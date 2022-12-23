@@ -20,7 +20,7 @@ DEBUG = True
 
 SECRET_KEY = env('SECRET_KEY')
 
-ALLOWED_HOSTS = [ 'localhost', '127.0.0.1' ]
+ALLOWED_HOSTS = [ 'localhost', '127.0.0.1', 'ngexile.freddecgames.com' ]
 
 INTERNAL_IPS = [ '127.0.0.1' ]
 
