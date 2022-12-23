@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block content %}
+<div class="p-3" style="width:1024px; height:640px;">
+    <div class="w-100 h-100 card">
+        <div class="card-header">
+            <div class="row gx-2 align-items-center">
+                <div class="col-3">
+                    <div class="row gx-2 align-items-center">
+                        <div class="col-auto">
+                            <img src="/static/img/logo.png" width="24px" class="rounded" />
+                        </div>
+                        <div class="col-auto">
+                            <span class="fs-6">NG-0</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="nav nav-pills justify-content-center">
+                        <div class="nav-item"><button type="button" class="nav-link">{% translate "Map" %}</button></div>
+                        <div class="nav-item"><button type="button" class="nav-link">{% translate "Fleets" %}</button></div>
+                        <div class="nav-item"><button type="button" class="nav-link">{% translate "Techs" %}</button></div>
+                    </div>
+                </div>
+                <div class="col-3">
+                </div>
+            </div>
+        </div>
+        <div class="flex-grow-1 tab-content card-body">
+            <div id="servers-pane" class="h-100 tab-pane fade">
+            </div>
+        </div>
+        <div class="card-footer">
+            <div class="row gx-2 align-items-center">
+                <div class="col-3">
+                </div>
+                <div class="col-6">
+                    <div class="nav nav-pills justify-content-center">
+                        <div class="nav-item"><button type="button" class="nav-link">{% translate "Buildings" %}</button></div>
+                        <div class="nav-item"><button type="button" class="nav-link">{% translate "Ships" %}</button></div>
+                    </div>
+                </div>
+                <div class="col-3">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block script %}
+
+
+{% endblock %}

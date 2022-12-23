@@ -1,0 +1,95 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-12-22 14:22+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: .\templates\django_registration\registration_form.html:17
+#: .\templates\django_registration\registration_form.html:43
+#: .\templates\index.html:46
+msgid "Sign Up"
+msgstr "Inscription"
+
+#: .\templates\django_registration\registration_form.html:22
+msgid "Username"
+msgstr "Nom d’utilisateur"
+
+#: .\templates\django_registration\registration_form.html:24
+msgid ""
+"Required. 150 characters or fewer. Letters, digits and « @ », « . », « # », "
+"« - » et « _ » only."
+msgstr ""
+"Requis. 150 caractères maximum. Uniquement des lettres, nombres et les "
+"caractères « @ », « . », « + », « - » et « _ »."
+
+#: .\templates\django_registration\registration_form.html:27
+msgid "Email address"
+msgstr "Adresse électronique"
+
+#: .\templates\django_registration\registration_form.html:29
+msgid "Required. 254 characters or fewer. Must contains @."
+msgstr "Requis. 254 caractères maximum. Doit contenir le caractère « @ »."
+
+#: .\templates\django_registration\registration_form.html:32
+msgid "Password"
+msgstr "Mot de passe"
+
+#: .\templates\django_registration\registration_form.html:34
+msgid ""
+"Required. Your password can’t be too similar to your other personal "
+"information. Your password must contain at least 8 characters. Your password "
+"can’t be a commonly used password. Your password can’t be entirely numeric."
+msgstr ""
+"Requis. Votre mot de passe ne peut pas trop ressembler à vos autres "
+"informations personnelles. Votre mot de passe doit contenir au minimum 8 "
+"caractères. Votre mot de passe ne peut pas être un mot de passe couramment "
+"utilisé. Votre mot de passe ne peut pas être entièrement numérique."
+
+#: .\templates\django_registration\registration_form.html:37
+msgid "Password confirmation"
+msgstr "Confirmation du mot de passe"
+
+#: .\templates\django_registration\registration_form.html:39
+msgid "Required. Enter the same password as before, for verification."
+msgstr ""
+"Requis. Saisissez le même mot de passe que précédemment, pour vérification."
+
+#: .\templates\index.html:33
+msgid ""
+"NG Exile is a strategic space simulation online game totally free, playable "
+"with a simple browser on all platforms."
+msgstr ""
+"NG Exile est un jeu web en ligne totalement gratuit de simulation "
+"stratégique spatiale jouable avec un simple navigateur."
+
+#: .\templates\index.html:40
+msgid ""
+"Game is still in development.<br>Bugs and data loses may happen.<br>Play at "
+"your own risks."
+msgstr ""
+"Le jeu est toujours en cours de développement.<br>Des bugs et des pertes de "
+"données sont à prévoir.<br>Jouez à vos risques et périls."
+
+#: .\templates\index.html:47
+msgid "Sign In"
+msgstr "Connexion"
+
+#: .\templates\index.html:53
+msgid "To be kept informed and to get last news, join our Discord server."
+msgstr ""
+"Pour vous tenir informé et obtenir les dernières informations, rejoignez le "
+"salon Discord du jeu."

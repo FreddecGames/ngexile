@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block content %}
+{% get_current_language as LANGUAGE_CODE %}
+<div class="p-3" style="width:100%; max-width:512px;">
+    <div class="row g-3">
+        <div class="col-12">
+            <div class="row g-1">
+                <div class="col-12 text-center"><img src="/static/img/logo.png" width="64px" class="rounded" /></div>
+                <div class="col-12 text-center"><span class="fs-5 text-white">NG Exile</span></div>
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="row gx-3 justify-content-center">
+                <form action="{% url 'set_language' %}" method="post" class="col-auto">
+                    {% csrf_token %}
+                    <input name="next" type="hidden" value=".">
+                    <input name="language" type="hidden" value="en">
+                    <button type="submit" class="btn {% if LANGUAGE_CODE == 'en' %}border-primary{% endif %}"><img src="/static/img/en.png" width="24px" /></button>
+                </form>
+                <form action="{% url 'set_language' %}" method="post" class="col-auto">
+                    {% csrf_token %}
+                    <input name="next" type="hidden" value=".">
+                    <input name="language" type="hidden" value="fr">
+                    <button type="submit" class="btn {% if LANGUAGE_CODE == 'fr' %}border-primary{% endif %}"><img src="/static/img/fr.png" width="24px" /></button>
+                </form>
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="row g-1">
+                <div class="col-12 text-center">
+                    <span class="fs-6">{% translate "NG Exile is a strategic space simulation online game totally free, playable with a simple browser on all platforms." %}</span>
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="row g-1">
+                <div class="col-12 text-center text-bg-danger p-2 rounded">
+                    <span><i class="fa-fw fas fa-exclamation-triangle"></i> {% translate "Game is still in development.<br>Bugs and data loses may happen.<br>Play at your own risks." %}</span>
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="row gx-3 justify-content-center">
+                <div class="col-auto"><a href="/accounts/register/" class="btn btn-primary"><i class="fa-fw fas fa-edit me-1"></i> {% translate "Sign Up" %}</a></div>
+                <div class="col-auto"><a href="/accounts/login/" class="btn btn-primary"><i class="fa-fw fas fa-sign-in-alt me-1"></i> {% translate "Sign In" %}</a></div>
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="row g-1">
+                <div class="col-12 text-center">
+                    <span>{% translate "To be kept informed and to get last news, join our Discord server." %}</span>
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="row g-1">
+                <div class="col-12 text-center">
+                    <a href="https://discord.gg/x39nHzM" target="_blank" class="btn btn-secondary"><i class="fa-fw fab fa-discord me-1"></i> Discord</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="row g-1">
+                <div class="col-12 text-center">
+                    <span class="text-muted">&#169; Copyright 2022-2023 - Freddec Games</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

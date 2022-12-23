@@ -1,0 +1,39 @@
+{% load i18n %}
+<!doctype html>
+<html lang="en">
+    <head>
+        <!-- -->
+        <title>NG Exile</title>
+        <!-- -->
+        <link rel="shortcut icon" href="/static/favicon.ico">
+        <!-- -->
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <!-- -->
+        <link rel="stylesheet" type="text/css" href="/static/css/vendor-bootstrap.min.css" />
+        <link rel="stylesheet" type="text/css" href="/static/css/styles.css" />
+        <!-- -->
+        <script type="text/javascript" src="/static/js/vendor-bootstrap.bundle.min.js"></script>
+        <script type="text/javascript" src="/static/js/vendor-fontawesome.js"></script>
+    </head>
+    <body>
+        <!-- -->
+        <div class="h-100 w-100 d-flex align-items-center justify-content-center">
+        {% block content %}{% endblock %}
+        </div>
+        <!-- -->
+        <div id="toastContainer" class="toast-container position-fixed bottom-0 end-0 p-3"></div>
+        <!-- -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-Y5FYL5X7FY"></script>
+        <script>
+            window.dataLayer = window.dataLayer || []
+            function gtag(){ dataLayer.push(arguments) }
+            gtag('js', new Date())
+            gtag('config', 'G-Y5FYL5X7FY')
+        </script>
+        <!-- -->
+        <script>
+        {% block script %}{% endblock %}
+        </script>
+    </body>
+</html>

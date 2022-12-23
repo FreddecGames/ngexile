@@ -1,0 +1,5 @@
+Django==4.0.7
+django-registration==3.3
+psycopg2==2.9.5
+python-gettext==4.1
+whitenoise==5.3.0
