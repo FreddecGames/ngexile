@@ -1,3 +1,3 @@
-SET SEARCH_PATH TO exile_s03,static,ng0,exile_nexus,public;
+SET SEARCH_PATH TO s03;
 
-SELECT static.admin_create_galaxies(1, 1);
+SELECT s03.admin_create_new_galaxy();
