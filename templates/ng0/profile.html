@@ -1,0 +1,18 @@
+{% extends "ng0/layout.html" %}
+{% load i18n %}
+
+{% block content %}
+<div class="h-100 row gx-3">
+    <div class="col-3">
+    </div>
+    <div class="col-9">
+        <div class="nav nav-pills">
+            <div class="nav-item"><a href="/ng0/profile_overview" class="nav-link {% if profile_tab == 'overview' %}active{% endif %}">{% translate "Overview" %}</a></div>
+            <div class="nav-item"><a href="/ng0/profile_reports" class="nav-link {% if profile_tab == 'reports' %}active{% endif %}">{% translate "Reports" %}</a></div>
+            <div class="nav-item"><a href="/ng0/profile_techs" class="nav-link {% if profile_tab == 'techs' %}active{% endif %}">{% translate "Techs" %}</a></div>
+            <div class="nav-item"><a href="/ng0/profile_options" class="nav-link {% if profile_tab == 'options' %}active{% endif %}">{% translate "Options" %}</a></div>
+        </div>
+        {% block profile_content %}{% endblock %}
+    </div>
+</div>
+{% endblock %}

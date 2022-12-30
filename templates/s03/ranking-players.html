@@ -1,0 +1,45 @@
+{% extends 's03/layout.html' %}
+
+{% block content %}
+<table class="default">
+
+<tr class="header">
+<td><a href="?col=1{% if r1 %}&r=1{% endif %}{% if search_params %}&a={{param_a}}&n={{param_n}}{% endif %}">Nation</a></td>
+<td><a href="?col=2{% if r2 %}&r=1{% endif %}{% if search_params %}&a={{param_a}}&n={{param_n}}{% endif %}">Alliance</a></td>
+<td><a href="?col=3{% if r3 %}&r=1{% endif %}{% if search_params %}&a={{param_a}}&n={{param_n}}{% endif %}">Développement</a></td>
+<td><a href="?col=4{% if r4 %}&r=1{% endif %}{% if search_params %}&a={{param_a}}&n={{param_n}}{% endif %}">Prestige</a></td>
+{% if t %}
+<td><a href="?col=5{% if r5 %}&r=1{% endif %}{% if search_params %}&a={{param_a}}&n={{param_n}}{% endif %}">Dernière connexion</a></td>
+{% endif %}
+</tr>
+
+{% if nav %}<tr class="nav"><td colspan="4" align=left>Page {{page_displayed}}, Nations {{page_first}}-{{page_last}}. Aller à
+{% if p %}&nbsp;{% if link %}<a href="?start={{page_link}}{% if search_params %}&a={{param_a}}&n={{param_n}}{% endif %}&col={{sort_column}}{% if reversed %}&r=1{% endif %}">{% endif %}{% if selected %}<span class="selected">{% endif %}{{page_id}}{% if selected %}</span>{% endif %}{% if link %}</a>{% endif %}{% endif %}.
+</td>
+</tr>{% endif %}
+{% if noresult %}<tr><td colspan="4" align="center">Aucune nation trouvée.</td></tr>{% endif %}
+{% for player in players %}
+<tr class="item{% if player.self %}highlight{% endif %}{% if player.ally %}ally{% endif %}">
+<td>{% if player.top10avatar %}<p align="center"><a href="/s03/nation/?name={{player.username}}" title="Afficher les informations sur {{player.username}}">{% if player.avatar %}<img src="{{player.avatar_url}}" width="64" height="64" class="avatar">{% endif %}{% if player.noavatar %}<img src="{{PATH_IMAGES}}interface/noavatar.gif" width=64 height=64 class="avatar">{% endif %}</a></p>{% endif %}{{player.place}}.&nbsp;{% if player.name %}<a href="/s03/nation/?name={{player.username}}" title="Afficher les informations sur {{player.username}}">{{player.username}}</a>{% endif %}{% if player.name_na %}Inconnu{% endif %}</td>
+<td align="right">{% if player.alliance %}<a href="/s03/alliance/?tag={{player.alliancetag}}">[{{player.alliancetag}}] {{player.alliancename}}</a>{% endif %}{% if player.noalliance %}&nbsp;{% endif %}</td>
+<td align="right">{{player.score}}<br/><span{% if player.plus %} class="plus"{% endif %}{% if player.minus %} class="minus"{% endif %}>{% if player.plus %}+{% endif %}{{player.score_delta}}</span></td>
+<td align="right">{{player.score_battle}}</td>
+{% if t %}
+<td align="right">
+{% if recently %}<span class="recent">Récemment</span>{% endif %}
+{% if 1day %}<span class="oneday">1 jour</span>{% endif %}
+{% if days %}<span class="threedays">{{last_login}} jours</span>{% endif %}
+{% if 3daysplus %}<span class="threedaysmore">&gt; 3 jours</span>{% endif %}
+{% if 1weekplus %}<span class="oneweekmore">&gt; 1 semaine</span>{% endif %}
+{% if 2weeksplus %}<span class="twoweeksmore">&gt; 2 semaines</span>{% endif %}
+</td>
+{% endif %}
+</tr>
+{% endfor %}
+
+{% if nav %}<tr class="nav"><td colspan="4" align="left">Page {{page_displayed}}, Nations {{page_first}}-{{page_last}}. Aller à
+{% if p %}&nbsp;{% if link %}<a href="?start={{page_link}}{% if search_params %}&a={{param_a}}&n={{param_n}}{% endif %}&col={{sort_column}}{% if reversed %}&r=1{% endif %}">{% endif %}{% if selected %}<span class="selected">{% endif %}{{page_id}}{% if selected %}</span>{% endif %}{% if link %}</a>{% endif %}{% endif %}.
+</td>
+</tr>{% endif %}
+</table>
+{% endblock %}

@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "ng0/layout.html" %}
 {% load i18n %}
 
 {% block content %}
@@ -26,7 +26,18 @@
                 {% csrf_token %}
                 <div class="col-12">
                     <span class="text-normal">{% translate "Before starting, you have to choose a nickname. This name will be the name displayed to other players. You cannot change it after starting." %}</span>
-                </div>               
+                </div>
+                {% if form.non_field_errors %}
+                <div class="col-12">
+                    <div class="text-bg-danger p-2 rounded">
+                        <div class="row gx-2 gy-2">
+                            {% for error in form.non_field_errors %}
+                                <div class="col-12 text-center">{{ error|escape }}</div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
                 <div class="col-12">
                     <label for="id_nickname" class="form-label text-white required">{% translate "Nickname" %}</label>
                     <input type="text" class="form-control {% if form.errors and form.errors.nickname  %}is-invalid{% endif %}" name="nickname" maxlength="150" autocapitalize="none" autocomplete="nickname" autofocus="" required="" id="id_nickname" value="{% if form.nickname.value  %}{{ form.nickname.value }}{% endif %}">

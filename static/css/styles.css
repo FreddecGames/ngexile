@@ -47,6 +47,17 @@ a { text-decoration: none; }
 .bg-gray-800 { background-color: var(--bs-gray-800)!important; }
 .bg-gray-900 { background-color: var(--bs-gray-900)!important; }
 
+.text-ally { color: #0f0!important; }
+.text-free { color: var(--bs-body-color)!important; }
+.text-empty { color: transparent!important; }
+.text-enemy { color: #f00!important; }
+.text-player { color: var(--bs-info)!important; }
+
+h6, .h6 {
+    padding-bottom: 0.5rem;
+    border-bottom: var(--bs-border-width) solid var(--bs-border-color);
+}
+
 .btn {
     --bs-btn-padding-y: 0.25rem;
     --bs-btn-padding-x: 0.75rem;
@@ -295,6 +306,26 @@ a { text-decoration: none; }
 
 .card-header {
     border-bottom: var(--bs-border-width) solid var(--bs-border-color);
+}
+
+.list-group {
+    --bs-list-group-bg: var(--bs-gray-800);
+    --bs-list-group-color: var(--bs-body-color);
+    --bs-list-group-item-padding-x: 0.75rem;
+    --bs-list-group-item-padding-y: 0.25rem;
+    --bs-list-group-border-width: var(--bs-border-width);
+    --bs-list-group-border-color: var(--bs-border-color);
+    --bs-list-group-border-radius: var(--bs-border-radius);
+    --bs-list-group-action-color: var(--bs-link-color);
+    --bs-list-group-action-hover-color: var(--bs-link-hover-color);
+    --bs-list-group-action-hover-bg: #f8f9fa;
+    --bs-list-group-action-active-color: #000;
+    --bs-list-group-action-active-bg: #f39c12;
+    --bs-list-group-disabled-color: #6c757d;
+    --bs-list-group-disabled-bg: #fff;
+    --bs-list-group-active-color: #000;
+    --bs-list-group-active-bg: #f39c12;
+    --bs-list-group-active-border-color: #f39c12;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

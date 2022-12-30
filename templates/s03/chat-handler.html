@@ -1,0 +1,32 @@
+{% load tz %}
+
+{% if join %}
+var chat = addChat({{id}},'{{name}}','{{topic}}',true,true);
+{% if setactive %}chat.setActive();{% endif %}
+{% endif %}
+{% if join_badpassword %}
+alert('Nom de salon ou mot de passe incorrect.');
+{% endif %}
+{% if join_error %}
+alert('Impossible de rejoindre ce salon.');
+{% endif %}
+
+
+{% if refresh %}
+var chat = chatlist[{{chatid}}];
+if(chat) {
+	{% for line in lines %}chat.addLine('{{line.alliancetag}}', '{{line.author}}', new Date({{line.datetime|timezone:"Europe/Paris"|date:"Y"}},{{line.datetime|timezone:"Europe/Paris"|date:"m"}}-1,{{line.datetime|timezone:"Europe/Paris"|date:"d"}},{{line.datetime|timezone:"Europe/Paris"|date:"H"}},{{line.datetime|timezone:"Europe/Paris"|date:"i"}},{{line.datetime|timezone:"Europe/Paris"|date:"s"}},{{line.datetime|timezone:"Europe/Paris"|date:"z"}}), '{{line.line}}');{% endfor %}
+	chat.display();
+
+{% if online_users %}
+	chat.clearUsers();
+	{% for user in online_users %}chat.addUser('{{user.alliancetag}}', '{{user.user}}', {{user.lastactivity}});{% endfor %}
+	chat.displayUsers();
+{% endif %}
+
+}
+{% endif %}
+
+{% if publicchats %}
+displayPublicChats([0{% for chat in publicchats %},['{{chat.name}}','{{chat.topic}}',{{chat.online}}]{% endfor %}]);
+{% endif %}

@@ -1,0 +1,34 @@
+{% extends 's03/layout.html' %}
+
+{% block content %}
+<table class="default" width="600">
+
+<tr class="header">
+<td><a href="?col=7{% if r7 %}&r=7{% endif %}{% if search_params %}&a={{param_a}}{% endif %}">Tag</a>&nbsp;<a href="?col=1{% if r1 %}&r=1{% endif %}{% if search_params %}&a={{param_a}}{% endif %}">Alliance</a></td>
+{% if hide %}
+<td><a href="?col=2{% if r2 %}&r=2{% endif %}{% if search_params %}&a={{param_a}}{% endif %}">Score</a></td>
+<td><a href="?col=5{% if r5 %}&r=5{% endif %}{% if search_params %}&a={{param_a}}{% endif %}">Moyenne</a></td>
+{% endif %}
+<td><a href="?col=3{% if r3 %}&r=3{% endif %}{% if search_params %}&a={{param_a}}{% endif %}">Membres</a></td>
+<td><a href="?col=4{% if r4 %}&r=4{% endif %}{% if search_params %}&a={{param_a}}{% endif %}">Colonies</a></td>
+<td><a href="?col=6{% if r6 %}&r=6{% endif %}{% if search_params %}&a={{param_a}}{% endif %}">Date de création</a></td>
+</tr>
+
+{% if nav %}<tr class="nav"><td colspan=2 align=left>Page {{page_display}}, Messages {{min}}-{{max}}. Aller à
+{% for p in ps %}&nbsp;{% if p.link %}<a href="?a=sent&start={{p.page_link}}">{% endif %}{% if p.selected %}<span class="selected">{% endif %}{{p.page_id}}{% if p.selected %}</span>{% endif %}{% if p.link %}</a>{% endif %}{% endfor %}.
+</td></tr>{% endif %}
+{% for alliance in alliances %}
+<tr{% if alliance.playeralliance %} class=ranking_alliance{% endif %}{% if alliance.nap %} class=ranking_nap{% endif %}{% if alliance.war %} class=ranking_war{% endif %}>
+	<td>{{alliance.place}}. <a href="/s03/alliance/?tag={{alliance.tag}}">[{{alliance.tag}}] {{alliance.name}}</a></td>
+	{% if alliance.hide %}<td align="right">{{alliance.score}}<br/><span{% if alliance.plus %} class="plus"{% endif %}{% if alliance.minus %} class="minus"{% endif %}>{% if alliance.plus %}+{% endif %}{{alliance.score_delta}}</span></td><td align=right>{{alliance.score_average}}</td>{% endif %}
+	<td align=right>{{alliance.members}} / {{alliance.max_members}}</td>
+	<td align=right>{{alliance.stat_colonies}}</td>
+	<td>{{alliance.created}}</td>
+</tr>
+{% empty %}<tr><td colspan=4 align=center>Aucune alliance trouvée.</td></tr>
+{% endfor %}
+{% if nav %}<tr class="nav"><td colspan=2 align=left>Page {{page_display}}, Messages {{min}}-{{max}}. Aller à
+{% for p in ps %}&nbsp;{% if p.link %}<a href="?a=sent&start={{p.page_link}}">{% endif %}{% if p.selected %}<span class="selected">{% endif %}{{p.page_id}}{% if p.selected %}</span>{% endif %}{% if p.link %}</a>{% endif %}{% endfor %}.
+</td></tr>{% endif %}
+</table>
+{% endblock %}

@@ -1,0 +1,18 @@
+{% extends "ng0/layout.html" %}
+{% load i18n %}
+
+{% block content %}
+<div class="h-100 row gx-3">
+    <div class="col-3">
+    </div>
+    <div class="col-9">
+        <div class="nav nav-pills">
+            <div class="nav-item"><a href="/ng0/mail_inbox" class="nav-link {% if mail_tab == 'inbox' %}active{% endif %}">{% translate "Inbox" %}</a></div>
+            <div class="nav-item"><a href="/ng0/mail_outbox" class="nav-link {% if mail_tab == 'outbox' %}active{% endif %}">{% translate "Outbox" %}</a></div>
+            <div class="nav-item"><a href="/ng0/mail_write" class="nav-link {% if mail_tab == 'write' %}active{% endif %}">{% translate "Write" %}</a></div>
+            <div class="nav-item"><a href="/ng0/mail_blacklist" class="nav-link {% if mail_tab == 'blacklist' %}active{% endif %}">{% translate "Blacklist" %}</a></div>
+        </div>
+        {% block alliance_content %}{% endblock %}
+    </div>
+</div>
+{% endblock %}

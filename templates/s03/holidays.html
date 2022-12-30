@@ -1,0 +1,59 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+
+<html>
+<head>
+	<script async src="https://www.googletagmanager.com/gtag/js?id=UA-134044291-1"></script>
+	<script>
+		window.dataLayer = window.dataLayer || [];
+		function gtag(){dataLayer.push(arguments);}
+		gtag('js', new Date());
+		gtag('config', 'UA-134044291-1');
+	</script>
+	<meta http-equiv="Content-type" content="text/html; charset=utf-8">
+	<meta http-equiv="cache-control" content="no-cache">
+	<meta http-equiv="expires" content="0">
+	<meta http-equiv="pragma" content="no-cache">
+
+	<title>Exile</title>
+
+	<link rel="stylesheet" href="{{PATH_IMAGES}}styles/s_transparent/style.css" type="text/css" media="all">
+
+	<script type="text/javascript">
+	var timers_enabled=true;
+	function alertAbort(){return window.confirm("Êtes-vous sûr de vouloir arrêter le mode vacances ?\r\nVous ne pourrez le réactiver qu'après une semaine de jeu.");}
+	</script>
+
+	<script type="text/javascript" src='/static/scripts/lang.js'></script>
+	<script type="text/javascript" src='/static/scripts/time.js'></script>
+</head>
+
+<body >
+<div align=center>
+<div id=container>
+
+<div id=holidays>MODE VACANCES</div>
+<div id=playername>{{login}}</div>
+<br/>
+Votre compte est actuellement en mode vacances, vos planètes sont protégées de toutes attaques et invasion mais toutes vos productions, constructions et recherches sont suspendues.<br />
+<br/>
+En cliquant sur Débloquer, le mode vacances sera arrêté, vos productions, constructions et recherches reprendront et vos planètes ne seront plus protégées.
+<br/>
+<br/>
+<div align=center>
+Temps restant: <script type="text/javascript">putcountdown1({{remaining_time}},"", "");</script><br/>
+<br/>
+{% if unlock %}
+<form method="post" action="?">{% csrf_token %}
+<input onclick="return alertAbort()" type="submit" name="unlock" value="Débloquer">
+</form>
+{% endif %}
+{% if cant_unlock %}
+Temps restant avant déblocage: <script type="text/javascript">putcountdown1({{remaining_time_before_unlock}},"", "");</script><br/>
+<script type="text/javascript">putcountdown2({{remaining_time_before_unlock}},"", "<br/><form method='post' action='?'>{% csrf_token %}<input onclick='return alertAbort()' type='submit' name='unlock' value='Débloquer'></form>");</script>
+{% endif %}
+</div>
+
+</div>
+</div>
+</body>
+</html>

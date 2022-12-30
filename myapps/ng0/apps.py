@@ -3,4 +3,4 @@ from django.apps import AppConfig
 
 class Ng0Config(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'ng0'
+    name = 'myapps.ng0'

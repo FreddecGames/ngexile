@@ -1,0 +1,526 @@
+{% extends 's03/layout.html' %}
+
+
+{% block content %}
+{% if header_credits %}
+{% include 's03/header-credits.html' %}
+{% endif %}
+<script>
+function setCargoLoad(value) { $('load').innerHTML = formatnumber(value); }
+
+function load_all(o,h,s,so,w)
+{
+	setval('load_ore',o);
+	setval('load_hydrocarbon',h);
+	setval('load_scientists',s);
+	setval('load_soldiers',so);
+	setval('load_workers',w);
+	return false;
+}
+
+function unload_all(o,h,s,so,w)
+{
+	setval('unload_ore',o);
+	setval('unload_hydrocarbon',h);
+	setval('unload_scientists',s);
+	setval('unload_soldiers',so);
+	setval('unload_workers',w);
+	return false;
+}
+
+function showCargo(cargoOre, cargoHydrocarbon, cargoScientists, cargoSoldiers, cargoWorkers, canload, canunload)
+{
+	var s = "<table class=default width=600>"+
+			"<tr class=category><td colspan=3>Cargaison - Aucune action possible</td></tr>"+
+			"<tr class=header><td width='1%'>Ressource</td><td>En soute</td></tr>"+
+			"<tr><td nowrap><img src='{{PATH_IMAGES}}interface/ore.gif' title='Minerai' class=res width=16 height=16> Minerai</td><td align=right>"+formatnumber(cargoOre)+"</td></tr>"+
+			"<tr><td nowrap><img src='{{PATH_IMAGES}}interface/hydrocarbon.gif' title='Hydrocarbure' class=res width=16 height=16> Hydrocarbure</td><td align=right>"+formatnumber(cargoHydrocarbon)+"</td></tr>"+
+			"<tr><td nowrap><img src='{{PATH_IMAGES}}interface/scientists.gif' title='Scientifiques' class=res width=16 height=16> Scientifiques</td><td align=right>"+formatnumber(cargoScientists)+"</td></tr>"+
+			"<tr><td nowrap><img src='{{PATH_IMAGES}}interface/soldiers.gif' title='Soldats' class=res width=16 height=16> Soldats</td><td align=right>"+formatnumber(cargoSoldiers)+"</td></tr>"+
+			"<tr><td nowrap><img src='{{PATH_IMAGES}}interface/workers.gif' title='Travailleurs' class=res width=16 height=16> Travailleurs</td><td align=right>"+formatnumber(cargoWorkers)+"</td></tr>"+
+			"</table>";
+			$('cargobox').innerHTML = s;
+}
+
+function showLoad(planetOre, planetHydrocarbon, planetScientists, planetSoldiers, planetWorkers, cargoOre, cargoHydrocarbon, cargoScientists, cargoSoldiers, cargoWorkers)
+{
+	var s = "<form method=post action='/s03/fleet-trade/?id={{fleetid}}' {% if t %}onsubmit='return transferResources()'{% endif %}>" + '{% csrf_token %}'+
+			"<table class=default width=600>"+
+			"<tr class=category><td colspan=5>Cargaison - Chargement et déchargement possible</td></tr>"+
+			"<tr class=header><td width='1%'>Ressource</td><td>En soute</td><td width='1%'>Décharger</td><td>Disponible</td><td width='1%'>Charger</td></tr>"+
+			"<tr><td nowrap><img src='{{PATH_IMAGES}}interface/ore.gif' title='Minerai' class=res width=16 height=16> Minerai</td><td align=right>"+formatnumber(cargoOre)+"</td><td nowrap><input type=number min=0 name=unload_ore id=unload_ore value=0 size=6> <a href='#' onclick='setval(\"unload_ore\","+cargoOre+")'>max</a></td><td align=right>"+formatnumber(planetOre)+"</td><td nowrap><input type=number min=0 name=load_ore id=load_ore value=0 size=6> <a href='#' onclick='setval(\"load_ore\","+planetOre+")'>max</a></td></tr>"+
+			"<tr><td nowrap><img src='{{PATH_IMAGES}}interface/hydrocarbon.gif' title='Hydrocarbure' class=res width=16 height=16> Hydrocarbure</td><td align=right>"+formatnumber(cargoHydrocarbon)+"</td><td><input type=number min=0 name=unload_hydrocarbon id=unload_hydrocarbon value=0 size=6> <a href='#' onclick='setval(\"unload_hydrocarbon\","+cargoHydrocarbon+")'>max</a></td><td align=right>"+formatnumber(planetHydrocarbon)+"</td><td><input type=number min=0 name=load_hydrocarbon id=load_hydrocarbon value=0 size=6> <a href='#' onclick='setval(\"load_hydrocarbon\","+planetHydrocarbon+")'>max</a></td></tr>"+
+			"<tr><td nowrap><img src='{{PATH_IMAGES}}interface/scientists.gif' title='Scientifiques' class=res width=16 height=16> Scientifiques</td><td align=right>"+formatnumber(cargoScientists)+"</td><td><input type=number min=0 name=unload_scientists id=unload_scientists value=0 size=6> <a href='#' onclick='setval(\"unload_scientists\","+cargoScientists+")'>max</a></td><td align=right>"+formatnumber(planetScientists)+"</td><td><input type=number min=0 name=load_scientists id=load_scientists value=0 size=6> <a href='#' onclick='setval(\"load_scientists\","+planetScientists+")'>max</a></td></tr>"+
+			"<tr><td nowrap><img src='{{PATH_IMAGES}}interface/soldiers.gif' title='Soldats' class=res width=16 height=16> Soldats</td><td align=right>"+formatnumber(cargoSoldiers)+"</td><td><input type=number min=0 name=unload_soldiers id=unload_soldiers value=0 size=6> <a href='#' onclick='setval(\"unload_soldiers\","+cargoSoldiers+")'>max</a></td><td align=right>"+formatnumber(planetSoldiers)+"</td><td><input type=number min=0 name=load_soldiers id=load_soldiers value=0 size=6> <a href='#' onclick='setval(\"load_soldiers\","+planetSoldiers+")'>max</a></td></tr>"+
+			"<tr><td nowrap><img src='{{PATH_IMAGES}}interface/workers.gif' title='Travailleurs' class=res width=16 height=16> Travailleurs</td><td align=right>"+formatnumber(cargoWorkers)+"</td><td><input type=number min=0 name=unload_workers id=unload_workers value=0 size=6> <a href='#' onclick='setval(\"unload_workers\","+cargoWorkers+")'>max</a></td><td align=right>"+formatnumber(planetWorkers)+"</td><td><input type=number min=0 name=load_workers id=load_workers value=0 size=6> <a href='#' onclick='setval(\"load_workers\","+planetWorkers+")'>max</a></td></tr>"+
+			"<tr><td>&nbsp;</td><td colspan=2 align=center><a href='#' onclick='return unload_all("+cargoOre+","+cargoHydrocarbon+","+cargoScientists+","+cargoSoldiers+","+cargoWorkers+")'>Tout décharger</a></td><td colspan=2 align=center><a href='#' onclick='return load_all("+planetOre+","+planetHydrocarbon+","+planetScientists+","+planetSoldiers+","+planetWorkers+")'>Tout charger</a></td></tr>"+
+			"<tr><td colspan=5 align=center><input type=submit value='Transférer'></td></tr>"+
+			"</table>"+
+			"</form>";
+			$('cargobox').innerHTML = s;
+}
+
+function showUnload(cargoOre, cargoHydrocarbon, cargoScientists, cargoSoldiers, cargoWorkers, canload)
+{
+	var s = "<form method=post action='/s03/fleet-trade/?id={{fleetid}}' {% if t %}onsubmit='return transferResources()'{% endif %}>" + '{% csrf_token %}'+
+			"<table class=default width=600>"+
+			"<tr class=category><td colspan=3>Cargaison - Déchargement uniquement possible</td></tr>"+
+			"<tr class=header><td width='1%'>Ressource</td><td>En soute</td><td width='1%'>Décharger</td></tr>"+
+			"<tr><td nowrap><img src='{{PATH_IMAGES}}interface/ore.gif' title='Minerai' class=res width=16 height=16> Minerai</td><td align=right>"+formatnumber(cargoOre)+"</td><td nowrap><input type=number min=0 name=unload_ore id=unload_ore value=0 size=6> <a href='#' onclick='setval(\"unload_ore\", "+cargoOre+")'>max</a></td></tr>"+
+			"<tr><td nowrap><img src='{{PATH_IMAGES}}interface/hydrocarbon.gif' title='Hydrocarbure' class=res width=16 height=16> Hydrocarbure</td><td align=right>"+formatnumber(cargoHydrocarbon)+"</td><td><input type=number min=0 name=unload_hydrocarbon id=unload_hydrocarbon value=0 size=6> <a href='#' onclick='setval(\"unload_hydrocarbon\", "+cargoHydrocarbon+")'>max</a></td></tr>"+
+			"<tr><td nowrap><img src='{{PATH_IMAGES}}interface/scientists.gif' title='Scientifiques' class=res width=16 height=16> Scientifiques</td><td align=right>"+formatnumber(cargoScientists)+"</td><td><input type=number min=0 name=unload_scientists id=unload_scientists value=0 size=6> <a href='#' onclick='setval(\"unload_scientists\", "+cargoScientists+")'>max</a></td></tr>"+
+			"<tr><td nowrap><img src='{{PATH_IMAGES}}interface/soldiers.gif' title='Soldats' class=res width=16 height=16> Soldats</td><td align=right>"+formatnumber(cargoSoldiers)+"</td><td><input type=number min=0 name=unload_soldiers id=unload_soldiers value=0 size=6> <a href='#' onclick='setval(\"unload_soldiers\", "+cargoSoldiers+")'>max</a></td></tr>"+
+			"<tr><td nowrap><img src='{{PATH_IMAGES}}interface/workers.gif' title='Travailleurs' class=res width=16 height=16> Travailleurs</td><td align=right>"+formatnumber(cargoWorkers)+"</td><td><input type=number min=0 name=unload_workers id=unload_workers value=0 size=6> <a href='#' onclick='setval(\"unload_workers\", "+cargoWorkers+")'>max</a></td></tr>"+
+			"<tr><td>&nbsp;</td><td colspan=2 align=center><a href='#' onclick='return unload_all("+cargoOre+","+cargoHydrocarbon+","+cargoScientists+","+cargoSoldiers+","+cargoWorkers+")'>Tout décharger</a></td></tr>"+
+			"<tr><td colspan=3 align=center><input type=submit value='Décharger'></td></tr>"+
+			"</table>"+
+			"</form>";
+			$('cargobox').innerHTML = s;
+}
+
+function setCargoMsg(msg){ $('cargobox').innerHTML = '<table class=default width=600><tr><td align=center>'+msg+'</td></tr></table>'; }
+function openCargo(){ setCargoMsg('Ouverture du cargo en cours ...'); openURL("/s03/fleet-trade/?id={{fleetid}}&a=open", evalResponse); }
+
+function transferResources(){
+	var params = "&load_ore=" + getval("load_ore") + "&load_hydrocarbon="+getval("load_hydrocarbon") + "&load_scientists="+getval("load_scientists")  + "&load_soldiers="+getval("load_soldiers") + "&load_workers="+getval("load_workers")+
+				"&unload_ore=" + getval("unload_ore") + "&unload_hydrocarbon=" + getval("unload_hydrocarbon") + "&unload_scientists=" + getval("unload_scientists")  + "&unload_soldiers=" + getval("unload_soldiers") + "&unload_workers=" + getval("unload_workers");
+	openURL("/s03/fleet-trade/?id={{fleetid}}&a=open"+params, evalResponse);
+
+	setCargoMsg('Transfert des ressources en cours ...');
+
+	return false;
+}
+
+function setTravelTime(seconds)
+{
+	var traveleta_obj = document.getElementById("travel_eta");
+	var traveltime_obj = document.getElementById("travel_time");
+
+	if(seconds < 0)
+	{
+		var s = "<span class=impossible>Saut impossible</span>";
+		if(traveltime_obj.innerHTML != s) traveltime_obj.innerHTML = s;
+
+		traveleta_obj.innerHTML = "";
+	}
+	else
+	{
+		var s = formattime(seconds);
+		if(traveltime_obj.innerHTML != s) traveltime_obj.innerHTML = s;
+	}
+}
+
+function updatetravel() {
+	window.setTimeout("updatetravel()", 100);
+	var to_g = getval("g");
+
+	if(to_g < 0){ to_g = 1; setval("g", 1); }
+
+	var to_s = getval("s");
+
+	if(to_s < 0){ to_s = 1; setval("s", 1); }
+	if(to_s > 99){ to_s = 99; setval("s", 99); }
+
+	var to_p = getval("p");
+
+	if(to_p < 0){ to_p = 1; setval("p", 1); }
+	if(to_p > 25){ to_p = 25; setval("p", 25); }
+
+
+	var oTravelCost = document.getElementById("travel_cost");
+
+	var cost = 0;
+	var distance = 0;
+	var time = 0;
+
+	if({{g}} != to_g) {
+		if({{fleet_real_signature}} > {{fleet_long_distance_capacity}}) {
+			var s = "-";
+			if(oTravelCost.innerHTML != s) oTravelCost.innerHTML = s;
+
+			setTravelTime(-1);
+
+			return;
+		}
+
+		distance = 200;
+		time = {{fleet_required_vortex_strength}}*24*3600;
+	}
+	else {
+		if({{s}} != to_s)
+			distance = 6*Math.sqrt( Math.pow(Math.floor((to_s-1) / 10) - Math.floor(({{s}}-1)/10), 2) + Math.pow((to_s-1) % 10 - ({{s}}-1)%10, 2) );
+		else
+		if({{p}} != to_p)
+			distance = Math.sqrt( Math.pow(Math.floor((to_p-1) / 5) - Math.floor(({{p}}-1)/5), 2) + Math.pow((to_p-1) % 5 - ({{p}}-1)%5, 2) );
+
+		time = Math.floor(distance * (1000.0/{{fleet_speed}}) * 3600);
+	}
+	
+	cost = Math.floor(distance / 200.0 * {{fleet_real_signature}});
+
+	setTravelTime(time);
+
+	if(distance > 0 && cost == 0) cost = 1;
+	if(oTravelCost.innerHTML != cost) oTravelCost.innerHTML = formatnumber(cost);
+}
+
+var ships=new Array();
+
+{% for ship in shiplist %}
+ships[{{ship.id}}]=new Array('{{ship.description|escapejs}}','{{ship.ship_signature}}','{{ship.ship_cargo}}','{{ship.ship_speed}}','{{ship.ship_handling}}',{{ship.ship_turrets}},{{ship.ship_power}},'{{ship.ship_tracking_speed}}','{{ship.ship_hull}}','{{ship.ship_shield}}','{{ship.ship_recycler_output}}','{{ship.ship_long_distance_capacity}}','{{ship.ship_droppods}}');{% endfor %}
+
+function descShip(id) {
+	var ship = ships[id];
+	var a = '<table><tr valign="top"><td><span class="title">Description</span><br/><br/>'+ship[0]+'</td><td width="1%" nowrap><span class="title">Caractéristiques</span><br/>'+
+			'<br/>Signature: <span class=value>'+ship[1]+'</span><br/>Cargo: <span class=value>'+ship[2]+'</span>'+
+			'<br/>Vitesse: <span class=value>'+ship[3]+'</span><br/>Manœuvrabilité: <span class=value>'+ship[4]+'</span>';
+	if(ship[6] > 0)
+		a+= '<br/>Puissance d\'attaque: <span class=value>'+ship[5]+'x'+ship[6]+'</span><br/>Ciblage: <span class=value>'+ship[7]+'</span>';
+	a+= '<br/>Armure: <span class=value>'+ship[8]+'</span>';
+	if(ship[9] != "0")	a+= '<br/>Bouclier: <span class=value>'+ship[9]+'</span>';
+	if(ship[10] != "0") a+= '<br/>Capacité de recyclage: <span class=value>'+ship[10]+'</span>';
+	if(ship[11] != "0") a+= '<br/>Capacité de saut intergalactique: <span class=value>'+ship[11]+'</span>';
+	if(ship[12] != "0") a+= '<br/>Capacité d\'invasion: <span class=value>'+ship[12]+'</span>';
+	a+= '</td></tr></table>';
+	return a;
+}
+</script>
+<script type="text/javascript" src='/static/scripts/third-party/tooltip.js?v=1'></script>
+<script>
+tipname = "hint";
+tipwidth = 450;
+tiptext = $("hinttext");
+</script>
+
+{% if display %}
+{% if overview %}
+
+{% if idle %}
+
+<script>
+function confirmAbandon() { return confirm('Êtes-vous sûr de vouloir abandonner la flotte "{{fleetname}" ?\r\nLes vaisseaux seront endommagés de telle sorte qu\'ils ne pourront être réutilisés !'); }
+</script>
+
+<div id=renamebox class=hidden>
+	<form action='?id={{fleetid}}' method='post'>{% csrf_token %}
+	<input type='hidden' name='action' value='rename'>
+	<input type='text' name='newname' value='{{fleetname}}'>
+	&nbsp;<input type=submit class=submit value='OK'>
+	&nbsp;<img src='{{PATH_IMAGES}}interface/close.gif' width=12 height=12 title='Fermer' class=close onclick='hide();'>
+	</form>
+</div>
+{% endif %}
+<div id=commandersbox class=hidden>
+	<form action='?id={{fleetid}}' method='post'>{% csrf_token %}
+	<input type='hidden' name='action' value='assigncommander'>
+	<select name='commander'>
+	{% if unassigncommander %}<option value='0'>Aucun</option>{% endif %}
+	{% if nocommander %}<option value='0'>Aucun</option>{% endif %}
+	{% for optgroup in optgroups %}<optgroup label='{% if optgroup.fleet %}sur Flottes{% endif %}{% if optgroup.planet %}sur Planètes{% endif %}{% if optgroup.none %}Non affectés{% endif %}'>
+		{% for cmd_option in optgroup.cmd_options %}<option value={{cmd_option.cmd_id}}{% if cmd_option.selected %} selected{% endif %}>&middot;&nbsp;{{cmd_option.cmd_name}}{% if cmd_option.assigned %} ({{cmd_option.name}}){% endif %}{% if cmd_option.unavailable %} (Indisponible){% endif %}</option>{% endfor %}
+	</optgroup>{% endfor %}x
+	</select>
+	&nbsp;<input type=submit class=submit value='OK'>
+	&nbsp;<img src='{{PATH_IMAGES}}interface/close.gif' width=12 height=12 title='Fermer' class=close onclick='hide()'>
+	</form>
+</div>
+{% if showroute %}
+<div id=routebox class=hidden>
+	<form action='?id={{fleetid}}' method='post'>{% csrf_token %}
+	<input type='hidden' name='action' value='assignroute'>
+	<select name='route'>
+	{% if noroute %}<option value='0'>Aucune</option>{% endif %}
+	{% for route in routes %}<option value={{route.route_id}}{% if route.selected %} selected{% endif %}>&middot;&nbsp;{{route.route_name}}</option>{% endfor %}
+	</select>
+	&nbsp;<input type=submit class=submit value='OK'>
+	&nbsp;<img src='{{PATH_IMAGES}}interface/close.gif' width=12 height=12 title='Fermer' class=close onclick='hide()'>
+	</form>
+</div>
+{% endif %}
+{% if invade %}
+<div id=invadebox class=hidden>
+	<form action="?id={{fleetid}}" method="post">{% csrf_token %}
+	<input type="hidden" name="action" value="invade">
+	Envahir avec <input id="droppods" type="text" name="droppods" size="6" maxlength="6" align="right" value="{{fleet_droppods}}">&nbsp;soldats
+	{% if can_take %}&nbsp;<input type="checkbox" id="take" name="take"> Occuper planète (<img src='{{PATH_IMAGES}}interface/prestige.gif' title='Prestige' class="res" width="16" height="16"> {{prestige}}){% endif %}
+	&nbsp;<input type="submit" class="submit" value="OK">
+	&nbsp;<img src="{{PATH_IMAGES}}interface/close.gif" width="12" height="12" title="Fermer" class="close" onclick="hide();">
+	</form>
+</div>
+{% endif %}
+{% endif %}
+{% endif %}
+
+<table cellpadding=0 cellspacing=0 width=850>
+<tr valign=top>
+
+<td width=600>
+
+{% if display %}
+<table class="default" width="100%">
+{% if overview %}
+<tr class="title"><td colspan=2 id="renameref">{% if attack %}<img src="{{PATH_IMAGES}}interface/stance_attack.gif" class="stance" alt="Attaque" width="10" height="10"> {% endif %}{% if defend %}<img src="{{PATH_IMAGES}}interface/stance_defend.gif" class="stance" alt="Riposte" width="10" height="10"> {% endif %}{{fleetname}}{% if idle %} - <a href="#" onclick="return show('renameref','renamebox')">Renommer</a> - <a href="?planet={{planetid}}&id={{fleetid}}&action=abandon" onclick="return confirmAbandon()">Abandonner</a>{% endif %}</td></tr>
+<tr><td width='1%' nowrap>Action</td>
+<td>
+<div class=left>
+{% if recycling %}
+Recyclage en cours près de <script>putplanet("{{planetid}}","{{planetname}}","{{g}}","{{s}}","{{p}}",{{relation}});</script> - (<script>putcountdown1({{time}}, 'Cycle terminé', '?id={{fleetid}}')</script>)
+{% endif %}
+{% if patrolling %}
+En patrouille près de <script>putplanet("{{planetid}}","{{planetname}}","{{g}}","{{s}}","{{p}}",{{relation}});</script>
+{% endif %}
+{% if fighting %}
+En combat près de <script>putplanet("{{planetid}}","{{planetname}}","{{g}}","{{s}}","{{p}}",{{relation}});</script>
+{% endif %}
+{% if moving %}
+En transit{% if from %} de <script>putplanet("{{planetid}}","{{planetname}}","{{g}}","{{s}}","{{p}}",{{relation}});</script>{% endif %} vers <script>putplanet("{{t_planetid}}","{{t_planetname}}","{{t_g}}","{{t_s}}","{{t_p}}",{{t_relation}});</script> - (<script>putcountdown1({{time}}, 'Arrivé', '?id={{fleetid}}')</script>)
+{% endif %}
+{% if waiting %}
+En attente (<script>putcountdown1({{time}}, 'Terminé', '?id={{fleetid}}')</script>)
+{% endif %}
+</div>
+{% if warp %}
+<div class=right><a href="?id={{fleetid}}&action=warp">Emprunter le vortex</a></div>
+{% endif %}
+{% if waiting %}
+<div class=right><a href="?id={{fleetid}}&action=stopwaiting">Stopper</a></div>
+{% endif %}
+{% if actions %}
+<div class=clear></div>
+<ul class=requirements>
+{% for action in actions %}
+<li>
+	{% if action.move %}Aller vers <script>putplanet("{{planetid}}","{{planetname}}","{{g}}","{{s}}","{{p}}",{{relation}});</script>{% endif %}
+	{% if action.loadall %}Tout charger{% endif %}
+	{% if action.unloadall %}Tout décharger{% endif %}
+	{% if action.recycle %}Récolter les ressources{% endif %}
+	{% if action.invade %}Envahir{% endif %}
+	{% if action.waiting %}Attendre{% endif %}
+</li>
+{% endfor %}
+</ul>
+{% endif %}
+</td>
+</tr>
+
+<tr><td nowrap>Attitude</td><td>
+<div class=left>{% if attack %}<img src="{{PATH_IMAGES}}interface/stance_attack.gif" class="stance" alt="Attaque" width="10" height="10">Attaquer à vue{% endif %}{% if defend %}<img src="{{PATH_IMAGES}}interface/stance_defend.gif" class="stance" alt="Riposte" width="10" height="10">Riposter aux attaques{% endif %} </div>
+<div class=right>{% if setstance %}<a href="?id={{fleetid}}&action={% if setstance_attack %}attack{% endif %}{% if setstance_defend %}defend{% endif %}">{% if setstance_attack %}Attaquer{% endif %}{% if setstance_defend %}Riposter{% endif %}</a>{% endif %}{% if cant_setstance %}<span class="error" title="Les flottes non armées ne peuvent attaquer">Attaquer</span>{% endif %}</div>
+</td></tr>
+
+<tr><td nowrap>Commandement</td>
+<td id="cmdref">
+<div class=left>{{fleet_leadership}}/{{fleet_size}}, Efficacité: {{fleet_commander_efficiency}}%</div>
+<div class=left>&nbsp;&nbsp;<img src="{{PATH_IMAGES}}interface/commander.gif" class="smallres" width=10 height=6 title="Commandant">{% if nocommander %}-{% endif %}{% if commander %}{{commandername}}{% endif %}</div>
+<div class=right><a href="#" onclick="return show('cmdref','commandersbox')">Changer</a></div>
+</td></tr>
+
+{% if showroute %}
+<tr><td nowrap>Route</td>
+<td id="routeref">
+<div class=left>{% if noroute %}-{% endif %}{% if route %}{{route}}{% endif %}</div>
+{% if idle %}
+<div class=right><a href="#" onclick="return show('routeref','routebox')">Changer</a></div>
+{% endif %}
+</td></tr>
+{% endif %}
+
+<tr{% if hide_recycling %} class="hidden"{% endif %}><td nowrap>Recyclage</td>
+<td>
+<div class=left>{{recycler_output}} unités/heure</div>
+{% if cant_recycle %}
+<div class=right><span class="error">Recycler</span></div>
+{% endif %}
+{% if recycle %}
+<div class=right><a href="?id={{fleetid}}&action=recycle">Recycler</a></div>
+{% endif %}
+{% if recycling %}
+<div class=right><a href="?id={{fleetid}}&action=stoprecycling">Stopper</a></div>
+{% endif %}
+</td></tr>
+
+<tr{% if hide_droppods %} class="hidden"{% endif %}><td nowrap>Barges d'invasion</td>
+<td id="invaderef">
+<div class=left>{{fleet_droppods}} soldats</div>
+{% if cant_invade %}
+<div class=right><span class="error">Envahir</span></div>
+{% endif %}
+{% if invade %}
+<div class=right><script>putcountdown2({{invade_time}},"Invasion possible dans ", '<a href="#" onclick=\'return show("invaderef","invadebox")\'>Envahir</a>');putcountdown1({{invade_time}},"","#")</script></div>
+{% endif %}
+</td></tr>
+
+<tr><td nowrap>Saut intergalactique</td><td{% if insufficient_long_distance_capacity %} class="notenough"{% endif %}>Signature max: {{fleet_long_distance_capacity}} / Stabilité requise: {{fleet_required_vortex_strength}}</td></tr>
+
+<tr><td nowrap>Signature</td>
+<td>
+<div class=left>{{fleet_real_signature}} (détectée: {{fleet_signature}})</div>
+{% if split %}
+<div class=right><a href="/s03/fleet-split/?id={{fleetid}}">Scinder</a></div>
+{% endif %}
+</td></tr>
+
+<tr><td nowrap>Entretien</td>
+<td>
+<div class=left><img src='{{PATH_IMAGES}}interface/credits.gif' title='Credits' class=res width=16 height=16> {{fleet_upkeep}} (x {{fleet_upkeep_multiplicator}})</div>
+</td></tr>
+
+<tr><td nowrap>Vitesse de la flotte</td>
+<td>
+<div class=left>{{fleet_speed}}</div>
+{% if cancel_moving %}
+<div class=right>Perte du contact : <script>putcountdown1({{timelimit}},"Effective"," ");</script>&nbsp;- <script>putcountdown2({{timelimit}},'<a href="?id={{fleetid}}&action=return">Annuler</a>', '');</script></div>
+{% endif %}
+</td></tr>
+
+<tr><td nowrap>Partage</td>
+<td>
+<div class=left>Flotte partagée à l'alliance: <a href="?id={{fleetid}}&action=share">{% if shared %}Oui{% endif %}{% if not_shared %}Non{% endif %}</a></div>
+</td></tr>
+
+<tr{% if hide_cargo %} class="hidden"{% endif %}><td nowrap>Cargaison</td><td><span id="load">{{fleet_load}}</span> / {{fleet_capacity}} unités</td></tr>
+
+{% if error_trade %}<tr class="error"><td colspan=2>Impossible de marchander avec cette planète, ils n'ont pas les crédits pour acheter nos ressources.</td></tr>{% endif %}
+{% if error_recycling %}<tr class="error"><td colspan=2>Une de nos flottes est déjà en train de recycler dans les parages !</td></tr>{% endif %}
+{% if error_soldiers %}<tr class="error"><td colspan=2>Nombre de soldat incorrect !</td></tr>{% endif %}
+{% if error_fleet %}<tr class="error"><td colspan=2>La flotte n'est pas prête pour une invasion !</td></tr>{% endif %}
+{% if error_planet %}<tr class="error"><td colspan=2>Impossible d'envahir une planète inoccupée, alliée ou dans une alliance qui n'est pas en guerre contre nous !</td></tr>{% endif %}
+{% if error_max_planets_reached %}<tr class="error"><td colspan=2>Nombre maximal de colonisations atteint !</td></tr>{% endif %}
+{% if error_invade_enemy_ships %}<tr class="error"><td colspan=2>Impossible d'envahir tant que des vaisseaux militaires ennemis sont proches de la planète !</td></tr>{% endif %}
+{% if error_deploy_enemy_ships %}<tr class="error"><td colspan=2>Impossible de coloniser tant que des vaisseaux militaires ennemis sont proches de la planète !</td></tr>{% endif %}
+{% if error_deploy_safe_planets %}<tr class="error"><td colspan=2>Impossible de coloniser plus de planètes dans des galaxies protégées !</td></tr>{% endif %}
+
+{% endif %}
+
+{% if move_fleet %}
+<script>
+var tab = new Array();
+
+function fillDest(obj){
+	var dest = obj.selectedIndex;
+	setval("g",tab[dest][0]);
+	setval("s",tab[dest][1]);
+	setval("p",tab[dest][2]);	
+}
+function d(idx,name,g,s,p){tab[idx]=new Array(g,s,p);}
+{% if planetgroup %}
+{% for location in planetgroup %}d({{location.index}},'{{location.name}}',{{location.to_g}},{{location.to_s}},{{location.to_p}});{% endfor %}
+{% endif %}
+
+{% if fleetgroup %}
+{% for location in fleetgroup %}d({{location.index}},'{{location.name}}',{{location.to_g}},{{location.to_s}},{{location.to_p}});{% endfor %}
+{% endif %}
+
+{% if merchantplanetsgroup %}
+{% for location in merchantplanetsgroup %}d({{location.index}},'',{{location.to_g}},{{location.to_s}},{{location.to_p}});{% endfor %}
+{% endif %}
+</script>
+
+<tr class="clear"><td colspan="2">&nbsp;</td></tr>
+<tr class="title"><td colspan="2">Déplacer la flotte</td></tr>
+<form method="post" action="?id={{fleetid}}">{% csrf_token %}
+<input type="hidden" name="action" value="move">
+<input type="hidden" name="loop" value="0">
+<tr>
+	<td>Action</td>
+	<td><select name="movetype"><option value="0">Aller simple</option><option value="1">Aller décharger puis revenir</option><option value=2>Aller recycler puis revenir</option></select></td>
+</tr>
+<tr>
+	<td>Destination</td>
+	<td>
+		<input type="number" min="1" name="g" size=3 maxlength=2 value="{{g}}">&nbsp;<input type="number" min="1" name="s" size=3 maxlength=2 value="{{s}}">&nbsp;<input type="number" min="1" name="p" size=3 maxlength=2 value="{{p}}">&nbsp;
+
+		<select name="planetlist" tabindex="1" onchange="fillDest(this)">
+			{% if planetgroup %}<optgroup label="Planètes">
+			{% for location in planetgroup %}<option{% if location.selected %} selected{% endif %}>{{location.name}} ({{location.to_g}}.{{location.to_s}}.{{location.to_p}})</option>{% endfor %}
+			</optgroup>{% endif %}
+			{% if fleetgroup %}<optgroup label="Vers Flottes">
+			{% for location in fleetgroup %}<option{% if location.selected %} selected{% endif %}>{{location.fleet_name}} ({{location.to_g}}.{{location.to_s}}.{{location.to_p}})</option>{% endfor %}
+			</optgroup>{% endif %}
+			{% if merchantplanetsgroup %}<optgroup label="Planètes marchandes">
+			{% for location in merchantplanetsgroup %}<option{% if location.selected %} selected{% endif %}>Marchand ({{location.to_g}}.{{location.to_s}}.{{location.to_p}})</option>{% endfor %}
+			</optgroup>{% endif %}
+		</select>
+	</td>
+</tr>
+<tr>
+	<td>Durée</td>
+	<td><span id="travel_time">-</span>&nbsp;<span id="travel_eta"></span></td>
+</tr>
+<tr>
+	<td>Coût</td>
+	<td><img src="{{PATH_IMAGES}}interface/credits.gif" class="res" title="Crédits" width=16 height=16><span id="travel_cost">0</span></td>
+</tr>
+{% if result %}
+<tr><td colspan=4 align=center><span class="error">
+{% if ok %}Flotte envoyée{% endif %}
+{% if bad_destination %}Destination non valide{% endif %}
+{% if new_player_protection %}Planète temporairement protégée{% endif %}
+{% if long_travel_impossible %}Saut impossible{% endif %}
+{% if not_enough_credits %}Pas assez de crédits{% endif %}
+{% if error_jump_from_require_empty_location %}Impossible de sauter d'ici. Déplacez la flotte à proximité d'un vortex avant de sauter.{% endif %}
+{% if error_jump_protected_galaxy %}Galaxie protégée{% endif %}
+{% if error_jump_to_require_empty_location %}Impossible de sauter vers cette destination. Choisissez un vortex comme point d'arrivé.{% endif %}
+{% if error_jump_to_same_point_limit_reached %}Trop de flottes sautent vers la même destination, utilisez des vortex avec stabilité suffisante.{% endif %}
+</span></td></tr>
+{% endif %}
+<tr><td colspan=2 align=center><input type="submit" value="Envoyer" autofocus></td></tr>
+</form>
+<script>window.setTimeout("updatetravel()", 500);</script>
+{% endif %}
+</table>
+<br/>
+
+<div class="left{% if hide_cargo %} hidden{% endif %}" id="cargobox"></div>
+{% endif %}
+
+</td>
+
+<td>
+
+<table class=default width="100%">
+<tr class="category"><td>{{fleetname}} ({{fleet_signature}}){% if manage %} - <a href="/s03/fleet-ships/?id={{fleetid}}">Gérer vaisseaux</a>{% endif %}{% if split %} - <a href="/s03/fleet-split/?id={{fleetid}}">Scinder</a>{% endif %}</tr>
+{% for ship in shiplist %}
+<tr>
+<td nowrap><div class=left><a href="/s03/help/?cat=ships#{{ship.id}}" onmouseover="ddrivetip(descShip({{ship.id}}))" onmouseout="hideddrivetip()"><b>{{ship.name}}</b></a> x{{ship.quantity}}</div>
+	{% if ship.install %}
+	<div class=right>&nbsp;<a href="?id={{fleetid}}&action=install&s={{ship.id}}">Déployer</a></div>
+	{% endif %}
+	{% if ship.cant_install %}
+	<div class=right>&nbsp;<span class="error">Déployer</span></div>
+	{% endif %}
+</td></tr>
+{% endfor %}
+</table>
+
+<br/>
+
+<table class="default" width="100%">
+<tr class="category"><td>Autres flottes</td></tr>
+{% for fleet in fleets %}
+{% if fleet.playerfleet %}
+<script>
+var fleet{{fleet.id}}="<table width='100%'><tr><td><div id='stats'><div><span class='label'>Signature: </span><span class='value'>{{fleet.signature}}</span></div><div><span class='label'>Vitesse: </span><span class='value'>{{fleet.speed}}</span></div><div><span class='label'>Cargo: </span><span class='value'>{{fleet.cargo_load}} / {{fleet.cargo_capacity}}</span></div></div></td></tr></table>";
+</script>
+<tr><td><a href="?id={{fleet.id}}" onmouseover="ddrivetip(fleet{{fleet.id}},200)" onmouseout="hideddrivetip()">{{fleet.name}}</a> ({{fleet.signature}}){% if fleet.merge %} - <a href="?id={{fleetid}}&action=merge&with={{fleet.id}}">absorber</a>{% endif %}</td></tr>
+{% else %}
+<tr><td><a title="Écrire à {{fleet.owner}}" href="/s03/mails/?subject=À propos de la flotte {{fleet.name}}&to={{fleet.owner}}" class="{% if fleet.ally %}ally{% endif %}{% if fleet.friend %}friend{% endif %}{% if fleet.enemy %}enemy{% endif %}">{% if fleet.alliance %}[{{fleet.tag}}] {% endif %}{{fleet.name}}</a> (<script>document.write(({{fleet.signature}}>0)?'{{fleet.signature}}':'indéterminé'); </script>)</td></tr>
+{% endif %}
+{% endfor %}
+
+{% if nofleets %}
+<tr><td align=center>Aucune</td></tr>
+{% endif %}
+</table>
+
+<br/>
+
+</td>
+
+</tr>
+</table>
+
+<script>
+openCargo();
+</script>
+{% endblock %}

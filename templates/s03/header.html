@@ -1,0 +1,64 @@
+
+
+<script>
+function jump(obj){eval("location='{{url}}" + obj.options[obj.selectedIndex].value + "'");}
+function nextplanet(){
+	var obj = document.getElementById("planetlist");
+	if(obj.selectedIndex<obj.options.length-1) obj.selectedIndex=obj.selectedIndex+1; jump(obj);
+}
+function previousplanet(){
+	var obj = document.getElementById("planetlist");
+	if(obj.selectedIndex>0) obj.selectedIndex=obj.selectedIndex-1; jump(obj);
+}
+</script>
+
+<style>
+table.tableheader {
+	background:url('{{PATH_IMAGES}}interface/header-bg.png');
+}
+table.tableheader td { padding-right:8px; }
+</style>
+
+<div align=center>
+	<table class="tableheader" cellspacing=2>
+	<tr>
+		<td rowspan="3"><a href="#" onclick="previousplanet(); return false;"><img src="{{PATH_IMAGES}}interface/left.gif" title="Planète précédente" width=10 height=34></a>&nbsp;</td>
+		<td nowrap>
+		<select id="planetlist" tabindex="1" onchange="jump(this)">
+			{% for planet in planets %}<option value="{{planet.id}}"{% if planet.selected %} selected{% endif %}>{{planet.name}} ({{planet.g}}.{{planet.s}}.{{planet.p}})</option>{% endfor %}
+		</select>
+		</td>
+		<td nowrap><img src="{{PATH_IMAGES}}interface/ore.gif" title="Minerai" width=16 height=16 class=res><span{% if medium_ore %} class=med2{% endif %}{% if high_ore %} class=high2{% endif %}>{{ore}}</span> / <span{% if medium_ore %} class=med2{% endif %}{% if high_ore %} class=high2{% endif %}>{{ore_capacity}}</span> (<span class={% if normal_ore_production %}prod{% endif %}{% if medium_ore_production %}medprod{% endif %}>+{{ore_production}}</span>)</td>
+		<td nowrap><img src="{{PATH_IMAGES}}interface/workers.gif" title="Travailleurs" width=16 height=16 class=res><span class={% if workers_low %}low{% endif %}>{{workers}}</span> / {{workers_capacity}} (<img src="{{PATH_IMAGES}}interface/workers_idle.gif" title="oisifs" width="12" height="12" class="idleworkers">{{workers_idle}})</td>
+		<td nowrap><img src="{{PATH_IMAGES}}interface/floor.gif" title="Terrain" width=16 height=16 class=res>{{floor_occupied}} / {{floor}}</td>
+{% if special %}
+		<td>
+			{% if special1 %}<div class="left"><img src="{{PATH_IMAGES}}interface/special.gif" title="Spécial" class=res width=16 height=16>{{special1}}</div>{% endif %}
+		</td>
+{% endif %}
+		<td rowspan=3>&nbsp;<a href="#" onclick="nextplanet(); return false;"><img src="{{PATH_IMAGES}}interface/right.gif" title="Planète suivante" width=10 height=34></a></td>
+	</tr>
+	<tr>
+		<td nowrap><img src="{{PATH_IMAGES}}interface/credits.gif" title="Crédits" width=16 height=16 class=res>{{money}}</td>
+		<td nowrap><img src="{{PATH_IMAGES}}interface/hydrocarbon.gif" title="Hydrocarbure" width=16 height=16 class=res><span{% if medium_hydrocarbon %} class=med2{% endif %}{% if high_hydrocarbon %} class=high2{% endif %}>{{hydrocarbon}}</span> / <span{% if medium_hydrocarbon %} class=med2{% endif %}{% if high_hydrocarbon %} class=high2{% endif %}>{{hydrocarbon_capacity}}</span> (<span class={% if normal_hydrocarbon_production %}prod{% endif %}{% if medium_hydrocarbon_production %}medprod{% endif %}>+{{hydrocarbon_production}}</span>)</td>
+		<td nowrap><img src="{{PATH_IMAGES}}interface/scientists.gif" title="Scientifiques" width=16 height=16 class=res><span class={% if scientists_low %}low{% endif %}>{{scientists}}</span> / {{scientists_capacity}}</td>
+		<td nowrap><img src="{{PATH_IMAGES}}interface/space.gif" title="Espace" width=16 height=16 class=res>{{space_occupied}} / {{space}}</td>
+{% if special %}
+		<td>
+			{% if special2 %}<div class="left"><img src="{{PATH_IMAGES}}interface/special.gif" title="Spécial" class=res width=16 height=16>{{special2}}</div>{% endif %}
+		</td>
+{% endif %}
+	</tr>
+	<tr>
+		<td nowrap><img src="{{PATH_IMAGES}}interface/prestige.gif" title="Prestige" width=16 height=16 class=res>{{pp}}</td>
+		<td nowrap><img src="{{PATH_IMAGES}}interface/energy.gif" title="Energie" width=16 height=16 class=res>{{energy}} / {{energy_capacity}} (<span class="{% if energy_production_minus %}minus{% endif %}{% if energy_production_normal %}plus{% endif %}">{% if energy_production_normal %}+{% endif %}{{energy_production}}</span>)</td>
+		<td nowrap><img src="{{PATH_IMAGES}}interface/soldiers.gif" title="Soldats" width=16 height=16 class=res><span class={% if soldiers_low %}low{% endif %}>{{soldiers}}</span> / {{soldiers_capacity}}</td>
+		<td nowrap></td>
+{% if special %}
+		<td>
+			{% if special3 %}<div class="left"><img src="{{PATH_IMAGES}}interface/special.gif" title="Spécial" class=res width=16 height=16>{{special3}}</div>{% endif %}
+		</td>
+{% endif %}
+	</tr>
+	</table>
+</div>

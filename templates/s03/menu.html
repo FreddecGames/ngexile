@@ -1,0 +1,245 @@
+<script>
+var menulinks=new Array();
+var activeSection = '';
+var selectedmenu='';
+var sectionmenu='';
+var lastmenulvl=1;
+var lastmenuname='';
+var lastmenuhidden='';
+
+var defaultTitle = document.title;
+
+function setTitle(title){
+	if(title.indexOf("<") > -1)
+		document.title = defaultTitle + ' - ' + title.substring(0,title.indexOf("<"));
+	else
+		document.title = defaultTitle + ' - ' + title;
+}
+
+function putMenu(url,name,label,lvl,x,popup,extended)
+{
+	if(name==activeSection) setTitle(label);
+
+	while(lastmenulvl > lvl) {
+		document.write('<div id="menu_'+lastmenuname+'_'+lastmenulvl+'" class="lvl'+lastmenulvl+'last'+lastmenuhidden+'"></div>');
+		menulinks.push(new Array(lastmenuname+'_'+lastmenulvl,lastmenulvl,true));
+		lastmenulvl--;
+	}
+
+	lastmenulvl = lvl;
+	lastmenuname = name;
+
+	if(lvl==0) return;
+
+	var selected = (name == selectedmenu)?" selected":"";
+	var hidden = (extended || (lvl < 3) || (sectionmenu != "" && name.indexOf(sectionmenu)==0))?"":" hidden";
+	lastmenuhidden = hidden;
+
+	x = false;
+
+	if(!x)
+	{
+		var target=popup?" target=_blank":"";
+
+		if(lvl==1)
+			document.write('<a href="'+url+'" class="menu lvl1"><img src="{{PATH_IMAGES}}menu/expand.gif" class="menuExpand">'+label+'</a>');
+		else
+		{
+			document.write('<a href="'+url+'"'+target+' id="menu_'+name+'" class="menu lvl' + lvl + selected + hidden + '"><span class=dot>&middot;</span>'+label+'</a>');
+			menulinks.push(new Array(name,lvl,false));
+		}
+	}
+	else
+	{
+		url = "return display('" + url + (url.indexOf('?') > -1?"&":"?") + "xml=1');";
+
+		if(lvl==1)
+			document.write('<a href="#" onclick="'+url+'" class="menu lvl1"><img src="{{PATH_IMAGES}}menu/expand.gif" class="menuExpand">'+label+'</a>');
+		else
+		{
+			document.write('<a href="#" onclick="'+url+'" id="menu_'+name+'" class="menu lvl' + lvl + selected + hidden + '"><span class=dot>&middot;</span>'+label+'</a>');
+			menulinks.push(new Array(name,lvl,false));
+		}
+	}
+}
+
+// update selected menu link
+function setSelectedMenu(name)
+{
+	selectedmenu = name;
+
+	if(name.indexOf("_") == -1)
+	{
+		sectionmenu = "";
+		activeSection = name;
+	}
+	else
+	{
+		sectionmenu = name.split("_")[0] + "_";
+		activeSection = name.split("_")[0];
+	}
+
+	var link,linkname,selected,hidden;
+
+	for(var i=0; i<menulinks.length;i++)
+	{
+		linkname = menulinks[i][0];
+		link = $('menu_'+linkname);
+		selected = (selectedmenu == linkname)?" selected":"";
+		hidden = (menulinks[i][1] < 3 || (sectionmenu != "" && linkname.indexOf(sectionmenu)==0))?"":" hidden";
+
+		if(!menulinks[i][2])
+			link.className = "menu lvl" + menulinks[i][1] + selected + hidden;
+		else
+			link.className = "lvl" + menulinks[i][1] + 'last' + hidden;
+	}
+}
+
+function setMailsCount(nb)
+{
+	var o = $('mailscount');
+	if(nb > 0)
+		o.innerHTML = '('+nb+')';
+	else
+		o.innerHTML = '';
+}
+
+function setReportsCount(nb)
+{
+	var o = $('reportscount');
+	if(nb > 0)
+		o.innerHTML = '('+nb+')';
+	else
+		o.innerHTML = '';
+}
+
+setSelectedMenu('{{selectedmenu}}');
+</script>
+
+<script>
+
+putMenu("/s03/overview/","empire","Empire",1);
+putMenu("/s03/overview/","overview","Vue d'ensemble",2);
+putMenu("/s03/upkeep/","upkeep","Coût d'entretien",2);
+putMenu("/s03/commanders/","commanders","Commandants",2);
+
+putMenu("/s03/fleets/","fleets","Flottes",2);
+putMenu("/s03/fleets/","fleets_fleets","Flottes",3);
+putMenu("/s03/fleets-orbiting/","fleets_orbiting","Flottes en orbite",3);
+putMenu("/s03/fleets-standby/","fleets_standby","Vaisseaux au sol",3);
+putMenu("/s03/fleets-ships-stats/","fleets_ships_stats","Détruits / perdus",3);
+
+putMenu("/s03/planets/","planets","Planètes",2);
+
+putMenu("/s03/market-sell/","merchants","Marchands",2);
+putMenu("/s03/market-buy/","merchants_buy","Achat",3);
+putMenu("/s03/market-sell/","merchants_sell","Vente",3);
+
+putMenu("/s03/research/","research","Recherche",2);
+
+{% if show_alliance %}
+putMenu("/s03/alliance/","alliance","Alliance",2);
+
+putMenu("/s03/alliance/","alliance_overview","Vue d'ensemble",3);
+{% if show_management %}
+	putMenu("/s03/alliance-manage/","alliance_manage","Gestion",3);
+{% endif %}
+{% if show_members %}
+putMenu("/s03/alliance-members/","alliance_members","Membres",3);
+{% endif %}
+putMenu("/s03/alliance-naps/","alliance_naps","PNA",3);
+putMenu("/s03/alliance-tributes/","alliance_tributes","Tributs",3);
+putMenu("/s03/alliance-wars/","alliance_wars","Guerres",3);
+putMenu("/s03/alliance-wallet/","alliance_wallet","Portefeuille",3);
+{% if show_reports %}
+	putMenu("/s03/alliance-reports/","alliance_reports","Rapports",3);
+{% endif %}
+putMenu("/s03/alliance-invitations/","alliance_invitations","Invitations",3);
+
+putMenu("/s03/alliance-create/","noalliance_create","Création",3);
+putMenu("/s03/alliance-invitations/","noalliance_invitations","Invitations",3);
+{% endif %}
+
+putMenu("/s03/map/","map","Galaxie",1);
+putMenu("/s03/map/?g={{cur_g}}&s={{cur_s}}","map","Carte spatiale",2);
+
+putMenu("/s03/ranking-alliances/","ranking","Alliances",2);
+
+putMenu("/s03/planet/?planet={{planetid}}","planet","Planète ({{cur_g}}.{{cur_s}}.{{cur_p}})",1);
+putMenu("/s03/planet/?planet={{planetid}}","planet","Vue d'ensemble",2);
+putMenu("/s03/production/?planet={{planetid}}","production","Production",2);
+putMenu("/s03/buildings/?planet={{planetid}}","buildings","Infrastructures",2);
+putMenu("/s03/shipyard/?planet={{planetid}}","shipyard","Chantier spatial",2);
+putMenu("/s03/shipyard/?planet={{planetid}}&f=0","shipyard_all","Tous",3);
+putMenu("/s03/shipyard/?planet={{planetid}}&f=1","shipyard_military","Militaire",3);
+putMenu("/s03/shipyard/?planet={{planetid}}&f=2","shipyard_unarmed","Utilitaire",3);
+putMenu("/s03/shipyard/?planet={{planetid}}&f=3","shipyard_upgrade","Upgrade",3);
+putMenu("/s03/shipyard/?planet={{planetid}}&recycle=1","shipyard_recycle","Recyclage",3);
+putMenu("/s03/training/?planet={{planetid}}","training","Entraînement",2);
+putMenu("/s03/orbit/?planet={{planetid}}","orbit","Orbite",2);
+
+putMenu("/s03/market-sell/?planet={{planetid}}","market","Marché",2);
+putMenu("/s03/market-buy/?planet={{planetid}}","market_buy","Achat",3);
+putMenu("/s03/market-sell/?planet={{planetid}}","market_sell","Vente",3);
+
+putMenu("/s03/mails/","mails","Communication",1);
+putMenu("/s03/nation/","nation","Infos nations",2);
+putMenu("/s03/mails/","mails","Messagerie <span id=mailscount></span>",2);
+
+putMenu("/s03/mails/","mails_inbox","Reçu",3);
+putMenu("/s03/mails/?a=sent","mails_sent","Envoyé",3);
+putMenu("/s03/mails/?a=new","mails_compose","Composer",3);
+putMenu("/s03/mails/?a=ignorelist","mails_ignorelist","Nations ignorées",3);
+
+putMenu("/s03/reports/","reports","Rapports <span id=reportscount></span>",2);
+putMenu("/s03/chat/","chat","Salon",2);
+putMenu("/s03/notes/","notes","Notes",2);
+
+{% if show_mercenary %}
+putMenu("/s03/mercenary-intelligence/","intelligence","Mercenaires",1);
+putMenu("/s03/mercenary-intelligence/","intelligence","Espionnage",2);
+{% endif %}
+
+{% if dev %}
+<!-- dev -->
+putMenu("/s03/exile-version/","admin","Admin",1);
+putMenu("/s03/dev-log-errors/","log","Log",2);
+putMenu("/s03/dev-log-errors/","log_errors","Erreurs ({{new_error}})",3,0,0,1);
+putMenu("/s03/dev-log-notices/","log_notices","Notices ({{new_notices}})",3,0,0,1);
+putMenu("/s03/dev-multi/","log_multi","Multi-comptes",3,0,0,1);
+
+putMenu("/s03/dev-options/","player","Joueur",2);
+putMenu("/s03/dev-options/","player_penalty","Options",3,0,0,1);
+putMenu("/s03/dev-fleets/","player_fleets","Créer des flottes",3,0,0,1);
+putMenu("/s03/dev-connections/","player_connections","Connexions",3,0,0,1);
+putMenu("/s03/dev-multi-users/","player_multi","Multi-comptes",3,0,0,1);
+putMenu("/s03/dev-expenses/","player_expenses","Dépenses",3,0,0,1);
+
+putMenu("/s03/dev-playas/","playas","Jouer en tant que...",2);
+putMenu("/s03/dev-stats/","stats","Statistiques",2);
+{% endif %}
+
+putMenu("/s03/help/","help","Aide",1);
+putMenu("/s03/help/","help","Aide",2);
+putMenu("https://discord.gg/9RHUEhw","forum","Forum",2,0,1);
+
+putMenu("/s03/options/","options","Compte",1);
+putMenu("/s03/options/","options","Options",2);
+putMenu("https://exileng.com/signout/","logout","Déconnexion",2);
+
+putMenu("","","",0);
+
+{% if new_mail %}
+setMailsCount({{new_mail}});
+{% endif %}
+{% if new_report %}
+setReportsCount({{new_report}});
+{% endif %}
+</script>
+
+<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
+    <input type="hidden" name="cmd" value="_s-xclick" />
+    <input type="hidden" name="hosted_button_id" value="7XYD7SJFKQ8M4" />
+    <input type="image" style="border:0; padding:.25rem 0 0 .5rem;" src="https://www.paypalobjects.com/fr_FR/FR/i/btn/btn_donate_SM.gif" border="0" name="submit" title="PayPal - The safer, easier way to pay online!" alt="Bouton Faites un don avec PayPal" />
+    <img alt="" border="0" src="https://www.paypal.com/fr_FR/i/scr/pixel.gif" width="1" height="1" />
+</form>

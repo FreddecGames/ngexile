@@ -1,0 +1,16 @@
+{% extends "ng0/layout.html" %}
+{% load i18n %}
+
+{% block content %}
+<div class="h-100 row gx-3">
+    <div class="col-3">
+    </div>
+    <div class="col-9">
+        <div class="nav nav-pills">
+            <div class="nav-item"><a href="/ng0/commander_overview" class="nav-link {% if commander_tab == 'overview' %}active{% endif %}">{% translate "Overview" %}</a></div>
+            <div class="nav-item"><a href="/ng0/commander_skills" class="nav-link {% if commander_tab == 'skills' %}active{% endif %}">{% translate "Skills" %}</a></div>
+        </div>
+        {% block commander_content %}{% endblock %}
+    </div>
+</div>
+{% endblock %}

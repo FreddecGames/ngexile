@@ -1,0 +1,10 @@
+{% if cargo %}
+showCargo({{fleet_ore}},{{fleet_hydrocarbon}},{{fleet_scientists}},{{fleet_soldiers}},{{fleet_workers}},0{% if canload %}1{% endif %}, 0{% if canunload %}1{% endif %});
+{% endif %}
+{% if load %}
+showLoad({{planet_ore}},{{planet_hydrocarbon}},{{planet_scientists}},{{planet_soldiers}},{{planet_workers}},{{fleet_ore}},{{fleet_hydrocarbon}},{{fleet_scientists}},{{fleet_soldiers}},{{fleet_workers}});
+{% endif %}
+{% if unload %}
+showUnload({{fleet_ore}},{{fleet_hydrocarbon}},{{fleet_scientists}},{{fleet_soldiers}},{{fleet_workers}},0{% if canload %}1{% endif %});
+{% endif %}
+setCargoLoad({{fleet_load}});

@@ -1,0 +1,180 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+
+<html>
+<head>
+	<script async src="https://www.googletagmanager.com/gtag/js?id=UA-134044291-1"></script>
+	<script>
+		window.dataLayer = window.dataLayer || [];
+		function gtag(){dataLayer.push(arguments);}
+		gtag('js', new Date());
+		gtag('config', 'UA-134044291-1');
+	</script>
+	<meta http-equiv="Content-type" content="text/html; charset=utf-8">
+	<meta http-equiv="cache-control" content="no-cache">
+	<meta http-equiv="expires" content="0">
+	<meta http-equiv="pragma" content="no-cache">
+
+	<title>Exile</title>
+
+	<link rel="stylesheet" href="{{PATH_IMAGES}}styles/s_transparent/style.css" type="text/css" media="all">
+	<script type="text/javascript" src='/static/scripts/common.js'></script>
+</head>
+
+<body>
+<script type="text/javascript">
+function displayOrientation(obj){
+	var opt = obj.options[obj.selectedIndex].value;
+
+	if(opt == 0)
+		hide();
+	else
+		$('description').innerHTML = $('orientation' + opt).innerHTML;
+}
+
+{% if galaxies %}
+var rec=[];
+{% for galaxy in galaxies %}rec[{{galaxy.id}}]={{galaxy.recommendation}};{% endfor %}
+function showRecommendation(obj) {
+	var r=rec[obj.options[obj.selectedIndex].value];
+	if(r == 2) {
+		$("recommendation").innerHTML = 'Galaxie recommandée';
+		$("recommendation").className = 'recommanded';
+	}
+	else
+	if(r == 1) {
+		$("recommendation").innerHTML = '';
+		$("recommendation").className = '';
+	}
+	else {
+		$("recommendation").innerHTML = 'Galaxie non recommandée';
+		$("recommendation").className = 'notrecommanded';
+	}
+}
+{% endif %}
+</script>
+
+{% if orientation_1 %}
+<div id="orientation1" class="hidden">
+<ul>
+<li>Prix de vente des ressources augmenté de 10%</li>
+<li>La guilde marchande viendra plus vite sur vos planètes lors de vos achats</li>
+<li>La production de minerai et d'hydrocarbure est augmentée de 5%</li>
+<li>La demande en minerai et en hydrocarbure sur les planètes est augmentée de 10%</li>
+<li>Le coût d'entretien de vos planètes est diminué de 10%</li>
+<li>Les points de prestige gagnés par les bâtiments augmentés de 5%</li>
+<li>Vous aurez accès à un vaisseau de transport supérieur aux vaisseaux de transport classiques</li>
+</ul>
+</div>
+{% endif %}
+
+{% if orientation_2 %}
+<div id="orientation2" class="hidden">
+<ul>
+<li>Prime sur les fossoyeurs détruits augmentée de 15%</li>
+<li>Vitesse de construction des vaisseaux augmentée de 20%</li>
+<li>Les boucliers de vos vaisseaux sont augmentés de 10%</li>
+<li>La manoeuvrabilité de vos vaisseaux est augmentée de 10%</li>
+<li>Le coût d'entretien de vos soldats est diminué de 10%</li>
+<li>Les salaires de vos commandants sont diminués de 10%</li>
+<li>Les points de prestige gagnés lors des combats sont augmentés de 5%</li>
+<li>Votre premier commandant (vous) est spécialisé dans les combats spatiaux</li>
+</ul>
+</div>
+{% endif %}
+
+{% if orientation_3 %}
+<div id="orientation3" class="hidden">
+<ul>
+<li>Vitesse de construction des bâtiments augmentée de 10%</li>
+<li>Le coût des recherches est diminué de 20%</li>
+<li>Le temps des recherches est diminué de 5%</li>
+<li>Le coût d'entretien de vos scientifiques est diminué de 20%</li>
+<li>Vos vaisseaux se déplacent 20% plus vite</li>
+<li>Vos centrales produisent 20% d'énergie en plus</li>
+<li>Les points de prestige gagnés par les bâtiments sont augmentés de 3%</li>
+<li>Les points de prestige gagnés lors des combats sont augmentés de 3%</li>
+<li>Vous aurez accès à une technologie permettant la construction de vaisseaux de déploiement qui pourront installer instantanément des bâtiments sur vos planètes ou les planètes de vos alliés</li>
+</ul>
+</div>
+{% endif %}
+
+{% if orientation_4 %}
+<div id="orientation4" class="hidden">
+<ul>
+<li>La production de minerai est augmentée de 400%</li>
+<li>La production d'hydrocarbure est augmentée de 400%</li>
+<li>Vitesse de construction des bâtiments augmentée de 400%</li>
+<li>Vitesse de construction des vaisseaux augmentée de 400%</li>
+<li>Vos vaisseaux se déplacent 400% plus vite</li>
+<li>Le temps des recherches est diminué de 75%</li>
+<li>Les points de prestige gagnés par les bâtiments sont augmentés de 400%</li>
+<li>Les points de prestige gagnés lors des combats sont augmentés de 100%</li>
+<li>La demande en minerai sur les planètes est augmentée de 400%</li>
+<li>La demande en hydrocarbure sur les planètes est augmentée de 400%</li>
+<li>Vous aurez accès à un vaisseau de transport supérieur aux vaisseaux de transport classiques</li>
+<li>Vous aurez accès à une technologie permettant la construction de vaisseaux de déploiement qui pourront installer instantanément des bâtiments sur vos planètes ou les planètes de vos alliés</li>
+</ul>
+</div>
+{% endif %}
+
+<div align="center">
+<div id="container">
+
+
+<div id="start">EXILE</div>
+<div id="playername">{{login}}</div>
+	<form method="post" action="?">{% csrf_token %}
+Bienvenue dans Exile, avant de commencer, veuillez entrer un nom pour votre nation. Ce sera le nom sous lequel vous jouerez dans le jeu, choisissez un nom différent de votre compte.<br/>
+<div align="center">
+	Nom de nation: <input type="text" name="name" value="{{login}}"/>
+</div>
+{% if error_10 %}
+<div class="error">Ce nom de nation est déjà utilisé.</div>
+{% endif %}
+{% if error_11 %}
+<div class="error">Ce nom de nation est invalide.</div>
+{% endif %}
+
+{% if galaxies %}
+<br/>
+<div align="center">
+Galaxie de départ: <select name="galaxy" id="galaxies" onchange="showRecommendation(this)">{% for galaxy in galaxies %}<option value="{{galaxy.id}}"{% if galaxy.selected %} selected{% endif %}>{{galaxy.id}}</option>{% endfor %}</select><br/>
+<span id="recommendation"></span><br/>
+</div>
+{% endif %}
+
+<br/>
+Désormais, vous devez choisir l'orientation de votre nation, ce choix aura pour conséquence de vous attribuer des bonus de départ que vous garderez tout le long du jeu.<br/>
+Il n'est pas possible d'en changer en cours de route alors choisissez bien suivant le style de jeu que vous préférez.<br/>
+Quelque soit l'orientation choisie, vous jouerez au même jeu mais avec des avantages différents.<br/>
+<br/>
+<div align="center">
+	Orientation: <select name="orientation" onchange='displayOrientation(this)'>
+	<option value="0">Choisissez</option>
+	{% if orientation_1 %}<option value="1">Marchand</option>{% endif %}
+	{% if orientation_2 %}<option value="2">Militaire</option>{% endif %}
+	{% if orientation_3 %}<option value="3">Scientifique</option>{% endif %}
+	{% if orientation_4 %}<option value="4">Seigneur de guerre</option>{% endif %}
+	</select>
+	<br/>
+	<div id="description" align="left"></div>
+	<br/>
+	<input type="submit" value="Valider">
+</div>
+
+</form>
+{% if error_2 %}
+<div class="error">Désolé, aucune planète ne peut actuellement accueillir notre nation.</div>
+{% endif %}
+
+</div>
+</div>
+
+{% if galaxies %}
+<script type="text/javascript">
+showRecommendation($("galaxies"));
+</script>
+{% endif %}
+
+</body>
+</html>

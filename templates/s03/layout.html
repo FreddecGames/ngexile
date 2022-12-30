@@ -1,0 +1,146 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="https://www.w3.org/1999/xhtml">
+<head>
+	<script async src="https://www.googletagmanager.com/gtag/js?id=UA-134044291-1"></script>
+	<script>
+		window.dataLayer = window.dataLayer || [];
+		function gtag(){dataLayer.push(arguments);}
+		gtag('js', new Date());
+		gtag('config', 'UA-134044291-1');
+	</script>
+
+	<title>[{{server}}] Exile</title>
+    
+    <link rel="shortcut icon" href="/static/favicon.ico">
+    
+	<meta http-equiv="Content-type" content="text/html; charset=utf-8"/>
+	<meta http-equiv="cache-control" content="no-cache"/>
+	<meta http-equiv="expires" content="0"/>
+	<meta http-equiv="pragma" content="no-cache"/>
+
+	<link href="{{PATH_IMAGES}}styles/reset.css" type="text/css" rel="stylesheet" media="all" />
+	<link href="{{PATH_IMAGES}}styles/{{skin}}/style.css?v=0" type="text/css" rel="stylesheet" media="all"/>
+
+	<script type="text/javascript" src='/static/scripts/lang.js?v=1'></script>
+	<script type="text/javascript" src='/static/scripts/common.js?v=1'></script>
+	<script type="text/javascript" src='/static/scripts/third-party/ajax1.js?v=1'></script>
+	<script type="text/javascript" src='/static/scripts/planet.js?v=1'></script>
+	<script type="text/javascript" src='/static/scripts/time.js?v=1'></script>
+	{% if scroll %}<script>function loaded(){scrollTo(0,{{scrolly}});}</script>{% endif %}
+</head>
+
+<body{% if scroll %} onload="loaded()"{% endif %}>
+
+<div id="hint" onclick="donothide(event)">
+<div class="rtop"><b class="r1"></b><b class="r2"></b><b class="r3"></b><b class="r4"></b></div>
+<div id="hinttext"></div>
+<div class="rbottom"><b class="r4"></b><b class="r3"></b><b class="r2"></b><b class="r1"></b></div>
+</div>
+
+<script>
+var timers_enabled={{timers_enabled}};
+var startTime;
+</script>
+
+{% if impersonating %}
+<style>
+#impersonate{
+	height:30px;
+	vertical-align:top;
+	position: relative;
+	border-top:1px solid #ff0;
+	border-left:1px solid #ff0;
+	border-right:1px solid #bb0;
+	border-bottom:1px solid #bb0;
+	background-color:#ee6;
+	color:#000;
+}
+</style>
+<div id="impersonate"><b>Impersonisation</b> (<a href="/impersonate/stop/" style="color:#f00">Revenir au compte de départ</a>)<br/>Compte "{{login}}" - impossible d'envoyer de messages<br/></div>
+{% endif %}
+{% if onholidays %}
+<style>
+#onholidays{
+	height:30px;
+	vertical-align:top;
+	position: relative;
+	border-top:1px solid #0f0;
+	border-left:1px solid #0f0;
+	border-right:1px solid #0b0;
+	border-bottom:1px solid #0b0;
+	background-color:#6e6;
+	color:#000;
+}
+</style>
+<div id="onholidays"><b>En vacances</b><br/>Activé le {{start_datetime|date:"D d M Y"}} à {{start_datetime|time}}<br/>Désactivable à partir du {{min_end_datetime|date:"D d M Y"}} à {{min_end_datetime|time}}<br/>Terminé le {{end_datetime|date:"D d M Y"}} à {{end_datetime|time}}</div>
+{% endif %}
+{% if creditswarning %}
+<style>
+#creditswarning{
+	min-height:30px;
+	height:auto !important;
+	height:30px;
+	vertical-align:top;
+	position: relative;
+	border-top:1px solid #ff9257;
+	border-left:1px solid #ff9257;
+	border-right:1px solid #ff782f;
+	border-bottom:1px solid #ff782f;
+	background-color:#ff8543;
+	color:#000;
+}
+</style>
+<div id="creditswarning"><b>Fonds insuffisants</b><br/>Nous sommes actuellement en déficit, cette situation est tolérable pendant un moment mais nous devons réagir. Nous pouvons soit alléger nos coûts d'entretien, soit augmenter nos revenus en vendant une plus grande partie de notre production.<br/>Vous avez {% if hours %}{{bankruptcy_hours}} heure(s){% endif %} pour faire revenir l'argent de la trésorerie dans le positif avant qu'un coup d'état n'éclate et que vous soyiez chassé de votre poste.<br/>Chaque heure passée en déficit, le nombre d'heures avant le coup d'état diminue d'une heure. Celui-ci remonte chaque heure passée dans le positif.</div>
+{% endif %}
+{% if deleting %}
+<style>
+#deleting{
+	height:30px;
+	vertical-align:top;
+	position: relative;
+	border-top:1px solid #f00;
+	border-left:1px solid #f00;
+	border-right:1px solid #b00;
+	border-bottom:1px solid #b00;
+	background-color:#e66;
+	color:#000;
+}
+</style>
+<div id="deleting"><b>Suppression du compte en cours</b><br/>Ce compte sera effacé le {{delete_datetime|date:"D d M Y"}} à {{delete_datetime|time}}</div>
+{% endif %}
+{% if banned %}
+<style>
+#banned{
+	height:30px;
+	vertical-align:top;
+	position: relative;
+	border-top:1px solid #fff;
+	border-left:1px solid #fff;
+	border-right:1px solid #bbb;
+	border-bottom:1px solid #bbb;
+	background-color:#999;
+	color:#000;
+}
+#banned table { color:#000; };
+</style>
+<div id="banned"><b>Suspendu</b><br/><table><tr><td>Depuis le:</td><td>{{ban_datetime|date:"D d M Y"}} à {{ban_datetime|time}}</td></tr>{% if expire %}<tr><td>Expire le:</td><td>{{ban_expire_datetime|date:"D d M Y"}} à {{ban_expire_datetime|time}}</td></tr>{% endif %}<tr><td>Raison:</td><td>{{ban_reason}}</td></tr><tr><td>Raison publique:</td><td>{{ban_reason_public}}</td></tr></table></div>
+{% endif %}
+
+<div id="super">
+<div id="bg"><!-- --></div>
+
+<div id="main">
+{% if menu %}<div id="leftnav">{% include 's03/menu.html' %}{% if dev %}<div>{{render_time|floatformat:4}}</div><div>Joueurs: {{players}}</div>{% endif %}</div>{% endif %}
+
+<div{% if menu %} id="content"{% endif %} align="center">
+	{% if context %}<div id="status">{% include 's03/header.html' %}</div>{% endif %}
+	<div id="page">{% block content %}{% endblock %}</div>
+</div>
+
+</div>
+
+<div class="clear"></div>
+</div>
+
+</body>
+</html>

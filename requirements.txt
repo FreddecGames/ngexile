@@ -1,4 +1,6 @@
+argon2-cffi==21.3.0
 Django==4.0.7
+django-impersonate==1.8.2
 django-registration==3.3
 psycopg2==2.9.5
 python-environ==0.4.54

@@ -1,0 +1,174 @@
+{% extends 's03/layout.html' %}
+
+{% load tz %}
+{% block content %}
+<script type="text/javascript" src='/static/scripts/cookies.js'></script>
+
+<script type="text/javascript">
+function toggle_elt(uid){
+	var d = new Date();
+	d = new Date(d.getFullYear()+1, d.getMonth(), d.getDay());
+
+	var obj = $(uid);
+	if (obj != undefined)
+	{
+		if(obj.className == "")
+		{
+			obj.className = "hidden";
+			SetCookie('display_' + uid, 0, d);
+		} else
+		{
+			obj.className = "";
+			SetCookie('display_' + uid, 1, d);
+		}
+	}
+}
+function restore_elt(uid){
+	var obj = $(uid);
+	if (obj == undefined) return;
+
+	if (GetCookie('display_' + uid) != 0)
+		$(uid).className = "";
+	else
+		$(uid).className = "hidden";
+}
+
+function sig(signature){
+	if(signature > 0)
+		document.write('('+formatnumber(signature)+')');
+	else
+		document.write('(indéterminé)');
+}
+</script>
+
+{% if announce %}
+<div id="motd">
+<table class="default" width="100%">
+<tr class="category"><td onclick="toggle_elt('motd_content')">Annonce de l'alliance{% if defcon %} - 
+{% if defcon_5 %}<b>DEFCON 5</b> : Préparation normale en temps de paix{% endif %}
+{% if defcon_4 %}<b>DEFCON 4</b> : Préparation normale, mais renseignement accru et mesures de sécurité renforcées{% endif %}
+{% if defcon_3 %}<b>DEFCON 3</b> : Accroissement de la préparation des forces au-dessus de la préparation normale{% endif %}
+{% if defcon_2 %}<b>DEFCON 2</b> : Accroissement supplémentaire dans la préparation des forces{% endif %}
+{% if defcon_1 %}<b>DEFCON 1</b> : Préparation maximale des forces (état de guerre){% endif %}
+{% endif %}</td></tr>
+<tr id="motd_content" class="item">
+<td>
+	{{motd|safe}}
+</td>
+</tr>
+</table>
+</div>
+{% endif %}
+<div id="stats">
+<table class="default" width="100%">
+<tr class="category"><td onclick="toggle_elt('stats_content')">Statistiques de votre empire - {{date|timezone:"Europe/Paris"|date:"d M Y H:i:s"}}</td></tr>
+<tr id="stats_content" class="item" valign="top">
+<td>
+	<table class="clear" width="100%">
+	<tr><td nowrap>
+	<div><span class="label">Nation: </span><span class="value">{% if orientation1 %}Marchand {% endif %}{% if orientation2 %}Militaire {% endif %}{% if orientation3 %}Scientifique {% endif %}{{nation}}</span></div>
+	<div><span class="label">Grade: </span><span class="value">{% if alliance %}{{alliance_rank_label}} de <a href="/s03/alliance/?tag={{alliance_tag}}">[{{alliance_tag}}] {{alliance_name}}</a>{% endif %}{% if no_alliance %}Indépendant{% endif %}</span></div>
+	<div><span class="label">Trésorerie: </span><span class="value"><img src="{{PATH_IMAGES}}interface/credits.gif" title="Crédits" class="res" width=16 height=16>{{stat_credits}}</span></div>
+	<div><span class="label">Score de développement: </span><span class="value">{{stat_score}}&nbsp;<span{% if plus %} class="plus"{% endif %}{% if minus %} class="minus"{% endif %}>{% if plus %}+{% endif %}{{stat_score_delta}}</span>&nbsp;(<a href="/s03/ranking-players/">rang: {{stat_rank}}/{{stat_players}}</a>)</span></div>
+	</td><td>
+	<div><span class="label">Nombre de colonies: </span><span class="value">{{stat_colonies}} / {{stat_maxcolonies}}</span></div>
+	<div><span class="label">Minerai par heure: </span><span class="value">{{stat_prod_ore}}</span></div>
+	<div><span class="label">Hydrocarbure par heure: </span><span class="value">{{stat_prod_hydrocarbon}}</span></div>
+	<div><span class="label">Score de prestige: </span><span class="value">{{stat_score_battle}} (<a href="/s03/ranking-players/?col=4">rang: {{stat_rank_battle}}/{{stat_players}}</a>)</span></div>
+	</td><td>
+	<div><span class="label">Travailleurs: </span><span class="value">{{stat_workers}}</span></div>
+	<div><span class="label">Scientifiques: </span><span class="value">{{stat_scientists}}</span></div>
+	<div><span class="label">Soldats: </span><span class="value">{{stat_soldiers}}</span></div>
+	<div><span class="label">Points de prestige: </span><span class="value">{{stat_victory_marks}}</span></div>
+	</td></tr>
+	</table>
+</td>
+</tr>
+</table>
+</div>
+
+<div id="fleetsmoving">
+<table class="default" width="100%">
+<tr class="category"><td><b>Mouvements en cours</b></td></tr>
+<tr class="item">
+<td>
+	{% for fleet in fleets %}
+	<div>
+	{% if fleet.owned %}Votre flotte {% if fleet.attack %}<img src="{{PATH_IMAGES}}interface/stance_attack.gif" class="stance" alt="Attaque" width=10 height=10>{% endif %}{% if fleet.defend %}<img src="{{PATH_IMAGES}}interface/stance_defend.gif" class="stance" alt="Riposte" width=10 height=10>{% endif %}<a href="/s03/fleet/?id={{fleet.id}}" class="self">{{fleet.name}}</a>{% endif %}
+	{% if fleet.ally %}Une flotte alliée de <a href="/s03/mails/?to={{fleet.name}}" class="ally" title="Envoyer un message à {{fleet.name}}">{{fleet.name}}</a>{% endif %}
+	{% if fleet.friend %}Une flotte amie de <a href="/s03/mails/?to={{fleet.name}}" class="friend" title="Envoyer un message à {{fleet.name}}">{{fleet.name}}</a>{% endif %}
+	{% if fleet.hostile %}Une flotte hostile de <a href="/s03/nation/?name={{fleet.name}}" class="enemy" title="Envoyer un message à {{fleet.name}}">{{fleet.name}}</a>{% endif %}
+	<script>sig({{fleet.signature}})</script> est en transit{% if fleet.movingfrom %} de <script>putplanet("{{fleet.f_planetid}}","{{fleet.f_planetname}}","{{fleet.f_g}}","{{fleet.f_s}}","{{fleet.f_p}}",{{fleet.f_relation}});</script>{% endif %}{% if fleet.no_from %} d'une planète inconnue{% endif %} vers <script>putplanet("{{fleet.t_planetid}}","{{fleet.t_planetname}}","{{fleet.t_g}}","{{fleet.t_s}}","{{fleet.t_p}}",{{fleet.t_relation}});</script> - (<script>putcountdown1({{fleet.time}}, "Terminé", "/s03/overview/");</script>)
+	</div>
+	{% endfor %}
+	{% if nofleets %}
+	<div>Aucun mouvement en cours</div>
+	{% endif %}
+</td>
+</tr>
+</table>
+</div>
+
+<div id="researchesunderway">
+<table class="default" width="100%">
+<tr class="category"><td>Recherche en cours</td></tr>
+<tr class="item">
+<td>
+	{% if research %}<div><a href="/s03/research/#{{researchid}}">{{researchlabel}}</a> (<script>putcountdown1({{researchtime}}, "Terminé", "/s03/research/");</script>)</div>{% endif %}
+	{% if noresearch %}<div><a href="/s03/research/" title="Voir le laboratoire de recherches">Aucune recherche en cours</a></div>{% endif %}
+</td>
+</tr>
+</table>
+</div>
+
+<div id="buildingsunderconstruction">
+<table class="default" width="100%">
+<tr class="category"><td>Bâtiments en construction</td><td>Vaisseaux en construction</td></tr>
+<tr class="item" valign="top">
+<td width="50%">
+	{% for item in constructionyards %}
+		<table class="clear" cellpadding="0" cellspacing="0">
+		<tr valign="top"><td><a href="/s03/buildings/?planet={{item.planetid}}">{{item.planetname}} ({{item.galaxy}}.{{item.sector}}.{{item.planet}}) : </a></td><td>
+			{% for building in item.buildings %}
+			<div>{% if building.destroy %}<span class="destroy">Destruction de {% endif %}{{building.building}} (<script>putcountdown1({{building.time}}, "Terminé", "/s03/buildings/?planet={{item.planetid}}#{{building.buildingid}}");</script>){% if building.destroy %}</span>{% endif %}</div>
+			{% empty %}
+			<div><a href="/s03/buildings/?planet={{item.planetid}}" title="Voir les infrastructures">Aucune construction en cours</a></div>
+			{% endfor %}
+		</td></tr>
+		</table>
+	{% endfor %}
+	&nbsp;
+</td>
+<td width="50%">
+	{% for planet in shipyards %}
+		<table class="clear" cellpadding="0" cellspacing="0">
+		<tr valign="top"><td><a href="/s03/shipyard/?planet={{planet.planetid}}">{{planet.planetname}} ({{planet.galaxy}}.{{planet.sector}}.{{planet.planet}}) : </a></td><td>
+			{% if planet.ship %}
+			<div>{% if planet.recycle %}Recyclage de {% endif %}{{planet.shiplabel}} (<script>putcountdown1({{planet.time}}, "Terminé", "/s03/shipyard/?planet={{planet.planetid}}&f=0#{{planet.shipid}}");</script>)</div>
+			{% endif %}
+			{% if planet.suspended %}
+			<div><a href="/s03/shipyard/?planet={{planet.planetid}}" title="Voir le chantier spatial">En pause</a></div>
+			{% endif %}
+			{% if planet.waiting_resources %}
+			<div>{{planet.waiting_ship}} (<span class="error">en attente de ressources</span>)</a></div>
+			{% endif %}
+			{% if planet.none %}
+			<div><a href="/s03/shipyard/?planet={{planet.planetid}}" title="Voir le chantier spatial">Aucune construction en cours</a></div>
+			{% endif %}
+		</td></tr>
+		</table>
+	{% endfor %}
+	&nbsp;
+</td>
+</tr>
+</table>
+</div>
+
+{% if motd %}
+<script type="text/javascript">
+	restore_elt('motd_content');
+	restore_elt('stats_content');
+	restore_elt('tcg_content');
+</script>
+{% endif %}
+{% endblock %}
