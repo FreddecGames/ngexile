@@ -18,7 +18,7 @@ class View(ExileMixin, View):
         
         if request.user.is_authenticated:
             
-            rs = oConnExecute('SELECT id, lastplanetid, privilege, resets FROM sp_account_connect(' + str(request.user.id) + ', 1036,' + dosql(self.ipaddress) + ',' + dosql(self.forwardedfor) + ',' + dosql(self.useragent) + ',' + str(self.browserid) + ')');
+            rs = oConnExecute('SELECT id, lastplanetid, privilege, resets FROM sp_account_connect(' + str(request.user.id) + ', 1036,' + dosql(self.ipaddress) + ',' + dosql(self.forwardedfor) + ',' + dosql(self.useragent) + ', 0)');
 
             request.session[sUser] = rs[0]
             request.session[sPlanet] = rs[1]
