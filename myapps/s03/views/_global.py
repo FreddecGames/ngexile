@@ -28,7 +28,7 @@ class GlobalView(ExileMixin, View):
         if response: return response
         
         if not request.session.get(sUser):
-            return HttpResponseRedirect("/") # Redirect to home page
+            return HttpResponseRedirect("/s03/") # Redirect to home page
 
         request.session["details"] = ""
         
@@ -446,7 +446,7 @@ class GlobalView(ExileMixin, View):
         
         # check account still exists or that the player didn't connect with another account meanwhile
         if self.oPlayerInfo == None:
-            return HttpResponseRedirect("/") # Redirect to home page
+            return HttpResponseRedirect("/s03/") # Redirect to home page
     
         self.SecurityLevel = self.oPlayerInfo["security_level"]
         self.displayAlliancePlanetName = self.oPlayerInfo["display_alliance_planet_name"]

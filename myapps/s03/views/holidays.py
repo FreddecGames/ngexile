@@ -17,7 +17,7 @@ class View(ExileMixin, View):
         self.UserId = ToInt(self.request.session.get("user"), "")
 
         if self.UserId == "":
-            return HttpResponseRedirect("/")
+            return HttpResponseRedirect("/s03/")
 
         content = GetTemplate(self.request, "holidays")
 
@@ -30,7 +30,7 @@ class View(ExileMixin, View):
         oRs = oConnExecute(query)
 
         if oRs == None:
-            return HttpResponseRedirect("/")
+            return HttpResponseRedirect("/s03/")
 
         # check to unlock holidays mode
         action = request.POST.get("unlock", "")

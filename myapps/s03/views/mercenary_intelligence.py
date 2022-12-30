@@ -42,7 +42,7 @@ class View(GlobalView):
         #
 
         if self.SecurityLevel < 3:
-            return HttpResponseRedirect("/")
+            return HttpResponseRedirect("/s03/")
 
         self.category = 8
 

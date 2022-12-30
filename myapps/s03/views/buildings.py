@@ -39,7 +39,7 @@ class View(GlobalView):
             request.session["scrollPage"] = scriptname
             request.session["scrolly"] = y
             
-            return HttpResponseRedirect(scriptname + "?planet=" + str(self.CurrentPlanet))
+            return HttpResponseRedirect("/s03/" + scriptname + "?planet=" + str(self.CurrentPlanet))
         else:
             
             # if scrolly is stored in the session and is still valid, set the scrolly of the displayed page

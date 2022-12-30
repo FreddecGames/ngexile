@@ -27,12 +27,12 @@ class View(ExileMixin, View):
         if galaxy == None: galaxy = 0
 
         if not self.UserId or self.UserId == 0:
-            return HttpResponseRedirect("/")
+            return HttpResponseRedirect("/s03/")
 
         # check if it is the first username of the player
         rs = oConnExecute("SELECT username FROM users WHERE resets=0 AND id=" + str(self.UserId))
         if not rs:
-            return HttpResponseRedirect("/")
+            return HttpResponseRedirect("/s03/")
 
         userName = rs[0]
         if not userName: userName = request.user.username

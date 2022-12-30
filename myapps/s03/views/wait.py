@@ -17,7 +17,7 @@ class View(ExileMixin, View):
         self.UserId = ToInt(self.request.session.get("user"), "")
 
         if self.UserId == "":
-            return HttpResponseRedirect("/")
+            return HttpResponseRedirect("/s03/")
 
         content = GetTemplate(self.request, "wait")
 
@@ -27,7 +27,7 @@ class View(ExileMixin, View):
         oRs = oConnExecute(query)
 
         if oRs == None:
-            return HttpResponseRedirect("/")
+            return HttpResponseRedirect("/s03/")
 
         remainingTime = oRs[1]
         

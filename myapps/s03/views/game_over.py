@@ -20,12 +20,12 @@ class View(ExileMixin, View):
         self.UserId = ToInt(self.request.session.get("user"), "")
 
         if self.UserId == "":
-            return HttpResponseRedirect("/")
+            return HttpResponseRedirect("/s03/")
 
         # check that the player has no more planets
         oRs = oConnExecute("SELECT int4(count(1)) FROM nav_planet WHERE ownerid=" + str(self.UserId))
         if oRs == None:
-            return HttpResponseRedirect("/")
+            return HttpResponseRedirect("/s03/")
 
         planets = oRs[0]
 
@@ -41,7 +41,7 @@ class View(ExileMixin, View):
 
         # still have planets
         if planets > 0 and bankruptcy > 0:
-            return HttpResponseRedirect("/")
+            return HttpResponseRedirect("/s03/")
 
         if resets == 0:
             return HttpResponseRedirect("/s03/start/")
@@ -80,7 +80,7 @@ class View(ExileMixin, View):
 
             elif action == "abandon":
                 oConnDoQuery("UPDATE users SET deletion_date=now()/*+INTERVAL '2 days'*/ WHERE id=" + str(self.UserId))
-                return HttpResponseRedirect("/")
+                return HttpResponseRedirect("/s03/")
 
         # display Game Over page
         content = GetTemplate(self.request, "game-over")

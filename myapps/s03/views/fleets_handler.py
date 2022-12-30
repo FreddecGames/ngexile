@@ -18,10 +18,10 @@ class View(ExileMixin, View):
         response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
 
-        if maintenance and not request.user.is_superuser : return HttpResponseRedirect("/")
+        if maintenance and not request.user.is_superuser : return HttpResponseRedirect("/s03/")
 
         self.UserId = ToInt(request.session.get(sUser), 0)
-        if self.UserId == 0: return HttpResponseRedirect("/")
+        if self.UserId == 0: return HttpResponseRedirect("/s03/")
 
         action = request.GET.get("a")
 
