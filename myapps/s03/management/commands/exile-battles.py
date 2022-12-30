@@ -43,7 +43,6 @@ class Command(BaseCommand):
                     
                     # fill the battlefield with the fleets
                     for oFleet in oFleets:
-                        print(oFleet)
                         if oFleet[11] == None:
                             battle.AddShips(oFleet[0], oFleet[1], oFleet[2], oFleet[3], oFleet[4], oFleet[5], oFleet[6], oFleet[8], oFleet[9], \
                                             {'EM': oFleet[17], 'Explosive': oFleet[18], 'Kinetic': oFleet[19], 'Thermal': oFleet[20]}, \

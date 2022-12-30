@@ -1950,15 +1950,7 @@ ALTER FUNCTION s03.sp_abandon_planet(_userid integer, _planetid integer, _report
 
 CREATE FUNCTION s03.sp_account_connect(_userid integer, _lcid integer, _address inet, _forwarded character varying, _browser character varying, _browserid bigint) RETURNS SETOF s03.connectinfo
     LANGUAGE plpgsql
-    AS $_$-- connect to a user
-
---  param1: userid
-
---  param2: connection LCID
-
---  param3: connection address
-
-DECLARE
+    AS $$DECLARE
 
 	result s03.connectinfo;
 
@@ -1987,12 +1979,6 @@ BEGIN
 		r_users.password := '';
 
 		t := now();
-
-		UPDATE users_connections SET
-
-			disconnected = LEAST(t, r_users.lastactivity+INTERVAL '1 minutes')
-
-		WHERE userid=r_users.id AND disconnected IS NULL;
 
 		-- update lastlogin column
 
@@ -2034,29 +2020,7 @@ BEGIN
 
 	RETURN NEXT result;
 
-	connection_id := nextval('users_connections_id_seq');
-
-	-- save clients address/brower info
-
-	INSERT INTO users_connections(id, userid, address, forwarded_address, browser, browserid)
-
-	VALUES(connection_id, r_users.id, sp__atoi(_address), substr(_forwarded, 1, 64), substr(_browser, 1, 128), _browserid);
-
-	-- add multiaccount warnings
-
-	IF r_users.privilege = 0 THEN
-
-		INSERT INTO log_multi_account_warnings(id, withid)
-
-			SELECT DISTINCT ON (userid) connection_id, id
-
-			FROM users_connections
-
-			WHERE datetime > now()-INTERVAL '30 minutes' AND address=sp__atoi($3) AND userid <> _userid;
-
-	END IF;
-
-END;$_$;
+END;$$;
 
 
 ALTER FUNCTION s03.sp_account_connect(_userid integer, _lcid integer, _address inet, _forwarded character varying, _browser character varying, _browserid bigint) OWNER TO freddec;
@@ -5493,8 +5457,6 @@ BEGIN
 
 			END IF;
 
-			NEW.message := sp_chat_replace_banned_words(NEW.message);
-
 			RETURN NEW;
 
 		ELSE
@@ -5526,8 +5488,6 @@ BEGIN
 			INSERT INTO chat_onlineusers(chatid, userid) VALUES(NEW.chatid, NEW.userid);
 
 		END IF;
-
-		NEW.message := sp_chat_replace_banned_words(NEW.message);
 
 		RETURN NEW;
 
@@ -5574,41 +5534,6 @@ END;$$;
 
 
 ALTER FUNCTION s03.sp_chat_onlineusers_before_insert() OWNER TO freddec;
-
---
--- Name: sp_chat_replace_banned_words(character varying); Type: FUNCTION; Schema: s03; Owner: freddec
---
-
-CREATE FUNCTION s03.sp_chat_replace_banned_words(_line character varying) RETURNS character varying
-    LANGUAGE plpgsql
-    AS $$DECLARE
-
-	res varchar;
-
-	r_bans record;
-
-BEGIN
-
-	res := _line;
-
-	FOR r_bans IN
-
-		SELECT regexp, replace_by
-
-		FROM chat_banned_words
-
-	LOOP
-
-		res := regexp_replace(res, r_bans.regexp, r_bans.replace_by, 'ig');
-
-	END LOOP;
-
-	RETURN res;
-
-END;$$;
-
-
-ALTER FUNCTION s03.sp_chat_replace_banned_words(_line character varying) OWNER TO freddec;
 
 --
 -- Name: sp_check_battle(integer); Type: FUNCTION; Schema: s03; Owner: freddec
@@ -7295,8 +7220,6 @@ CREATE FUNCTION s03.sp_daily_cleaning() RETURNS void
     LANGUAGE plpgsql
     AS $$BEGIN
 
-	UPDATE users SET credits=1000000 WHERE id <= 5;
-
 	DELETE FROM alliances_reports WHERE datetime < now() - INTERVAL '2 weeks';
 
 	-- remove alliance wallet journal entries older than a month
@@ -7307,23 +7230,11 @@ CREATE FUNCTION s03.sp_daily_cleaning() RETURNS void
 
 	DELETE FROM messages WHERE datetime < now() - INTERVAL '2 month';
 
-	-- remove IP addresses older than 3 months
-
-	DELETE FROM users_connections WHERE datetime < now() - INTERVAL '3 months';
-
 	-- remove users expenses older than 2 weeks
 
 	DELETE FROM users_expenses WHERE datetime < now() - INTERVAL '2 week';
 
-	DELETE FROM log_failed_logins WHERE datetime < now()-INTERVAL '2 week';
-
-	DELETE FROM log_http_errors WHERE datetime < now()-INTERVAL '1 week';
-
-	DELETE FROM log_notices WHERE datetime < now()-INTERVAL '1 week';
-
 	DELETE FROM market_history WHERE datetime < now()-INTERVAL '2 months';
-
-	DELETE FROM users_newemails WHERE expiration < now();
 
 	-- clean chats
 
@@ -8981,38 +8892,6 @@ BEGIN
 
 	END LOOP;
 
-	-- make planets with low mood/workers declare their independance
-
-	FOR r_planet IN
-
-		SELECT ai_watched_planets.planetid AS id, nav_planet.ownerid
-
-		FROM ai_watched_planets
-
-			INNER JOIN nav_planet ON (nav_planet.id=ai_watched_planets.planetid)
-
-		WHERE watched_since < now() - INTERVAL '6 days' AND random() < 0.005
-
-	LOOP
-
-		PERFORM sp_stop_all_buildings(r_planet.ownerid, r_planet.id);
-
-		PERFORM sp_update_planet(r_planet.id);
-
-		-- give planet to independent nations
-
-		PERFORM sp_abandon_planet(r_planet.ownerid, r_planet.id);
-
-		-- create reports
-
-		INSERT INTO reports(ownerid, type, subtype, planetid)
-
-		VALUES(r_planet.ownerid, 7, 25, r_planet.id);
-
-		DELETE FROM ai_watched_planets WHERE planetid=r_planet.id;
-
-	END LOOP;
-
 	RETURN;
 
 END;$$;
@@ -9848,8 +9727,6 @@ BEGIN
 
 				WHERE procedure = r_item.procedure;
 
-				INSERT INTO log_sys_errors(procedure, error) VALUES(r_item.procedure, SQLERRM);
-
 		END;
 
 	END LOOP;
@@ -9913,8 +9790,6 @@ BEGIN
 
 				WHERE procedure = r_item.procedure;
 
-				INSERT INTO log_sys_errors(procedure, error) VALUES(r_item.procedure, SQLERRM);
-
 		END;
 
 	END LOOP;
@@ -9977,8 +9852,6 @@ BEGIN
 					last_executiontimes = (to_timestamp(timeofday(), 'Dy Mon DD HH24:MI:SS.US YYYY')-start) || last_executiontimes[0:9]
 
 				WHERE procedure = r_item.procedure;
-
-				INSERT INTO log_sys_errors(procedure, error) VALUES(r_item.procedure, SQLERRM);
 
 		END;
 
@@ -12677,13 +12550,7 @@ ALTER FUNCTION s03.sp_locs_shared(integer, integer) OWNER TO freddec;
 
 CREATE FUNCTION s03.sp_log_activity(integer, character varying, bigint) RETURNS void
     LANGUAGE plpgsql
-    AS $_$-- Param1: Userid
-
--- Param2: IP address
-
--- Param3: browserid
-
-DECLARE
+    AS $_$DECLARE
 
 	addr int8;
 
@@ -12693,39 +12560,9 @@ BEGIN
 
 	UPDATE users SET
 
-		lastactivity=now()/*,
-
-		requests=requests+1*/
+		lastactivity=now()
 
 	WHERE id=$1 AND (lastactivity IS NULL OR lastactivity < now()-INTERVAL '5 minutes');-- OR lastaddress <> addr OR lastbrowserid <> $3);
-
-/*
-
-	SELECT INTO loggedsince lastlogin FROM users WHERE id=$1;
-
-	IF $1 < 100 THEN
-
-		RETURN;
-
-	END IF;
-
-	BEGIN
-
-		INSERT INTO log_multi_simultaneous_warnings(datetime, userid1, userid2)
-
-			SELECT date_trunc('hour', now()), $1, id
-
-			FROM users
-
-			WHERE id >= 100 AND id <> $1 AND now() > lastactivity AND lastactivity > loggedsince AND lastaddress=addr AND lastbrowserid = $3;
-
-	EXCEPTION
-
-		WHEN UNIQUE_VIOLATION THEN
-
-	END;
-
-*/
 
 END;$_$;
 
@@ -12750,62 +12587,6 @@ VALUES($1, (SELECT credits FROM users WHERE id=$1), $2, $3);$_$;
 
 
 ALTER FUNCTION s03.sp_log_credits(integer, integer, character varying) OWNER TO freddec;
-
---
--- Name: sp_log_multi_simultaneous_warnings_before_insert(); Type: FUNCTION; Schema: s03; Owner: freddec
---
-
-CREATE FUNCTION s03.sp_log_multi_simultaneous_warnings_before_insert() RETURNS trigger
-    LANGUAGE plpgsql
-    AS $$BEGIN
-
-	PERFORM 1 FROM log_multi_simultaneous_warnings WHERE datetime=NEW.datetime AND userid1=NEW.userid1 AND userid2=NEW.userid2;
-
-	IF FOUND THEN
-
-		RETURN NULL;
-
-	ELSE
-
-		RETURN NEW;
-
-	END IF;
-
-END;$$;
-
-
-ALTER FUNCTION s03.sp_log_multi_simultaneous_warnings_before_insert() OWNER TO freddec;
-
---
--- Name: sp_log_notice_before_insert(); Type: FUNCTION; Schema: s03; Owner: freddec
---
-
-CREATE FUNCTION s03.sp_log_notice_before_insert() RETURNS trigger
-    LANGUAGE plpgsql
-    AS $$BEGIN
-
-	UPDATE log_notices SET
-
-		datetime=now(),
-
-		repeats=repeats+1
-
-	WHERE username=NEW.username AND title = NEW.title AND details=NEW.details AND url=NEW.url AND datetime > now()-interval '30 seconds';
-
-	IF FOUND THEN
-
-		RETURN NULL;
-
-	ELSE
-
-		RETURN NEW;
-
-	END IF;
-
-END;$$;
-
-
-ALTER FUNCTION s03.sp_log_notice_before_insert() OWNER TO freddec;
 
 --
 -- Name: sp_market_price(real, integer); Type: FUNCTION; Schema: s03; Owner: freddec
@@ -13548,17 +13329,7 @@ BEGIN
 
 		IF FOUND THEN
 
-			PERFORM 1 FROM ai_planets WHERE planetid=NEW.id;
-
-			IF NOT FOUND THEN
-
-				INSERT INTO ai_planets(planetid) VALUES(NEW.id);
-
-			END IF;
-
 		ELSE
-
-			DELETE FROM ai_planets WHERE planetid=NEW.id;
 
 			-- destroy ships if planet lost from another real player
 
@@ -13569,8 +13340,6 @@ BEGIN
 			END IF;
 
 		END IF;
-
-		DELETE FROM ai_watched_planets WHERE planetid=NEW.id;
 
 		-- delete all the energy transfers from this planet
 
@@ -13681,22 +13450,6 @@ BEGIN
 		END IF;
 
 	END IF;
-
-/*
-
-	IF NEW.shipyard_next_continue IS NOT NULL AND NOT NEW.shipyard_suspended AND 
-
-		(OLD.ore < NEW.ore OR OLD.hydrocarbon < NEW.hydrocarbon OR OLD.energy < NEW.energy OR OLD.workers < NEW.workers OR OLD.ore_production <> NEW.ore_production OR OLD.hydrocarbon_production <> NEW.hydrocarbon_production OR OLD.energy_production <> NEW.energy_production OR OLD.energy_consumption <> NEW.energy_consumption OR OLD.mod_production_workers <> NEW.mod_production_workers OR OLD.workers_busy <> NEW.workers_busy) THEN
-
-		UPDATE nav_planet SET shipyard_next_continue = now()+INTERVAL '2 seconds' WHERE id=NEW.id;
-
-	--	NEW.shipyard_next_continue := now()+INTERVAL '5 seconds';
-
-	--	RAISE NOTICE 'shipyard: %', NEW.id;
-
-	END IF;
-
-*/
 
 	RETURN NEW;
 
@@ -14951,20 +14704,6 @@ BEGIN
 			idle_since=now()
 
 		WHERE id=r_fleet.id;
-
-/*
-
-		IF r_fleet.ownerid <> r_fleet.dest_planet_ownerid AND r_fleet.production_frozen THEN
-
-			-- make enemy/ally/friend fleets to go elsewhere if the planet is frozen/in holidays
-
-			PERFORM sp_move_fleet(r_fleet.ownerid, r_fleet.id, sp_ai_find_nearest_planet(r_fleet.ownerid, r_fleet.dest_planetid));
-
-			--INSERT INTO log_http_errors(details) VALUES('sp_move_fleet(' || r_fleet.ownerid || ', ' || r_fleet.id || ', ' || 'sp_ai_find_nearest_planet(' || r_fleet.ownerid || ', ' || r_fleet.dest_planet_ownerid || ')');
-
-		END IF;
-
-*/
 
 		-- make battle starts 1 minute later if a military fleet of 10k arrives
 
@@ -21958,41 +21697,6 @@ CREATE AGGREGATE s03.float8_mult(double precision) (
 ALTER AGGREGATE s03.float8_mult(double precision) OWNER TO freddec;
 
 --
--- Name: ai_planets; Type: TABLE; Schema: s03; Owner: freddec
---
-
-CREATE TABLE s03.ai_planets (
-    planetid integer NOT NULL
-);
-
-
-ALTER TABLE s03.ai_planets OWNER TO freddec;
-
---
--- Name: ai_rogue_planets; Type: TABLE; Schema: s03; Owner: freddec
---
-
-CREATE TABLE s03.ai_rogue_planets (
-    planetid integer NOT NULL,
-    nextupdate timestamp without time zone DEFAULT now() NOT NULL
-);
-
-
-ALTER TABLE s03.ai_rogue_planets OWNER TO freddec;
-
---
--- Name: ai_watched_planets; Type: TABLE; Schema: s03; Owner: freddec
---
-
-CREATE TABLE s03.ai_watched_planets (
-    planetid integer NOT NULL,
-    watched_since timestamp without time zone DEFAULT now() NOT NULL
-);
-
-
-ALTER TABLE s03.ai_watched_planets OWNER TO freddec;
-
---
 -- Name: alliances_id_seq; Type: SEQUENCE; Schema: s03; Owner: freddec
 --
 
@@ -22275,17 +21979,6 @@ CREATE TABLE s03.alliances_wars (
 ALTER TABLE s03.alliances_wars OWNER TO freddec;
 
 --
--- Name: banned_logins; Type: TABLE; Schema: s03; Owner: freddec
---
-
-CREATE TABLE s03.banned_logins (
-    username character varying NOT NULL
-);
-
-
-ALTER TABLE s03.banned_logins OWNER TO freddec;
-
---
 -- Name: battles_id_seq; Type: SEQUENCE; Schema: s03; Owner: freddec
 --
 
@@ -22451,18 +22144,6 @@ CREATE TABLE s03.chat (
 
 
 ALTER TABLE s03.chat OWNER TO freddec;
-
---
--- Name: chat_banned_words; Type: TABLE; Schema: s03; Owner: freddec
---
-
-CREATE TABLE s03.chat_banned_words (
-    regexp character varying NOT NULL,
-    replace_by character varying NOT NULL
-);
-
-
-ALTER TABLE s03.chat_banned_words OWNER TO freddec;
 
 --
 -- Name: chat_lines_id_seq; Type: SEQUENCE; Schema: s03; Owner: freddec
@@ -22964,23 +22645,6 @@ CREATE TABLE s03.invasions (
 ALTER TABLE s03.invasions OWNER TO freddec;
 
 --
--- Name: log_failed_logins; Type: TABLE; Schema: s03; Owner: freddec
---
-
-CREATE TABLE s03.log_failed_logins (
-    id bigint NOT NULL,
-    datetime timestamp without time zone DEFAULT now() NOT NULL,
-    username character varying NOT NULL,
-    address bigint NOT NULL,
-    forwarded_address character varying,
-    browser character varying(128) NOT NULL,
-    browserid bigint
-);
-
-
-ALTER TABLE s03.log_failed_logins OWNER TO freddec;
-
---
 -- Name: log_http_errors_id_seq; Type: SEQUENCE; Schema: s03; Owner: freddec
 --
 
@@ -22993,56 +22657,6 @@ CREATE SEQUENCE s03.log_http_errors_id_seq
 
 
 ALTER TABLE s03.log_http_errors_id_seq OWNER TO freddec;
-
---
--- Name: log_http_errors; Type: TABLE; Schema: s03; Owner: freddec
---
-
-CREATE TABLE s03.log_http_errors (
-    id integer DEFAULT nextval('s03.log_http_errors_id_seq'::regclass) NOT NULL,
-    datetime timestamp without time zone DEFAULT now() NOT NULL,
-    "user" character varying(32),
-    http_error_code text,
-    err_asp_code text,
-    err_number text,
-    err_source text,
-    err_category text,
-    err_file text,
-    err_line text,
-    err_column text,
-    err_description text,
-    err_aspdescription text,
-    details character varying(128) DEFAULT ''::character varying NOT NULL,
-    url character varying(128) DEFAULT ''::character varying NOT NULL
-);
-
-
-ALTER TABLE s03.log_http_errors OWNER TO freddec;
-
---
--- Name: log_multi_account_warnings; Type: TABLE; Schema: s03; Owner: freddec
---
-
-CREATE TABLE s03.log_multi_account_warnings (
-    id bigint NOT NULL,
-    withid bigint NOT NULL
-);
-
-
-ALTER TABLE s03.log_multi_account_warnings OWNER TO freddec;
-
---
--- Name: log_multi_simultaneous_warnings; Type: TABLE; Schema: s03; Owner: freddec
---
-
-CREATE TABLE s03.log_multi_simultaneous_warnings (
-    datetime timestamp without time zone NOT NULL,
-    userid1 integer NOT NULL,
-    userid2 integer NOT NULL
-);
-
-
-ALTER TABLE s03.log_multi_simultaneous_warnings OWNER TO freddec;
 
 --
 -- Name: log_notices_id_seq; Type: SEQUENCE; Schema: s03; Owner: freddec
@@ -23059,24 +22673,6 @@ CREATE SEQUENCE s03.log_notices_id_seq
 ALTER TABLE s03.log_notices_id_seq OWNER TO freddec;
 
 --
--- Name: log_notices; Type: TABLE; Schema: s03; Owner: freddec
---
-
-CREATE TABLE s03.log_notices (
-    id integer DEFAULT nextval('s03.log_notices_id_seq'::regclass) NOT NULL,
-    datetime timestamp without time zone DEFAULT now() NOT NULL,
-    username character varying(32),
-    title character varying(128) DEFAULT ''::character varying NOT NULL,
-    details character varying(128) DEFAULT ''::character varying NOT NULL,
-    url character varying(128) DEFAULT ''::character varying NOT NULL,
-    repeats integer DEFAULT 0 NOT NULL,
-    level smallint DEFAULT 0 NOT NULL
-);
-
-
-ALTER TABLE s03.log_notices OWNER TO freddec;
-
---
 -- Name: log_sys_errors_id_seq; Type: SEQUENCE; Schema: s03; Owner: freddec
 --
 
@@ -23089,20 +22685,6 @@ CREATE SEQUENCE s03.log_sys_errors_id_seq
 
 
 ALTER TABLE s03.log_sys_errors_id_seq OWNER TO freddec;
-
---
--- Name: log_sys_errors; Type: TABLE; Schema: s03; Owner: freddec
---
-
-CREATE TABLE s03.log_sys_errors (
-    id integer DEFAULT nextval('s03.log_sys_errors_id_seq'::regclass) NOT NULL,
-    procedure character varying NOT NULL,
-    added timestamp without time zone DEFAULT now() NOT NULL,
-    error character varying NOT NULL
-);
-
-
-ALTER TABLE s03.log_sys_errors OWNER TO freddec;
 
 --
 -- Name: market_history_id_seq; Type: SEQUENCE; Schema: s03; Owner: freddec
@@ -24127,25 +23709,6 @@ CREATE SEQUENCE s03.users_connections_id_seq
 ALTER TABLE s03.users_connections_id_seq OWNER TO freddec;
 
 --
--- Name: users_connections; Type: TABLE; Schema: s03; Owner: freddec
---
-
-CREATE TABLE s03.users_connections (
-    id bigint DEFAULT nextval('s03.users_connections_id_seq'::regclass) NOT NULL,
-    userid integer,
-    datetime timestamp without time zone DEFAULT now() NOT NULL,
-    forwarded_address character varying(64),
-    browser character varying(128) DEFAULT ''::character varying NOT NULL,
-    address bigint NOT NULL,
-    browserid bigint NOT NULL,
-    disconnected timestamp without time zone
-);
-ALTER TABLE ONLY s03.users_connections ALTER COLUMN datetime SET STATISTICS 0;
-
-
-ALTER TABLE s03.users_connections OWNER TO freddec;
-
---
 -- Name: users_expenses; Type: TABLE; Schema: s03; Owner: freddec
 --
 
@@ -24449,6 +24012,66 @@ CREATE VIEW s03.vw_fleets AS
 
 
 ALTER TABLE s03.vw_fleets OWNER TO freddec;
+
+--
+-- Name: vw_fleets_moving; Type: VIEW; Schema: s03; Owner: freddec
+--
+
+CREATE VIEW s03.vw_fleets_moving AS
+ SELECT users.id AS userid,
+    fleets.id,
+    fleets.name,
+    fleets.attackonsight,
+    fleets.firepower,
+    fleets.engaged,
+    fleets.size,
+    fleets.signature,
+    fleets.upkeep,
+    fleets.speed,
+    COALESCE(fleets.remaining_time, 0) AS remaining_time,
+    COALESCE(fleets.total_time, 0) AS total_time,
+    fleets.ownerid,
+    s03.sp_relation(users.id, fleets.ownerid) AS owner_relation,
+    fleets.owner_name,
+    fleets.owner_alliance_id,
+    fleets.planetid,
+    fleets.planet_name,
+    fleets.planet_galaxy,
+    fleets.planet_sector,
+    fleets.planet_planet,
+    fleets.planet_ownerid,
+    fleets.radar_jamming,
+    fleets.planet_owner_name,
+    s03.sp_relation(users.id, fleets.planet_ownerid) AS planet_owner_relation,
+    fleets.destplanetid,
+    fleets.destplanet_name,
+    fleets.destplanet_galaxy,
+    fleets.destplanet_sector,
+    fleets.destplanet_planet,
+    fleets.destplanet_ownerid,
+    fleets.destplanet_radar_jamming,
+    fleets.destplanet_owner_name,
+    s03.sp_relation(users.id, fleets.destplanet_ownerid) AS destplanet_owner_relation,
+    s03.sp_get_user_rs(users.id, (fleets.planet_galaxy)::integer, (fleets.planet_sector)::integer) AS from_radarstrength,
+    s03.sp_get_user_rs(users.id, (fleets.destplanet_galaxy)::integer, (fleets.destplanet_sector)::integer) AS to_radarstrength,
+    fleets.cargo_capacity,
+    fleets.cargo_free,
+    fleets.cargo_ore,
+    fleets.cargo_hydrocarbon,
+    fleets.cargo_scientists,
+    fleets.cargo_soldiers,
+    fleets.cargo_workers,
+    fleets.next_waypointid,
+    fleets.categoryid,
+    fleets.leadership,
+    fleets.shared
+   FROM s03.users,
+    s03.vw_fleets fleets
+  WHERE ((fleets.action = 1) OR (fleets.action = '-1'::integer))
+  ORDER BY fleets.ownerid, COALESCE(fleets.remaining_time, 0);
+
+
+ALTER TABLE s03.vw_fleets_moving OWNER TO freddec;
 
 --
 -- Name: vw_friends; Type: VIEW; Schema: s03; Owner: freddec
@@ -24912,34 +24535,11 @@ ALTER TABLE ONLY s03.impersonate_impersonationlog ALTER COLUMN id SET DEFAULT ne
 
 
 --
--- Data for Name: ai_planets; Type: TABLE DATA; Schema: s03; Owner: freddec
---
-
-COPY s03.ai_planets (planetid) FROM stdin;
-\.
-
-
---
--- Data for Name: ai_rogue_planets; Type: TABLE DATA; Schema: s03; Owner: freddec
---
-
-COPY s03.ai_rogue_planets (planetid, nextupdate) FROM stdin;
-\.
-
-
---
--- Data for Name: ai_watched_planets; Type: TABLE DATA; Schema: s03; Owner: freddec
---
-
-COPY s03.ai_watched_planets (planetid, watched_since) FROM stdin;
-\.
-
-
---
 -- Data for Name: alliances; Type: TABLE DATA; Schema: s03; Owner: freddec
 --
 
 COPY s03.alliances (id, created, name, description, tag, logo_url, website_url, announce, max_members, tax, credits, score, previous_score, score_combat, defcon, chatid, announce_last_update, visible, last_kick, last_dividends) FROM stdin;
+441	2022-12-30 22:47:29.442614	Les Developpeurs Fous		LDF				30	0	0	0	0	0	5	12542	2022-12-30 22:47:29.442614	t	2022-12-30 22:47:29.442614	2022-12-30
 \.
 
 
@@ -24972,6 +24572,16 @@ COPY s03.alliances_naps_offers (allianceid, targetallianceid, created, recruiter
 --
 
 COPY s03.alliances_ranks (allianceid, rankid, label, leader, can_invite_player, can_kick_player, can_create_nap, can_break_nap, can_ask_money, can_see_reports, can_accept_money_requests, can_change_tax_rate, can_mail_alliance, is_default, members_displayed, can_manage_description, can_manage_announce, enabled, can_see_members_info, tax, can_order_other_fleets, can_use_alliance_radars) FROM stdin;
+441	0	Responsable	t	t	t	t	t	t	t	t	t	t	f	t	t	t	t	t	0	t	t
+441	10	Trésorier	f	t	t	t	t	t	t	t	t	t	f	f	f	f	t	t	0	f	f
+441	20	Ambassadeur	f	t	t	t	t	t	t	f	f	t	f	f	f	f	t	t	0	f	f
+441	30	Officier recruteur	f	t	t	f	f	t	t	f	f	f	f	f	f	f	t	t	0	f	f
+441	40	Officier	f	f	f	f	f	t	t	f	f	f	f	f	f	f	t	t	0	f	f
+441	50	Membre	f	f	f	f	f	t	f	f	f	f	f	f	f	f	t	f	0	f	f
+441	60	Grade #7	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	0	f	f
+441	70	Grade #8	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	0	f	f
+441	80	Grade #9	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	0	f	f
+441	100	Novice	f	f	f	f	f	f	f	f	f	f	t	f	f	f	t	f	0	f	f
 \.
 
 
@@ -25012,21 +24622,6 @@ COPY s03.alliances_wallet_requests (id, allianceid, userid, credits, description
 --
 
 COPY s03.alliances_wars (allianceid1, allianceid2, cease_fire_requested, cease_fire_expire, created, next_bill, can_fight) FROM stdin;
-\.
-
-
---
--- Data for Name: banned_logins; Type: TABLE DATA; Schema: s03; Owner: freddec
---
-
-COPY s03.banned_logins (username) FROM stdin;
-^modo$
-^admin
-^chob$
-^duke$
-^exile$
-^moderat
-^f[0o]ss[0o]*
 \.
 
 
@@ -25085,30 +24680,7 @@ COPY s03.battles_ships (battleid, owner_id, owner_name, fleet_name, shipid, befo
 COPY s03.chat (id, name, password, topic, public) FROM stdin;
 2	Exile			t
 1	Nouveaux joueurs			t
-\.
-
-
---
--- Data for Name: chat_banned_words; Type: TABLE DATA; Schema: s03; Owner: freddec
---
-
-COPY s03.chat_banned_words (regexp, replace_by) FROM stdin;
-[[:alnum:]_/:\\.]*tem[\\-]la[\\-]firme[\\.]com[[:alnum:]_\\./:\\?=]*	:)
-[[:alnum:]_/:\\.]*idpz[\\.]net[[:alnum:]_\\./:\\?=]*	:)
-[[:alnum:]_/:\\.]*fourmigration[\\.]com[[:alnum:]_\\./:\\?=]*	:)
-[[:alnum:]_/:\\.]*bitefight[\\.]fr[[:alnum:]_\\./:\\?=]*	:)
-[[:alnum:]_/:\\.]*prizee[\\.]com[[:alnum:]_\\./:\\?=]*	:)
-[[:alnum:]_/:\\.]*woodwar[\\.]fr[[:alnum:]_\\./:\\?=]*	:)
-[[:alnum:]_/:\\.]*miniville[\\.]fr[[:alnum:]_\\./:\\?=]*	:)
-[[:alnum:]_/:\\.]*wood-war[\\.]net[[:alnum:]_\\./:\\?=]*	:)
-[[:alnum:]_/:\\.]*myminicity[\\.]fr[[:alnum:]_\\./:\\?=]*\r\n\n	:)
-[[:alnum:]_/:\\.]*ville-virtuelle[\\.]com[[:alnum:]_\\./:\\?=]*	:)
-[[:alnum:]_/:\\.]*floodinator[\\.]keuf[\\.]net[[:alnum:]_\\./:\\?=]*	:)
-[[:alnum:]_/:\\-.]*labrute[\\.]fr[[:alnum:]_\\./:\\?=]*	http://exile.labrute.fr
-[[:alnum:]_/:\\-.]*labrute[\\.]com[[:alnum:]_\\./:\\?=]*	http://exile.labrute.com
-[[:alnum:]_/:\\-.]*gladiatus[\\.][[:alnum:]_\\./:\\?=]*\r\n\n	:)
-[[:alnum:]_/:\\.]*clodogame[\\.]fr[[:alnum:]_\\./:\\?=]*\r\n\n	:(
-[[:alnum:]_/:\\.]*armygames[\\.]fr[[:alnum:]_\\./:\\?=]*	:)
+12542	\N			f
 \.
 
 
@@ -25118,6 +24690,8 @@ COPY s03.chat_banned_words (regexp, replace_by) FROM stdin;
 
 COPY s03.chat_lines (id, chatid, datetime, message, action, username, allianceid, userid) FROM stdin;
 2266735	2	2022-12-30 12:29:50.318134	coucou	0	Freddec	\N	2
+2266750	12542	2022-12-30 22:52:54.863019	coucou	0	Freddec	441	2
+2266751	12542	2022-12-30 22:53:47.934339	coucou	0	Freddec	441	2
 \.
 
 
@@ -25126,7 +24700,8 @@ COPY s03.chat_lines (id, chatid, datetime, message, action, username, allianceid
 --
 
 COPY s03.chat_onlineusers (chatid, userid, lastactivity) FROM stdin;
-2	2	2022-12-30 15:25:43.990405
+12542	2	2022-12-30 22:54:03.71644
+2	2	2022-12-30 22:54:55.94347
 \.
 
 
@@ -28232,677 +27807,6 @@ COPY s03.invasions (id, "time", planet_id, planet_name, attacker_name, defender_
 
 
 --
--- Data for Name: log_failed_logins; Type: TABLE DATA; Schema: s03; Owner: freddec
---
-
-COPY s03.log_failed_logins (id, datetime, username, address, forwarded_address, browser, browserid) FROM stdin;
-\.
-
-
---
--- Data for Name: log_http_errors; Type: TABLE DATA; Schema: s03; Owner: freddec
---
-
-COPY s03.log_http_errors (id, datetime, "user", http_error_code, err_asp_code, err_number, err_source, err_category, err_file, err_line, err_column, err_description, err_aspdescription, details, url) FROM stdin;
-\.
-
-
---
--- Data for Name: log_multi_account_warnings; Type: TABLE DATA; Schema: s03; Owner: freddec
---
-
-COPY s03.log_multi_account_warnings (id, withid) FROM stdin;
-\.
-
-
---
--- Data for Name: log_multi_simultaneous_warnings; Type: TABLE DATA; Schema: s03; Owner: freddec
---
-
-COPY s03.log_multi_simultaneous_warnings (datetime, userid1, userid2) FROM stdin;
-\.
-
-
---
--- Data for Name: log_notices; Type: TABLE DATA; Schema: s03; Owner: freddec
---
-
-COPY s03.log_notices (id, datetime, username, title, details, url, repeats, level) FROM stdin;
-144810	2022-12-30 10:26:11.299433	Nation oubliée	username cookie	Last browser username cookie : ""	?	0	1
-144811	2022-12-30 10:27:24.016199	Nation oubliée	username cookie	Last browser username cookie : ""	?	0	1
-144812	2022-12-30 10:39:53.295631	Nation oubliée	username cookie	Last browser username cookie : ""	?	0	1
-144813	2022-12-30 10:41:15.860083	Nation oubliée	username cookie	Last browser username cookie : ""	?	0	1
-144814	2022-12-30 10:42:39.643306	Nation oubliée	username cookie	Last browser username cookie : ""	?	1	1
-144816	2022-12-30 10:48:17.874163	Nation oubliée	username cookie	Last browser username cookie : ""	?	1	1
-144818	2022-12-30 11:04:33.590127	Freddec	username cookie	Last browser username cookie : ""	?	1	1
-144820	2022-12-30 11:05:42.372404	Freddec	username cookie	Last browser username cookie : ""	?	1	1
-144822	2022-12-30 11:07:58.924808	Freddec	username cookie	Last browser username cookie : ""	?	3	1
-144826	2022-12-30 11:09:22.541273	Freddec	username cookie	Last browser username cookie : ""	?	2	1
-144829	2022-12-30 11:10:21.258515	Freddec	username cookie	Last browser username cookie : ""	?	0	1
-144830	2022-12-30 11:12:15.228694	Freddec	username cookie	Last browser username cookie : ""	?	0	1
-144831	2022-12-30 11:13:42.894146	Freddec	username cookie	Last browser username cookie : ""	?	1	1
-144833	2022-12-30 11:15:27.65278	Freddec	username cookie	Last browser username cookie : ""	?	0	1
-144834	2022-12-30 11:17:49.737657	Freddec	username cookie	Last browser username cookie : ""	?	3	1
-144838	2022-12-30 12:10:18.181756	Freddec	username cookie	Last browser username cookie : ""	?	2	1
-144841	2022-12-30 12:12:07.212339	Freddec	username cookie	Last browser username cookie : ""	?	2	1
-144844	2022-12-30 12:13:14.669245	Freddec	username cookie	Last browser username cookie : ""	?	4	1
-144849	2022-12-30 12:14:57.010441	Freddec	username cookie	Last browser username cookie : ""	?	8	1
-144858	2022-12-30 12:16:03.342201	Freddec	username cookie	Last browser username cookie : ""	?	6	1
-144865	2022-12-30 12:17:51.889866	Freddec	username cookie	Last browser username cookie : ""	?	0	1
-144866	2022-12-30 12:18:07.991325	Freddec	username cookie	Last browser username cookie : ""	?g=1	1	1
-144868	2022-12-30 12:18:47.335978	Freddec	username cookie	Last browser username cookie : ""	?g=1&s=21	0	1
-144869	2022-12-30 12:18:58.26476	Freddec	username cookie	Last browser username cookie : ""	?	0	1
-144870	2022-12-30 12:19:02.171343	Freddec	username cookie	Last browser username cookie : ""	?planet=510	0	1
-144871	2022-12-30 12:25:02.509634	Freddec	username cookie	Last browser username cookie : ""	?planet=510	0	1
-144872	2022-12-30 12:25:25.768853	Freddec	username cookie	Last browser username cookie : ""	?	1	1
-144874	2022-12-30 12:25:58.758515	Freddec	username cookie	Last browser username cookie : ""	?	0	1
-144878	2022-12-30 12:26:20.518046	Freddec	username cookie	Last browser username cookie : ""	?planet=510&a=build&c=0&b=115&y=0	0	1
-144880	2022-12-30 12:26:23.557997	Freddec	username cookie	Last browser username cookie : ""	?planet=510&a=build&c=0&b=116&y=0	0	1
-144883	2022-12-30 12:26:43.136482	Freddec	username cookie	Last browser username cookie : ""	?planet=510&f=1	0	1
-144884	2022-12-30 12:26:44.545294	Freddec	username cookie	Last browser username cookie : ""	?planet=510&f=2	0	1
-144885	2022-12-30 12:26:45.764498	Freddec	username cookie	Last browser username cookie : ""	?planet=510&f=3	0	1
-144886	2022-12-30 12:26:46.855998	Freddec	username cookie	Last browser username cookie : ""	?planet=510&recycle=1	0	1
-144875	2022-12-30 12:27:01.116848	Freddec	username cookie	Last browser username cookie : ""	?planet=510	10	1
-144892	2022-12-30 12:27:18.921578	Freddec	username cookie	Last browser username cookie : ""	?	2	1
-144897	2022-12-30 12:29:20.415496	Freddec	username cookie	Last browser username cookie : ""	?a=sent	0	1
-144898	2022-12-30 12:29:22.219207	Freddec	username cookie	Last browser username cookie : ""	?a=new	0	1
-144899	2022-12-30 12:29:24.516752	Freddec	username cookie	Last browser username cookie : ""	?a=ignorelist	0	1
-144901	2022-12-30 12:29:30.980778	Freddec	username cookie	Last browser username cookie : ""	?cat=1	0	1
-144902	2022-12-30 12:29:32.047747	Freddec	username cookie	Last browser username cookie : ""	?cat=2	0	1
-144903	2022-12-30 12:29:32.852244	Freddec	username cookie	Last browser username cookie : ""	?cat=3	0	1
-144904	2022-12-30 12:29:33.919315	Freddec	username cookie	Last browser username cookie : ""	?cat=6	0	1
-144906	2022-12-30 12:29:37.449872	Freddec	username cookie	Last browser username cookie : ""	?a=chatlist	0	1
-144907	2022-12-30 12:29:46.472575	Freddec	username cookie	Last browser username cookie : ""	?a=join&chat=Exile&pass=	0	1
-144910	2022-12-30 12:29:50.241111	Freddec	username cookie	Last browser username cookie : ""	?a=send&id=2&l=coucou	0	1
-144908	2022-12-30 12:29:56.200789	Freddec	username cookie	Last browser username cookie : ""	?a=refresh&id=2	4	1
-144917	2022-12-30 12:30:05.098029	Freddec	username cookie	Last browser username cookie : ""	?cat=buildings	0	1
-144918	2022-12-30 12:30:06.631503	Freddec	username cookie	Last browser username cookie : ""	?cat=research	0	1
-144895	2022-12-30 12:30:15.018635	Freddec	username cookie	Last browser username cookie : ""	?	8	1
-144921	2022-12-30 12:30:17.447501	Freddec	username cookie	Last browser username cookie : ""	?cat=2	0	1
-144922	2022-12-30 12:30:18.681587	Freddec	username cookie	Last browser username cookie : ""	?cat=3	0	1
-144923	2022-12-30 12:30:20.347142	Freddec	username cookie	Last browser username cookie : ""	?cat=5	0	1
-144924	2022-12-30 12:30:21.390573	Freddec	username cookie	Last browser username cookie : ""	?cat=6	0	1
-144925	2022-12-30 12:30:47.413436	Freddec	username cookie	Last browser username cookie : ""	?	0	1
-144926	2022-12-30 12:34:03.424144	Freddec	username cookie	Last browser username cookie : ""	?	0	1
-144928	2022-12-30 12:34:45.38112	Freddec	username cookie	Last browser username cookie : ""	?a=research&r=101	0	1
-144927	2022-12-30 12:34:52.226911	Freddec	username cookie	Last browser username cookie : ""	?	1	1
-1341873	2022-12-30 13:35:56.434153	Freddec	username cookie	Last browser username cookie : ""	?	0	1
-1341874	2022-12-30 13:37:34.077497	Freddec	username cookie	Last browser username cookie : ""	?	1	1
-1341876	2022-12-30 13:42:17.247065	Freddec	username cookie	Last browser username cookie : ""	?	0	1
-1341877	2022-12-30 13:43:27.71191	Freddec	username cookie	Last browser username cookie : ""	?	2	1
-1341881	2022-12-30 13:43:37.126589	Freddec	username cookie	Last browser username cookie : ""	?planet=510&a=build&c=0&b=103&y=308.79998779296875	0	1
-1341883	2022-12-30 13:43:45.039758	Freddec	username cookie	Last browser username cookie : ""	?planet=510&a=build&c=0&b=118&y=308.79998779296875	0	1
-1341880	2022-12-30 13:43:45.402794	Freddec	username cookie	Last browser username cookie : ""	?planet=510	2	1
-1341885	2022-12-30 13:59:15.25398	Freddec	username cookie	Last browser username cookie : ""	?planet=510	1	1
-1341887	2022-12-30 15:15:21.438109	Freddec	username cookie	Last browser username cookie : ""	?planet=510	0	1
-1341888	2022-12-30 15:15:24.543613	Freddec	username cookie	Last browser username cookie : ""	?	0	1
-1341889	2022-12-30 15:24:02.866915	Freddec	username cookie	Last browser username cookie : ""	?	0	1
-1341891	2022-12-30 15:24:06.21899	Freddec	username cookie	Last browser username cookie : ""	?a=chatlist	0	1
-1341890	2022-12-30 15:25:43.902966	Freddec	username cookie	Last browser username cookie : ""	?a=refresh&id=2	18	1
-1341910	2022-12-30 15:25:51.179175	Freddec	username cookie	Last browser username cookie : ""	?	0	1
-1341911	2022-12-30 15:28:27.503158	Freddec	username cookie	Last browser username cookie : ""	?	0	1
-1341913	2022-12-30 15:33:38.200019	Freddec	username cookie	Last browser username cookie : ""	?g=1&s=21	0	1
-1341914	2022-12-30 15:33:45.769007	Freddec	username cookie	Last browser username cookie : ""	?planet=510	0	1
-1341912	2022-12-30 15:33:50.298104	Freddec	username cookie	Last browser username cookie : ""	?	1	1
-1341916	2022-12-30 15:47:10.963727	Freddec	username cookie	Last browser username cookie : ""	?	0	1
-1341917	2022-12-30 15:53:38.248987	Freddec	username cookie	Last browser username cookie : ""	?	0	1
-1341920	2022-12-30 15:55:31.903051	Freddec	username cookie	Last browser username cookie : ""	?cat=1	0	1
-1341921	2022-12-30 15:55:33.18157	Freddec	username cookie	Last browser username cookie : ""	?cat=2	0	1
-1341922	2022-12-30 15:55:34.269232	Freddec	username cookie	Last browser username cookie : ""	?cat=3	0	1
-1341923	2022-12-30 15:55:35.296605	Freddec	username cookie	Last browser username cookie : ""	?cat=4	0	1
-1341924	2022-12-30 15:55:36.251303	Freddec	username cookie	Last browser username cookie : ""	?cat=5	0	1
-1341925	2022-12-30 15:55:37.09179	Freddec	username cookie	Last browser username cookie : ""	?cat=6	0	1
-1341926	2022-12-30 15:55:37.967224	Freddec	username cookie	Last browser username cookie : ""	?cat=7	0	1
-1341927	2022-12-30 15:55:39.097109	Freddec	username cookie	Last browser username cookie : ""	?cat=8	0	1
-1341918	2022-12-30 15:56:00.035968	Freddec	username cookie	Last browser username cookie : ""	?	6	1
-1341933	2022-12-30 16:02:14.533172	Freddec	username cookie	Last browser username cookie : ""	?	0	1
-1341934	2022-12-30 16:06:27.695476	Freddec	username cookie	Last browser username cookie : ""		0	1
-1341935	2022-12-30 16:07:11.985838	Freddec	username cookie	Last browser username cookie : ""		1	1
-1341937	2022-12-30 16:08:25.879396	Freddec	username cookie	Last browser username cookie : ""		2	1
-1341940	2022-12-30 16:13:45.777542	Freddec	username cookie	Last browser username cookie : ""		1	1
-1341942	2022-12-30 16:16:13.711667	Freddec	username cookie	Last browser username cookie : ""		0	1
-1341943	2022-12-30 16:18:55.728903	Freddec	username cookie	Last browser username cookie : ""		0	1
-1341944	2022-12-30 16:35:03.598147	Freddec	username cookie	Last browser username cookie : ""		0	1
-1341945	2022-12-30 16:37:41.634909	Freddec	username cookie	Last browser username cookie : ""		1	1
-1341947	2022-12-30 16:38:12.462083	Freddec	username cookie	Last browser username cookie : ""		0	1
-1341948	2022-12-30 16:44:48.806689	Freddec	username cookie	Last browser username cookie : ""		13	1
-1341962	2022-12-30 16:47:46.750822	Freddec	username cookie	Last browser username cookie : ""		0	1
-\.
-
-
---
--- Data for Name: log_sys_errors; Type: TABLE DATA; Schema: s03; Owner: freddec
---
-
-COPY s03.log_sys_errors (id, procedure, added, error) FROM stdin;
-639060	sp_process_sessions_timeout()	2022-12-30 16:36:53.245314	relation "sessions" does not exist
-639061	sp_process_buildings()	2022-12-30 16:36:53.245314	function sp_session_isalive(integer) does not exist
-639062	sp_process_researches()	2022-12-30 16:36:53.245314	function sp_session_isalive(integer) does not exist
-639063	sp_process_sessions_timeout()	2022-12-30 16:36:53.802864	relation "sessions" does not exist
-639064	sp_process_buildings()	2022-12-30 16:36:53.802864	function sp_session_isalive(integer) does not exist
-639065	sp_process_researches()	2022-12-30 16:36:53.802864	function sp_session_isalive(integer) does not exist
-639066	sp_process_sessions_timeout()	2022-12-30 16:36:54.326361	relation "sessions" does not exist
-639067	sp_process_buildings()	2022-12-30 16:36:54.326361	function sp_session_isalive(integer) does not exist
-639068	sp_process_researches()	2022-12-30 16:36:54.326361	function sp_session_isalive(integer) does not exist
-639069	sp_process_sessions_timeout()	2022-12-30 16:36:54.867216	relation "sessions" does not exist
-639070	sp_process_buildings()	2022-12-30 16:36:54.867216	function sp_session_isalive(integer) does not exist
-639071	sp_process_researches()	2022-12-30 16:36:54.867216	function sp_session_isalive(integer) does not exist
-639072	sp_process_sessions_timeout()	2022-12-30 16:36:55.402295	relation "sessions" does not exist
-639073	sp_process_buildings()	2022-12-30 16:36:55.402295	function sp_session_isalive(integer) does not exist
-639074	sp_process_researches()	2022-12-30 16:36:55.402295	function sp_session_isalive(integer) does not exist
-639075	sp_process_sessions_timeout()	2022-12-30 16:36:55.927253	relation "sessions" does not exist
-639076	sp_process_buildings()	2022-12-30 16:36:55.927253	function sp_session_isalive(integer) does not exist
-639077	sp_process_researches()	2022-12-30 16:36:55.927253	function sp_session_isalive(integer) does not exist
-639078	sp_process_sessions_timeout()	2022-12-30 16:36:56.466857	relation "sessions" does not exist
-639079	sp_process_buildings()	2022-12-30 16:36:56.466857	function sp_session_isalive(integer) does not exist
-639080	sp_process_researches()	2022-12-30 16:36:56.466857	function sp_session_isalive(integer) does not exist
-639081	sp_process_researches()	2022-12-30 16:36:56.987261	function sp_session_isalive(integer) does not exist
-639082	sp_process_sessions_timeout()	2022-12-30 16:36:56.987261	relation "sessions" does not exist
-639083	sp_process_buildings()	2022-12-30 16:36:56.987261	function sp_session_isalive(integer) does not exist
-639084	sp_process_researches()	2022-12-30 16:36:57.517246	function sp_session_isalive(integer) does not exist
-639085	sp_process_buildings()	2022-12-30 16:36:57.517246	function sp_session_isalive(integer) does not exist
-639086	sp_process_sessions_timeout()	2022-12-30 16:36:57.517246	relation "sessions" does not exist
-639087	sp_process_sessions_timeout()	2022-12-30 16:36:58.047305	relation "sessions" does not exist
-639088	sp_process_researches()	2022-12-30 16:36:58.047305	function sp_session_isalive(integer) does not exist
-639089	sp_process_buildings()	2022-12-30 16:36:58.047305	function sp_session_isalive(integer) does not exist
-639090	sp_process_sessions_timeout()	2022-12-30 16:36:58.574499	relation "sessions" does not exist
-639091	sp_process_researches()	2022-12-30 16:36:58.574499	function sp_session_isalive(integer) does not exist
-639092	sp_process_buildings()	2022-12-30 16:36:58.574499	function sp_session_isalive(integer) does not exist
-639093	sp_process_buildings()	2022-12-30 16:36:59.107552	function sp_session_isalive(integer) does not exist
-639094	sp_process_sessions_timeout()	2022-12-30 16:36:59.107552	relation "sessions" does not exist
-639095	sp_process_researches()	2022-12-30 16:36:59.107552	function sp_session_isalive(integer) does not exist
-639096	sp_process_sessions_timeout()	2022-12-30 16:36:59.637329	relation "sessions" does not exist
-639097	sp_process_researches()	2022-12-30 16:36:59.637329	function sp_session_isalive(integer) does not exist
-639098	sp_process_buildings()	2022-12-30 16:36:59.637329	function sp_session_isalive(integer) does not exist
-639099	sp_process_sessions_timeout()	2022-12-30 16:37:00.157405	relation "sessions" does not exist
-639100	sp_process_buildings()	2022-12-30 16:37:00.157405	function sp_session_isalive(integer) does not exist
-639101	sp_process_researches()	2022-12-30 16:37:00.157405	function sp_session_isalive(integer) does not exist
-639102	sp_process_buildings()	2022-12-30 16:37:00.686947	function sp_session_isalive(integer) does not exist
-639103	sp_process_researches()	2022-12-30 16:37:00.686947	function sp_session_isalive(integer) does not exist
-639104	sp_process_sessions_timeout()	2022-12-30 16:37:00.686947	relation "sessions" does not exist
-639105	sp_process_sessions_timeout()	2022-12-30 16:37:01.21735	relation "sessions" does not exist
-639106	sp_process_buildings()	2022-12-30 16:37:01.21735	function sp_session_isalive(integer) does not exist
-639107	sp_process_researches()	2022-12-30 16:37:01.21735	function sp_session_isalive(integer) does not exist
-639108	sp_process_buildings()	2022-12-30 16:37:01.738027	function sp_session_isalive(integer) does not exist
-639109	sp_process_researches()	2022-12-30 16:37:01.738027	function sp_session_isalive(integer) does not exist
-639110	sp_process_sessions_timeout()	2022-12-30 16:37:01.738027	relation "sessions" does not exist
-639111	sp_process_buildings()	2022-12-30 16:37:02.257368	function sp_session_isalive(integer) does not exist
-639112	sp_process_researches()	2022-12-30 16:37:02.257368	function sp_session_isalive(integer) does not exist
-639113	sp_process_sessions_timeout()	2022-12-30 16:37:02.257368	relation "sessions" does not exist
-639114	sp_process_researches()	2022-12-30 16:37:02.786573	function sp_session_isalive(integer) does not exist
-639115	sp_process_sessions_timeout()	2022-12-30 16:37:02.786573	relation "sessions" does not exist
-639116	sp_process_buildings()	2022-12-30 16:37:02.786573	function sp_session_isalive(integer) does not exist
-639117	sp_process_researches()	2022-12-30 16:37:03.307418	function sp_session_isalive(integer) does not exist
-639118	sp_process_buildings()	2022-12-30 16:37:03.307418	function sp_session_isalive(integer) does not exist
-639119	sp_process_sessions_timeout()	2022-12-30 16:37:03.307418	relation "sessions" does not exist
-639120	sp_process_buildings()	2022-12-30 16:37:03.836559	function sp_session_isalive(integer) does not exist
-639121	sp_process_sessions_timeout()	2022-12-30 16:37:03.836559	relation "sessions" does not exist
-639122	sp_process_researches()	2022-12-30 16:37:03.836559	function sp_session_isalive(integer) does not exist
-639123	sp_process_sessions_timeout()	2022-12-30 16:37:04.357393	relation "sessions" does not exist
-639124	sp_process_buildings()	2022-12-30 16:37:04.357393	function sp_session_isalive(integer) does not exist
-639125	sp_process_researches()	2022-12-30 16:37:04.357393	function sp_session_isalive(integer) does not exist
-639126	sp_process_sessions_timeout()	2022-12-30 16:37:04.897963	relation "sessions" does not exist
-639127	sp_process_buildings()	2022-12-30 16:37:04.897963	function sp_session_isalive(integer) does not exist
-639128	sp_process_researches()	2022-12-30 16:37:04.897963	function sp_session_isalive(integer) does not exist
-639129	sp_process_researches()	2022-12-30 16:37:05.422532	function sp_session_isalive(integer) does not exist
-639130	sp_process_sessions_timeout()	2022-12-30 16:37:05.422532	relation "sessions" does not exist
-639131	sp_process_buildings()	2022-12-30 16:37:05.422532	function sp_session_isalive(integer) does not exist
-639132	sp_process_researches()	2022-12-30 16:37:05.940545	function sp_session_isalive(integer) does not exist
-639133	sp_process_sessions_timeout()	2022-12-30 16:37:05.940545	relation "sessions" does not exist
-639134	sp_process_buildings()	2022-12-30 16:37:05.940545	function sp_session_isalive(integer) does not exist
-639135	sp_process_buildings()	2022-12-30 16:37:06.477456	function sp_session_isalive(integer) does not exist
-639136	sp_process_researches()	2022-12-30 16:37:06.477456	function sp_session_isalive(integer) does not exist
-639137	sp_process_sessions_timeout()	2022-12-30 16:37:06.477456	relation "sessions" does not exist
-639138	sp_process_buildings()	2022-12-30 16:37:06.997535	function sp_session_isalive(integer) does not exist
-639139	sp_process_researches()	2022-12-30 16:37:06.997535	function sp_session_isalive(integer) does not exist
-639140	sp_process_sessions_timeout()	2022-12-30 16:37:06.997535	relation "sessions" does not exist
-639141	sp_process_sessions_timeout()	2022-12-30 16:37:07.507498	relation "sessions" does not exist
-639142	sp_process_buildings()	2022-12-30 16:37:07.507498	function sp_session_isalive(integer) does not exist
-639143	sp_process_researches()	2022-12-30 16:37:07.507498	function sp_session_isalive(integer) does not exist
-639144	sp_process_sessions_timeout()	2022-12-30 16:37:08.027613	relation "sessions" does not exist
-639145	sp_process_buildings()	2022-12-30 16:37:08.027613	function sp_session_isalive(integer) does not exist
-639146	sp_process_researches()	2022-12-30 16:37:08.027613	function sp_session_isalive(integer) does not exist
-639147	sp_process_researches()	2022-12-30 16:37:08.555246	function sp_session_isalive(integer) does not exist
-639148	sp_process_sessions_timeout()	2022-12-30 16:37:08.555246	relation "sessions" does not exist
-639149	sp_process_buildings()	2022-12-30 16:37:08.555246	function sp_session_isalive(integer) does not exist
-639150	sp_process_researches()	2022-12-30 16:37:09.083108	function sp_session_isalive(integer) does not exist
-639151	sp_process_sessions_timeout()	2022-12-30 16:37:09.083108	relation "sessions" does not exist
-639152	sp_process_buildings()	2022-12-30 16:37:09.083108	function sp_session_isalive(integer) does not exist
-639153	sp_process_buildings()	2022-12-30 16:37:09.608044	function sp_session_isalive(integer) does not exist
-639154	sp_process_researches()	2022-12-30 16:37:09.608044	function sp_session_isalive(integer) does not exist
-639155	sp_process_sessions_timeout()	2022-12-30 16:37:09.608044	relation "sessions" does not exist
-639156	sp_process_buildings()	2022-12-30 16:37:10.137207	function sp_session_isalive(integer) does not exist
-639157	sp_process_researches()	2022-12-30 16:37:10.137207	function sp_session_isalive(integer) does not exist
-639158	sp_process_sessions_timeout()	2022-12-30 16:37:10.137207	relation "sessions" does not exist
-639159	sp_process_buildings()	2022-12-30 16:37:10.672735	function sp_session_isalive(integer) does not exist
-639160	sp_process_researches()	2022-12-30 16:37:10.672735	function sp_session_isalive(integer) does not exist
-639161	sp_process_sessions_timeout()	2022-12-30 16:37:10.672735	relation "sessions" does not exist
-639162	sp_process_sessions_timeout()	2022-12-30 16:37:11.205721	relation "sessions" does not exist
-639163	sp_process_buildings()	2022-12-30 16:37:11.205721	function sp_session_isalive(integer) does not exist
-639164	sp_process_researches()	2022-12-30 16:37:11.205721	function sp_session_isalive(integer) does not exist
-639165	sp_process_sessions_timeout()	2022-12-30 16:37:11.72625	relation "sessions" does not exist
-639166	sp_process_buildings()	2022-12-30 16:37:11.72625	function sp_session_isalive(integer) does not exist
-639167	sp_process_researches()	2022-12-30 16:37:11.72625	function sp_session_isalive(integer) does not exist
-639168	sp_process_sessions_timeout()	2022-12-30 16:37:12.244732	relation "sessions" does not exist
-639169	sp_process_buildings()	2022-12-30 16:37:12.244732	function sp_session_isalive(integer) does not exist
-639170	sp_process_researches()	2022-12-30 16:37:12.244732	function sp_session_isalive(integer) does not exist
-639171	sp_process_sessions_timeout()	2022-12-30 16:37:12.772225	relation "sessions" does not exist
-639172	sp_process_buildings()	2022-12-30 16:37:12.772225	function sp_session_isalive(integer) does not exist
-639173	sp_process_researches()	2022-12-30 16:37:12.772225	function sp_session_isalive(integer) does not exist
-639174	sp_process_researches()	2022-12-30 16:37:13.289312	function sp_session_isalive(integer) does not exist
-639175	sp_process_sessions_timeout()	2022-12-30 16:37:13.289312	relation "sessions" does not exist
-639176	sp_process_buildings()	2022-12-30 16:37:13.289312	function sp_session_isalive(integer) does not exist
-639177	sp_process_researches()	2022-12-30 16:37:13.822748	function sp_session_isalive(integer) does not exist
-639178	sp_process_sessions_timeout()	2022-12-30 16:37:13.822748	relation "sessions" does not exist
-639179	sp_process_buildings()	2022-12-30 16:37:13.822748	function sp_session_isalive(integer) does not exist
-639180	sp_process_buildings()	2022-12-30 16:37:14.355203	function sp_session_isalive(integer) does not exist
-639181	sp_process_researches()	2022-12-30 16:37:14.355203	function sp_session_isalive(integer) does not exist
-639182	sp_process_sessions_timeout()	2022-12-30 16:37:14.355203	relation "sessions" does not exist
-639183	sp_process_buildings()	2022-12-30 16:37:14.887822	function sp_session_isalive(integer) does not exist
-639184	sp_process_researches()	2022-12-30 16:37:14.887822	function sp_session_isalive(integer) does not exist
-639185	sp_process_sessions_timeout()	2022-12-30 16:37:14.887822	relation "sessions" does not exist
-639186	sp_process_researches()	2022-12-30 16:37:15.422233	function sp_session_isalive(integer) does not exist
-639187	sp_process_sessions_timeout()	2022-12-30 16:37:15.422233	relation "sessions" does not exist
-639188	sp_process_buildings()	2022-12-30 16:37:15.422233	function sp_session_isalive(integer) does not exist
-639189	sp_process_researches()	2022-12-30 16:37:15.954258	function sp_session_isalive(integer) does not exist
-639190	sp_process_sessions_timeout()	2022-12-30 16:37:15.954258	relation "sessions" does not exist
-639191	sp_process_buildings()	2022-12-30 16:37:15.954258	function sp_session_isalive(integer) does not exist
-639192	sp_process_buildings()	2022-12-30 16:37:16.487272	function sp_session_isalive(integer) does not exist
-639193	sp_process_researches()	2022-12-30 16:37:16.487272	function sp_session_isalive(integer) does not exist
-639194	sp_process_sessions_timeout()	2022-12-30 16:37:16.487272	relation "sessions" does not exist
-639195	sp_process_buildings()	2022-12-30 16:37:17.022729	function sp_session_isalive(integer) does not exist
-639196	sp_process_researches()	2022-12-30 16:37:17.022729	function sp_session_isalive(integer) does not exist
-639197	sp_process_sessions_timeout()	2022-12-30 16:37:17.022729	relation "sessions" does not exist
-639198	sp_process_sessions_timeout()	2022-12-30 16:37:17.545189	relation "sessions" does not exist
-639199	sp_process_buildings()	2022-12-30 16:37:17.545189	function sp_session_isalive(integer) does not exist
-639200	sp_process_researches()	2022-12-30 16:37:17.545189	function sp_session_isalive(integer) does not exist
-639201	sp_process_sessions_timeout()	2022-12-30 16:37:18.072642	relation "sessions" does not exist
-639202	sp_process_buildings()	2022-12-30 16:37:18.072642	function sp_session_isalive(integer) does not exist
-639203	sp_process_researches()	2022-12-30 16:37:18.072642	function sp_session_isalive(integer) does not exist
-639204	sp_process_sessions_timeout()	2022-12-30 16:37:18.595867	relation "sessions" does not exist
-639205	sp_process_buildings()	2022-12-30 16:37:18.595867	function sp_session_isalive(integer) does not exist
-639206	sp_process_researches()	2022-12-30 16:37:18.595867	function sp_session_isalive(integer) does not exist
-639207	sp_process_researches()	2022-12-30 16:37:19.12891	function sp_session_isalive(integer) does not exist
-639208	sp_process_sessions_timeout()	2022-12-30 16:37:19.12891	relation "sessions" does not exist
-639209	sp_process_buildings()	2022-12-30 16:37:19.12891	function sp_session_isalive(integer) does not exist
-639210	sp_process_researches()	2022-12-30 16:37:19.654761	function sp_session_isalive(integer) does not exist
-639211	sp_process_sessions_timeout()	2022-12-30 16:37:19.654761	relation "sessions" does not exist
-639212	sp_process_buildings()	2022-12-30 16:37:19.654761	function sp_session_isalive(integer) does not exist
-639213	sp_process_researches()	2022-12-30 16:37:20.18727	function sp_session_isalive(integer) does not exist
-639214	sp_process_sessions_timeout()	2022-12-30 16:37:20.18727	relation "sessions" does not exist
-639215	sp_process_buildings()	2022-12-30 16:37:20.18727	function sp_session_isalive(integer) does not exist
-639216	sp_process_researches()	2022-12-30 16:37:20.706864	function sp_session_isalive(integer) does not exist
-639217	sp_process_sessions_timeout()	2022-12-30 16:37:20.706864	relation "sessions" does not exist
-639218	sp_process_buildings()	2022-12-30 16:37:20.706864	function sp_session_isalive(integer) does not exist
-639219	sp_process_researches()	2022-12-30 16:37:21.236963	function sp_session_isalive(integer) does not exist
-639220	sp_process_sessions_timeout()	2022-12-30 16:37:21.236963	relation "sessions" does not exist
-639221	sp_process_buildings()	2022-12-30 16:37:21.236963	function sp_session_isalive(integer) does not exist
-639222	sp_process_buildings()	2022-12-30 16:37:21.766857	function sp_session_isalive(integer) does not exist
-639223	sp_process_researches()	2022-12-30 16:37:21.766857	function sp_session_isalive(integer) does not exist
-639224	sp_process_sessions_timeout()	2022-12-30 16:37:21.766857	relation "sessions" does not exist
-639225	sp_process_sessions_timeout()	2022-12-30 16:37:22.286846	relation "sessions" does not exist
-639226	sp_process_buildings()	2022-12-30 16:37:22.286846	function sp_session_isalive(integer) does not exist
-639227	sp_process_researches()	2022-12-30 16:37:22.286846	function sp_session_isalive(integer) does not exist
-639228	sp_process_sessions_timeout()	2022-12-30 16:37:22.802452	relation "sessions" does not exist
-639229	sp_process_buildings()	2022-12-30 16:37:22.802452	function sp_session_isalive(integer) does not exist
-639230	sp_process_researches()	2022-12-30 16:37:22.802452	function sp_session_isalive(integer) does not exist
-639231	sp_process_researches()	2022-12-30 16:37:23.337292	function sp_session_isalive(integer) does not exist
-639232	sp_process_sessions_timeout()	2022-12-30 16:37:23.337292	relation "sessions" does not exist
-639233	sp_process_buildings()	2022-12-30 16:37:23.337292	function sp_session_isalive(integer) does not exist
-639234	sp_process_researches()	2022-12-30 16:37:23.855357	function sp_session_isalive(integer) does not exist
-639235	sp_process_sessions_timeout()	2022-12-30 16:37:23.855357	relation "sessions" does not exist
-639236	sp_process_buildings()	2022-12-30 16:37:23.855357	function sp_session_isalive(integer) does not exist
-639237	sp_process_researches()	2022-12-30 16:37:24.388497	function sp_session_isalive(integer) does not exist
-639238	sp_process_sessions_timeout()	2022-12-30 16:37:24.388497	relation "sessions" does not exist
-639239	sp_process_buildings()	2022-12-30 16:37:24.388497	function sp_session_isalive(integer) does not exist
-639240	sp_process_buildings()	2022-12-30 16:37:24.916018	function sp_session_isalive(integer) does not exist
-639241	sp_process_researches()	2022-12-30 16:37:24.916018	function sp_session_isalive(integer) does not exist
-639242	sp_process_sessions_timeout()	2022-12-30 16:37:24.916018	relation "sessions" does not exist
-639243	sp_process_buildings()	2022-12-30 16:37:25.445396	function sp_session_isalive(integer) does not exist
-639244	sp_process_sessions_timeout()	2022-12-30 16:37:25.445396	relation "sessions" does not exist
-639245	sp_process_researches()	2022-12-30 16:37:25.445396	function sp_session_isalive(integer) does not exist
-639246	sp_process_sessions_timeout()	2022-12-30 16:37:25.97147	relation "sessions" does not exist
-639247	sp_process_buildings()	2022-12-30 16:37:25.97147	function sp_session_isalive(integer) does not exist
-639248	sp_process_researches()	2022-12-30 16:37:25.97147	function sp_session_isalive(integer) does not exist
-639249	sp_process_sessions_timeout()	2022-12-30 16:37:26.500465	relation "sessions" does not exist
-639250	sp_process_buildings()	2022-12-30 16:37:26.500465	function sp_session_isalive(integer) does not exist
-639251	sp_process_researches()	2022-12-30 16:37:26.500465	function sp_session_isalive(integer) does not exist
-639252	sp_process_researches()	2022-12-30 16:37:27.029488	function sp_session_isalive(integer) does not exist
-639253	sp_process_sessions_timeout()	2022-12-30 16:37:27.029488	relation "sessions" does not exist
-639254	sp_process_buildings()	2022-12-30 16:37:27.029488	function sp_session_isalive(integer) does not exist
-639255	sp_process_researches()	2022-12-30 16:37:27.557627	function sp_session_isalive(integer) does not exist
-639256	sp_process_sessions_timeout()	2022-12-30 16:37:27.557627	relation "sessions" does not exist
-639257	sp_process_buildings()	2022-12-30 16:37:27.557627	function sp_session_isalive(integer) does not exist
-639258	sp_process_researches()	2022-12-30 16:37:28.084083	function sp_session_isalive(integer) does not exist
-639259	sp_process_sessions_timeout()	2022-12-30 16:37:28.084083	relation "sessions" does not exist
-639260	sp_process_buildings()	2022-12-30 16:37:28.084083	function sp_session_isalive(integer) does not exist
-639261	sp_process_buildings()	2022-12-30 16:37:28.612584	function sp_session_isalive(integer) does not exist
-639262	sp_process_researches()	2022-12-30 16:37:28.612584	function sp_session_isalive(integer) does not exist
-639263	sp_process_sessions_timeout()	2022-12-30 16:37:28.612584	relation "sessions" does not exist
-639264	sp_process_buildings()	2022-12-30 16:37:29.137063	function sp_session_isalive(integer) does not exist
-639265	sp_process_researches()	2022-12-30 16:37:29.137063	function sp_session_isalive(integer) does not exist
-639266	sp_process_sessions_timeout()	2022-12-30 16:37:29.137063	relation "sessions" does not exist
-639267	sp_process_sessions_timeout()	2022-12-30 16:37:29.657426	relation "sessions" does not exist
-639268	sp_process_buildings()	2022-12-30 16:37:29.657426	function sp_session_isalive(integer) does not exist
-639269	sp_process_researches()	2022-12-30 16:37:29.657426	function sp_session_isalive(integer) does not exist
-639270	sp_process_sessions_timeout()	2022-12-30 16:37:30.187183	relation "sessions" does not exist
-639271	sp_process_buildings()	2022-12-30 16:37:30.187183	function sp_session_isalive(integer) does not exist
-639272	sp_process_researches()	2022-12-30 16:37:30.187183	function sp_session_isalive(integer) does not exist
-639273	sp_process_sessions_timeout()	2022-12-30 16:37:30.717141	relation "sessions" does not exist
-639274	sp_process_buildings()	2022-12-30 16:37:30.717141	function sp_session_isalive(integer) does not exist
-639275	sp_process_researches()	2022-12-30 16:37:30.717141	function sp_session_isalive(integer) does not exist
-639276	sp_process_sessions_timeout()	2022-12-30 16:37:31.241062	relation "sessions" does not exist
-639277	sp_process_buildings()	2022-12-30 16:37:31.241062	function sp_session_isalive(integer) does not exist
-639278	sp_process_researches()	2022-12-30 16:37:31.241062	function sp_session_isalive(integer) does not exist
-639279	sp_process_sessions_timeout()	2022-12-30 16:37:31.774633	relation "sessions" does not exist
-639280	sp_process_buildings()	2022-12-30 16:37:31.774633	function sp_session_isalive(integer) does not exist
-639281	sp_process_researches()	2022-12-30 16:37:31.774633	function sp_session_isalive(integer) does not exist
-639282	sp_process_researches()	2022-12-30 16:37:32.306562	function sp_session_isalive(integer) does not exist
-639283	sp_process_sessions_timeout()	2022-12-30 16:37:32.306562	relation "sessions" does not exist
-639284	sp_process_buildings()	2022-12-30 16:37:32.306562	function sp_session_isalive(integer) does not exist
-639285	sp_process_researches()	2022-12-30 16:37:32.838117	function sp_session_isalive(integer) does not exist
-639286	sp_process_sessions_timeout()	2022-12-30 16:37:32.838117	relation "sessions" does not exist
-639287	sp_process_buildings()	2022-12-30 16:37:32.838117	function sp_session_isalive(integer) does not exist
-639288	sp_process_buildings()	2022-12-30 16:37:33.357258	function sp_session_isalive(integer) does not exist
-639289	sp_process_researches()	2022-12-30 16:37:33.357258	function sp_session_isalive(integer) does not exist
-639290	sp_process_sessions_timeout()	2022-12-30 16:37:33.357258	relation "sessions" does not exist
-639291	sp_process_buildings()	2022-12-30 16:37:33.884095	function sp_session_isalive(integer) does not exist
-639292	sp_process_researches()	2022-12-30 16:37:33.884095	function sp_session_isalive(integer) does not exist
-639293	sp_process_sessions_timeout()	2022-12-30 16:37:33.884095	relation "sessions" does not exist
-639294	sp_process_sessions_timeout()	2022-12-30 16:37:34.416035	relation "sessions" does not exist
-639295	sp_process_buildings()	2022-12-30 16:37:34.416035	function sp_session_isalive(integer) does not exist
-639296	sp_process_researches()	2022-12-30 16:37:34.416035	function sp_session_isalive(integer) does not exist
-639297	sp_process_sessions_timeout()	2022-12-30 16:37:34.946202	relation "sessions" does not exist
-639298	sp_process_buildings()	2022-12-30 16:37:34.946202	function sp_session_isalive(integer) does not exist
-639299	sp_process_researches()	2022-12-30 16:37:34.946202	function sp_session_isalive(integer) does not exist
-639300	sp_process_sessions_timeout()	2022-12-30 16:37:35.466646	relation "sessions" does not exist
-639301	sp_process_buildings()	2022-12-30 16:37:35.466646	function sp_session_isalive(integer) does not exist
-639302	sp_process_researches()	2022-12-30 16:37:35.466646	function sp_session_isalive(integer) does not exist
-639303	sp_process_sessions_timeout()	2022-12-30 16:37:35.989767	relation "sessions" does not exist
-639304	sp_process_buildings()	2022-12-30 16:37:35.989767	function sp_session_isalive(integer) does not exist
-639305	sp_process_researches()	2022-12-30 16:37:35.989767	function sp_session_isalive(integer) does not exist
-639306	sp_process_buildings()	2022-12-30 16:37:36.508681	function sp_session_isalive(integer) does not exist
-639307	sp_process_researches()	2022-12-30 16:37:36.508681	function sp_session_isalive(integer) does not exist
-639308	sp_process_sessions_timeout()	2022-12-30 16:37:36.508681	relation "sessions" does not exist
-639309	sp_process_buildings()	2022-12-30 16:37:37.036742	function sp_session_isalive(integer) does not exist
-639310	sp_process_researches()	2022-12-30 16:37:37.036742	function sp_session_isalive(integer) does not exist
-639311	sp_process_sessions_timeout()	2022-12-30 16:37:37.036742	relation "sessions" does not exist
-639312	sp_process_sessions_timeout()	2022-12-30 16:37:37.564582	relation "sessions" does not exist
-639313	sp_process_buildings()	2022-12-30 16:37:37.564582	function sp_session_isalive(integer) does not exist
-639314	sp_process_researches()	2022-12-30 16:37:37.564582	function sp_session_isalive(integer) does not exist
-639315	sp_process_sessions_timeout()	2022-12-30 16:37:38.089708	relation "sessions" does not exist
-639316	sp_process_buildings()	2022-12-30 16:37:38.089708	function sp_session_isalive(integer) does not exist
-639317	sp_process_researches()	2022-12-30 16:37:38.089708	function sp_session_isalive(integer) does not exist
-639318	sp_process_researches()	2022-12-30 16:37:38.614779	function sp_session_isalive(integer) does not exist
-639319	sp_process_sessions_timeout()	2022-12-30 16:37:38.614779	relation "sessions" does not exist
-639320	sp_process_buildings()	2022-12-30 16:37:38.614779	function sp_session_isalive(integer) does not exist
-639321	sp_process_buildings()	2022-12-30 16:37:39.14566	function sp_session_isalive(integer) does not exist
-639322	sp_process_researches()	2022-12-30 16:37:39.14566	function sp_session_isalive(integer) does not exist
-639323	sp_process_sessions_timeout()	2022-12-30 16:37:39.14566	relation "sessions" does not exist
-639324	sp_process_buildings()	2022-12-30 16:37:39.678265	function sp_session_isalive(integer) does not exist
-639325	sp_process_researches()	2022-12-30 16:37:39.678265	function sp_session_isalive(integer) does not exist
-639326	sp_process_sessions_timeout()	2022-12-30 16:37:39.678265	relation "sessions" does not exist
-639327	sp_process_buildings()	2022-12-30 16:37:40.206193	function sp_session_isalive(integer) does not exist
-639328	sp_process_researches()	2022-12-30 16:37:40.206193	function sp_session_isalive(integer) does not exist
-639329	sp_process_sessions_timeout()	2022-12-30 16:37:40.206193	relation "sessions" does not exist
-639330	sp_process_buildings()	2022-12-30 16:37:40.738773	function sp_session_isalive(integer) does not exist
-639331	sp_process_researches()	2022-12-30 16:37:40.738773	function sp_session_isalive(integer) does not exist
-639332	sp_process_sessions_timeout()	2022-12-30 16:37:40.738773	relation "sessions" does not exist
-639333	sp_process_researches()	2022-12-30 16:37:41.272372	function sp_session_isalive(integer) does not exist
-639334	sp_process_buildings()	2022-12-30 16:37:41.272372	function sp_session_isalive(integer) does not exist
-639335	sp_process_sessions_timeout()	2022-12-30 16:37:41.272372	relation "sessions" does not exist
-639336	sp_process_buildings()	2022-12-30 16:37:41.803289	function sp_session_isalive(integer) does not exist
-639337	sp_process_sessions_timeout()	2022-12-30 16:37:41.803289	relation "sessions" does not exist
-639338	sp_process_researches()	2022-12-30 16:37:41.803289	function sp_session_isalive(integer) does not exist
-639339	sp_process_buildings()	2022-12-30 16:37:42.334355	function sp_session_isalive(integer) does not exist
-639340	sp_process_sessions_timeout()	2022-12-30 16:37:42.334355	relation "sessions" does not exist
-639341	sp_process_researches()	2022-12-30 16:37:42.334355	function sp_session_isalive(integer) does not exist
-639342	sp_process_researches()	2022-12-30 16:37:42.853789	function sp_session_isalive(integer) does not exist
-639343	sp_process_buildings()	2022-12-30 16:37:42.853789	function sp_session_isalive(integer) does not exist
-639344	sp_process_sessions_timeout()	2022-12-30 16:37:42.853789	relation "sessions" does not exist
-639345	sp_process_researches()	2022-12-30 16:37:43.373284	function sp_session_isalive(integer) does not exist
-639346	sp_process_buildings()	2022-12-30 16:37:43.373284	function sp_session_isalive(integer) does not exist
-639347	sp_process_sessions_timeout()	2022-12-30 16:37:43.373284	relation "sessions" does not exist
-639348	sp_process_sessions_timeout()	2022-12-30 16:37:43.896925	relation "sessions" does not exist
-639349	sp_process_researches()	2022-12-30 16:37:43.896925	function sp_session_isalive(integer) does not exist
-639350	sp_process_buildings()	2022-12-30 16:37:43.896925	function sp_session_isalive(integer) does not exist
-639351	sp_process_sessions_timeout()	2022-12-30 16:37:44.422363	relation "sessions" does not exist
-639352	sp_process_researches()	2022-12-30 16:37:44.422363	function sp_session_isalive(integer) does not exist
-639353	sp_process_buildings()	2022-12-30 16:37:44.422363	function sp_session_isalive(integer) does not exist
-639354	sp_process_buildings()	2022-12-30 16:37:44.94179	function sp_session_isalive(integer) does not exist
-639355	sp_process_sessions_timeout()	2022-12-30 16:37:44.94179	relation "sessions" does not exist
-639356	sp_process_researches()	2022-12-30 16:37:44.94179	function sp_session_isalive(integer) does not exist
-639357	sp_process_buildings()	2022-12-30 16:37:45.462424	function sp_session_isalive(integer) does not exist
-639358	sp_process_sessions_timeout()	2022-12-30 16:37:45.462424	relation "sessions" does not exist
-639359	sp_process_researches()	2022-12-30 16:37:45.462424	function sp_session_isalive(integer) does not exist
-639360	sp_process_buildings()	2022-12-30 16:37:45.987898	function sp_session_isalive(integer) does not exist
-639361	sp_process_sessions_timeout()	2022-12-30 16:37:45.987898	relation "sessions" does not exist
-639362	sp_process_researches()	2022-12-30 16:37:45.987898	function sp_session_isalive(integer) does not exist
-639363	sp_process_sessions_timeout()	2022-12-30 16:37:46.508358	relation "sessions" does not exist
-639364	sp_process_buildings()	2022-12-30 16:37:46.508358	function sp_session_isalive(integer) does not exist
-639365	sp_process_researches()	2022-12-30 16:37:46.508358	function sp_session_isalive(integer) does not exist
-639366	sp_process_sessions_timeout()	2022-12-30 16:37:47.037831	relation "sessions" does not exist
-639367	sp_process_buildings()	2022-12-30 16:37:47.037831	function sp_session_isalive(integer) does not exist
-639368	sp_process_researches()	2022-12-30 16:37:47.037831	function sp_session_isalive(integer) does not exist
-639369	sp_process_sessions_timeout()	2022-12-30 16:37:47.559822	relation "sessions" does not exist
-639370	sp_process_buildings()	2022-12-30 16:37:47.559822	function sp_session_isalive(integer) does not exist
-639371	sp_process_researches()	2022-12-30 16:37:47.559822	function sp_session_isalive(integer) does not exist
-639372	sp_process_sessions_timeout()	2022-12-30 16:37:48.083851	relation "sessions" does not exist
-639373	sp_process_buildings()	2022-12-30 16:37:48.083851	function sp_session_isalive(integer) does not exist
-639374	sp_process_researches()	2022-12-30 16:37:48.083851	function sp_session_isalive(integer) does not exist
-639375	sp_process_sessions_timeout()	2022-12-30 16:43:55.627759	relation "sessions" does not exist
-639376	sp_process_sessions_timeout()	2022-12-30 16:43:56.207685	relation "sessions" does not exist
-639377	sp_process_sessions_timeout()	2022-12-30 16:43:56.727675	relation "sessions" does not exist
-639378	sp_process_sessions_timeout()	2022-12-30 16:43:57.248748	relation "sessions" does not exist
-639379	sp_process_sessions_timeout()	2022-12-30 16:43:57.768265	relation "sessions" does not exist
-639380	sp_process_sessions_timeout()	2022-12-30 16:43:58.293865	relation "sessions" does not exist
-639381	sp_process_sessions_timeout()	2022-12-30 16:43:58.828336	relation "sessions" does not exist
-639382	sp_process_sessions_timeout()	2022-12-30 16:43:59.357879	relation "sessions" does not exist
-639383	sp_process_sessions_timeout()	2022-12-30 16:43:59.880254	relation "sessions" does not exist
-639384	sp_process_sessions_timeout()	2022-12-30 16:44:00.413388	relation "sessions" does not exist
-639385	sp_process_sessions_timeout()	2022-12-30 16:44:00.931203	relation "sessions" does not exist
-639386	sp_process_sessions_timeout()	2022-12-30 16:44:01.463343	relation "sessions" does not exist
-639387	sp_process_sessions_timeout()	2022-12-30 16:44:01.989931	relation "sessions" does not exist
-639388	sp_process_sessions_timeout()	2022-12-30 16:44:02.509439	relation "sessions" does not exist
-639389	sp_process_sessions_timeout()	2022-12-30 16:44:03.030344	relation "sessions" does not exist
-639390	sp_process_sessions_timeout()	2022-12-30 16:44:03.54894	relation "sessions" does not exist
-639391	sp_process_sessions_timeout()	2022-12-30 16:44:04.065952	relation "sessions" does not exist
-639392	sp_process_sessions_timeout()	2022-12-30 16:44:04.595886	relation "sessions" does not exist
-639393	sp_process_sessions_timeout()	2022-12-30 16:44:05.112439	relation "sessions" does not exist
-639394	sp_process_sessions_timeout()	2022-12-30 16:44:05.643986	relation "sessions" does not exist
-639395	sp_process_sessions_timeout()	2022-12-30 16:44:06.169458	relation "sessions" does not exist
-639396	sp_process_sessions_timeout()	2022-12-30 16:44:06.693103	relation "sessions" does not exist
-639397	sp_process_sessions_timeout()	2022-12-30 16:44:07.221542	relation "sessions" does not exist
-639398	sp_process_sessions_timeout()	2022-12-30 16:44:08.603078	relation "sessions" does not exist
-639399	sp_process_sessions_timeout()	2022-12-30 16:44:09.128446	relation "sessions" does not exist
-639400	sp_process_sessions_timeout()	2022-12-30 16:44:09.658612	relation "sessions" does not exist
-639401	sp_process_sessions_timeout()	2022-12-30 16:44:10.178127	relation "sessions" does not exist
-639402	sp_process_sessions_timeout()	2022-12-30 16:44:10.703099	relation "sessions" does not exist
-639403	sp_process_sessions_timeout()	2022-12-30 16:44:11.22011	relation "sessions" does not exist
-639404	sp_process_sessions_timeout()	2022-12-30 16:44:11.745637	relation "sessions" does not exist
-639405	sp_process_sessions_timeout()	2022-12-30 16:44:12.277181	relation "sessions" does not exist
-639406	sp_process_sessions_timeout()	2022-12-30 16:44:12.80315	relation "sessions" does not exist
-639407	sp_process_sessions_timeout()	2022-12-30 16:44:13.330719	relation "sessions" does not exist
-639408	sp_process_sessions_timeout()	2022-12-30 16:44:13.858106	relation "sessions" does not exist
-639409	sp_process_sessions_timeout()	2022-12-30 16:44:14.378043	relation "sessions" does not exist
-639410	sp_process_sessions_timeout()	2022-12-30 16:44:14.898717	relation "sessions" does not exist
-639411	sp_process_sessions_timeout()	2022-12-30 16:44:15.418065	relation "sessions" does not exist
-639412	sp_process_sessions_timeout()	2022-12-30 16:44:15.947204	relation "sessions" does not exist
-639413	sp_process_sessions_timeout()	2022-12-30 16:44:16.477621	relation "sessions" does not exist
-639414	sp_process_sessions_timeout()	2022-12-30 16:44:17.003155	relation "sessions" does not exist
-639415	sp_process_sessions_timeout()	2022-12-30 16:44:17.534291	relation "sessions" does not exist
-639416	sp_process_sessions_timeout()	2022-12-30 16:44:18.058418	relation "sessions" does not exist
-639417	sp_process_sessions_timeout()	2022-12-30 16:44:18.58414	relation "sessions" does not exist
-639418	sp_process_sessions_timeout()	2022-12-30 16:44:19.103147	relation "sessions" does not exist
-639419	sp_process_sessions_timeout()	2022-12-30 16:44:19.628678	relation "sessions" does not exist
-639420	sp_process_sessions_timeout()	2022-12-30 16:44:20.147269	relation "sessions" does not exist
-639421	sp_process_sessions_timeout()	2022-12-30 16:44:20.670302	relation "sessions" does not exist
-639422	sp_process_sessions_timeout()	2022-12-30 16:44:21.196731	relation "sessions" does not exist
-639423	sp_process_sessions_timeout()	2022-12-30 16:44:21.717766	relation "sessions" does not exist
-639424	sp_process_sessions_timeout()	2022-12-30 16:44:22.237204	relation "sessions" does not exist
-639425	sp_process_sessions_timeout()	2022-12-30 16:44:22.757222	relation "sessions" does not exist
-639426	sp_process_sessions_timeout()	2022-12-30 16:44:23.285358	relation "sessions" does not exist
-639427	sp_process_sessions_timeout()	2022-12-30 16:44:23.81113	relation "sessions" does not exist
-639428	sp_process_sessions_timeout()	2022-12-30 16:44:24.337972	relation "sessions" does not exist
-639429	sp_process_sessions_timeout()	2022-12-30 16:44:24.857208	relation "sessions" does not exist
-639430	sp_process_sessions_timeout()	2022-12-30 16:44:25.378278	relation "sessions" does not exist
-639431	sp_process_sessions_timeout()	2022-12-30 16:44:25.903354	relation "sessions" does not exist
-639432	sp_process_sessions_timeout()	2022-12-30 16:44:26.425831	relation "sessions" does not exist
-639433	sp_process_sessions_timeout()	2022-12-30 16:44:26.953296	relation "sessions" does not exist
-639434	sp_process_sessions_timeout()	2022-12-30 16:44:27.480359	relation "sessions" does not exist
-639435	sp_process_sessions_timeout()	2022-12-30 16:44:28.008389	relation "sessions" does not exist
-639436	sp_process_sessions_timeout()	2022-12-30 16:44:28.533835	relation "sessions" does not exist
-639437	sp_process_sessions_timeout()	2022-12-30 16:44:29.062877	relation "sessions" does not exist
-639438	sp_process_sessions_timeout()	2022-12-30 16:44:29.583145	relation "sessions" does not exist
-639439	sp_process_sessions_timeout()	2022-12-30 16:44:30.103286	relation "sessions" does not exist
-639440	sp_process_sessions_timeout()	2022-12-30 16:44:30.630841	relation "sessions" does not exist
-639441	sp_process_sessions_timeout()	2022-12-30 16:44:31.158381	relation "sessions" does not exist
-639442	sp_process_sessions_timeout()	2022-12-30 16:44:31.672854	relation "sessions" does not exist
-639443	sp_process_sessions_timeout()	2022-12-30 16:44:32.203452	relation "sessions" does not exist
-639444	sp_process_sessions_timeout()	2022-12-30 16:44:32.731534	relation "sessions" does not exist
-639445	sp_process_sessions_timeout()	2022-12-30 16:44:33.262998	relation "sessions" does not exist
-639446	sp_process_sessions_timeout()	2022-12-30 16:44:33.788426	relation "sessions" does not exist
-639447	sp_process_sessions_timeout()	2022-12-30 16:44:34.309422	relation "sessions" does not exist
-639448	sp_process_sessions_timeout()	2022-12-30 16:44:34.829107	relation "sessions" does not exist
-639449	sp_process_sessions_timeout()	2022-12-30 16:44:35.354602	relation "sessions" does not exist
-639450	sp_process_sessions_timeout()	2022-12-30 16:44:35.882512	relation "sessions" does not exist
-639451	sp_process_sessions_timeout()	2022-12-30 16:44:36.412087	relation "sessions" does not exist
-639452	sp_process_sessions_timeout()	2022-12-30 16:44:36.934642	relation "sessions" does not exist
-639453	sp_process_sessions_timeout()	2022-12-30 16:44:37.468022	relation "sessions" does not exist
-639454	sp_process_sessions_timeout()	2022-12-30 16:44:37.988596	relation "sessions" does not exist
-639455	sp_process_sessions_timeout()	2022-12-30 16:44:38.509557	relation "sessions" does not exist
-639456	sp_process_sessions_timeout()	2022-12-30 16:44:39.031702	relation "sessions" does not exist
-639457	sp_process_sessions_timeout()	2022-12-30 16:44:39.561537	relation "sessions" does not exist
-639458	sp_process_sessions_timeout()	2022-12-30 16:44:40.089642	relation "sessions" does not exist
-639459	sp_process_sessions_timeout()	2022-12-30 16:44:40.614777	relation "sessions" does not exist
-639460	sp_process_sessions_timeout()	2022-12-30 16:44:41.137079	relation "sessions" does not exist
-639461	sp_process_sessions_timeout()	2022-12-30 16:44:41.662706	relation "sessions" does not exist
-639462	sp_process_sessions_timeout()	2022-12-30 16:44:42.188101	relation "sessions" does not exist
-639463	sp_process_sessions_timeout()	2022-12-30 16:44:42.707635	relation "sessions" does not exist
-639464	sp_process_sessions_timeout()	2022-12-30 16:44:43.238231	relation "sessions" does not exist
-639465	sp_process_sessions_timeout()	2022-12-30 16:44:43.76178	relation "sessions" does not exist
-639466	sp_process_sessions_timeout()	2022-12-30 16:44:44.278756	relation "sessions" does not exist
-639467	sp_process_sessions_timeout()	2022-12-30 16:44:44.805252	relation "sessions" does not exist
-639468	sp_process_sessions_timeout()	2022-12-30 16:44:45.322717	relation "sessions" does not exist
-639469	sp_process_sessions_timeout()	2022-12-30 16:44:45.848671	relation "sessions" does not exist
-639470	sp_process_sessions_timeout()	2022-12-30 16:44:46.366367	relation "sessions" does not exist
-639471	sp_process_sessions_timeout()	2022-12-30 16:44:46.897721	relation "sessions" does not exist
-639472	sp_process_sessions_timeout()	2022-12-30 16:44:47.417832	relation "sessions" does not exist
-639473	sp_process_sessions_timeout()	2022-12-30 16:44:47.949704	relation "sessions" does not exist
-639474	sp_process_sessions_timeout()	2022-12-30 16:44:48.480703	relation "sessions" does not exist
-639475	sp_process_sessions_timeout()	2022-12-30 16:44:49.007243	relation "sessions" does not exist
-639476	sp_process_sessions_timeout()	2022-12-30 16:44:49.536677	relation "sessions" does not exist
-639477	sp_process_sessions_timeout()	2022-12-30 16:44:50.062321	relation "sessions" does not exist
-639478	sp_process_sessions_timeout()	2022-12-30 16:44:50.578266	relation "sessions" does not exist
-639479	sp_process_sessions_timeout()	2022-12-30 16:46:14.288976	relation "sessions" does not exist
-639480	sp_process_sessions_timeout()	2022-12-30 16:46:14.82797	relation "sessions" does not exist
-639481	sp_process_sessions_timeout()	2022-12-30 16:46:15.358095	relation "sessions" does not exist
-639482	sp_process_sessions_timeout()	2022-12-30 16:46:15.888029	relation "sessions" does not exist
-639483	sp_process_sessions_timeout()	2022-12-30 16:46:16.418026	relation "sessions" does not exist
-639484	sp_process_sessions_timeout()	2022-12-30 16:46:16.937943	relation "sessions" does not exist
-639485	sp_process_sessions_timeout()	2022-12-30 16:46:17.468081	relation "sessions" does not exist
-639486	sp_process_sessions_timeout()	2022-12-30 16:46:17.99856	relation "sessions" does not exist
-639487	sp_process_sessions_timeout()	2022-12-30 16:46:18.516132	relation "sessions" does not exist
-639488	sp_process_sessions_timeout()	2022-12-30 16:46:19.042592	relation "sessions" does not exist
-639489	sp_process_sessions_timeout()	2022-12-30 16:46:19.558058	relation "sessions" does not exist
-639490	sp_process_sessions_timeout()	2022-12-30 16:46:20.083073	relation "sessions" does not exist
-639491	sp_process_sessions_timeout()	2022-12-30 16:46:20.61196	relation "sessions" does not exist
-639492	sp_process_sessions_timeout()	2022-12-30 16:46:21.133162	relation "sessions" does not exist
-639493	sp_process_sessions_timeout()	2022-12-30 16:46:21.65712	relation "sessions" does not exist
-639494	sp_process_sessions_timeout()	2022-12-30 16:46:22.178727	relation "sessions" does not exist
-639495	sp_process_sessions_timeout()	2022-12-30 16:46:22.699583	relation "sessions" does not exist
-639496	sp_process_sessions_timeout()	2022-12-30 16:46:23.225602	relation "sessions" does not exist
-639497	sp_process_sessions_timeout()	2022-12-30 16:46:23.755142	relation "sessions" does not exist
-639498	sp_process_sessions_timeout()	2022-12-30 16:46:24.271742	relation "sessions" does not exist
-639499	sp_process_sessions_timeout()	2022-12-30 16:46:24.797659	relation "sessions" does not exist
-639500	sp_process_sessions_timeout()	2022-12-30 16:46:25.322721	relation "sessions" does not exist
-639501	sp_process_sessions_timeout()	2022-12-30 16:46:25.838223	relation "sessions" does not exist
-639502	sp_process_sessions_timeout()	2022-12-30 16:46:26.37277	relation "sessions" does not exist
-639503	sp_process_sessions_timeout()	2022-12-30 16:46:26.900323	relation "sessions" does not exist
-639504	sp_process_sessions_timeout()	2022-12-30 16:46:27.42833	relation "sessions" does not exist
-639505	sp_process_sessions_timeout()	2022-12-30 16:46:27.958848	relation "sessions" does not exist
-639506	sp_process_sessions_timeout()	2022-12-30 16:46:28.477223	relation "sessions" does not exist
-639507	sp_process_sessions_timeout()	2022-12-30 16:46:29.00718	relation "sessions" does not exist
-639508	sp_process_sessions_timeout()	2022-12-30 16:46:29.522662	relation "sessions" does not exist
-639509	sp_process_sessions_timeout()	2022-12-30 16:46:30.048278	relation "sessions" does not exist
-639510	sp_process_sessions_timeout()	2022-12-30 16:46:30.573304	relation "sessions" does not exist
-639511	sp_process_sessions_timeout()	2022-12-30 16:46:31.097888	relation "sessions" does not exist
-639512	sp_process_sessions_timeout()	2022-12-30 16:46:31.618304	relation "sessions" does not exist
-639513	sp_process_sessions_timeout()	2022-12-30 16:46:32.138241	relation "sessions" does not exist
-639514	sp_process_sessions_timeout()	2022-12-30 16:46:32.668327	relation "sessions" does not exist
-639515	sp_process_sessions_timeout()	2022-12-30 16:46:33.189942	relation "sessions" does not exist
-639516	sp_process_sessions_timeout()	2022-12-30 16:46:33.712352	relation "sessions" does not exist
-639517	sp_process_sessions_timeout()	2022-12-30 16:46:34.248335	relation "sessions" does not exist
-639518	sp_process_sessions_timeout()	2022-12-30 16:46:34.765376	relation "sessions" does not exist
-639519	sp_process_sessions_timeout()	2022-12-30 16:46:35.294204	relation "sessions" does not exist
-639520	sp_process_sessions_timeout()	2022-12-30 16:46:35.828334	relation "sessions" does not exist
-639521	sp_process_sessions_timeout()	2022-12-30 16:46:36.35546	relation "sessions" does not exist
-639522	sp_process_sessions_timeout()	2022-12-30 16:46:36.8764	relation "sessions" does not exist
-639523	sp_process_sessions_timeout()	2022-12-30 16:46:37.396975	relation "sessions" does not exist
-639524	sp_process_sessions_timeout()	2022-12-30 16:46:37.91746	relation "sessions" does not exist
-639525	sp_process_sessions_timeout()	2022-12-30 16:46:38.433936	relation "sessions" does not exist
-639526	sp_process_sessions_timeout()	2022-12-30 16:46:38.957956	relation "sessions" does not exist
-639527	sp_process_sessions_timeout()	2022-12-30 16:46:39.47002	relation "sessions" does not exist
-639528	sp_process_sessions_timeout()	2022-12-30 16:46:39.988609	relation "sessions" does not exist
-639529	sp_process_sessions_timeout()	2022-12-30 16:46:40.518525	relation "sessions" does not exist
-639530	sp_process_sessions_timeout()	2022-12-30 16:46:41.046712	relation "sessions" does not exist
-639531	sp_process_sessions_timeout()	2022-12-30 16:46:41.578149	relation "sessions" does not exist
-639532	sp_process_sessions_timeout()	2022-12-30 16:46:42.098637	relation "sessions" does not exist
-639533	sp_process_sessions_timeout()	2022-12-30 16:46:42.638082	relation "sessions" does not exist
-639534	sp_process_sessions_timeout()	2022-12-30 16:46:43.157962	relation "sessions" does not exist
-639535	sp_process_sessions_timeout()	2022-12-30 16:46:43.681552	relation "sessions" does not exist
-639536	sp_process_sessions_timeout()	2022-12-30 16:46:44.209125	relation "sessions" does not exist
-639537	sp_process_sessions_timeout()	2022-12-30 16:46:44.738671	relation "sessions" does not exist
-639538	sp_process_sessions_timeout()	2022-12-30 16:46:45.256222	relation "sessions" does not exist
-639539	sp_process_sessions_timeout()	2022-12-30 16:46:45.7737	relation "sessions" does not exist
-639540	sp_process_sessions_timeout()	2022-12-30 16:46:46.298183	relation "sessions" does not exist
-639541	sp_process_sessions_timeout()	2022-12-30 16:46:46.827884	relation "sessions" does not exist
-639542	sp_process_sessions_timeout()	2022-12-30 16:46:47.348596	relation "sessions" does not exist
-639543	sp_process_sessions_timeout()	2022-12-30 16:46:47.87065	relation "sessions" does not exist
-639544	sp_process_sessions_timeout()	2022-12-30 16:46:48.390273	relation "sessions" does not exist
-639545	sp_process_sessions_timeout()	2022-12-30 16:46:48.917648	relation "sessions" does not exist
-639546	sp_process_sessions_timeout()	2022-12-30 16:46:49.437719	relation "sessions" does not exist
-639547	sp_process_sessions_timeout()	2022-12-30 16:46:49.958224	relation "sessions" does not exist
-639548	sp_process_sessions_timeout()	2022-12-30 16:46:50.486293	relation "sessions" does not exist
-639549	sp_process_sessions_timeout()	2022-12-30 16:46:51.01815	relation "sessions" does not exist
-639550	sp_process_sessions_timeout()	2022-12-30 16:46:51.54815	relation "sessions" does not exist
-639551	sp_process_sessions_timeout()	2022-12-30 16:46:52.065737	relation "sessions" does not exist
-639552	sp_process_sessions_timeout()	2022-12-30 16:46:52.597318	relation "sessions" does not exist
-639553	sp_process_sessions_timeout()	2022-12-30 16:46:53.117206	relation "sessions" does not exist
-639554	sp_process_sessions_timeout()	2022-12-30 16:46:53.647708	relation "sessions" does not exist
-639555	sp_process_sessions_timeout()	2022-12-30 16:46:54.167763	relation "sessions" does not exist
-639556	sp_process_sessions_timeout()	2022-12-30 16:46:54.695311	relation "sessions" does not exist
-639557	sp_process_sessions_timeout()	2022-12-30 16:46:55.218313	relation "sessions" does not exist
-639558	sp_process_sessions_timeout()	2022-12-30 16:46:55.737762	relation "sessions" does not exist
-639559	sp_process_sessions_timeout()	2022-12-30 16:46:56.262799	relation "sessions" does not exist
-639560	sp_process_sessions_timeout()	2022-12-30 16:46:56.782814	relation "sessions" does not exist
-639561	sp_process_sessions_timeout()	2022-12-30 16:46:57.315425	relation "sessions" does not exist
-639562	sp_process_sessions_timeout()	2022-12-30 16:46:57.839361	relation "sessions" does not exist
-639563	sp_process_sessions_timeout()	2022-12-30 16:46:58.365839	relation "sessions" does not exist
-639564	sp_process_sessions_timeout()	2022-12-30 16:46:58.88641	relation "sessions" does not exist
-639565	sp_process_sessions_timeout()	2022-12-30 16:46:59.406962	relation "sessions" does not exist
-639566	sp_process_sessions_timeout()	2022-12-30 16:46:59.930005	relation "sessions" does not exist
-639567	sp_process_sessions_timeout()	2022-12-30 16:47:00.458096	relation "sessions" does not exist
-639568	sp_process_sessions_timeout()	2022-12-30 16:47:00.978523	relation "sessions" does not exist
-639569	sp_process_sessions_timeout()	2022-12-30 16:47:01.507482	relation "sessions" does not exist
-639570	sp_process_sessions_timeout()	2022-12-30 16:47:02.039907	relation "sessions" does not exist
-639571	sp_process_sessions_timeout()	2022-12-30 16:47:02.565943	relation "sessions" does not exist
-639572	sp_process_sessions_timeout()	2022-12-30 16:47:03.097122	relation "sessions" does not exist
-639573	sp_process_sessions_timeout()	2022-12-30 16:47:03.615961	relation "sessions" does not exist
-639574	sp_process_sessions_timeout()	2022-12-30 16:47:04.140004	relation "sessions" does not exist
-639575	sp_process_sessions_timeout()	2022-12-30 16:47:04.663075	relation "sessions" does not exist
-639576	sp_process_sessions_timeout()	2022-12-30 16:47:05.183583	relation "sessions" does not exist
-639577	sp_process_sessions_timeout()	2022-12-30 16:47:05.701624	relation "sessions" does not exist
-639578	sp_process_sessions_timeout()	2022-12-30 16:47:06.232079	relation "sessions" does not exist
-639579	sp_process_sessions_timeout()	2022-12-30 16:47:06.745076	relation "sessions" does not exist
-639580	sp_process_sessions_timeout()	2022-12-30 16:47:07.276187	relation "sessions" does not exist
-639581	sp_process_sessions_timeout()	2022-12-30 16:47:07.809624	relation "sessions" does not exist
-639582	sp_process_sessions_timeout()	2022-12-30 16:47:08.328076	relation "sessions" does not exist
-639583	sp_process_sessions_timeout()	2022-12-30 16:47:08.856193	relation "sessions" does not exist
-\.
-
-
---
 -- Data for Name: market_history; Type: TABLE DATA; Schema: s03; Owner: freddec
 --
 
@@ -28933,6 +27837,7 @@ COPY s03.market_sales (planetid, ore, hydrocarbon, credits, sale_time, ore_price
 COPY s03.messages (id, datetime, read_date, ownerid, owner, senderid, sender, subject, body, credits, deleted, bbcode) FROM stdin;
 467895	2022-12-30 11:04:17.534199	2022-12-30 12:27:14.335011	2	Freddec	\N		Rapport de colonisation	Notre nouvelle colonie est prête à accueillir nos colons !\r\n\nNous devrions commencer à produire de l'énergie, à extraire du minerai et des hydrocarbures dès que possible afin d'assurer le développement de la colonie.\r\n\nVous pouvez lancer la construction de nouveaux bâtiments à partir de la page Planète / Infrastructures.\r\n\nGagnez des crédits en vendant des ressources dans la page Planète / Marché, un marchand de la Guilde Marchande (géré par ordinateur) viendra au bout de 3 à 4 heures sur la planète pour prendre les ressources vendues. Les marchands payent la moitié de l'argent à la vente puis la seconde moitié est payée une fois que leurs vaisseaux sont revenus sur leur planète.\r\n\nCet argent vous servira à l'entretien de vos infrastructures et vaisseaux, à faire des recherches afin de débloquer de nouveaux bâtiments et d'autres recherches, à construire de nouveaux vaisseaux et pour les salaires de vos commandants (notez que votre premier commandant ne vous coûte rien).\r\n\nEn tant que nouvelle nation, vos planètes ne peuvent être attaquées pendant deux semaines. Profitez-en pour faire connaissance avec les nations autour de vous.\r\n\nPendant cette période de protection, vous ne pourrez ni recevoir ni envoyer d'argent par la messagerie du jeu ou par la demande de financement de l'alliance.\r\n\nDéveloppez-vous, augmentez votre production en construisant des mines de minerai et des puits d'hydrocarbure.\r\n\nFin de transmission.	0	f	f
 467896	2022-12-30 11:04:17.534199	2022-12-30 12:27:14.335011	2	Freddec	\N		Recherches	Votre équipe de scientifiques attend vos ordres. Vous pouvez choisir une recherche en allant sur la page "Recherche" du menu Empire.\r\n\nNous ne connaissons pas bien les environs de notre colonie, nous pouvons construire un radar mais nous n'aurons que les informations relatives aux planètes de notre secteur.\r\n\nIl serait bien de débloquer les sondes qui sont de petits appareils très rapides idéaux pour découvrir les planètes d'autres secteurs.\r\n\nPour cela, nous avons besoin de faire des recherches en mécanique et nous aurons aussi besoin d'un spatioport pour construire les vaisseaux.\r\n\nAfin de construire le vaisseau de colonisation, nous avons besoin de "Mécanique" niveau 1 et de "Vaisseau Utilitaire" niveau 3.\r\n\nFin de transmission.	0	f	f
+467897	2022-12-30 16:52:36.507524	2022-12-30 16:55:59.68579	2	Freddec	\N	Guilde Marchande	Début de la loterie 	Bonjour,\r\n\nNous avons le plaisir de vous annoncer le début de la prochaine loterie intergalactique dont le tirage a lieu chaque vendredi à minuit.\r\n\nLe gagnant recevra un Dreadnought d'élite directement sorti de nos industries et envoyé à destination d'une de ses planètes.\r\n\nAfin de piloter ce vaisseau d'exception, vous devrez posséder les connaissances nécessaire au pilotage des croiseurs d'élite.\r\n\nPour participer, envoyez-nous simplement un message en joignant la somme de crédit que vous voulez.\r\n\nPlus la somme est élevée, plus vos chances de gagner augmentent et celles des autres diminuent.\r\n\nBon jeu !	0	f	f
 \.
 
 
@@ -29398,7 +28303,6 @@ COPY s03.nav_planet (id, ownerid, commanderid, name, galaxy, sector, planet, war
 422	\N	\N		1	17	22	\N	83	20	163	29	163	29	83	20	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	2	0
 423	\N	\N		1	17	23	\N	80	20	174	63	174	63	80	20	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	2	0
 424	\N	\N		1	17	24	\N	90	32	162	31	162	31	90	32	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	2	0
-425	\N	\N		1	17	25	\N	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	16720	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	2	0
 426	\N	\N		1	18	1	\N	94	19	85	15	85	15	94	19	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	2	0
 427	\N	\N		1	18	2	\N	93	22	63	37	63	37	93	22	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	2	0
 428	\N	\N		1	18	3	\N	81	21	83	61	83	61	81	21	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	2	0
@@ -29417,7 +28321,6 @@ COPY s03.nav_planet (id, ownerid, commanderid, name, galaxy, sector, planet, war
 441	\N	\N		1	18	16	\N	85	38	107	20	107	20	85	38	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	2	0
 442	\N	\N		1	18	17	\N	94	16	43	123	43	123	94	16	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	2	0
 443	\N	\N		1	18	18	\N	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	2	0
-444	\N	\N		1	18	19	\N	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	13966	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	2	0
 445	\N	\N		1	18	20	\N	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	2	0
 446	\N	\N		1	18	21	\N	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	2	0
 447	\N	\N		1	18	22	\N	83	24	116	67	116	67	83	24	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	2	0
@@ -29509,7 +28412,6 @@ COPY s03.nav_planet (id, ownerid, commanderid, name, galaxy, sector, planet, war
 534	\N	\N		1	22	9	\N	80	28	123	40	123	40	80	28	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	2	0
 535	\N	\N		1	22	10	\N	82	26	72	98	72	98	82	26	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	2	0
 536	\N	\N		1	22	11	\N	82	22	51	143	51	143	82	22	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	2	0
-537	\N	\N		1	22	12	\N	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	16304	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	2	0
 538	\N	\N		1	22	13	\N	84	24	118	125	118	125	84	24	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	2	0
 539	\N	\N		1	22	14	\N	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	2	0
 540	\N	\N		1	22	15	\N	80	39	220	21	220	21	80	39	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	2	0
@@ -29525,7 +28427,6 @@ COPY s03.nav_planet (id, ownerid, commanderid, name, galaxy, sector, planet, war
 550	\N	\N		1	22	25	\N	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	2	0
 551	\N	\N		1	23	1	\N	92	32	100	42	100	42	92	32	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	3	0
 552	\N	\N		1	23	2	\N	85	23	151	41	151	41	85	23	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	3	0
-553	\N	\N		1	23	3	\N	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	16247	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	3	0
 554	\N	\N		1	23	4	\N	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	3	0
 555	\N	\N		1	23	5	\N	81	33	58	77	58	77	81	33	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	3	0
 556	\N	\N		1	23	6	\N	87	20	97	79	97	79	87	20	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	3	0
@@ -29634,7 +28535,6 @@ COPY s03.nav_planet (id, ownerid, commanderid, name, galaxy, sector, planet, war
 660	\N	\N		1	27	10	\N	91	33	116	56	116	56	91	33	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	3	0
 661	\N	\N		1	27	11	\N	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	3	0
 662	\N	\N		1	27	12	\N	82	40	86	78	86	78	82	40	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	3	0
-663	\N	\N		1	27	13	\N	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	13629	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	3	0
 664	\N	\N		1	27	14	\N	99	16	145	27	145	27	99	16	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	3	0
 665	\N	\N		1	27	15	\N	81	40	104	51	104	51	81	40	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	3	0
 666	\N	\N		1	27	16	\N	95	30	97	58	97	58	95	30	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	3	0
@@ -29671,7 +28571,6 @@ COPY s03.nav_planet (id, ownerid, commanderid, name, galaxy, sector, planet, war
 698	\N	\N		1	28	23	\N	91	32	53	53	53	53	91	32	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	3	0
 699	\N	\N		1	28	24	\N	96	16	132	20	132	20	96	16	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	3	0
 700	\N	\N		1	28	25	\N	89	24	104	92	104	92	89	24	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	3	0
-701	\N	\N		1	29	1	\N	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	16342	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	2	0
 702	\N	\N		1	29	2	\N	87	39	52	82	52	82	87	39	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	2	0
 703	\N	\N		1	29	3	\N	83	30	83	152	83	152	83	30	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	2	0
 704	\N	\N		1	29	4	\N	84	32	105	152	105	152	84	32	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	2	0
@@ -29689,7 +28588,6 @@ COPY s03.nav_planet (id, ownerid, commanderid, name, galaxy, sector, planet, war
 716	\N	\N		1	29	16	\N	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	2	0
 717	\N	\N		1	29	17	\N	81	33	145	31	145	31	81	33	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	2	0
 718	\N	\N		1	29	18	\N	92	30	127	49	127	49	92	30	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	2	0
-719	\N	\N		1	29	19	\N	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	14846	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	2	0
 720	\N	\N		1	29	20	\N	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	2	0
 721	\N	\N		1	29	21	\N	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	2	0
 722	\N	\N		1	29	22	\N	83	34	131	41	131	41	83	34	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	2	0
@@ -30175,9 +29073,7 @@ COPY s03.nav_planet (id, ownerid, commanderid, name, galaxy, sector, planet, war
 1202	\N	\N		1	49	2	\N	98	23	106	29	106	29	98	23	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	2	0
 1203	\N	\N		1	49	3	\N	81	39	145	83	145	83	81	39	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	2	0
 1204	\N	\N		1	49	4	\N	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	2	0
-1205	\N	\N		1	49	5	\N	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	15187	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	2	0
 1206	\N	\N		1	49	6	\N	86	36	46	91	46	91	86	36	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	2	0
-1207	\N	\N		1	49	7	\N	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	13267	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	2	0
 1208	\N	\N		1	49	8	\N	91	25	141	50	141	50	91	25	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	2	0
 1209	\N	\N		1	49	9	\N	97	20	129	59	129	59	97	20	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	2	0
 1210	\N	\N		1	49	10	\N	89	38	32	148	32	148	89	38	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	2	0
@@ -30436,7 +29332,6 @@ COPY s03.nav_planet (id, ownerid, commanderid, name, galaxy, sector, planet, war
 1463	\N	\N		1	59	13	\N	80	26	112	73	112	73	80	26	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	2	0
 1464	\N	\N		1	59	14	\N	81	34	174	78	174	78	81	34	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	2	0
 1465	\N	\N		1	59	15	\N	84	29	152	72	152	72	84	29	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	2	0
-1466	\N	\N		1	59	16	\N	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	14918	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	2	0
 1467	\N	\N		1	59	17	\N	82	39	65	164	65	164	82	39	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	2	0
 1468	\N	\N		1	59	18	\N	82	28	148	47	148	47	82	28	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	2	0
 1469	\N	\N		1	59	19	\N	80	34	103	93	103	93	80	34	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	2	0
@@ -30497,7 +29392,6 @@ COPY s03.nav_planet (id, ownerid, commanderid, name, galaxy, sector, planet, war
 1524	\N	\N		1	61	24	\N	80	10	60	60	60	60	80	10	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	1	0
 1525	\N	\N		1	61	25	\N	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	1	0
 1526	\N	\N		1	62	1	\N	83	33	102	49	102	49	83	33	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	2	0
-1527	\N	\N		1	62	2	\N	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	15985	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	2	0
 1528	\N	\N		1	62	3	\N	87	27	28	75	28	75	87	27	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	2	0
 1529	\N	\N		1	62	4	\N	84	28	31	154	31	154	84	28	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	2	0
 1530	\N	\N		1	62	5	\N	80	37	145	89	145	89	80	37	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	2	0
@@ -30789,7 +29683,6 @@ COPY s03.nav_planet (id, ownerid, commanderid, name, galaxy, sector, planet, war
 1817	\N	\N		1	73	17	\N	81	22	104	87	104	87	81	22	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	3	0
 1818	\N	\N		1	73	18	\N	98	24	40	74	40	74	98	24	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	3	0
 1819	\N	\N		1	73	19	\N	83	25	199	18	199	18	83	25	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	3	0
-1820	\N	\N		1	73	20	\N	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	15948	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	3	0
 1821	\N	\N		1	73	21	\N	85	39	103	31	103	31	85	39	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	3	0
 1822	\N	\N		1	73	22	\N	80	27	91	109	91	109	80	27	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	3	0
 1823	\N	\N		1	73	23	\N	90	34	59	124	59	124	90	34	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	3	0
@@ -30872,7 +29765,6 @@ COPY s03.nav_planet (id, ownerid, commanderid, name, galaxy, sector, planet, war
 1900	\N	\N		1	76	25	\N	88	28	88	55	88	55	88	28	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	3	0
 1901	\N	\N		1	77	1	\N	98	21	119	56	119	56	98	21	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	3	0
 1902	\N	\N		1	77	2	\N	103	22	80	74	80	74	103	22	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	3	0
-1903	\N	\N		1	77	3	\N	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	15489	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	3	0
 1904	\N	\N		1	77	4	\N	93	30	40	69	40	69	93	30	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	3	0
 1905	\N	\N		1	77	5	\N	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	3	0
 1906	\N	\N		1	77	6	\N	85	34	156	43	156	43	85	34	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	3	0
@@ -30888,9 +29780,7 @@ COPY s03.nav_planet (id, ownerid, commanderid, name, galaxy, sector, planet, war
 1916	\N	\N		1	77	16	\N	80	38	25	231	25	231	80	38	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	3	0
 1917	\N	\N		1	77	17	\N	89	39	76	72	76	72	89	39	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	3	0
 1918	\N	\N		1	77	18	\N	84	27	44	178	44	178	84	27	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	3	0
-1919	\N	\N		1	77	19	\N	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	15770	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	3	0
 1920	\N	\N		1	77	20	\N	110	12	97	35	97	35	110	12	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	3	0
-1921	\N	\N		1	77	21	\N	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	13267	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	3	0
 1922	\N	\N		1	77	22	\N	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	3	0
 1923	\N	\N		1	77	23	\N	104	13	164	14	164	14	104	13	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	3	0
 1924	\N	\N		1	77	24	\N	98	27	65	112	65	112	98	27	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	3	0
@@ -30917,7 +29807,6 @@ COPY s03.nav_planet (id, ownerid, commanderid, name, galaxy, sector, planet, war
 1946	\N	\N		1	78	21	\N	83	30	26	192	26	192	83	30	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	3	0
 1947	\N	\N		1	78	22	\N	87	24	141	31	141	31	87	24	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	3	0
 1948	\N	\N		1	78	23	\N	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	3	0
-1949	\N	\N		1	78	24	\N	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	16020	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	3	0
 1950	\N	\N		1	78	25	\N	98	34	82	82	82	82	98	34	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	3	0
 1951	\N	\N		1	79	1	\N	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	2	0
 1952	\N	\N		1	79	2	\N	80	25	54	88	54	88	80	25	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	2	0
@@ -31007,7 +29896,6 @@ COPY s03.nav_planet (id, ownerid, commanderid, name, galaxy, sector, planet, war
 2036	\N	\N		1	82	11	\N	80	28	206	18	206	18	80	28	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	2	0
 2037	\N	\N		1	82	12	\N	81	29	93	41	93	41	81	29	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	2	0
 2038	\N	\N		1	82	13	\N	81	40	123	99	123	99	81	40	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	2	0
-2039	\N	\N		1	82	14	\N	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	16743	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	2	0
 2040	\N	\N		1	82	15	\N	81	35	51	93	51	93	81	35	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	2	0
 2041	\N	\N		1	82	16	\N	82	33	168	71	168	71	82	33	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	2	0
 2042	\N	\N		1	82	17	\N	82	39	116	87	116	87	82	39	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	2	0
@@ -31040,7 +29928,6 @@ COPY s03.nav_planet (id, ownerid, commanderid, name, galaxy, sector, planet, war
 2069	\N	\N		1	83	19	\N	80	37	146	13	146	13	80	37	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	2	0
 2070	\N	\N		1	83	20	\N	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	2	0
 2071	\N	\N		1	83	21	\N	82	30	21	222	21	222	82	30	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	2	0
-2072	\N	\N		1	83	22	\N	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	13451	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	2	0
 2073	\N	\N		1	83	23	\N	83	29	157	38	157	38	83	29	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	2	0
 2074	\N	\N		1	83	24	\N	80	32	77	162	77	162	80	32	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	2	0
 2075	\N	\N		1	83	25	\N	86	25	69	85	69	85	86	25	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	2	0
@@ -31058,8 +29945,6 @@ COPY s03.nav_planet (id, ownerid, commanderid, name, galaxy, sector, planet, war
 2087	\N	\N		1	84	12	\N	90	33	36	161	36	161	90	33	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	2	0
 2088	\N	\N		1	84	13	\N	82	32	121	61	121	61	82	32	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	2	0
 2089	\N	\N		1	84	14	\N	81	30	131	69	131	69	81	30	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	2	0
-2090	\N	\N		1	84	15	\N	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	15698	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	2	0
-2091	\N	\N		1	84	16	\N	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	13143	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	2	0
 2092	\N	\N		1	84	17	\N	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	2	0
 2093	\N	\N		1	84	18	\N	83	29	43	153	43	153	83	29	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	2	0
 2094	\N	\N		1	84	19	\N	82	33	67	177	67	177	82	33	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	2	0
@@ -31089,7 +29974,6 @@ COPY s03.nav_planet (id, ownerid, commanderid, name, galaxy, sector, planet, war
 2118	\N	\N		1	85	18	\N	91	22	40	156	40	156	91	22	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	2	0
 2119	\N	\N		1	85	19	\N	82	22	56	79	56	79	82	22	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	2	0
 2120	\N	\N		1	85	20	\N	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	2	0
-2121	\N	\N		1	85	21	\N	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	13086	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	2	0
 2122	\N	\N		1	85	22	\N	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	2	0
 2123	\N	\N		1	85	23	\N	81	39	51	123	51	123	81	39	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	2	0
 2124	\N	\N		1	85	24	\N	88	31	89	50	89	50	88	31	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	2	0
@@ -31171,7 +30055,6 @@ COPY s03.nav_planet (id, ownerid, commanderid, name, galaxy, sector, planet, war
 2200	\N	\N		1	88	25	\N	90	26	130	32	130	32	90	26	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	2	0
 2201	\N	\N		1	89	1	\N	83	35	83	67	83	67	83	35	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	2	0
 2202	\N	\N		1	89	2	\N	86	25	64	52	64	52	86	25	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	2	0
-2203	\N	\N		1	89	3	\N	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	14109	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	2	0
 2204	\N	\N		1	89	4	\N	81	23	113	83	113	83	81	23	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	2	0
 2205	\N	\N		1	89	5	\N	82	24	138	43	138	43	82	24	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	2	0
 2206	\N	\N		1	89	6	\N	80	27	97	71	97	71	80	27	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	0	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	2	0
@@ -31448,7 +30331,29 @@ COPY s03.nav_planet (id, ownerid, commanderid, name, galaxy, sector, planet, war
 688	3	\N		1	28	13	\N	85	32	131	50	131	50	85	32	30	0	11500000	0	900400000	0	0	0	900400000	0	0	100000	600000	0	0	100000	0	100000	0	20000	2022-12-30 10:39:09.200954	f	4	0	0	0	0	0	100	100	100	0	100	100	0	0	0	0	0	12000	2400	\N	2022-12-30 10:39:09.200954	2023-01-01 10:39:09.200954	2022-12-30 10:39:09.200954	f	0	0	0	\N	0	0	1000	0	0	0	0	0	1000000	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	3	0
 1813	3	\N		1	73	13	\N	84	38	165	24	165	24	84	38	30	0	11500000	0	900400000	0	0	0	900400000	0	0	100000	600000	0	0	100000	0	100000	0	20000	2022-12-30 10:39:09.200954	f	4	0	0	0	0	0	100	100	100	0	100	100	0	0	0	0	0	12000	2400	\N	2022-12-30 10:39:09.200954	2023-01-01 10:39:09.200954	2022-12-30 10:39:09.200954	f	0	0	0	\N	0	0	1000	0	0	0	0	0	1000000	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	3	0
 1938	3	\N		1	78	13	\N	94	34	80	101	80	101	94	34	30	0	11500000	0	900400000	0	0	0	900400000	0	0	100000	600000	0	0	100000	0	100000	0	20000	2022-12-30 10:39:09.200954	f	4	0	0	0	0	0	100	100	100	0	100	100	0	0	0	0	0	12000	2400	\N	2022-12-30 10:39:09.200954	2023-01-01 10:39:09.200954	2022-12-30 10:39:09.200954	f	0	0	0	\N	0	0	1000	0	0	0	0	0	1000000	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	3	0
-510	2	50939	Freddec I	1	21	10	\N	80	10	60	60	60	60	80	10	12	0	44750	2376	100000	333	300	938	100000	300	270	10581	20000	10000	50	1000	50	1000	225	600	2022-12-30 16:44:30.669821	f	0	0	0	0	0	0	101	101	100	10	100	121	50	50	100	0	0	2550	75	\N	2022-12-30 11:04:17.534199	2023-01-01 11:04:17.534199	2022-12-30 10:39:09.200954	t	0	0	1.1	0	104	0	1000	0	0	0	0	1185	30000	\N	90	\N	f	\N	\N	0	2022-12-30 17:04:17.534199	0	0	0	10	-45362	-45362	7880	7880	0	0	0	1	0
+510	2	50939	Freddec I	1	21	10	\N	80	10	60	60	60	60	80	10	14	0	46250	3851	100000	606	540	2201	100000	572	510	11119	20000	5000	50	1000	50	1000	250	900	2022-12-30 21:43:34.612732	f	1	0	0	0	0	0	102	102	100	10	101	121	50	50	120	-1	-1	4700	145	\N	2022-12-30 11:04:17.534199	2023-01-01 11:04:17.534199	2022-12-30 10:39:09.200954	t	0	0	1.1	0	104	0	1000	0	0	0	0	4175	30000	\N	330	\N	f	\N	\N	0	2022-12-30 23:04:17.534199	0	0	0	10	-84281	-84521	7760	7760	0	0	0	1	0
+425	\N	\N		1	17	25	\N	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	16720	0	92514	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	2	0
+444	\N	\N		1	18	19	\N	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	13966	0	77158	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	2	0
+1903	\N	\N		1	77	3	\N	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	15489	0	87368	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	3	0
+1919	\N	\N		1	77	19	\N	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	15770	0	89493	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	3	0
+537	\N	\N		1	22	12	\N	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	16304	0	91265	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	2	0
+553	\N	\N		1	23	3	\N	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	16247	0	90650	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	3	0
+663	\N	\N		1	27	13	\N	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	13629	0	74945	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	3	0
+701	\N	\N		1	29	1	\N	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	16342	0	89177	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	2	0
+719	\N	\N		1	29	19	\N	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	14846	0	82754	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	2	0
+1205	\N	\N		1	49	5	\N	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	15187	0	83308	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	2	0
+1207	\N	\N		1	49	7	\N	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	13267	0	70885	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	2	0
+1466	\N	\N		1	59	16	\N	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	14918	0	84053	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	2	0
+1527	\N	\N		1	62	2	\N	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	15985	0	87625	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	2	0
+1820	\N	\N		1	73	20	\N	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	15948	0	87945	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	3	0
+1949	\N	\N		1	78	24	\N	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	0	16020	0	89540	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	3	0
+2039	\N	\N		1	82	14	\N	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	16743	0	91123	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	2	0
+2072	\N	\N		1	83	22	\N	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	13451	0	76019	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	2	0
+2090	\N	\N		1	84	15	\N	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	15698	0	89181	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	2	0
+1921	\N	\N		1	77	21	\N	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	13267	0	72458	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	3	0
+2091	\N	\N		1	84	16	\N	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	13143	0	72506	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	2	0
+2121	\N	\N		1	85	21	\N	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	13086	0	73050	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	2	0
+2203	\N	\N		1	89	3	\N	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2022-12-30 10:39:09.200954	f	0	0	14109	0	79305	0	0	0	0	0	0	0	0	0	100	0	0	0	0	\N	\N	2022-12-30 10:39:09.200954	2022-12-30 10:39:09.200954	t	0	0	0	\N	0	0	0	0	0	0	0	0	0	\N	0	\N	f	\N	\N	0	2022-12-30 10:39:09.200954	0	0	0	0	0	0	0	0	0	0	0	2	0
 \.
 
 
@@ -31474,9 +30379,10 @@ COPY s03.planet_buildings (planetid, buildingid, quantity, destroy_datetime, dis
 1938	1020	1	\N	0
 1938	1021	1	\N	0
 510	101	1	\N	0
-510	115	1	\N	0
-510	116	1	\N	0
-510	118	1	\N	0
+510	118	2	\N	0
+510	115	2	\N	0
+510	116	2	\N	0
+510	103	1	\N	0
 \.
 
 
@@ -31485,10 +30391,7 @@ COPY s03.planet_buildings (planetid, buildingid, quantity, destroy_datetime, dis
 --
 
 COPY s03.planet_buildings_pending (id, planetid, buildingid, start_time, end_time, loop) FROM stdin;
-1354296	510	103	2022-12-30 13:43:37.262562	2022-12-30 21:43:37.262562	f
 1354298	510	102	2022-12-30 16:44:23.385264	2022-12-31 04:44:23.385264	f
-1354299	510	115	2022-12-30 16:44:25.948891	2022-12-30 18:44:25.948891	f
-1354300	510	118	2022-12-30 16:44:30.669821	2022-12-30 17:44:30.669821	f
 \.
 
 
@@ -31547,6 +30450,12 @@ COPY s03.reports (id, ownerid, type, subtype, datetime, read_date, battleid, fle
 5705592	3	6	0	2022-12-30 10:39:09.200954	\N	\N	\N	\N	1813	\N	0	0	0	0	0	0	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N		2	Guilde marchande	{planet:{id:1813,owner:"Guilde marchande",g:1,s:73,p:13}}
 5705593	3	6	0	2022-12-30 10:39:09.200954	\N	\N	\N	\N	1938	\N	0	0	0	0	0	0	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N		2	Guilde marchande	{planet:{id:1938,owner:"Guilde marchande",g:1,s:78,p:13}}
 5705594	2	6	0	2022-12-30 11:04:17.534199	2022-12-30 12:29:34.021315	\N	\N	\N	510	\N	0	0	0	0	0	0	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	Freddec I	2	Freddec	{planet:{id:510,owner:"Freddec",g:1,s:21,p:10}}
+5705809	2	3	1	2022-12-30 17:44:28.148966	2022-11-30 17:44:28.148966	\N	\N	\N	510	\N	0	0	0	0	0	0	\N	\N	\N	\N	\N	118	\N	\N	\N	\N	\N	\N	\N	\N	Freddec I	2	Freddec	{}
+5705813	2	3	1	2022-12-30 20:44:34.688621	2022-11-30 20:44:34.688621	\N	\N	\N	510	\N	0	0	0	0	0	0	\N	\N	\N	\N	\N	116	\N	\N	\N	\N	\N	\N	\N	\N	Freddec I	2	Freddec	{}
+5705810	2	3	0	2022-12-30 18:41:47.716198	2022-12-30 18:45:29.499673	\N	\N	\N	\N	201	0	0	0	0	0	0	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	{researchid:201}
+5705814	2	3	1	2022-12-30 21:43:34.612732	2022-11-30 21:43:34.612732	\N	\N	\N	510	\N	0	0	0	0	0	0	\N	\N	\N	\N	\N	103	\N	\N	\N	\N	\N	\N	\N	\N	Freddec I	2	Freddec	{}
+5705811	2	3	1	2022-12-30 18:44:23.040091	2022-11-30 18:44:23.040091	\N	\N	\N	510	\N	0	0	0	0	0	0	\N	\N	\N	\N	\N	115	\N	\N	\N	\N	\N	\N	\N	\N	Freddec I	2	Freddec	{}
+5705812	2	3	0	2022-12-30 20:01:34.757687	2022-12-30 22:27:14.038644	\N	\N	\N	\N	902	0	0	0	0	0	0	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	{researchid:902}
 5705806	2	3	1	2022-12-30 16:43:55.627759	2022-11-30 16:43:55.627759	\N	\N	\N	510	\N	0	0	0	0	0	0	\N	\N	\N	\N	\N	115	\N	\N	\N	\N	\N	\N	\N	\N	Freddec I	2	Freddec	{}
 5705807	2	3	1	2022-12-30 16:43:55.627759	2022-11-30 16:43:55.627759	\N	\N	\N	510	\N	0	0	0	0	0	0	\N	\N	\N	\N	\N	116	\N	\N	\N	\N	\N	\N	\N	\N	Freddec I	2	Freddec	{}
 5705808	2	3	1	2022-12-30 16:43:55.627759	2022-11-30 16:43:55.627759	\N	\N	\N	510	\N	0	0	0	0	0	0	\N	\N	\N	\N	\N	118	\N	\N	\N	\N	\N	\N	\N	\N	Freddec I	2	Freddec	{}
@@ -31567,6 +30476,8 @@ COPY s03.researches (userid, researchid, level, expires) FROM stdin;
 2	20	1	\N
 2	21	1	\N
 2	22	1	\N
+2	201	1	\N
+2	902	1	\N
 2	101	1	\N
 \.
 
@@ -31576,7 +30487,7 @@ COPY s03.researches (userid, researchid, level, expires) FROM stdin;
 --
 
 COPY s03.researches_pending (id, userid, researchid, start_time, end_time, looping) FROM stdin;
-165399	2	201	2022-12-30 16:44:45.672584	2022-12-30 18:41:50.672584	f
+165401	2	901	2022-12-30 22:15:48.708783	2022-12-31 02:44:49.708783	f
 \.
 
 
@@ -31654,21 +30565,21 @@ sp_daily_cleaning()	t	2008-01-30 04:09:50.279533	22:00:00	\N	{00:00:13.869816,00
 COPY s03.sys_events (procedure, enabled, last_runtime, run_every, last_result, last_executiontimes) FROM stdin;
 sp_event_fleet_delayed()	f	2008-09-24 13:52:44.233	00:10:30	\N	{00:00:00.016,00:00:00.015,00:00:00,00:00:00,00:00:00.016,00:00:00,00:00:00.016,00:00:00,00:00:00,00:00:00.015}
 sp_event_spawn_new_resource_points()	f	2008-07-24 15:24:11.004	00:19:10	\N	{00:00:00,00:00:00,00:00:00,00:00:00,00:00:00,00:00:00,00:00:00,00:00:00,00:00:00,00:00:00}
-sp_event_spawn_orbit_resources()	t	2008-11-03 13:43:38.781	00:01:00	\N	{00:00:00,00:00:00,00:00:00,00:00:00,00:00:00,00:00:00.016,00:00:00,00:00:00.016,00:00:00.016,00:00:00.016}
 sp_event_annihilation_fleets()	f	2019-03-28 22:23:15.281233	00:30:00	\N	{00:00:02.363637,00:00:02.49736,00:00:00.049482,00:00:00.049954,00:00:00.049901,00:00:08.135784,00:00:02.225658,00:00:00.935741,00:00:01.75,00:00:02.125}
-sp_event_merchants_contract()	t	2020-09-09 18:37:48.554622	24:00:00	\N	{00:00:00.013764,00:00:00.002839,00:00:00.002246,00:00:00.001681,00:00:00.001819,00:00:00.00186,00:00:00.010767,00:00:00.007715,00:00:00.001035,00:00:00.000896}
-sp_event_lottery()	t	2020-09-06 18:34:47.887603	168:00:00	\N	{00:00:00.010829,00:00:00.004089,00:00:00.089142,00:00:00.003773,00:00:00.101392,00:00:03.625,00:00:00.938,00:00:00.781,00:00:01.031,00:00:04.203}
-sp_daily_cleaning()	t	2020-09-09 18:37:48.554622	24:00:00	\N	{00:00:00.034056,00:00:00.040125,00:00:00.032311,00:00:00.034862,00:00:00.033231,00:00:00.026335,00:00:00.023199,00:00:00.019599,00:00:00.025142,00:00:00.022588}
-sp_event_riots()	t	2020-09-10 12:43:38.081482	00:10:50	\N	{00:00:00.002134,00:00:00.002266,00:00:00.004531,00:00:00.005939,00:00:00.002095,00:00:00.002307,00:00:00.001463,00:00:00.001195,00:00:00.006364,00:00:00.005597}
-sp_event_rogue_fleets_patrol()	t	2020-09-10 11:27:46.500595	01:30:00	\N	{00:00:00.002591,00:00:00.007417,00:00:00.009682,00:00:00.007987,00:00:00.009318,00:00:00.00837,00:00:00.008106,00:00:00.007294,00:00:00.03403,00:00:00.006827}
-sp_event_commanders_promotions()	t	2020-09-10 12:27:46.919184	00:30:00	\N	{00:00:00.002799,00:00:00.001448,00:00:00.000485,00:00:00.00147,00:00:00.001721,00:00:00.001647,00:00:00.001341,00:00:00.001246,00:00:00.001248,00:00:00.001645}
-sp_event_lost_nations_abandon()	t	2020-09-10 12:45:47.018908	00:11:00	\N	{00:00:00.004053,00:00:00.002489,00:00:00.002518,00:00:00.003105,00:00:00.002655,00:00:00.004197,00:00:00.002434,00:00:00.000374,00:00:00.003662,00:00:00.002457}
-sp_event_planet_bonus()	t	2020-09-10 12:37:48.084671	00:10:00	\N	{00:00:00.004053,00:00:00.004412,00:00:00.004921,00:00:00.004532,00:00:00.005446,00:00:00.003884,00:00:00.004165,00:00:00.001473,00:00:00.004265,00:00:00.004304}
-sp_event_robberies()	t	2020-09-10 12:38:58.89094	00:10:10	\N	{00:00:00.004312,00:00:00.008309,00:00:00.001908,00:00:00.002102,00:00:00.002169,00:00:00.002388,00:00:00.001979,00:00:00.001587,00:00:00.002864,00:00:00.002615}
-sp_event_laboratory_accident()	t	2020-09-10 12:40:08.400608	00:10:20	\N	{00:00:00.004202,00:00:00.004227,00:00:00.003442,00:00:00.003826,00:00:00.005053,00:00:00.001292,00:00:00.000967,00:00:00.001897,00:00:00.004072,00:00:00.004552}
-sp_event_rogue_fleets_rush_resources()	t	2020-09-10 12:42:46.92233	01:15:00	\N	{00:00:00.002609,00:00:00.002989,00:00:00.001325,00:00:00.000765,00:00:00.033123,00:00:00.00155,00:00:00.002498,00:00:00.001128,00:00:00.004483,00:00:00.001258}
-sp_event_long()	t	2020-09-10 12:43:26.544712	00:10:40	\N	{00:00:00.001374,00:00:00.003457,00:00:00.003917,00:00:00.005572,00:00:00.003241,00:00:00.00357,00:00:00.000931,00:00:00.001459,00:00:00.000989,00:00:00.003432}
-sp_event_sandworm()	t	2020-09-10 12:46:06.572772	00:11:10	\N	{00:00:00.002357,00:00:00.002254,00:00:00.002829,00:00:00.002264,00:00:00.002626,00:00:00.002231,00:00:00.002218,00:00:00.001324,00:00:00.004023,00:00:00.004078}
+sp_event_robberies()	t	2022-12-30 22:54:10.755409	00:10:10	\N	{00:00:00.003697,00:00:00.003522,00:00:00.003657,00:00:00.005421,00:00:00.003709,00:00:00.002584,00:00:00.002697,00:00:00.005189,00:00:00.00546,00:00:00.003508}
+sp_event_merchants_contract()	t	2022-12-30 16:52:36.507524	24:00:00	\N	{00:00:00.001108,00:00:00.013764,00:00:00.002839,00:00:00.002246,00:00:00.001681,00:00:00.001819,00:00:00.00186,00:00:00.010767,00:00:00.007715,00:00:00.001035}
+sp_event_lottery()	t	2022-12-30 16:52:36.507524	168:00:00	\N	{00:00:00.003361,00:00:00.010829,00:00:00.004089,00:00:00.089142,00:00:00.003773,00:00:00.101392,00:00:03.625,00:00:00.938,00:00:00.781,00:00:01.031}
+sp_event_laboratory_accident()	t	2022-12-30 22:48:21.822744	00:10:20	\N	{00:00:00.001797,00:00:00.001861,00:00:00.003726,00:00:00.001867,00:00:00.002014,00:00:00.003693,00:00:00.001032,00:00:00.003722,00:00:00.003885,00:00:00.003189}
+sp_event_lost_nations_abandon()	t	2022-12-30 22:54:42.943149	00:11:00	\N	{00:00:00.002467,00:00:00.002686,00:00:00.002626,00:00:00.000885,00:00:00.000922,00:00:00.002757,00:00:00.002615,00:00:00.002792,00:00:00.002871,00:00:00.002728}
+sp_event_spawn_orbit_resources()	t	2022-12-30 22:54:48.465543	00:01:00	\N	{00:00:00.002312,00:00:00.004045,00:00:00.002117,00:00:00.003877,00:00:00.002146,00:00:00.001872,00:00:00.004101,00:00:00.003977,00:00:00.004009,00:00:00.004011}
+sp_event_commanders_promotions()	t	2022-12-30 22:49:37.965877	00:30:00	\N	{00:00:00.001467,00:00:00.001524,00:00:00.001487,00:00:00.001473,00:00:00.000569,00:00:00.001252,00:00:00.001418,00:00:00.00157,00:00:00.001395,00:00:00.000443}
+sp_event_planet_bonus()	t	2022-12-30 22:49:43.4866	00:10:00	\N	{00:00:00.003933,00:00:00.004923,00:00:00.002901,00:00:00.0027,00:00:00.002638,00:00:00.002724,00:00:00.003901,00:00:00.004871,00:00:00.004744,00:00:00.004011}
+sp_event_rogue_fleets_rush_resources()	t	2022-12-30 22:04:37.164129	01:15:00	\N	{00:00:00.001187,00:00:00.0028,00:00:00.002725,00:00:00.000676,00:00:00.00039,00:00:00.002609,00:00:00.002989,00:00:00.001325,00:00:00.000765,00:00:00.033123}
+sp_event_riots()	t	2022-12-30 22:50:38.178165	00:10:50	\N	{00:00:00.003808,00:00:00.001408,00:00:00.00205,00:00:00.002207,00:00:00.001197,00:00:00.00389,00:00:00.003757,00:00:00.004145,00:00:00.003963,00:00:00.004168}
+sp_event_rogue_fleets_patrol()	t	2022-12-30 22:52:37.514464	01:30:00	\N	{00:00:00.004434,00:00:00.003937,00:00:00.00457,00:00:00.003297,00:00:00.001801,00:00:00.002591,00:00:00.007417,00:00:00.009682,00:00:00.007987,00:00:00.009318}
+sp_event_long()	t	2022-12-30 22:46:22.287701	00:10:40	\N	{00:00:00.001912,00:00:00.003675,00:00:00.002266,00:00:00.000981,00:00:00.001978,00:00:00.003986,00:00:00.003835,00:00:00.003916,00:00:00.003448,00:00:00.002425}
+sp_event_sandworm()	t	2022-12-30 22:47:46.699454	00:11:10	\N	{00:00:00.00249,00:00:00.004462,00:00:00.001653,00:00:00.002572,00:00:00.004636,00:00:00.004746,00:00:00.004139,00:00:00.002749,00:00:00.004584,00:00:00.004598}
+sp_daily_cleaning()	t	2022-12-30 19:01:06.940705	24:00:00	\N	{00:00:00.003422,00:00:00.000407,00:00:00.000616,00:00:00.000419,00:00:00.000366,00:00:00.000373,00:00:00.000468,00:00:00.000444,00:00:00.000368,00:00:00.000422}
 \.
 
 
@@ -31677,32 +30588,32 @@ sp_event_sandworm()	t	2020-09-10 12:46:06.572772	00:11:10	\N	{00:00:00.002357,00
 --
 
 COPY s03.sys_processes (procedure, enabled, last_runtime, run_every, last_result, last_executiontimes) FROM stdin;
-sp_process_market_price()	t	2022-12-30 16:36:53.245314	01:00:00	\N	{00:00:00.005138,00:00:00.004626,00:00:00.006103,00:00:00.004638,00:00:00.003627,00:00:00.003688,00:00:00.003939,00:00:00.006734,00:00:00.003795,00:00:00.003886}
-sp_process_clean_routes()	t	2022-12-30 16:43:55.627759	00:05:00	\N	{00:00:00.002798,00:00:00.000806,00:00:00.000816,00:00:00.001336,00:00:00.003024,00:00:00.000628,00:00:00.001527,00:00:00.001373,00:00:00.001031,00:00:00.001412}
-sp_process_clean_waiting_fleets()	t	2022-12-30 16:46:53.647708	00:10:00	\N	{00:00:00.000519,00:00:00.000943,00:00:00.000768,00:00:00.000854,00:00:00.00075,00:00:00.000705,00:00:00.000449,00:00:00.000592,00:00:00.00048,00:00:00.001052}
-sp_process_clean_alliances()	t	2022-12-30 16:46:14.288976	00:01:00	\N	{00:00:00.000835,00:00:00.00195,00:00:00.001011,00:00:00.002406,00:00:00.0036,00:00:00.002186,00:00:00.003399,00:00:00.000717,00:00:00.000917,00:00:00.001037}
-sp_process_naps(10)	t	2022-12-30 16:47:08.856193	00:00:01	\N	{00:00:00.00014,00:00:00.000133,00:00:00.000118,00:00:00.000115,00:00:00.000109,00:00:00.000123,00:00:00.000115,00:00:00.000139,00:00:00.000137,00:00:00.000121}
-sp_process_tributes(25)	t	2022-12-30 16:47:08.856193	00:00:01	\N	{00:00:00.000099,00:00:00.000093,00:00:00.000096,00:00:00.000119,00:00:00.000102,00:00:00.000108,00:00:00.000091,00:00:00.000084,00:00:00.000097,00:00:00.000095}
-sp_process_destroy_buildings('0:00:01', 10)	t	2022-12-30 16:47:08.856193	00:00:01	\N	{00:00:00.000084,00:00:00.000103,00:00:00.000083,00:00:00.00009,00:00:00.000084,00:00:00.000106,00:00:00.000096,00:00:00.000083,00:00:00.000138,00:00:00.000133}
-sp_process_accounts_deletion()	t	2022-12-30 16:47:08.856193	00:00:01	\N	{00:00:00.000103,00:00:00.000107,00:00:00.000099,00:00:00.000103,00:00:00.000099,00:00:00.000123,00:00:00.00011,00:00:00.00015,00:00:00.000116,00:00:00.000144}
-sp_process_score('0:00:00', 50)	t	2022-12-30 16:47:08.856193	00:00:01	\N	{00:00:00.000072,00:00:00.000091,00:00:00.00007,00:00:00.000071,00:00:00.00007,00:00:00.000078,00:00:00.000075,00:00:00.000077,00:00:00.000076,00:00:00.000076}
-sp_process_market('0:00:05', 50)	t	2022-12-30 16:47:06.745076	00:00:05	\N	{00:00:00.000133,00:00:00.000129,00:00:00.00011,00:00:00.000149,00:00:00.000132,00:00:00.000419,00:00:00.000516,00:00:00.000462,00:00:00.000413,00:00:00.000412}
-sp_process_holidays()	t	2022-12-30 16:47:06.745076	00:00:05	\N	{00:00:00.000078,00:00:00.000072,00:00:00.000072,00:00:00.000078,00:00:00.000074,00:00:00.000075,00:00:00.000074,00:00:00.000082,00:00:00.000083,00:00:00.000074}
-sp_process_researches()	t	2022-12-30 16:47:08.856193	00:00:01	\N	{00:00:00.000109,00:00:00.000101,00:00:00.000106,00:00:00.000107,00:00:00.000102,00:00:00.000125,00:00:00.000142,00:00:00.0001,00:00:00.000127,00:00:00.000117}
-sp_process_training('0:00:01', 10)	t	2022-12-30 16:47:08.856193	00:00:01	\N	{00:00:00.00031,00:00:00.000243,00:00:00.000257,00:00:00.000263,00:00:00.000249,00:00:00.000289,00:00:00.000276,00:00:00.000247,00:00:00.000305,00:00:00.000282}
-sp_process_fleets_movements('0:00:01', 25)	t	2022-12-30 16:47:08.856193	00:00:00.5	\N	{00:00:00.000114,00:00:00.000149,00:00:00.000119,00:00:00.000118,00:00:00.000109,00:00:00.000146,00:00:00.000112,00:00:00.000118,00:00:00.000101,00:00:00.00011}
-sp_process_fleets_recycling('0:00:01', 25)	t	2022-12-30 16:47:08.856193	00:00:00.5	\N	{00:00:00.000103,00:00:00.000106,00:00:00.000092,00:00:00.000104,00:00:00.000098,00:00:00.000117,00:00:00.0001,00:00:00.000105,00:00:00.000102,00:00:00.000124}
-sp_process_bounties(10)	t	2022-12-30 16:47:06.745076	00:00:05	\N	{00:00:00.000067,00:00:00.00007,00:00:00.000066,00:00:00.000074,00:00:00.000072,00:00:00.000087,00:00:00.000087,00:00:00.000086,00:00:00.00009,00:00:00.000087}
-sp_process_merchant_planets()	t	2022-12-30 16:47:06.745076	00:00:05	\N	{00:00:00.000108,00:00:00.000102,00:00:00.000113,00:00:00.000103,00:00:00.000109,00:00:00.000111,00:00:00.000106,00:00:00.000104,00:00:00.000106,00:00:00.000101}
-sp_process_ships('0:00:01', 20)	t	2022-12-30 16:47:08.856193	00:00:00.5	\N	{00:00:00.000364,00:00:00.00036,00:00:00.000342,00:00:00.000356,00:00:00.000361,00:00:00.000342,00:00:00.000358,00:00:00.000359,00:00:00.000359,00:00:00.000352}
-sp_process_credits_production('0:00:00', 50)	t	2022-12-30 16:47:08.856193	00:00:01	\N	{00:00:00.000091,00:00:00.000083,00:00:00.000089,00:00:00.000083,00:00:00.000089,00:00:00.000088,00:00:00.000083,00:00:00.000079,00:00:00.000083,00:00:00.000098}
-sp_process_market_purchases()	t	2022-12-30 16:47:06.745076	00:00:05	\N	{00:00:00.000103,00:00:00.000093,00:00:00.0001,00:00:00.00009,00:00:00.000094,00:00:00.0001,00:00:00.000096,00:00:00.000106,00:00:00.000092,00:00:00.00009}
-sp_process_fleets_waiting()	t	2022-12-30 16:47:08.856193	00:00:01	\N	{00:00:00.000077,00:00:00.00007,00:00:00.000092,00:00:00.000073,00:00:00.000076,00:00:00.000073,00:00:00.000071,00:00:00.00007,00:00:00.000085,00:00:00.000075}
-sp_process_leave_alliance(10)	t	2022-12-30 16:47:08.856193	00:00:01	\N	{00:00:00.000074,00:00:00.000079,00:00:00.000073,00:00:00.000082,00:00:00.000075,00:00:00.000094,00:00:00.000121,00:00:00.000078,00:00:00.00009,00:00:00.000076}
-sp_process_buildings()	t	2022-12-30 16:47:08.856193	00:00:01	\N	{00:00:00.000124,00:00:00.000082,00:00:00.000077,00:00:00.000085,00:00:00.000081,00:00:00.000091,00:00:00.000084,00:00:00.000077,00:00:00.000088,00:00:00.000082}
-sp_process_wars(10)	t	2022-12-30 16:47:08.856193	00:00:01	\N	{00:00:00.000155,00:00:00.000143,00:00:00.00019,00:00:00.000147,00:00:00.000151,00:00:00.000154,00:00:00.000156,00:00:00.000145,00:00:00.000176,00:00:00.000155}
-sp_process_update_planets('0:00:00', 25)	t	2022-12-30 16:47:08.856193	00:00:01	\N	{00:00:00.00016,00:00:00.000149,00:00:00.000149,00:00:00.000159,00:00:00.00016,00:00:00.000176,00:00:00.000151,00:00:00.000154,00:00:00.000154,00:00:00.000151}
-sp_process_continue_shipyard('0:00:01', 20)	t	2022-12-30 16:47:08.856193	00:00:00.5	\N	{00:00:00.000147,00:00:00.00017,00:00:00.000163,00:00:00.000162,00:00:00.000159,00:00:00.000196,00:00:00.000165,00:00:00.000156,00:00:00.000163,00:00:00.000164}
+sp_process_market_price()	t	2022-12-30 22:36:54.750231	01:00:00	\N	{00:00:00.00241,00:00:00.00246,00:00:00.002515,00:00:00.002538,00:00:00.002528,00:00:00.002494,00:00:00.005138,00:00:00.004626,00:00:00.006103,00:00:00.004638}
+sp_process_clean_waiting_fleets()	t	2022-12-30 22:45:43.627891	00:10:00	\N	{00:00:00.000452,00:00:00.000447,00:00:00.000491,00:00:00.000467,00:00:00.000446,00:00:00.00041,00:00:00.000457,00:00:00.000488,00:00:00.00044,00:00:00.00043}
+sp_process_clean_routes()	t	2022-12-30 22:50:50.99082	00:05:00	\N	{00:00:00.001023,00:00:00.00096,00:00:00.001019,00:00:00.000958,00:00:00.000972,00:00:00.000945,00:00:00.000983,00:00:00.000944,00:00:00.000997,00:00:00.000942}
+sp_process_tributes(25)	t	2022-12-30 22:54:55.762415	00:00:01	\N	{00:00:00.000106,00:00:00.000105,00:00:00.000101,00:00:00.000099,00:00:00.000103,00:00:00.000108,00:00:00.000104,00:00:00.000102,00:00:00.00013,00:00:00.000145}
+sp_process_destroy_buildings('0:00:01', 10)	t	2022-12-30 22:54:55.762415	00:00:01	\N	{00:00:00.000084,00:00:00.000086,00:00:00.000084,00:00:00.000085,00:00:00.000087,00:00:00.000084,00:00:00.000086,00:00:00.000083,00:00:00.000086,00:00:00.000119}
+sp_process_market('0:00:05', 50)	t	2022-12-30 22:54:54.753352	00:00:05	\N	{00:00:00.000416,00:00:00.000438,00:00:00.000522,00:00:00.000454,00:00:00.003917,00:00:00.000129,00:00:00.000108,00:00:00.000153,00:00:00.000145,00:00:00.000124}
+sp_process_clean_alliances()	t	2022-12-30 22:54:55.259028	00:01:00	\N	{00:00:00.000817,00:00:00.000791,00:00:00.000824,00:00:00.000809,00:00:00.000693,00:00:00.000889,00:00:00.000799,00:00:00.000784,00:00:00.000791,00:00:00.000852}
+sp_process_accounts_deletion()	t	2022-12-30 22:54:55.762415	00:00:01	\N	{00:00:00.000164,00:00:00.000131,00:00:00.000152,00:00:00.000111,00:00:00.000105,00:00:00.000105,00:00:00.00011,00:00:00.000103,00:00:00.000106,00:00:00.000131}
+sp_process_score('0:00:00', 50)	t	2022-12-30 22:54:55.762415	00:00:01	\N	{00:00:00.000084,00:00:00.000082,00:00:00.000084,00:00:00.000112,00:00:00.000104,00:00:00.000151,00:00:00.000079,00:00:00.00007,00:00:00.000071,00:00:00.000076}
+sp_process_naps(10)	t	2022-12-30 22:54:55.762415	00:00:01	\N	{00:00:00.000121,00:00:00.000124,00:00:00.000132,00:00:00.000128,00:00:00.000128,00:00:00.000132,00:00:00.000127,00:00:00.000175,00:00:00.000226,00:00:00.000134}
+sp_process_holidays()	t	2022-12-30 22:54:54.753352	00:00:05	\N	{00:00:00.000083,00:00:00.000073,00:00:00.000088,00:00:00.000082,00:00:00.000468,00:00:00.00007,00:00:00.000083,00:00:00.000072,00:00:00.000072,00:00:00.000081}
+sp_process_training('0:00:01', 10)	t	2022-12-30 22:54:55.762415	00:00:01	\N	{00:00:00.000271,00:00:00.000255,00:00:00.000336,00:00:00.000271,00:00:00.000278,00:00:00.000283,00:00:00.00029,00:00:00.000252,00:00:00.000282,00:00:00.000316}
+sp_process_researches()	t	2022-12-30 22:54:55.762415	00:00:01	\N	{00:00:00.000117,00:00:00.000126,00:00:00.000152,00:00:00.000119,00:00:00.000124,00:00:00.000122,00:00:00.00015,00:00:00.000113,00:00:00.000142,00:00:00.000131}
+sp_process_fleets_movements('0:00:01', 25)	t	2022-12-30 22:54:56.266802	00:00:00.5	\N	{00:00:00.000157,00:00:00.000095,00:00:00.000112,00:00:00.000109,00:00:00.000157,00:00:00.000114,00:00:00.000133,00:00:00.000099,00:00:00.000103,00:00:00.000097}
+sp_process_fleets_recycling('0:00:01', 25)	t	2022-12-30 22:54:56.266802	00:00:00.5	\N	{00:00:00.000111,00:00:00.000096,00:00:00.0001,00:00:00.000105,00:00:00.000109,00:00:00.000123,00:00:00.000108,00:00:00.0001,00:00:00.000157,00:00:00.000109}
+sp_process_bounties(10)	t	2022-12-30 22:54:54.753352	00:00:05	\N	{00:00:00.000097,00:00:00.000095,00:00:00.0001,00:00:00.000097,00:00:00.00024,00:00:00.000065,00:00:00.000066,00:00:00.000071,00:00:00.00007,00:00:00.000064}
+sp_process_merchant_planets()	t	2022-12-30 22:54:54.753352	00:00:05	\N	{00:00:00.000101,00:00:00.000096,00:00:00.000113,00:00:00.000094,00:00:00.00111,00:00:00.0001,00:00:00.0001,00:00:00.000096,00:00:00.000108,00:00:00.000095}
+sp_process_market_purchases()	t	2022-12-30 22:54:54.753352	00:00:05	\N	{00:00:00.00011,00:00:00.000096,00:00:00.000106,00:00:00.000096,00:00:00.000769,00:00:00.000095,00:00:00.000093,00:00:00.000104,00:00:00.000095,00:00:00.000092}
+sp_process_wars(10)	t	2022-12-30 22:54:55.762415	00:00:01	\N	{00:00:00.00016,00:00:00.000185,00:00:00.000175,00:00:00.000145,00:00:00.000151,00:00:00.000152,00:00:00.00015,00:00:00.000143,00:00:00.000146,00:00:00.000161}
+sp_process_continue_shipyard('0:00:01', 20)	t	2022-12-30 22:54:56.266802	00:00:00.5	\N	{00:00:00.000202,00:00:00.000161,00:00:00.000169,00:00:00.000164,00:00:00.000191,00:00:00.000159,00:00:00.000181,00:00:00.000156,00:00:00.000223,00:00:00.000153}
+sp_process_update_planets('0:00:00', 25)	t	2022-12-30 22:54:55.762415	00:00:01	\N	{00:00:00.000162,00:00:00.000165,00:00:00.000158,00:00:00.000159,00:00:00.000162,00:00:00.000164,00:00:00.000153,00:00:00.000154,00:00:00.000149,00:00:00.000163}
+sp_process_credits_production('0:00:00', 50)	t	2022-12-30 22:54:55.762415	00:00:01	\N	{00:00:00.000087,00:00:00.000089,00:00:00.000084,00:00:00.000083,00:00:00.000085,00:00:00.000089,00:00:00.000094,00:00:00.000081,00:00:00.000081,00:00:00.000088}
+sp_process_fleets_waiting()	t	2022-12-30 22:54:55.762415	00:00:01	\N	{00:00:00.000071,00:00:00.000073,00:00:00.000069,00:00:00.00007,00:00:00.00007,00:00:00.000083,00:00:00.00008,00:00:00.000065,00:00:00.000077,00:00:00.000073}
+sp_process_leave_alliance(10)	t	2022-12-30 22:54:55.762415	00:00:01	\N	{00:00:00.000075,00:00:00.000076,00:00:00.00014,00:00:00.000072,00:00:00.000073,00:00:00.000079,00:00:00.000077,00:00:00.000071,00:00:00.000076,00:00:00.000083}
+sp_process_buildings()	t	2022-12-30 22:54:55.762415	00:00:01	\N	{00:00:00.000082,00:00:00.000085,00:00:00.000107,00:00:00.00008,00:00:00.000083,00:00:00.000084,00:00:00.000084,00:00:00.000075,00:00:00.000083,00:00:00.000089}
+sp_process_ships('0:00:01', 20)	t	2022-12-30 22:54:56.266802	00:00:00.5	\N	{00:00:00.000387,00:00:00.000366,00:00:00.000376,00:00:00.000367,00:00:00.000397,00:00:00.000363,00:00:00.000384,00:00:00.000359,00:00:00.000393,00:00:00.000364}
 \.
 
 
@@ -31714,8 +30625,8 @@ COPY s03.users (id, privilege, username, password, lastlogin, regdate, email, cr
 4	-100	Nation rebelle	A	2006-09-01 00:00:00	2006-09-01 00:00:00	nr@exile	1000000	168	1036		\N		\N	\N	0	103843	0	0	0	\N	0	\N	\N	0	0	0	0	\N	\N	0	\N	2006-09-05 11:57:09.571683	\N	0	t	\N	2009-01-01 17:00:00	\N	\N	\N	0	0	\N	\N	f	5	2006-09-19 11:57:09.571683	50000	100000	0	0	0	0	0	0	0	0	\N	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	0	0	100	2		\N	\N	2006-09-01 00:00:00	1	1	0	2007-02-23 10:53:36.184266	f	0	103843	1	0	0	\N	0.0.0.0	\N	1	\N	t	t	\N	0	2008-07-27 14:38:06.042	0	1	1	1	400	3	0
 1	-100	Les fossoyeurs	A	2006-09-01 00:00:00	2006-09-01 00:00:00	fos@exile	1000000	168	1036		\N		\N	\N	0	14868700	0	0	0	\N	100	2019-03-30 13:49:00.351465	2019-03-30 21:49:00.351465	0	0	0	0	\N	\N	0	\N	2006-09-05 11:56:46.664541	\N	0	f	\N	2009-01-01 17:00:00	\N	\N	\N	0	0	\N	\N	f	5	2006-09-19 11:56:46.664541	50000	99999	0	0	0	0	0	535430.8	0	0	\N	1	1.8522	1.8522	1.21	1	1.9845	2.3625	1.2	1.575	1.625	1.5	1.45	1	1	1	0.9	1.1	1.25	1	0.95	0.8	0.9	1	0.8	0.95	1	5	20	85	2		\N	\N	2006-09-01 00:00:00	1	1	0	2007-02-23 10:53:36.184266	f	0	14905392	1.1	0	0	\N	0.0.0.0	\N	1	\N	t	t	\N	0	2008-07-27 14:38:06.042	0	1	1	1	400	3	0
 3	-50	Guilde marchande	A	2006-09-01 00:00:00	2006-09-01 00:00:00	gm@exile	1000000	168	1036		\N		\N	\N	0	0	0	0	0	\N	100	2019-03-30 13:49:00.351465	2019-03-30 21:49:00.351465	0	0	0	0	\N	\N	1025	\N	2106-09-05 11:54:00.464825	\N	0	f	\N	2009-01-01 17:00:00	\N	\N	\N	0	0	\N	\N	f	5	2005-09-19 11:54:00.464825	50000	100000	46389	0	375	0	0	1026.6666	0	0	\N	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	0	0	85	1		\N	\N	2006-09-01 00:00:00	1	1	0	2007-02-23 10:53:36.184266	t	0	0	1	0	0	\N	0.0.0.0	\N	1	\N	t	t	\N	0	2008-07-27 14:38:06.042	0	1	1	1	400	3	0
-2	0	Freddec	\N	2022-12-30 11:04:33.305665	2022-12-30 10:49:00.208872	\N	3420	168	1036		\N		510	\N	0	0	5750	2686	0	\N	0	\N	\N	0	0	0	0	\N	2022-12-30 16:44:18.199374	1	\N	2022-12-30 10:49:00.208872	\N	0	t	\N	2009-01-01 17:00:00	\N	\N	\N	0	0	\N	\N	f	5	2023-01-13 11:04:17.534199	50000	100000	0	0	0	0	0	0	0	0	\N	1	1	1	1	1	1	1.212	1	1.01	1.1	1.1	1	1	1	1	1	1	1	0.9	1	1	0.9	1	1	1	1	5	20	85	2		\N		2022-12-30 11:04:17.534199	1	1	0	2022-12-31 00:00:00	f	0	0	1	0	0	\N	127.0.0.1	\N	1.1	\N	f	f	\N	10	2022-12-29 10:49:00.208872	624	1.05	1	1	200	3	0
 5	500	Duke	nocheat	2019-03-29 16:14:24.626639	2009-01-01 21:22:34.04	\N	1000000	168	1036		\N		\N	\N	283	0	0	0	0	\N	0	\N	\N	0	0	0	0	\N	2019-03-29 16:14:24.626639	0	\N	2009-01-01 21:22:34.04	\N	283	t	\N	2009-01-01 17:00:00	\N	\N	\N	0	0	637	99880	f	5	2009-01-15 21:22:34.04	50000	100000	0	0	0	0	0	0	0	0	\N	0	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	0	0	85	0		\N		2009-01-01 21:22:34.04	1	1	0	2022-12-31 00:00:00	f	0	0	1	0	0	\N	82.246.212.174	\N	1	s_default	f	f	\N	0	2008-12-31 21:22:34.04	0	1	1	1	400	3	0
+2	0	Freddec	\N	2022-12-30 22:49:15.587262	2022-12-30 10:49:00.208872	\N	989882	168	1036		\N		510	\N	0	0	13000	3062	0	441	0	2022-12-30 22:47:29.442614	\N	0	0	0	0	\N	2022-12-30 22:54:18.92668	1	\N	2022-12-30 10:49:00.208872	\N	0	t	\N	2009-01-01 17:00:00	\N	\N	\N	0	0	\N	\N	f	5	2023-01-13 11:04:17.534199	50000	100000	0	0	2376.251	1150.0007	517.5	0	0	0	\N	1	1	1	1	1	1.01	1.212	1	1.01	1.1	1.1	1	1	1	1	1	1	1	0.9	1	1	0.9	1	1	1	1	5	20	100	2		\N		2022-12-30 11:04:17.534199	1	1	0	2022-12-31 00:00:00	f	0	0	1	0	0	\N	127.0.0.1	\N	1.1	\N	f	f	\N	10	2022-12-29 10:49:00.208872	1248	1.05	1	1	200	3	0
 \.
 
 
@@ -31741,24 +30652,6 @@ COPY s03.users_bounty (userid, bounty, reward_time) FROM stdin;
 
 COPY s03.users_chats (userid, chatid, password, added, lastactivity) FROM stdin;
 2	2		2022-12-30 12:29:46.56055	2022-12-30 12:29:46.56055
-\.
-
-
---
--- Data for Name: users_connections; Type: TABLE DATA; Schema: s03; Owner: freddec
---
-
-COPY s03.users_connections (id, userid, datetime, forwarded_address, browser, address, browserid, disconnected) FROM stdin;
-905475	350	2020-09-10 11:29:54.512186		Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.102 Safari/537.36	2964195738	5334197	\N
-905476	2	2022-12-30 10:26:11.015324		Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36	2130706433	5334200	2022-12-30 10:27:11.015324
-905477	2	2022-12-30 10:39:53.014687		Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36	2130706433	5334203	2022-12-30 10:40:53.014687
-905478	2	2022-12-30 10:42:38.739416		Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36	2130706433	5334206	2022-12-30 10:42:39.388819
-905479	2	2022-12-30 10:42:39.388819		Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36	2130706433	5334208	2022-12-30 10:43:39.388819
-905480	2	2022-12-30 10:48:16.930565		Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36	2130706433	5334211	2022-12-30 10:48:17.627788
-905481	2	2022-12-30 10:48:17.627788		Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36	2130706433	5334213	2022-12-30 10:49:01.663991
-905482	2	2022-12-30 10:49:00.208872		Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36	2130706433	5334216	2022-12-30 10:49:01.663991
-905483	2	2022-12-30 10:49:01.663991		Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36	2130706433	5334218	2022-12-30 10:50:01.663991
-905484	2	2022-12-30 11:04:33.305665		Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36	2130706433	5334233	\N
 \.
 
 
@@ -31806,7 +30699,7 @@ COPY s03.users_ships_kills (userid, shipid, killed, lost) FROM stdin;
 -- Name: alliances_id_seq; Type: SEQUENCE SET; Schema: s03; Owner: freddec
 --
 
-SELECT pg_catalog.setval('s03.alliances_id_seq', 440, true);
+SELECT pg_catalog.setval('s03.alliances_id_seq', 441, true);
 
 
 --
@@ -31848,14 +30741,14 @@ SELECT pg_catalog.setval('s03.battles_id_seq', 110642, true);
 -- Name: chat_id_seq; Type: SEQUENCE SET; Schema: s03; Owner: freddec
 --
 
-SELECT pg_catalog.setval('s03.chat_id_seq', 12541, true);
+SELECT pg_catalog.setval('s03.chat_id_seq', 12542, true);
 
 
 --
 -- Name: chat_lines_id_seq; Type: SEQUENCE SET; Schema: s03; Owner: freddec
 --
 
-SELECT pg_catalog.setval('s03.chat_lines_id_seq', 2266735, true);
+SELECT pg_catalog.setval('s03.chat_lines_id_seq', 2266751, true);
 
 
 --
@@ -31932,14 +30825,14 @@ SELECT pg_catalog.setval('s03.log_http_errors_id_seq', 21661, true);
 -- Name: log_notices_id_seq; Type: SEQUENCE SET; Schema: s03; Owner: freddec
 --
 
-SELECT pg_catalog.setval('s03.log_notices_id_seq', 1341962, true);
+SELECT pg_catalog.setval('s03.log_notices_id_seq', 1342027, true);
 
 
 --
 -- Name: log_sys_errors_id_seq; Type: SEQUENCE SET; Schema: s03; Owner: freddec
 --
 
-SELECT pg_catalog.setval('s03.log_sys_errors_id_seq', 639583, true);
+SELECT pg_catalog.setval('s03.log_sys_errors_id_seq', 644252, true);
 
 
 --
@@ -31960,7 +30853,7 @@ SELECT pg_catalog.setval('s03.messages_addressee_history_id_seq', 214540, true);
 -- Name: messages_id_seq; Type: SEQUENCE SET; Schema: s03; Owner: freddec
 --
 
-SELECT pg_catalog.setval('s03.messages_id_seq', 467896, true);
+SELECT pg_catalog.setval('s03.messages_id_seq', 467897, true);
 
 
 --
@@ -31981,7 +30874,7 @@ SELECT pg_catalog.setval('s03.npc_fleet_uid_seq', 217505, true);
 -- Name: planet_buildings_pending_id_seq; Type: SEQUENCE SET; Schema: s03; Owner: freddec
 --
 
-SELECT pg_catalog.setval('s03.planet_buildings_pending_id_seq', 1354300, true);
+SELECT pg_catalog.setval('s03.planet_buildings_pending_id_seq', 1354301, true);
 
 
 --
@@ -32009,14 +30902,14 @@ SELECT pg_catalog.setval('s03.planet_training_pending_id_seq', 1996304, true);
 -- Name: reports_id_seq; Type: SEQUENCE SET; Schema: s03; Owner: freddec
 --
 
-SELECT pg_catalog.setval('s03.reports_id_seq', 5705808, true);
+SELECT pg_catalog.setval('s03.reports_id_seq', 5705814, true);
 
 
 --
 -- Name: researches_pending_id_seq; Type: SEQUENCE SET; Schema: s03; Owner: freddec
 --
 
-SELECT pg_catalog.setval('s03.researches_pending_id_seq', 165399, true);
+SELECT pg_catalog.setval('s03.researches_pending_id_seq', 165401, true);
 
 
 --
@@ -32044,23 +30937,7 @@ SELECT pg_catalog.setval('s03.spy_id_seq', 7880, true);
 -- Name: users_connections_id_seq; Type: SEQUENCE SET; Schema: s03; Owner: freddec
 --
 
-SELECT pg_catalog.setval('s03.users_connections_id_seq', 905484, true);
-
-
---
--- Name: ai_planets ai_planets_pkey; Type: CONSTRAINT; Schema: s03; Owner: freddec
---
-
-ALTER TABLE ONLY s03.ai_planets
-    ADD CONSTRAINT ai_planets_pkey PRIMARY KEY (planetid);
-
-
---
--- Name: ai_rogue_planets ai_rogue_planets_pkey; Type: CONSTRAINT; Schema: s03; Owner: freddec
---
-
-ALTER TABLE ONLY s03.ai_rogue_planets
-    ADD CONSTRAINT ai_rogue_planets_pkey PRIMARY KEY (planetid);
+SELECT pg_catalog.setval('s03.users_connections_id_seq', 905486, true);
 
 
 --
@@ -32141,14 +31018,6 @@ ALTER TABLE ONLY s03.alliances_wallet_requests
 
 ALTER TABLE ONLY s03.alliances_wars
     ADD CONSTRAINT alliances_wars_pkey PRIMARY KEY (allianceid1, allianceid2);
-
-
---
--- Name: banned_logins banned_logins_pkey; Type: CONSTRAINT; Schema: s03; Owner: freddec
---
-
-ALTER TABLE ONLY s03.banned_logins
-    ADD CONSTRAINT banned_logins_pkey PRIMARY KEY (username);
 
 
 --
@@ -32349,46 +31218,6 @@ ALTER TABLE ONLY s03.impersonate_impersonationlog
 
 ALTER TABLE ONLY s03.invasions
     ADD CONSTRAINT invasions_pkey PRIMARY KEY (id);
-
-
---
--- Name: log_failed_logins log_failed_logins_pkey; Type: CONSTRAINT; Schema: s03; Owner: freddec
---
-
-ALTER TABLE ONLY s03.log_failed_logins
-    ADD CONSTRAINT log_failed_logins_pkey PRIMARY KEY (id);
-
-
---
--- Name: log_http_errors log_http_errors_pkey; Type: CONSTRAINT; Schema: s03; Owner: freddec
---
-
-ALTER TABLE ONLY s03.log_http_errors
-    ADD CONSTRAINT log_http_errors_pkey PRIMARY KEY (id);
-
-
---
--- Name: log_multi_simultaneous_warnings log_multi_simultaneous_warnings_pkey; Type: CONSTRAINT; Schema: s03; Owner: freddec
---
-
-ALTER TABLE ONLY s03.log_multi_simultaneous_warnings
-    ADD CONSTRAINT log_multi_simultaneous_warnings_pkey PRIMARY KEY (datetime, userid1, userid2);
-
-
---
--- Name: log_notices log_notices_pkey; Type: CONSTRAINT; Schema: s03; Owner: freddec
---
-
-ALTER TABLE ONLY s03.log_notices
-    ADD CONSTRAINT log_notices_pkey PRIMARY KEY (id);
-
-
---
--- Name: log_sys_errors log_sys_errors_pkey; Type: CONSTRAINT; Schema: s03; Owner: freddec
---
-
-ALTER TABLE ONLY s03.log_sys_errors
-    ADD CONSTRAINT log_sys_errors_pkey PRIMARY KEY (id);
 
 
 --
@@ -32661,14 +31490,6 @@ ALTER TABLE ONLY s03.users_holidays
 
 ALTER TABLE ONLY s03.users
     ADD CONSTRAINT users_pkey PRIMARY KEY (id);
-
-
---
--- Name: users_connections users_remote_address_history_pkey; Type: CONSTRAINT; Schema: s03; Owner: freddec
---
-
-ALTER TABLE ONLY s03.users_connections
-    ADD CONSTRAINT users_remote_address_history_pkey PRIMARY KEY (id);
 
 
 --
@@ -32982,20 +31803,6 @@ CREATE INDEX fki_fleets_dest_planetid_fkey ON s03.fleets USING btree (dest_plane
 
 
 --
--- Name: fki_log_multi_simultaneous_warnings_userid1_fkey; Type: INDEX; Schema: s03; Owner: freddec
---
-
-CREATE INDEX fki_log_multi_simultaneous_warnings_userid1_fkey ON s03.log_multi_simultaneous_warnings USING btree (userid1);
-
-
---
--- Name: fki_log_multi_simultaneous_warnings_userid2_fkey; Type: INDEX; Schema: s03; Owner: freddec
---
-
-CREATE INDEX fki_log_multi_simultaneous_warnings_userid2_fkey ON s03.log_multi_simultaneous_warnings USING btree (userid2);
-
-
---
 -- Name: fki_market_planetid_fk; Type: INDEX; Schema: s03; Owner: freddec
 --
 
@@ -33136,27 +31943,6 @@ CREATE INDEX fki_users_alliance_id_fkey ON s03.users USING btree (alliance_id) W
 
 
 --
--- Name: fki_users_multi_account_warnings_id_fkey; Type: INDEX; Schema: s03; Owner: freddec
---
-
-CREATE INDEX fki_users_multi_account_warnings_id_fkey ON s03.log_multi_account_warnings USING btree (id);
-
-
---
--- Name: fki_users_multi_account_warnings_withid_fkey; Type: INDEX; Schema: s03; Owner: freddec
---
-
-CREATE INDEX fki_users_multi_account_warnings_withid_fkey ON s03.log_multi_account_warnings USING btree (withid);
-
-
---
--- Name: fki_users_remote_address_history_userid; Type: INDEX; Schema: s03; Owner: freddec
---
-
-CREATE INDEX fki_users_remote_address_history_userid ON s03.users_connections USING btree (userid);
-
-
---
 -- Name: fki_users_reports_userid_fkey; Type: INDEX; Schema: s03; Owner: freddec
 --
 
@@ -33245,13 +32031,6 @@ CREATE INDEX impersonate_impersonationlog_impersonator_id_1ecfe8ce ON s03.impers
 --
 
 CREATE INDEX invasions_time_idx ON s03.invasions USING btree ("time");
-
-
---
--- Name: log_notices_timestamp_idx; Type: INDEX; Schema: s03; Owner: freddec
---
-
-CREATE INDEX log_notices_timestamp_idx ON s03.log_notices USING btree (datetime);
 
 
 --
@@ -33521,20 +32300,6 @@ CREATE INDEX users_regdate ON s03.users USING btree (regdate);
 
 
 --
--- Name: users_remote_address_history_address_idx; Type: INDEX; Schema: s03; Owner: freddec
---
-
-CREATE INDEX users_remote_address_history_address_idx ON s03.users_connections USING btree (address);
-
-
---
--- Name: users_remote_address_history_datetime_idx; Type: INDEX; Schema: s03; Owner: freddec
---
-
-CREATE INDEX users_remote_address_history_datetime_idx ON s03.users_connections USING btree (datetime);
-
-
---
 -- Name: users_score_next_update_idx; Type: INDEX; Schema: s03; Owner: freddec
 --
 
@@ -33633,13 +32398,6 @@ CREATE TRIGGER before_fleets_ships_insert BEFORE INSERT ON s03.fleets_ships FOR 
 
 
 --
--- Name: log_notices before_log_notice_insert; Type: TRIGGER; Schema: s03; Owner: freddec
---
-
-CREATE TRIGGER before_log_notice_insert BEFORE INSERT ON s03.log_notices FOR EACH ROW EXECUTE FUNCTION s03.sp_log_notice_before_insert();
-
-
---
 -- Name: messages_addressee_history before_messages_addressee_history_insert; Type: TRIGGER; Schema: s03; Owner: freddec
 --
 
@@ -33728,13 +32486,6 @@ CREATE TRIGGER before_user_deletion BEFORE DELETE ON s03.users FOR EACH ROW EXEC
 --
 
 CREATE TRIGGER chat_onlineusers_beforeinsert BEFORE INSERT ON s03.chat_onlineusers FOR EACH ROW EXECUTE FUNCTION s03.sp_chat_onlineusers_before_insert();
-
-
---
--- Name: log_multi_simultaneous_warnings log_multi_simultaneous_warnings_before_insert; Type: TRIGGER; Schema: s03; Owner: freddec
---
-
-CREATE TRIGGER log_multi_simultaneous_warnings_before_insert BEFORE INSERT ON s03.log_multi_simultaneous_warnings FOR EACH ROW EXECUTE FUNCTION s03.sp_log_multi_simultaneous_warnings_before_insert();
 
 
 --
@@ -34256,22 +33007,6 @@ ALTER TABLE ONLY s03.impersonate_impersonationlog
 
 
 --
--- Name: log_multi_simultaneous_warnings log_multi_simultaneous_warnings_userid1_fkey; Type: FK CONSTRAINT; Schema: s03; Owner: freddec
---
-
-ALTER TABLE ONLY s03.log_multi_simultaneous_warnings
-    ADD CONSTRAINT log_multi_simultaneous_warnings_userid1_fkey FOREIGN KEY (userid1) REFERENCES s03.users(id) ON UPDATE CASCADE ON DELETE CASCADE;
-
-
---
--- Name: log_multi_simultaneous_warnings log_multi_simultaneous_warnings_userid2_fkey; Type: FK CONSTRAINT; Schema: s03; Owner: freddec
---
-
-ALTER TABLE ONLY s03.log_multi_simultaneous_warnings
-    ADD CONSTRAINT log_multi_simultaneous_warnings_userid2_fkey FOREIGN KEY (userid2) REFERENCES s03.users(id) ON UPDATE CASCADE ON DELETE CASCADE;
-
-
---
 -- Name: market_sales market_planetid_fk; Type: FK CONSTRAINT; Schema: s03; Owner: freddec
 --
 
@@ -34645,22 +33380,6 @@ ALTER TABLE ONLY s03.users_holidays
 
 ALTER TABLE ONLY s03.users
     ADD CONSTRAINT users_lastplanetid_fkey FOREIGN KEY (lastplanetid) REFERENCES s03.nav_planet(id) ON UPDATE CASCADE ON DELETE SET NULL;
-
-
---
--- Name: log_multi_account_warnings users_multi_account_warnings_id_fkey; Type: FK CONSTRAINT; Schema: s03; Owner: freddec
---
-
-ALTER TABLE ONLY s03.log_multi_account_warnings
-    ADD CONSTRAINT users_multi_account_warnings_id_fkey FOREIGN KEY (id) REFERENCES s03.users_connections(id) ON UPDATE CASCADE ON DELETE CASCADE;
-
-
---
--- Name: log_multi_account_warnings users_multi_account_warnings_withid_fkey; Type: FK CONSTRAINT; Schema: s03; Owner: freddec
---
-
-ALTER TABLE ONLY s03.log_multi_account_warnings
-    ADD CONSTRAINT users_multi_account_warnings_withid_fkey FOREIGN KEY (withid) REFERENCES s03.users_connections(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --

@@ -68,16 +68,6 @@ class GlobalView(ExileMixin, View):
     def IsImpersonating(self):
         return self.request.user.is_impersonate
     
-    def log_notice(self, title, details, level):
-        query = "INSERT INTO log_notices (username, title, details, url, level) VALUES(" +\
-                dosql(self.oPlayerInfo["username"]) + ", " +\
-                dosql(title[:127]) + "," +\
-                dosql(details[:127]) + "," +\
-                "\'\'," +\
-                str(level) +\
-                ")"
-        oConnDoQuery(query)
-    
     # Call this function when the name of a planet has changed or has been colonized or abandonned
     def InvalidatePlanetList(self):
         self.request.session[sPlanetList] = None
@@ -289,29 +279,6 @@ class GlobalView(ExileMixin, View):
             tpl.Parse("show_mercenary")
             tpl.Parse("show_alliance")
     
-        #
-        # Fill admin info
-        #
-        if self.request.session.get("privilege", 0) >= 100:
-            
-            query = "SELECT int4(MAX(id)) FROM log_http_errors"
-            oRs = oConnExecute(query)
-            last_errorid = oRs[0]
-    
-            query = "SELECT int4(MAX(id)) FROM log_notices"
-            oRs = oConnExecute(query)
-            last_noticeid = oRs[0]
-    
-            query = "SELECT COALESCE(dev_lasterror, 0), COALESCE(dev_lastnotice, 0) FROM users WHERE id=" + self.request.session.get(sLogonUserID)
-            oRs = oConnExecute(query)
-            if last_errorid > oRs[0]:
-                tpl.AssignValue("new_error", last_errorid-oRs[0])
-    
-            if last_noticeid > oRs[1]:
-                tpl.AssignValue("new_notice", last_noticeid-oRs[1])
-    
-            tpl.Parse("dev")
-    
         tpl.AssignValue("planetid", self.CurrentPlanet)
     
         tpl.AssignValue("cur_g", self.CurrentGalaxyId)
@@ -485,14 +452,6 @@ class GlobalView(ExileMixin, View):
         self.displayAlliancePlanetName = self.oPlayerInfo["display_alliance_planet_name"]
     
         self.request.session["LCID"] = self.oPlayerInfo["lcid"]
-    
-        if self.request.session.get(sPrivilege) < 100:
-            if self.request.COOKIES.get("username") == "":
-                self.request.COOKIES["username"] = self.oPlayerInfo["username"]
-            elif self.request.COOKIES.get("username") != self.oPlayerInfo["username"]:
-                self.log_notice("username cookie", "Last browser username cookie : \"" + self.request.COOKIES.get("username", "") + "\"", 1)
-                
-                self.request.COOKIES["username"] = self.oPlayerInfo["username"]
 
         if self.IsPlayerAccount():
             # Redirect to locked page

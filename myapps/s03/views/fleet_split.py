@@ -34,10 +34,7 @@ class View(GlobalView):
     # display fleet info
     def DisplayExchangeForm(self, fleetid):
 
-        if self.request.session.get(sPrivilege) > 100:
-            content = GetTemplate(self.request, "fleet-split")
-        else:
-            content = GetTemplate(self.request, "fleet-split-old")
+        content = GetTemplate(self.request, "fleet-split")
 
         # retrieve fleet name, size, position, destination
         query = "SELECT id, name, attackonsight, engaged, size, signature, speed, remaining_time, commanderid, commandername," + \

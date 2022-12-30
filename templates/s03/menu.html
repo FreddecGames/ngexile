@@ -193,6 +193,7 @@ putMenu("/s03/mails/?a=ignorelist","mails_ignorelist","Nations ignorées",3);
 
 putMenu("/s03/reports/","reports","Rapports <span id=reportscount></span>",2);
 putMenu("/s03/chat/","chat","Salon",2);
+putMenu("https://discord.gg/x39nHzM","chat","Discord",2);
 putMenu("/s03/notes/","notes","Notes",2);
 
 {% if show_mercenary %}
@@ -200,28 +201,8 @@ putMenu("/s03/mercenary-intelligence/","intelligence","Mercenaires",1);
 putMenu("/s03/mercenary-intelligence/","intelligence","Espionnage",2);
 {% endif %}
 
-{% if dev %}
-<!-- dev -->
-putMenu("/s03/exile-version/","admin","Admin",1);
-putMenu("/s03/dev-log-errors/","log","Log",2);
-putMenu("/s03/dev-log-errors/","log_errors","Erreurs ({{new_error}})",3,0,0,1);
-putMenu("/s03/dev-log-notices/","log_notices","Notices ({{new_notices}})",3,0,0,1);
-putMenu("/s03/dev-multi/","log_multi","Multi-comptes",3,0,0,1);
-
-putMenu("/s03/dev-options/","player","Joueur",2);
-putMenu("/s03/dev-options/","player_penalty","Options",3,0,0,1);
-putMenu("/s03/dev-fleets/","player_fleets","Créer des flottes",3,0,0,1);
-putMenu("/s03/dev-connections/","player_connections","Connexions",3,0,0,1);
-putMenu("/s03/dev-multi-users/","player_multi","Multi-comptes",3,0,0,1);
-putMenu("/s03/dev-expenses/","player_expenses","Dépenses",3,0,0,1);
-
-putMenu("/s03/dev-playas/","playas","Jouer en tant que...",2);
-putMenu("/s03/dev-stats/","stats","Statistiques",2);
-{% endif %}
-
 putMenu("/s03/help/","help","Aide",1);
 putMenu("/s03/help/","help","Aide",2);
-putMenu("https://discord.gg/9RHUEhw","forum","Forum",2,0,1);
 
 putMenu("/s03/options/","options","Compte",1);
 putMenu("/s03/options/","options","Options",2);

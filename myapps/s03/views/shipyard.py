@@ -26,10 +26,6 @@ class View(GlobalView):
         request.session["shipyardfilter"] = self.ShipFilter
 
         if Action == "build" or Action == "bui1d":
-            if Action != "bui1d":
-                scripturl = Request.ServerVariables("SCRIPT_NAME") + "?..."
-                log_notice("shipyard.asp", "used BAD 'build' action", 2)
-            
             return self.BuildShips()
 
         if Action == "recycle": return self.RecycleShips()

@@ -135,5 +135,3 @@ class View(GlobalView):
                 self.request.session["details"] = query
                 oRs = oConnExecute(query)
                 self.request.session["details"] = "done:"+query
-
-        if self.request.POST.get("rel") != 1: self.log_notice("market-sell.asp", "hidden value is missing from form data", 1)

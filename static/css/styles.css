@@ -53,6 +53,8 @@ a { text-decoration: none; }
 .text-enemy { color: #f00!important; }
 .text-player { color: var(--bs-info)!important; }
 
+.text-normal { color: var(--bs-body-color)!important; }
+
 h6, .h6 {
     padding-bottom: 0.5rem;
     border-bottom: var(--bs-border-width) solid var(--bs-border-color);

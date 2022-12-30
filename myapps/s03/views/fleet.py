@@ -662,8 +662,6 @@ class View(GlobalView):
         
         if res == 0:
             self.move_fleet_result = "ok"
-        elif res == -1: # fleet not found or busy
-            self.log_notice("fleet.asp", "Move: cant move fleet", 0)
         elif res == -4: # new player or holidays protection
             self.move_fleet_result = "new_player_protection"
         elif res == -5: # long travel not possible
@@ -718,9 +716,6 @@ class View(GlobalView):
 
             oConnExecute("SELECT sp_update_fleet_bonus(" + str(fleetid) + ")")
         elif self.request.POST.get("action") == "move":
-            if self.request.POST.get("loop") != "0":
-                log_notice("fleet.asp", "Move: parameter missing", 1)
-
             self.MoveFleet(fleetid)
 
         if self.request.GET.get("action") == "share":
