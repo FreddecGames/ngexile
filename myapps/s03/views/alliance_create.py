@@ -28,7 +28,7 @@ class View(GlobalView):
             self.description = request.POST.get("description", "").strip()
 
             self.valid_name = self.isValidAlliancename(self.name)
-            self.valid_tag = (request.session.get(sPrivilege) > 100) or self.isValidAlliancetag(self.tag)
+            self.valid_tag = self.isValidAlliancetag(self.tag)
             self.valid_description = self.isValiddescription(self.description)
 
             if self.valid_name and self.valid_tag:

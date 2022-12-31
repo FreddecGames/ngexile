@@ -642,9 +642,6 @@ class View(GlobalView):
             # display planet
             #
             planets.append(planet)
-
-        if not self.IsPlayerAccount():
-            content.Parse("dev")
         
         content.AssignValue("locations", planets)
         

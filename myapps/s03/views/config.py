@@ -25,5 +25,4 @@ sUser = "user"
 sPlanet = "planet"
 sPlanetList = "planetlist"
 sPlanetListCount = "planetlistcount"
-sPrivilege = "Privilege"
 sLogonUserID = "logonuserid" # this is the userid when the user logged in, it won't change even if another user is impersonated

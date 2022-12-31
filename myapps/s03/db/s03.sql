@@ -618,6 +618,273 @@ END;$$;
 ALTER FUNCTION s03.admin_create_galaxies(_fromgalaxy integer, _togalaxy integer) OWNER TO freddec;
 
 --
+-- Name: admin_create_galaxies2(integer, integer); Type: FUNCTION; Schema: s03; Owner: freddec
+--
+
+CREATE FUNCTION s03.admin_create_galaxies2(_fromgalaxy integer, _togalaxy integer) RETURNS void
+    LANGUAGE plpgsql
+    AS $$-- create a galaxy without market
+
+DECLARE
+
+	g int4; 
+
+	s int4;
+
+	p int4;
+
+	fl int2;
+
+	sp int2;
+
+	-- abundance of ore, hydrocarbon
+
+	pore int2;
+
+	phydrocarbon int2;
+
+	t int2;
+
+	planettype int2;
+
+	i int4;
+
+	specialplanets int2[];
+
+	sectorvalue float;
+
+	sectorplanets int2;
+
+	sectorfloor int4;
+
+	sectorspace int4;
+
+	galaxyplanets int4;
+
+BEGIN
+
+	FOR g IN _fromgalaxy.._togalaxy LOOP
+
+		RAISE NOTICE 'Populating galaxy %', g;
+
+		INSERT INTO nav_galaxies(id, visible, has_merchants, allow_new_players) VALUES(g, true, false, false);
+
+		galaxyplanets := 0;
+
+		FOR s IN 1..99 LOOP
+
+			sectorvalue := 130 - 3*LEAST(sp_travel_distance(s, 13, 23, 13), sp_travel_distance(s, 13, 28, 13), sp_travel_distance(s, 13, 73, 13), sp_travel_distance(s, 13, 78, 13));
+
+			sectorplanets := 25;
+
+			FOR i IN 1..10 LOOP specialplanets[i] := int2(30*random()); END LOOP;
+
+			FOR p IN 1..25 LOOP
+
+				FOR i IN 1..10 LOOP
+
+					IF specialplanets[i] = p THEN
+
+						sectorplanets := sectorplanets - 1;
+
+						EXIT;
+
+					END IF;
+
+				END LOOP;
+
+			END LOOP;
+
+			IF s=45 OR s=46 OR s=55 OR s=56 THEN sectorplanets := sectorplanets - 1; END IF;
+
+			--RAISE NOTICE 'Sector % : %,%', s, sectorvalue, sectorplanets;
+
+			sectorvalue := sectorvalue*25/sectorplanets;
+
+			FOR p IN 1..25 LOOP
+
+				planettype := 1; -- normal planet
+
+				FOR i IN 1..10 LOOP
+
+					IF specialplanets[i] = p THEN
+
+						planettype := int2(100*random());
+
+						IF planettype < 98 THEN
+
+							planettype := 0;	-- empty space
+
+						ELSEIF random() < 0.5 THEN
+
+							planettype := 3;	-- asteroid with auto-spawn of ore in orbit
+
+						ELSE
+
+							planettype := 4;	-- star with auto-spawn of hydrocarbon in orbit
+
+						END IF;						
+
+						-- no spawning resources near the center of galaxies
+
+						IF (planettype = 3 OR planettype = 4) AND (6-0.55*sqrt(power(5.5-(s%10), 2) + power(5.5-(s/10 + 1), 2))) > 4.5 THEN
+
+							planettype := 1;
+
+						END IF;
+
+						EXIT;
+
+					END IF;
+
+				END LOOP;
+
+				-- reserve these planets to put merchants on them
+
+				IF p = 13 AND (s=23 OR s=28 OR s=73 OR s=78) THEN
+
+					planettype := 1;
+
+				END IF;
+
+				-- planet in the very center of a galaxy are always empty
+
+				IF (s=45 AND p=25) OR (s=46 AND p=21) OR (s=55 AND p=5) OR (s=56 AND p=1) THEN planettype := 0; END IF;
+
+				-- floor/space and random ore/hydrocarbon abundancy
+
+				fl := int2(1.1*((sectorvalue*2/3) + random()*sectorvalue/3));
+
+				WHILE fl > 200 LOOP
+
+					fl := fl - 4;
+
+				END LOOP;
+
+				IF fl < 90 THEN
+
+					sp := int2(20+random()*20);
+
+				ELSEIF fl < 100 THEN
+
+					sp := int2(15+random()*20);
+
+				ELSE
+
+					sp := int2(10+random()*15);
+
+				END IF;
+
+				t := int2(80+random()*100 + sectorvalue / 5);
+
+				pore := int2(LEAST(35+random()*(t-47), t));
+
+				phydrocarbon := t - pore;
+
+				IF random() > 0.6 THEN
+
+					t := phydrocarbon;
+
+					phydrocarbon := pore;
+
+					pore := t;
+
+				END IF;
+
+				IF planettype = 0 THEN	-- empty space
+
+					INSERT INTO nav_planet(id, galaxy, sector, planet, planet_floor, planet_space, floor, space, planet_pct_ore, planet_pct_hydrocarbon, pct_ore, pct_hydrocarbon)
+
+					VALUES((g-1)*25*99 + (s-1)*25 + p, g, s, p, 0, 0, 0, 0, 0, 0, 0, 0);
+
+				ELSEIF planettype = 1 THEN	-- normal planet
+
+					galaxyplanets := galaxyplanets + 1;
+
+					INSERT INTO nav_planet(id, galaxy, sector, planet, planet_floor, planet_space, floor, space, planet_pct_ore, planet_pct_hydrocarbon, pct_ore, pct_hydrocarbon)
+
+					VALUES((g-1)*25*99 + (s-1)*25 + p, g, s, p, fl, sp, fl, sp, pore, phydrocarbon, pore, phydrocarbon);
+
+					IF fl > 170 AND random() < 0.5 THEN
+
+						INSERT INTO planet_buildings(planetid, buildingid, quantity)
+
+						VALUES((g-1)*25*99 + (s-1)*25 + p, 95, 1);
+
+					END IF;
+
+					IF fl > 120 AND random() < 0.05 THEN
+
+						INSERT INTO planet_buildings(planetid, buildingid, quantity)
+
+						VALUES((g-1)*25*99 + (s-1)*25 + p, 96, 1);
+
+					END IF;
+
+					IF fl > 65 AND random() < 0.02 THEN
+
+						INSERT INTO planet_buildings(planetid, buildingid, quantity)
+
+						VALUES((g-1)*25*99 + (s-1)*25 + p, 94, 1);
+
+					END IF;
+
+					IF fl > 65 AND random() < 0.01 THEN
+
+						INSERT INTO planet_buildings(planetid, buildingid, quantity)
+
+						VALUES((g-1)*25*99 + (s-1)*25 + p, 90, 1);
+
+					END IF;
+
+				ELSEIF planettype = 3 THEN	-- spawn ore
+
+					INSERT INTO nav_planet(id, galaxy, sector, planet, planet_floor, planet_space, floor, space, planet_pct_ore, planet_pct_hydrocarbon, pct_ore, pct_hydrocarbon, spawn_ore, spawn_hydrocarbon)
+
+					VALUES((g-1)*25*99 + (s-1)*25 + p, g, s, p, 0, 0, 0, 0, 0, 0, 0, 0, 42000+10000*random(), 0);
+
+				ELSE	-- spawn hydrocarbon
+
+					INSERT INTO nav_planet(id, galaxy, sector, planet, planet_floor, planet_space, floor, space, planet_pct_ore, planet_pct_hydrocarbon, pct_ore, pct_hydrocarbon, spawn_ore, spawn_hydrocarbon)
+
+					VALUES((g-1)*25*99 + (s-1)*25 + p, g, s, p, 0, 0, 0, 0, 0, 0, 0, 0, 0, 42000+10000*random());
+
+				END IF;
+
+			END LOOP;
+
+		END LOOP;
+
+		RAISE NOTICE 'creating pirates';
+
+		PERFORM admin_generate_fleet(1, 'Les fossoyeurs', id, null, 6) FROM nav_planet WHERE galaxy=g AND planet_floor >= 95 AND planet_floor < 140 AND ownerid IS NULL;
+
+		PERFORM admin_generate_fleet(1, 'Les fossoyeurs', id, null, 7) FROM nav_planet WHERE galaxy=g AND planet_floor >= 140 AND planet_floor < 180 AND ownerid IS NULL;
+
+		PERFORM admin_generate_fleet(1, 'Les fossoyeurs', id, null, 8) FROM nav_planet WHERE galaxy=g AND planet_floor >= 180 AND ownerid IS NULL;
+
+		PERFORM admin_generate_fleet(1, 'Les fossoyeurs', id, null, 5) FROM nav_planet WHERE galaxy=g AND planet_floor = 0 AND ownerid IS NULL;
+
+		UPDATE fleets SET attackonsight=true WHERE ownerid=1 AND NOT attackonsight;
+
+		UPDATE nav_galaxies SET
+
+			planets=(SELECT count(*) FROM nav_planet WHERE galaxy=g AND planet_floor > 0),
+
+			protected_until = now()
+
+		WHERE id=g;
+
+	END LOOP;
+
+	RETURN;
+
+END;$$;
+
+
+ALTER FUNCTION s03.admin_create_galaxies2(_fromgalaxy integer, _togalaxy integer) OWNER TO freddec;
+
+--
 -- Name: admin_create_merchants(integer, integer, integer); Type: FUNCTION; Schema: s03; Owner: freddec
 --
 
@@ -1492,17 +1759,6 @@ CREATE FUNCTION s03.const_ship_recycling_multiplier() RETURNS real
 ALTER FUNCTION s03.const_ship_recycling_multiplier() OWNER TO freddec;
 
 --
--- Name: const_universe_id(); Type: FUNCTION; Schema: s03; Owner: freddec
---
-
-CREATE FUNCTION s03.const_universe_id() RETURNS integer
-    LANGUAGE sql IMMUTABLE
-    AS $$SELECT 8;$$;
-
-
-ALTER FUNCTION s03.const_universe_id() OWNER TO freddec;
-
---
 -- Name: const_upkeep_commanders(); Type: FUNCTION; Schema: s03; Owner: freddec
 --
 
@@ -1644,55 +1900,6 @@ CREATE FUNCTION s03.const_value_workers() RETURNS double precision
 
 
 ALTER FUNCTION s03.const_value_workers() OWNER TO freddec;
-
---
--- Name: sp__atoi(inet); Type: FUNCTION; Schema: s03; Owner: freddec
---
-
-CREATE FUNCTION s03.sp__atoi(inet) RETURNS bigint
-    LANGUAGE sql IMMUTABLE
-    AS $_$SELECT sp__atoi(host($1));$_$;
-
-
-ALTER FUNCTION s03.sp__atoi(inet) OWNER TO freddec;
-
---
--- Name: sp__atoi(character varying); Type: FUNCTION; Schema: s03; Owner: freddec
---
-
-CREATE FUNCTION s03.sp__atoi(character varying) RETURNS bigint
-    LANGUAGE plpgsql IMMUTABLE
-    AS $_$DECLARE
-
-	res int8;
-
-BEGIN
-
-	SELECT INTO res ((int8(split_part($1,'.',1))*256+int8(split_part($1,'.',2)))*256+int8(split_part($1,'.',3)))*256+int8(split_part($1,'.',4));
-
-	RETURN res;
-
-EXCEPTION
-
-	WHEN DATA_EXCEPTION THEN
-
-		RETURN 0;
-
-END;$_$;
-
-
-ALTER FUNCTION s03.sp__atoi(character varying) OWNER TO freddec;
-
---
--- Name: sp__itoa(bigint); Type: FUNCTION; Schema: s03; Owner: freddec
---
-
-CREATE FUNCTION s03.sp__itoa(bigint) RETURNS character varying
-    LANGUAGE sql
-    AS $_$SELECT ($1 / (256*256*256) || '.' || ($1 / (256*256)) % 256 || '.' || ($1 / (256)) % 256 || '.' || $1 % 256)::varchar;$_$;
-
-
-ALTER FUNCTION s03.sp__itoa(bigint) OWNER TO freddec;
 
 --
 -- Name: sp__quote(character varying); Type: FUNCTION; Schema: s03; Owner: freddec
@@ -2035,40 +2242,6 @@ CREATE FUNCTION s03.sp_account_hashpassword(character varying) RETURNS character
 
 
 ALTER FUNCTION s03.sp_account_hashpassword(character varying) OWNER TO freddec;
-
---
--- Name: sp_account_password_change(integer, character varying, character varying); Type: FUNCTION; Schema: s03; Owner: freddec
---
-
-CREATE FUNCTION s03.sp_account_password_change(_userid integer, _oldpassword character varying, _newpassword character varying) RETURNS boolean
-    LANGUAGE plpgsql
-    AS $$BEGIN
-
-	UPDATE users SET password=sp_account_hashpassword(_newpassword) WHERE id=_userid AND password=sp_account_hashpassword(_oldpassword);
-
-	RETURN FOUND;
-
-END;$$;
-
-
-ALTER FUNCTION s03.sp_account_password_change(_userid integer, _oldpassword character varying, _newpassword character varying) OWNER TO freddec;
-
---
--- Name: sp_account_password_set(integer, character varying); Type: FUNCTION; Schema: s03; Owner: freddec
---
-
-CREATE FUNCTION s03.sp_account_password_set(_userid integer, _newpassword character varying) RETURNS boolean
-    LANGUAGE plpgsql
-    AS $$BEGIN
-
-	UPDATE users SET password=sp_account_hashpassword(_newpassword) WHERE id=_userid;
-
-	RETURN FOUND;
-
-END;$$;
-
-
-ALTER FUNCTION s03.sp_account_password_set(_userid integer, _newpassword character varying) OWNER TO freddec;
 
 --
 -- Name: sp_add_battle_fleet(integer, integer, integer, integer, integer, integer, integer, boolean, boolean); Type: FUNCTION; Schema: s03; Owner: freddec
@@ -7266,110 +7439,6 @@ END;$$;
 ALTER FUNCTION s03.sp_daily_cleaning() OWNER TO freddec;
 
 --
--- Name: sp_daily_credits_production(); Type: FUNCTION; Schema: s03; Owner: freddec
---
-
-CREATE FUNCTION s03.sp_daily_credits_production() RETURNS void
-    LANGUAGE plpgsql
-    AS $$DECLARE
-
-	r_planet record;
-
-BEGIN
-
-	FOR r_planet IN
-
-		SELECT id, ownerid, int4(credits_production + credits_random_production * random()) AS credits
-
-		FROM nav_planet
-
-		WHERE ownerid IS NOT NULL AND (credits_production > 0 OR credits_random_production > 0) AND not production_frozen
-
-	LOOP
-
-		UPDATE users SET
-
-			credits = credits + r_planet.credits
-
-		WHERE id=r_planet.ownerid;
-
-		INSERT INTO reports(ownerid, type, subtype, credits, planetid)
-
-		VALUES(r_planet.ownerid, 5, 10, r_planet.credits, r_planet.id);
-
-	END LOOP;
-
-END;$$;
-
-
-ALTER FUNCTION s03.sp_daily_credits_production() OWNER TO freddec;
-
---
--- Name: sp_daily_update_scores(); Type: FUNCTION; Schema: s03; Owner: freddec
---
-
-CREATE FUNCTION s03.sp_daily_update_scores() RETURNS void
-    LANGUAGE plpgsql
-    AS $$DECLARE
-
-	r_player record;
-
-	i int4;
-
-BEGIN
-
-	-- update players scores
-
-	FOR r_player IN
-
-		SELECT id FROM vw_players
-
-	LOOP
-
-		i := 0;
-
-		<<retries>>
-
-		WHILE i < 5 LOOP
-
-			i := i + 1;
-
-			BEGIN
-
-				RAISE NOTICE 'updating %', r_player.id;
-
-				PERFORM sp_update_player_score(r_player.id);
-
-				EXIT retries;
-
-			EXCEPTION
-
-				WHEN OTHERS THEN
-
-					RAISE NOTICE '%', SQLERRM;
-
-			END;
-
-		END LOOP retries;
-
-	END LOOP;
-
-	-- update alliances scores
-
-	UPDATE alliances SET
-
-		previous_score=score,
-
-		score=COALESCE((SELECT sum(score_global) FROM users WHERE privilege=0 AND alliance_id=alliances.id),0)/1000;
-
-	RETURN;
-
-END;$$;
-
-
-ALTER FUNCTION s03.sp_daily_update_scores() OWNER TO freddec;
-
---
 -- Name: sp_delete_account(integer); Type: FUNCTION; Schema: s03; Owner: freddec
 --
 
@@ -7936,206 +8005,6 @@ END;$_$;
 ALTER FUNCTION s03.sp_dismiss_staff(integer, integer, integer, integer, integer) OWNER TO freddec;
 
 --
--- Name: sp_event_annihilation_fleets(); Type: FUNCTION; Schema: s03; Owner: freddec
---
-
-CREATE FUNCTION s03.sp_event_annihilation_fleets() RETURNS void
-    LANGUAGE plpgsql
-    AS $$DECLARE
-
-	r_gal record;
-
-	r_planet record;
-
-	r_fleet record;
-
-	c int8;
-
-	fleet_id int4;
-
-	fleet_route int8;
-
-	fleet_wp int8;
-
-	military_sig int8;
-
-	i int4;
-
-	destination int4;
-
-BEGIN
-
-	UPDATE fleets SET
-
-		action = 4, 
-
-		action_end_time = now() 
-
-	WHERE ownerid=1 AND signature <= 1 AND action=0 AND next_waypointid IS NOT NULL;
-
-	FOR r_fleet IN
-
-		SELECT id, planetid, (SELECT galaxy FROM nav_planet WHERE nav_planet.id = fleets.planetid) as galaxy
-
-		FROM fleets
-
-		WHERE ownerid=1 AND signature <= 1 AND planetid IS NOT NULL AND (action_end_time IS NULL OR action_end_time < now()) AND action = 0
-
-	LOOP
-
-		destination := sp_ai_find_nearest_planet(r_fleet.planetid);
-
-		RAISE NOTICE '% : %', r_fleet.id, destination;
-
-		PERFORM 1 FROM fleets WHERE ownerid=1 AND signature <= 1 AND dest_planetid = destination;
-
-		IF FOUND THEN
-
-			SELECT INTO destination
-
-				id
-
-			FROM nav_planet
-
-			WHERE galaxy = r_fleet.galaxy AND floor > 0
-
-			ORDER BY random()
-
-			LIMIT 1;
-
-		END IF;
-
-		fleet_route := sp_create_route(null, null);
-
-		fleet_wp := sp_wp_append_destruction(fleet_route);
-
-		PERFORM sp_wp_append_move(fleet_route, destination);
-
-		PERFORM sp_wp_append_wait(fleet_route, 10);
-
-		UPDATE fleets SET attackonsight = true, next_waypointid=fleet_wp WHERE id=r_fleet.id;
-
-		PERFORM sp_routes_continue(1, r_fleet.id);
-
-	END LOOP;
-
-	FOR r_gal IN
-
-		SELECT id, sp_first_planet(id, 1) AS first, sp_last_planet(id, 99) AS last
-
-		FROM nav_galaxies
-
-	LOOP
-
-		-- check there are enough annihilation fleets in the galaxy
-
-		SELECT INTO c count(*)
-
-		FROM fleets
-
-		WHERE ownerid=1 AND signature <= 1 AND ((planetid >= r_gal.first AND planetid <= r_gal.last) OR (dest_planetid >= r_gal.first AND dest_planetid <= r_gal.last));
-
-		IF c >= 15 THEN
-
-			CONTINUE;
-
-		END IF;
-
-		FOR r_planet IN
-
-			SELECT id
-
-			FROM nav_planet
-
-			WHERE floor > 0 AND galaxy = r_gal.id
-
-			ORDER BY floor
-
-			LIMIT 15 - c
-
-		LOOP
-
-			fleet_id := nextval('fleets_id_seq');
-
-			INSERT INTO fleets(id, ownerid, planetid, name, idle_since, speed)
-
-			VALUES(fleet_id, 1, r_planet.id, 'Les fossoyeurs', now(), 800);
-
-			-- annihilator
-
-			INSERT INTO fleets_ships(fleetid, shipid, quantity)
-
-			VALUES(fleet_id, 959, 1);
-
-			fleet_route := sp_create_route(null, null);
-
-			--fleet_wp := sp_wp_append_move(fleet_route, r_planet.id);
-
-			fleet_wp := sp_wp_append_wait(fleet_route, 10);
-
-			PERFORM sp_wp_append_destruction(fleet_route);
-
-			UPDATE fleets SET attackonsight = true, next_waypointid=fleet_wp WHERE id=fleet_id;
-
-			PERFORM sp_routes_continue(1, fleet_id);
-
-			--RAISE NOTICE 'create fleet % toward %',fleet_id, r_planet.id;
-
-		END LOOP;
-
-	END LOOP;
-
-END;$$;
-
-
-ALTER FUNCTION s03.sp_event_annihilation_fleets() OWNER TO freddec;
-
---
--- Name: sp_event_can_happen(integer, integer); Type: FUNCTION; Schema: s03; Owner: freddec
---
-
-CREATE FUNCTION s03.sp_event_can_happen(integer, integer) RETURNS boolean
-    LANGUAGE plpgsql STABLE
-    AS $_$-- Param1: UserId
-
--- Param2: PlanetId
-
-DECLARE
-
-	res bool;
-
-BEGIN
-
-	SELECT INTO res now()-last_catastrophe > INTERVAL '1 hour' AND (planets > 3) FROM users WHERE id=$1;
-
-	IF FOUND AND NOT res THEN
-
-		RETURN res;
-
-	END IF;
-
-	IF $2 IS NOT NULL THEN
-
-		SELECT INTO res now()-last_catastrophe > INTERVAL '1 hour' FROM nav_planet WHERE id=$2 AND ownerid=$1;
-
-	END IF;
-
-	IF NOT FOUND THEN
-
-		RETURN true;
-
-	ELSE
-
-		RETURN res;
-
-	END IF;
-
-END;$_$;
-
-
-ALTER FUNCTION s03.sp_event_can_happen(integer, integer) OWNER TO freddec;
-
---
 -- Name: sp_event_commanders_promotions(); Type: FUNCTION; Schema: s03; Owner: freddec
 --
 
@@ -8167,86 +8036,6 @@ END;$$;
 
 
 ALTER FUNCTION s03.sp_event_commanders_promotions() OWNER TO freddec;
-
---
--- Name: sp_event_decay(); Type: FUNCTION; Schema: s03; Owner: freddec
---
-
-CREATE FUNCTION s03.sp_event_decay() RETURNS void
-    LANGUAGE plpgsql
-    AS $$DECLARE
-
-	r_planet record;
-
-BEGIN
-
-	FOR r_planet IN
-
-		SELECT id, ownerid, random() AS x
-
-		FROM nav_planet
-
-		WHERE ownerid > 4 AND buildings_dilapidation > 1000
-
-		ORDER BY random() LIMIT 20
-
-	LOOP
-
-	END LOOP;
-
-	RETURN;
-
-END;$$;
-
-
-ALTER FUNCTION s03.sp_event_decay() OWNER TO freddec;
-
---
--- Name: sp_event_fleet_delayed(); Type: FUNCTION; Schema: s03; Owner: freddec
---
-
-CREATE FUNCTION s03.sp_event_fleet_delayed() RETURNS void
-    LANGUAGE plpgsql
-    AS $$-- fleets moving have a probability to have an engine problem and see their travel time increased a little
-
-DECLARE
-
-	r_fleet record;
-
-BEGIN
-
-	FOR r_fleet IN
-
-		SELECT id, ownerid, name
-
-		FROM fleets
-
-		WHERE dest_planetid IS NOT NULL AND NOT engaged AND action_end_time > now()+INTERVAL '2 hour' AND random() < log(GREATEST(1, signature-military_signature))/50000 FOR UPDATE
-
-	LOOP
-
-		UPDATE fleets SET
-
-			action_start_time = action_start_time - INTERVAL '1 hour',
-
-			action_end_time = action_end_time + INTERVAL '1 hour'
-
-		WHERE id=r_fleet.id;
-
-		-- create a report
-
-		INSERT INTO reports(ownerid, type, subtype, fleetid, fleet_name)
-
-		VALUES(r_fleet.ownerid, 7, 24, r_fleet.id, r_fleet.name);
-
-	END LOOP;
-
-	RETURN;
-
-END;$$;
-
-
-ALTER FUNCTION s03.sp_event_fleet_delayed() OWNER TO freddec;
 
 --
 -- Name: sp_event_laboratory_accident(); Type: FUNCTION; Schema: s03; Owner: freddec
@@ -8422,121 +8211,6 @@ END;$$;
 
 
 ALTER FUNCTION s03.sp_event_lost_nations_abandon() OWNER TO freddec;
-
---
--- Name: sp_event_lottery(); Type: FUNCTION; Schema: s03; Owner: freddec
---
-
-CREATE FUNCTION s03.sp_event_lottery() RETURNS void
-    LANGUAGE plpgsql
-    AS $$DECLARE
-
-	r_contestant record;
-
-	_total bigint;
-
-	_winner bigint;
-
-	_fleet_id integer;
-
-BEGIN
-
-	BEGIN
-
-		LOCK TABLE users, messages;
-
-		SELECT INTO _total sum(credits)
-
-		FROM messages
-
-		WHERE ownerid=3 AND read_date IS NULL AND messages.credits > 0;
-
-		_winner := (random() * _total)::bigint;
-
-		FOR r_contestant IN
-
-			SELECT senderid, lcid, username, sum(messages.credits) AS credits
-
-			FROM messages
-
-				INNER JOIN users ON (users.id = messages.senderid)
-
-			WHERE ownerid=3 AND read_date IS NULL AND messages.credits > 0 AND planets > 0
-
-			GROUP BY senderid, lcid, username
-
-			ORDER BY random()
-
-		LOOP
-
-			IF _winner >= 0 AND _winner < r_contestant.credits THEN
-
-				PERFORM sp_send_sys_message(r_contestant.senderid, 11, r_contestant.lcid, r_contestant.credits::character varying, '');
-
-				_fleet_id := nextval('fleets_id_seq');
-
-				INSERT INTO fleets(id, ownerid, planetid, name, idle_since, speed)
-
-				VALUES(_fleet_id, r_contestant.senderid, null, 'Gros lot', now(), 800);
-
-				INSERT INTO fleets_ships(fleetid, shipid, quantity)
-
-				VALUES(_fleet_id, 605, 1);
-
-				UPDATE fleets SET
-
-					dest_planetid = (SELECT id FROM nav_planet WHERE ownerid=r_contestant.senderid ORDER BY blocus_strength ASC, score DESC LIMIT 1),
-
-					action_start_time = now(),
-
-					action_end_time = now() + INTERVAL '8 hours',
-
-					engaged = false,
-
-					action = 1,
-
-					idle_since = null
-
-				WHERE id=_fleet_id;
-
-				INSERT INTO s03.users_successes(user_id, success_id, universe_id)
-
-				VALUES(r_contestant.senderid, 4, const_universe_id());
-
-			ELSE
-
-				PERFORM sp_send_sys_message(r_contestant.senderid, 10, r_contestant.lcid, r_contestant.credits::character varying, '');
-
-			END IF;
-
-			_winner := _winner - r_contestant.credits;
-
-		END LOOP;
-
-		UPDATE messages SET
-
-			read_date = now()
-
-		WHERE ownerid=3;
-
-		PERFORM sp_send_sys_message(id, 12, lcid)
-
-		FROM users
-
-		WHERE privilege = 0 AND username is not null;
-
-	EXCEPTION
-
-		WHEN NO_DATA_FOUND THEN
-
-			-- nothing, just need to have a when clause
-
-	END;
-
-END;$$;
-
-
-ALTER FUNCTION s03.sp_event_lottery() OWNER TO freddec;
 
 --
 -- Name: sp_event_merchants_contract(); Type: FUNCTION; Schema: s03; Owner: freddec
@@ -9554,103 +9228,6 @@ END;$$;
 ALTER FUNCTION s03.sp_event_sandworm() OWNER TO freddec;
 
 --
--- Name: sp_event_spawn_new_resource_points(); Type: FUNCTION; Schema: s03; Owner: freddec
---
-
-CREATE FUNCTION s03.sp_event_spawn_new_resource_points() RETURNS void
-    LANGUAGE plpgsql
-    AS $$DECLARE
-
-	r_planet record;
-
-BEGIN
-
-/*
-
-	-- create new resource spawning points
-
-	FOR r_planet IN
-
-		SELECT nav_planet.id
-
-		FROM nav_planet
-
-			JOIN nav_galaxies ON (nav_planet.galaxy=nav_galaxies.id)
-
-		WHERE colonies > 400 AND ownerid IS NULL AND planet_floor=0 AND planet_space=0 AND warp_to IS NULL AND spawn_ore=0 AND spawn_hydrocarbon=0 AND random() < 0.00005
-
-	LOOP
-
-		IF random() < 0.5 THEN
-
-			UPDATE nav_planet SET
-
-				spawn_ore=int4(10000+random()*3000)
-
-			WHERE id=r_planet.id;
-
-		ELSE
-
-			UPDATE nav_planet SET
-
-				spawn_hydrocarbon=int4(9000+random()*2000)
-
-			WHERE id=r_planet.id;
-
-		END IF;
-
-		INSERT INTO events_spawned_resources(planetid, end_time)
-
-		VALUES(r_planet.id, now()+'1 day');
-
-	END LOOP;
-
-*/
-
-	-- check which resource spawning points have to be stopped
-
-	FOR r_planet IN
-
-		SELECT planetid
-
-		FROM events_spawned_resources
-
-		WHERE end_time <= now()
-
-	LOOP
-
-		UPDATE nav_planet SET
-
-			spawn_ore=1
-
-		WHERE id=r_planet.planetid AND spawn_ore > 0;
-
-		UPDATE nav_planet SET
-
-			spawn_hydrocarbon=1
-
-		WHERE id=r_planet.planetid AND spawn_hydrocarbon > 0;
-
-		DELETE FROM events_spawned_resources WHERE planetid=r_planet.planetid;
-
-	END LOOP;
-
-	-- destroy resource spawning points
-
-	UPDATE nav_planet SET
-
-		spawn_ore = 0,
-
-		spawn_hydrocarbon = 0
-
-	WHERE (spawn_ore = 1 and orbit_ore < 1000) or (spawn_hydrocarbon = 1 and orbit_hydrocarbon < 1000);
-
-END;$$;
-
-
-ALTER FUNCTION s03.sp_event_spawn_new_resource_points() OWNER TO freddec;
-
---
 -- Name: sp_event_spawn_orbit_resources(); Type: FUNCTION; Schema: s03; Owner: freddec
 --
 
@@ -9676,132 +9253,6 @@ END;$$;
 ALTER FUNCTION s03.sp_event_spawn_orbit_resources() OWNER TO freddec;
 
 --
--- Name: sp_execute_daily_updates(); Type: FUNCTION; Schema: s03; Owner: freddec
---
-
-CREATE FUNCTION s03.sp_execute_daily_updates() RETURNS void
-    LANGUAGE plpgsql
-    AS $$DECLARE
-
-	r_item record;
-
-	start timestamp;
-
-BEGIN
-
-	FOR r_item IN
-
-		SELECT *
-
-		FROM sys_daily_updates
-
-		WHERE last_runtime+run_every < now() AND enabled
-
-	LOOP
-
-		start := to_timestamp(timeofday(), 'Dy Mon DD HH24:MI:SS.US YYYY');
-
-		BEGIN
-
-			EXECUTE 'SELECT ' || r_item.procedure;
-
-			UPDATE sys_daily_updates SET
-
-				last_runtime = now(),
-
-				last_result = null,
-
-				last_executiontimes = (to_timestamp(timeofday(), 'Dy Mon DD HH24:MI:SS.US YYYY')-start) || last_executiontimes[0:9]
-
-			WHERE procedure = r_item.procedure;
-
-		EXCEPTION
-
-			WHEN OTHERS THEN
-
-				UPDATE sys_daily_updates SET
-
-					last_result = SQLERRM,
-
-					last_executiontimes = (to_timestamp(timeofday(), 'Dy Mon DD HH24:MI:SS.US YYYY')-start) || last_executiontimes[0:9]
-
-				WHERE procedure = r_item.procedure;
-
-		END;
-
-	END LOOP;
-
-	RETURN;
-
-END;$$;
-
-
-ALTER FUNCTION s03.sp_execute_daily_updates() OWNER TO freddec;
-
---
--- Name: sp_execute_events(); Type: FUNCTION; Schema: s03; Owner: freddec
---
-
-CREATE FUNCTION s03.sp_execute_events() RETURNS void
-    LANGUAGE plpgsql
-    AS $$DECLARE
-
-	r_item record;
-
-	start timestamp;
-
-BEGIN
-
-	FOR r_item IN
-
-		SELECT *
-
-		FROM sys_events
-
-		WHERE last_runtime+run_every < now() AND enabled
-
-	LOOP
-
-		start := to_timestamp(timeofday(), 'Dy Mon DD HH24:MI:SS.US YYYY');
-
-		BEGIN
-
-			EXECUTE 'SELECT ' || r_item.procedure;
-
-			UPDATE sys_events SET
-
-				last_runtime = now(),
-
-				last_result = null,
-
-				last_executiontimes = (to_timestamp(timeofday(), 'Dy Mon DD HH24:MI:SS.US YYYY')-start) || last_executiontimes[0:9]
-
-			WHERE procedure = r_item.procedure;
-
-		EXCEPTION
-
-			WHEN OTHERS THEN
-
-				UPDATE sys_events SET
-
-					last_result = SQLERRM,
-
-					last_executiontimes = (to_timestamp(timeofday(), 'Dy Mon DD HH24:MI:SS.US YYYY')-start) || last_executiontimes[0:9]
-
-				WHERE procedure = r_item.procedure;
-
-		END;
-
-	END LOOP;
-
-	RETURN;
-
-END;$$;
-
-
-ALTER FUNCTION s03.sp_execute_events() OWNER TO freddec;
-
---
 -- Name: sp_execute_processes(); Type: FUNCTION; Schema: s03; Owner: freddec
 --
 
@@ -9821,7 +9272,7 @@ BEGIN
 
 		FROM sys_processes
 
-		WHERE last_runtime+run_every < now() AND enabled
+		WHERE last_runtime+run_every < now()
 
 	LOOP
 
@@ -9835,9 +9286,7 @@ BEGIN
 
 				last_runtime = now(),
 
-				last_result = null,
-
-				last_executiontimes = (to_timestamp(timeofday(), 'Dy Mon DD HH24:MI:SS.US YYYY')-start) || last_executiontimes[0:9]
+				last_result = null
 
 			WHERE procedure = r_item.procedure;
 
@@ -9847,9 +9296,7 @@ BEGIN
 
 				UPDATE sys_processes SET
 
-					last_result = SQLERRM,
-
-					last_executiontimes = (to_timestamp(timeofday(), 'Dy Mon DD HH24:MI:SS.US YYYY')-start) || last_executiontimes[0:9]
+					last_result = SQLERRM
 
 				WHERE procedure = r_item.procedure;
 
@@ -9916,37 +9363,6 @@ CREATE FUNCTION s03.sp_first_planet(integer, integer) RETURNS integer
 
 
 ALTER FUNCTION s03.sp_first_planet(integer, integer) OWNER TO freddec;
-
---
--- Name: sp_fix_accents(); Type: FUNCTION; Schema: s03; Owner: freddec
---
-
-CREATE FUNCTION s03.sp_fix_accents() RETURNS void
-    LANGUAGE plpgsql
-    AS $$BEGIN
-
-	update db_buildings SET
-
-		label = replace(replace(replace(replace(replace(replace(label, 'Ã ', 'à'), 'Ã©', 'é'), 'Ã¨', 'è'), 'Ãª', 'ê'), 'Ã¢', 'â'), 'Ã´', 'ô'),
-
-		description = replace(replace(replace(replace(replace(replace(description, 'Ã ', 'à'), 'Ã©', 'é'), 'Ã¨', 'è'), 'Ãª', 'ê'), 'Ã¢', 'â'), 'Ã´', 'ô');
-
-	update db_research SET
-
-		label = replace(replace(replace(replace(replace(replace(label, 'Ã ', 'à'), 'Ã©', 'é'), 'Ã¨', 'è'), 'Ãª', 'ê'), 'Ã¢', 'â'), 'Ã´', 'ô'),
-
-		description = replace(replace(replace(replace(replace(replace(description, 'Ã ', 'à'), 'Ã©', 'é'), 'Ã¨', 'è'), 'Ãª', 'ê'), 'Ã¢', 'â'), 'Ã´', 'ô');
-
-	update db_ships SET
-
-		label = replace(replace(replace(replace(replace(replace(label, 'Ã ', 'à'), 'Ã©', 'é'), 'Ã¨', 'è'), 'Ãª', 'ê'), 'Ã¢', 'â'), 'Ã´', 'ô'),
-
-		description = replace(replace(replace(replace(replace(replace(description, 'Ã ', 'à'), 'Ã©', 'é'), 'Ã¨', 'è'), 'Ãª', 'ê'), 'Ã¢', 'â'), 'Ã´', 'ô');
-
-END;$$;
-
-
-ALTER FUNCTION s03.sp_fix_accents() OWNER TO freddec;
 
 --
 -- Name: sp_fleets_categories_add(integer, character varying); Type: FUNCTION; Schema: s03; Owner: freddec
@@ -10236,19 +9652,6 @@ END;$$;
 
 
 ALTER FUNCTION s03.sp_fleets_ships_beforeinsert() OWNER TO freddec;
-
---
--- Name: sp_flush_unused_accounts(); Type: FUNCTION; Schema: s03; Owner: freddec
---
-
-CREATE FUNCTION s03.sp_flush_unused_accounts() RETURNS void
-    LANGUAGE sql
-    AS $$DELETE FROM users WHERE privilege > -50 AND privilege < 100 AND orientation=0 AND (now() - regdate > INTERVAL '7 days');
-
-DELETE FROM users WHERE privilege > -50 AND privilege < 100 AND (now() - regdate > INTERVAL '2 months');$$;
-
-
-ALTER FUNCTION s03.sp_flush_unused_accounts() OWNER TO freddec;
 
 --
 -- Name: sp_get_addressee_list(integer); Type: FUNCTION; Schema: s03; Owner: freddec
@@ -10583,17 +9986,6 @@ END;$$;
 
 
 ALTER FUNCTION s03.sp_get_galaxy_planets(_galaxyid integer, _userid integer) OWNER TO freddec;
-
---
--- Name: sp_get_nav_galaxycount(); Type: FUNCTION; Schema: s03; Owner: freddec
---
-
-CREATE FUNCTION s03.sp_get_nav_galaxycount() RETURNS smallint
-    LANGUAGE sql STABLE
-    AS $$SELECT int2(25)$$;
-
-
-ALTER FUNCTION s03.sp_get_nav_galaxycount() OWNER TO freddec;
 
 --
 -- Name: sp_get_nav_sectorcount(integer); Type: FUNCTION; Schema: s03; Owner: freddec
@@ -12029,55 +11421,6 @@ END;$_$;
 ALTER FUNCTION s03.sp_invade_planet(integer, integer, integer, boolean) OWNER TO freddec;
 
 --
--- Name: sp_is_ally(integer, integer); Type: FUNCTION; Schema: s03; Owner: freddec
---
-
-CREATE FUNCTION s03.sp_is_ally(integer, integer) RETURNS boolean
-    LANGUAGE plpgsql STABLE
-    AS $_$-- param1: User1
-
--- param2: User2
-
-DECLARE
-
-	alliance1 int4;
-
-	alliance2 int4;
-
-BEGIN
-
-	-- if one player is null then return -3
-
-	IF ($1 IS NULL) OR ($2 IS NULL) THEN
-
-		RETURN false;
-
-	END IF;
-
-	-- return true for same player
-
-	IF $1 = $2 THEN
-
-		RETURN true;
-
-	END IF;
-
-	-- retrieve alliances of the 2 players
-
-	SELECT INTO alliance1 alliance_id FROM users WHERE id=$1;
-
-	SELECT INTO alliance2 alliance_id FROM users WHERE id=$2;
-
-	-- return 1 for same alliance, 0 for NAPs
-
-	RETURN alliance1 = alliance2;
-
-END;$_$;
-
-
-ALTER FUNCTION s03.sp_is_ally(integer, integer) OWNER TO freddec;
-
---
 -- Name: sp_last_planet(integer, integer); Type: FUNCTION; Schema: s03; Owner: freddec
 --
 
@@ -12346,113 +11689,6 @@ CREATE FUNCTION s03.sp_list_available_ships(integer) RETURNS SETOF s03.db_ships
 ALTER FUNCTION s03.sp_list_available_ships(integer) OWNER TO freddec;
 
 --
--- Name: sp_list_available_ships2(integer); Type: FUNCTION; Schema: s03; Owner: freddec
---
-
-CREATE FUNCTION s03.sp_list_available_ships2(integer) RETURNS SETOF s03.db_ships
-    LANGUAGE sql STABLE
-    AS $_$-- param1: user id
-
-	-- list all ships that can be built
-
-	-- a ship can be built if it meet the requirement :
-
-	-- if it depends on researches, these researches must be done
-
-	SELECT
-
-  db_ships.id,
-
-  db_ships.category,
-
-  db_ships.name,
-
-  COALESCE(s2.label, db_ships.label),
-
-  COALESCE(s2.description, db_ships.description),
-
-  db_ships.cost_ore,
-
-  db_ships.cost_hydrocarbon,
-
-  db_ships.cost_credits,
-
-  db_ships.workers,
-
-  db_ships.crew,
-
-  COALESCE(s2.capacity,db_ships.capacity),
-
-  db_ships.construction_time,
-
-  COALESCE(s2.maximum,db_ships.maximum),
-
-  COALESCE(s2.hull,db_ships.hull),
-
-  COALESCE(s2.shield,db_ships.shield),
-
-  COALESCE(s2.weapon_power,db_ships.weapon_power),
-
-  COALESCE(s2.weapon_ammo,db_ships.weapon_ammo),
-
-  COALESCE(s2.weapon_tracking_speed,db_ships.weapon_tracking_speed),
-
-  COALESCE(s2.weapon_turrets,db_ships.weapon_turrets),
-
-  COALESCE(s2.signature,db_ships.signature),
-
-  COALESCE(s2.speed,db_ships.speed),
-
-  COALESCE(s2.handling,db_ships.handling),
-
-  COALESCE(s2.buildingid,db_ships.buildingid),
-
-  COALESCE(s2.recycler_output,db_ships.recycler_output),
-
-  COALESCE(s2.droppods,db_ships.droppods),
-
-  COALESCE(s2.long_distance_capacity,db_ships.long_distance_capacity),
-
-  COALESCE(s2.buildable,db_ships.buildable),
-
-  COALESCE(s2.mod_speed,db_ships.mod_speed),
-
-  COALESCE(s2.mod_shield,db_ships.mod_shield),
-
-  COALESCE(s2.mod_handling,db_ships.mod_handling),
-
-  COALESCE(s2.mod_tracking_speed,db_ships.mod_tracking_speed),
-
-  COALESCE(s2.mod_damage,db_ships.mod_damage),
-
-  COALESCE(s2.mod_signature,db_ships.mod_signature),
-
-  COALESCE(s2.mod_recycling,db_ships.mod_recycling),
-
-  db_ships.required_shipid,
-
-  db_ships.new_shipid
-
-	FROM db_ships
-
-		LEFT JOIN db_ships s2 ON (s2.id=db_ships.new_shipid)
-
-	WHERE
-
-	COALESCE(s2.buildable,db_ships.buildable) and NOT EXISTS
-
-		(SELECT required_researchid, required_researchlevel
-
-		FROM db_ships_req_research 
-
-		WHERE (shipid = db_ships.id) AND (required_researchid NOT IN (SELECT researchid FROM researches WHERE userid=$1 AND level >= required_researchlevel)))
-
-	ORDER BY category, id;$_$;
-
-
-ALTER FUNCTION s03.sp_list_available_ships2(integer) OWNER TO freddec;
-
---
 -- Name: sp_list_researches(integer); Type: FUNCTION; Schema: s03; Owner: freddec
 --
 
@@ -12568,25 +11804,6 @@ END;$_$;
 
 
 ALTER FUNCTION s03.sp_log_activity(integer, character varying, bigint) OWNER TO freddec;
-
---
--- Name: sp_log_credits(integer, integer, character varying); Type: FUNCTION; Schema: s03; Owner: freddec
---
-
-CREATE FUNCTION s03.sp_log_credits(integer, integer, character varying) RETURNS void
-    LANGUAGE sql
-    AS $_$-- Param1: Userid
-
--- Param2: Credits delta
-
--- Param3: Description
-
-INSERT INTO users_expenses(userid, credits, credits_delta, description)
-
-VALUES($1, (SELECT credits FROM users WHERE id=$1), $2, $3);$_$;
-
-
-ALTER FUNCTION s03.sp_log_credits(integer, integer, character varying) OWNER TO freddec;
 
 --
 -- Name: sp_market_price(real, integer); Type: FUNCTION; Schema: s03; Owner: freddec
@@ -13957,64 +13174,6 @@ END;$$;
 
 
 ALTER FUNCTION s03.sp_planet_training_pending_afterdelete() OWNER TO freddec;
-
---
--- Name: sp_planets(integer, integer); Type: FUNCTION; Schema: s03; Owner: freddec
---
-
-CREATE FUNCTION s03.sp_planets(integer, integer) RETURNS SETOF integer
-    LANGUAGE sql IMMUTABLE
-    AS $_$SELECT id FROM nav_planet WHERE galaxy=$1 AND sector=$2;$_$;
-
-
-ALTER FUNCTION s03.sp_planets(integer, integer) OWNER TO freddec;
-
---
--- Name: sp_player_addnotification(integer, character varying, text); Type: FUNCTION; Schema: s03; Owner: freddec
---
-
-CREATE FUNCTION s03.sp_player_addnotification(_playerid integer, _type character varying, _data text) RETURNS void
-    LANGUAGE sql
-    AS $_$-- sp_player_addnotification
-
-INSERT INTO sessions_notifications(userid, type, data)
-
-VALUES($1, $2, $3);$_$;
-
-
-ALTER FUNCTION s03.sp_player_addnotification(_playerid integer, _type character varying, _data text) OWNER TO freddec;
-
---
--- Name: sp_player_get_name(integer); Type: FUNCTION; Schema: s03; Owner: freddec
---
-
-CREATE FUNCTION s03.sp_player_get_name(_playerid integer) RETURNS character varying
-    LANGUAGE sql STABLE
-    AS $_$SELECT username
-
-FROM users
-
-WHERE users.id=$1;$_$;
-
-
-ALTER FUNCTION s03.sp_player_get_name(_playerid integer) OWNER TO freddec;
-
---
--- Name: sp_player_get_tag(integer); Type: FUNCTION; Schema: s03; Owner: freddec
---
-
-CREATE FUNCTION s03.sp_player_get_tag(_playerid integer) RETURNS character varying
-    LANGUAGE sql STABLE
-    AS $_$SELECT COALESCE(alliances.tag, '')
-
-FROM users
-
-LEFT JOIN alliances ON (alliances.id=users.alliance_id)
-
-WHERE users.id=$1;$_$;
-
-
-ALTER FUNCTION s03.sp_player_get_tag(_playerid integer) OWNER TO freddec;
 
 --
 -- Name: sp_plunder_planet(integer, integer); Type: FUNCTION; Schema: s03; Owner: freddec
@@ -18186,10 +17345,6 @@ BEGIN
 
 	IF NOT (FOUND AND (r_planet.ownerid IS NULL OR r_planet.ownerid=$1 OR sp_relation(r_planet.ownerid, $1) >= -1)) THEN
 
---	IF NOT (FOUND AND (r_planet.ownerid IS NULL OR r_planet.ownerid=$1 OR sp_is_ally(r_planet.ownerid, $1))) THEN
-
-		-- forbidden to install on this planet
-
 		RETURN -3;
 
 	END IF;
@@ -21507,33 +20662,6 @@ END;$_$;
 ALTER FUNCTION s03.sp_warp_fleet(integer, integer) OWNER TO freddec;
 
 --
--- Name: sp_wp_append_destruction(bigint); Type: FUNCTION; Schema: s03; Owner: freddec
---
-
-CREATE FUNCTION s03.sp_wp_append_destruction(_routeid bigint) RETURNS bigint
-    LANGUAGE plpgsql
-    AS $$DECLARE
-
-	waypointid int8;
-
-BEGIN
-
-	-- destroy the planet where the fleet is
-
-	waypointid := nextval('routes_waypoints_id_seq');
-
-	INSERT INTO routes_waypoints(id, routeid, "action")
-
-	VALUES(waypointid, _routeid, -1);
-
-	RETURN waypointid;
-
-END;$$;
-
-
-ALTER FUNCTION s03.sp_wp_append_destruction(_routeid bigint) OWNER TO freddec;
-
---
 -- Name: sp_wp_append_disappear(bigint, integer); Type: FUNCTION; Schema: s03; Owner: freddec
 --
 
@@ -23413,48 +22541,14 @@ CREATE TABLE s03.spy_research (
 ALTER TABLE s03.spy_research OWNER TO freddec;
 
 --
--- Name: sys_daily_updates; Type: TABLE; Schema: s03; Owner: freddec
---
-
-CREATE TABLE s03.sys_daily_updates (
-    procedure character varying(64) NOT NULL,
-    enabled boolean DEFAULT false NOT NULL,
-    last_runtime timestamp without time zone DEFAULT now() NOT NULL,
-    run_every interval DEFAULT '01:00:00'::interval NOT NULL,
-    last_result character varying,
-    last_executiontimes interval[] DEFAULT '{00:00:00,00:00:00,00:00:00,00:00:00,00:00:00,00:00:00,00:00:00,00:00:00,00:00:00,00:00:00}'::interval[] NOT NULL
-);
-
-
-ALTER TABLE s03.sys_daily_updates OWNER TO freddec;
-
---
--- Name: sys_events; Type: TABLE; Schema: s03; Owner: freddec
---
-
-CREATE TABLE s03.sys_events (
-    procedure character varying(64) NOT NULL,
-    enabled boolean DEFAULT false NOT NULL,
-    last_runtime timestamp without time zone DEFAULT now() NOT NULL,
-    run_every interval NOT NULL,
-    last_result character varying,
-    last_executiontimes interval[] DEFAULT '{00:00:00,00:00:00,00:00:00,00:00:00,00:00:00,00:00:00,00:00:00,00:00:00,00:00:00,00:00:00}'::interval[] NOT NULL
-);
-
-
-ALTER TABLE s03.sys_events OWNER TO freddec;
-
---
 -- Name: sys_processes; Type: TABLE; Schema: s03; Owner: freddec
 --
 
 CREATE TABLE s03.sys_processes (
     procedure character varying(64) NOT NULL,
-    enabled boolean DEFAULT false NOT NULL,
     last_runtime timestamp without time zone DEFAULT now() NOT NULL,
     run_every interval NOT NULL,
-    last_result character varying,
-    last_executiontimes interval[] DEFAULT '{00:00:00,00:00:00,00:00:00,00:00:00,00:00:00,00:00:00,00:00:00,00:00:00,00:00:00,00:00:00}'::interval[] NOT NULL
+    last_result character varying
 );
 
 
@@ -24659,6 +23753,7 @@ COPY s03.chat (id, name, password, topic, public) FROM stdin;
 --
 
 COPY s03.chat_lines (id, chatid, datetime, message, action, username, allianceid, userid) FROM stdin;
+2	2	2022-12-31 09:50:44.174169	coucou	0	Freddec	\N	6
 \.
 
 
@@ -24692,11 +23787,9 @@ COPY s03.commanders (id, ownerid, recruited, name, points, mod_production_ore, m
 
 COPY s03.db_buildings (id, category, name, label, description, cost_ore, cost_hydrocarbon, cost_credits, workers, energy_consumption, energy_production, floor, space, production_ore, production_hydrocarbon, storage_ore, storage_hydrocarbon, storage_workers, construction_maximum, construction_time, destroyable, mod_production_ore, mod_production_hydrocarbon, mod_production_energy, mod_production_workers, mod_construction_speed_buildings, mod_construction_speed_ships, storage_scientists, storage_soldiers, radar_strength, radar_jamming, is_planet_element, can_be_disabled, training_scientists, training_soldiers, maintenance_factor, security_factor, sandworm_activity, seismic_activity, production_credits, production_credits_random, mod_research_effectiveness, energy_receive_antennas, energy_send_antennas, construction_time_exp_per_building, storage_energy, buildable, lifetime, active_when_destroying, upkeep, cost_energy, use_planet_production_pct, production_exp_per_building, consumption_exp_per_building, vortex_strength, production_prestige, cost_prestige, mod_planet_need_ore, mod_planet_need_hydrocarbon, bonus_planet_need_ore, bonus_planet_need_hydrocarbon, visible, invasion_defense, parked_ships_capacity) FROM stdin;
 52	110	hydro_bonus	Gisements d'hydrocarbure	De riches gisements d'hydrocarbure ont été découverts, la production en hydrocarbure est augmentée.	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	f	0	0.1	0	0	0	0	0	0	0	0	t	f	0	0	0	0	0	0	0	0	0	0	0	1	0	f	0	t	0	0	t	\N	\N	0	0	0	0	0	0	0	t	0	0
-80	100	shame_on_you	Monument de la honte	Votre peuple a honte de vous.	0	0	0	0	0	0	1	0	0	0	0	0	0	1	0	f	-0.8	-0.8	0	0	0	0	0	0	0	0	t	f	0	0	0	0	0	0	0	0	0	0	0	1	0	f	0	t	0	0	t	\N	\N	0	0	0	0	0	0	0	t	0	0
 90	100	magnetic_clouds	Nuages magnétiques	Un amas de nuages entoure le système de la planète agissant comme un brouilleur radar géant.	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	f	0	0	0	0	0	0	0	0	0	10	t	f	0	0	0	0	0	0	0	0	0	0	0	1	0	f	0	t	0	0	t	\N	\N	0	0	0	0	0	0	0	t	0	0
 91	100	electromagnetic_storm	Tempête électromagnétique	Nous subissons actuellement une tempête électromagétique, la production s'en voit grandement diminuée.	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	f	-0.6	-0.6	-0.3	0	-0.99	-0.99	0	0	0	20	t	f	0	0	0	0	0	0	0	0	0	0	0	1	0	f	0	t	0	0	t	\N	\N	0	0	0	0	0	0	0	t	0	0
 125	32	ship_hangar1	Hangar à vaisseaux	Ce hangar augmente la capacité de stockage des vaisseaux de 25 000 signature.	40000	35000	0	25000	250	0	2	0	0	0	0	0	0	200	28000	t	0	0	0	0	0	0	0	0	0	0	f	f	0	0	5	1	0	0	0	0	0	0	0	1	0	f	0	f	100	0	t	\N	\N	0	0	0	0	0	0	0	t	0	25000
-93	100	oil_rich	Riche en hydrocarbure	Nous avons découvert un gros gisement de pétrôle, nos puits d'hydrocarbures carburent à fond.	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	f	0	0.15	0	0	0	0	0	0	0	0	t	f	0	0	0	0	0	0	0	0	0	0	0	1	0	f	0	t	0	0	t	\N	\N	0	0	0	0	0	0	0	t	0	0
 94	100	extraordinary_planet	Planète extraordinaire	Cette planète se trouve proche d'une déformation gravitationnelle dans l'espace temps, le temps passe plus vite par rapport aux autres colonies.<br/>\r\n\nLa construction, la production et la formation des nouveaux travailleurs est plus rapide sur cette planète.	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	f	0.3	0.3	0	0.8	2	2	0	0	0	0	t	f	0	0	0	0	0	0	0	0	0	0	0	1	0	f	0	t	0	0	t	\N	\N	0	0	0	0	0	0	0	t	0	0
 217	23	nuclear_power_plant	Centrale nucléaire	Cette centrale à énergie accueille plusieurs réacteurs nucléaires dont le principe repose sur la fission nucléaire.<br/>\r\n\nL'énergie produite est importante.	28000	14000	0	7500	200	2000	2	0	0	0	0	0	0	200	43200	t	0	0	0	0	0	0	0	0	0	0	f	f	0	0	5	1	0	0	0	0	0	0	0	1	0	t	0	f	150	0	t	\N	\N	0	0	0	0	0	0	0	t	0	0
 115	20	ore_mine1	Mine de minerai	Un système automatisé extrait le minerai de la planète continuellement.<br/>\r\n\nChaque bâtiment augmente la production de minerai de 1% mais réduit la demande en minerai de la planète.	500	1000	0	2000	25	0	2	0	400	0	0	0	0	200	7200	t	0.01	0	0	0	0	0	0	0	0	0	f	t	0	0	50	1	0	0	0	0	0	0	0	1	0	t	0	f	20	0	t	\N	\N	0	0	0	-0.015	0	0	0	t	0	0
@@ -24709,7 +23802,6 @@ COPY s03.db_buildings (id, category, name, label, description, cost_ore, cost_hy
 602	23	energy_cell	Caisse d'énergie	Ce bâtiment apporte un flux minimum de 10000 unités d'énergie pour une durée d'environ 5 heures.	0	0	0	0	0	10000	1	0	0	0	0	0	0	1	3600	t	0	0	0	0	0	0	0	0	0	0	f	f	0	0	1	1	0	0	0	0	0	0	0	1	0	f	18000	t	0	0	t	\N	\N	0	0	0	0	0	0	0	t	0	0
 402	32	hydrocarbon_storage_complex	Complexe de stockage d'hydrocarbure	Ce complexe de stockage augmente la capacité de stockage en hydrocarbure de 2 000 000.	500000	400000	0	25000	1000	0	2	0	0	0	0	2000000	0	200	128000	t	0	0	0	0	0	0	0	0	0	0	f	f	0	0	5	1	0	0	0	0	0	0	0	1	0	t	0	f	200	0	t	\N	\N	0	0	10000	0	0	0	0	t	0	0
 231	20	manufactured_products_factory	Usine de produits manufacturés	De ces usines sortent des produits manufacturés vendus à la population.<br/>\r\n\nChaque usine génère entre 8 000 et 10 000 crédits par jour.	30000	25000	0	10000	3000	0	4	0	0	0	0	0	0	100	54000	t	0	0	0	0	0	0	0	0	0	0	f	t	0	0	50	1	0	0	8000	2000	0	0	0	1	0	t	0	f	0	0	t	\N	\N	0	0	0	0	0	0	0	t	0	0
-1	100	boost_x_server	Boost serveur X	description here	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	f	0	0	0	0	0	0	0	0	0	0	t	f	0	0	1	1	0	0	0	0	0	0	0	1	0	f	0	t	0	0	t	\N	\N	0	0	0	0	0	0	0	f	0	0
 96	100	sandworm_activity	Présence de vers de sable	De gigantesques vers de sable sont présents sur la planète et attaquent tout ce qui émet des vibrations régulières.	0	0	0	0	0	0	0	0	0	0	0	0	0	1	3600	f	0	0	0	0	0	0	0	0	0	0	t	f	0	0	0	0	20	0	0	0	0	0	0	1	0	f	0	t	0	0	t	\N	\N	0	0	0	0	0	0	0	t	0	0
 600	80	space_radar	Radar renforcé	Station temporaire déployée permettant le balayage radar d'un secteur pour une durée limitée (puissance radar 1)	0	0	0	0	0	0	0	0	0	0	0	0	0	1	3600	t	0	0	0	0	0	0	0	0	1	0	t	f	0	0	1	1	0	0	0	0	0	0	0	1	0	f	28800	t	0	0	t	\N	\N	0	0	0	0	0	0	0	t	0	0
 601	80	space_jammer	Brouillage renforcé	Station temporaire déployée permettant le brouillage de l'emplacement avec une puissance de 10.	0	0	0	0	0	0	0	0	0	0	0	0	0	1	3600	t	0	0	0	0	0	0	0	0	0	10	t	f	0	0	1	1	0	0	0	0	0	0	0	1	0	f	28800	t	0	0	t	\N	\N	0	0	0	0	0	0	0	t	0	0
@@ -24722,7 +23814,6 @@ COPY s03.db_buildings (id, category, name, label, description, cost_ore, cost_hy
 102	11	construction_plant1	Usine de préfabriqués	Cette usine est spécialisée dans la préfabrication, des ouvriers préfabriquent certains éléments qui sont ensuite assemblés sur place ce qui donne une augmentation globale de la vitesse de construction des bâtiments.<br/>\r\n\nCe bâtiment est requis avant de pouvoir construire des structures plus avancées.	2000	1250	0	5000	50	0	1	0	0	0	0	0	0	1	43200	t	0	0	0	0	0.05	0	0	0	0	0	f	f	0	0	5	1	0	0	0	0	0	0	0	1	0	t	0	f	50	0	t	\N	\N	0	0	0	0	0	0	0	t	0	0
 303	40	heavyweapon_factory	Usine d'armement lourd	Cette usine permet de construire les différentes armes dont vous aurez besoin pour construire vos défenses plus évoluées et équiper vos vaisseaux de combat.	180000	160000	0	32000	600	0	12	0	0	0	0	0	0	1	172800	t	0	0	0	0	0	0.02	0	0	0	0	f	f	0	0	20	1	0	0	0	0	0	0	0	1	0	t	0	f	1000	0	t	\N	\N	0	0	0	0	0	0	0	t	0	0
 1021	32	merchant_hydrocarbon_storage	Entrepôt marchand d'hydrocarbure	Les entrepôts marchand sont immenses et peuvent contenir des millions d'unités de ressources.	3000000	2000000	0	120000	0	0	5	0	0	0	0	900000000	0	100	1000000	t	0	0	0	0	0	0	0	0	0	0	f	f	0	0	5	1	0	0	0	0	0	0	0	1	0	f	0	f	0	0	t	\N	\N	0	0	0	0	0	0	0	t	0	0
-99	100	bonus	Bonus de production (12 heures)	Suite aux récents problèmes rencontrés par notre nation, tous les effectifs travaillent à 120% de leurs capacités pour rattraper le temps perdu. Au travail !	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	f	0.2	0.2	0	0	0.2	0.2	0	0	0	0	t	f	0	0	0	0	0	0	0	0	0	0	0	1	0	f	0	t	0	0	t	\N	\N	0	0	0	0	0	0	0	t	0	0
 203	40	light_weapon_factory	Usine d'armement léger	Cette usine permet de construire différentes armes légères dont vous aurez besoin pour construire vos défenses et équiper vos vaisseaux.	32000	25000	0	17500	250	0	6	0	0	0	0	0	0	1	50400	t	0	0	0	0	0	0.02	0	0	0	0	f	f	0	0	5	1	0	0	0	0	0	0	0	1	0	t	0	f	300	0	t	\N	\N	0	0	0	0	0	0	0	t	0	0
 120	31	ore_hangar1	Réserve à minerai	Ce petit entrepôt augmente la capacité de stockage du minerai de 50 000.	1000	500	0	5000	0	0	1	0	0	0	50000	0	0	200	9000	t	0	0	0	0	0	0	0	0	0	0	f	f	0	0	5	1	0	0	0	0	0	0	0	1	0	f	0	f	10	0	t	\N	\N	0	0	0	0	0	0	0	t	0	0
 218	23	solar_power_satellite	Satellite solaire	Un satelite solaire est envoyé en orbite géostationnaire, transforme l'énergie solaire en électricité puis redirige celle-ci vers la rectenna de la colonie sous forme de micro-ondes.	4000	7000	0	2500	0	600	0	1	0	0	0	0	0	200	32000	t	0	0	0	0	0	0	0	0	0	0	f	f	0	0	5	1	0	0	0	0	0	0	0	1	0	t	0	f	125	0	t	\N	\N	0	0	0	0	0	0	0	t	0	0
@@ -24762,7 +23853,6 @@ COPY s03.db_buildings (id, category, name, label, description, cost_ore, cost_hy
 210	80	receive_energy_satellite	Satellite de réception d'énergie	Ce satellite permet de recevoir un flux d'énergie provenant d'une autre planète située dans la même galaxie envoyé par un satellite émetteur.<br/>\r\n\nL'énergie reçue est redirigée vers la rectenna et est ensuite utilisable par la colonie.	9000	6000	0	5000	0	0	0	1	0	0	0	0	0	200	28000	t	0	0	0	0	0	0	0	0	0	0	f	f	0	0	5	1	0	0	0	0	0	1	0	1	0	t	0	f	20	0	t	\N	\N	0	0	0	0	0	0	0	t	0	0
 371	40	sandworm_field	Champ de moissonneuses	Des moissonneuses récoltent une substance étrange à partir du sable de la planète où la présence de vers a été signalé récemment. Cette substance est ensuite exclusivement vendue à la guilde marchande qui y porte un très grand intérêt.<br/>\r\n\nSuivant les récoltes, l'argent généré par jour varie entre 40 000 et 50 000 crédits.<br/>\r\n\nDe plus, chaque champ vous fait gagner 20 points de prestige par jour.	30000	17000	0	10000	2000	0	7	0	0	0	0	0	0	100	78000	t	0	0	0	0	0	0	0	0	0	0	f	t	0	0	50	1	0	0	40000	10000	0	0	0	1	0	t	0	f	50	0	t	\N	\N	0	20	0	0	0	0	0	t	0	0
 106	30	laboratory	Laboratoire	Le laboratoire permet d'accueillir 1 000 scientifiques supplémentaire et la formation de 150 scientifiques par heure.	2500	2000	0	4000	100	0	1	0	0	0	0	0	0	200	9600	t	0	0	0	0	0	0	1000	0	0	0	f	f	150	0	5	1	0	0	0	0	0	0	0	1	0	t	0	f	50	0	t	\N	\N	0	0	0	0	0	0	0	t	0	0
-92	100	ore_rich	Riche en minerai	De riches filons de minerai ont été découverts, nos mines de minerai minent plus vite.	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	f	0.15	0	0	0	0	0	0	0	0	0	t	f	0	0	0	0	0	0	0	0	0	0	0	1	0	f	0	t	0	0	t	\N	\N	0	0	0	0	0	0	0	t	0	0
 201	10	colony2	Cité	De nouveaux bâtiment et ateliers sont construits à proximité de votre colonie ce qui vous permet d'emmagasiner 70 000 unités d'énergie supplémentaire et d'accueillir 10 000 nouveaux travailleurs.<br/>\r\n\nLa formation de vos travailleurs et l'efficacité de vos mines et puits sont légèrement augmentées.<br/>\r\n\nLa cité génère 1 500 crédits par jour.	35000	35000	0	6000	100	0	2	0	0	0	0	0	10000	1	64800	t	0.02	0.02	0.02	0.1	0	0	0	0	0	0	f	f	0	0	5	1	0	0	1500	0	0	0	0	1	70000	t	0	f	0	0	t	\N	\N	0	0	0	0	0	0	0	t	0	15000
 301	10	colony3	Métropole	Votre colonie s'aggrandit encore et doit être, en partie, réorganisée.<br/>\r\n\nLe contrôle de la production en minerai, hydrocarbures et énergie est désormais effectué par un centre dédié, la production s'en voit légérement augmentée.<br/>\r\n\nLes anciens ateliers sont réaménagés et de nouveaux sont construits augmentant le nombre de travailleurs de 10 000.<br/>\r\n\nLa métropole génère 2 500 crédits par jour.	200000	200000	0	30000	500	0	3	1	0	0	0	0	10000	1	259200	t	0.02	0.02	0.02	0.1	0	0	0	0	0	0	f	f	0	0	5	1	0	0	2500	0	0	0	0	1	0	t	0	f	0	0	t	\N	\N	0	0	0	0	0	0	0	t	0	25000
 202	11	construction_plant2	Usine d'automates	Les ouvriers ne peuvent pas tout construire par eux-même, ils ont besoin d'aide méchanisée pour mener à bien les constructions, cette usine permet de construire de nouveaux bâtiments et augmente la vitesse de construction.	22500	15000	0	15000	250	0	1	0	0	0	0	0	0	1	64800	t	0	0	0	0	0.05	0	0	0	0	0	f	f	0	0	5	1	0	0	0	0	0	0	0	1	0	t	0	f	100	0	t	\N	\N	0	0	0	0	0	0	0	t	0	0
@@ -24845,7 +23935,6 @@ COPY s03.db_buildings_req_building (buildingid, required_buildingid) FROM stdin;
 --
 
 COPY s03.db_buildings_req_research (buildingid, required_researchid, required_researchlevel) FROM stdin;
-80	1	1
 1001	3	1
 317	402	3
 317	404	3
@@ -24866,10 +23955,7 @@ COPY s03.db_buildings_req_research (buildingid, required_researchid, required_re
 52	1	1
 90	1	1
 91	1	1
-92	1	1
-93	1	1
 94	1	1
-99	1	1
 95	1	1
 96	1	1
 381	1	1
@@ -25563,6 +24649,10 @@ COPY s03.planet_training_pending (id, planetid, start_time, end_time, scientists
 --
 
 COPY s03.reports (id, ownerid, type, subtype, datetime, read_date, battleid, fleetid, fleet_name, planetid, researchid, ore, hydrocarbon, scientists, soldiers, workers, credits, allianceid, userid, invasionid, spyid, commanderid, buildingid, description, upkeep_planets, upkeep_scientists, upkeep_ships, upkeep_ships_in_position, upkeep_ships_parked, upkeep_soldiers, upkeep_commanders, planet_name, planet_relation, planet_ownername, data) FROM stdin;
+2	3	6	0	2022-12-31 09:25:45.20784	\N	\N	\N	\N	563	\N	0	0	0	0	0	0	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N		2	Guilde marchande	{planet:{id:563,owner:"Guilde marchande",g:1,s:23,p:13}}
+3	3	6	0	2022-12-31 09:25:45.20784	\N	\N	\N	\N	688	\N	0	0	0	0	0	0	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N		2	Guilde marchande	{planet:{id:688,owner:"Guilde marchande",g:1,s:28,p:13}}
+4	3	6	0	2022-12-31 09:25:45.20784	\N	\N	\N	\N	1813	\N	0	0	0	0	0	0	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N		2	Guilde marchande	{planet:{id:1813,owner:"Guilde marchande",g:1,s:73,p:13}}
+5	3	6	0	2022-12-31 09:25:45.20784	\N	\N	\N	\N	1938	\N	0	0	0	0	0	0	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N		2	Guilde marchande	{planet:{id:1938,owner:"Guilde marchande",g:1,s:78,p:13}}
 \.
 
 
@@ -25639,72 +24729,49 @@ COPY s03.spy_research (spy_id, research_id, research_level) FROM stdin;
 
 
 --
--- Data for Name: sys_daily_updates; Type: TABLE DATA; Schema: s03; Owner: freddec
---
-
-COPY s03.sys_daily_updates (procedure, enabled, last_runtime, run_every, last_result, last_executiontimes) FROM stdin;
-sp_daily_credits_production()	f	2007-02-06 04:10:22.4907	22:00:00	\N	{00:00:01.675299,00:00:00.447144,00:00:01.357681,00:00:00.577626,00:00:01.028507,00:00:00.193653,00:00:02.033776,00:00:00.201612,00:00:01.079752,00:00:01.914209}
-sp_daily_update_scores()	f	2006-11-20 00:00:00	22:00:00	\N	{00:00:00,00:00:00,00:00:00,00:00:00,00:00:00,00:00:00,00:00:00,00:00:00,00:00:00,00:00:00}
-sp_daily_cleaning()	t	2008-01-30 04:09:50.279533	22:00:00	\N	{00:00:13.869816,00:00:08.827096,00:00:12.374063,00:00:09.327597,00:00:08.78746,00:00:09.458528,00:00:16.454975,00:00:12.765035,00:00:12.074814,00:00:12.369658}
-\.
-
-
---
--- Data for Name: sys_events; Type: TABLE DATA; Schema: s03; Owner: freddec
---
-
-COPY s03.sys_events (procedure, enabled, last_runtime, run_every, last_result, last_executiontimes) FROM stdin;
-sp_event_fleet_delayed()	f	2008-09-24 13:52:44.233	00:10:30	\N	{00:00:00.016,00:00:00.015,00:00:00,00:00:00,00:00:00.016,00:00:00,00:00:00.016,00:00:00,00:00:00,00:00:00.015}
-sp_event_spawn_new_resource_points()	f	2008-07-24 15:24:11.004	00:19:10	\N	{00:00:00,00:00:00,00:00:00,00:00:00,00:00:00,00:00:00,00:00:00,00:00:00,00:00:00,00:00:00}
-sp_event_annihilation_fleets()	f	2019-03-28 22:23:15.281233	00:30:00	\N	{00:00:02.363637,00:00:02.49736,00:00:00.049482,00:00:00.049954,00:00:00.049901,00:00:08.135784,00:00:02.225658,00:00:00.935741,00:00:01.75,00:00:02.125}
-sp_event_planet_bonus()	t	2022-12-30 23:29:44.47759	00:10:00	\N	{00:00:00.002478,00:00:00.002973,00:00:00.004827,00:00:00.004852,00:00:00.003933,00:00:00.004923,00:00:00.002901,00:00:00.0027,00:00:00.002638,00:00:00.002724}
-sp_event_merchants_contract()	t	2022-12-30 16:52:36.507524	24:00:00	\N	{00:00:00.001108,00:00:00.013764,00:00:00.002839,00:00:00.002246,00:00:00.001681,00:00:00.001819,00:00:00.00186,00:00:00.010767,00:00:00.007715,00:00:00.001035}
-sp_event_lottery()	t	2022-12-30 16:52:36.507524	168:00:00	\N	{00:00:00.003361,00:00:00.010829,00:00:00.004089,00:00:00.089142,00:00:00.003773,00:00:00.101392,00:00:03.625,00:00:00.938,00:00:00.781,00:00:01.031}
-sp_event_robberies()	t	2022-12-30 23:24:41.529759	00:10:10	\N	{00:00:00.005686,00:00:00.003703,00:00:00.003739,00:00:00.003697,00:00:00.003522,00:00:00.003657,00:00:00.005421,00:00:00.003709,00:00:00.002584,00:00:00.002697}
-sp_event_spawn_orbit_resources()	t	2022-12-30 23:33:56.065746	00:01:00	\N	{00:00:00.002748,00:00:00.002559,00:00:00.002435,00:00:00.002532,00:00:00.000641,00:00:00.002653,00:00:00.000807,00:00:00.002564,00:00:00.003809,00:00:00.001956}
-sp_event_riots()	t	2022-12-30 23:33:59.078352	00:10:50	\N	{00:00:00.00228,00:00:00.00213,00:00:00.002129,00:00:00.002125,00:00:00.003808,00:00:00.001408,00:00:00.00205,00:00:00.002207,00:00:00.001197,00:00:00.00389}
-sp_event_lost_nations_abandon()	t	2022-12-30 23:27:43.529197	00:11:00	\N	{00:00:00.002552,00:00:00.002707,00:00:00.002638,00:00:00.002467,00:00:00.002686,00:00:00.002626,00:00:00.000885,00:00:00.000922,00:00:00.002757,00:00:00.002615}
-sp_event_rogue_fleets_rush_resources()	t	2022-12-30 23:19:37.507153	01:15:00	\N	{00:00:00.002634,00:00:00.001187,00:00:00.0028,00:00:00.002725,00:00:00.000676,00:00:00.00039,00:00:00.002609,00:00:00.002989,00:00:00.001325,00:00:00.000765}
-sp_event_commanders_promotions()	t	2022-12-30 23:19:38.011864	00:30:00	\N	{00:00:00.000572,00:00:00.001467,00:00:00.001524,00:00:00.001487,00:00:00.001473,00:00:00.000569,00:00:00.001252,00:00:00.001418,00:00:00.00157,00:00:00.001395}
-sp_event_rogue_fleets_patrol()	t	2022-12-30 22:52:37.514464	01:30:00	\N	{00:00:00.004434,00:00:00.003937,00:00:00.00457,00:00:00.003297,00:00:00.001801,00:00:00.002591,00:00:00.007417,00:00:00.009682,00:00:00.007987,00:00:00.009318}
-sp_event_long()	t	2022-12-30 23:29:03.628376	00:10:40	\N	{00:00:00.002143,00:00:00.001917,00:00:00.00376,00:00:00.00208,00:00:00.001912,00:00:00.003675,00:00:00.002266,00:00:00.000981,00:00:00.001978,00:00:00.003986}
-sp_event_laboratory_accident()	t	2022-12-30 23:29:42.968292	00:10:20	\N	{00:00:00.003774,00:00:00.002017,00:00:00.001921,00:00:00.003915,00:00:00.001797,00:00:00.001861,00:00:00.003726,00:00:00.001867,00:00:00.002014,00:00:00.003693}
-sp_daily_cleaning()	t	2022-12-30 19:01:06.940705	24:00:00	\N	{00:00:00.003422,00:00:00.000407,00:00:00.000616,00:00:00.000419,00:00:00.000366,00:00:00.000373,00:00:00.000468,00:00:00.000444,00:00:00.000368,00:00:00.000422}
-sp_event_sandworm()	t	2022-12-30 23:32:27.673245	00:11:10	\N	{00:00:00.002729,00:00:00.002207,00:00:00.001548,00:00:00.002285,00:00:00.00249,00:00:00.004462,00:00:00.001653,00:00:00.002572,00:00:00.004636,00:00:00.004746}
-\.
-
-
---
 -- Data for Name: sys_processes; Type: TABLE DATA; Schema: s03; Owner: freddec
 --
 
-COPY s03.sys_processes (procedure, enabled, last_runtime, run_every, last_result, last_executiontimes) FROM stdin;
-sp_process_market_price()	t	2022-12-30 22:36:54.750231	01:00:00	\N	{00:00:00.00241,00:00:00.00246,00:00:00.002515,00:00:00.002538,00:00:00.002528,00:00:00.002494,00:00:00.005138,00:00:00.004626,00:00:00.006103,00:00:00.004638}
-sp_process_clean_waiting_fleets()	t	2022-12-30 23:25:44.818876	00:10:00	\N	{00:00:00.000425,00:00:00.000452,00:00:00.000485,00:00:00.000421,00:00:00.000452,00:00:00.000447,00:00:00.000491,00:00:00.000467,00:00:00.000446,00:00:00.00041}
-sp_process_clean_routes()	t	2022-12-30 23:30:52.519613	00:05:00	\N	{00:00:00.000971,00:00:00.000821,00:00:00.001057,00:00:00.001039,00:00:00.000966,00:00:00.00092,00:00:00.001103,00:00:00.001092,00:00:00.001023,00:00:00.00096}
-sp_process_market('0:00:05', 50)	t	2022-12-30 23:33:59.926653	00:00:05	\N	{00:00:00.000513,00:00:00.000395,00:00:00.000429,00:00:00.000498,00:00:00.00045,00:00:00.004697,00:00:00.000124,00:00:00.000105,00:00:00.000124,00:00:00.000166}
-sp_process_accounts_deletion()	t	2022-12-30 23:34:03.958567	00:00:01	\N	{00:00:00.000129,00:00:00.000122,00:00:00.000112,00:00:00.000103,00:00:00.000139,00:00:00.000104,00:00:00.000101,00:00:00.000099,00:00:00.000108,00:00:00.000101}
-sp_process_score('0:00:00', 50)	t	2022-12-30 23:34:03.958567	00:00:01	\N	{00:00:00.00008,00:00:00.000084,00:00:00.00012,00:00:00.000147,00:00:00.000093,00:00:00.00011,00:00:00.000116,00:00:00.000109,00:00:00.000105,00:00:00.000071}
-sp_process_naps(10)	t	2022-12-30 23:34:03.958567	00:00:01	\N	{00:00:00.00012,00:00:00.000119,00:00:00.000138,00:00:00.000131,00:00:00.000125,00:00:00.000134,00:00:00.000128,00:00:00.000124,00:00:00.000156,00:00:00.000188}
-sp_process_tributes(25)	t	2022-12-30 23:34:03.958567	00:00:01	\N	{00:00:00.000097,00:00:00.000096,00:00:00.000105,00:00:00.000103,00:00:00.000096,00:00:00.0001,00:00:00.000103,00:00:00.000097,00:00:00.000106,00:00:00.0001}
-sp_process_destroy_buildings('0:00:01', 10)	t	2022-12-30 23:34:03.958567	00:00:01	\N	{00:00:00.000081,00:00:00.000083,00:00:00.000087,00:00:00.000087,00:00:00.000084,00:00:00.000083,00:00:00.000085,00:00:00.000082,00:00:00.000085,00:00:00.000105}
-sp_process_clean_alliances()	t	2022-12-30 23:33:05.400414	00:01:00	\N	{00:00:00.000812,00:00:00.000797,00:00:00.000718,00:00:00.000842,00:00:00.000886,00:00:00.000801,00:00:00.000801,00:00:00.000792,00:00:00.00082,00:00:00.000829}
-sp_process_merchant_planets()	t	2022-12-30 23:33:59.926653	00:00:05	\N	{00:00:00.000101,00:00:00.000096,00:00:00.000097,00:00:00.000106,00:00:00.000115,00:00:00.001173,00:00:00.000105,00:00:00.000097,00:00:00.000091,00:00:00.000114}
-sp_process_training('0:00:01', 10)	t	2022-12-30 23:34:03.958567	00:00:01	\N	{00:00:00.00026,00:00:00.000272,00:00:00.000297,00:00:00.000312,00:00:00.000303,00:00:00.000297,00:00:00.00031,00:00:00.000264,00:00:00.000278,00:00:00.00024}
-sp_process_researches()	t	2022-12-30 23:34:03.958567	00:00:01	\N	{00:00:00.000117,00:00:00.000119,00:00:00.000125,00:00:00.000146,00:00:00.000123,00:00:00.000126,00:00:00.000149,00:00:00.00012,00:00:00.000122,00:00:00.000119}
-sp_process_fleets_recycling('0:00:01', 25)	t	2022-12-30 23:34:04.463026	00:00:00.5	\N	{00:00:00.000127,00:00:00.000107,00:00:00.000119,00:00:00.000099,00:00:00.000115,00:00:00.000109,00:00:00.000107,00:00:00.000117,00:00:00.000111,00:00:00.000099}
-sp_process_fleets_movements('0:00:01', 25)	t	2022-12-30 23:34:04.463026	00:00:00.5	\N	{00:00:00.000101,00:00:00.000094,00:00:00.000098,00:00:00.000164,00:00:00.000125,00:00:00.00011,00:00:00.000165,00:00:00.000098,00:00:00.000164,00:00:00.000103}
-sp_process_holidays()	t	2022-12-30 23:33:59.926653	00:00:05	\N	{00:00:00.000075,00:00:00.000089,00:00:00.000076,00:00:00.000074,00:00:00.000085,00:00:00.000486,00:00:00.000072,00:00:00.000081,00:00:00.000072,00:00:00.000073}
-sp_process_bounties(10)	t	2022-12-30 23:33:59.926653	00:00:05	\N	{00:00:00.00009,00:00:00.000095,00:00:00.000094,00:00:00.000088,00:00:00.000099,00:00:00.000271,00:00:00.000072,00:00:00.000066,00:00:00.000073,00:00:00.000065}
-sp_process_continue_shipyard('0:00:01', 20)	t	2022-12-30 23:34:04.463026	00:00:00.5	\N	{00:00:00.000172,00:00:00.00016,00:00:00.000166,00:00:00.000171,00:00:00.000174,00:00:00.000164,00:00:00.000206,00:00:00.000159,00:00:00.000208,00:00:00.000164}
-sp_process_ships('0:00:01', 20)	t	2022-12-30 23:34:04.463026	00:00:00.5	\N	{00:00:00.000371,00:00:00.000353,00:00:00.00036,00:00:00.000383,00:00:00.000377,00:00:00.000376,00:00:00.000392,00:00:00.000381,00:00:00.000407,00:00:00.000399}
-sp_process_fleets_waiting()	t	2022-12-30 23:34:03.958567	00:00:01	\N	{00:00:00.000068,00:00:00.00008,00:00:00.00007,00:00:00.000081,00:00:00.000071,00:00:00.000072,00:00:00.000071,00:00:00.000068,00:00:00.000073,00:00:00.000071}
-sp_process_leave_alliance(10)	t	2022-12-30 23:34:03.958567	00:00:01	\N	{00:00:00.000073,00:00:00.000077,00:00:00.00008,00:00:00.000077,00:00:00.000083,00:00:00.000074,00:00:00.000076,00:00:00.000072,00:00:00.000076,00:00:00.000072}
-sp_process_buildings()	t	2022-12-30 23:34:03.958567	00:00:01	\N	{00:00:00.000079,00:00:00.000082,00:00:00.000086,00:00:00.000093,00:00:00.000093,00:00:00.000088,00:00:00.000091,00:00:00.000081,00:00:00.000091,00:00:00.000081}
-sp_process_market_purchases()	t	2022-12-30 23:33:59.926653	00:00:05	\N	{00:00:00.000098,00:00:00.0001,00:00:00.000096,00:00:00.000106,00:00:00.000097,00:00:00.000779,00:00:00.0001,00:00:00.000103,00:00:00.000095,00:00:00.000113}
-sp_process_wars(10)	t	2022-12-30 23:34:03.958567	00:00:01	\N	{00:00:00.000146,00:00:00.000148,00:00:00.000154,00:00:00.000155,00:00:00.000155,00:00:00.000158,00:00:00.00015,00:00:00.000149,00:00:00.000158,00:00:00.000152}
-sp_process_update_planets('0:00:00', 25)	t	2022-12-30 23:34:03.958567	00:00:01	\N	{00:00:00.000176,00:00:00.000154,00:00:00.000155,00:00:00.000153,00:00:00.000155,00:00:00.000164,00:00:00.000192,00:00:00.000151,00:00:00.000163,00:00:00.000158}
-sp_process_credits_production('0:00:00', 50)	t	2022-12-30 23:34:03.958567	00:00:01	\N	{00:00:00.000079,00:00:00.000084,00:00:00.000085,00:00:00.000087,00:00:00.000085,00:00:00.000085,00:00:00.000086,00:00:00.000084,00:00:00.00009,00:00:00.000084}
+COPY s03.sys_processes (procedure, last_runtime, run_every, last_result) FROM stdin;
+sp_event_merchants_contract()	2022-12-30 16:52:36.507524	24:00:00	\N
+sp_daily_cleaning()	2022-12-30 19:01:06.940705	24:00:00	\N
+sp_event_rogue_fleets_patrol()	2022-12-31 12:22:40.648128	01:30:00	\N
+sp_event_lost_nations_abandon()	2022-12-31 13:24:03.286095	00:11:00	\N
+sp_process_clean_waiting_fleets()	2022-12-31 13:26:57.201914	00:10:00	\N
+sp_event_riots()	2022-12-31 13:28:46.246579	00:10:50	\N
+sp_event_robberies()	2022-12-31 13:30:46.872077	00:10:10	\N
+sp_process_market_price()	2022-12-31 12:36:59.252636	01:00:00	\N
+sp_event_rogue_fleets_rush_resources()	2022-12-31 13:04:40.422699	01:15:00	\N
+sp_event_sandworm()	2022-12-31 13:22:17.439794	00:11:10	\N
+sp_event_commanders_promotions()	2022-12-31 13:23:36.098695	00:30:00	\N
+sp_event_planet_bonus()	2022-12-31 13:23:38.117006	00:10:00	\N
+sp_event_long()	2022-12-31 13:25:00.363201	00:10:40	\N
+sp_process_clean_routes()	2022-12-31 13:28:44.232443	00:05:00	\N
+sp_event_laboratory_accident()	2022-12-31 13:29:38.671952	00:10:20	\N
+sp_event_spawn_orbit_resources()	2022-12-31 13:32:15.895251	00:01:00	\N
+sp_process_clean_alliances()	2022-12-31 13:32:15.895251	00:01:00	\N
+sp_process_bounties(10)	2022-12-31 13:32:19.922156	00:00:05	\N
+sp_process_market_purchases()	2022-12-31 13:32:19.922156	00:00:05	\N
+sp_process_market('0:00:05', 50)	2022-12-31 13:32:19.922156	00:00:05	\N
+sp_process_holidays()	2022-12-31 13:32:19.922156	00:00:05	\N
+sp_process_merchant_planets()	2022-12-31 13:32:19.922156	00:00:05	\N
+sp_process_buildings()	2022-12-31 13:32:21.936174	00:00:01	\N
+sp_process_training('0:00:01', 10)	2022-12-31 13:32:21.936174	00:00:01	\N
+sp_process_tributes(25)	2022-12-31 13:32:21.936174	00:00:01	\N
+sp_process_leave_alliance(10)	2022-12-31 13:32:21.936174	00:00:01	\N
+sp_process_fleets_waiting()	2022-12-31 13:32:21.936174	00:00:01	\N
+sp_process_accounts_deletion()	2022-12-31 13:32:21.936174	00:00:01	\N
+sp_process_wars(10)	2022-12-31 13:32:21.936174	00:00:01	\N
+sp_process_credits_production('0:00:00', 50)	2022-12-31 13:32:21.936174	00:00:01	\N
+sp_process_continue_shipyard('0:00:01', 20)	2022-12-31 13:32:21.936174	00:00:00.5	\N
+sp_process_fleets_recycling('0:00:01', 25)	2022-12-31 13:32:21.936174	00:00:00.5	\N
+sp_process_fleets_movements('0:00:01', 25)	2022-12-31 13:32:21.936174	00:00:00.5	\N
+sp_process_ships('0:00:01', 20)	2022-12-31 13:32:21.936174	00:00:00.5	\N
+sp_process_destroy_buildings('0:00:01', 10)	2022-12-31 13:32:21.936174	00:00:01	\N
+sp_process_update_planets('0:00:00', 25)	2022-12-31 13:32:21.936174	00:00:01	\N
+sp_process_researches()	2022-12-31 13:32:21.936174	00:00:01	\N
+sp_process_naps(10)	2022-12-31 13:32:21.936174	00:00:01	\N
+sp_process_score('0:00:00', 50)	2022-12-31 13:32:21.936174	00:00:01	\N
 \.
 
 
@@ -25715,9 +24782,10 @@ sp_process_credits_production('0:00:00', 50)	t	2022-12-30 23:34:03.958567	00:00:
 COPY s03.users (id, privilege, username, password, lastlogin, regdate, email, credits, credits_bankruptcy, lcid, description, notes, avatar_url, lastplanetid, deletion_date, score, score_prestige, score_buildings, score_research, score_ships, alliance_id, alliance_rank, alliance_joined, alliance_left, alliance_taxes_paid, alliance_credits_given, alliance_credits_taken, alliance_score_combat, newpassword, lastactivity, planets, noplanets_since, last_catastrophe, last_holidays, previous_score, timers_enabled, ban_datetime, ban_expire, ban_reason, ban_reason_public, ban_adminuserid, scientists, soldiers, dev_lasterror, dev_lastnotice, protection_enabled, protection_colonies_to_unprotect, protection_datetime, max_colonizable_planets, remaining_colonizations, upkeep_last_cost, upkeep_commanders, upkeep_planets, upkeep_scientists, upkeep_soldiers, upkeep_ships, upkeep_ships_in_position, upkeep_ships_parked, wallet_display, resets, mod_production_ore, mod_production_hydrocarbon, mod_production_energy, mod_production_workers, mod_construction_speed_buildings, mod_construction_speed_ships, mod_fleet_damage, mod_fleet_speed, mod_fleet_shield, mod_fleet_handling, mod_fleet_tracking_speed, mod_fleet_energy_capacity, mod_fleet_energy_usage, mod_fleet_signature, mod_merchant_buy_price, mod_merchant_sell_price, mod_merchant_speed, mod_upkeep_commanders_cost, mod_upkeep_planets_cost, mod_upkeep_scientists_cost, mod_upkeep_soldiers_cost, mod_upkeep_ships_cost, mod_research_cost, mod_research_time, mod_recycling, mod_commanders, mod_planets, commanders_loyalty, orientation, admin_notes, paid_until, autosignature, game_started, mod_research_effectiveness, mod_energy_transfer_effectiveness, requests, score_next_update, display_alliance_planet_name, score_visibility, prestige_points, mod_prestige_from_buildings, displays_ads, displays_pages, ad_bonus_code, regaddress, inframe, modf_bounty, skin, tutorial_first_ship_built, tutorial_first_colonisation_ship_built, leave_alliance_datetime, production_prestige, score_visibility_last_change, credits_produced, mod_prestige_from_ships, mod_planet_need_ore, mod_planet_need_hydrocarbon, mod_fleets, security_level, prestige_points_refund) FROM stdin;
 4	-100	Nation rebelle	A	2006-09-01 00:00:00	2006-09-01 00:00:00	nr@exile	1000000	168	1036		\N		\N	\N	0	103843	0	0	0	\N	0	\N	\N	0	0	0	0	\N	\N	0	\N	2006-09-05 11:57:09.571683	\N	0	t	\N	2009-01-01 17:00:00	\N	\N	\N	0	0	\N	\N	f	5	2006-09-19 11:57:09.571683	50000	100000	0	0	0	0	0	0	0	0	\N	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	0	0	100	2		\N	\N	2006-09-01 00:00:00	1	1	0	2007-02-23 10:53:36.184266	f	0	103843	1	0	0	\N	0.0.0.0	\N	1	\N	t	t	\N	0	2008-07-27 14:38:06.042	0	1	1	1	400	3	0
 1	-100	Les fossoyeurs	A	2006-09-01 00:00:00	2006-09-01 00:00:00	fos@exile	1000000	168	1036		\N		\N	\N	0	14868700	0	0	0	\N	100	2019-03-30 13:49:00.351465	2019-03-30 21:49:00.351465	0	0	0	0	\N	\N	0	\N	2006-09-05 11:56:46.664541	\N	0	f	\N	2009-01-01 17:00:00	\N	\N	\N	0	0	\N	\N	f	5	2006-09-19 11:56:46.664541	50000	99999	0	0	0	0	0	535430.8	0	0	\N	1	1.8522	1.8522	1.21	1	1.9845	2.3625	1.2	1.575	1.625	1.5	1.45	1	1	1	0.9	1.1	1.25	1	0.95	0.8	0.9	1	0.8	0.95	1	5	20	85	2		\N	\N	2006-09-01 00:00:00	1	1	0	2007-02-23 10:53:36.184266	f	0	14905392	1.1	0	0	\N	0.0.0.0	\N	1	\N	t	t	\N	0	2008-07-27 14:38:06.042	0	1	1	1	400	3	0
-3	-50	Guilde marchande	A	2006-09-01 00:00:00	2006-09-01 00:00:00	gm@exile	1000000	168	1036		\N		\N	\N	0	0	0	0	0	\N	100	2019-03-30 13:49:00.351465	2019-03-30 21:49:00.351465	0	0	0	0	\N	\N	1025	\N	2106-09-05 11:54:00.464825	\N	0	f	\N	2009-01-01 17:00:00	\N	\N	\N	0	0	\N	\N	f	5	2005-09-19 11:54:00.464825	50000	100000	46389	0	375	0	0	1026.6666	0	0	\N	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	0	0	85	1		\N	\N	2006-09-01 00:00:00	1	1	0	2007-02-23 10:53:36.184266	t	0	0	1	0	0	\N	0.0.0.0	\N	1	\N	t	t	\N	0	2008-07-27 14:38:06.042	0	1	1	1	400	3	0
-5	500	Duke	nocheat	2019-03-29 16:14:24.626639	2009-01-01 21:22:34.04	\N	1000000	168	1036		\N		\N	\N	283	0	0	0	0	\N	0	\N	\N	0	0	0	0	\N	2019-03-29 16:14:24.626639	0	\N	2009-01-01 21:22:34.04	\N	283	t	\N	2009-01-01 17:00:00	\N	\N	\N	0	0	637	99880	f	5	2009-01-15 21:22:34.04	50000	100000	0	0	0	0	0	0	0	0	\N	0	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	0	0	85	0		\N		2009-01-01 21:22:34.04	1	1	0	2022-12-31 00:00:00	f	0	0	1	0	0	\N	82.246.212.174	\N	1	s_default	f	f	\N	0	2008-12-31 21:22:34.04	0	1	1	1	400	3	0
 2	-100	Nation oubliée	A	2006-09-01 00:00:00	2006-09-01 00:00:00	no@exile	1000000	168	1036		\N		\N	\N	0	4469810	140617750	0	36455650	\N	100	2019-03-29 18:16:08.73905	2019-03-30 02:16:08.73905	0	0	0	0	\N	\N	3	\N	2006-09-05 11:54:34.148706	\N	0	t	\N	2009-01-01 17:00:00	\N	\N	\N	0	0	\N	\N	f	5	2006-09-19 11:54:34.148706	50000	100000	7095	0	375	3255	1693	0	0	0	\N	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	0	0	100	2		\N	\N	2006-09-01 00:00:00	1	1	0	2007-02-23 10:53:36.184266	f	0	4471262	1	0	0	\N	0.0.0.0	\N	1	\N	t	t	\N	62100	2008-07-27 14:38:06.042	2908212204	1	1	1	400	3	3
+5	500	Duke	nocheat	2019-03-29 16:14:24.626639	2009-01-01 21:22:34.04	\N	1000000	168	1036		\N		\N	\N	283	0	0	0	0	\N	0	\N	\N	0	0	0	0	\N	2019-03-29 16:14:24.626639	0	\N	2009-01-01 21:22:34.04	\N	283	t	\N	2009-01-01 17:00:00	\N	\N	\N	0	0	637	99880	f	5	2009-01-15 21:22:34.04	50000	100000	0	0	0	0	0	0	0	0	\N	0	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	0	0	85	0		\N		2009-01-01 21:22:34.04	1	1	0	2023-01-01 00:00:00	f	0	0	1	0	0	\N	82.246.212.174	\N	1	s_default	f	f	\N	0	2008-12-31 21:22:34.04	0	1	1	1	400	3	0
+3	-50	Guilde marchande	A	2006-09-01 00:00:00	2006-09-01 00:00:00	gm@exile	1000000	168	1036		\N		\N	\N	0	0	0	0	0	\N	100	2019-03-30 13:49:00.351465	2019-03-30 21:49:00.351465	0	0	0	0	\N	\N	1029	\N	2106-09-05 11:54:00.464825	\N	0	f	\N	2009-01-01 17:00:00	\N	\N	\N	0	0	\N	\N	f	5	2005-09-19 11:54:00.464825	50000	100000	46389	0	375	0	0	1026.6666	0	0	\N	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	0	0	85	1		\N	\N	2006-09-01 00:00:00	1	1	0	2007-02-23 10:53:36.184266	t	0	0	1	0	0	\N	0.0.0.0	\N	1	\N	t	t	\N	0	2008-07-27 14:38:06.042	0	1	1	1	400	3	0
+6	-3	\N	\N	2022-12-31 10:37:53.939493	2022-12-31 10:37:53.939493	\N	3500	168	1036		\N		\N	\N	0	0	0	0	0	\N	0	\N	\N	0	0	0	0	\N	\N	0	\N	2022-12-31 10:37:53.939493	\N	0	t	\N	2009-01-01 17:00:00	\N	\N	\N	0	0	\N	\N	f	5	2023-01-14 10:37:53.939493	50000	100000	0	0	0	0	0	0	0	0	\N	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	100	0		\N		2022-12-31 10:37:53.939493	0	0	0	2023-01-01 00:00:00	f	0	0	1	0	0	\N	127.0.0.1	\N	1	\N	f	f	\N	0	2022-12-30 10:37:53.939493	0	1	1	1	200	3	0
 \.
 
 
@@ -25838,14 +24906,14 @@ SELECT pg_catalog.setval('s03.chat_id_seq', 2, true);
 -- Name: chat_lines_id_seq; Type: SEQUENCE SET; Schema: s03; Owner: freddec
 --
 
-SELECT pg_catalog.setval('s03.chat_lines_id_seq', 1, true);
+SELECT pg_catalog.setval('s03.chat_lines_id_seq', 2, true);
 
 
 --
 -- Name: commanders_id_seq; Type: SEQUENCE SET; Schema: s03; Owner: freddec
 --
 
-SELECT pg_catalog.setval('s03.commanders_id_seq', 1, true);
+SELECT pg_catalog.setval('s03.commanders_id_seq', 2, true);
 
 
 --
@@ -25880,7 +24948,7 @@ SELECT pg_catalog.setval('s03.db_ships_id_seq', 1, true);
 -- Name: fleets_id_seq; Type: SEQUENCE SET; Schema: s03; Owner: freddec
 --
 
-SELECT pg_catalog.setval('s03.fleets_id_seq', 1, true);
+SELECT pg_catalog.setval('s03.fleets_id_seq', 2772, true);
 
 
 --
@@ -25915,7 +24983,7 @@ SELECT pg_catalog.setval('s03.messages_addressee_history_id_seq', 1, true);
 -- Name: messages_id_seq; Type: SEQUENCE SET; Schema: s03; Owner: freddec
 --
 
-SELECT pg_catalog.setval('s03.messages_id_seq', 1, true);
+SELECT pg_catalog.setval('s03.messages_id_seq', 3, true);
 
 
 --
@@ -25943,7 +25011,7 @@ SELECT pg_catalog.setval('s03.planet_buildings_pending_id_seq', 1, true);
 -- Name: planet_owners_id_seq; Type: SEQUENCE SET; Schema: s03; Owner: freddec
 --
 
-SELECT pg_catalog.setval('s03.planet_owners_id_seq', 1, true);
+SELECT pg_catalog.setval('s03.planet_owners_id_seq', 6, true);
 
 
 --
@@ -25964,7 +25032,7 @@ SELECT pg_catalog.setval('s03.planet_training_pending_id_seq', 1, true);
 -- Name: reports_id_seq; Type: SEQUENCE SET; Schema: s03; Owner: freddec
 --
 
-SELECT pg_catalog.setval('s03.reports_id_seq', 1, true);
+SELECT pg_catalog.setval('s03.reports_id_seq', 6, true);
 
 
 --
@@ -26236,14 +25304,6 @@ ALTER TABLE ONLY s03.db_ships_req_research
 
 
 --
--- Name: sys_events events_pkey; Type: CONSTRAINT; Schema: s03; Owner: freddec
---
-
-ALTER TABLE ONLY s03.sys_events
-    ADD CONSTRAINT events_pkey PRIMARY KEY (procedure);
-
-
---
 -- Name: fleets fleets_pkey; Type: CONSTRAINT; Schema: s03; Owner: freddec
 --
 
@@ -26497,14 +25557,6 @@ ALTER TABLE ONLY s03.spy_planet
 
 ALTER TABLE ONLY s03.spy_research
     ADD CONSTRAINT spy_research_pkey PRIMARY KEY (spy_id, research_id);
-
-
---
--- Name: sys_daily_updates sys_daily_updates_pkey; Type: CONSTRAINT; Schema: s03; Owner: freddec
---
-
-ALTER TABLE ONLY s03.sys_daily_updates
-    ADD CONSTRAINT sys_daily_updates_pkey PRIMARY KEY (procedure);
 
 
 --
@@ -27373,6 +26425,13 @@ CREATE TRIGGER after_fleets_insert_update_check_battle AFTER INSERT OR DELETE OR
 --
 
 CREATE TRIGGER after_fleets_ships_changes AFTER INSERT OR DELETE OR UPDATE ON s03.fleets_ships FOR EACH ROW EXECUTE FUNCTION s03.sp_fleets_ships_afterchanges();
+
+
+--
+-- Name: nav_planet after_nav_planet_update; Type: TRIGGER; Schema: s03; Owner: freddec
+--
+
+CREATE TRIGGER after_nav_planet_update AFTER UPDATE ON s03.nav_planet FOR EACH ROW EXECUTE FUNCTION s03.sp_nav_planet_afterupdate();
 
 
 --

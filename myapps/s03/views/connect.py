@@ -22,7 +22,6 @@ class View(ExileMixin, View):
 
             request.session[sUser] = rs[0]
             request.session[sPlanet] = rs[1]
-            request.session[sPrivilege] = rs[2]
             request.session[sLogonUserID] = rs[0]
             
             if not request.session.get("isplaying"):

@@ -41,7 +41,6 @@ class View(GlobalView):
             Id = ToInt(request.GET.get("mailid"), 0)
 
             query = "SELECT sender, subject, body FROM messages WHERE ownerid=" + str(self.UserId) + " AND id=" + str(Id) + " LIMIT 1"
-            self.request.session["details"] = query
             oRs = oConnExecute(query)
 
             if oRs:
@@ -163,11 +162,8 @@ class View(GlobalView):
         if offset > 50: offset=50
         if offset < 0: offset=0
 
-        search_cond = ""
-        if self.request.session.get(sPrivilege) < 100: search_cond = "not deleted AND "
-
         # get total number of mails that could be displayed
-        query = "SELECT count(1) FROM messages WHERE "+search_cond+" ownerid = " + str(self.UserId)
+        query = "SELECT count(1) FROM messages WHERE NOT deleted AND ownerid = " + str(self.UserId)
         oRs = oConnExecute(query)
         size = int(oRs[0])
         nb_pages = int(size/displayed)
@@ -269,8 +265,6 @@ class View(GlobalView):
                 item["to_admins"] = True
             elif oRs[11] == ":alliance":
                 item["to_alliance"] = True
-
-            if self.request.session.get(sPrivilege) > 100: item["admin"] = True
 
             i = i + 1
 

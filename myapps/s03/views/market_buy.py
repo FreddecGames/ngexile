@@ -24,8 +24,6 @@ class View(GlobalView):
         get_planet = self.request.GET.get("planet", "").strip()
         if get_planet != "": get_planet = " AND v.id=" + dosql(get_planet)
 
-        self.request.session["details"] = "list planets"
-
         # retrieve ore, hydrocarbon, sales quantities on the planet
 
         query = "SELECT v.id, v.name, v.galaxy, v.sector, v.planet, v.ore, v.hydrocarbon, v.ore_capacity, v.hydrocarbon_capacity, v.planet_floor," + \
@@ -136,8 +134,6 @@ class View(GlobalView):
 
         if self.request.GET.get("a", "") != "buy": return
 
-        self.request.session["details"] = "Execute orders"
-
         # for each planet owned, check what the player buys
         query = "SELECT id FROM nav_planet WHERE ownerid="+str(self.UserId)
         planetsArray = oConnExecuteAll(query)
@@ -152,6 +148,4 @@ class View(GlobalView):
             if ore > 0 or hydrocarbon > 0:
 
                 query = "SELECT * FROM sp_buy_resources(" + str(self.UserId) + "," + str(planetid) + "," + str(ore*1000) + "," + str(hydrocarbon*1000) + ")"
-                self.request.session["details"] = query
                 oConnDoQuery(query)
-                self.request.session["details"] = "done:"+query

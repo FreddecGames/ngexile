@@ -11,9 +11,6 @@ class View(GlobalView):
 
         self.selected_menu = "ranking.players"
 
-        return self.DisplayRanking()
-
-    def DisplayRanking(self):
         content = GetTemplate(self.request, "ranking-players")
 
         #
@@ -63,7 +60,6 @@ class View(GlobalView):
                 " WHERE True "+searchby + \
                 " ORDER BY score DESC OFFSET 9 LIMIT 1"
         oRs = oConnExecute(query)
-
         if oRs == None:
             TenthUserScore = 0
         else:

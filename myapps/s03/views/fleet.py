@@ -515,33 +515,6 @@ class View(GlobalView):
 
                 content.Parse("move_fleet")
 
-                if self.request.session.get(sPrivilege) > 100:
-
-                    #
-                    # list routes
-                    #
-                    query = " SELECT id, name, repeat" + \
-                            " FROM routes" + \
-                            " WHERE ownerid="+ str(self.UserId)
-                    list_oRss = oConnExecuteAll(query)
-
-                    if list_oRss == None: content.Parse("noroute")
-                    else:
-                        routes = []
-                        for list_oRs in list_oRss:
-                            route = {}
-                            route["route_id"] = list_oRs[0]
-                            route["route_name"] = list_oRs[1]
-
-                            if list_oRs[0] == oRs[45]: route["selected"] = True
-
-                            routes.append(route)
-
-                        content.AssignValue("routes", routes)
-
-        if self.request.session.get(sPrivilege) > 100:
-            content.Parse("showroute")
-
         # display action error
         if self.action_result != "": content.Parse(self.action_result)
 

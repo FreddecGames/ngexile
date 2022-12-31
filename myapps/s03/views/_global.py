@@ -29,8 +29,6 @@ class GlobalView(ExileMixin, View):
         
         if not request.session.get(sUser):
             return HttpResponseRedirect("/s03/") # Redirect to home page
-
-        request.session["details"] = ""
         
         # Check that this session is still valid
         response = self.CheckSessionValidity()
@@ -61,9 +59,6 @@ class GlobalView(ExileMixin, View):
                 return ownerName if ownerName else ""
             else:
                 return ""
-
-    def IsPlayerAccount(self):
-        return self.request.session.get(sPrivilege) > -50 and self.request.session.get(sPrivilege) < 50
 
     def IsImpersonating(self):
         return self.request.user.is_impersonate
@@ -358,68 +353,14 @@ class GlobalView(ExileMixin, View):
             if self.IsImpersonating():
                 tpl_layout.AssignValue("username", self.oPlayerInfo["username"])
                 tpl_layout.Parse("impersonating")
-                
-            #
-            # Fill admin info
-            #
-            if self.request.session.get(sPrivilege) > 100:
-    
-                # Assign the time taken to generate the page
-                tpl_layout.AssignValue("render_time",  (time.clock() - self.StartTime))
-    
-                # Assign number of logged players
-                oRs = oConnExecute("SELECT int4(count(*)) FROM vw_players WHERE lastactivity >= now()-INTERVAL '20 minutes'")
-                tpl_layout.AssignValue("players", oRs[0])
-                tpl_layout.Parse("dev")
-    
-                if self.oPlayerInfo["privilege"] == -2:
-                    oRs = oConnExecute("SELECT start_time, min_end_time, end_time FROM users_holidays WHERE userid="+str(self.UserId))
-    
-                    if oRs:
-                        tpl_layout.AssignValue("start_datetime", oRs[0])
-                        tpl_layout.AssignValue("min_end_datetime", oRs[1])
-                        tpl_layout.AssignValue("end_datetime", oRs[2])
-                        tpl_layout.Parse("onholidays")
-    
-                if self.oPlayerInfo["privilege"] == -1:
-                    tpl_layout.AssignValue("ban_datetime", self.oPlayerInfo["ban_datetime"])
-                    tpl_layout.AssignValue("ban_reason", self.oPlayerInfo["ban_reason"])
-                    tpl_layout.AssignValue("ban_reason_public", self.oPlayerInfo["ban_reason_public"])
-    
-                    if self.oPlayerInfo["ban_expire"]:
-                        tpl_layout.AssignValue("ban_expire_datetime", self.oPlayerInfo["ban_expire"])
-                        tpl_layout.Parse("banned.expire")
-    
-                    tpl_layout.Parse("banned")
 
             tpl_layout.AssignValue("userid", self.UserId)
             tpl_layout.AssignValue("server", universe)
     
-            '''
-            if not oPlayerInfo("paid") and Session(sPrivilege) < 100:
-    
-                connectNexusDB
-                set oRs = oNexusConn.Execute("SELECT sp_ad_get_code(" & UserId & ")")
-                if not oRs.EOF:
-                    if not isnull(oRs[0]):
-                        tpl_layout.AssignValue("ad_code", oRs[0]
-                        tpl_layout.Parse("ads.code"
-                    end if
-                end if
-    
-                tpl_layout.Parse("ads"
-                oConn.Execute "UPDATE users SET displays_pages=displays_pages+1 WHERE id=" & UserId
-            '''
-            
             tpl_layout.Parse("menu")
     
             if not self.oPlayerInfo["inframe"]:
                 tpl_layout.Parse("test_frame")
-            
-            #
-            # Write the template to the client
-            #
-            self.request.session["details"] = "sending page"
     
         self.logpage()
 
@@ -450,21 +391,18 @@ class GlobalView(ExileMixin, View):
     
         self.SecurityLevel = self.oPlayerInfo["security_level"]
         self.displayAlliancePlanetName = self.oPlayerInfo["display_alliance_planet_name"]
-    
-        self.request.session["LCID"] = self.oPlayerInfo["lcid"]
 
-        if self.IsPlayerAccount():
-            # Redirect to locked page
-            if self.oPlayerInfo["privilege"] == -1: return HttpResponseRedirect("/s03/locked/")
-    
-            # Redirect to holidays page
-            if self.oPlayerInfo["privilege"] == -2: return HttpResponseRedirect("/s03/holidays/")
-    
-            # Redirect to wait page
-            if self.oPlayerInfo["privilege"] == -3: return HttpResponseRedirect("/s03/wait/")
-    
-            # Redirect to game-over page
-            if self.oPlayerInfo["credits_bankruptcy"] <= 0: return HttpResponseRedirect("/s03/game-over/")
+        # Redirect to locked page
+        if self.oPlayerInfo["privilege"] == -1: return HttpResponseRedirect("/s03/locked/")
+
+        # Redirect to holidays page
+        if self.oPlayerInfo["privilege"] == -2: return HttpResponseRedirect("/s03/holidays/")
+
+        # Redirect to wait page
+        if self.oPlayerInfo["privilege"] == -3: return HttpResponseRedirect("/s03/wait/")
+
+        # Redirect to game-over page
+        if self.oPlayerInfo["credits_bankruptcy"] <= 0: return HttpResponseRedirect("/s03/game-over/")
 
         self.AllianceId = self.oPlayerInfo["alliance_id"]
         self.AllianceRank = self.oPlayerInfo["alliance_rank"]
@@ -529,14 +467,7 @@ class GlobalView(ExileMixin, View):
     
         # if player owns no planets then the game is over
         if oRs == None:
-            if self.IsPlayerAccount():
-                return HttpResponseRedirect("/s03/game-over/")
-            else:
-                self.CurrentPlanet = 0
-                self.CurrentGalaxyId = 0
-                self.CurrentSectorId = 0
-    
-                return
+            return HttpResponseRedirect("/s03/game-over/")
     
         # assign planet id
         self.CurrentPlanet = oRs[0]
