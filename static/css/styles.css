@@ -37,6 +37,9 @@ a { text-decoration: none; }
 
 .scrollbar { height: 100%; overflow-y: auto; overflow-x: hidden; scrollbar-color: rgba(255, 255, 255, .075); scrollbar-width: thin; }
 
+@media (min-width: 992px) { .container { max-width: 720px; } }
+@media (min-width: 1200px) { .container { max-width: 720px; } }
+
 .bg-gray-100 { background-color: var(--bs-gray-100)!important; }
 .bg-gray-200 { background-color: var(--bs-gray-200)!important; }
 .bg-gray-300 { background-color: var(--bs-gray-300)!important; }

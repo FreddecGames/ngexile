@@ -104,7 +104,7 @@ function dCargo(id) {
 			var s = '<table width="100%">';
 			for(var i=1;i<fleet.resources.length;i++){
 				var res = fleet.resources[i];
-				s+='<tr><td width="1%" nowrap><img src="{{PATH_IMAGES}}interface/' + resources[res.id].image + '.gif" width="16" height="16" class="res">' + resources[res.id].label + '</td><td width="1%" align="right" nowrap class="grey">' + res.quantity.n() + '</td></tr>';
+				s+='<tr><td width="1%" nowrap><img src="{{PATH_IMAGES}}interface/' + resources[res.id].image + '.gif" width="16" height="16" class="res">' + resources[res.id].label + '</td><td width="1%" align="right" nowrap class="grey">' + res.quantity + '</td></tr>';
 			}
 			return s + '</table>';
 		}
@@ -262,7 +262,7 @@ function displayFleetList(list) {
 
 		z+= '<a href="/s03/fleet/?planet=' + fleet.position.id + '&id=' + fleet.id + '" id="fleet' + fleet.id + '" onmouseover="ddrivetip(dShipList(' + fleet.id + '))" onmouseout="hideddrivetip()" nowrap><b>' + fleet.name + '</b></td>';
 
-		z+= '<td align="right" nowrap>' + fleet.size.n() + '</td><td align="right" nowrap>' + fleet.signature.n() + '</td><td align="right"' + (fleet.cargoload > 0?'onmouseover="ddrivetip(dCargo(' + fleet.id + '))"':'')+ 'onmouseout="hideddrivetip()" nowrap>' + fleet.cargoload.n() + ' / ' + fleet.cargocapacity.n() + '</td><td>' + fleet.position + '</td>';
+		z+= '<td align="right" nowrap>' + fleet.size + '</td><td align="right" nowrap>' + fleet.signature + '</td><td align="right"' + (fleet.cargoload > 0?'onmouseover="ddrivetip(dCargo(' + fleet.id + '))"':'')+ 'onmouseout="hideddrivetip()" nowrap>' + fleet.cargoload + ' / ' + fleet.cargocapacity + '</td><td>' + fleet.position + '</td>';
 
 		z+= '<td nowrap>';
 		switch(fleet.action){
@@ -297,7 +297,7 @@ function displayFleetList(list) {
 		s+= z;
 	}
 
-	s+= '<tr class="smallitem"><td nowrap>Total: <b>' + list.length.n() + '</b></td><td nowrap align="right"><b>' + ships.n() + '</b></td><td nowrap align="right"><b>' + signature.n() + '</b></td><td nowrap align="right"><b>' + cargoload.n() + '</b></td><td colspan="3" class="justhidden">&nbsp;</td></tr>'+
+	s+= '<tr class="smallitem"><td nowrap>Total: <b>' + list.length + '</b></td><td nowrap align="right"><b>' + ships + '</b></td><td nowrap align="right"><b>' + signature + '</b></td><td nowrap align="right"><b>' + cargoload + '</b></td><td colspan="3" class="justhidden">&nbsp;</td></tr>'+
 		'</table>';
 
 	$('fleet_list').innerHTML = s;
@@ -425,10 +425,10 @@ function $tab(id){
 
 function setCategory(id){
 	var tab = $tab(activeCategory);
-	if(tab != null) tab.className = "";
+	if(tab != null) tab.className = "nav-link";
 	
 	tab = $tab(id);
-	if(tab != null) tab.className = "active";
+	if(tab != null) tab.className = "nav-link active";
 
 	activeCategory = id;
 }
@@ -449,7 +449,7 @@ function showNewCategoryForm(){
 
 // add, category
 function addCategory(id, name){
-	var newtab = $tab(null);
+	var newtab = $tab('newtab');
 	var tab = $tab(id);
 
 	// remove category
@@ -461,12 +461,12 @@ function addCategory(id, name){
 
 	// add category if not found
 	if(tab == null){
-		tab = document.createElement('li');
-		tab.id = 'tab'+id;
+		tab = document.createElement('div');
+        tab.className = 'nav-item'
 		$('fleets_categories').insertBefore(tab, newtab);
 	}
 
-	tab.innerHTML = '<a href="" onclick="displayCategory('+id+'); return false;" ondblclick="editCategory(' + id + ')" onmouseover="dropTest('+id+',true)" onmouseout="dropTest('+id+',false)" onmousedown="mouseDown()" onmouseup="mouseUp()">' + name + '</a>';
+	tab.innerHTML = '<a id="tab' + id + '" href="" class="nav-link" onclick="displayCategory('+id+'); return false;" ondblclick="editCategory(' + id + ')" onmouseover="dropTest('+id+',true)" onmouseout="dropTest('+id+',false)" onmousedown="mouseDown()" onmouseup="mouseUp()">' + name + '</a>';
 	categories[id] = new Category(id, name);
 }
 
@@ -538,11 +538,10 @@ function renameCategory(id){
 </script>
 
 <div id="fleets">
-<div>
-<ul class="htabs" id="fleets_categories">
-	<li id="newtab"><a href="#" onClick="showNewCategoryForm(); return false;">&nbsp;</a></li>
-</ul>
-</div>
+
+    <div id="fleets_categories" class="nav nav-tabs mb-3">
+        <div class="nav-item"><a id="newtab" href="#" class="nav-link" onClick="showNewCategoryForm(); return false;">+</a></div>
+    </div>    
 
 <div id="fleet_list">
 

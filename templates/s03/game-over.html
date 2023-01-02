@@ -98,7 +98,7 @@ L'ancien nom deviendra alors disponible aux nouveaux joueurs ou aux joueurs souh
 <div align="center">
 <form method="post" action="?">{% csrf_token %}
 <input type="hidden" name="action" value="retry">
-Nouveau nom <input type="text" name="login" value="{{login}}" maxlength="12"><br/>
+Nouveau nom <input type="text" name="username" value="{{username}}" maxlength="12"><br/>
 {% if galaxies %}
 <br/>
 Galaxie de départ <select name="galaxy" id="galaxies" onchange="showRecommendation(this)">{% for galaxy in galaxies %}<option value="{{galaxy.id}}"{% if galaxy.selected %} selected{% endif %}>{{galaxy.id}}</option>{% endfor %}</select><br/>

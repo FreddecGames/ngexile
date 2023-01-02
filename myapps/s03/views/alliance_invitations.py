@@ -10,7 +10,7 @@ class View(GlobalView):
         if response: return response
 
         if self.AllianceId == None:
-            self.selected_menu = "noalliance.invitations"
+            self.selected_menu = "allianceno.invitations"
         else:
             self.selected_menu = "alliance.invitations"
 

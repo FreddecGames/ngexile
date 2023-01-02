@@ -1,9 +1,6 @@
 {% extends 's03/layout.html' %}
 
 {% block content %}
-{% if totalprice %}
-{% include 's03/header-credits.html' %}
-{% endif %}
 <div id="market">
 <script>
 	var planets=new Array(0{% for planet in m_planets %}{% if planet.can_buy %},new Array({{planet.planet_id}},{{planet.ore_max}},{{planet.hydrocarbon_max}},{{planet.price_ore}},{{planet.price_hydrocarbon}}){% endif %}{% endfor %});

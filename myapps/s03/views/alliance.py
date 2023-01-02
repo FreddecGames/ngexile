@@ -9,7 +9,7 @@ class View(GlobalView):
         response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
 
-        self.selected_menu = "noalliance."
+        self.selected_menu = "allianceno."
 
         tag = request.GET.get("tag")
 

@@ -24,7 +24,7 @@ function sameDay(d1, d2)
 function formatTime(dt)
 {
 	if(dt==null) return '';
-	return dt.getHours().lz() + ':' + dt.getMinutes().lz();
+	return dt.getHours() + ':' + dt.getMinutes();
 }
 
 var Smileys={
@@ -154,13 +154,14 @@ Chat.prototype = {
 		var newtab = $('newtab');
 		var tabs = $('chattabs');
 
-		this.tab = document.createElement('li');
+		this.tab = document.createElement('div');
+        this.tab.className = 'nav-item'
 		this.tab.chat = this;
 
-		this.tab.innerHTML = '<a href="#" onclick="chatlist['+id+'].setActive(); return false;">' + name +
+		this.tab.innerHTML = '<a id="' + this.id + '" href="#" class="nav-link" onclick="chatlist['+id+'].setActive(); return false;">' + name +
 							 (canClose?'&nbsp;<img src="{{PATH_IMAGES}}interface/closechat.gif" width="12" height="12" title="Fermer" class="close" onclick="chatlist['+id+'].close();">':'') + '</a>';
 
-		tabs.insertBefore(this.tab, newtab);
+		tabs.appendChild(this.tab);
 
 		// add this chat to the chat list
 		chatlist[this.id] = this;
@@ -242,10 +243,10 @@ Chat.prototype = {
 		if(activeChat) activeChat.setInactive();
 
 		var newtab = $('newtab');
-		newtab.className = '';
+		newtab.className = 'nav-link';
 
 		this.active = true;
-		this.tab.className = 'active';
+        $(this.id).className = 'nav-link active';
 
 		this.refreshTime = 200;
 
@@ -274,7 +275,7 @@ Chat.prototype = {
 		this.line = oChatLine.value;
 
 		this.lastLine = 0;
-		this.tab.className = '';
+		$(this.id).className = 'nav-link';
 		this.active = false;
 		this.refreshTime = disabled_refreshtime;
 	},
@@ -529,7 +530,7 @@ function showJoinChatForm()
 	if(activeChat) activeChat.setInactive();
 
 	var newtab = $('newtab');
-	newtab.className = "active";
+	newtab.className = "nav-link active";
 
 	var obj = $('chatform');
 	obj.style.visibility = "hidden";
@@ -564,9 +565,9 @@ function displayPublicChats(list)
 
 </script>
 
-<ul id="chattabs" class="htabs">
-	<li id="newtab"><a href="#" onclick="showJoinChatForm(); return false;">&nbsp;&nbsp;</a></li>
-</ul>
+<div id="chattabs" class="nav nav-tabs mb-3">
+	<div class="nav-item"><a id="newtab" href="#" class="nav-link" onclick="showJoinChatForm(); return false;">+</a></div>
+</div>
 
 <form id="chatform" action="#" method=get onsubmit="return sendText();">{% csrf_token %}
 <table class="default" width="100%">

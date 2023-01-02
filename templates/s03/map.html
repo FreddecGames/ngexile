@@ -2,7 +2,6 @@
 
 {% load l10n %}
 
-
 {% block content %}
 <script>
 var currGalaxy="";
@@ -223,7 +222,7 @@ function showmenu(objet,title,txt) {
 	var x = (get_left(obj)+16);
 	var y = (get_top(obj)-2);
 
-	hinttext.innerHTML = "<h1>" + title + "</h1>" + txt;
+	hinttext.innerHTML = txt;
 
 	if (x + hint.offsetWidth > max) {
 		x = x - hint.offsetWidth-16;
@@ -544,24 +543,25 @@ function displayRadar() {
 </script>
 
 <div id="map">
-<p align="center">
-
-<table>
+    
+    <div class="card card-body mb-3">
+        <form method="get" action="?" class="row gx-3 align-items-center justify-content-center">
+            <div class="col-auto"><a href="#" onclick="openGalaxy(''); return false;">Univers</a></div>
+            <div class="col-auto">
+                <div class="row gx-2 align-items-center">
+                    <div class="col-auto">{% if galaxy_link %}<a href="#" onclick="openGalaxy(currGalaxy); return false;">{% endif %}Galaxie{% if galaxy_link %}</a>{% endif %}</div>
+                    <div class="col-auto"><input type="text" name="g" id="locgalaxy" size="2" maxlength="2" autocomplete="off" value="{{galaxy}}"></div>
+                    <div class="col-auto">Secteur</div>
+                    <div class="col-auto"><input type="text" name="s" id="locsector" size="2" maxlength="2" autocomplete="off" value="{{sector}}"></div>
+                </div>
+            </div>
+            <div class="col-auto"><input type="submit" value="Localiser"></div>
+        </form>
+    </div>
+    
+<table cellpadding="0" cellspacing="0">
 <tr valign="top">
 <td width="120">
-	<table class="default" width="100%">
-	<tr><td>
-	<form method="get" action="?">
-	<table class="clear">
-		<tr><td nowrap colspan="2"><a href="#" onclick="openGalaxy(''); return false;">Univers</a></td></tr>
-		<tr><td nowrap>{% if galaxy_link %}<a href="#" onclick="openGalaxy(currGalaxy); return false;">{% endif %}Galaxie{% if galaxy_link %}</a>{% endif %}</td><td><input type="text" name="g" id="locgalaxy" size="2" maxlength="2" autocomplete="off" value="{{galaxy}}"></td></tr>
-		<tr><td nowrap>Secteur</td><td><input type="text" name="s" id="locsector" size="2" maxlength="2" autocomplete="off" value="{{sector}}"></td></tr>
-		<tr><td colspan="2"><br/></td></tr>
-		<tr><td align="center" colspan="2"><input type="submit" value="Localiser"></td></tr>
-	</table>
-	</form>
-	</td></tr>
-	</table>
 
 	<br/>
 
@@ -626,9 +626,9 @@ function displayRadar() {
 	{% endif %}
 
 	{% if nav_sector %}
-	<div id="mapsector">
-	<table>
-	<tr class="border">
+	<div id="mapsector" class="mb-3">
+	<table cellpadding="0" cellspacing="0">
+	<tr class="lh-1">
 		<td><img src="{{PATH_IMAGES}}map/arrow_nw.gif" class=arrow onclick="openSector({{galaxy}},{{sector0}})"></td>
 		<td align=center class=borderup><img src="{{PATH_IMAGES}}map/arrow_n.gif" class=arrow onclick="openSector({{galaxy}},{{sector1}})"></td>
 		<td><img src="{{PATH_IMAGES}}map/arrow_ne.gif" class=arrow onclick="openSector({{galaxy}},{{sector2}})"></td>
@@ -640,7 +640,7 @@ function displayRadar() {
 		</td>
 		<td valign="middle" class="borderright"><img src="{{PATH_IMAGES}}map/arrow_e.gif" class=arrow onclick="openSector({{galaxy}},{{sector3}})"></td>
 	</tr>
-	<tr class="border">
+	<tr class="lh-1">
 		<td><img src="{{PATH_IMAGES}}map/arrow_sw.gif" class=arrow onclick="openSector({{galaxy}},{{sector6}})"></td>
 		<td align="center" class="borderdown"><img src="{{PATH_IMAGES}}map/arrow_s.gif" class=arrow onclick="openSector({{galaxy}},{{sector5}})"></td>
 		<td><img src="{{PATH_IMAGES}}map/arrow_se.gif" class=arrow onclick="openSector({{galaxy}},{{sector4}})"></td>
@@ -658,6 +658,7 @@ function displayRadar() {
 		</script>
 	{% endif %}
 </td></tr>
+</tr>
 
 {% if radar %}
 <tr><td colspan="2">
@@ -707,7 +708,6 @@ function displayRadar() {
 {% endif %}
 </table>
 
-</p>
 </div>
 
 <script>

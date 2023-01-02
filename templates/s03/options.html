@@ -12,9 +12,6 @@
 	 {% if cat1 %}<li{% if cat1_selected %} class="active"{% endif %}><a href="?cat=1">Général</a></li>{% endif %}
 	 {% if cat2 %}<li{% if cat2_selected %} class="active"{% endif %}><a href="?cat=2">Options</a></li>{% endif %}
 	 {% if cat3 %}<li{% if cat3_selected %} class="active"{% endif %}><a href="?cat=3">Vacances</a></li>{% endif %}
-	 {% if cat4 %}<li{% if cat4_selected %} class="active"{% endif %}><a href="?cat=4">Rapports</a></li>{% endif %}
-	 {% if cat5 %}<li{% if cat5_selected %} class="active"{% endif %}><a href="?cat=5">Messagerie</a></li>{% endif %}
-	 {% if cat6 %}<li{% if cat6_selected %} class="active"{% endif %}><a href="?cat=6">Signature</a></li>{% endif %}
 </ul>
 {% endif %}
 </td>
@@ -88,7 +85,6 @@
 	<td>
 	<select name="skin">
 		<option value="0"{% if skin_s_default %} selected{% endif %}>Par défaut</option>
-		<option value="1"{% if skin_s_transparent %} selected{% endif %}>Transparent (IE6 non supporté)</option>
 	</select>
 	</td>
 </tr>

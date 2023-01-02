@@ -7,35 +7,6 @@ from .accounts import *
 
 class View(GlobalView):
     
-    '''
-    sub displayTcgCredits(tpl)
-        dim connTcg, oRs, query, credits
-        set connTcg = openDB(connectionStrings.tcg)
-
-        query = "SELECT COALESCE(sum(accumulated_credits), 0)::integer FROM profiles WHERE lower(username)=lower(" & dosql(oPlayerInfo("username")) & ")"
-
-        set oRs = connTcg.Execute(query)
-
-        credits = oRs[0).value
-
-        ' redeem credits
-        if request.QueryString("redeem") = "1" then
-            query = "UPDATE users SET credits = credits + " & dosql(credits) & " WHERE id=" & UserId
-            oConn.Execute query, , 128
-            credits = 0
-
-            query = "UPDATE profiles SET accumulated_credits=0 WHERE lower(username)=lower(" & dosql(oPlayerInfo("username")) & ")"
-            connTcg.Execute query, , 128
-        end if
-
-        tpl.AssignValue "redeemable_credits", credits
-
-        if credits > 0 then
-            tpl.Parse "redeem_credits"
-        end if
-    end sub
-    '''
-    
     def dispatch(self, request, *args, **kwargs):
 
         response = super().pre_dispatch(request, *args, **kwargs)
@@ -144,7 +115,7 @@ class View(GlobalView):
                 " FROM nav_planet AS p" +\
                 "	 LEFT JOIN vw_buildings_under_construction2 AS b ON (p.id=b.planetid)"+\
                 " WHERE p.ownerid="+str(self.UserId)+\
-                " ORDER BY p.id, destroying, remaining_time DESC"
+                " ORDER BY p.id, destroying, remaining_time"
         oRs = oConnExecuteAll(query)
 
         lastplanet = -1
@@ -187,7 +158,7 @@ class View(GlobalView):
                 " FROM nav_planet AS p" +\
                 "	LEFT JOIN vw_ships_under_construction AS s ON (p.id=s.planetid AND p.ownerid=s.ownerid AND s.end_time IS NOT NULL)"+\
                 " WHERE (s.recycle OR EXISTS(SELECT 1 FROM planet_buildings WHERE (buildingid = 105 OR buildingid = 205) AND planetid=p.id)) AND p.ownerid=" + str(self.UserId) +\
-                " ORDER BY p.id, s.remaining_time DESC"
+                " ORDER BY p.id, s.remaining_time"
         oRs = oConnExecuteAll(query)
 
         if oRs:

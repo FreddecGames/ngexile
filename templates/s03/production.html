@@ -8,18 +8,16 @@ tipwidth = 450;
 tiptext = $("hinttext");
 </script>
 
-<table width="600">
+<table class="w-100">
 <tr>
 <td align="center">
 
 	{% if nav %}
-	<div>
-	<ul class="htabs">
-		{% if cat1 %}<li{% if cat1_selected %} class="active"{% endif %}><a href="?cat=1">Vue d'ensemble</a></li>{% endif %}
-		{% if cat2 %}<li{% if cat2_selected %} class="active"{% endif %}><a href="?cat=2">Fonctionnement</a></li>{% endif %}
-		{% if cat3 %}<li{% if cat3_selected %} class="active"{% endif %}><a href="?cat=3">Transfert d'énergie</a></li>{% endif %}
-	</ul>
-	</div>
+    <div class="nav nav-tabs mb-3">
+        {% if cat1 %}<div class="nav-item"><a href="?cat=1" class="nav-link {% if cat1_selected %}active{% endif %}">Vue d'ensemble</a></div>{% endif %}
+        {% if cat2 %}<div class="nav-item"><a href="?cat=2" class="nav-link {% if cat2_selected %}active{% endif %}">Fonctionnement</a></div>{% endif %}
+        {% if cat3 %}<div class="nav-item"><a href="?cat=3" class="nav-link {% if cat3_selected %}active{% endif %}">Transfert d'énergie</a></div>{% endif %}
+    </div>
 	{% endif %}
 
 	{% if overview %}

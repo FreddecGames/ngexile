@@ -48,13 +48,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.humanize',
     
+    'precise_bbcode',
     'impersonate',
     
     'myapps.accounts',
     'myapps.lobby',
     'myapps.s03',
-    'myapps.ng0',
 ]
 
 
@@ -97,7 +98,7 @@ DATABASES = {
         'HOST': env('DATABASE_HOST'),
         'PORT': env('DATABASE_PORT'),
         'OPTIONS': {
-            'options': '-c search_path=s03,ng0,public'
+            'options': '-c search_path=s03,public'
         },
     }
 }

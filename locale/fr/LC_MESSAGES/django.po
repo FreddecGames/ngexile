@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-22 14:22+0100\n"
+"POT-Creation-Date: 2023-01-02 09:28+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,37 +18,78 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: .\templates\django_registration\registration_form.html:17
-#: .\templates\django_registration\registration_form.html:43
+#: .\myapps\accounts\admin.py:13
+msgid "Personal info"
+msgstr ""
+
+#: .\myapps\accounts\admin.py:14
+msgid "Permissions"
+msgstr ""
+
+#: .\myapps\accounts\admin.py:15
+msgid "Important dates"
+msgstr ""
+
+#: .\myapps\accounts\models.py:46
+#, fuzzy
+#| msgid "Email address"
+msgid "email address"
+msgstr "Adresse électronique"
+
+#: .\templates\django_registration\activation_complete.html:25
+#: .\templates\django_registration\registration_complete.html:25
+#: .\templates\django_registration\registration_form.html:26
+#: .\templates\django_registration\registration_form.html:74
 #: .\templates\index.html:46
 msgid "Sign Up"
 msgstr "Inscription"
 
-#: .\templates\django_registration\registration_form.html:22
-msgid "Username"
-msgstr "Nom d’utilisateur"
-
-#: .\templates\django_registration\registration_form.html:24
-msgid ""
-"Required. 150 characters or fewer. Letters, digits and « @ », « . », « # », "
-"« - » et « _ » only."
+#: .\templates\django_registration\activation_complete.html:32
+msgid "Your account is now activated. You could sign in to start playing."
 msgstr ""
-"Requis. 150 caractères maximum. Uniquement des lettres, nombres et les "
-"caractères « @ », « . », « + », « - » et « _ »."
+"Votre compte est activé. Vous pouvez vous connecter pour commencer à jouer."
 
-#: .\templates\django_registration\registration_form.html:27
+#: .\templates\django_registration\activation_complete.html:35
+#: .\templates\index.html:47 .\templates\registration\login.html:26
+#: .\templates\registration\login.html:62
+msgid "Sign In"
+msgstr "Connexion"
+
+#: .\templates\django_registration\activation_email_body.txt:2
+msgid "Activate account at"
+msgstr "Lien d'activation pour"
+
+#: .\templates\django_registration\activation_email_body.txt:6
+#, python-format
+msgid "Link is valid for %(expiration_days)s days."
+msgstr "Ce lien est valide %(expiration_days)s jours."
+
+#: .\templates\django_registration\activation_email_subject.txt:1
+msgid "Account activation on"
+msgstr "Lien d'activation pour"
+
+#: .\templates\django_registration\registration_complete.html:32
+msgid ""
+"You are now registered. An email with an activation link was sent to your "
+"email. Don't forget to look at your spam."
+msgstr ""
+"Vous êtes inscrit. Un email avec un lien d'activation a été envoyé à "
+"l'adresse électronique renseignée. N'oubliez pas de regarder parmi vos spams."
+
+#: .\templates\django_registration\registration_form.html:44
 msgid "Email address"
 msgstr "Adresse électronique"
 
-#: .\templates\django_registration\registration_form.html:29
+#: .\templates\django_registration\registration_form.html:51
 msgid "Required. 254 characters or fewer. Must contains @."
 msgstr "Requis. 254 caractères maximum. Doit contenir le caractère « @ »."
 
-#: .\templates\django_registration\registration_form.html:32
+#: .\templates\django_registration\registration_form.html:54
+#: .\templates\registration\login.html:53
 msgid "Password"
 msgstr "Mot de passe"
 
-#: .\templates\django_registration\registration_form.html:34
+#: .\templates\django_registration\registration_form.html:61
 msgid ""
 "Required. Your password can’t be too similar to your other personal "
 "information. Your password must contain at least 8 characters. Your password "
@@ -59,14 +100,20 @@ msgstr ""
 "caractères. Votre mot de passe ne peut pas être un mot de passe couramment "
 "utilisé. Votre mot de passe ne peut pas être entièrement numérique."
 
-#: .\templates\django_registration\registration_form.html:37
+#: .\templates\django_registration\registration_form.html:64
 msgid "Password confirmation"
 msgstr "Confirmation du mot de passe"
 
-#: .\templates\django_registration\registration_form.html:39
+#: .\templates\django_registration\registration_form.html:71
 msgid "Required. Enter the same password as before, for verification."
 msgstr ""
 "Requis. Saisissez le même mot de passe que précédemment, pour vérification."
+
+#: .\templates\django_registration\registration_form.html:81
+msgid ""
+"If you already have an account, <a href='/accounts/login/'>Sign In</a> "
+"instead."
+msgstr "Déjà inscrit ? <a href='/accounts/login/'>Connexion</a>."
 
 #: .\templates\index.html:33
 msgid ""
@@ -84,12 +131,47 @@ msgstr ""
 "Le jeu est toujours en cours de développement.<br>Des bugs et des pertes de "
 "données sont à prévoir.<br>Jouez à vos risques et périls."
 
-#: .\templates\index.html:47
-msgid "Sign In"
-msgstr "Connexion"
-
 #: .\templates\index.html:53
 msgid "To be kept informed and to get last news, join our Discord server."
 msgstr ""
 "Pour vous tenir informé et obtenir les dernières informations, rejoignez le "
 "salon Discord du jeu."
+
+#: .\templates\lobby\home.html:21
+msgid "Servers"
+msgstr "Serveurs"
+
+#: .\templates\lobby\home.html:22 .\templates\lobby\home.html:57
+msgid "Sign Out"
+msgstr "Déconnexion"
+
+#: .\templates\lobby\home.html:32
+msgid "Select a server to join"
+msgstr "Sélectionner un serveur pour jouer"
+
+#: .\templates\lobby\home.html:39
+msgid "Original server with original bugs and original design"
+msgstr "Serveur original avec les bugs et le design originaux"
+
+#: .\templates\lobby\home.html:54
+msgid "Are you sure?"
+msgstr "Etes-vous sur ?"
+
+#: .\templates\registration\login.html:44
+msgid "Email"
+msgstr "Adresse électronique"
+
+#: .\templates\registration\login.html:69
+msgid ""
+"Don't have an account? <a href='/accounts/register'>Create an account</a>."
+msgstr "Pas encore inscrit ? <a href='/accounts/register'>Inscription</a>."
+
+#~ msgid "Username"
+#~ msgstr "Nom d’utilisateur"
+
+#~ msgid ""
+#~ "Required. 150 characters or fewer. Letters, digits and « @ », « . », « # "
+#~ "», « - » et « _ » only."
+#~ msgstr ""
+#~ "Requis. 150 caractères maximum. Uniquement des lettres, nombres et les "
+#~ "caractères « @ », « . », « + », « - » et « _ »."

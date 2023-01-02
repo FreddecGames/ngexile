@@ -256,8 +256,6 @@ class View(GlobalView):
                     ship["no_construction_time"] = True
                     ship["cant_build"] = True
 
-                if self.request.session.get("privilege", 0) >= 100: ship["dev"] = True
-
                 for i in retrieveShipsReqCache():
                     if i[0] == ShipId:
                         ship["building"] = getBuildingLabel(i[1])
@@ -356,8 +354,6 @@ class View(GlobalView):
 
             ship["build"] = True
             buildable = buildable + 1
-
-            if self.request.session.get("privilege", 0) >= 100: ship["dev"] = True
 
             count = count + 1
 

@@ -9,20 +9,19 @@
 <div id="reports">
 
 {% if tabnav %}
-<div>
-<ul class="htabs">
-	{% if tabnav_000 %}<li{% if tabnav_000_selected %} class="active"{% endif %}><a href="?cat=0">Tout{% if tabnav_000_new %}&nbsp;({{total_newreports}}){% endif %}</a></li>{% endif %}
-	{% if tabnav_100 %}<li{% if tabnav_100_selected %} class="active"{% endif %}><a href="?cat=1">Alliance{% if tabnav_100_new %}&nbsp;({{tabnav_100_newreports}}){% endif %}</a></li>{% endif %}
-	{% if tabnav_200 %}<li{% if tabnav_200_selected %} class="active"{% endif %}><a href="?cat=2">Combats{% if tabnav_200_new %}&nbsp;({{tabnav_200_newreports}}){% endif %}</a></li>{% endif %}
-	{% if tabnav_300 %}<li{% if tabnav_300_selected %} class="active"{% endif %}><a href="?cat=3">Développement{% if tabnav_300_new %}&nbsp;({{tabnav_300_newreports}}){% endif %}</a></li>{% endif %}
-	{% if tabnav_400 %}<li{% if tabnav_400_selected %} class="active"{% endif %}><a href="?cat=4">Flottes{% if tabnav_400_new %}&nbsp;({{tabnav_400_newreports}}){% endif %}</a></li>{% endif %}
-	{% if tabnav_500 %}<li{% if tabnav_500_selected %} class="active"{% endif %}><a href="?cat=5">Echanges{% if tabnav_500_new %}&nbsp;({{tabnav_500_newreports}}){% endif %}</a></li>{% endif %}
-	{% if tabnav_600 %}<li{% if tabnav_600_selected %} class="active"{% endif %}><a href="?cat=6">Colonisations{% if tabnav_600_new %}&nbsp;({{tabnav_600_newreports}}){% endif %}</a></li>{% endif %}
-	{% if tabnav_700 %}<li{% if tabnav_700_selected %} class="active"{% endif %}><a href="?cat=7">Événements{% if tabnav_700_new %}&nbsp;({{tabnav_700_newreports}}){% endif %}</a></li>{% endif %}
-	{% if tabnav_800 %}<li{% if tabnav_800_selected %} class="active"{% endif %}><a href="?cat=8">Mercenaires{% if tabnav_800_new %}&nbsp;({{tabnav_800_newreports}}){% endif %}</a></li>{% endif %}
-</ul>
+<div class="nav nav-tabs mb-3">
+	{% if tabnav_000 %}<div class="nav-item"><a href="?cat=0" class="nav-link {% if tabnav_000_selected %}active{% endif %}">Tout{% if tabnav_000_new %}&nbsp;({{total_newreports}}){% endif %}</a></div>{% endif %}
+	{% if tabnav_100 %}<div class="nav-item"><a href="?cat=1" class="nav-link {% if tabnav_100_selected %}active{% endif %}">Alliance{% if tabnav_100_new %}&nbsp;({{tabnav_100_newreports}}){% endif %}</a></div>{% endif %}
+	{% if tabnav_200 %}<div class="nav-item"><a href="?cat=2" class="nav-link {% if tabnav_200_selected %}active{% endif %}">Combats{% if tabnav_200_new %}&nbsp;({{tabnav_200_newreports}}){% endif %}</a></div>{% endif %}
+	{% if tabnav_300 %}<div class="nav-item"><a href="?cat=3" class="nav-link {% if tabnav_300_selected %}active{% endif %}">Développement{% if tabnav_300_new %}&nbsp;({{tabnav_300_newreports}}){% endif %}</a></div>{% endif %}
+	{% if tabnav_400 %}<div class="nav-item"><a href="?cat=4" class="nav-link {% if tabnav_400_selected %}active{% endif %}">Flottes{% if tabnav_400_new %}&nbsp;({{tabnav_400_newreports}}){% endif %}</a></div>{% endif %}
+	{% if tabnav_500 %}<div class="nav-item"><a href="?cat=5" class="nav-link {% if tabnav_500_selected %}active{% endif %}">Echanges{% if tabnav_500_new %}&nbsp;({{tabnav_500_newreports}}){% endif %}</a></div>{% endif %}
+	{% if tabnav_600 %}<div class="nav-item"><a href="?cat=6" class="nav-link {% if tabnav_600_selected %}active{% endif %}">Colonisations{% if tabnav_600_new %}&nbsp;({{tabnav_600_newreports}}){% endif %}</a></div>{% endif %}
+	{% if tabnav_700 %}<div class="nav-item"><a href="?cat=7" class="nav-link {% if tabnav_700_selected %}active{% endif %}">Événements{% if tabnav_700_new %}&nbsp;({{tabnav_700_newreports}}){% endif %}</a></div>{% endif %}
+	{% if tabnav_800 %}<div class="nav-item"><a href="?cat=8" class="nav-link {% if tabnav_800_selected %}active{% endif %}">Mercenaires{% if tabnav_800_new %}&nbsp;({{tabnav_800_newreports}}){% endif %}</a></div>{% endif %}
 </div>
 {% endif %}
+
 <table class="default" width="100%">
 {% for message in messages %}
 <tr class="item{% if message.new %}highlight{% endif %}">

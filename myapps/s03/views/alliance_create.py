@@ -11,7 +11,7 @@ class View(GlobalView):
         response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
 
-        self.selected_menu = "noalliance.create"
+        self.selected_menu = "allianceno.create"
 
         self.name = ""
         self.tag = ""

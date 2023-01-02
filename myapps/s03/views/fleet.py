@@ -587,8 +587,6 @@ class View(GlobalView):
 
         content.Parse("display")
 
-        if self.UserId==1009: content.Parse("dev")
-
         return self.Display(content)
 
     def InstallBuilding(self, fleetid, shipid):

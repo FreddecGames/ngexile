@@ -270,10 +270,6 @@ class GlobalView(ExileMixin, View):
             if self.oAllianceRights["leader"] or self.oAllianceRights["can_see_reports"]: tpl.Parse("show_reports")
             if self.oAllianceRights["leader"] or self.oAllianceRights["can_see_members_info"]: tpl.Parse("show_members")
     
-        if self.SecurityLevel >= 3:
-            tpl.Parse("show_mercenary")
-            tpl.Parse("show_alliance")
-    
         tpl.AssignValue("planetid", self.CurrentPlanet)
     
         tpl.AssignValue("cur_g", self.CurrentGalaxyId)
@@ -281,19 +277,6 @@ class GlobalView(ExileMixin, View):
         tpl.AssignValue("cur_p", ((self.CurrentPlanet-1) % 25) + 1)
     
         tpl.AssignValue("selectedmenu", self.selected_menu.replace(".","_"))
-    
-        if self.selected_menu != "":
-            blockname = self.selected_menu + "_selected"
-    
-            while blockname != "":
-                tpl.Parse(blockname)
-    
-                i = blockname.rfind(".")
-                if i > 0: i = i - 1
-                blockname = blockname[:i]
-
-        # Assign the menu
-        tpl_layout.AssignValue("menu", True)
 
     def logpage(self):
         self.pagelogged = True
@@ -318,6 +301,10 @@ class GlobalView(ExileMixin, View):
             # Fill and parse the header template
             #
             if self.showHeader == True: self.FillHeader(tpl_layout)
+            
+            oRs = oConnExecute("SELECT credits, prestige_points FROM users WHERE id="+str(self.UserId))
+            tpl_layout.AssignValue("credits", oRs[0])
+            tpl_layout.AssignValue("prestige_points", oRs[1])
     
             #
             # Fill and parse the menu template
@@ -356,8 +343,6 @@ class GlobalView(ExileMixin, View):
 
             tpl_layout.AssignValue("userid", self.UserId)
             tpl_layout.AssignValue("server", universe)
-    
-            tpl_layout.Parse("menu")
     
             if not self.oPlayerInfo["inframe"]:
                 tpl_layout.Parse("test_frame")

@@ -143,8 +143,7 @@ class View(GlobalView):
                 if cat != 0:
                     oConnDoQuery("UPDATE reports SET read_date = now() WHERE ownerid = " + str(self.UserId) + " AND type = "+str(cat)+ " AND read_date is null AND datetime <= now()")
 
-                # flag all reports as read
-                if self.request.GET.get("cat", "") == "0":
+                else:
                     oConnDoQuery("UPDATE reports SET read_date = now() WHERE ownerid = " + str(self.UserId) + " AND read_date is null AND datetime <= now()")
             
         content.Parse("tabnav_000")

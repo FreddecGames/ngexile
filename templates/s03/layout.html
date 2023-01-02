@@ -1,146 +1,150 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="https://www.w3.org/1999/xhtml">
-<head>
-	<script async src="https://www.googletagmanager.com/gtag/js?id=UA-134044291-1"></script>
-	<script>
-		window.dataLayer = window.dataLayer || [];
-		function gtag(){dataLayer.push(arguments);}
-		gtag('js', new Date());
-		gtag('config', 'UA-134044291-1');
-	</script>
+<!doctype html>
+<html lang="en">
+    <head>
 
-	<title>[{{server}}] Exile</title>
-    
-    <link rel="shortcut icon" href="/static/favicon.ico">
-    
-	<meta http-equiv="Content-type" content="text/html; charset=utf-8"/>
-	<meta http-equiv="cache-control" content="no-cache"/>
-	<meta http-equiv="expires" content="0"/>
-	<meta http-equiv="pragma" content="no-cache"/>
+        <title>[s03] NG Exile</title>
+        
+        <link rel="shortcut icon" href="/static/favicon.ico">
+        
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
 
-	<link href="{{PATH_IMAGES}}styles/reset.css" type="text/css" rel="stylesheet" media="all" />
-	<link href="{{PATH_IMAGES}}styles/{{skin}}/style.css?v=0" type="text/css" rel="stylesheet" media="all"/>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+        <link href="{{PATH_IMAGES}}styles/s_default/style.css" type="text/css" rel="stylesheet" media="all"/>
+        
+        <script type="text/javascript" src="/static/js/vendor-fontawesome.js"></script>
+        
+        <script type="text/javascript" src="/static/scripts/common.js"></script>
+        <script type="text/javascript" src="/static/scripts/third-party/ajax1.js"></script>
+        <script type="text/javascript" src="/static/scripts/time.js"></script>
+        
+        {% if scroll %}<script>function loaded() { scrollTo(0, {{scrolly}}); }</script>{% endif %}
+        
+    </head>
 
-	<script type="text/javascript" src='/static/scripts/lang.js?v=1'></script>
-	<script type="text/javascript" src='/static/scripts/common.js?v=1'></script>
-	<script type="text/javascript" src='/static/scripts/third-party/ajax1.js?v=1'></script>
-	<script type="text/javascript" src='/static/scripts/planet.js?v=1'></script>
-	<script type="text/javascript" src='/static/scripts/time.js?v=1'></script>
-	{% if scroll %}<script>function loaded(){scrollTo(0,{{scrolly}});}</script>{% endif %}
-</head>
+    <body{% if scroll %} onload="loaded()"{% endif %}>
 
-<body{% if scroll %} onload="loaded()"{% endif %}>
+        <div id="hint" onclick="donothide(event)">
+            <div id="hinttext" class="card card-body"></div>
+        </div>
 
-<div id="hint" onclick="donothide(event)">
-<div class="rtop"><b class="r1"></b><b class="r2"></b><b class="r3"></b><b class="r4"></b></div>
-<div id="hinttext"></div>
-<div class="rbottom"><b class="r4"></b><b class="r3"></b><b class="r2"></b><b class="r1"></b></div>
-</div>
+        <script>
+            var timers_enabled = {{timers_enabled}};
+            var startTime;
+        </script>
 
-<script>
-var timers_enabled={{timers_enabled}};
-var startTime;
-</script>
+        <div id="super">
+            
+            <div id="topbar">
+                <div class="flex-grow-1 row gx-3 align-items-center">
+                
+                    <div class="col-auto">
+                        <div class="row gx-2 align-items-center">
+                            <div class="col-auto"><img src="/static/img/logo.png" width="32px" /></div>
+                            <div class="col-auto"><span class="fs-6">[s03] NG Exile</span></div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-auto">
+                        <div class="row gx-1 align-items-center">
+                            <div class="col-auto"><img src="{{PATH_IMAGES}}interface/credits.gif" width="16px" /></div>
+                            <div class="col-auto"><span>{{credits}}</span></div>
+                        </div>
+                    </div>
+                    
+                    <div class="col">
+                        <div class="row gx-1 align-items-center">
+                            <div class="col-auto"><img src="{{PATH_IMAGES}}interface/prestige.gif" width="16px" /></div>
+                            <div class="col-auto"><span>{{prestige_points}}</span></div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-auto">
+                        <div class="row gx-3 align-items-center justify-content-center">
+                        
+                            <form class="col-auto" action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_blank">
+                                <input type="hidden" name="cmd" value="_s-xclick">
+                                <input type="hidden" name="hosted_button_id" value="7XYD7SJFKQ8M4">
+                                <button type="submit" class="p-0 border-0 bg-transparent" data-bs-toggle="tooltip" data-bs-title="Make a donation">
+                                    <img src="/static/img/paypal.png" width="24px" />
+                                </button>
+                            </form>
 
-{% if impersonating %}
-<style>
-#impersonate{
-	height:30px;
-	vertical-align:top;
-	position: relative;
-	border-top:1px solid #ff0;
-	border-left:1px solid #ff0;
-	border-right:1px solid #bb0;
-	border-bottom:1px solid #bb0;
-	background-color:#ee6;
-	color:#000;
-}
-</style>
-<div id="impersonate"><b>Impersonisation</b> (<a href="/impersonate/stop/" style="color:#f00">Revenir au compte de départ</a>)<br/>Compte "{{login}}" - impossible d'envoyer de messages<br/></div>
-{% endif %}
-{% if onholidays %}
-<style>
-#onholidays{
-	height:30px;
-	vertical-align:top;
-	position: relative;
-	border-top:1px solid #0f0;
-	border-left:1px solid #0f0;
-	border-right:1px solid #0b0;
-	border-bottom:1px solid #0b0;
-	background-color:#6e6;
-	color:#000;
-}
-</style>
-<div id="onholidays"><b>En vacances</b><br/>Activé le {{start_datetime|date:"D d M Y"}} à {{start_datetime|time}}<br/>Désactivable à partir du {{min_end_datetime|date:"D d M Y"}} à {{min_end_datetime|time}}<br/>Terminé le {{end_datetime|date:"D d M Y"}} à {{end_datetime|time}}</div>
-{% endif %}
-{% if creditswarning %}
-<style>
-#creditswarning{
-	min-height:30px;
-	height:auto !important;
-	height:30px;
-	vertical-align:top;
-	position: relative;
-	border-top:1px solid #ff9257;
-	border-left:1px solid #ff9257;
-	border-right:1px solid #ff782f;
-	border-bottom:1px solid #ff782f;
-	background-color:#ff8543;
-	color:#000;
-}
-</style>
-<div id="creditswarning"><b>Fonds insuffisants</b><br/>Nous sommes actuellement en déficit, cette situation est tolérable pendant un moment mais nous devons réagir. Nous pouvons soit alléger nos coûts d'entretien, soit augmenter nos revenus en vendant une plus grande partie de notre production.<br/>Vous avez {% if hours %}{{bankruptcy_hours}} heure(s){% endif %} pour faire revenir l'argent de la trésorerie dans le positif avant qu'un coup d'état n'éclate et que vous soyiez chassé de votre poste.<br/>Chaque heure passée en déficit, le nombre d'heures avant le coup d'état diminue d'une heure. Celui-ci remonte chaque heure passée dans le positif.</div>
-{% endif %}
-{% if deleting %}
-<style>
-#deleting{
-	height:30px;
-	vertical-align:top;
-	position: relative;
-	border-top:1px solid #f00;
-	border-left:1px solid #f00;
-	border-right:1px solid #b00;
-	border-bottom:1px solid #b00;
-	background-color:#e66;
-	color:#000;
-}
-</style>
-<div id="deleting"><b>Suppression du compte en cours</b><br/>Ce compte sera effacé le {{delete_datetime|date:"D d M Y"}} à {{delete_datetime|time}}</div>
-{% endif %}
-{% if banned %}
-<style>
-#banned{
-	height:30px;
-	vertical-align:top;
-	position: relative;
-	border-top:1px solid #fff;
-	border-left:1px solid #fff;
-	border-right:1px solid #bbb;
-	border-bottom:1px solid #bbb;
-	background-color:#999;
-	color:#000;
-}
-#banned table { color:#000; };
-</style>
-<div id="banned"><b>Suspendu</b><br/><table><tr><td>Depuis le:</td><td>{{ban_datetime|date:"D d M Y"}} à {{ban_datetime|time}}</td></tr>{% if expire %}<tr><td>Expire le:</td><td>{{ban_expire_datetime|date:"D d M Y"}} à {{ban_expire_datetime|time}}</td></tr>{% endif %}<tr><td>Raison:</td><td>{{ban_reason}}</td></tr><tr><td>Raison publique:</td><td>{{ban_reason_public}}</td></tr></table></div>
-{% endif %}
+                            <div class="col-auto">
+                                <a href="https://ko-fi.com/freddecgames" target="_blank" data-bs-toggle="tooltip" data-bs-title="Buy me a Ko-fi">
+                                    <img src="/static/img/kofi.png" width="24px" />
+                                </a>
+                            </div>
 
-<div id="super">
-<div id="bg"><!-- --></div>
+                            <div class="col-auto">
+                                <a href="https://www.patreon.com/bePatron?u=61283131" target="_blank" data-bs-toggle="tooltip" data-bs-title="Become a Patreon supporter">
+                                    <img src="/static/img/patreon.png" width="24px" />
+                                </a>
+                            </div>
 
-<div id="main">
-{% if menu %}<div id="leftnav">{% include 's03/menu.html' %}{% if dev %}<div>{{render_time|floatformat:4}}</div><div>Joueurs: {{players}}</div>{% endif %}</div>{% endif %}
+                            <div class="col-auto">
+                                <a href="https://discord.gg/3UkgeeT9CV" target="_blank" data-bs-toggle="tooltip" data-bs-title="Discord">
+                                    <img src="/static/img/discord.png" width="24px" />
+                                </a>
+                            </div>
+                            
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+            
+            <div id="leftnav">{% include 's03/menu.html' %}</div>
+            
+            <div id="content">
+                <div id="page">
 
-<div{% if menu %} id="content"{% endif %} align="center">
-	{% if context %}<div id="status">{% include 's03/header.html' %}</div>{% endif %}
-	<div id="page">{% block content %}{% endblock %}</div>
-</div>
-
-</div>
-
-<div class="clear"></div>
-</div>
-
-</body>
+                    {% if impersonating %}
+                    <div class="alert alert-info">
+                        <div><b>Impersonisation</b> (<a href="/impersonate/stop/" style="color:#f00">Revenir au compte de départ</a>)</div>
+                        <div>Compte "{{username}}" - impossible d'envoyer de messages</div>
+                    </div>
+                    {% endif %}
+                
+                    {% if creditswarning %}
+                    <div class="alert alert-warning">
+                        <div><b>Fonds insuffisants</b></div>
+                        <div>Nous sommes actuellement en déficit, cette situation est tolérable pendant un moment mais nous devons réagir. Nous pouvons soit alléger nos coûts d'entretien, soit augmenter nos revenus en vendant une plus grande partie de notre production.</div>
+                        <div>Vous avez {% if hours %}{{bankruptcy_hours}} heure(s){% endif %} pour faire revenir l'argent de la trésorerie dans le positif avant qu'un coup d'état n'éclate et que vous soyiez chassé de votre poste.</div>
+                        <div>Chaque heure passée en déficit, le nombre d'heures avant le coup d'état diminue d'une heure. Celui-ci remonte chaque heure passée dans le positif.</div>
+                    </div>
+                    {% endif %}
+                    
+                    {% if deleting %}
+                    <div class="alert alert-danger">
+                        <div><b>Suppression du compte en cours</b></div>
+                        <div>Ce compte sera effacé le {{delete_datetime|date:"D d M Y"}} à {{delete_datetime|time}}</div>
+                    </div>
+                    {% endif %}
+                    
+                    {% if context %}{% include 's03/header.html' %}{% endif %}
+                    
+                    {% block content %}{% endblock %}
+                    
+                </div>
+            </div>
+            
+        </div>
+        
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-212X2QX8W5"></script>
+        <script>
+            window.dataLayer = window.dataLayer || []
+            function gtag(){ dataLayer.push(arguments) }
+            gtag('js', new Date())
+            gtag('config', 'G-212X2QX8W5')
+        </script>
+        
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
+        
+        <script>
+            const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+            const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+        </script>
+        
+    </body>
 </html>
