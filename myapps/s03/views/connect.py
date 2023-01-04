@@ -16,6 +16,9 @@ class View(BaseMixin, View):
         request.session[sUser] = rs[0]
         request.session[sPlanet] = rs[1]
         
+        result = oConnExecute('SELECT username FROM users WHERE id=' + str(rs[0]))
+        if not result[0]: return HttpResponseRedirect('/s03/home-start/')
+        
         if (rs[2] == -3): return HttpResponseRedirect('/s03/home-wait/')
         elif (rs[2] == -2): return HttpResponseRedirect('/s03/home-holidays/')
         elif (rs[2] < 100 and rs[3] == 0): return HttpResponseRedirect('/s03/home-start/')
