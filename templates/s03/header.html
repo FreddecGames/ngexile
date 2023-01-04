@@ -23,79 +23,89 @@ function previousplanet() {
         <div class="row gx-3 align-items-center">
         
             <div class="col-auto">
-                <a href="#" onclick="previousplanet(); return false;"><i class="fa-fw fas fa-chevron-circle-left"></i></a>
+                <a href="#" onclick="previousplanet(); return false;" class="fs-6" data-bs-toggle="tooltip" data-bs-title="Planète Précédente"><i class="fa-fw fas fa-chevron-circle-left"></i></a>
             </div>
             
             <div class="col">
-            
-                <select id="planetlist" class="w-100" tabindex="1" onchange="jump(this)">
-                    {% for planet in planets %}<option value="{{planet.id}}"{% if planet.selected %} selected{% endif %}>{{planet.g}}.{{planet.s}}.{{planet.p}} {{planet.name}}</option>{% endfor %}
-                </select>
+                <div class="row g-1">
                 
-                {% if special1 %}<div class="mt-1 text-nowrap"><img src="{{PATH_IMAGES}}interface/special.gif" class="res" width="16px" height="16px" />{{special1}}</div>{% endif %}
-                {% if special2 %}<div class="mt-1 text-nowrap"><img src="{{PATH_IMAGES}}interface/special.gif" class="res" width="16px" height="16px" />{{special2}}</div>{% endif %}
-                {% if special3 %}<div class="mt-1 text-nowrap"><img src="{{PATH_IMAGES}}interface/special.gif" class="res" width="16px" height="16px" />{{special3}}</div>{% endif %}
+                    <div class="col-12">            
+                        <select id="planetlist" class="w-100" tabindex="1" onchange="jump(this)">
+                            {% for planet in planets %}<option value="{{planet.id}}"{% if planet.selected %} selected{% endif %}>{{planet.g}}.{{planet.s}}.{{planet.p}} {{planet.name}}</option>{% endfor %}
+                        </select>
+                    </div>
+                    
+                    {% if special1 %}<div class="col-12 text-nowrap"><img src="{{PATH_IMAGES}}interface/special.gif" class="res" width="16px" height="16px" />{{special1}}</div>{% endif %}
+                    {% if special2 %}<div class="col-12 text-nowrap"><img src="{{PATH_IMAGES}}interface/special.gif" class="res" width="16px" height="16px" />{{special2}}</div>{% endif %}
+                    {% if special3 %}<div class="col-12 text-nowrap"><img src="{{PATH_IMAGES}}interface/special.gif" class="res" width="16px" height="16px" />{{special3}}</div>{% endif %}
                 
+                </div>
             </div>
             
             <div class="col">
+                <div class="row g-1">
             
-                <div class="text-nowrap">
-                    <img src="{{PATH_IMAGES}}interface/ore.gif" class="res" width="16px" height="16px" /><span class="{% if medium_ore %}text-warning{% elif high_ore %}text-danger{% endif %}">{{ore|intcomma}}</span>
-                    <small class="text-normal">/{{ore_capacity|intcomma}}</small>
-                    <small class="{% if normal_ore_production %}text-success{% elif medium_ore_production %}text-warning{% endif %}">+{{ore_production|intcomma}}</small>
-                </div>
-                
-                <div class="text-nowrap">
-                    <img src="{{PATH_IMAGES}}interface/hydrocarbon.gif" class="res" width="16px" height="16px" /><span class="{% if medium_hydrocarbon %}text-warning{% elif high_hydrocarbon %}text-danger{% endif %}">{{hydrocarbon|intcomma}}</span>
-                    <small class="text-normal">/{{hydrocarbon_capacity|intcomma}}</small>
-                    <small class="{% if normal_hydrocarbon_production %}text-success{% elif medium_hydrocarbon_production %}text-warning{% endif %}">+{{hydrocarbon_production|intcomma}}</small>
-                </div>
+                    <div class="col-12 text-nowrap">
+                        <img src="{{PATH_IMAGES}}interface/ore.gif" class="res" width="16px" height="16px" /><span class="{% if medium_ore %}text-warning{% elif high_ore %}text-danger{% endif %}">{{ore|intcomma}}</span>
+                        <small class="text-normal">/{{ore_capacity|intcomma}}</small>
+                        <small class="{% if normal_ore_production %}text-success{% elif medium_ore_production %}text-warning{% endif %}">+{{ore_production|intcomma}}</small>
+                    </div>
+                    
+                    <div class="col-12 text-nowrap">
+                        <img src="{{PATH_IMAGES}}interface/hydrocarbon.gif" class="res" width="16px" height="16px" /><span class="{% if medium_hydrocarbon %}text-warning{% elif high_hydrocarbon %}text-danger{% endif %}">{{hydrocarbon|intcomma}}</span>
+                        <small class="text-normal">/{{hydrocarbon_capacity|intcomma}}</small>
+                        <small class="{% if normal_hydrocarbon_production %}text-success{% elif medium_hydrocarbon_production %}text-warning{% endif %}">+{{hydrocarbon_production|intcomma}}</small>
+                    </div>
 
-                <div class="text-nowrap">
-                    <img src="{{PATH_IMAGES}}interface/energy.gif" class="res" width="16px" height="16px" /><span>{{energy|intcomma}}</span>
-                    <small class="text-normal">/{{energy_capacity|intcomma}}</small>
-                    <small class="{% if energy_production_minus %}text-danger{% else %}text-success{% endif %}">{% if energy_production > 0 %}+{% endif %}{{energy_production|intcomma}}</small>
+                    <div class="col-12 text-nowrap">
+                        <img src="{{PATH_IMAGES}}interface/energy.gif" class="res" width="16px" height="16px" /><span>{{energy|intcomma}}</span>
+                        <small class="text-normal">/{{energy_capacity|intcomma}}</small>
+                        <small class="{% if energy_production_minus %}text-danger{% else %}text-success{% endif %}">{% if energy_production > 0 %}+{% endif %}{{energy_production|intcomma}}</small>
+                    </div>
+                    
                 </div>
-                
             </div>
             
             <div class="col">
+                <div class="row g-1">
 
-                <div class="text-nowrap">
-                    <img src="{{PATH_IMAGES}}interface/workers.gif" class="res" width="16px" height="16px" /><span class="{% if workers_low %}text-danger{% endif %}">{{workers|intcomma}}</span>
-                    <small class="text-normal">/{{workers_capacity|intcomma}}</small>
-                    <small class="{% if workers_idle <= 0 %}text-danger{% else %}text-success{% endif %}">{{workers_idle|intcomma}}</small>
-                </div>
+                    <div class="col-12 text-nowrap">
+                        <img src="{{PATH_IMAGES}}interface/workers.gif" class="res" width="16px" height="16px" /><span class="{% if workers_low %}text-danger{% endif %}">{{workers|intcomma}}</span>
+                        <small class="text-normal">/{{workers_capacity|intcomma}}</small>
+                        <small class="{% if workers_idle <= 0 %}text-danger{% else %}text-success{% endif %}">{{workers_idle|intcomma}}</small>
+                    </div>
 
-                <div class="text-nowrap">
-                    <img src="{{PATH_IMAGES}}interface/scientists.gif" class="res" width="16px" height="16px" /><span class="{% if scientists_low %}text-danger{% endif %}">{{scientists|intcomma}}</span>
-                    <small class="text-normal">/{{scientists_capacity|intcomma}}</small>
-                </div>
+                    <div class="col-12 text-nowrap">
+                        <img src="{{PATH_IMAGES}}interface/scientists.gif" class="res" width="16px" height="16px" /><span class="{% if scientists_low %}text-danger{% endif %}">{{scientists|intcomma}}</span>
+                        <small class="text-normal">/{{scientists_capacity|intcomma}}</small>
+                    </div>
 
-                <div class="text-nowrap">
-                    <img src="{{PATH_IMAGES}}interface/soldiers.gif" class="res" width="16px" height="16px" /><span class="{% if soldiers_low %}text-danger{% endif %}">{{soldiers|intcomma}}</span>
-                    <small class="text-normal">/{{soldiers_capacity|intcomma}}</small>
-                </div>
+                    <div class="col-12 text-nowrap">
+                        <img src="{{PATH_IMAGES}}interface/soldiers.gif" class="res" width="16px" height="16px" /><span class="{% if soldiers_low %}text-danger{% endif %}">{{soldiers|intcomma}}</span>
+                        <small class="text-normal">/{{soldiers_capacity|intcomma}}</small>
+                    </div>
                 
+                </div>
             </div>
             
             <div class="col-auto">
+                <div class="row g-1">
 
-                <div class="text-nowrap">
-                    <img src="{{PATH_IMAGES}}interface/floor.gif" class="res" width="16px" height="16px" /><span>{{floor_occupied|intcomma}}</span>
-                    <small class="text-normal">/{{floor|intcomma}}</small>
-                </div>
+                    <div class="col-12 text-nowrap">
+                        <img src="{{PATH_IMAGES}}interface/floor.gif" class="res" width="16px" height="16px" /><span>{{floor_occupied|intcomma}}</span>
+                        <small class="text-normal">/{{floor|intcomma}}</small>
+                    </div>
+                    
+                    <div class="col-12 text-nowrap">
+                        <img src="{{PATH_IMAGES}}interface/space.gif" class="res" width="16px" height="16px" /><span>{{space_occupied|intcomma}}</span>
+                        <small class="text-normal">/{{space|intcomma}}</small>
+                    </div>
                 
-                <div class="text-nowrap">
-                    <img src="{{PATH_IMAGES}}interface/space.gif" class="res" width="16px" height="16px" /><span>{{space_occupied|intcomma}}</span>
-                    <small class="text-normal">/{{space|intcomma}}</small>
                 </div>
-                
             </div>
             
             <div class="col-auto">
-                <a href="#" onclick="nextplanet(); return false;"><i class="fa-fw fas fa-chevron-circle-right"></i></a>
+                <a href="#" onclick="nextplanet(); return false;" class="fs-6" data-bs-toggle="tooltip" data-bs-title="Planète Suivante"><i class="fa-fw fas fa-chevron-circle-right"></i></a>
             </div>
             
         </div>

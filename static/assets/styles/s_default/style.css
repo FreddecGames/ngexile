@@ -658,8 +658,12 @@ span.title {
 }
 
 .tooltip {
+    --bs-tooltip-bg: #212529;
+    --bs-tooltip-border-radius: .25rem;
     --bs-tooltip-padding-x: .75rem;
     --bs-tooltip-padding-y: .5rem;
+    --bs-tooltip-max-width: 25rem;
+    --bs-tooltip-opacity: 1;
     
-    font-size: 12px;
+    font-family: Roboto, Arial; font-size: 12px;
 }

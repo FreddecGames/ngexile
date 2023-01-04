@@ -52,24 +52,57 @@ function refreshPage(url) {
                 <div class="list-group-item {% if building.isbuilding %}bg-success{% endif %} {% if building.isdestroying %}bg-danger{% endif %}">
                     <div class="row gx-3 align-items-center">
                         <div class="col-auto">
-                            <img src="{{PATH_IMAGES}}buildings/{{building.id}}.jpg" width="64px" class="rounded" />
+                            <img src="{{PATH_IMAGES}}buildings/{{building.id}}.jpg" width="64px" class="rounded" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true" data-bs-title="
+                                <div class='row g-3'>
+                                    <div class='col-12'>
+                                        <div class='row g-1'>
+                                            <div class='col-12 text-start fs-6'>{{building.name}}</div>
+                                            <div class='col-12 text-start text-normal '>{{building.description}}</div>
+                                        </div>
+                                    </div>
+                                    <div class='col-12'>
+                                        <div class='row g-1'>
+                                            {% if building.ore_prod or building.hydro_prod or building.energy_prod %}
+                                            <div class='col-12'>
+                                                <div class='row gx-3 align-items-center'>
+                                                    <div class='col-auto'>Production</div>
+                                                    {% if building.ore_prod %}<div class='col-auto'><img src='{{PATH_IMAGES}}interface/ore.gif' width='16px' class='res' />{{building.ore_prod|intcomma}} <small class='text-normal'>/heure</small></div>{% endif %}
+                                                    {% if building.hydro_prod %}<div class='col-auto'><img src='{{PATH_IMAGES}}interface/hydrocarbon.gif' width='16px' class='res' />{{building.hydro_prod|intcomma}} <small class='text-normal'>/heure</small></div>{% endif %}
+                                                    {% if building.energy_prod %}<div class='col-auto'><img src='{{PATH_IMAGES}}interface/energy.gif' width='16px' class='res' />{{building.energy_prod|intcomma}} <small class='text-normal'>/heure</small></div>{% endif %}
+                                                </div>
+                                            </div>
+                                            {% endif %}
+                                            {% if building.workers_for_maintenance or building.upkeep or building.upkeep_energy %}
+                                            <div class='col-12'>
+                                                <div class='row gx-3 align-items-center'>
+                                                    <div class='col-auto'>Entretien</div>
+                                                    {% if building.upkeep_energy %}<div class='col-auto'><img src='{{PATH_IMAGES}}interface/energy.gif' width='16px' class='res' />{{building.upkeep_energy|intcomma}} <small class='text-normal'>/heure</small></div>{% endif %}
+                                                    {% if building.workers_for_maintenance %}<div class='col-auto'><img src='{{PATH_IMAGES}}interface/workers.gif' width='16px' class='res' />{{building.workers_for_maintenance|intcomma}}</div>{% endif %}
+                                                    {% if building.upkeep %}<div class='col-auto'><img src='{{PATH_IMAGES}}interface/credits.gif' width='16px' class='res' />{{building.upkeep|intcomma}} <small class='text-normal'>/jour</small></div>{% endif %}
+                                                </div>
+                                            </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            " />
                         </div>
                         <div class="col">
-                            <div class="row gx-2 align-items-center">
-                                <div class="col">
-                                    <div class="mb-2">
-                                        <div class="row gx-2">
-                                            <div class="col"><a href="/s03/help/?cat=buildings#{{building.id}}">{{building.name}}</a></div>
-                                            {% if building.quantity > 0 %}<div class="col-auto"><small class="text-normal">x</small>{{building.quantity}}</div>{% endif %}
-                                        </div>
+                            <div class="row g-1">
+                                <div class="col-12">
+                                    <div class="row gx-2">
+                                        <div class="col"><a href="/s03/help/?cat=buildings#{{building.id}}">{{building.name}}</a></div>
+                                        {% if building.quantity > 0 %}<div class="col-auto"><small class="text-normal">x</small>{{building.quantity}}</div>{% endif %}
                                     </div>
-                                    <div class="mb-1">
-                                        <div class="row gx-3">
-                                            <div class="col-4"><img src="{{PATH_IMAGES}}interface/ore.gif" width="16px" class="res" /><span {% if building.not_enough_ore %}class="text-danger"{% endif %}>{{building.ore|intcomma}}</span></div>
-                                            <div class="col-4"><img src="{{PATH_IMAGES}}interface/floor.gif" width="16px" class="res" /><span {% if building.not_enough_floor %}class="text-danger"{% endif %}>{{building.floor|intcomma}}</span></div>
-                                            <div class="col-4"><img src="{{PATH_IMAGES}}interface/workers_idle.gif" width="16px" class="res" /><span {% if building.not_enough_workers %}class="text-danger"{% endif %}>{{building.workers|intcomma}}</span></div>
-                                        </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="row gx-3">
+                                        <div class="col-4"><img src="{{PATH_IMAGES}}interface/ore.gif" width="16px" class="res" /><span {% if building.not_enough_ore %}class="text-danger"{% endif %}>{{building.ore|intcomma}}</span></div>
+                                        <div class="col-4"><img src="{{PATH_IMAGES}}interface/floor.gif" width="16px" class="res" /><span {% if building.not_enough_floor %}class="text-danger"{% endif %}>{{building.floor|intcomma}}</span></div>
+                                        <div class="col-4"><img src="{{PATH_IMAGES}}interface/workers_idle.gif" width="16px" class="res" /><span {% if building.not_enough_workers %}class="text-danger"{% endif %}>{{building.workers|intcomma}}</span></div>
                                     </div>
+                                </div>
+                                <div class="col-12">
                                     <div class="row gx-3">
                                         <div class="col-4"><img src="{{PATH_IMAGES}}interface/hydrocarbon.gif" width="16px" class="res" /><span {% if building.not_enough_hydrocarbon %}class="text-danger"{% endif %}>{{building.hydrocarbon|intcomma}}</span></div>
                                         <div class="col-4"><img src="{{PATH_IMAGES}}interface/space.gif" width="16px" class="res" /><span {% if building.not_enough_space %}class="text-danger"{% endif %}>{{building.space|intcomma}}</span></div>
