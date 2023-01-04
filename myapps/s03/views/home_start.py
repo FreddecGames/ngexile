@@ -29,34 +29,34 @@ class View(BaseMixin, View):
             except:
                 result = 10
 
-        if result == 0:
-        
-            galaxy = int(request.POST.get('galaxy', 0))
-            result = oConnExecute('SELECT sp_reset_account(' + str(userId) + ',' + str(galaxy) + ')')
+            if result == 0:
+            
+                galaxy = int(request.POST.get('galaxy', 0))
+                result = oConnExecute('SELECT sp_reset_account(' + str(userId) + ',' + str(galaxy) + ')')
 
-            if result[0] == 0:
-                
-                orientation = int(request.POST.get('orientation', 0))
-                oConnDoQuery('UPDATE users SET orientation=' + str(orientation) + ' WHERE id=' + str(userId))
+                if result[0] == 0:
+                    
+                    orientation = int(request.POST.get('orientation', 0))
+                    oConnDoQuery('UPDATE users SET orientation=' + str(orientation) + ' WHERE id=' + str(userId))
 
-                if orientation == 1:
-                    oConnDoQuery('INSERT INTO researches(userid, researchid, level) VALUES(' + str(userId) + ', 10, 1)')
-                    oConnDoQuery('INSERT INTO researches(userid, researchid, level) VALUES(' + str(userId) + ', 11, 1)')
-                    oConnDoQuery('INSERT INTO researches(userid, researchid, level) VALUES(' + str(userId) + ', 12, 1)')
+                    if orientation == 1:
+                        oConnDoQuery('INSERT INTO researches(userid, researchid, level) VALUES(' + str(userId) + ', 10, 1)')
+                        oConnDoQuery('INSERT INTO researches(userid, researchid, level) VALUES(' + str(userId) + ', 11, 1)')
+                        oConnDoQuery('INSERT INTO researches(userid, researchid, level) VALUES(' + str(userId) + ', 12, 1)')
 
-                elif orientation == 2:
-                    oConnDoQuery('INSERT INTO researches(userid, researchid, level) VALUES(' + str(userId) + ', 20, 1)')
-                    oConnDoQuery('INSERT INTO researches(userid, researchid, level) VALUES(' + str(userId) + ', 21, 1)')
-                    oConnDoQuery('INSERT INTO researches(userid, researchid, level) VALUES(' + str(userId) + ', 22, 1)')
+                    elif orientation == 2:
+                        oConnDoQuery('INSERT INTO researches(userid, researchid, level) VALUES(' + str(userId) + ', 20, 1)')
+                        oConnDoQuery('INSERT INTO researches(userid, researchid, level) VALUES(' + str(userId) + ', 21, 1)')
+                        oConnDoQuery('INSERT INTO researches(userid, researchid, level) VALUES(' + str(userId) + ', 22, 1)')
 
-                elif orientation == 3:
-                    oConnDoQuery('INSERT INTO researches(userid, researchid, level) VALUES(' + str(userId) + ', 30, 1)')
-                    oConnDoQuery('INSERT INTO researches(userid, researchid, level) VALUES(' + str(userId) + ', 31, 1)')
-                    oConnDoQuery('INSERT INTO researches(userid, researchid, level) VALUES(' + str(userId) + ', 32, 1)')
+                    elif orientation == 3:
+                        oConnDoQuery('INSERT INTO researches(userid, researchid, level) VALUES(' + str(userId) + ', 30, 1)')
+                        oConnDoQuery('INSERT INTO researches(userid, researchid, level) VALUES(' + str(userId) + ', 31, 1)')
+                        oConnDoQuery('INSERT INTO researches(userid, researchid, level) VALUES(' + str(userId) + ', 32, 1)')
 
-                oConnExecute('SELECT sp_update_researches(' + str(userId) + ')')
+                    oConnExecute('SELECT sp_update_researches(' + str(userId) + ')')
 
-                return HttpResponseRedirect('/s03/empire-view/')
+                    return HttpResponseRedirect('/s03/empire-view/')
 
         #--- get
         
