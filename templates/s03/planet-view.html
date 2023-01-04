@@ -1,0 +1,248 @@
+{% extends 's03/layout.html' %}
+
+{% load humanize %}
+
+{% block content %}
+<script>
+function confirmAbandon() { return window.confirm('Êtes-vous sûr de vouloir abandonner la planète "{{planet_name}}" ?'); }
+function confirmScientists(id) { return window.confirm('Êtes-vous sûr de vouloir renvoyer '+getval('scientists'+id)+' scientifiques ?'); }
+function confirmSoldiers(id) { return window.confirm('Êtes-vous sûr de vouloir renvoyer '+getval('soldiers'+id)+' soldats ?'); }
+function confirmWorkers(id) { return window.confirm('Êtes-vous sûr de vouloir renvoyer '+getval('workers'+id)+' travailleurs ?'); }
+</script>
+
+<div id="planet">
+
+<div id="renamebox" class="hidden">
+	<form action='?planet={{planet_id}}' method='post'>{% csrf_token %}
+	<input type='hidden' name='action' value='rename'>
+	<input type='text' class=editbox name='name' size=28 maxlength=16 value='{{planet_name}}'>
+	&nbsp;<input type='submit' value='OK' class=submitok>
+	&nbsp;<img src='{{PATH_IMAGES}}interface/close.gif' width=12 height=12 title='Fermer' class=close onclick='hide();'>
+	</form>
+</div>
+
+<div id="scientistsbox" class="hidden">
+	<form action='?planet={{planet_id}}' method='post'>{% csrf_token %}
+	<input type='hidden' name='action' value='firescientists'>
+	<input type='hidden' name='planet' value='{{planet_id}}'>
+	<input type='text' class=editbox name='amount' id="scientistsXXX" size=8 maxlength=8 value='0'>
+	&nbsp;<input type='submit' value='OK' class=submitok onclick="return confirmScientists(XXX)">
+	&nbsp;<img src='{{PATH_IMAGES}}interface/close.gif' width=12 height=12 title='Fermer' class=close onclick='hide();'>
+	</form>
+</div>
+
+<div id="soldiersbox" class="hidden">
+	<form action='?planet={{planet_id}}' method='post'>{% csrf_token %}
+	<input type='hidden' name='action' value='firesoldiers'>
+	<input type='text' class=editbox name='amount' id="soldiersXXX" size=8 maxlength=8 value='0'>
+	&nbsp;<input type='submit' value='OK' class=submitok onclick="return confirmSoldiers(XXX)">
+	&nbsp;<img src='{{PATH_IMAGES}}interface/close.gif' width=12 height=12 title='Fermer' class=close onclick='hide();'>
+	</form>
+</div>
+
+<div id="workersbox" class="hidden">
+	<form action='?planet={{planet_id}}' method='post'>{% csrf_token %}
+	<input type='hidden' name='action' value='fireworkers'>
+	<input type='text' class=editbox name='amount' id="workersXXX" size=8 maxlength=8 value='0'>
+	&nbsp;<input type='submit' value='OK' class=submitok onclick="return confirmWorkers(XXX)">
+	&nbsp;<img src='{{PATH_IMAGES}}interface/close.gif' width=12 height=12 title='Fermer' class=close onclick='hide();'>
+	</form>
+</div>
+
+<div id="commandersbox" class="hidden">
+	<form action='?planet={{planet_id}}' method='post'>{% csrf_token %}
+	<input type='hidden' name='action' value='assigncommander'>
+	<select name='commander' class="editbox">
+	{% if unassign %}<option value='0'>Renvoyer</option>{% endif %}
+	{% if none %}<option value='0'>Aucun</option>{% endif %}
+	{% for optgroup in optgroups %}<optgroup label="{% if optgroup.typ == 'fleet' %}sur Flottes{% endif %}{% if optgroup.typ == 'planet' %}sur Planètes{% endif %}{% if optgroup.typ == 'none' %}Non affectés{% endif %}">
+		{% for cmd in optgroup.cmds %}<option value={{cmd.cmd_id}}{% if cmd.selected %} selected{% endif %}>&middot;&nbsp;{{cmd.cmd_name}}{% if cmd.assigned %} ({{cmd.name}}){% endif %}{% if cmd.unavailable %} (Indisponible){% endif %}</option>{% endfor %}
+	</optgroup>{% endfor %}
+	</select>
+	&nbsp;<input type='submit' value='OK' class=submitok>
+	&nbsp;<img src='{{PATH_IMAGES}}interface/close.gif' width=12 height=12 title='Fermer' class=close onclick='hide()'>
+	</form>
+</div>
+	
+<table class="w-100">
+<tr><td align="center">
+
+<table class="default">
+<tr>
+	<td rowspan=11 width="1%" align="center"><img src="{{PATH_IMAGES}}planets/p{{planet_img}}.gif" class="smallplanet" width=64 height=64><br/>
+	<div align="center">
+	<form method="post" action="/s03/planet-view/?planet={{planet_id}}">{% csrf_token %}
+	<input type="hidden" name="action" value="abandon">
+	<input type="submit" value="Abandonner" onclick="return confirmAbandon()">
+	</form></div>
+    
+    
+    
+	</td>
+	<td width="1%">Planète</td>
+	<td id="renameref">
+	<div style="float:left">{{planet_name}}</div>
+	<div align="right"><a href="#" title="Renommer la planète" onclick="return show('renameref','renamebox')">Renommer</a></div></td>
+</tr>
+<tr>
+	<td>Localisation</td>
+	<td><a href="/s03/map/?g={{pla_g}}&s={{pla_s}}">{{pla_g}}.{{pla_s}}.{{pla_p}}</a></td>
+</tr>
+<tr>
+	<td>Commandant</td>
+
+	<td id="cmdref">
+	<div style="float:left"><img src="{{PATH_IMAGES}}interface/commander.gif" class="smallicon" width=10 height=6 title="Commandant">{% if nocommander %}-{% endif %}{% if commander %}{{commandername}}{% endif %}</div>
+	<div align="right"><a href="#" title="Affecter un nouveau commandant" onclick="return show('cmdref','commandersbox')">Changer</a></div></td>
+</tr>
+<tr>
+	<td>Terrain</td>
+	<td>{{floor_occupied}} / {{floor}}</td>
+</tr>
+<tr>
+	<td>Espace</td>
+	<td>{{space_occupied}} / {{space}}</td>
+</tr>
+<tr>
+	<td>Scientifiques</td>
+	<td id="scientistsref">
+	<div style="float:left">{{scientists}} / {{scientists_capacity}}</div>
+	<div align="right"><a href="#" title="Renvoyer le nombre indiqué de scientifiques" onclick="return show('scientistsref','scientistsbox')">Renvoyer</a></div></td>
+</tr>
+<tr>
+	<td>Soldats</td>
+	<td id="soldiersref">
+	<div style="float:left">{{soldiers}} / {{soldiers_capacity}}</div>
+	<div align="right"><a href="#" title="Renvoyer le nombre indiqué de soldats" onclick="return show('soldiersref','soldiersbox')">Renvoyer</a></div></td>
+</tr>
+<tr>
+	<td>Travailleurs</td>
+	<td id="workersref">
+	<div style="float:left">{{workers}} / {{workers_capacity}}</div>
+	<div align="right"><a href="#" title="Renvoyer le nombre indiqué de travailleurs" onclick="return show('workersref','workersbox')">Renvoyer</a></div></td>
+</tr>
+<tr>
+	<td>Formation</td>
+	<td><div style="float:left">{{growth|floatformat:1}}% par heure</div>
+	<div align="right">{% if suspend %}<a href="?a=suspend" title="Suspendre le recrutement de nouveaux travailleurs">Suspendre</a>{% endif %}{% if resume %}<a href="?a=resume" title="Reprendre le recrutement de nouveaux travailleurs">Reprendre</a>{% endif %}</div></td>
+</tr>
+<tr>
+	<td>Production</td>
+    <td>
+        <div class="row gx-4 align-items-center">
+            <div class="col-auto"><img src="{{PATH_IMAGES}}interface/credits.gif" class="res" width="16" />{{credit_prod|intcomma}} <small class="text-normal">/24 heures</small></div>
+            <div class="col-auto"><img src="{{PATH_IMAGES}}interface/prestige.gif" class="res" width="16" />{{prestige_prod|intcomma}} <small class="text-normal">/24 heures</small></div>
+        </div>
+    </td>
+</tr>
+<tr>
+	<td>Entretien</td>
+    <td>
+        <div class="row gx-4 align-items-center">
+            <div class="col-auto {% if workers < upkeep_workers %}text-danger{% endif %}"><img src="{{PATH_IMAGES}}interface/workers.gif" class="res" width="16" />{{upkeep_workers|intcomma}}</div>
+            <div class="col-auto"><img src="{{PATH_IMAGES}}interface/credits.gif" class="res" width="16" />{{upkeep_credits|intcomma}}</div>
+            <div class="col-auto {% if soldiers < upkeep_soldiers %}text-danger{% endif %}"><img src="{{PATH_IMAGES}}interface/soldiers.gif" class="res" width="16" />{{upkeep_soldiers|intcomma}}</div>
+        </div>
+    </td>
+</tr>
+
+{% if rename_bad_name %}
+<tr><td colspan="3"><p class="error">Veuillez spécifier un nom de planète valide.</p></td></tr>
+{% endif %}
+
+</table>
+
+</td></tr>
+
+<tr><td>
+
+<table class="default" width="100%">
+<tr class="category">
+	<td>Bâtiments en construction</td>
+</tr>
+<tr class="item">
+<td>
+	<table class="clear" width="100%">
+
+	{% for building in buildings %}
+	<tr>
+		<td>{% if building.destroy %}<span class="destroy">Destruction de {% endif %}<a href="/s03/planet-buildings/#{{building.buildingid}}" {% if building.destroy %} class="destroy" {% endif %} title="Voir les infrastructures">{{building.building}}</a> (<script>putcountdown1({{building.time}}, "terminé", "/s03/planet-buildings/#{{building.buildingid}}");</script>){% if building.destroy %}</span>{% endif %}</td>
+	</tr>
+	{% endfor %}
+	{% if nobuilding %}
+	<tr>
+		<td><a href="/s03/planet-buildings/" title="Voir les infrastructures">Aucune construction en cours</a></td>
+	</tr>
+	{% endif %}
+
+	</table>
+</td>
+</tr>
+</table>
+
+</td></tr>
+<tr><td>
+
+<table class="default" width="100%">
+<tr class="category">
+	<td>Chantier spatial</td>
+</tr>
+<tr class="item">
+<td>
+	<table class="clear" width="100%">
+	{% for ship in ships %}
+	<tr>
+		<td>{% if ship.recycle %}Recyclage de {% endif %}<a href="/s03/planet-ships/#{{ship.shipid}}" title="Voir le chantier spatial">{{ship.ship}}</a> (<script>putcountdown1({{ship.time}}, "terminé", "/s03/planet-ships/#{{ship.shipid}}");</script>)</td>
+	</tr>
+	{% endfor %}
+	{% if noship %}
+	<tr>
+		<td><a href="/s03/planet-ships/" title="Voir le chantier spatial">Aucune construction en cours</a></td>
+	</tr>
+	{% endif %}
+	</table>
+</td>
+</tr>
+</table>
+
+</td></tr>
+<tr><td>
+
+<table class="default" width="100%">
+<tr class="category">
+	<td>Flottes en orbite</td>
+</tr>
+<tr class="item">
+<td>
+	<table class="clear" width="100%">
+
+	{% for fleet in fleets %}
+	<tr>
+		<td nowrap>{% if fleet.owner %}<a class="self" href="/s03/fleet-view/?id={{fleet.id}}" title="Inspecter la flotte {{fleet.name}}">{{fleet.name}}</a>{% endif %}
+			{% if fleet.ally %}<span class="ally"><b>{{fleet.name}}</b></span>{% endif %}
+			{% if fleet.friend %}<span class="friend"><b>{{fleet.name}}</b></span>{% endif %}
+			{% if fleet.enemy %}<span class="enemy"><b>{{fleet.name}}</b></span>{% endif %} ({{fleet.signature}})
+		</td>
+		<td>
+		{% if fleet.fighting %}<span class="fighting">En combat</span>{% endif %}
+		{% if fleet.patrolling %}En patrouille{% endif %}
+		</td>
+
+		<td>
+		<img src="{{PATH_IMAGES}}interface/commander.gif" class="smallicon" width=10 height=6 title="Commandant">{% if fleet.nocommander %}-{% endif %}{% if commander %}<a href="/s03/empire-commanders/#{{fleet.commandername}}">{{fleet.commandername}}</a>{% endif %}
+		</td>
+	</tr>
+	{% endfor %}
+	{% if nofleet %}
+	<tr>
+		<td><a href="/s03/planet-orbit/" title="Voir l'orbite de la planète">Aucune flotte près de la planète</a></td>
+	</tr>
+	{% endif %}
+	</table>
+</td></tr>
+</table>
+
+</td></tr>
+</table>
+</div>
+{% endblock %}

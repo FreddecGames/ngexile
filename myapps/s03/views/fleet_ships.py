@@ -1,6 +1,4 @@
-# -*- coding: utf-8 -*-
-
-from ._global import *
+from .base import *
 
 class View(GlobalView):
 
@@ -20,7 +18,7 @@ class View(GlobalView):
         fleetid = request.GET.get("id", "")
 
         if fleetid == None or fleetid == "":
-            return HttpResponseRedirect("/s03/fleets/")
+            return HttpResponseRedirect("/s03/empire-fleets/")
 
         fleetid = int(fleetid)
 
@@ -44,11 +42,11 @@ class View(GlobalView):
 
         # if fleet doesn't exist, redirect to the list of fleets
         if oRs == None:
-            return HttpResponseRedirect("/s03/fleets/")
+            return HttpResponseRedirect("/s03/empire-fleets/")
 
         # if fleet is moving or engaged, go back to the fleets
         if oRs[7] or oRs[3]:
-            return HttpResponseRedirect("/s03/fleet/?id=" + str(fleetid))
+            return HttpResponseRedirect("/s03/fleet-view/?id=" + str(fleetid))
 
         content.AssignValue("fleetid", fleetid)
         content.AssignValue("fleetname", oRs[1])
@@ -129,9 +127,9 @@ class View(GlobalView):
 
             if oRs == None:
                 if self.fleet_planet > 0:
-                    return HttpResponseRedirect("/s03/orbit/?planet=" + str(self.fleet_planet))
+                    return HttpResponseRedirect("/s03/planet-orbit/?planet=" + str(self.fleet_planet))
                 else:
-                    return HttpResponseRedirect("/s03/fleets/")
+                    return HttpResponseRedirect("/s03/empire-fleets/")
 
     def ExecuteOrder(self, fleetid):
         if ToInt(self.request.POST.get("transfer_ships"), 0) == 1:

@@ -1,6 +1,4 @@
-# -*- coding: utf-8 -*-
-
-from ._global import *
+from .base import *
 
 class View(GlobalView):
 
@@ -11,8 +9,8 @@ class View(GlobalView):
 
         self.selected_menu = "alliance.members"
 
-        if self.AllianceId == None: return HttpResponseRedirect("/s03/alliance/")
-        if not self.oAllianceRights["leader"] and not self.oAllianceRights["can_see_members_info"]: return HttpResponseRedirect("/s03/alliance/")
+        if self.AllianceId == None: return HttpResponseRedirect("/s03/alliance-view/")
+        if not self.oAllianceRights["leader"] and not self.oAllianceRights["can_see_members_info"]: return HttpResponseRedirect("/s03/alliance-view/")
 
         self.invitation_success = ""
 
@@ -292,4 +290,4 @@ class View(GlobalView):
             oConnDoQuery(query)
 
         # if leader demotes himself
-        if ToInt(self.request.POST.get("player" + str(self.UserId)), 100) > 0: return HttpResponseRedirect("/s03/alliance/")
+        if ToInt(self.request.POST.get("player" + str(self.UserId)), 100) > 0: return HttpResponseRedirect("/s03/alliance-view/")

@@ -1,8 +1,4 @@
-# -*- coding: utf-8 -*-
-
-from ._global import *
-
-from .accounts import *
+from .base import *
 
 class View(GlobalView):
 
@@ -24,7 +20,7 @@ class View(GlobalView):
         fleetid = ToInt(request.GET.get("id"), 0)
 
         if fleetid == 0:
-            return HttpResponseRedirect("/s03/fleets/")
+            return HttpResponseRedirect("/s03/empire-fleets/")
 
         response = self.ExecuteOrder(fleetid)
         if response: return response
@@ -48,11 +44,11 @@ class View(GlobalView):
 
         # if fleet doesn't exist, redirect to the list of fleets
         if oRs == None:
-            return HttpResponseRedirect("/s03/fleets/")
+            return HttpResponseRedirect("/s03/empire-fleets/")
 
         # if fleet is moving or engaged, go back to the fleets
         if oRs[24] != 0:
-            return HttpResponseRedirect("/s03/fleet/?id=" + str(fleetid))
+            return HttpResponseRedirect("/s03/fleet-view/?id=" + str(fleetid))
 
         content.AssignValue("fleetid", fleetid)
         content.AssignValue("fleetname", oRs[1])
@@ -255,7 +251,7 @@ class View(GlobalView):
         query = "DELETE FROM fleets WHERE ownerid=" + str(self.UserId) + " AND size=0"
         oConnDoQuery(query)
 
-        return HttpResponseRedirect("/s03/fleet/?id="+str(newfleetid))
+        return HttpResponseRedirect("/s03/fleet-view/?id="+str(newfleetid))
 
     def ExecuteOrder(self, fleetid):
         if self.request.POST.get("split") == "1":

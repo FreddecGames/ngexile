@@ -1,0 +1,328 @@
+{% extends 's03/layout.html' %}
+
+{% load tz %}
+
+
+{% block content %}
+<script>function LinkFleet(id, name){ if(id != "None") document.write('<a href="/s03/fleet-view/?id=' + id + '">'+name+'</a>'); else document.write(name); }</script>
+
+<div id="reports">
+
+{% if tabnav %}
+<div class="nav nav-tabs mb-3">
+	{% if tabnav_000 %}<div class="nav-item"><a href="?cat=0" class="nav-link {% if tabnav_000_selected %}active{% endif %}">Tout{% if tabnav_000_new %}&nbsp;({{total_newreports}}){% endif %}</a></div>{% endif %}
+	{% if tabnav_100 %}<div class="nav-item"><a href="?cat=1" class="nav-link {% if tabnav_100_selected %}active{% endif %}">Alliance{% if tabnav_100_new %}&nbsp;({{tabnav_100_newreports}}){% endif %}</a></div>{% endif %}
+	{% if tabnav_200 %}<div class="nav-item"><a href="?cat=2" class="nav-link {% if tabnav_200_selected %}active{% endif %}">Combats{% if tabnav_200_new %}&nbsp;({{tabnav_200_newreports}}){% endif %}</a></div>{% endif %}
+	{% if tabnav_300 %}<div class="nav-item"><a href="?cat=3" class="nav-link {% if tabnav_300_selected %}active{% endif %}">Développement{% if tabnav_300_new %}&nbsp;({{tabnav_300_newreports}}){% endif %}</a></div>{% endif %}
+	{% if tabnav_400 %}<div class="nav-item"><a href="?cat=4" class="nav-link {% if tabnav_400_selected %}active{% endif %}">Flottes{% if tabnav_400_new %}&nbsp;({{tabnav_400_newreports}}){% endif %}</a></div>{% endif %}
+	{% if tabnav_600 %}<div class="nav-item"><a href="?cat=6" class="nav-link {% if tabnav_600_selected %}active{% endif %}">Colonisations{% if tabnav_600_new %}&nbsp;({{tabnav_600_newreports}}){% endif %}</a></div>{% endif %}
+	{% if tabnav_700 %}<div class="nav-item"><a href="?cat=7" class="nav-link {% if tabnav_700_selected %}active{% endif %}">Événements{% if tabnav_700_new %}&nbsp;({{tabnav_700_newreports}}){% endif %}</a></div>{% endif %}
+</div>
+{% endif %}
+
+<table class="default" width="100%">
+{% for message in messages %}
+<tr class="item{% if message.new %}highlight{% endif %}">
+	<td width="1%" valign="top"><img src="{{PATH_IMAGES}}reports/{{message.type}}.jpg" width="64" height="64" class="report"></td>
+	<td width="90%" valign="top">
+	<div class="subject">{{message.date|timezone:"Europe/Paris"|date:"d M Y H:i"}}{% if message.nation %} | <a href="/s03/profile-view/?name={{message.nation}}">{{message.nation}}</a>{% endif %} |
+	{% if message.type == 100 %}Invitation d'alliance.
+	{% elif message.type == 110 %}Demande de financement.
+	{% elif message.type == 111 %}Modification de la demande de financement.
+	{% elif message.type == 112 %}Annulation de la demande de financement.
+	{% elif message.type == 120 %}Invitation d'un nouveau membre.
+	{% elif message.type == 122 %}Invitation déclinée.
+	{% elif message.type == 130 %}Invitation acceptée.
+	{% elif message.type == 131 %}Départ de membre.
+	{% elif message.type == 132 %}Exclusion de membre.
+	{% elif message.type == 150 %}Impossibilité de payer le tribut.
+	{% elif message.type == 151 %}Tribut non payé.
+	{% elif message.type == 160 %}Nous entrons en guerre !
+	{% elif message.type == 161 %}Demande de fin de guerre.
+	{% elif message.type == 162 %}Guerre terminée.
+	{% elif message.type == 163 %}Guerre annulée.
+	{% elif message.type == 171 %}PNA rompu.
+	{% elif message.type == 200 %}Rapport de bataille.
+	{% elif message.type == 201 %}Rapport de bataille (vainqueur).
+	{% elif message.type == 202 %}Rapport de bataille.
+	{% elif message.type == 210 %}Invasion ennemie : perte d'une planète.
+	{% elif message.type == 211 %}Invasion ennemie repoussée !
+	{% elif message.type == 212 %}Invasion repoussée.
+	{% elif message.type == 213 %}Résistance éliminée
+	{% elif message.type == 214 %}Invasion réussie !
+	{% elif message.type == 220 %}Prime de destruction
+	{% elif message.type == 300 %}Eurêka !
+	{% elif message.type == 302 %}Ralliement d'une planète.
+	{% elif message.type == 310 %}Production et coût d'entretien.
+	{% elif message.type == 311 %}Commerce intra-alliance.
+	{% elif message.type == 320 %}Un commandant a récemment eu une augmentation
+	{% elif message.type == 400 %}Flotte arrivée à destination.
+	{% elif message.type == 401 %}Récolteurs pleins.
+	{% elif message.type == 402 %}Plus de matériau à recycler.
+	{% elif message.type == 403 %}Détection d'une flotte.
+	{% elif message.type == 500 %}Vente effectuée.
+	{% elif message.type == 501 %}Cargaison reçue.
+	{% elif message.type == 502 %}Versement reçu.
+	{% elif message.type == 503 %}Vente effectuée.
+	{% elif message.type == 504 %}Vente effectuée sur planète alliée.
+	{% elif message.type == 505 %}Achat effectué sur une de nos planètes.
+	{% elif message.type == 510 %}Vente de la production.
+	{% elif message.type == 600 %}Nouvelle planète.
+	{% elif message.type == 601 %}Abandon de planète.
+	{% elif message.type == 602 %}Soulèvement.
+	{% elif message.type == 700 %}Vaisseaux marchands détruits.
+	{% elif message.type == 701 %}Vaisseaux marchands détruits.
+	{% elif message.type == 702 %}Inventaire des stocks après vente.
+	{% elif message.type == 710 %}Bulletin d'alerte : tempête solaire !
+	{% elif message.type == 711 %}Fin d'alerte : tempête solaire.
+	{% elif message.type == 720 %}Vol de ressources.
+	{% elif message.type == 721 %}Des émeutes éclatent.
+	{% elif message.type == 722 %}Un accident est survenu sur un chantier.
+	{% elif message.type == 723 %}Une expérience a mal tourné.
+	{% elif message.type == 724 %}Flotte retardée par une avarie.
+	{% elif message.type == 725 %}Soulèvement !
+	{% elif message.type == 726 %}Un bâtiment s'est effondré !
+	{% elif message.type == 730 %}Perte du signal d'une flotte !
+	{% elif message.type == 731 %}Rétablissement du contact avec une flotte.
+	{% elif message.type == 750 %}Baby-boom !
+	{% elif message.type == 751 %}Baby-boom terminé.
+	{% elif message.type == 752 %}Découverte de riches filons de minerai !
+	{% elif message.type == 753 %}Épuisement des filons de minerai.
+	{% elif message.type == 754 %}Découverte de riches gisements d'hydrocarbure !
+	{% elif message.type == 755 %}Épuisement des gisements d'hydrocarbure.
+	{% elif message.type == 790 %}Séisme.
+	{% elif message.type == 791 %}Ver de sable.
+	{% elif message.type == 795 %}Gestion du budget de la nation.
+	{% elif message.type == 796 %}Gestion du budget de la nation.
+	{% elif message.type == 797 %}Gestion du budget de la nation.
+	{% elif message.type == 798 %}Gestion du budget de la nation.
+	{% elif message.type == 800 %}Contre-espionnage : tentative d'espionnage.
+	{% elif message.type == 801 %}Contre-espionnage : notre Nation est espionnée !
+	{% elif message.type == 802 %}Contre-espionnage : nos Flottes sont espionnées !
+	{% elif message.type == 803 %}Contre-espionnage : une de nos planètes est espionnée !
+	{% elif message.type == 810 %}Rapport d'espionnage : nation.
+	{% elif message.type == 820 %}Rapport d'espionnage : flottes.
+	{% elif message.type == 830 %}Rapport d'espionnage : planète.
+	{% else %}{{message.type}}
+	{% endif %}
+	</div>
+	
+	<div class="body">
+	{% if message.type == 100 %}L'alliance <a href="/s03/alliance-view/?tag={{message.alliancetag}}">[{{message.alliancetag}}] {{message.alliancename}}</a> nous propose de les rejoindre.<br/>
+	Vous devriez réfléchir à cette offre et répondre en accédant à <a href="/s03/alliance-invitations/">cette page</a>.
+	{% elif message.type == 110 %}La nation <a href="/s03/profile-view/?name={{message.username}}">{{message.username}}</a> a formulé une demande de financement s'élevant à <img src="{{PATH_IMAGES}}interface/credits.gif" title="Crédits" class="icon" width="16" height="16"> {{message.credits}} crédits<script>var d="{{message.description}}"; if(d!='') document.write(' pour la raison suivante : '+d);</script>.<br/>
+	Vous pouvez accéder à toutes les demandes en cours sur <a href="/s03/alliance-wallet/?cat=2">cette page</a>.
+	{% elif message.type == 111 %}La nation <a href="/s03/profile-view/?name={{message.username}}">{{message.username}}</a> a modifié sa demande de financement et demande désormais <img src="{{PATH_IMAGES}}interface/credits.gif" title="Crédits" class="icon" width="16" height="16">  {{message.credits}} crédits<script>var d="{{message.description}}"; if(d!='') document.write(' pour la raison suivante : '+d);</script>.<br/>
+	Vous pouvez accéder à toutes les demandes en cours sur <a href="/s03/alliance-wallet/?cat=2">cette page</a>.
+	{% elif message.type == 112 %}La nation <a href="/s03/profile-view/?name={{message.username}}">{{message.username}}</a> a annulé sa demande de financement.
+	{% elif message.type == 120 %}Le recruteur <a href="/s03/profile-view/?name={{message.nation}}">{{message.nation}}</a> a invité la nation <a href="/s03/profile-view/?name={{message.invitedusername}}">{{message.invitedusername}}</a> à rejoindre notre alliance.
+	{% elif message.type == 121 %}L'invitation de la nation <a href="/s03/profile-view/?name={{message.invitedusername}}">{{message.invitedusername}}</a> à rejoindre notre alliance a été retirée par <a href="/s03/profile-view/?name={{message.nation}}">{{message.nation}}</a>.
+	{% elif message.type == 122 %}La nation <a href="/s03/profile-view/?name={{message.nation}}">{{message.nation}}</a> a décliné notre invitation.
+	{% elif message.type == 130 %}La nation <a href="/s03/profile-view/?name={{message.nation}}">{{message.nation}}</a> a rejoint notre alliance.
+	{% elif message.type == 131 %}La nation <a href="/s03/profile-view/?name={{message.nation}}">{{message.nation}}</a> a décidé de quitter notre alliance.
+	{% elif message.type == 132 %}La nation <a href="/s03/profile-view/?name={{message.nation}}">{{message.nation}}</a> va être exclue de l'alliance<script>if('{{message.username}}'!='') document.write(' (action décidée par <a href="/s03/profile-view/?name={{message.username}}">{{message.username}}</a>)');</script>.
+	{% elif message.type == 150 %}Notre alliance n'a pas pu honorer son contrat et payer les <img src="{{PATH_IMAGES}}interface/credits.gif" title="Crédits" class="icon" width="16" height="16"> {{message.credits}} crédits à l'alliance <a href="/s03/alliance-view/?tag={{message.alliancetag}}">[{{message.alliancetag}}] {{message.alliancename}}</a>.
+	{% elif message.type == 151 %}Il semblerait que l'alliance <a href="/s03/alliance-view/?tag={{message.alliancetag}}">[{{message.alliancetag}}] {{message.alliancename}}</a> ait oublié de nous verser les <img src="{{PATH_IMAGES}}interface/credits.gif" title="Crédits" class="icon" width="16" height="16">  {{message.credits}} crédits prévus.
+    {% elif message.type == 160 %}L'alliance <a href="/s03/alliance-view/?tag={{message.alliancetag}}">[{{message.alliancetag}}] {{message.alliancename}}</a> vient de nous déclarer la guerre.
+	{% elif message.type == 161 %}L'alliance <a href="/s03/alliance-view/?tag={{message.alliancetag}}">[{{message.alliancetag}}] {{message.alliancename}}</a> propose d'arrêter la guerre.
+	{% elif message.type == 162 %}L'alliance <a href="/s03/alliance-view/?tag={{message.alliancetag}}">[{{message.alliancetag}}] {{message.alliancename}}</a> a décidé de mettre un terme à la guerre.
+	{% elif message.type == 163 %}La nation <a href="/s03/profile-view/?name={{message.nation}}">{{message.nation}}</a> a annulée la guerre avec l'alliance <a href="/s03/alliance-view/?tag={{message.alliancetag}}">[{{message.alliancetag}}] {{message.alliancename}}</a>.
+    {% elif message.type == 171 %}L'alliance <a href="/s03/alliance-view/?tag={{message.alliancetag}}">[{{message.alliancetag}}] {{message.alliancename}}</a> a décidé de rompre le pacte de non-aggression que nous avions.
+    {% elif message.type == 200 %}Une bataille a eu lieu près de la planète <a href="/s03/map/?g={{message.g}}&s={{message.s}}">{{message.planetname}} ({{message.g}}.{{message.s}}.{{message.p}})</a>.<br/>
+	Vous pouvez accéder au <a href="/s03/report-battle/?id={{message.battleid}}&v={{message.ownerid}}">rapport du combat</a>.
+	{% elif message.type == 201 %}Une bataille a eu lieu près de la planète <a href="/s03/map/?g={{message.g}}&s={{message.s}}">{{message.planetname}} ({{message.g}}.{{message.s}}.{{message.p}})</a>.<br/>
+	Vous pouvez accéder au <a href="/s03/report-battle/?id={{message.battleid}}&v={{message.ownerid}}">rapport du combat</a>.
+	{% elif message.type == 202 %}Une bataille a eu lieu près de la planète <a href="/s03/map/?g={{message.g}}&s={{message.s}}">{{message.planetname}} ({{message.g}}.{{message.s}}.{{message.p}})</a>. La bataille s'est déroulée très rapidement et nous n'avons pu établir une quelconque évaluation des forces ennemies en présence.
+	Vous pouvez accéder au <a href="/s03/report-battle/?id={{message.battleid}}&v={{message.ownerid}}">rapport des pertes</a>.
+	{% elif message.type == 210 %}Une flotte ennemie de <a href="/s03/profile-view/?name={{message.username}}">{{message.username}}</a> s'est emparée d'une de nos planètes. Elle est désormais connue sous le nom de <a href="/s03/map/?g={{message.g}}&s={{message.s}}">{{message.planetname}} ({{message.g}}.{{message.s}}.{{message.p}})</a>.<br/>
+	Vous pouvez accéder au <a href="/s03/report-invasion/?id={{message.invasionid}}">rapport d'invasion</a>.
+	{% elif message.type == 211 %}Une flotte ennemie de <a href="/s03/profile-view/?name={{message.username}}">{{message.username}}</a> a tenté d'envahir notre planète <a href="/s03/planet-trainings/?planet={{message.planetid}}">{{message.planetname}} ({{message.g}}.{{message.s}}.{{message.p}}</a>, mais nos vaillantes troupes l'ont repoussée !<br/>
+	Vous pouvez accéder au <a href="/s03/report-invasion/?id={{message.invasionid}}">rapport d'invasion</a>.
+	{% elif message.type == 212 %}Notre tentative pour prendre la planète <a href="/s03/map/?g={{message.g}}&s={{message.s}}">{{message.planetname}} ({{message.g}}.{{message.s}}.{{message.p}})</a> a lamentablement échoué.<br/>
+	Vous pouvez accéder au <a href="/s03/report-invasion/?id={{message.invasionid}}">rapport d'invasion</a> que nous avons pu établir suite aux indications de nos soldats tombés vaillament au combat.
+	{% elif message.type == 213 %}Nous avons exterminé toute résistance ennemie sur la planète <a href="/s03/map/?g={{message.g}}&s={{message.s}}">{{message.planetname}} ({{message.g}}.{{message.s}}.{{message.p}})</a>.<br/>
+	Vous pouvez accéder au <a href="/s03/report-invasion/?id={{message.invasionid}}">rapport d'invasion</a>.
+	{% elif message.type == 214 %}Nous avons pris la planète <a href="/s03/map/?g={{message.g}}&s={{message.s}}">{{message.planetname}} ({{message.g}}.{{message.s}}.{{message.p}})</a> !<br/>
+	Vous pouvez accéder au <a href="/s03/report-invasion/?id={{message.invasionid}}">rapport d'invasion</a>.
+	{% elif message.type == 220 %}La destruction récente de flottes de fossoyeur nous a rapporté la somme de <img src="{{PATH_IMAGES}}interface/credits.gif" class="res" width="16" height="16"> {{message.credits}}.
+	{% elif message.type == 300 %}Nos scientifiques ont terminé la recherche sur "{{message.researchname}}".<br/>
+	Ils sont prêts pour de <a href="/s03/empire-techs/">nouvelles recherches</a>.
+	{% elif message.type == 310 %}Les coûts d'entretien et de fonctionnement concernant la dernière période s'élèvent à <img src="{{PATH_IMAGES}}interface/credits.gif" class="res" width="16" height="16"> {{message.credits}}.<br/><br/>
+	<table class=clear>
+	<tr><td><img src="{{PATH_IMAGES}}interface/upkeep_commander.gif" class="res" width="16" height="16">Commandants: {{message.upkeep_commanders}}</td></tr>
+	<tr><td><img src="{{PATH_IMAGES}}interface/planet.gif" class="res" width="16" height="16">Planètes: {{message.upkeep_planets}}</td></tr>
+	<tr><td><img src="{{PATH_IMAGES}}interface/scientists.gif" class="res" width="16" height="16">Scientifiques: {{message.upkeep_scientists}}</td></tr>
+	<tr><td><img src="{{PATH_IMAGES}}interface/soldiers.gif" class="res" width="16" height="16">Soldats: {{message.upkeep_soldiers}}</td></tr>
+	<tr><td><img src="{{PATH_IMAGES}}interface/fleets.gif" class="res" width="16" height="16">Vaisseaux: {{message.upkeep_ships}}</td></tr>
+	<tr><td><img src="{{PATH_IMAGES}}interface/fleets.gif" class="res" width="16" height="16">Vaisseaux en position: {{message.upkeep_ships_in_position}}</td></tr>
+	<tr><td><img src="{{PATH_IMAGES}}interface/fleets.gif" class="res" width="16" height="16">Vaisseaux posés: {{message.upkeep_ships_parked}}</td></tr>
+	</table><br/><br/>
+	Nos infrastructures ont généré <img src="{{PATH_IMAGES}}interface/prestige.gif" class="res" width="16" height="16"> {{message.scientists}} et <img src="{{PATH_IMAGES}}interface/credits.gif" class="res" width="16" height="16"> {{message.soldiers}}
+	{% elif message.type == 311 %}Le commerce entre nos planètes et celles de nos alliés nous a rapporté <img src="{{PATH_IMAGES}}interface/credits.gif" class="res" width="16" height="16"> {{message.credits}}.
+	{% elif message.type == 320 %}Le commandant {{message.commandername}} s'est récemment distingué et a obtenu une promotion. Vous devriez vous rendre sur la page de gestion des commandants afin de lui attribuer son nouveau point de compétence.
+	{% elif message.type == 400 %}La flotte <script>LinkFleet('{{message.fleetid}}','{{message.fleetname}}')</script> est arrivée aux alentours de la planète <a href="/s03/map/?g={{message.g}}&s={{message.s}}">{{message.planetname}} ({{message.g}}.{{message.s}}.{{message.p}})</a>.
+	{% elif message.type == 401 %}Les récolteurs de la flotte <script>LinkFleet('{{message.fleetid}}','{{message.fleetname}}')</script> ne peuvent plus recycler car leurs soutes sont pleines. Videz leurs soutes avant de recycler à nouveau.
+	{% elif message.type == 402 %}La flotte <script>LinkFleet('{{message.fleetid}}','{{message.fleetname}}')</script>  a terminé le recyclage aux coordonnées suivantes <a href="/s03/map/?g={{message.g}}&s={{message.s}}">{{message.planetname}} ({{message.g}}.{{message.s}}.{{message.p}})</a>, il n'y a plus de ressources dans les parages.
+	{% elif message.type == 403 %}Une flotte de la nation <a href="/s03/profile-view/?name={{message.username}}">{{message.username}}</a> vient d'être détectée à proximité de notre planète <a href="/s03/map/?g={{message.g}}&s={{message.s}}">{{message.planetname}} ({{message.g}}.{{message.s}}.{{message.p}})</a>.
+	{% elif message.type == 500 %}Le commerçant venu acheter nos ressources mises en vente sur <a href="/s03/map/?g={{message.g}}&s={{message.s}}">{{message.planetname}} ({{message.g}}.{{message.s}}.{{message.p}})</a> est arrivé à sa destination sans rencontrer de problème.<br/>
+	Pour rappel, <script>if({{message.ore}} > 0){ document.write('{{message.ore}} unités de minerai'); if({{message.hydrocarbon}} > 0) document.write(" et {{message.hydrocarbon}} unités d'hydrocarbure");} else document.write("{{message.hydrocarbon}} unités d'hydrocarbure")</script> ont été vendues pour un total de <img src="{{PATH_IMAGES}}interface/credits.gif" title="Crédits" class="icon" width="16" height="16"> {{message.credits}} crédits.<br/>Nous venons de recevoir la seconde moitié du paiement (la première moitié a été payée à la vente).
+	{% elif message.type == 501 %}Une flotte de <a href="/s03/profile-view/?name={{message.username}}">{{message.username}}</a> vient de décharger des ressources sur notre planète <a href="/s03/planet-buildings/?planet={{message.planetid}}">{{message.planetname}} ({{message.g}}.{{message.s}}.{{message.p}})</a>.<br/>
+	<script>if({{message.ore}} > 0 || {{message.hydrocarbon}} > 0) {
+	document.write('Nos stocks ont augmenté de '); if({{message.ore}} > 0){ document.write('{{message.ore}} unités de minerai'); if({{message.hydrocarbon}} > 0) document.write(" et de {{message.hydrocarbon}} unités d'hydrocarbure");} else document.write("{{message.hydrocarbon}} unités d'hydrocarbure"); document.write('.<br/>'); }
+	if({{message.scientists}}>0 || {{message.soldiers}}>0 || {{message.workers}} > 0) {
+		document.write('Nous notons'+(({{message.ore}}>0 || {{message.hydrocarbon}}>0)?' aussi':'') +' l\'arrivée de personnel : ');
+		if({{message.scientists}}>0) document.write('{{message.scientists}} scientifiques, ');
+		if({{message.soldiers}}>0) document.write('{{message.soldiers}} soldats, ');
+		if({{message.workers}}>0) document.write('{{message.workers}} travailleurs, ');
+		document.write('ils se sont parfaitement intégrés et travaillent désormais sous nos ordres.');
+		}
+	</script>
+	{% elif message.type == 502 %}Vous avez reçu la somme de <img src="{{PATH_IMAGES}}interface/credits.gif" title="Crédits" class="icon" width="16" height="16"> {{message.credits}} crédits par messagerie de la part de <a href="/s03/profile-view/?name={{message.username}}">{{message.username}}</a>.
+	{% elif message.type == 503 %}Suite au dépôt de 
+	<script>
+		var s = "";
+
+		if({{message.ore}} > 0) s += '{{message.ore}} unités de minerai';
+		if({{message.hydrocarbon}} > 0) s += (s!=''?', ':'')+'{{message.hydrocarbon}} unités d\'hydrocarbure'; 
+		
+		if({{message.scientists}} > 0) s += (s!=''?', ':'')+'{{message.scientists}} scientifiques';
+		if({{message.soldiers}} > 0) s += (s!=''?', ':'')+'{{message.soldiers}} soldats';
+		if({{message.workers}} > 0) s += (s!=''?', ':'')+'{{message.workers}} travailleurs';
+		document.write(s);
+	</script> 
+	
+	sur une de leurs planètes, les marchands nous ont payé la somme de <img src="{{PATH_IMAGES}}interface/credits.gif" title="Crédits" class="icon" width="16" height="16"> {{message.credits}} crédits.
+	{% elif message.type == 504 %}Suite au dépôt de 
+	<script>
+		var s = "";
+
+		if({{message.ore}} > 0) s += '{{message.ore}} unités de minerai';
+		if({{message.hydrocarbon}} > 0) s += (s!=''?', ':'')+'{{message.hydrocarbon}} unités d\'hydrocarbure'; 
+		
+		if({{message.scientists}} > 0) s += (s!=''?', ':'')+'{{message.scientists}} scientifiques';
+		if({{message.soldiers}} > 0) s += (s!=''?', ':'')+'{{message.soldiers}} soldats';
+		if({{message.workers}} > 0) s += (s!=''?', ':'')+'{{message.workers}} travailleurs';
+		document.write(s);
+	</script> 
+	sur la planète <a href="/s03/map/?g={{message.g}}&s={{message.s}}">{{message.planetname}} ({{message.g}}.{{message.s}}.{{message.p}})</a>, nous avons été payé la somme de <img src="{{PATH_IMAGES}}interface/credits.gif" title="Crédits" class="icon" width="16" height="16"> {{message.credits}} crédits.
+    {% elif message.type == 504 %}Suite au dépôt de 
+	<script>
+		var s = "";
+
+		if({{message.ore}} > 0) s += '{{message.ore}} unités de minerai';
+		if({{message.hydrocarbon}} > 0) s += (s!=''?', ':'')+'{{message.hydrocarbon}} unités d\'hydrocarbure'; 
+		
+		if({{message.scientists}} > 0) s += (s!=''?', ':'')+'{{message.scientists}} scientifiques';
+		if({{message.soldiers}} > 0) s += (s!=''?', ':'')+'{{message.soldiers}} soldats';
+		if({{message.workers}} > 0) s += (s!=''?', ':'')+'{{message.workers}} travailleurs';
+		document.write(s);
+	</script>
+	sur la planète <a href="/s03/map/?g={{message.g}}&s={{message.s}}">{{message.planetname}} ({{message.g}}.{{message.s}}.{{message.p}})</a>, nous avons été payé la somme de <img src="{{PATH_IMAGES}}interface/credits.gif" title="Crédits" class="icon" width="16" height="16"> {{message.credits}} crédits.
+    {% elif message.type == 505 %}Une flotte de <a href="/s03/profile-view/?name={{message.username}}">{{message.username}}</a> vient de décharger des ressources sur notre planète <a href="/s03/planet-buildings/?planet={{message.planetid}}">{{message.planetname}} ({{message.g}}.{{message.s}}.{{message.p}})</a>.<br/>
+	<script>if({{message.ore}} > 0 || {{message.hydrocarbon}} > 0) {
+	document.write('Nos stocks ont augmenté de '); if({{message.ore}} > 0){ document.write('{{message.ore}} unités de minerai'); if({{message.hydrocarbon}} > 0) document.write(" et de {{message.hydrocarbon}} unités d'hydrocarbure");} else document.write("{{message.hydrocarbon}} unités d'hydrocarbure"); document.write('.<br/>'); }
+	if({{message.scientists}}>0 || {{message.soldiers}}>0 || {{message.workers}} > 0) {
+		document.write('Nous notons'+(({{message.ore}}>0 || {{message.hydrocarbon}}>0)?' aussi':'') +' l\'arrivée de personnel : ');
+		if({{message.scientists}}>0) document.write('{{message.scientists}} scientifiques, ');
+		if({{message.soldiers}}>0) document.write('{{message.soldiers}} soldats, ');
+		if({{message.workers}}>0) document.write('{{message.workers}} travailleurs, ');
+		document.write('ils se sont parfaitement intégrés et travaillent désormais sous nos ordres.');
+		}
+	</script>
+	Nous avons payé la somme de <img src="{{PATH_IMAGES}}interface/credits.gif" title="Crédits" class="icon" width="16" height="16"> {{message.credits}} crédits.
+	{% elif message.type == 510 %}La production de la planète <a href="/s03/map/?g={{message.g}}&s={{message.s}}">{{message.planetname}} ({{message.g}}.{{message.s}}.{{message.p}})</a> a rapporté la somme de <img src="{{PATH_IMAGES}}interface/credits.gif" title="Crédits" class="icon" width="16" height="16"> {{message.credits}} crédits.
+    {% elif message.type == 600 %}Nous occupons désormais la planète <a href="/s03/map/?g={{message.g}}&s={{message.s}}">{{message.planetname}} ({{message.g}}.{{message.s}}.{{message.p}})</a>.<br/>
+	Nous devrions vérifier les installations et <a href="/s03/planet-buildings/?planet={{message.planetid}}">construire les bâtiments</a> dont nous avons besoin.
+	{% elif message.type == 602 %}Suite à votre ordre, nous avons essayé d'abandonner la planète <a href="/s03/map/?g={{message.g}}&s={{message.s}}">({{message.g}}.{{message.s}}.{{message.p}})</a>, malheureusement, d'importantes manifestations se sont déclarées dans toute la colonie pour montrer leur indignation face à cette décision.<br/>
+	Les travailleurs qui étaient censés détruire les bâtiments de la colonie ont été arrêtés avant même de commencer. Il s'en est suivi un coup d'état et une déclaration d'indépendance émanant des dirigeants temporaires de la planète.<br/>
+	Nous ne contrôlons plus la planète et les bâtiments sont restés fonctionnels ! Une autre nation pourrait s'en emparer et s'en servir contre nous.<br/>
+	Nous perdons 20 points de contrôle sur toutes nos planètes.
+	{% elif message.type == 700 %}La flotte de vaisseaux marchands venue prendre nos ressources a disparu de nos radars. La guilde des marchands parle d'une avarie dans un des moteurs des vaisseaux qui aurait fait exploser toute la flotte. Celle-ci se refuse par la même occasion à payer les <img src="{{PATH_IMAGES}}interface/credits.gif" title="Crédits" class="icon" width="16" height="16"> <script>document.write({{message.credits}}/2);</script> crédits restant de la vente.
+	{% elif message.type == 701 %}La flotte de vaisseaux marchands venue prendre nos ressources a disparu de nos radars. La guilde des marchands parle d'une attaque de pirates. Celle-ci se refuse par la même occasion à payer les <img src="{{PATH_IMAGES}}interface/credits.gif" title="Crédits" class="icon" width="16" height="16"> <script>document.write({{message.credits}}/2);</script> crédits restant de la vente.
+	{% elif message.type == 702 %}Un rapide inventaire a été effectué et il semblerait que le vaisseau marchand ait oublié une partie de sa cargaison sur la planète <a href="/s03/map/?g={{message.g}}&s={{message.s}}">{{message.planetname}} ({{message.g}}.{{message.s}}.{{message.p}})</a>.<br/>Après vérification, nous avons retrouvé <script>
+	if({{message.ore}} > 0){
+		document.write('{{message.ore}} unités de minerai'); 
+		if({{message.hydrocarbon}} > 0) document.write(" et {{message.hydrocarbon}} unités d'hydrocarbure.");
+	}
+	else
+		document.write(" {{message.hydrocarbon}} unités d'hydrocarbure.");</script>
+	{% elif message.type == 710 %}De violentes éruptions solaires provoquent des orages électromagnétiques sur la planète <a href="/s03/map/?g={{message.g}}&s={{message.s}}">{{message.planetname}} ({{message.g}}.{{message.s}}.{{message.p}})</a>. Ces orages chargent le sol et des courts-circuits peuvent se produire entre les appareils électriques et la terre. Afin d'éviter tout accident, nous sommes obligés de baisser notre production d'environ 60% jusqu'à ce que ces éruptions se terminent.
+	{% elif message.type == 711 %}Les éruptions solaires ont cessé sur <a href="/s03/map/?g={{message.g}}&s={{message.s}}">{{message.planetname}} ({{message.g}}.{{message.s}}.{{message.p}})</a>. Nous reprenons une activité normale.
+	{% elif message.type == 720 %}Une intrusion a eu lieu dans nos entrepôts de <a href="/s03/planet-trainings/?planet={{message.planetid}}">{{message.planetname}} ({{message.g}}.{{message.s}}.{{message.p}})</a>. Après inventaire des stocks, il semblerait <script>
+	if({{message.ore}} > 0 || {{message.hydrocarbon}} > 0) {
+		if({{message.ore}} > 0){
+			document.write('que {{message.ore}} unités de minerai'); 
+			if({{message.hydrocarbon}} > 0) document.write(" et {{message.hydrocarbon}} unités d'hydrocarbure");
+		}
+		else
+			document.write("que {{message.hydrocarbon}} unités d'hydrocarbure");
+
+		document.write(" aient été volées.<br/>Nous ");
+	}
+	else
+		document.write("que rien n'ait été volé.<br/>Cependant, nous "); </script>
+	devrions augmenter nos effectifs de <a href="/s03/planet-trainings/?planet={{message.planetid}}">soldats</a> afin de prévenir ce genre d'agissement dans le futur.<br/>Nous perdons 3 points de contrôle sur cette planète.
+	{% elif message.type == 721 %}Des rassemblements se sont formés sur <a href="/s03/planet-trainings/?planet={{message.planetid}}">{{message.planetname}} ({{message.g}}.{{message.s}}.{{message.p}})</a> pour manifester contre le manque de sécurité et ont dégénéré en émeutes générales. Les gens sont devenus incontrôlables et s'en sont pris aux bâtiments administratifs.
+	<script>
+	if({{message.scientists}} > 0 || {{message.soldiers}} > 0 || {{message.workers}} > 0) {
+		document.write("Il y a eu beaucoup de blessés dont plusieurs morts. Il y a à déplorer la mort de ");
+
+		if({{message.scientists}} > 0){
+			document.write("{{message.scientists}} scientifiques"); 
+			if({{message.soldiers}} > 0) document.write(", {{message.soldiers}} soldats");
+			if({{message.workers}} > 0) document.write(" et {{message.workers}} travailleurs");
+		}
+		else
+		if({{message.soldiers}} > 0){
+			document.write("{{message.soldier}} soldats");
+			if({{message.workers}} > 0) document.write(" et {{message.workers}} travailleurs");
+		}
+		else
+		if({{message.workers}} > 0) document.write("{{message.workers}} travailleurs");
+
+		document.write(".<br/>La population est encore sous le choc.");
+	}
+	else
+	{
+		document.write("Il y a eu beaucoup de blessés mais heureusement aucun mort n'est à déplorer.");
+	}
+	</script><br/>Nous perdons 17 points de contrôle sur cette planète et 2 points sur toutes les autres planètes.
+    {% elif message.type == 722 %}Une mauvaise manoeuvre sur un chantier ..
+    {% elif message.type == 723 %}Un accident est survenu dans un laboratoire de recherche sur <a href="/s03/planet-trainings/?planet={{message.planetid}}">{{message.planetname}} ({{message.g}}.{{message.s}}.{{message.p}})</a>.<br/>
+	Plusieurs <a href="/s03/planet-trainings/?planet={{message.planetid}}"> scientifiques</a> ont été blessés dont {{message.scientists}} mortellement.
+	{% elif message.type == 724 %}La flotte <script>LinkFleet('{{message.fleetid}}','{{message.fleetname}}')</script> a subi une avarie. Le temps que les techniciens de bord réparent les vaisseaux endommagés, la flotte a perdu une heure sur l'horaire prévu.
+	{% elif message.type == 725 %}Excédé par le peu de soutien et d'attention que vous pretez à la planète <a href="map.asp?g={g}&s={s}">({g}.{s}.{p})</a>, les dirigeants de la colonie ont décidé de déclarer leur indépendance !<br/>Nous n'avons désormais plus aucun contrôle sur cette planète.
+	{% elif message.type == 726 %}Le bâtiment "{{message.building}}"
+	{% elif message.type == 730 %}Nous venons de perdre le contact avec la flotte {fleetname} ! Nos techniciens ne sont pas en mesure de nous en expliquer la cause et nous n'avons reçu aucun signalement de cette flotte à propos d'un quelconque problème.
+	{% elif message.type == 731 %}Une flotte connue sous le nom de {fleetname} vient de nous transmettre qu'elle vient d'arriver à destination ! Nous avions perdu le contact avec cette flotte précédemment.
+	{% elif message.type == 750 %}La population de <a href="/s03/planet-view/?planet={{message.planetid}}">{{message.planetname}} ({{message.g}}.{{message.s}}.{{message.p}})</a> est contente et la croissance de la population augmente.
+	{% elif message.type == 751 %}Le baby-boom sur <a href="/s03/planet-view/?planet={{message.planetid}}">{{message.planetname}} ({{message.g}}.{{message.s}}.{{message.p}})</a> est terminé et la croissance de la population est revenue à son niveau normal.
+	{% elif message.type == 752 %}De riches filons de minerai ont été découverts sur <a href="/s03/planet-view/?planet={{message.planetid}}">{{message.planetname}} ({{message.g}}.{{message.s}}.{{message.p}})</a>, la production de minerai est augmentée.
+	{% elif message.type == 753 %}Nous avons épuisé les filons de minerai que nous avions localisés sur <a href="/s03/planet-view/?planet={{message.planetid}}">{{message.planetname}} ({{message.g}}.{{message.s}}.{{message.p}})</a>, la production de minerai est redescendue au niveau normal.
+	{% elif message.type == 754 %}De riches gisements d'hydrocarbure ont été découverts sur <a href="/s03/planet-view/?planet={{message.planetid}}">{{message.planetname}} ({{message.g}}.{{message.s}}.{{message.p}})</a>, la production en hydrocarbure est augmentée.
+	{% elif message.type == 755 %}Nous avons épuisé les riches gisements d'hydrocarbure que nous avions localisés sur <a href="/s03/planet-view/?planet={{message.planetid}}">{{message.planetname}} ({{message.g}}.{{message.s}}.{{message.p}})</a>, la production en hydrocarbure est redescendue au niveau normal.
+	{% elif message.type == 780 %}Un de nos hommes a récemment obtenu le grade de commandant.<br/>Le commandant {commandername} a juré fidélité et se tient prêt à vous servir.<br/>Vous devriez inspecter <a href="commanders.asp">ses compétences</a> et l'affecter à une place qui lui conviendrait.
+	{% elif message.type == 790 %}D'importants séismes ont eu lieu sur la planète <a href="/s03/planet-buildings/?planet={{message.planetid}}">{{message.planetname}} ({{message.g}}.{{message.s}}.{{message.p}})</a>. Beaucoup de bâtiments ont souffert et le bâtiment "{{message.building}}" s'est effondré. Nous déplorons la mort de {{message.workers}} travailleurs. Nous perdons 100 points de contrôle sur cette planète.
+	{% elif message.type == 791 %}Un énorme ver de sable a été aperçu près de la colonie de la planète <a href="/s03/planet-buildings/?planet={{message.planetid}}">{{message.planetname}} ({{message.g}}.{{message.s}}.{{message.p}})</a>, il s'est attaqué à plusieurs bâtiments avant de se focaliser sur le bâtiment "{{message.building}}" puis il est reparti.<br/>Les ruines du bâtiment sont en train d'être déblayées, les autres bâtiments sont encore fonctionnels et sont en train d'être réparés.<br/> Les personnes sur place ont pu être évacuées à temps et aucun mort n'est à déplorer.<br/>Nous perdons 20 points de contrôle sur cette planète.
+	{% elif message.type == 795 %}Le ministère des finances n'approuve pas vos dépenses et vous le fait savoir.
+	{% elif message.type == 796 %}Le ministère des finances prévoit une banqueroute prochainement si le déficit n'est pas comblé d'ici quelques jours.
+	{% elif message.type == 797 %}L'opposition dénonce publiquement votre pitoyable gestion de l'argent de la nation.
+	{% elif message.type == 798 %}Cette situation n'est plus tenable, vous devez réagir très rapidement. Vos propres partisans commencent à se désolidariser de vous.
+	{% elif message.type == 800 %}Nos services de contre-espionnage ont repéré un espion et l'ont maîtrisé. Malheureusement, celui-ci s'est suicidé en cellule avant de pouvoir nous révéler le nom de son employeur.
+	{% elif message.type == 801 %}Nos services de contre-espionnage ont capté un message codé provenant certainement d'un espion, destiné à <a href="/s03/profile-view/?name={{message.description}}">{{message.description}}</a>, contenant des informations sur l'ensemble de notre nation.
+	{% elif message.type == 802 %}Nos services de contre-espionnage ont capté un message codé provenant certainement d'un espion, destiné à <a href="/s03/profile-view/?name={{message.description}}">{{message.description}}</a>, contenant des données tactiques sur l'ensemble de nos flottes. Nous devrions les redéployer discrètement afin que l'ennemi ait des informations périmées.
+	{% elif message.type == 803 %}Nos services de contre-espionnage ont capté un message codé provenant certainement d'un espion, destiné à <a href="/s03/profile-view/?name={{message.description}}">{{message.description}}</a>, contenant des informations capitales sur la planète <a href="/s03/map/?g={{message.g}}&s={{message.s}}">{{message.planetname}} ({{message.g}}.{{message.s}}.{{message.p}})</a>. Il est possible que l'ennemi connaisse nos forces de défenses.
+	{% elif message.type == 810 %}L'espion de la Compagnie des Pirates de la Fosse est revenu avec <a href="/s03/spy-report/?id={{message.spyid}}&key={{message.spykey}}" title="Rapport">son rapport</a> sur la nation <a href="/s03/profile-view/?name={{message.description}}">{{message.description}}</a>.
+	{% elif message.type == 820 %}L'espion de la Compagnie des Pirates de la Fosse est revenu avec <a href="/s03/spy-report/?id={{message.spyid}}&key={{message.spykey}}" title="Rapport">son rapport</a>  sur les flottes de <a href="/s03/profile-view/?name={{message.description}}">{{message.description}}</a>.
+	{% elif message.type == 830 %}L'espion de la Compagnie des Pirates de la Fosse est revenu avec <a href="/s03/spy-report/?id={{message.spyid}}&key={{message.spykey}}" title="Rapport">son rapport</a> sur la planète <a href="/s03/map/?g={{message.g}}&s={{message.s}}">{{message.planetname}} ({{message.g}}.{{message.s}}.{{message.p}})</a>.
+	{% else %}{{message.type}}
+	{% endif %}
+	</div>
+	</td>
+</tr>
+{% empty %}
+<tr class="header" ><td colspan="2">Aucun rapport</td></tr>
+{% endfor %}
+</table>
+</div>
+{% endblock %}

@@ -3,20 +3,12 @@ let defaultTitle = document.title
 
 function setTitle(title) { document.title = defaultTitle + ' - ' + title }
 
-function putMenuLevel1(url, label) { document.write('<a href="' + url + '" class="menu lvl1"><span class="col">' + label + '</span><i class="fa-fw fas fa-chevron-down"></i></a>') }
+function putMenuLevel1(url, content) { document.write('<a href="' + url + '" class="menu lvl1"><span class="col pe-3">' + content + '</span><i class="fa-fw fas fa-chevron-down"></i></a>') }
 
-function putMenuLevel2(url, label, name, selectedMenu) {
-
-    let selected = (name == selectedMenu) ? ' selected' : ''
-    document.write('<a href="' + url + '" class="menu lvl2' + selected + '"><span class="col"><i class="fa-fw fas fa-caret-right"></i>' + label + '</a>')
-    
-    if (selected) setTitle(label)
-}
-
-function putMenuLevel3(url, label, name, selectedMenu) {
+function putMenuLevel2(url, content, name, label, selectedMenu) {
 
     let selected = (name == selectedMenu) ? ' selected' : ''
-    document.write('<a href="' + url + '" class="menu lvl3' + selected + '"><span class="col"><i class="fa-fw fas fa-caret-right"></i>' + label + '</a>')
+    document.write('<a href="' + url + '" class="menu lvl2' + selected + '"><div class="flex-grow-1 row gx-2 align-items-baseline"><i class="fa-fw fas fa-caret-right pe-2"></i><div class="col">' + content + '</div></div></a>')
     
     if (selected) setTitle(label)
 }
@@ -24,102 +16,44 @@ function putMenuLevel3(url, label, name, selectedMenu) {
 function setMailsCount(count) {
 
 	let elem = $('mailscount')
-	if (count > 0) elem.innerHTML = '(' + count + ')'
+	if (count > 0) elem.innerHTML = count
 	else elem.innerHTML = ''
 }
 
 function setReportsCount(count) {
 
 	let elem = $('reportscount')
-	if (count > 0) elem.innerHTML = '(' + count + ')'
+	if (count > 0) elem.innerHTML = count
 	else elem.innerHTML = ''
 }
 
-putMenuLevel1('/s03/overview/', 'Empire')
+putMenuLevel1('/s03/mails/', 'Communication')
 
-    putMenuLevel2('/s03/overview/', 'Vue d\'ensemble', 'overview', '{{selectedmenu}}')
-    putMenuLevel2('/s03/upkeep/', 'Coût d\'entretien', 'upkeep', '{{selectedmenu}}')
-    putMenuLevel2('/s03/commanders/', 'Commandants', 'commanders', '{{selectedmenu}}')
-    putMenuLevel2('/s03/fleets/', 'Flottes', 'fleets', '{{selectedmenu}}')
+    putMenuLevel2('/s03/empire-reports/', '<div class="row gx-2 align-items-baseline"><div class="col">Rapports</div><div class="col-auto text-success"><span id="reportscount" class="badge text-bg-success"></span></div></div>', 'reports', 'Rapports', '{{selectedmenu}}')
+    putMenuLevel2('/s03/mail-inbox/', '<div class="row gx-2 align-items-baseline"><div class="col">Mails</div><div class="col-auto text-success"><span id="mailscount" class="badge text-bg-success"></span></div></div>', 'mails', 'Mails', '{{selectedmenu}}')
 
-        {% if 'fleets_' in selectedmenu %}
-        putMenuLevel3('/s03/fleets/', 'Flottes', 'fleets_fleets', '{{selectedmenu}}')
-        putMenuLevel3('/s03/fleets-orbiting/', 'Flottes en orbite', 'fleets_orbiting', '{{selectedmenu}}')
-        putMenuLevel3('/s03/fleets-standby/', 'Vaisseaux au sol', 'fleets_standby', '{{selectedmenu}}')
-        putMenuLevel3('/s03/fleets-ships-stats/', 'Détruits / perdus', 'fleets_ships_stats', '{{selectedmenu}}')
-        {% endif %}
+putMenuLevel1('/s03/empire-view/', 'Empire')
 
-    putMenuLevel2('/s03/planets/', 'Planètes', 'planets', '{{selectedmenu}}')
-    putMenuLevel2('/s03/market-sell/', 'Marchands', 'merchants', '{{selectedmenu}}')
-
-        {% if 'merchants_' in selectedmenu %}
-        putMenuLevel3('/s03/market-buy/', 'Achat', 'merchants_buy', '{{selectedmenu}}')
-        putMenuLevel3('/s03/market-sell/', 'Vente', 'merchants_sell', '{{selectedmenu}}')
-        {% endif %}
-
-    putMenuLevel2('/s03/research/', 'Recherches', 'research', '{{selectedmenu}}')
-    putMenuLevel2('/s03/alliance/', 'Alliance', 'alliance', '{{selectedmenu}}')
-
-        {% if 'allianceno_' in selectedmenu %}
-        putMenuLevel3('/s03/alliance-create/', 'Création', 'allianceno_create', '{{selectedmenu}}')
-        putMenuLevel3('/s03/alliance-invitations/', 'Invitations', 'allianceno_invitations', '{{selectedmenu}}')
-        {% endif %}
-
-        {% if 'alliance_' in selectedmenu %}
-        putMenuLevel3('/s03/alliance/', 'Vue d\'ensemble', 'alliance_overview', '{{selectedmenu}}')
-        {% if show_management %}putMenuLevel3('/s03/alliance-manage/', 'Gestion', 'alliance_manage', '{{selectedmenu}}'){% endif %}
-        {% if show_members %}putMenuLevel3('/s03/alliance-members/', 'Membres', 'alliance_members', '{{selectedmenu}}'){% endif %}
-        putMenuLevel3('/s03/alliance-naps/', 'PNA', 'alliance_naps', '{{selectedmenu}}')
-        putMenuLevel3('/s03/alliance-tributes/', 'Tributs', 'alliance_tributes', '{{selectedmenu}}')
-        putMenuLevel3('/s03/alliance-wars/', 'Guerres', 'alliance_wars', '{{selectedmenu}}')
-        putMenuLevel3('/s03/alliance-wallet/', 'Portefeuille', 'alliance_wallet', '{{selectedmenu}}')
-        {% if show_reports %}putMenuLevel3('/s03/alliance-reports/', 'Rapports', 'alliance_reports', '{{selectedmenu}}'){% endif %}
-        putMenuLevel3('/s03/alliance-invitations/', 'Invitations', 'alliance_invitations', '{{selectedmenu}}')
-        {% endif %}
+    putMenuLevel2('/s03/empire-view/', 'Vue d\'ensemble', 'empire', 'Vue d\'ensemble', '{{selectedmenu}}')
+    putMenuLevel2('/s03/empire-commanders/', 'Commandants', 'commanders', 'Commandants', '{{selectedmenu}}')
+    putMenuLevel2('/s03/empire-fleets/', 'Flottes', 'fleets', 'Flottes', '{{selectedmenu}}')
+    putMenuLevel2('/s03/empire-techs/', 'Recherches', 'techs', 'Recherches', '{{selectedmenu}}')
+    putMenuLevel2('/s03/alliance-view/', 'Alliance', 'alliance', 'Alliance', '{{selectedmenu}}')
 
 putMenuLevel1('/s03/map/', 'Galaxie')
 
-    putMenuLevel2('/s03/map/?g={{cur_g}}&s={{cur_s}}', 'Carte spatiale', 'map', '{{selectedmenu}}')
-    putMenuLevel2('/s03/ranking-alliances/', 'Alliances', 'ranking', '{{selectedmenu}}')
-    putMenuLevel2('/s03/mercenary-intelligence/', 'Espionnage', 'intelligence', '{{selectedmenu}}')
+    putMenuLevel2('/s03/map/?g={{cur_g}}&s={{cur_s}}', 'Carte spatiale', 'map', 'Carte spatiale', '{{selectedmenu}}')
+    putMenuLevel2('/s03/ranking-players/', 'Classement', 'ranking', 'Classement', '{{selectedmenu}}')
 
-putMenuLevel1('/s03/planet/?planet={{planetid}}', 'Planète ({{cur_g}}.{{cur_s}}.{{cur_p}})')
+putMenuLevel1('/s03/planet-view/?planet={{planetid}}', '<div class="row gx-2 align-items-baseline"><div class="col">Planète</div><div class="col-auto">{{cur_g}}.{{cur_s}}.{{cur_p}}</div></div>')
 
-    putMenuLevel2('/s03/planet/?planet={{planetid}}', 'Vue d\'ensemble', 'planet', '{{selectedmenu}}')
-    putMenuLevel2('/s03/production/?planet={{planetid}}', 'Production', 'production', '{{selectedmenu}}')
-    putMenuLevel2('/s03/buildings/?planet={{planetid}}', 'Bâtiments', 'buildings', '{{selectedmenu}}')
-    putMenuLevel2('/s03/shipyard/?planet={{planetid}}', 'Chantier spatial', 'shipyard_all', '{{selectedmenu}}')
-    putMenuLevel2('/s03/shipyard/?planet={{planetid}}&recycle=1', 'Recyclage', 'shipyard_recycle', '{{selectedmenu}}')
-    putMenuLevel2('/s03/training/?planet={{planetid}}', 'Entraînement', 'training', '{{selectedmenu}}')
-    putMenuLevel2('/s03/orbit/?planet={{planetid}}', 'Orbite', 'orbit', '{{selectedmenu}}')
-    putMenuLevel2('/s03/market-sell/?planet={{planetid}}', 'Marché', 'market', '{{selectedmenu}}')
-
-        {% if 'market_' in selectedmenu %}
-        putMenuLevel3('/s03/market-buy/?planet={{planetid}}', 'Achat', 'market_buy', '{{selectedmenu}}')
-        putMenuLevel3('/s03/market-sell/?planet={{planetid}}', 'Vente', 'market_sell', '{{selectedmenu}}')
-        {% endif %}
-
-putMenuLevel1('/s03/mails/', 'Communication')
-
-    putMenuLevel2('/s03/nation/', 'Infos nations', 'nation', '{{selectedmenu}}')
-    putMenuLevel2('/s03/mails/', 'Messagerie <span id="mailscount"></span>', 'mails', '{{selectedmenu}}')
-
-        {% if 'mails_' in selectedmenu %}
-        putMenuLevel3('/s03/mails/', 'Reçu', 'mails_inbox', '{{selectedmenu}}')
-        putMenuLevel3('/s03/mails/?a=sent', 'Envoyé', 'mails_sent', '{{selectedmenu}}')
-        putMenuLevel3('/s03/mails/?a=new', 'Composer', 'mails_compose', '{{selectedmenu}}')
-        putMenuLevel3('/s03/mails/?a=ignorelist', 'Nations ignorées', 'mails_ignorelist', '{{selectedmenu}}')
-        {% endif %}
-
-    putMenuLevel2('/s03/reports/', 'Rapports <span id="reportscount"></span>', 'reports', '{{selectedmenu}}')
-    putMenuLevel2('/s03/chat/', 'Salon', 'chat', '{{selectedmenu}}')
-    putMenuLevel2('/s03/notes/', 'Notes', 'notes', '{{selectedmenu}}')
-
-putMenuLevel1('/s03/options/', 'Compte')
-
-    putMenuLevel2('/s03/help/', 'Aide', 'help', '{{selectedmenu}}')
-    putMenuLevel2('/s03/options/', 'Options', 'options', '{{selectedmenu}}')
-    putMenuLevel2('https://ngexile.freddecgames.com/accounts/logout/', 'Déconnexion', 'logout', '{{selectedmenu}}')
+    putMenuLevel2('/s03/planet-view/?planet={{planetid}}', 'Vue d\'ensemble', 'planet', 'Vue d\'ensemble', '{{selectedmenu}}')
+    putMenuLevel2('/s03/planet-production/?planet={{planetid}}', 'Production', 'production', 'Production', '{{selectedmenu}}')
+    putMenuLevel2('/s03/planet-working/?planet={{planetid}}', 'Fonctionnement', 'working', 'Fonctionnement', '{{selectedmenu}}')
+    putMenuLevel2('/s03/planet-buildings/?planet={{planetid}}', 'Bâtiments', 'buildings', 'Bâtiments', '{{selectedmenu}}')
+    putMenuLevel2('/s03/planet-ships/?planet={{planetid}}', 'Chantier spatial', 'ships', 'Chantier spatial', '{{selectedmenu}}')
+    putMenuLevel2('/s03/planet-trainings/?planet={{planetid}}', 'Entraînement', 'trainings', 'Entraînement', '{{selectedmenu}}')
+    putMenuLevel2('/s03/planet-orbit/?planet={{planetid}}', 'Orbite', 'orbit', 'Orbite', '{{selectedmenu}}')
 
 {% if new_mail %}setMailsCount({{new_mail}}){% endif %}
 {% if new_report %}setReportsCount({{new_report}}){% endif %}

@@ -1,0 +1,101 @@
+{% extends 's03/layout.html' %}
+
+{% block content %}
+<script type="text/javascript" src='/static/scripts/third-party/tooltip.js?v=1'></script>
+<script>
+tipname = "hint";
+tipwidth = 450;
+tiptext = $("hinttext");
+</script>
+
+<table class="w-100">
+<tr>
+<td align="center">
+
+	{% if overview %}
+	<div id="productionoverview">
+	<table width="100%" class=default>
+	<tr class=title><td colspan=3>Abondance</td></tr>
+	<tr class=header><td>Elément</td><td>Minerai</td><td>Hydrocarbure</td></tr>
+	<tr><td width='50%'>Planète</td><td width='25%' align=right>{{a_ore}}%</td><td width='25%' align=right>{{a_hydrocarbon}}%</td></tr>
+	<tr class="clear"><td colspan=3>&nbsp;</td></tr>
+	</table>
+
+	<table width="100%" class=default>
+
+	<tr class=title><td colspan=4>Production</td></tr>
+	<tr><td width='50%'>Effectifs</td><td width='50%' colspan=3 nowrap>{{workers}} / {{workers_required}} requis, {{production_percent}}%</td></tr>
+	<tr><td>Condition des installations</td><td colspan=3 nowrap>{% if condition_excellent %}Excellente{% endif %}{% if condition_good %}Bonne{% endif %}{% if condition_fair %}Passable{% endif %}{% if condition_bad %}Mauvaise{% endif %}{% if condition_catastrophic %}Catastrophique{% endif %}, {% if repairing %}réparation en cours{% endif %}{% if decaying %}en détérioration{% endif %}</td></tr>
+	<tr><td>Estimation de la production </td><td colspan=3 nowrap>{{final_production}}%</td></tr>
+	<tr class="clear"><td colspan=4>&nbsp;</td></tr>
+
+
+	<tr class="header"><td>Elément</td><td>Minerai</td><td>Hydrocarbure</td><td>Energie</td></tr>
+
+	<tr class="category"><td colspan=4>Bâtiments</td></tr>
+	{% for building in buildings %}
+	<script>
+	var description{{building.id}}='{{building.description|escapejs}}';
+	</script>
+
+	<tr class="item" align=right>
+	<td align="left"><a href="/s03/help/?cat=buildings#{{building.id}}" onMouseover="ddrivetip(description{{building.id}})" onMouseout="hideddrivetip()"><b>{{building.name}}</b></a> x{{building.quantity}}</td>
+	<td>{{building.production_ore}}</td>
+	<td>{{building.production_hydrocarbon}}</td>
+	<td>{{building.production_energy}}</td>
+	</tr>
+	{% endfor %}
+	{% if subtotal %}
+	<tr class="item" align="right">
+	<td align="left">Sous total</td>
+	<td><img src="{{PATH_IMAGES}}interface/ore.gif" class="icon" title="Minerai" width=16 height=16> {{production_ore}}</td>
+	<td><img src="{{PATH_IMAGES}}interface/hydrocarbon.gif" class="icon" title="Hydrocarbure" width=16 height=16> {{production_hydrocarbon}}</td>
+	<td><img src="{{PATH_IMAGES}}interface/energy.gif" class="icon" title="Energie" width=16 height=16> {{production_energy}}</td>
+	</tr>
+	{% endif %}
+	<tr class="clear"><td colspan="4">&nbsp;</td></tr>
+	{% if bonus %}
+	<tr class="category"><td colspan="4">Bonus</td></tr>
+	{% for item in bonuses %}
+	<script>
+	var description2{{item.id}}='{{item.description|escapejs}}';
+	</script>
+	<tr class="item" align=right>
+	<td align="left">
+		{% if item.building %}<a href="/s03/help/?cat=buildings#{{item.id}}" onMouseover="ddrivetip(description2{{item.id}})" onMouseout="hideddrivetip()"><b>{{item.name}}</b></a>{% endif %}
+		{% if item.commander %}<img src="{{PATH_IMAGES}}interface/commander.gif" width=10 height=6 class="smallicon" title="Commandant"><a href="/s03/empire-commanders/#{{item.id}}" title="Informations sur {{item.name}}"><b>{{item.name}}</b></a>{% endif %}
+		{% if item.research %}<a href="/s03/help/?cat=research#{{item.id}}" onMouseover="ddrivetip(description2{{item.id}})" onMouseout="hideddrivetip()"><b>{{item.name}}</b></a> nv{{item.level}}{% endif %}
+	</td>
+	<td>
+		<span class={% if item.ore_positive %}plus{% endif %}{% if item.ore_negative %}minus{% endif %}>{{item.mod_production_ore}}%</span>
+	</td>
+	<td>
+		<span class={% if item.hydrocarbon_positive %}plus{% endif %}{% if item.hydrocarbon_negative %}minus{% endif %}>{{item.mod_production_hydrocarbon}}%</span>
+	</td>
+	<td>
+		<span class={% if item.energy_positive %}plus{% endif %}{% if item.energy_negative %}minus{% endif %}>{{item.mod_production_energy}}%</span>
+	</td>
+	</tr>
+	{% endfor %}
+	<tr class="item" align="right">
+	<td align="left">Sous total</td>
+	<td><img src="{{PATH_IMAGES}}interface/ore.gif" class="icon" title="Minerai" width=16 height=16> {{bonus_production_ore}}</td>
+	<td><img src="{{PATH_IMAGES}}interface/hydrocarbon.gif" class="icon" title="Hydrocarbure" width=16 height=16> {{bonus_production_hydrocarbon}}</td>
+	<td><img src="{{PATH_IMAGES}}interface/energy.gif" class="icon" title="Energie" width=16 height=16> {{bonus_production_energy}}</td>
+	</tr>
+	<tr class="clear"><td colspan=4>&nbsp;</td></tr>
+	{% endif %}
+	<tr class="item" align="right">
+	<td align="left">Production totale</td>
+	<td><img src="{{PATH_IMAGES}}interface/ore.gif" class="icon" title="Minerai" width=16 height=16> {{total_production_ore}}</td>
+	<td><img src="{{PATH_IMAGES}}interface/hydrocarbon.gif" class="icon" title="Hydrocarbure" width=16 height=16> {{total_production_hydrocarbon}}</td>
+	<td><img src="{{PATH_IMAGES}}interface/energy.gif" class="icon" title="Energie" width=16 height=16> {{total_production_energy}}</td>
+	</tr>
+	</table>
+	</div>
+	{% endif %}
+
+</td>
+</tr>
+</table>
+{% endblock %}

@@ -1,6 +1,4 @@
-# -*- coding: utf-8 -*-
-
-from ._global import *
+from .base import *
 
 class View(GlobalView):
 
@@ -10,9 +8,9 @@ class View(GlobalView):
         if response: return response
 
         if self.AllianceId == None:
-            self.selected_menu = "allianceno.invitations"
+            self.selected_menu = "alliance"
         else:
-            self.selected_menu = "alliance.invitations"
+            self.selected_menu = "alliance"
 
         self.sLeaveCost = "leavealliancecost"
 
@@ -25,7 +23,7 @@ class View(GlobalView):
             oRs = oConnExecute("SELECT sp_alliance_accept_invitation(" + str(self.UserId) + "," + dosql(alliance_tag) + ")")
 
             if oRs[0] == 0:
-                return HttpResponseRedirect("/s03/alliance/")
+                return HttpResponseRedirect("/s03/alliance-view/")
 
             elif oRs[0] == 4:
                 self.invitation_status = "max_members_reached"
@@ -38,7 +36,7 @@ class View(GlobalView):
             if request.POST.get("leave", "") == "1":
                 oRs = oConnExecute("SELECT sp_alliance_leave(" + str(self.UserId) + ",0)")
                 if oRs[0] == 0:
-                    return HttpResponseRedirect("/s03/alliance/")
+                    return HttpResponseRedirect("/s03/alliance-view/")
 
         return self.DisplayInvitations()
 
@@ -104,6 +102,6 @@ class View(GlobalView):
 
             content.Parse("leave")
 
-        self.FillHeaderCredits(content)
+        content.AssignValue("allianceId", self.AllianceId)
 
         return self.Display(content)

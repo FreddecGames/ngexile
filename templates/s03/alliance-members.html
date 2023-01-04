@@ -65,7 +65,7 @@ function displayStatus(id,rank,manage,kick){
 </tr>
 
 {% for player in players %}
-<tr><td>{{player.place}}. <a href="/s03/nation/?name={{player.name}}" title="Afficher les infos sur {{player.name}}">{{player.name}}</a><br/><span class="grey">{% if player.orientation1 %}Marchand{% endif %}{% if player.orientation2 %}Militaire{% endif %}{% if player.orientation3 %}Scientifique{% endif %}{% if player.orientation4 %}Seigneur de guerre{% endif %}</span></td>
+<tr><td>{{player.place}}. <a href="/s03/profile-view/?name={{player.name}}" title="Afficher les infos sur {{player.name}}">{{player.name}}</a><br/><span class="grey">{% if player.orientation1 %}Marchand{% endif %}{% if player.orientation2 %}Militaire{% endif %}{% if player.orientation3 %}Scientifique{% endif %}{% if player.orientation4 %}Seigneur de guerre{% endif %}</span></td>
 <td align="right">
 {% if player.scoreshown %}{{player.score}}<br/><span{% if player.score_plus %} class="plus"{% endif %}{% if player.score_minus %} class="minus"{% endif %}>{% if player.score_plus %}+{% endif %}{{player.score_delta}}</span>{% endif %}
 {% if player.score_na %}<span class="grey">Non publié</span>{% endif %}

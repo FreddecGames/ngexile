@@ -1,6 +1,4 @@
-# -*- coding: utf-8 -*-
-
-from ._global import *
+from .base import *
 
 class View(GlobalView):
 
@@ -9,7 +7,7 @@ class View(GlobalView):
         response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
 
-        self.selected_menu = "ranking.players"
+        self.selected_menu = "ranking"
 
         content = GetTemplate(self.request, "ranking-players")
 

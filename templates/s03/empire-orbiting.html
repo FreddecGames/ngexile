@@ -1,0 +1,30 @@
+{% extends 's03/layout.html' %}
+
+{% block content %}
+
+    <div class="nav nav-tabs mb-3">
+        <div class="nav-item"><a href="/s03/empire-fleets/" class="nav-link">Flottes</a></div>
+        <div class="nav-item"><a href="/s03/empire-orbiting/" class="nav-link active">Flottes en orbite</a></div>
+        <div class="nav-item"><a href="/s03/empire-ground/" class="nav-link">Vaisseaux au sol</a></div>
+        <div class="nav-item"><a href="/s03/empire-stats/" class="nav-link">Détruits / perdus</a></div>
+    </div>  
+
+<div id="fleets">
+<table class="default" width="450">
+<tr class="header">
+	<td>Planète</td><td>Flottes</td>
+</tr>
+
+{% for planet in planets %}
+<tr class="smallitem">
+	<td><b><a href="/s03/planet-orbit/?planet={{planet.planetid}}">{{planet.planetname}}</a>&nbsp;<a href="/s03/map/?g={{planet.g}}&s={{planet.s}}&p={{planet.p}}">({{planet.g}}.{{planet.s}}.{{planet.p}})</a></b></td>
+	<td align=left>{% for fleet in planet.fleets %}<a title="Écrire à {{fleet.fleetowner}}" href="/s03/mails/?subject=À propos de la flotte {{fleet.fleetname}}&to={{fleet.fleetowner}}" class={% if fleet.ally %}ally{% endif %}{% if fleet.friend %}friend{% endif %}{% if fleet.enemy %}enemy{% endif %}>{% if fleet.alliance %}[{{fleet.tag}}]{% endif %} {{fleet.fleetname}} ({{fleet.fleetsignature}})</a><br/>{% endfor %}</td>
+</tr>
+{% empty %}
+<tr class="smallitem">
+	<td colspan="3" align="center">Aucune flotte étrangère en orbite de nos planètes</td>
+</tr>
+{% endfor %}
+</table>
+</div>
+{% endblock %}

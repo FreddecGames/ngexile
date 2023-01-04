@@ -1,6 +1,12 @@
 {% extends 's03/layout.html' %}
 
 {% block content %}
+
+    <div class="nav nav-tabs mb-3">
+        <div class="nav-item"><a href="/s03/ranking-players/" class="nav-link">Joueurs</a></div>
+        <div class="nav-item"><a href="/s03/ranking-alliances/" class="nav-link active">Alliances</a></div>
+    </div>
+
 <table class="default" width="600">
 
 <tr class="header">
@@ -19,7 +25,7 @@
 </td></tr>{% endif %}
 {% for alliance in alliances %}
 <tr{% if alliance.playeralliance %} class=ranking_alliance{% endif %}{% if alliance.nap %} class=ranking_nap{% endif %}{% if alliance.war %} class=ranking_war{% endif %}>
-	<td>{{alliance.place}}. <a href="/s03/alliance/?tag={{alliance.tag}}">[{{alliance.tag}}] {{alliance.name}}</a></td>
+	<td>{{alliance.place}}. <a href="/s03/alliance-view/?tag={{alliance.tag}}">[{{alliance.tag}}] {{alliance.name}}</a></td>
 	{% if alliance.hide %}<td align="right">{{alliance.score}}<br/><span{% if alliance.plus %} class="plus"{% endif %}{% if alliance.minus %} class="minus"{% endif %}>{% if alliance.plus %}+{% endif %}{{alliance.score_delta}}</span></td><td align=right>{{alliance.score_average}}</td>{% endif %}
 	<td align=right>{{alliance.members}} / {{alliance.max_members}}</td>
 	<td align=right>{{alliance.stat_colonies}}</td>

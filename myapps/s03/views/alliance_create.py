@@ -1,8 +1,4 @@
-# -*- coding: utf-8 -*-
-
-import re
-
-from ._global import *
+from .base import *
 
 class View(GlobalView):
 
@@ -11,7 +7,7 @@ class View(GlobalView):
         response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
 
-        self.selected_menu = "allianceno.create"
+        self.selected_menu = "alliance"
 
         self.name = ""
         self.tag = ""
@@ -37,7 +33,7 @@ class View(GlobalView):
 
                 self.create_result = oRs[0]
                 if self.create_result >= -1:
-                    return HttpResponseRedirect("/s03/alliance/")
+                    return HttpResponseRedirect("/s03/alliance-view/")
 
         return self.DisplayAllianceCreate()
 

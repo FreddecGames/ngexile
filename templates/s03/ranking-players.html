@@ -1,6 +1,12 @@
 {% extends 's03/layout.html' %}
 
 {% block content %}
+
+    <div class="nav nav-tabs mb-3">
+        <div class="nav-item"><a href="/s03/ranking-players/" class="nav-link active">Joueurs</a></div>
+        <div class="nav-item"><a href="/s03/ranking-alliances/" class="nav-link">Alliances</a></div>
+    </div>
+
 <table class="default">
 
 <tr class="header">
@@ -20,8 +26,8 @@
 {% if noresult %}<tr><td colspan="4" align="center">Aucune nation trouvée.</td></tr>{% endif %}
 {% for player in players %}
 <tr class="item{% if player.self %}highlight{% endif %}{% if player.ally %}ally{% endif %}">
-<td>{% if player.top10avatar %}<p align="center"><a href="/s03/nation/?name={{player.username}}" title="Afficher les informations sur {{player.username}}">{% if player.avatar %}<img src="{{player.avatar_url}}" width="64" height="64" class="avatar">{% endif %}{% if player.noavatar %}<img src="{{PATH_IMAGES}}interface/noavatar.gif" width=64 height=64 class="avatar">{% endif %}</a></p>{% endif %}{{player.place}}.&nbsp;{% if player.name %}<a href="/s03/nation/?name={{player.username}}" title="Afficher les informations sur {{player.username}}">{{player.username}}</a>{% endif %}{% if player.name_na %}Inconnu{% endif %}</td>
-<td align="right">{% if player.alliance %}<a href="/s03/alliance/?tag={{player.alliancetag}}">[{{player.alliancetag}}] {{player.alliancename}}</a>{% endif %}{% if player.noalliance %}&nbsp;{% endif %}</td>
+<td>{% if player.top10avatar %}<p align="center"><a href="/s03/profile-view/?name={{player.username}}" title="Afficher les informations sur {{player.username}}">{% if player.avatar %}<img src="{{player.avatar_url}}" width="64" height="64" class="avatar">{% endif %}{% if player.noavatar %}<img src="{{PATH_IMAGES}}interface/noavatar.gif" width=64 height=64 class="avatar">{% endif %}</a></p>{% endif %}{{player.place}}.&nbsp;{% if player.name %}<a href="/s03/profile-view/?name={{player.username}}" title="Afficher les informations sur {{player.username}}">{{player.username}}</a>{% endif %}{% if player.name_na %}Inconnu{% endif %}</td>
+<td align="right">{% if player.alliance %}<a href="/s03/alliance-view/?tag={{player.alliancetag}}">[{{player.alliancetag}}] {{player.alliancename}}</a>{% endif %}{% if player.noalliance %}&nbsp;{% endif %}</td>
 <td align="right">{{player.score}}<br/><span{% if player.plus %} class="plus"{% endif %}{% if player.minus %} class="minus"{% endif %}>{% if player.plus %}+{% endif %}{{player.score_delta}}</span></td>
 <td align="right">{{player.score_battle}}</td>
 {% if t %}

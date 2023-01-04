@@ -1,8 +1,4 @@
-# -*- coding: utf-8 -*-
-
-from ._global import *
-
-from .accounts import *
+from .base import *
 
 class View(GlobalView):
 
@@ -11,10 +7,10 @@ class View(GlobalView):
         response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
 
-        self.selected_menu = "alliance.manage"
+        self.selected_menu = "alliance"
 
-        if self.AllianceId == None: return HttpResponseRedirect("/s03/alliance/")
-        if not (self.oAllianceRights["leader"] or self.oAllianceRights["can_manage_description"] or self.oAllianceRights["can_manage_announce"]): return HttpResponseRedirect("/s03/alliance/")
+        if self.AllianceId == None: return HttpResponseRedirect("/s03/alliance-view/")
+        if not (self.oAllianceRights["leader"] or self.oAllianceRights["can_manage_description"] or self.oAllianceRights["can_manage_announce"]): return HttpResponseRedirect("/s03/alliance-view/")
 
         cat = ToInt(request.GET.get("cat", ""), 1)
         if cat < 1 or cat > 3: cat = 1

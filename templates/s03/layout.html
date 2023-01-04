@@ -1,3 +1,5 @@
+{% load humanize %}
+
 <!doctype html>
 <html lang="en">
     <head>
@@ -36,7 +38,7 @@
         <div id="super">
             
             <div id="topbar">
-                <div class="flex-grow-1 row gx-3 align-items-center">
+                <div class="flex-grow-1 row gx-4 align-items-center">
                 
                     <div class="col-auto">
                         <div class="row gx-2 align-items-center">
@@ -48,14 +50,14 @@
                     <div class="col-auto">
                         <div class="row gx-1 align-items-center">
                             <div class="col-auto"><img src="{{PATH_IMAGES}}interface/credits.gif" width="16px" /></div>
-                            <div class="col-auto"><span>{{credits}}</span></div>
+                            <div class="col-auto"><span>{{credits|intcomma}}</span></div>
                         </div>
                     </div>
                     
                     <div class="col">
                         <div class="row gx-1 align-items-center">
                             <div class="col-auto"><img src="{{PATH_IMAGES}}interface/prestige.gif" width="16px" /></div>
-                            <div class="col-auto"><span>{{prestige_points}}</span></div>
+                            <div class="col-auto"><span>{{prestige_points|intcomma}}</span></div>
                         </div>
                     </div>
                     
@@ -65,27 +67,45 @@
                             <form class="col-auto" action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_blank">
                                 <input type="hidden" name="cmd" value="_s-xclick">
                                 <input type="hidden" name="hosted_button_id" value="7XYD7SJFKQ8M4">
-                                <button type="submit" class="p-0 border-0 bg-transparent" data-bs-toggle="tooltip" data-bs-title="Make a donation">
-                                    <img src="/static/img/paypal.png" width="24px" />
+                                <button type="submit" class="p-0 border-0 bg-transparent" data-bs-toggle="tooltip" data-bs-placement="left" data-bs-title="Make a donation">
+                                    <img src="/static/img/paypal.png" width="22px" />
                                 </button>
                             </form>
 
                             <div class="col-auto">
-                                <a href="https://ko-fi.com/freddecgames" target="_blank" data-bs-toggle="tooltip" data-bs-title="Buy me a Ko-fi">
-                                    <img src="/static/img/kofi.png" width="24px" />
+                                <a href="https://ko-fi.com/freddecgames" target="_blank" data-bs-toggle="tooltip" data-bs-placement="left" data-bs-title="Buy me a Ko-fi">
+                                    <img src="/static/img/kofi.png" width="22px" />
                                 </a>
                             </div>
 
                             <div class="col-auto">
-                                <a href="https://www.patreon.com/bePatron?u=61283131" target="_blank" data-bs-toggle="tooltip" data-bs-title="Become a Patreon supporter">
-                                    <img src="/static/img/patreon.png" width="24px" />
+                                <a href="https://www.patreon.com/bePatron?u=61283131" target="_blank" data-bs-toggle="tooltip" data-bs-placement="left" data-bs-title="Become a Patreon supporter">
+                                    <img src="/static/img/patreon.png" width="22px" />
                                 </a>
                             </div>
 
                             <div class="col-auto">
-                                <a href="https://discord.gg/3UkgeeT9CV" target="_blank" data-bs-toggle="tooltip" data-bs-title="Discord">
-                                    <img src="/static/img/discord.png" width="24px" />
+                                <a href="https://discord.gg/3UkgeeT9CV" target="_blank" data-bs-toggle="tooltip" data-bs-placement="left" data-bs-title="Discord">
+                                    <img src="/static/img/discord.png" width="22px" />
                                 </a>
+                            </div>
+                            
+                        </div>
+                    </div>
+                    
+                    <div class="col-auto">
+                        <div class="row gx-2 align-items-center justify-content-center">
+                        
+                            <div class="col-auto">
+                                <a href="/s03/help/" class="fs-5"><i class="fa-fw fas fa-question-circle" data-bs-toggle="tooltip" data-bs-placement="left" data-bs-title="Aide"></i></a>
+                            </div>
+                            
+                            <div class="col-auto">
+                                <a href="/s03/profile-view/" class="fs-5"><i class="fa-fw fas fa-user-circle" data-bs-toggle="tooltip" data-bs-placement="left" data-bs-title="Options"></i></a>
+                            </div>
+                            
+                            <div class="col-auto">
+                                <a href="/accounts/logout/" class="fs-5"><i class="fa-fw fas fa-sign-out-alt" data-bs-toggle="tooltip" data-bs-placement="left" data-bs-title="Déconnexion"></i></a>
                             </div>
                             
                         </div>

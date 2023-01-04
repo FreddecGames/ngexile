@@ -1,6 +1,4 @@
-# -*- coding: utf-8 -*-
-
-from ._global import *
+from .base import *
 
 class View(GlobalView):
 

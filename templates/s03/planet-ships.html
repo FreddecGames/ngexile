@@ -1,0 +1,187 @@
+{% extends 's03/layout.html' %}
+
+
+
+{% block content %}
+<script>
+var ships=new Array();
+var shiplist=new Array();
+
+{% for category in categories %}{% for ship in category.ships %}
+{% if ship.build %}shiplist.push({{ship.id}});{% endif %}
+ships[{{ship.id}}]=new Array('{{ship.description|escapejs}}','{{ship.ship_signature}}','{{ship.ship_cargo}}','{{ship.ship_speed}}','{{ship.ship_handling}}',{{ship.ship_turrets}},{{ship.ship_power}},'{{ship.ship_tracking_speed}}','{{ship.ship_hull}}','{{ship.ship_shield}}','{{ship.ship_recycler_output}}','{{ship.ship_long_distance_capacity}}','{{ship.ship_droppods}}',{{ship.ore}},{{ship.hydrocarbon}},{{ship.energy}},{{ship.crew}},{{ship.time}},'{{ship.upkeep}}',{{ship.ship_required_vortex_strength}},{{ship.ship_leadership}}{% if ship.buildingsrequired %},'{{ship.building}}'{% endif %});{% endfor %}{% endfor %}
+
+function descShip(id){
+	var ship = ships[id];
+
+	var buildings = "";
+
+	for(var i=21;i<ship.length;i++)
+		buildings = buildings + "<li>" + ship[i] + "</li>";
+
+	var a = '<table class="description"><tr valign=top><td><span class="title">Description</span><br/><br/>'+ship[0]+'<br/><br/><span class="title">Bâtiments requis</span><br/><ul class=requirements>'+buildings+'</ul>' + (ship[18]!='0'?'<br/><span class=title>Entretien</span><br/><br/>Crédits: <img src="{{PATH_IMAGES}}interface/credits.gif" class="icon" title="Credits" width=16 height=16>'+ship[18]+'<br/>':'') + '</td><td width="1%" nowrap><span class=title>Caractéristiques</span><br/>'+
+			'<br/>Signature: <span class=value>'+ship[1]+'</span><br/>Cargo: <span class=value>'+ship[2]+'</span>'+
+			'<br/>Vitesse: <span class=value>'+ship[3]+'</span><br/>Manœuvrabilité: <span class=value>'+ship[4]+'</span><br/>Stabilité: <span class=value>'+ship[19]+'</span>' + (ship[20]>0?'<br/>Commandement: <span class=value>+'+formatnumber(ship[20])+'</span>':'');
+	if(ship[6] > 0)
+		a+= '<br/>Puissance d\'attaque: <span class=value>'+ship[5]+'x'+ship[6]+'</span><br/>Ciblage: <span class=value>'+ship[7]+'</span>';
+	a+= '<br/>Armure: <span class=value>'+ship[8]+'</span>';
+	if(ship[9] != '0')	a+= '<br/>Bouclier: <span class=value>'+ship[9]+'</span>';
+	if(ship[10] != '0') a+= '<br/>Capacité de recyclage: <span class=value>'+ship[10]+'</span>';
+	if(ship[11] != '0') a+= '<br/>Capacité de saut intergalactique: <span class=value>'+ship[11]+'</span>';
+	if(ship[12] != '0') a+= '<br/>Capacité d\'invasion: <span class=value>'+ship[12]+'</span>';
+	a+= '</td></tr></table>';
+	return a;
+}
+
+
+function updateNeeds(){
+	var ore=0;
+	var hydrocarbon=0;
+	var energy=0;
+	var crew=0;
+	var totaltime=0;
+
+	var i,id,c;
+
+	for(i=0;i<shiplist.length;i++){
+		id = shiplist[i];
+		c = getval('s'+id);
+
+		ore += c * ships[id][13];
+		hydrocarbon += c * ships[id][14];
+		energy += c * ships[id][15];
+		crew += c * ships[id][16];
+		totaltime += c * ships[id][17];
+	}
+
+	$("totalore").innerHTML = formatnumber(ore);
+	$("totalhydrocarbon").innerHTML = formatnumber(hydrocarbon);
+	$("totalenergy").innerHTML = formatnumber(energy);
+	$("totalcrew").innerHTML = formatnumber(crew);
+	$("totaltime").innerHTML = formattime(totaltime);
+}
+</script>
+<script type="text/javascript" src='/static/scripts/third-party/tooltip.js?v=1'></script>
+<script>
+tipname = "hint";
+tipwidth = 600;
+tiptext = $("hinttext");
+</script>
+
+<div id="shipyard">
+<form method="post" action="?f={{filter}}&planet={{planetid}}&a=bui1d">
+{% csrf_token %}
+<table class="default" width="800">
+<tr class="header"><td>Vaisseau</td><td width=100>Minerai</td><td width=100>Hydrocarbure</td><td width=80>Énergie</td><td width=80>Équipage</td><td width=90>Temps</td><td width='1%'>Construction</td></tr>
+
+{% if no_shipyard %}
+<tr><td colspan=7><p class="error">Aucun vaisseau n'est constructible.</p></td></tr>
+{% endif %}
+
+{% for category in categories %}
+<tr class="category">
+	<td colspan=7>
+	{% if category.id == 10 %}Vaisseaux utilitaires{% endif %}
+	{% if category.id == 11 %}Vaisseaux de déploiement{% endif %}
+	{% if category.id == 15 %}Vaisseaux tactiques{% endif %}
+	{% if category.id == 20 %}Vaisseaux légers{% endif %}
+	{% if category.id == 30 %}Corvettes{% endif %}
+	{% if category.id == 40 %}Frégates{% endif %}
+	{% if category.id == 50 %}Croiseurs{% endif %}
+	{% if category.id == 60 %}Dreadnought{% endif %}
+	{% if category.id == 80 %}Titan{% endif %}
+	{% if category.id == 90 %}Plateforme de défense{% endif %}
+	&nbsp;
+	</td>
+</tr>
+
+{% for ship in category.ships %}
+<tr valign="middle" align="right" class="item">
+
+<td nowrap align="left">
+	<table class="clear" width="100%">
+	<tr><td><a href="/s03/help/?cat=ships#{{ship.id}}" onmouseover="ddrivetip(descShip({{ship.id}}))" onmouseout="hideddrivetip()"><b>{{ship.name}}</b></a></td><td align="right">x{{ship.quantity}}</td></tr>
+	{% if ship.required_ship %}<tr><td colspan=2 nowrap><p class="shiprequirement">Requiert {{ship.required_ship_name}} ({% if none_available %}<span class=low>{% endif %}{{ship.required_ship_available}}{% if ship.none_available %}</span>{% endif %})</p></td></tr>{% endif %}
+	{% if ship.required_pp %}<tr><td colspan=2 nowrap><p class="shiprequirement">Requiert {{ship.required_pp}} points de prestige ({% if ship.required_pp_not_enough %}<span class=low>{% endif %}{{ship.pp}}{% if ship.ship.required_pp_not_enough %}</span>{% endif %})</p></td></tr>{% endif %}
+	</table>
+</td>
+<td nowrap{% if ship.not_enough_ore %} class="notenough"{% endif %}><img src="{{PATH_IMAGES}}interface/ore.gif" class="icon" title="Minerai" width=16 height=16> {{ship.ore}}</td>
+<td nowrap{% if ship.not_enough_hydrocarbon %} class="notenough"{% endif %}><img src="{{PATH_IMAGES}}interface/hydrocarbon.gif" class="icon" title="Hydrocarbure" width=16 height=16> {{ship.hydrocarbon}}</td>
+<td nowrap{% if ship.not_enough_energy %} class="notenough"{% endif %}><img src="{{PATH_IMAGES}}interface/energy.gif" class="icon" title="Énergie" width=16 height=16> {{ship.energy}}</td>
+<td nowrap{% if ship.not_enough_crew %} class="notenough"{% endif %}><img src="{{PATH_IMAGES}}interface/workers.gif" class="icon" title="Équipage" width=16 height=16> {{ship.crew}}</td>
+<td align=center>
+{% if ship.construction_time %}<script>document.write(formattime({{ship.time}}));</script>{% endif %}
+{% if ship.no_construction_time %}-{% endif %}
+</td>
+
+<td align="center" style="padding:0;margin:0">
+	{% if ship.build %}<input type="number" min="0" name="s{{ship.id}}" onkeyup="updateNeeds()" size=3 maxlength="5" style="height:18px">{% endif %}
+	{% if ship.buildings_required %}<div class="error2">bâtiments requis</div>{% endif %}
+	{% if ship.notenoughresources %}<div class="error">ressources insuffisantes</div>{% endif %}
+	{% if ship.cant_build %}&nbsp;{% endif %}
+</td>
+
+</tr>
+{% endfor %}
+{% endfor %}
+
+{% if build %}<tr>
+<td>&nbsp;</td>
+<td align=right><img src="{{PATH_IMAGES}}interface/ore.gif" class=icon title="Minerai" width=16 height=16><span id="totalore">0</span></td>
+<td align=right><img src="{{PATH_IMAGES}}interface/hydrocarbon.gif" class=icon title="Hydrocarbure" width=16 height=16><span id="totalhydrocarbon">0</span></td>
+<td align=right><img src="{{PATH_IMAGES}}interface/energy.gif" class=icon title="Énergie" width=16 height=16><span id="totalenergy">0</span></td>
+<td align=right><img src="{{PATH_IMAGES}}interface/workers.gif" class=icon title="Équipage" width=16 height=16><span id="totalcrew">0</span></td>
+<td align=center><span id="totaltime"><script>document.write(formattime(0));</script></span></td>
+<td align=center><input type="submit" value="Construire"></td></tr>{% endif %}
+{% if nobuild %}<tr><td colspan=8 class=clear>&nbsp;</td></tr>{% endif %}
+
+{% if underconstructions|length > 0 %}
+<tr class="clear"><td colspan="7">&nbsp;</td></tr>
+<tr class="category">
+	<td colspan="7">En cours</td>
+</tr>
+	{% for ship in underconstructions %}
+	<tr align="right">
+		<td align="left" nowrap colspan="1">
+			<table class="clear" width="100%">
+			<tr><td>{% if ship.recycle %}Recyclage de {% endif %}<a href="/s03/help/?cat=ships#{{ship.id}}"><b>{{ship.name}}</b></a></td><td align="right">x{{ship.quantity}}</td></tr>
+			{% if ship.required_ship %}<tr><td colspan=2 nowrap><p class="shiprequirement">Requiert {{ship.required_ship_name}}</p></td></tr>{% endif %}
+			{% if ship.required_pp %}<tr><td colspan="2" nowrap><p class="shiprequirement">Requiert {{ship.required_pp} points de prestige</p></td></tr>{% endif %}
+			</table>
+		</td>
+		<td nowrap><img src="{{PATH_IMAGES}}interface/ore.gif" class=icon title="Minerai" width=16 height=16>{{ship.ore}}</td>
+		<td nowrap><img src="{{PATH_IMAGES}}interface/hydrocarbon.gif" class=icon title="Hydrocarbure" width=16 height=16>{{ship.hydrocarbon}}</td>
+		<td nowrap><img src="{{PATH_IMAGES}}interface/energy.gif" class=icon title="Énergie" width=16 height=16>{{ship.energy}}</td>
+		<td nowrap><img src="{{PATH_IMAGES}}interface/workers.gif" class=icon title="Équipage" width=16 height=16>{{ship.crew}}</td>
+		<td align="center"><script>putcountdown1({{ship.remainingtime}},"&nbsp;");</script></td>
+		<td align="center"><script>putcountdown2({{ship.remainingtime}}, "{% if ship.recycle %}&nbsp;{% endif %}{% if ship.cancel %}<a href='?f={{filter}}&planet={{planetid}}&a=cancel&q={{ship.queueid}}'>annuler</a>{% endif %}", "<a href='/s03/planet-ships/?planet={{planetid}}&f={{filter}}'>terminé</a>");</script></td>
+	</tr>
+	{% endfor %}
+{% endif %}
+{% if queues|length > 0 %}
+<tr class="clear"><td colspan="7">&nbsp;</td></tr>
+<tr class="category">
+	<td colspan="7">En queue</td>
+</tr>
+	{% for ship in queues %}
+	<tr align="right">
+		<td align="left" colspan="1">
+			<table class="clear" width="100%">
+			<tr><td>{% if ship.recycle %}Recyclage de {% endif %}<a href="/s03/help/?cat=ships#{{ship.id}}"><b>{{ship.name}}</b></a></td><td align="right">x{{ship.quantity}}</td></tr>
+			{% if ship.required_ship %}<tr><td colspan=2 nowrap><p class="shiprequirement">Requiert {{ship.required_ship_name}}</p></td></tr>{% endif %}
+			{% if ship.required_pp %}<tr><td colspan="2" nowrap><p class="shiprequirement">Requiert {{ship.required_pp}} points de prestige</p></td></tr>{% endif %}
+			</table>
+		</td>
+		<td nowrap><img src="{{PATH_IMAGES}}interface/ore.gif" class=icon title="Minerai" width=16 height=16>{{ship.ore}}</td>
+		<td nowrap><img src="{{PATH_IMAGES}}interface/hydrocarbon.gif" class=icon title="Hydrocarbure" width=16 height=16>{{ship.hydrocarbon}}</td>
+		<td nowrap><img src="{{PATH_IMAGES}}interface/energy.gif" class=icon title="Énergie" width=16 height=16>{{ship.energy}}</td>
+		<td nowrap><img src="{{PATH_IMAGES}}interface/workers.gif" class=icon title="Équipage" width=16 height=16>{{ship.crew}}</td>
+		<td align="center"><script language="javascript">document.write(formattime({{ship.remainingtime}}));</script></td>
+		<td align="center"><a href="?f={{filter}}&planet={{planetid}}&a=cancel&q={{ship.queueid}}">annuler</a></td>
+	</tr>
+	{% endfor %}
+{% endif %}
+</table>
+</form>
+</div>
+{% endblock %}

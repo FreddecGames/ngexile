@@ -1,6 +1,4 @@
-# -*- coding: utf-8 -*-
-
-from ._global import *
+from .base import *
 
 class View(GlobalView):
 
@@ -9,19 +7,19 @@ class View(GlobalView):
         response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
 
-        self.selected_menu = "alliance.reports"
+        self.selected_menu = "alliance"
 
         cat = ToInt(request.GET.get("cat"), 0)
 
-        if self.AllianceId == None: return HttpResponseRedirect("/s03/alliance/")
-        if not self.oAllianceRights["can_see_reports"]: return HttpResponseRedirect("/s03/alliance/")
+        if self.AllianceId == None: return HttpResponseRedirect("/s03/alliance-view/")
+        if not self.oAllianceRights["can_see_reports"]: return HttpResponseRedirect("/s03/alliance-view/")
 
         return self.display_reports(cat)
 
     # display list of messages
     def display_reports(self, cat):
 
-        content = GetTemplate(self.request, "reports")
+        content = GetTemplate(self.request, "empire-reports")
 
         query = "SELECT type, subtype, datetime, battleid, fleetid, fleet_name," + \
                 " planetid, planet_name, galaxy, sector, planet," + \

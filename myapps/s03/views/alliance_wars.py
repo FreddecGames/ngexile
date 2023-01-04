@@ -1,6 +1,4 @@
-# -*- coding: utf-8 -*-
-
-from ._global import *
+from .base import *
 
 class View(GlobalView):
 
@@ -9,7 +7,7 @@ class View(GlobalView):
         response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
 
-        self.selected_menu = "alliance.wars"
+        self.selected_menu = "alliance"
 
         self.result = ""
         self.cease_success = ""
@@ -25,7 +23,7 @@ class View(GlobalView):
 
         # redirect the player to the alliance page if he is not part of an alliance
         if self.AllianceId == None:
-            return HttpResponseRedirect("/s03/alliance/")
+            return HttpResponseRedirect("/s03/alliance-view/")
 
         action = request.GET.get("a", "")
         self.tag = ""

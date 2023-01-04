@@ -258,7 +258,7 @@ function getRelationClass(rel) {
 
 function Fl(id,name,tag,owner,rel,signature,fleeing) {
 	if(rel==2 || id != 0)
-		var s= '<a title="Inspecter la flotte '+name+'" href="/s03/fleet/?id=' + id + '" class="self">'+(tag!=''?'['+tag+'] ':'')+name+'</a>';
+		var s= '<a title="Inspecter la flotte '+name+'" href="/s03/fleet-view/?id=' + id + '" class="self">'+(tag!=''?'['+tag+'] ':'')+name+'</a>';
 	else
 	{
 		var c = getRelationClass(rel);
@@ -284,7 +284,7 @@ function descOrbit(idx,planetid,rel,parked) {
 
 	if(parked > 0) {
 		if(rel == 2)
-			s += '<a href="/s03/orbit/?planet='+planetid+'" class="' + getRelationClass(rel) + '">Au sol: ' + formatnumber(parked) + '</a>';
+			s += '<a href="/s03/planet-orbit/?planet='+planetid+'" class="' + getRelationClass(rel) + '">Au sol: ' + formatnumber(parked) + '</a>';
 		else
 			s += '<span class="' + getRelationClass(rel) + '">Au sol: ' + formatnumber(parked) + '</span>';
 	}
@@ -439,12 +439,12 @@ function loc(img,alliancetag,id,owner,name,rel,radar,jammer,ore,hydrocarbon,floo
 
 		var n='';
 
-		if(alliancetag != '') n+='<a href="/s03/alliance/?tag='+alliancetag+'" class="'+c+'">['+alliancetag+']</a>';
+		if(alliancetag != '') n+='<a href="/s03/alliance-view/?tag='+alliancetag+'" class="'+c+'">['+alliancetag+']</a>';
 
 		if(rel==2)
 		{
 			if(floor>0 && space>0)
-				n+= '<a href="/s03/planet/?planet='+id+'" class="'+c+'" title="Inspecter la planète '+name+'">'+name+'</a>';
+				n+= '<a href="/s03/planet-view/?planet='+id+'" class="'+c+'" title="Inspecter la planète '+name+'">'+name+'</a>';
 			else
 				n+= '<span class="'+c+'">'+name+'</span>';
 		}
@@ -458,7 +458,7 @@ function loc(img,alliancetag,id,owner,name,rel,radar,jammer,ore,hydrocarbon,floo
 			if(owner=='')
 				n+= '<span class="'+c+'" title="Planète occupée">Occupée</span>';
 			else
-				n+= '<a href="/s03/nation/?name='+owner+'" class="'+c+'" title="Voir les informations sur '+owner+'">'+name+'</a>';
+				n+= '<a href="/s03/profile-view/?name='+owner+'" class="'+c+'" title="Voir les informations sur '+owner+'">'+name+'</a>';
 		}
 
 		if(n=='') n = '&nbsp;';
@@ -497,10 +497,10 @@ function r(rel,tag,owner,fleetid,fleet,sig,f_id,f_name,f_g,f_s,f_p,f_rel,t_id,t_
 	var c = getRelationClass(rel);
 
 	var s = '<tr class="smallitem"><td>';
-	if(tag != '') s+= '<a href="/s03/alliance/?tag='+tag+'" class='+c+'>['+tag+']</a> ';
-	s+= '<a href="/s03/nation/?name='+owner+'" title="Voir les informations sur '+owner+'" class="'+c+'">'+owner+'</a></td><td>';
+	if(tag != '') s+= '<a href="/s03/alliance-view/?tag='+tag+'" class='+c+'>['+tag+']</a> ';
+	s+= '<a href="/s03/profile-view/?name='+owner+'" title="Voir les informations sur '+owner+'" class="'+c+'">'+owner+'</a></td><td>';
 	if(rel==2)
-		s+= '<a href="/s03/fleet/?id='+fleetid+'" class="self">'+fleet+'</a>';
+		s+= '<a href="/s03/fleet-view/?id='+fleetid+'" class="self">'+fleet+'</a>';
 	else
 		s+= '<a href="/s03/mails/?to='+owner+'" class="'+c+'" title="Envoyer un message à '+owner+'">'+fleet+'</a>';
 
@@ -525,9 +525,9 @@ function r(rel,tag,owner,fleetid,fleet,sig,f_id,f_name,f_g,f_s,f_p,f_rel,t_id,t_
 	s+= '</td><td>'
 	
 	if(losing)
-		s+= 'Perte du signal :&nbsp;<script>putcountdown1('+time+', "Signal perdu", "/s03/overview/");</'+'script>';
+		s+= 'Perte du signal :&nbsp;<script>putcountdown1('+time+', "Signal perdu", "/s03/empire-view/");</'+'script>';
 	else
-		s+= '<script>putcountdown1('+time+', "Arrivé", "/s03/overview/");</'+'script>';
+		s+= '<script>putcountdown1('+time+', "Arrivé", "/s03/empire-view/");</'+'script>';
 		
 	s+= '</td></tr>';
 

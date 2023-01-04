@@ -25,7 +25,7 @@ function confirmStopWar(tag) {
 <td>status</td>
 </tr>
 {% for war in wars %}
-<tr><td>{{war.place}}. <a href="/s03/alliance/?tag={{war.tag}}">[{{war.tag}}] {{war.name}}</a></td>
+<tr><td>{{war.place}}. <a href="/s03/alliance-view/?tag={{war.tag}}">[{{war.tag}}] {{war.name}}</a></td>
 <td>{{war.created}}<br/>{% if war.cant_fight %}Préparation en cours{% endif %}{% if war.can_fight %}{{war.next_bill}}{% endif %}</td>
 <td>
 {% if war.extend %}<a href="?cat={{cat}}&a=pay&tag={{war.tag}}">Étendre la guerre d'une semaine</a> <img src="{{PATH_IMAGES}}interface/credits.gif" title="Crédits" class="icon" width="16" height="16">{{war.cost}}<br/>{% endif %}

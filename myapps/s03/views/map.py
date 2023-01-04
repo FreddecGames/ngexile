@@ -1,8 +1,4 @@
-# -*- coding: utf-8 -*-
-
-from math import sqrt
-
-from ._global import *
+from .base import *
 
 class View(GlobalView):
     
