@@ -85,7 +85,7 @@ function refreshPage(url) {
                             {% elif building.limitreached %}<span class="text-success">Limite atteinte</span>
                             {% elif building.built %}<span class="text-success">Bâtiment construit</span>
                             {% elif building.build %}
-                            <a href="#" onclick="refreshPage('?planet={{planetid}}&a=build&c=0&b={{building.id}}); return false;">
+                            <a href="#" onclick="refreshPage('?planet={{planetid}}&a=build&c=0&b={{building.id}}'); return false;">
                                 <div><script>document.write(formattime({{building.time}}));</script></div>
                                 <div>Construire</div>
                             </a>

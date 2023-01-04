@@ -27,7 +27,7 @@ function setReportsCount(count) {
 	else elem.innerHTML = ''
 }
 
-putMenuLevel1('/s03/mails/', 'Communication')
+putMenuLevel1('/s03/mail-inbox/', 'Communication')
 
     putMenuLevel2('/s03/empire-reports/', '<div class="row gx-2 align-items-baseline"><div class="col">Rapports</div><div class="col-auto text-success"><span id="reportscount" class="badge text-bg-success"></span></div></div>', 'reports', 'Rapports', '{{selectedmenu}}')
     putMenuLevel2('/s03/mail-inbox/', '<div class="row gx-2 align-items-baseline"><div class="col">Mails</div><div class="col-auto text-success"><span id="mailscount" class="badge text-bg-success"></span></div></div>', 'mails', 'Mails', '{{selectedmenu}}')
