@@ -45,61 +45,85 @@ function sig(signature) {
             <div class="card-body">
                 <div class="row gx-3">
                     <div class="col">
-                    
-                        <div class="row gx-2 flex-nowrap align-items-center">
-                            <div class="col-auto text-normal">Nation</div>
-                            <div class="col-auto">{% if orientation1 %}Marchand {% endif %}{% if orientation2 %}Militaire {% endif %}{% if orientation3 %}Scientifique {% endif %}</div>
-                            <div class="col-auto text-player">{{nation}}</div>
+                        <div class="row g-1">
+                            
+                            <div class="col-12">
+                                <div class="row gx-2 flex-nowrap align-items-center">
+                                    <div class="col-auto text-normal">Nation</div>
+                                    <div class="col-auto">{% if orientation1 %}Marchand {% endif %}{% if orientation2 %}Militaire {% endif %}{% if orientation3 %}Scientifique {% endif %}</div>
+                                    <div class="col-auto text-player">{{nation}}</div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-12">
+                                <div class="row gx-2 flex-nowrap align-items-center">
+                                    <div class="col-auto text-normal">Grade</div>
+                                    <div class="col-auto">{% if alliance %}{{alliance_rank_label}} de <a href="/s03/alliance-view/?tag={{alliance_tag}}">[{{alliance_tag}}] {{alliance_name}}</a>{% endif %}{% if no_alliance %}Indépendant{% endif %}</div>
+                                </div>
+                            </div>
+                                
+                            <div class="col-12">
+                                <div class="row gx-2 flex-nowrap align-items-baseline">
+                                    <div class="col-auto text-normal">Score</div>
+                                    <div class="col-auto">{{stat_score|intcomma}}</div>
+                                    <div class="col-auto small {% if plus %}text-success{% endif %}{% if minus %}text-danger{% endif %}">{% if plus %}+{% endif %}{{stat_score_delta|intcomma}}</div>
+                                    <div class="col-auto small"><a href="/s03/ranking-players/">{{stat_rank|intcomma}} <small>/{{stat_players|intcomma}}</small></a></div>
+                                </div>
+                            </div>
+                            
                         </div>
-                        
-                        <div class="row gx-2 flex-nowrap align-items-center">
-                            <div class="col-auto text-normal">Grade</div>
-                            <div class="col-auto">{% if alliance %}{{alliance_rank_label}} de <a href="/s03/alliance-view/?tag={{alliance_tag}}">[{{alliance_tag}}] {{alliance_name}}</a>{% endif %}{% if no_alliance %}Indépendant{% endif %}</div>
-                        </div>
-                        
-                        <div class="row gx-2 flex-nowrap align-items-baseline">
-                            <div class="col-auto text-normal">Score</div>
-                            <div class="col-auto">{{stat_score|intcomma}}</div>
-                            <div class="col-auto small {% if plus %}text-success{% endif %}{% if minus %}text-danger{% endif %}">{% if plus %}+{% endif %}{{stat_score_delta|intcomma}}</div>
-                            <div class="col-auto small"><a href="/s03/ranking-players/">{{stat_rank|intcomma}} <small>/{{stat_players|intcomma}}</small></a></div>
-                        </div>
-                        
                     </div>
                     <div class="col">
-                    
-                        <div class="row gx-2 flex-nowrap align-items-center">
-                            <div class="col-auto text-normal">Planètes</div>
-                            <div class="col-auto">{{stat_colonies|intcomma}} <small class="text-normal">/{{stat_maxcolonies|intcomma}}</small></div>
-                        </div>
+                        <div class="row g-1">
+                            
+                            <div class="col-12">
+                                <div class="row gx-2 flex-nowrap align-items-center">
+                                    <div class="col-auto text-normal">Planètes</div>
+                                    <div class="col-auto">{{stat_colonies|intcomma}} <small class="text-normal">/{{stat_maxcolonies|intcomma}}</small></div>
+                                </div>
+                            </div>
+                                
+                            <div class="col-12">
+                                <div class="row gx-2 flex-nowrap align-items-center">
+                                    <div class="col-auto text-normal">Minerai</div>
+                                    <div class="col-auto">{{stat_prod_ore|intcomma}} <small class="text-normal">/heure</small></div>
+                                </div>
+                            </div>
+                                
+                            <div class="col-12">
+                                <div class="row gx-2 flex-nowrap align-items-center">
+                                    <div class="col-auto text-normal">Hydrocarbure</div>
+                                    <div class="col-auto">{{stat_prod_hydrocarbon|intcomma}} <small class="text-normal">/heure</small></div>
+                                </div>
+                            </div>
                         
-                        <div class="row gx-2 flex-nowrap align-items-center">
-                            <div class="col-auto text-normal">Minerai</div>
-                            <div class="col-auto">{{stat_prod_ore|intcomma}} <small class="text-normal">/heure</small></div>
                         </div>
-                        
-                        <div class="row gx-2 flex-nowrap align-items-center">
-                            <div class="col-auto text-normal">Hydrocarbure</div>
-                            <div class="col-auto">{{stat_prod_hydrocarbon|intcomma}} <small class="text-normal">/heure</small></div>
-                        </div>
-                        
                     </div>
                     <div class="col">
-                    
-                        <div class="row gx-2 flex-nowrap align-items-center">
-                            <div class="col-auto text-normal">Travailleurs</div>
-                            <div class="col-auto">{{stat_workers|intcomma}}</div>
-                        </div>
+                        <div class="row g-1">
+                            
+                            <div class="col-12">
+                                <div class="row gx-2 flex-nowrap align-items-center">
+                                    <div class="col-auto text-normal">Travailleurs</div>
+                                    <div class="col-auto">{{stat_workers|intcomma}}</div>
+                                </div>
+                            </div>
+                                
+                            <div class="col-12">
+                                <div class="row gx-2 flex-nowrap align-items-center">
+                                    <div class="col-auto text-normal">Scientifiques</div>
+                                    <div class="col-auto">{{stat_scientists|intcomma}}</div>
+                                </div>
+                            </div>
+                                
+                            <div class="col-12">
+                                <div class="row gx-2 flex-nowrap align-items-center">
+                                    <div class="col-auto text-normal">Soldats</div>
+                                    <div class="col-auto">{{stat_soldiers|intcomma}}</div>
+                                </div>
+                            </div>
                         
-                        <div class="row gx-2 flex-nowrap align-items-center">
-                            <div class="col-auto text-normal">Scientifiques</div>
-                            <div class="col-auto">{{stat_scientists|intcomma}}</div>
                         </div>
-                        
-                        <div class="row gx-2 flex-nowrap align-items-center">
-                            <div class="col-auto text-normal">Soldats</div>
-                            <div class="col-auto">{{stat_soldiers|intcomma}}</div>
-                        </div>
-                        
                     </div>
                 </div>
             </div>
@@ -110,8 +134,9 @@ function sig(signature) {
             <div class="card-header">
                 <span>Mouvements en cours</span>
             </div>
-            <div class="card-body">
+            <div class="list-group list-group-flush">
                 {% for fleet in fleets %}
+                <div class="list-group-item">
                     <div class="row gx-2 flex-nowrap align-items-baseline">
                         <div class="col-auto">
                             {% if fleet.owned %}
@@ -135,8 +160,11 @@ function sig(signature) {
                         <div class="col-auto"><script>putplanet('{{fleet.t_planetid}}', '{{fleet.t_planetname}}', '{{fleet.t_g}}', '{{fleet.t_s}}', '{{fleet.t_p}}', {{fleet.t_relation}})</script></div>
                         <div class="col-auto text-yellow"><script>putcountdown1({{fleet.time}}, 'Terminé', '/s03/empire-view/')</script></div>
                     </div>
+                </div>
                 {% empty %}
+                <div class="list-group-item">
                     <span class="text-normal">Aucun mouvement en cours</span>
+                </div>
                 {% endfor %}
             </div>
         </div>
@@ -146,53 +174,77 @@ function sig(signature) {
             <div class="card-header">
                 <span>Coût d'entretien</span>
             </div>
-            <div class="card-body">
-                <p><span class="text-normal">Les coûts d'entretien et de fonctionnement estimés pour la prochaine période s'élèvent à</span> <img src="/static/assets/interface/credits.gif" class="res" width="16px">{{total_estimation|intcomma}}.</p>
-                <div class="row gx-3">
-                    <div class="col">
-                    
-                        <div class="row gx-2 flex-nowrap align-items-center">
-                            <div class="col-auto text-normal"><img src="/static/assets/interface/upkeep_commander.gif" class="res" width="16px">Commandants</div>
-                            <div class="col-auto">{{commanders_estimated_cost|intcomma}}</div>
-                        </div>
-                    
-                        <div class="row gx-2 flex-nowrap align-items-center">
-                            <div class="col-auto text-normal"><img src="/static/assets/interface/planet.gif" class="res" width="16px">Planètes</div>
-                            <div class="col-auto">{{planets_estimated_cost|intcomma}}</div>
-                        </div>
+            <div class="list-group list-group-flush">
+                <div class="list-group-item">
+                    <div class="row gx-3">
+                        <div class="col">
+                            <div class="row g-1">
                         
-                    </div>
-                    <div class="col">
-                    
-                        <div class="row gx-2 flex-nowrap align-items-center">
-                            <div class="col-auto text-normal"><img src="/static/assets/interface/scientists.gif" class="res" width="16px">Scientifiques</div>
-                            <div class="col-auto">{{scientists_estimated_cost|intcomma}}</div>
-                        </div>
-                    
-                        <div class="row gx-2 flex-nowrap align-items-center">
-                            <div class="col-auto text-normal"><img src="/static/assets/interface/soldiers.gif" class="res" width="16px">Soldats</div>
-                            <div class="col-auto">{{soldiers_estimated_cost|intcomma}}</div>
-                        </div>                        
-                        
-                    </div>
-                    <div class="col">
-                    
-                        <div class="row gx-2 flex-nowrap align-items-center">
-                            <div class="col-auto text-normal"><img src="/static/assets/interface/fleets.gif" class="res" width="16px">Vaisseaux</div>
-                            <div class="col-auto">{{ships_estimated_cost|intcomma}}</div>
-                        </div>
-                        
-                        <div class="row gx-2 flex-nowrap align-items-center">
-                            <div class="col-auto text-normal"><img src="/static/assets/interface/fleets.gif" class="res" width="16px">Vaisseaux en position</div>
-                            <div class="col-auto">{{ships_in_position_estimated_cost|intcomma}}</div>
-                        </div>
+                                <div class="col-12">
+                                    <div class="row gx-2 flex-nowrap align-items-center">
+                                        <div class="col-auto text-normal">Vaisseaux</div>
+                                        <div class="col-auto">{{ships_estimated_cost|intcomma}}</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-12">
+                                    <div class="row gx-2 flex-nowrap align-items-center">
+                                        <div class="col-auto text-normal">Vaisseaux en position</div>
+                                        <div class="col-auto">{{ships_in_position_estimated_cost|intcomma}}</div>
+                                    </div>
+                                </div>
 
-                        <div class="row gx-2 flex-nowrap align-items-center">
-                            <div class="col-auto text-normal"><img src="/static/assets/interface/fleets.gif" class="res" width="16px">Vaisseaux posés</div>
-                            <div class="col-auto">{{ships_parked_estimated_cost|intcomma}}</div>
-                        </div>
+                                <div class="col-12">
+                                    <div class="row gx-2 flex-nowrap align-items-center">
+                                        <div class="col-auto text-normal">Vaisseaux posés</div>
+                                        <div class="col-auto">{{ships_parked_estimated_cost|intcomma}}</div>
+                                    </div>
+                                </div>
 
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="row g-1">
+                            
+                                <div class="col-12">
+                                    <div class="row gx-2 flex-nowrap align-items-center">
+                                        <div class="col-auto text-normal">Commandants</div>
+                                        <div class="col-auto">{{commanders_estimated_cost|intcomma}}</div>
+                                    </div>
+                                </div>
+                            
+                                <div class="col-12">
+                                    <div class="row gx-2 flex-nowrap align-items-center">
+                                        <div class="col-auto text-normal">Planètes</div>
+                                        <div class="col-auto">{{planets_estimated_cost|intcomma}}</div>
+                                    </div>
+                                </div>
+                                
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="row g-1">
+                        
+                                <div class="col-12">
+                                    <div class="row gx-2 flex-nowrap align-items-center">
+                                        <div class="col-auto text-normal">Scientifiques</div>
+                                        <div class="col-auto">{{scientists_estimated_cost|intcomma}}</div>
+                                    </div>
+                                </div>
+                            
+                                <div class="col-12">
+                                    <div class="row gx-2 flex-nowrap align-items-center">
+                                        <div class="col-auto text-normal">Soldats</div>
+                                        <div class="col-auto">{{soldiers_estimated_cost|intcomma}}</div>
+                                    </div>                        
+                                </div>                        
+                                
+                            </div>                        
+                        </div>
                     </div>
+                </div>
+                <div class="list-group-item">
+                    <span class="text-normal">Les coûts d'entretien et de fonctionnement estimés pour la prochaine période s'élèvent à</span> <img src="/static/assets/interface/credits.gif" class="res" width="16px">{{total_estimation|intcomma}}.
                 </div>
             </div>
         </div>
@@ -219,19 +271,29 @@ function sig(signature) {
             <div class="card-header">
                 <span>Bâtiments en construction</span>
             </div>
-            {% for item in constructionyards %}
-                <div class="card-body">
-                    <div><a href="/s03/planet-buildings/?planet={{item.planetid}}"><small>{{item.galaxy}}.{{item.sector}}.{{item.planet}}</small> {{item.planetname}}</a></div>
-                    {% for building in item.buildings %}
-                        <div class="row gx-2 flex-nowrap align-items-center">
-                            <div class="col {% if building.destroy %}text-danger{% endif %}">{{building.building}}</div>
-                            <div class="col-auto text-yellow"><script>putcountdown1({{building.time}}, 'Terminé', '/s03/planet-buildings/?planet={{item.planetid}}#{{building.buildingid}}')</script></div>
+            <div class="list-group list-group-flush">
+                {% for item in constructionyards %}
+                <div class="list-group-item">
+                    <div class="row g-1">
+                        <div class="col-12">
+                            <a href="/s03/planet-buildings/?planet={{item.planetid}}"><small>{{item.galaxy}}.{{item.sector}}.{{item.planet}}</small> {{item.planetname}}</a>
                         </div>
-                    {% empty %}
-                        <span class="text-normal">Aucune construction en cours</span>
-                    {% endfor %}
+                        {% for building in item.buildings %}
+                        <div class="col-12">
+                            <div class="row gx-2 flex-nowrap align-items-center">
+                                <div class="col {% if building.destroy %}text-danger{% endif %}">{{building.building}}</div>
+                                <div class="col-auto text-yellow"><script>putcountdown1({{building.time}}, 'Terminé', '/s03/planet-buildings/?planet={{item.planetid}}#{{building.buildingid}}')</script></div>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <div class="col-12">
+                            <span class="text-normal">Aucune construction en cours</span>
+                        </div>
+                        {% endfor %}
+                    </div>
                 </div>
-            {% endfor %}
+                {% endfor %}
+            </div>
         </div>
     </div>
     <div class="col-6">
@@ -239,28 +301,36 @@ function sig(signature) {
             <div class="card-header">
                 <span>Vaisseaux en construction</span>
             </div>
-            {% for planet in shipyards %}
-                <div class="card-body">
-                    <div><a href="/s03/planet-ships/?planet={{planet.planetid}}"><small>{{planet.galaxy}}.{{planet.sector}}.{{planet.planet}}</small> {{planet.planetname}}</a></div>
-                    {% if planet.ship %}
-                        <div class="row gx-2 flex-nowrap align-items-center">
-                            <div class="col {% if planet.recycle %}text-danger{% endif %}">{{planet.shiplabel}}</div>
-                            <div class="col-auto text-yellow"><script>putcountdown1({{planet.time}}, 'Terminé', '/s03/planet-ships/?planet={{planet.planetid}}&f=0#{{planet.shipid}}')</script></div>
+            <div class="list-group list-group-flush">
+                {% for planet in shipyards %}
+                <div class="list-group-item">
+                    <div class="row g-1">
+                        <div class="col-12">
+                            <a href="/s03/planet-ships/?planet={{planet.planetid}}"><small>{{planet.galaxy}}.{{planet.sector}}.{{planet.planet}}</small> {{planet.planetname}}</a>
                         </div>
-                    {% elif planet.waiting_resources %}
-                        <div class="row gx-2 flex-nowrap align-items-center">
-                            <div class="col">{{planet.waiting_ship}}</div>
-                            <div class="col-auto text-danger">En attente de ressources</div>
+                        <div class="col-12">
+                            {% if planet.ship %}
+                            <div class="row gx-2 flex-nowrap align-items-center">
+                                <div class="col {% if planet.recycle %}text-danger{% endif %}">{{planet.shiplabel}}</div>
+                                <div class="col-auto text-yellow"><script>putcountdown1({{planet.time}}, 'Terminé', '/s03/planet-ships/?planet={{planet.planetid}}&f=0#{{planet.shipid}}')</script></div>
+                            </div>
+                            {% elif planet.waiting_resources %}
+                            <div class="row gx-2 flex-nowrap align-items-center">
+                                <div class="col">{{planet.waiting_ship}}</div>
+                                <div class="col-auto text-danger">En attente de ressources</div>
+                            </div>
+                            {% elif planet.none %}
+                            <span class="text-normal">Aucune construction en cours</span>
+                            {% endif %}
                         </div>
-                    {% elif planet.none %}
-                        <span class="text-normal">Aucune construction en cours</span>
-                    {% endif %}
+                    </div>
                 </div>
-            {% empty %}
-                <div class="card-body">
+                {% empty %}
+                <div class="list-group-item">
                     <span class="text-normal">Aucune chantier spatial</span>
                 </div>
-            {% endfor %}
+                {% endfor %}
+            </div>
         </div>
     </div>
 </div>
