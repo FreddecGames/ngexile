@@ -72,7 +72,7 @@ div.clear { clear:both; }
     position: absolute; top: 0px; left: 0px; right: 0px;
     height: 52px;
     padding: 0 .75rem;
-    background-color: #1c1f26;
+    background-color: var(--bs-gray-900);
     display: flex; align-items: center;
 }
 
@@ -84,7 +84,7 @@ div.clear { clear:both; }
 	position: absolute; top: 52px; bottom: 0px; left: 0px;
     overflow-y: auto; overflow-x: hidden; scrollbar-color: rgba(255, 255, 255, .075); scrollbar-width: thin;
 	width: 256px;
-	background-color: #4d4d57;
+	background-color: var(--bs-gray-700);
     padding-bottom: .75rem;
 }
 
@@ -126,7 +126,7 @@ div#container { margin:6px; padding:6px; text-align:left; width:800px; backgroun
 
 .lvl1 {
 	padding: .5rem .75rem;
-	background-color: #2c2c38;
+	background-color: var(--bs-gray-800);
 }
 
 .lvl2 {
@@ -589,6 +589,7 @@ span.title {
 .text-player { color: #77f!important; }
 .text-yellow { color: #ff0!important; }
 
+.bg-danger { background-color: #700000!important; }
 .bg-success { background-color: #005400!important; }
 .bg-info { background-color: #45457a!important; }
 
@@ -619,18 +620,18 @@ span.title {
 .card {
     --bs-card-spacer-x: .75rem;
     --bs-card-spacer-y: .5rem;
-    --bs-card-bg: #3c3c3c;
+    --bs-card-bg: var(--bs-gray-700);
     --bs-card-border-width: 1px;
     --bs-card-border-color: #000;
     --bs-card-border-radius: .25rem;
     --bs-card-inner-border-radius: calc(.25rem - 1px);
-    --bs-card-cap-bg: #323232;
+    --bs-card-cap-bg: var(--bs-gray-800);
     --bs-card-cap-padding-y: .5rem;
     --bs-card-cap-padding-x: .75rem;
 }
 
 .list-group {
-    --bs-list-group-bg: #3c3c3c;
+    --bs-list-group-bg: var(--bs-gray-700);
     --bs-list-group-color: #fff;
     --bs-list-group-border-width: 1px;
     --bs-list-group-border-color: #000;
@@ -651,7 +652,7 @@ span.title {
     --bs-nav-tabs-border-color: #323232;
     --bs-nav-tabs-border-radius: 0.25rem;
     --bs-nav-tabs-link-hover-border-color: transparent transparent #323232;
-    --bs-nav-tabs-link-active-bg: #323232;
+    --bs-nav-tabs-link-active-bg: var(--bs-gray-800);
     --bs-nav-tabs-link-active-border-color: #323232 #323232 #323232;
     --bs-nav-tabs-link-active-color: #fff;
 

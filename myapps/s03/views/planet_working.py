@@ -30,7 +30,7 @@ class View(GlobalView):
                         "WHERE planetid=" + str(self.CurrentPlanet) + " AND buildingid =" + str(oRs[0])
                 oConnDoQuery(query)
 
-            return HttpResponseRedirect("/s03/planet-production/?cat=" + str(self.cat))
+            return HttpResponseRedirect("/s03/planet-working/?cat=" + str(self.cat))
 
         query = "SELECT buildingid, quantity - CASE WHEN destroy_datetime IS NULL THEN 0 ELSE 1 END, disabled, energy_consumption, int4(workers*maintenance_factor/100.0), upkeep" + \
                 " FROM planet_buildings" + \
