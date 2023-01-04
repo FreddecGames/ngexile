@@ -111,9 +111,12 @@ function refreshPage(url) {
                             </div>
                         </div>
                         <div class="col-3 text-center">
-                            {% if building.isbuilding or building.isdestroying %}
+                            {% if building.isbuilding %}
                             <div class="text-yellow"><script>putcountdown1({{building.remainingtime}}, '');</script></div>
                             <div><script>putcountdown2({{building.remainingtime}}, '<a href="#" onclick="refreshPage(\'/s03/planet-buildings/?planet={{planetid}}&a=cancel&b={{building.id}}\'); return false;">Annuler</a>', '<a href="#" onclick="refreshPage(); return false;">Terminé</a>');</script></div>
+                            {% elif building.isdestroying %}
+                            <div class="text-yellow"><script>putcountdown1({{building.nextdestroytime}}, '');</script></div>
+                            <div><script>putcountdown2({{building.nextdestroytime}}, '<a href="#" onclick="refreshPage(\'/s03/planet-buildings/?planet={{planetid}}&a=cancel&b={{building.id}}\'); return false;">Annuler</a>', '<a href="#" onclick="refreshPage(); return false;">Terminé</a>');</script></div>
                             {% elif building.buildings_required %}<span class="text-danger">Bâtiment requis</span>
                             {% elif building.limitreached %}<span class="text-success">Limite atteinte</span>
                             {% elif building.built %}<span class="text-success">Bâtiment construit</span>
