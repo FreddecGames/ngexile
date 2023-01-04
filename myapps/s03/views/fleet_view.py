@@ -603,11 +603,11 @@ class View(GlobalView):
         relation = oRs[17]
     
         # if fleet is moving or engaged, go back to the fleets
-        if oRs[7] or oRs[3]:
-            if self.request.GET.get("a") == "open":
-                relation = rWar
-            else:
-                return HttpResponseRedirect("/s03/fleet-view/?id=" + str(fleetid))
+        # if oRs[7] or oRs[3]:
+        #     if self.request.GET.get("a") == "open":
+        #         relation = rWar
+        #     else:
+        #         return HttpResponseRedirect("/s03/fleet-view/?id=" + str(fleetid))
             
         content.AssignValue("fleetid", fleetid)
         content.AssignValue("fleetname", oRs[1])
