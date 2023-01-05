@@ -19,12 +19,20 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 if env('PROD') == 'True':
 
     DEBUG = False
+    
     SECURE_SSL_REDIRECT = True
+
+    STATIC_ROOT = BASE_DIR / 'static'
     
 else:
 
     DEBUG = True
+    
     SECURE_SSL_REDIRECT = False
+
+    STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+    STATICFILES_DIRS = [ BASE_DIR / 'static' ]
 
 SECRET_KEY = env('SECRET_KEY')
 
@@ -139,9 +147,7 @@ LOCALE_PATHS = [ BASE_DIR / 'locale' ]
 
 
 STATIC_URL = '/static/'
-STATIC_ROOT = BASE_DIR / 'staticfiles'
 
-STATICFILES_DIRS = [ BASE_DIR / 'static' ]
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 MEDIA_URL = '/media/'
