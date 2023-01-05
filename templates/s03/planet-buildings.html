@@ -60,6 +60,7 @@ function refreshPage(url) {
                                             <div class='col-12 text-start text-normal '>{{building.description}}</div>
                                         </div>
                                     </div>
+                                    {% if building.ore_prod or building.hydro_prod or building.energy_prod or building.workers_for_maintenance or building.upkeep or building.upkeep_energy %}
                                     <div class='col-12'>
                                         <div class='row g-1'>
                                             {% if building.ore_prod or building.hydro_prod or building.energy_prod %}
@@ -84,6 +85,7 @@ function refreshPage(url) {
                                             {% endif %}
                                         </div>
                                     </div>
+                                    {% endif %}
                                 </div>
                             " />
                         </div>

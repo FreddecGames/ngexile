@@ -41,7 +41,7 @@ function showCargo(cargoOre, cargoHydrocarbon, cargoScientists, cargoSoldiers, c
 
 function showLoad(planetOre, planetHydrocarbon, planetScientists, planetSoldiers, planetWorkers, cargoOre, cargoHydrocarbon, cargoScientists, cargoSoldiers, cargoWorkers)
 {
-	var s = "<form method=post action='/s03/fleet-trade/?id={{fleetid}}' {% if t %}onsubmit='return transferResources()'{% endif %}>" + '{% csrf_token %}'+
+	var s = "<form method=post action='/s03/fleet-view/?id={{fleetid}}' {% if t %}onsubmit='return transferResources()'{% endif %}>" + '{% csrf_token %}'+
 			"<table class=default width=600>"+
 			"<tr class=category><td colspan=5>Cargaison - Chargement et déchargement possible</td></tr>"+
 			"<tr class=header><td width='1%'>Ressource</td><td>En soute</td><td width='1%'>Décharger</td><td>Disponible</td><td width='1%'>Charger</td></tr>"+
@@ -59,7 +59,7 @@ function showLoad(planetOre, planetHydrocarbon, planetScientists, planetSoldiers
 
 function showUnload(cargoOre, cargoHydrocarbon, cargoScientists, cargoSoldiers, cargoWorkers, canload)
 {
-	var s = "<form method=post action='/s03/fleet-trade/?id={{fleetid}}' {% if t %}onsubmit='return transferResources()'{% endif %}>" + '{% csrf_token %}'+
+	var s = "<form method=post action='/s03/fleet-view/?id={{fleetid}}' {% if t %}onsubmit='return transferResources()'{% endif %}>" + '{% csrf_token %}'+
 			"<table class=default width=600>"+
 			"<tr class=category><td colspan=3>Cargaison - Déchargement uniquement possible</td></tr>"+
 			"<tr class=header><td width='1%'>Ressource</td><td>En soute</td><td width='1%'>Décharger</td></tr>"+

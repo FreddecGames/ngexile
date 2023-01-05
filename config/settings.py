@@ -16,7 +16,15 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-DEBUG = True
+if env('PROD') == 'True':
+
+    DEBUG = False
+    SECURE_SSL_REDIRECT = True
+    
+else:
+
+    DEBUG = True
+    SECURE_SSL_REDIRECT = False
 
 SECRET_KEY = env('SECRET_KEY')
 
@@ -29,7 +37,6 @@ ROOT_URLCONF = 'config.urls'
 WSGI_APPLICATION = 'config.wsgi.application'
 
 ADMINS = [('Freddec', 'freddec.games@gmail.com')]
-
 
 AUTH_USER_MODEL = 'accounts.User'
 
@@ -68,9 +75,9 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'impersonate.middleware.ImpersonateMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'impersonate.middleware.ImpersonateMiddleware',
 ]
 
 

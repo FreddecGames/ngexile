@@ -7,6 +7,8 @@ class View(BaseMixin, View):
         response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
         
+        if not request.user.id: return HttpResponseRedirect('/')
+        
         ipaddress = request.META.get('REMOTE_ADDR', '')
         useragent = request.META.get('HTTP_USER_AGENT', '')
         forwardedfor = request.META.get('HTTP_X_FORWARDED_FOR', '')

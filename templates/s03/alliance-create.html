@@ -24,16 +24,18 @@
         </tr>
         <tr class="item">
             <td align=right>Nom de l'alliance :</td>
-            <td><input type="text" name="alliancename" maxlength=32 size=32 value="{{name}}">
-            {% if name_already_used %} <br/><span class="error">Ce nom est déjà utilisé, veuillez en choisir un autre.</span>{% endif %}
-            {% if invalid_name %} <br/><span class="error">Entrez un nom de 4 à 32 lettres (A-Z, 0-9, -, .).</span>{% endif %}
+            <td>
+                <input type="text" name="alliancename" maxlength=32 size=32 value="{{name}}">
+                {% if name_already_used %} <br/><span class="error">Ce nom est déjà utilisé, veuillez en choisir un autre.</span>{% endif %}
+                {% if invalid_name %} <br/><span class="error">Entrez un nom de 4 à 32 lettres (A-Z, 0-9, -, .).</span>{% endif %}
             </td>
         </tr>
         <tr class="item">
             <td align=right>Tag de l'alliance :</td>
-            <td><input type="text" name="alliancetag" maxlength=4 size=32 value="{{tag}}">
-            {% if tag_already_used %} <br/><span class="error">Ce tag est déjà utilisé, veuillez en choisir un autre.</span>{% endif %}
-            {% if invalid_tag %} <br/><span class="error">Le tag doit être composé de 2 à 4 lettres.</span>{% endif %}
+            <td>
+                <input type="text" name="alliancetag" maxlength=4 size=32 value="{{tag}}">
+                {% if tag_already_used %} <br/><span class="error">Ce tag est déjà utilisé, veuillez en choisir un autre.</span>{% endif %}
+                {% if invalid_tag %} <br/><span class="error">Le tag doit être composé de 2 à 4 lettres.</span>{% endif %}
             </td>
         </tr>
         <tr class="item">

@@ -20,7 +20,16 @@
     <tr class="title"><td colspan="4">Alliances nous invitant à les rejoindre</td></tr>
     <tr class="header"><td>Alliance</td><td>Réception de l'offre</td><td>Recruteur</td><td>Réponse</td></tr>
     {% for invitation in invitations %}
-    <tr><td><a href="/s03/alliance-view/?tag={{invitation.tag}}">[{{invitation.tag}}] {{invitation.name}}</a></td><td>{{invitation.date}}</td><td>{{invitation.recruiter}}</td><td align=center>{% if invitation.accept %}<a href="?a=accept&tag={{invitation.tag}}">Accepter</a>{% endif %}{% if invitation.cant_accept %}<span class="error">Déjà dans une alliance</span>{% endif %} {% if invitation.cant_join %}<span class="error">Impossible de rejoindre</span>{% endif %} - <a href="?a=decline&tag={{invitation.tag}}">Refuser</a></td></tr>
+    <tr>
+        <td><a href="/s03/alliance-view/?tag={{invitation.tag}}">[{{invitation.tag}}] {{invitation.name}}</a></td>
+        <td>{{invitation.date}}</td><td>{{invitation.recruiter}}</td>
+        <td align=center>
+            {% if invitation.accept %}<a href="?a=accept&tag={{invitation.tag}}">Accepter</a>{% endif %}
+            {% if invitation.cant_accept %}<span class="error">Déjà dans une alliance</span>{% endif %}
+            {% if invitation.cant_join %}<span class="error">Impossible de rejoindre</span>{% endif %}
+            - <a href="?a=decline&tag={{invitation.tag}}">Refuser</a>
+        </td>
+    </tr>
     {% empty %}
     <tr><td colspan="4" align="center">Aucune invitation</td></tr>
     {% endfor %}
