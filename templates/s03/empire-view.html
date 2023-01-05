@@ -10,7 +10,7 @@
 function sig(signature) {
 
 	if (signature > 0) document.write(formatnumber(signature))
-	else document.write('indéterminé')
+	else document.write('Indéterminé')
 }
 </script>
 
@@ -31,7 +31,7 @@ function sig(signature) {
                     {% if defcon_1 %}<b>DEFCON 1</b>: Préparation maximale des forces (état de guerre){% endif %}
                 </p>
                 
-                <div>{{motd|safe|bbcode}}</div>
+                <div>{{motd|escape|safe|bbcode}}</div>
                 
             </div>
         </div>

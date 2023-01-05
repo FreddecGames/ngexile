@@ -54,7 +54,7 @@
                                 <div class="row gx-3">
                                     <div class="col-2 text-end text-normal">Description</div>
                                     <div class="col">
-                                        {% if description %}{{description|safe}}
+                                        {% if description %}{{description|escape|safe}}
                                         {% else %}<span class="text-normal">Aucune</span>
                                         {% endif %}
                                     </div>

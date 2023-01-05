@@ -109,6 +109,7 @@ class View(GlobalView):
 
                 fleet["fleetid"] = oRs[0]
                 fleet["fleetname"] = oRs[1]
+                fleet["stance"] = oRs[2]
                 fleet["signature"] = oRs[5]
 
                 #
