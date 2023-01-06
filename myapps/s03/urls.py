@@ -7,6 +7,8 @@ from .views import alliance_create
 from .views import alliance_invitations
 from .views import alliance_manage
 from .views import alliance_members
+from .views import alliance_ranks
+from .views import alliance_recruit
 from .views import alliance_reports
 from .views import alliance_view
 from .views import alliance_wars
@@ -64,6 +66,8 @@ urlpatterns = [
     path('alliance-invitations/', alliance_invitations.View.as_view()),
     path('alliance-manage/', alliance_manage.View.as_view()),
     path('alliance-members/', alliance_members.View.as_view()),
+    path('alliance-ranks/', alliance_ranks.View.as_view()),
+    path('alliance-recruit/', alliance_recruit.View.as_view()),
     path('alliance-reports/', alliance_reports.View.as_view()),
     path('alliance-view/', alliance_view.View.as_view()),
     path('alliance-wars/', alliance_wars.View.as_view()),

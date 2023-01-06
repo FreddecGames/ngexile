@@ -73,16 +73,64 @@ class View(GlobalView):
 
         content.Parse("motd")
 
+    def displayRanks(self, content):
+        # list ranks
+        query = "SELECT rankid, label, leader, can_invite_player, can_kick_player, can_create_nap, can_break_nap, can_ask_money, can_see_reports, " + \
+                " can_accept_money_requests, can_change_tax_rate, can_mail_alliance, is_default, members_displayed, can_manage_description, can_manage_announce, " + \
+                " enabled, can_see_members_info, can_order_other_fleets, can_use_alliance_radars" + \
+                " FROM alliances_ranks" + \
+                " WHERE allianceid=" + str(self.AllianceId) + \
+                " ORDER BY rankid"
+        oRss = oConnRows(query)
+        list = []
+        for oRs in oRss:
+            item = {}
+            item["rank_id"] = oRs["rankid"]
+            item["rank_label"] = oRs["label"]
+
+            if oRs["leader"]: item["disabled"] = True
+
+            if oRs["leader"] or oRs["enabled"]: item["checked_enabled"] = True
+
+            if oRs["leader"] or oRs["is_default"] and not oRs["leader"]: item["checked_0"] = True
+
+            if oRs["leader"] or oRs["can_invite_player"]: item["checked_1"] = True
+            if oRs["leader"] or oRs["can_kick_player"]: item["checked_2"] = True
+
+            if oRs["leader"] or oRs["can_create_nap"]: item["checked_3"] = True
+            if oRs["leader"] or oRs["can_break_nap"]: item["checked_4"] = True
+
+            if oRs["leader"] or oRs["can_ask_money"]: item["checked_5"] = True
+            if oRs["leader"] or oRs["can_see_reports"]: item["checked_6"] = True
+
+            if oRs["leader"] or oRs["can_accept_money_requests"]: item["checked_7"] = True
+            if oRs["leader"] or oRs["can_change_tax_rate"]: item["checked_8"] = True
+
+            if oRs["leader"] or oRs["can_mail_alliance"]: item["checked_9"] = True
+
+            if oRs["leader"] or oRs["can_manage_description"]: item["checked_10"] = True
+            if oRs["leader"] or oRs["can_manage_announce"]: item["checked_11"] = True
+
+            if oRs["leader"] or oRs["can_see_members_info"]: item["checked_12"] = True
+
+            if oRs["leader"] or oRs["members_displayed"]: item["checked_13"] = True
+
+            if oRs["leader"] or oRs["can_order_other_fleets"]: item["checked_14"] = True
+            if oRs["leader"] or oRs["can_use_alliance_radars"]: item["checked_15"] = True
+
+            list.append(item)
+
+        content.AssignValue("ranks", list)
+
     #
     # Load template and display the right page
     #
     def displayOptions(self, cat):
 
-        content = GetTemplate(self.request, "alliance-manage")
+        content = GetTemplate(self.request, "alliance-ranks")
         content.AssignValue("cat", cat)
         
-        self.displayGeneral(content)
-        self.displayMotD(content)
+        self.displayRanks(content)
 
         if self.changes_status != "":
             content.Parse(self.changes_status)

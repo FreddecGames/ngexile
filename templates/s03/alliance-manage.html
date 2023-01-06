@@ -2,6 +2,18 @@
 
 
 {% block content %}
+
+<div class="nav nav-tabs mb-3">
+    <div class="nav-item"><a href="/s03/alliance-view/" class="nav-link">Vue d'ensemble</a></div>
+    {% if show_management %}<div class="nav-item"><a href="/s03/alliance-manage/" class="nav-link active">Gestion</a></div>{% endif %}
+    {% if show_management %}<div class="nav-item"><a href="/s03/alliance-ranks/" class="nav-link">Grades</a></div>{% endif %}
+    {% if show_members %}<div class="nav-item"><a href="/s03/alliance-members/" class="nav-link">Membres</a></div>{% endif %}
+    {% if show_members %}<div class="nav-item"><a href="/s03/alliance-recruit/" class="nav-link">Recrutement</a></div>{% endif %}
+    <div class="nav-item"><a href="/s03/alliance-wars/" class="nav-link">Guerres</a></div>
+    {% if show_reports %}<div class="nav-item"><a href="/s03/alliance-reports/" class="nav-link">Rapports</a></div>{% endif %}
+    <div class="nav-item"><a href="/s03/alliance-invitations/" class="nav-link">Invitations</a></div>
+</div>
+
 {% if ranks %}
 <script>
 function check(){
@@ -17,20 +29,12 @@ function check(){
 {% endif %}
 <table cellpadding="0" cellspacing="0">
 <tr>
-<td valign="top">
-{% if nav %}
-<ul class="vtabs">
-	{% if cat1 %}<li{% if cat1_selected %} class="active"{% endif %}><a href="?cat=1">Général</a></li>{% endif %}
-	{% if cat2 %}<li{% if cat2_selected %} class="active"{% endif %}><a href="?cat=2">Annonce</a></li>{% endif %}
-	{% if cat3 %}<li{% if cat3_selected %} class="active"{% endif %}><a href="?cat=3">Grades</a></li>{% endif %}
-</ul>
-{% endif %}
-</td>
 <td>
 
 <table class="default" width="600">
-<form method="post" action="?cat={{cat}}"{% if ranks %} onsubmit="return check()"{% endif %}>{% csrf_token %}
-{% if general %}
+<form method="post" action="?cat=1"{% if ranks %} onsubmit="return check()"{% endif %}>{% csrf_token %}
+
+
 <tr class="item">
 	<td colspan="5" align="center">
 		<div id="stats">
@@ -60,10 +64,12 @@ function check(){
 
 <tr class="title"><td colspan="5">Description</td></tr>
 <tr class="item"><td colspan="5" align="center"><textarea name="description" cols="62" rows="15">{{description}}</textarea><div align="center"><a href="/s03/help/?cat=tags" target="_blank">Balises supportées</a></div></td></tr>
-{% endif %}
 
-{% if motd %}
+
+
 <tr class="item"><td colspan="5">{{announce|safe}}</td></tr>
+</form>
+<form method="post" action="?cat=2"{% if ranks %} onsubmit="return check()"{% endif %}>{% csrf_token %}
 
 <tr class="title"><td colspan="5">Annonce</td></tr>
 <tr class="item"><td width='1%'>DEFCON</td><td colspan="4"><select name="defcon">
@@ -74,26 +80,8 @@ function check(){
 <option value=1{% if defcon_1 %} selected{% endif %}>1 : Préparation maximale des forces (état de guerre)</option>
 </select></td></tr>
 <tr class="item"><td colspan="5" align="center"><textarea name="motd" cols="62" rows="15">{{announce}}</textarea><div align=center><a href="/s03/help/?cat=tags" target=_blank>Balises supportées</a></div></td></tr>
-{% endif %}
 
-{% if ranks %}
-<tr class="title"><td colspan="5">Grades</td></tr>
-{% for rank in ranks %}
-<tr class="item"><td colspan="5">
-<table class="clear" width="100%" cellspacing="0" cellpadding="0">
-<tr><td nowrap><input type="checkbox" class="checkbox" id="c{{rank.rank_id}}_enabled" name="c{{rank.rank_id}}_enabled" value="1"{% if rank.checked_enabled %} checked{% endif %}{% if rank.disabled %} disabled{% endif %}><input type="text" size="28" maxlength="32" name="n{{rank.rank_id}}" id="n{{rank.rank_id}}" value="{{rank.rank_label}}"></td><td><input type="checkbox" class="checkbox" id="c{{rank.rank_id}}_0" name="c{{rank.rank_id}}_0" value="1"{% if rank.checked_0 %} checked{% endif %}{% if rank.disabled %} disabled{% endif %}><label for="c{{rank.rank_id}}_0">Grade des nouveaux membres</label></td></tr>
-<tr{% if rank.disabled %} disabled{% endif %}><td nowrap><input type="checkbox" class="checkbox" id="c{{rank.rank_id}}_1" name="c{{rank.rank_id}}_1" value="1"{% if rank.checked_1 %} checked{% endif %}><label for="c{{rank.rank_id}}_1">Recruter une nation</label></td><td><input type="checkbox" class="checkbox" id="c{{rank.rank_id}}_2" name="c{{rank.rank_id}}_2" value="1"{% if rank.checked_2 %} checked{% endif %}><label for="c{{rank.rank_id}}_2">Exclure une nation</label></td></tr>
-<tr{% if rank.disabled %} disabled{% endif %}><td nowrap><input type="checkbox" class="checkbox" id="c{{rank.rank_id}}_3" name="c{{rank.rank_id}}_3" value="1"{% if rank.checked_3 %} checked{% endif %}><label for="c{{rank.rank_id}}_3">Créer un pacte/tribut/guerre</label></td><td><input type="checkbox" class="checkbox" id="c{{rank.rank_id}}_4" name="c{{rank.rank_id}}_4" value="1"{% if rank.checked_4 %} checked{% endif %}><label for="c{{rank.rank_id}}_4">Rompre un pacte/tribut/guerre</label></td></tr>
-<tr{% if rank.disabled %} disabled{% endif %}><td nowrap><input type="checkbox" class="checkbox" id="c{{rank.rank_id}}_5" name="c{{rank.rank_id}}_5" value="1"{% if rank.checked_5 %} checked{% endif %}><label for="c{{rank.rank_id}}_5">Demander un financement</label></td><td><input type="checkbox" class="checkbox" id="c{{rank.rank_id}}_6" name="c{{rank.rank_id}}_6" value="1"{% if rank.checked_6 %} checked{% endif %}><label for="c{{rank.rank_id}}_6">Voir les rapports d'alliance</label></td></tr>
-<tr{% if rank.disabled %} disabled{% endif %}><td nowrap><input type="checkbox" class="checkbox" id="c{{rank.rank_id}}_7" name="c{{rank.rank_id}}_7" value="1"{% if rank.checked_7 %} checked{% endif %}><label for="c{{rank.rank_id}}_7">Accepter les demandes de financement</label></td><td><input type="checkbox" class="checkbox" id="c{{rank.rank_id}}_8" name="c{{rank.rank_id}}_8" value="1"{% if rank.checked_8 %} checked{% endif %}><label for="c{{rank.rank_id}}_8">Modifier la taxe</label></td></tr>
-<tr{% if rank.disabled %} disabled{% endif %}><td nowrap><input type="checkbox" class="checkbox" id="c{{rank.rank_id}}_9" name="c{{rank.rank_id}}_9" value="1"{% if rank.checked_9 %} checked{% endif %}><label for="c{{rank.rank_id}}_9">Envoyer un message à toute l'alliance</label></td><td nowrap><input type="checkbox" class="checkbox" id="c{{rank.rank_id}}_12" name="c{{rank.rank_id}}_12" value="1"{% if rank.checked_12 %} checked{% endif %}><label for="c{{rank.rank_id}}_12">Voir les détails sur les membres (infos nation)</label></td></tr>
-<tr{% if rank.disabled %} disabled{% endif %}><td nowrap><input type="checkbox" class="checkbox" id="c{{rank.rank_id}}_10" name="c{{rank.rank_id}}_10" value="1"{% if rank.checked_10 %} checked{% endif %}><label for="c{{rank.rank_id}}_10">Modifier la description de l'alliance</label></td><td><input type="checkbox" class="checkbox" id="c{{rank.rank_id}}_11" name="c{{rank.rank_id}}_11" value="1"{% if rank.checked_11 %} checked{% endif %}><label for="c{{rank.rank_id}}_11">Modifier l'annonce de l'alliance</label></td></tr>
-<tr{% if rank.disabled %} disabled{% endif %}><td nowrap colspan="2"><input type="checkbox" class="checkbox" id="c{{rank.rank_id}}_13" name="c{{rank.rank_id}}_13" value="1"{% if rank.checked_13 %} checked{% endif %}><label for="c{{rank.rank_id}}_13">Publier la liste des membres</label></td></tr>
-<tr{% if rank.disabled %} disabled{% endif %}><td nowrap><input type="checkbox" class="checkbox" id="c{{rank.rank_id}}_14" name="c{{rank.rank_id}}_14" value="1"{% if rank.checked_14 %} checked{% endif %}><label for="c{{rank.rank_id}}_14">Commander les flottes partagées</label></td><td nowrap><input type="checkbox" class="checkbox" id="c{{rank.rank_id}}_15" name="c{{rank.rank_id}}_15" value="1"{% if rank.checked_15 %} checked{% endif %}><label for="c{{rank.rank_id}}_15">Utiliser les radars de l'alliance</label></td></tr>
-</table>
-</td></tr>
-{% endfor %}
-{% endif %}
+
 
 <tr><td colspan="5" align="center"><input type="submit" name="submit" id="submit" value="Valider changements"></td></tr>
 

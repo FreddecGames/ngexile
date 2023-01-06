@@ -490,33 +490,6 @@ div.sector div.hostile { color: #f00; }
 div.sector div.resource { color: #ff0; }
 div.sector div.vortex { color: #f0f; }
 
-/*
-#mapgalaxyview div.sector .p0 { left: 4px; top: 4px; }
-#mapgalaxyview div.sector .p1 { left: 11px; top: 4px; }
-#mapgalaxyview div.sector .p2 { left: 18px; top: 4px; }
-#mapgalaxyview div.sector .p3 { left: 25px; top: 4px; }
-#mapgalaxyview div.sector .p4 { left: 32px; top: 4px; }
-#mapgalaxyview div.sector .p5 { left: 4px; top: 11px; }
-#mapgalaxyview div.sector .p6 { left: 11px; top: 11px; }
-#mapgalaxyview div.sector .p7 { left: 18px; top: 11px; }
-#mapgalaxyview div.sector .p8 { left: 25px; top: 11px; }
-#mapgalaxyview div.sector .p9 { left: 32px; top: 11px; }
-#mapgalaxyview div.sector .p10 { left: 4px; top: 18px; }
-#mapgalaxyview div.sector .p11 { left: 11px; top: 18px; }
-#mapgalaxyview div.sector .p12 { left: 18px; top: 18px; }
-#mapgalaxyview div.sector .p13 { left: 25px; top: 18px; }
-#mapgalaxyview div.sector .p14 { left: 32px; top: 18px; }
-#mapgalaxyview div.sector .p15 { left: 4px; top: 25px; }
-#mapgalaxyview div.sector .p16 { left: 11px; top: 25px; }
-#mapgalaxyview div.sector .p17 { left: 18px; top: 25px; }
-#mapgalaxyview div.sector .p18 { left: 25px; top: 25px; }
-#mapgalaxyview div.sector .p19 { left: 32px; top: 25px; }
-#mapgalaxyview div.sector .p20 { left: 4px; top: 32px; }
-#mapgalaxyview div.sector .p21 { left: 11px; top: 32px; }
-#mapgalaxyview div.sector .p22 { left: 18px; top: 32px; }
-#mapgalaxyview div.sector .p23 { left: 25px; top: 32px; }
-#mapgalaxyview div.sector .p24 { left: 32px; top: 32px; }
-*/
 
 #mapsector { background:transparent; visibility: hidden; display:none; }
 #mapsector table { border-collapse:collapse; border-spacing:0; }

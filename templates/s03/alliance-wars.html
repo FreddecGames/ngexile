@@ -1,6 +1,18 @@
 {% extends 's03/layout.html' %}
 
 {% block content %}
+
+<div class="nav nav-tabs mb-3">
+    <div class="nav-item"><a href="/s03/alliance-view/" class="nav-link">Vue d'ensemble</a></div>
+    {% if show_management %}<div class="nav-item"><a href="/s03/alliance-manage/" class="nav-link">Gestion</a></div>{% endif %}
+    {% if show_management %}<div class="nav-item"><a href="/s03/alliance-ranks/" class="nav-link">Grades</a></div>{% endif %}
+    {% if show_members %}<div class="nav-item"><a href="/s03/alliance-members/" class="nav-link">Membres</a></div>{% endif %}
+    {% if show_members %}<div class="nav-item"><a href="/s03/alliance-recruit/" class="nav-link">Recrutement</a></div>{% endif %}
+    <div class="nav-item"><a href="/s03/alliance-wars/" class="nav-link active">Guerres</a></div>
+    {% if show_reports %}<div class="nav-item"><a href="/s03/alliance-reports/" class="nav-link">Rapports</a></div>{% endif %}
+    <div class="nav-item"><a href="/s03/alliance-invitations/" class="nav-link">Invitations</a></div>
+</div>
+
 <script type="text/javascript">
 function confirmStopWar(tag) {
 	return confirm("Êtes-vous sûr de vouloir arrêter la guerre avec [" + tag + "] ?");
@@ -9,15 +21,8 @@ function confirmStopWar(tag) {
 <table width="750" cellpadding=0 cellspacing=0>
 <tr>
 <td align="center">
-	{% if nav %}
-    <div class="nav nav-tabs mb-3">
-        {% if cat1 %}<div class="nav-item"><a href="?cat=1" class="nav-link {% if cat1_selected %}active{% endif %}">Guerres en cours</a></div>{% endif %}
-        {% if cat2 %}<div class="nav-item"><a href="?cat=2" class="nav-link {% if cat2_selected %}active{% endif %}">Déclaration de guerre</a></div>{% endif %}
-    </div>
-	{% endif %}
 	<div>
 
-{% if cat1_selected %}
 <table class="default" width="100%">
 <tr class="header">
 <td><a href="?col=1{% if r1 %}&r=1{% endif %}">Alliance</a></td>
@@ -46,7 +51,6 @@ function confirmStopWar(tag) {
 </td></tr>
 {% endif %}
 </table>
-{% endif %}
 
 {% if newwar %}
 <form action="?cat={{cat}}&a=new" method="post">{% csrf_token %}

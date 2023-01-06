@@ -182,10 +182,8 @@ class View(GlobalView):
         content = GetTemplate(self.request, "alliance-wars")
         content.AssignValue("cat", cat)
 
-        if cat == 1:
-            self.displayWars(content)
-        elif cat == 2:
-            self.displayDeclaration(content)
+        self.displayWars(content)
+        self.displayDeclaration(content)
 
         content.Parse("cat" + str(cat) + "_selected")
 

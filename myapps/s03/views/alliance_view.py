@@ -143,5 +143,6 @@ class View(GlobalView):
                 content.AssignValue("ranks", list)
                 
             content.Parse("display")
+            content.AssignValue("allianceId", self.AllianceId)
 
         return self.Display(content)

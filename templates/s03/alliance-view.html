@@ -1,14 +1,26 @@
 {% extends 's03/layout.html' %}
 
-
-
 {% block content %}
-<div id="alliance">
-{% if noalliance %}
-<a href="/s03/alliance-create/">Créer une alliance</a><br/>
-<a href="/s03/alliance-invitations/">Invitations reçues</a><br/>
-{% endif %}
+
+
 {% if display %}
+
+<div class="nav nav-tabs mb-3">
+    <div class="nav-item"><a href="/s03/alliance-view/" class="nav-link active">Vue d'ensemble</a></div>
+    {% if allianceId %}
+    {% if show_management %}<div class="nav-item"><a href="/s03/alliance-manage/" class="nav-link">Gestion</a></div>{% endif %}
+    {% if show_management %}<div class="nav-item"><a href="/s03/alliance-ranks/" class="nav-link">Grades</a></div>{% endif %}
+    {% if show_members %}<div class="nav-item"><a href="/s03/alliance-members/" class="nav-link">Membres</a></div>{% endif %}
+    {% if show_members %}<div class="nav-item"><a href="/s03/alliance-recruit/" class="nav-link">Recrutement</a></div>{% endif %}
+    <div class="nav-item"><a href="/s03/alliance-wars/" class="nav-link">Guerres</a></div>
+    {% if show_reports %}<div class="nav-item"><a href="/s03/alliance-reports/" class="nav-link">Rapports</a></div>{% endif %}
+    <div class="nav-item"><a href="/s03/alliance-invitations/" class="nav-link">Invitations</a></div>
+    {% else %}
+    <div class="nav-item"><a href="/s03/alliance-invitations/" class="nav-link">Invitations</a></div>
+    <div class="nav-item"><a href="/s03/alliance-create/" class="nav-link">Création</a></div>
+    {% endif %}    
+</div>
+
 <table class="default">
 <tr class="bigtitle"><td>[{{tag}}] {{name}}</td></tr>
 {% if logo %}<tr class="item"><td align=center><img src="{{logo_url}}" class="logo"></td></tr>{% endif %}
@@ -24,13 +36,7 @@
 
 <tr><td>
 	<table class="clear">
-	<tr valign="top"><td>
-		<table width="300">
-		<tr class="title"><td>Pacte(s) de non-aggression</td></tr>
-		{% for nap in naps %}<tr class="smallitem"><td><a href="/s03/alliance-view/?tag={{nap.naptag}}">[{{nap.naptag}}] {{nap.napname}}</a></td></tr>{% endfor %}
-		{% if nonaps %}<tr><td align=center>Aucun</td></tr>{% endif %}
-		</table>
-	</td>
+	<tr valign="top">
 	<td>
 		<table>
 		<tr class="title"><td>Guerres en cours</td></tr>
@@ -42,5 +48,5 @@
 </td></tr>
 </table>
 {% endif %}
-</div>
+
 {% endblock %}

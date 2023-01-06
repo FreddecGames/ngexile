@@ -9,13 +9,13 @@
 
 {% if tabnav %}
 <div class="nav nav-tabs mb-3">
-	{% if tabnav_000 %}<div class="nav-item"><a href="?cat=0" class="nav-link {% if tabnav_000_selected %}active{% endif %}">Tout {% if tabnav_000_new %}<span class="badge text-bg-success">{{total_newreports}}</span>{% endif %}</a></div>{% endif %}
-	{% if tabnav_100 %}<div class="nav-item"><a href="?cat=1" class="nav-link {% if tabnav_100_selected %}active{% endif %}">Alliance {% if tabnav_100_new %}<span class="badge text-bg-success">{{tabnav_100_newreports}}</span>{% endif %}</a></div>{% endif %}
-	{% if tabnav_200 %}<div class="nav-item"><a href="?cat=2" class="nav-link {% if tabnav_200_selected %}active{% endif %}">Combats {% if tabnav_200_new %}<span class="badge text-bg-success">{{tabnav_200_newreports}}</span>{% endif %}</a></div>{% endif %}
-	{% if tabnav_300 %}<div class="nav-item"><a href="?cat=3" class="nav-link {% if tabnav_300_selected %}active{% endif %}">Développement {% if tabnav_300_new %}<span class="badge text-bg-success">{{tabnav_300_newreports}}</span>{% endif %}</a></div>{% endif %}
-	{% if tabnav_400 %}<div class="nav-item"><a href="?cat=4" class="nav-link {% if tabnav_400_selected %}active{% endif %}">Flottes {% if tabnav_400_new %}<span class="badge text-bg-success">{{tabnav_400_newreports}}</span>{% endif %}</a></div>{% endif %}
-	{% if tabnav_600 %}<div class="nav-item"><a href="?cat=6" class="nav-link {% if tabnav_600_selected %}active{% endif %}">Colonisations {% if tabnav_600_new %}<span class="badge text-bg-success">{{tabnav_600_newreports}}</span>{% endif %}</a></div>{% endif %}
-	{% if tabnav_700 %}<div class="nav-item"><a href="?cat=7" class="nav-link {% if tabnav_700_selected %}active{% endif %}">Événements {% if tabnav_700_new %}<span class="badge text-bg-success">{{tabnav_700_newreports}}</span>{% endif %}</a></div>{% endif %}
+	{% if tabnav_000 %}<div class="nav-item"><a href="?cat=0" class="nav-link d-flex align-items-center {% if tabnav_000_selected %}active{% endif %}">Tout {% if tabnav_000_new %}<span class="ms-2 badge text-bg-success">{{total_newreports}}</span>{% endif %}</a></div>{% endif %}
+	{% if tabnav_100 %}<div class="nav-item"><a href="?cat=1" class="nav-link d-flex align-items-center {% if tabnav_100_selected %}active{% endif %}">Alliance {% if tabnav_100_new %}<span class="ms-2 badge text-bg-success">{{tabnav_100_newreports}}</span>{% endif %}</a></div>{% endif %}
+	{% if tabnav_200 %}<div class="nav-item"><a href="?cat=2" class="nav-link d-flex align-items-center {% if tabnav_200_selected %}active{% endif %}">Combats {% if tabnav_200_new %}<span class="ms-2 badge text-bg-success">{{tabnav_200_newreports}}</span>{% endif %}</a></div>{% endif %}
+	{% if tabnav_300 %}<div class="nav-item"><a href="?cat=3" class="nav-link d-flex align-items-center {% if tabnav_300_selected %}active{% endif %}">Développement {% if tabnav_300_new %}<span class="ms-2 badge text-bg-success">{{tabnav_300_newreports}}</span>{% endif %}</a></div>{% endif %}
+	{% if tabnav_400 %}<div class="nav-item"><a href="?cat=4" class="nav-link d-flex align-items-center {% if tabnav_400_selected %}active{% endif %}">Flottes {% if tabnav_400_new %}<span class="ms-2 badge text-bg-success">{{tabnav_400_newreports}}</span>{% endif %}</a></div>{% endif %}
+	{% if tabnav_600 %}<div class="nav-item"><a href="?cat=6" class="nav-link d-flex align-items-center {% if tabnav_600_selected %}active{% endif %}">Colonisations {% if tabnav_600_new %}<span class="ms-2 badge text-bg-success">{{tabnav_600_newreports}}</span>{% endif %}</a></div>{% endif %}
+	{% if tabnav_700 %}<div class="nav-item"><a href="?cat=7" class="nav-link d-flex align-items-center {% if tabnav_700_selected %}active{% endif %}">Événements {% if tabnav_700_new %}<span class="ms-2 badge text-bg-success">{{tabnav_700_newreports}}</span>{% endif %}</a></div>{% endif %}
 </div>
 {% endif %}
 
