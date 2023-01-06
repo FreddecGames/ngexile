@@ -72,7 +72,7 @@ class View(GlobalView):
 
         # if fleet doesnt exist, redirect to the last known planet orbit or display the fleets list
         if oRs == None:
-            return HttpResponseRedirect("/s03/fleets/")
+            return HttpResponseRedirect("/s03/empire-fleets/")
 
         if self.AllianceId:
             if oRs[57]:
@@ -596,9 +596,9 @@ class View(GlobalView):
         # if fleet doesn't exist, redirect to the list of fleets
         if oRs == None:
             if self.request.GET.get("a") == "open":
-                return HttpResponseRedirect("/s03/fleets/")
+                return HttpResponseRedirect("/s03/empire-fleets/")
             else:
-                return HttpResponseRedirect("/s03/fleets/")
+                return HttpResponseRedirect("/s03/empire-fleets/")
     
         relation = oRs[17]
     
