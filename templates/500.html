@@ -1,60 +1,49 @@
+{% extends "base.html" %}
+
 {% load i18n %}
 
-<!doctype html>
-<html lang="en">
-    <head>
-        <!-- -->
-        <title>NG Exile</title>
-        <!-- -->
-        <link rel="shortcut icon" href="/static/favicon.ico">
-        <!-- -->
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <!-- -->
-        <link rel="stylesheet" type="text/css" href="/static/css/vendor-bootstrap.min.css" />
-        <link rel="stylesheet" type="text/css" href="/static/css/styles.css" />
-        <!-- -->
-        <script type="text/javascript" src="/static/js/vendor-bootstrap.bundle.min.js"></script>
-        <script type="text/javascript" src="/static/js/vendor-fontawesome.js"></script>
-        <!-- -->
-        <script type="text/javascript">
-        function shakewnd(n) {
-            if (self.moveBy)
-                for (i=10; i>0; i--)
-                    for (x=0; x<n; x++) {
-                        self.moveBy(i,i);
-                        self.moveBy(0,-i);
-                        self.moveBy(-i,i);
-                        self.moveBy(0,-i);
-                    }
-                }
-            }
-        }
-        </script>
-    </head>
-    <body onload="shakewnd(1)">
-        <!-- -->
-        <div class="h-100 w-100 d-flex align-items-center justify-content-center">
-            <div class="row g-1">
-                <div class="col-12 text-center"><span class="fs-6 text-white">Oups...</span></div>
-                <div class="col-12 text-center"><img src="/static/assets/error500.jpg" width="250px" height="216px" class="rounded"></div>
-                <div class="col-12 text-center">
-                    Une erreur est survenue sur la page que vous avez demandée.<br/>
-                    Merci de bien vouloir nous en excuser.
+{% block content %}
+<div class="p-3" style="width:100%; max-width:512px;">
+    <div class="row g-3">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <div class="row gx-2 align-items-center">
+                        <div class="col-auto" style="padding-top:2px;">
+                            <a href="/" class="mt-1"><i class="fa-fw fas fa-arrow-alt-circle-left"></i></a>
+                        </div>
+                        <div class="col">
+                            <div class="row gx-2 align-items-center">
+                                <div class="col-auto">
+                                    <img src="/static/img/logo.png" width="24px" class="rounded" />
+                                </div>
+                                <div class="col-auto">
+                                    <span class="fs-6">NG Exile</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <span class="fs-6 text-white">{% translate "Oups..." %}</span>
+                        </div>
+                    </div>
                 </div>
-                <div class="col-12 text-center">
-                    Si le problème persiste contactez Freddec sur Discord.<br/>
-                    <a href="https://discord.gg/x39nHzM" target="_blank" class="btn btn-secondary"><i class="fa-fw fab fa-discord me-1"></i> Discord</a>
+                <div class="card-body">
+                    <div class="row gx-2 gy-3">
+                        <div class="col-12 text-center">
+                            <img src="/static/assets/error500.jpg" width="250px" height="216px" class="rounded" />
+                        </div>
+                        <div class="col-12 text-center">
+                            Une erreur est survenue sur la page que vous avez demandée.<br/>
+                            Merci de bien vouloir nous en excuser.
+                        </div>
+                        <div class="col-12 text-center">
+                            Si le problème persiste contactez Freddec sur Discord.<br/>
+                            <a href="https://discord.gg/x39nHzM" target="_blank" class="btn btn-secondary"><i class="fa-fw fab fa-discord me-1"></i> Discord</a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-        <!-- -->
-        <script async src="https://www.googletagmanager.com/gtag/js?id=G-212X2QX8W5"></script>
-        <script>
-            window.dataLayer = window.dataLayer || []
-            function gtag(){ dataLayer.push(arguments) }
-            gtag('js', new Date())
-            gtag('config', 'G-212X2QX8W5')
-        </script>
-    </body>
-</html>
+    </div>
+</div>
+{% endblock %}
