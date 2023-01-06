@@ -370,10 +370,6 @@ En attente (<script>putcountdown1({{time}}, 'Terminé', '?id={{fleetid}}')</scri
 {% endif %}
 </td></tr>
 
-<tr><td nowrap>Partage</td>
-<td>
-<div class=left>Flotte partagée à l'alliance: <a href="?id={{fleetid}}&action=share">{% if shared %}Oui{% endif %}{% if not_shared %}Non{% endif %}</a></div>
-</td></tr>
 
 <tr{% if hide_cargo %} class="hidden"{% endif %}><td nowrap>Cargaison</td><td><span id="load">{{fleet_load}}</span> / {{fleet_capacity}} unités</td></tr>
 
@@ -501,7 +497,7 @@ var fleet{{fleet.id}}="<table width='100%'><tr><td><div id='stats'><div><span cl
 </script>
 <tr><td><a href="?id={{fleet.id}}" onmouseover="ddrivetip(fleet{{fleet.id}},200)" onmouseout="hideddrivetip()">{{fleet.name}}</a> ({{fleet.signature}}){% if fleet.merge %} - <a href="?id={{fleetid}}&action=merge&with={{fleet.id}}">absorber</a>{% endif %}</td></tr>
 {% else %}
-<tr><td><a title="Écrire à {{fleet.owner}}" href="/s03/mails/?subject=À propos de la flotte {{fleet.name}}&to={{fleet.owner}}" class="{% if fleet.ally %}ally{% endif %}{% if fleet.friend %}friend{% endif %}{% if fleet.enemy %}enemy{% endif %}">{% if fleet.alliance %}[{{fleet.tag}}] {% endif %}{{fleet.name}}</a> (<script>document.write(({{fleet.signature}}>0)?'{{fleet.signature}}':'indéterminé'); </script>)</td></tr>
+<tr><td><a title="Écrire à {{fleet.owner}}" href="/s03/mail-new/?subject=À propos de la flotte {{fleet.name}}&to={{fleet.owner}}" class="{% if fleet.ally %}ally{% endif %}{% if fleet.friend %}friend{% endif %}{% if fleet.enemy %}enemy{% endif %}">{% if fleet.alliance %}[{{fleet.tag}}] {% endif %}{{fleet.name}}</a> (<script>document.write(({{fleet.signature}}>0)?'{{fleet.signature}}':'indéterminé'); </script>)</td></tr>
 {% endif %}
 {% endfor %}
 

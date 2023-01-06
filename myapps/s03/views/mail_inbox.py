@@ -113,6 +113,7 @@ class View(GlobalView):
             query = "False"
 
             for mailid in request.POST.getlist("checked_mails"):
+                print(mailid)
                 query = query + " OR id=" + mailid
 
             if query != "False":
@@ -206,7 +207,7 @@ class View(GlobalView):
                 "    LEFT JOIN users ON (upper(users.username) = upper(messages.sender) AND messages.datetime >= users.game_started)" + \
                 "    LEFT JOIN alliances ON (users.alliance_id = alliances.id)" + \
                 "    LEFT JOIN messages_ignore_list ON (userid=" + str(self.UserId) + " AND ignored_userid = users.id)" + \
-                " WHERE ownerid = " + str(self.UserId) + \
+                " WHERE NOT deleted AND ownerid = " + str(self.UserId) + \
                 " ORDER BY datetime DESC, messages.id DESC" + \
                 " OFFSET " + str(offset*displayed) + " LIMIT "+str(displayed)
         oRss = oConnExecuteAll(query)

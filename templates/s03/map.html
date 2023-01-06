@@ -94,7 +94,6 @@
 
     document.onclick=hidemenu;
 
-
     function getRelationClass(rel) {
         switch(rel){
             case 2: return "self"; break;
@@ -109,38 +108,57 @@
 
 
     function Fl(id,name,tag,owner,rel,signature,fleeing) {
+        
+        var s = '<div class="col-12">'
+        s += '<div class="row gx-2 align-items-baseline">'
+        
         if(rel==2 || id != 0)
-            var s= '<a title="Inspecter la flotte '+name+'" href="/s03/fleet-view/?id=' + id + '" class="self">'+(tag!=''?'['+tag+'] ':'')+name+'</a>';
+            s += '<div class="col"><a title="Inspecter la flotte '+name+'" href="/s03/fleet-view/?id=' + id + '" class="self">'+(tag!=''?'['+tag+'] ':'')+name+'</a></div>';
         else
         {
             var c = getRelationClass(rel);
 
-            var s = '<a title="Écrire à '+owner+'" href="/s03/mails/?subject=À propos de la flotte '+name+'&to='+owner+'" class="' + c+ '">' +(tag!=''?'['+tag+'] ':'')+name+'</a>';
+            s += '<div class="col"><a title="Écrire à '+owner+'" href="/s03/mail-new/?subject=À propos de la flotte '+name+'&to='+owner+'" class="' + c+ '">' +(tag!=''?'['+tag+'] ':'')+name+'</a></div>';
         }
 
         if(signature > 0)
-            s += ' ('+formatnumber(signature)+')';
+            s += '<div class="col-auto">'+formatnumber(signature)+'</div>';
         else
-            s += ' (indéterminé)';
+            s += '<div class="col-auto">Indéterminé</div>';
 
-        if(fleeing)	s += ' en fuite';
-        return s+'<br/>';
+        if(fleeing)	s += '<div class="col-auto">Fuite</div>';
+        
+        s += '</div>'
+        s += '</div>'
+        
+        return s;
     }
 
     function descOrbit(idx,planetid,rel,parked) {
-        var s="";
+        var s = '<div class="row g-1">';
         var orbit=orb[idx];
 
         for(var i=1; i<orbit.length; i++)
             s += Fl(orbit[i][0], orbit[i][1], orbit[i][2], orbit[i][3], orbit[i][4], orbit[i][5], orbit[i][6]);
 
         if(parked > 0) {
-            if(rel == 2)
-                s += '<a href="/s03/planet-orbit/?planet='+planetid+'" class="' + getRelationClass(rel) + '">Au sol: ' + formatnumber(parked) + '</a>';
-            else
-                s += '<span class="' + getRelationClass(rel) + '">Au sol: ' + formatnumber(parked) + '</span>';
-        }
+        
+            s += '<div class="col-12">'
+            s += '<div class="row gx-2 align-items-baseline">'
 
+            if(rel == 2)
+                s += '<div class="col"><a href="/s03/planet-orbit/?planet='+planetid+'" class="' + getRelationClass(rel) + '">Au sol</a></div>';
+            else
+                s += '<div class="col"><span class="' + getRelationClass(rel) + '">Au sol</div>';
+            
+            s += '<div class="col-auto">' + formatnumber(parked) + '</div>'
+            
+            s += '</div>'
+            s += '</div>'
+        }
+        
+        s += '</div>'
+        
         return s;
     }
 
@@ -386,7 +404,7 @@
             <div class="col-12">
                 <div class="card">
                     <div class="card-header">
-                        <span>Prix GM</span>
+                        <span>Prix GM 1000 unités</span>
                     </div>
                     <div class="card-body">
                         <div class="row g-1">
@@ -561,7 +579,7 @@ function sig(signature) {
                         <a href="/s03/fleet-view/?id={{fleet.fleetid}}" class="self">{{fleet.fleetname}}</a>
                     {% else %}
                         {% if fleet.alliancetag %}<a href="/s03/alliance-view/?tag={{fleet.alliancetag}}" class="{% if fleet.relation == 1 or fleet.relation == 0 %}text-success{% else %}text-danger{% endif %}">[{{fleet.alliancetag}}]</a>{% endif %}
-                        <a href="/s03/mails/?to={{fleet.name}}" class="{% if fleet.relation == 1 or fleet.relation == 0 %}text-success{% else %}text-danger{% endif %}">{{fleet.name}}</a>
+                        <a href="/s03/mail-new/?to={{fleet.name}}" class="{% if fleet.relation == 1 or fleet.relation == 0 %}text-success{% else %}text-danger{% endif %}">{{fleet.name}}</a>
                     {% endif %}
                 </div>
                 <div class="col small">
@@ -606,7 +624,7 @@ function sig(signature) {
                         <a href="/s03/fleet-view/?id={{fleet.fleetid}}" class="self">{{fleet.fleetname}}</a>
                     {% else %}
                         {% if fleet.alliancetag %}<a href="/s03/alliance-view/?tag={{fleet.alliancetag}}" class="{% if fleet.relation == 1 or fleet.relation == 0 %}text-success{% else %}text-danger{% endif %}">[{{fleet.alliancetag}}]</a>{% endif %}
-                        <a href="/s03/mails/?to={{fleet.name}}" class="{% if fleet.relation == 1 or fleet.relation == 0 %}text-success{% else %}text-danger{% endif %}">{{fleet.name}}</a>
+                        <a href="/s03/mail-new/?to={{fleet.name}}" class="{% if fleet.relation == 1 or fleet.relation == 0 %}text-success{% else %}text-danger{% endif %}">{{fleet.name}}</a>
                     {% endif %}
                 </div>
                 <div class="col small">
@@ -651,7 +669,7 @@ function sig(signature) {
                         <a href="/s03/fleet-view/?id={{fleet.fleetid}}" class="self">{{fleet.fleetname}}</a>
                     {% else %}
                         {% if fleet.alliancetag %}<a href="/s03/alliance-view/?tag={{fleet.alliancetag}}" class="{% if fleet.relation == 1 or fleet.relation == 0 %}text-success{% else %}text-danger{% endif %}">[{{fleet.alliancetag}}]</a>{% endif %}
-                        <a href="/s03/mails/?to={{fleet.name}}" class="{% if fleet.relation == 1 or fleet.relation == 0 %}text-success{% else %}text-danger{% endif %}">{{fleet.name}}</a>
+                        <a href="/s03/mail-new/?to={{fleet.name}}" class="{% if fleet.relation == 1 or fleet.relation == 0 %}text-success{% else %}text-danger{% endif %}">{{fleet.name}}</a>
                     {% endif %}
                 </div>
                 <div class="col small">

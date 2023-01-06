@@ -144,8 +144,8 @@ function sig(signature) {
                                     {% if fleet.attack %}<img src="{{PATH_IMAGES}}interface/stance_attack.gif" class="stance" width="10" height="10" />{% endif %}
                                     {% if fleet.defend %}<img src="{{PATH_IMAGES}}interface/stance_defend.gif" class="stance" width="10" height="10" />{% endif %}
                                     <a href="/s03/fleet-view/?id={{fleet.id}}" class="self">{{fleet.name}}</a>
-                                {% elif fleet.ally %}<a href="/s03/mails/?to={{fleet.name}}" class="ally">{{fleet.name}}</a>
-                                {% elif fleet.friend %}<a href="/s03/mails/?to={{fleet.name}}" class="friend">{{fleet.name}}</a>
+                                {% elif fleet.ally %}<a href="/s03/mail-new/?to={{fleet.name}}" class="ally">{{fleet.name}}</a>
+                                {% elif fleet.friend %}<a href="/s03/mail-new/?to={{fleet.name}}" class="friend">{{fleet.name}}</a>
                                 {% elif fleet.hostile %}<a href="/s03/profile-view/?name={{fleet.name}}" class="enemy">{{fleet.name}}</a>
                                 {% endif %}
                             </div>

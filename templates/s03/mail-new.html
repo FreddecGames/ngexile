@@ -1,118 +1,81 @@
 {% extends 's03/layout.html' %}
 
-
 {% block content %}
 
 <div class="nav nav-tabs mb-3">
     <div class="nav-item"><a href="/s03/mail-inbox/" class="nav-link">Reçu</a></div>
     <div class="nav-item"><a href="/s03/mail-outbox/" class="nav-link">Envoyé</a></div>
     <div class="nav-item"><a href="/s03/mail-new/" class="nav-link active">Composer</a></div>
-    <div class="nav-item"><a href="/s03/mail-blacklist/" class="nav-link">Nations ignorées</a></div>
+    <div class="nav-item"><a href="/s03/mail-blacklist/" class="nav-link">Nations bloquées</a></div>
 </div>
 
 <script>
-function setaddressee(obj,input){if(obj.selectedIndex > 0) input.value = obj.options[obj.selectedIndex].text; else input.value = '';}
-
-{% if send_credits %}
-function check(obj){document.getElementById(obj).checked=true}
-function validateAmount()
-{	
-	var amount = Number(document.getElementById("amount").value);
-	var to = document.getElementById("to").value;
-
-	if (document.getElementById("sendcredits").checked && amount != 0) {
-		if (isNaN(amount)){ window.alert("Veuillez entrer un nombre !") ;return false;}
-		if (amount > {{player_credits}}) {
-			window.alert("Vous n'avez pas assez de crédits pour envoyer cette somme !") ;
-			return false;
-		}else {
-			return window.confirm('Êtes-vous sûr de vouloir envoyer '+amount+' crédits à "'+to+'" ?');
-		}
-	}else return true;
-}
-{% endif %}
-
-function showAddressee(obj)
-{
-	{% if sendadmins %}
-	if(obj.value=="admins") alert("Vous allez envoyer un message aux administrateurs du jeu, assurez-vous de bien expliquer votre problème.\r\nPour toutes questions ou informations sur le jeu, référez-vous au forum pour voir si votre question n'a pas déjà été traitée.\r\n\r\nTout message qui ne relève pas d'un problème technique ou d'un problème sur le compte sera ignoré. Merci.");
-	{% endif %}
-
-	var target = document.getElementById('nation');
-	var sendcreditsbox = document.getElementById('sendcreditsbox');
-
-	if(obj.value=="nation")
-	{
-		target.style.display="";
-		target.style.visibility="visible";
-		sendcreditsbox.style.visibility="visible";
-	}
-	else
-	{
-		target.style.display="none";
-		target.style.visibility="hidden";
-		sendcreditsbox.style.visibility="hidden";
-	}
-}
+    function setaddressee(obj, input) {
+    
+        if (obj.selectedIndex > 0) input.value = obj.options[obj.selectedIndex].text;
+        else input.value = '';
+    }
 </script>
-<form method="post" name="newmail" action="?" {% if send_credits %} onsubmit="return validateAmount();"{% endif %}>{% csrf_token %}
-<table class="default" width="100%">
-	<tr class="title"><td colspan=2>Nouveau message</td></tr>
-	<tr class="item">
-		<td width="1%">Destinataire</td>
-		<td><select name="type" id="type" onchange="javascript:showAddressee(this)">
-		{% if sendadmins_ %}<option value="admins"{% if sendadmins_selected %} selected{% endif %}>Administrateurs</option>{% endif %}
-		{% if sendalliance %}<option value="alliance"{% if sendalliance_selected %} selected{% endif %}>Alliance</option>{% endif %}
-		<option value="nation"{% if nation_selected %} selected{% endif %}>Nation</option></select></td>
-	</tr>
-	<tr class="item" id="nation"{% if hidenation %} style="display:none; visibility:hidden"{% endif %}>
-		<td width="1%">Nation</td>
-		<td><input type="text" id=to name=to value="{{mailto}}" size=36 maxlength=128>&nbsp;&nbsp;<select onchange="return setaddressee(this,to)"><option>Derniers contacts</option>{% for to in tos %}<option>{{to.to_user}}</option>{% endfor %}</select></td>
-	</tr>
 
-	<tr class="item">
-		<td width="1%">Objet</td>
-		<td nowrap><input type="text" name="subject" value="{{subject}}" size=64 maxlength=64>
-		{% if send_credits %}
-		<span id="sendcreditsbox"{% if send_credits_hide %} style="visibility:hidden"{% endif %}>&nbsp;
-		<input type="checkbox" class="checkbox" name="sendcredits" id="sendcredits" value="1">
-		<label for="sendcredits">Joindre la somme</label>&nbsp;
-		<img src="{{PATH_IMAGES}}interface/credits.gif" title="Crédits" class="icon" width=16 height=16> 
-		<input type="text" id="amount" name="amount" value="{{mail_credits}}" size="11" maxlength="9" align="right" onclick="check('sendcredits')">
-		</span>
-		{% endif %}&nbsp;
-		<input type="checkbox" class="checkbox" name="bbcode" id="bbcode" value="1"{% if bbcode %} checked{% endif %}>
-		<label for="bbcode">Utiliser bbcode</label>
-		</td>
-	</tr>
-	<tr class="item">
-		<td width="1%">Message</td>
-		<td><textarea name="message" cols=45 rows=20 style="width:100%">{{message}}</textarea>
-		<p class="error">Pas d'insulte, restez courtois, merci.</p>
-		</td>
-	</tr>
-
-	<tr class="item">
-		<td colspan="2" align="center"><input type="button" value="< Retour" onclick="javascript:window.location.href='/s03/mail-inbox/'" class="button100">&nbsp;<input type="submit" name="sendmail" value="Envoyer >" class="button100"></td>
-	</tr>
-
-	{% if error %}
-	<tr class="item">
-		<td colspan="2">
-		<p class="error">
-		{% if mail_unknown_from %}Expéditeur inconnu{% endif %}
-		{% if mail_unknown_to %}Destinataire inconnu<script>onload=function() { document.newmail.to.focus(); document.newmail.to.value = document.newmail.to.value; }</script>{% endif %}
-		{% if mail_missing_to %}Destinataire manquant<script>onload=function() { document.newmail.to.focus(); }</script>{% endif %}
-		{% if mail_same %}Vous ne pouvez pas envoyer de message à vous même{% endif %}
-		{% if mail_empty %}Spécifiez un message{% endif %}
-		{% if not_enough_credits %}Vous ne possédez pas assez d'argent pour envoyer cette somme{% endif %}
-		{% if blocked %}Vous êtes ignoré : le destinataire ne souhaite pas recevoir de message provenant de votre nation{% endif %}
-		{% if mail_sent %}Message envoyé{% endif %}
-		</p>
-		</td>
-	</tr>
-	{% endif %}
+<form method="post" action="?" class="card card-body">
+    <div class="row g-1">
+        <div class="col-12">
+            <div class="row gx-3 align-items-center">
+                <div class="col-2 text-end">
+                    <span class="text-normal">Destinataire</span>
+                </div>
+                <div class="col">
+                    <div class="row gx-3 align-items-center">
+                        <div class="col">
+                            <input type="text" id="to" name="to" value="{{mailto}}" maxlength="128" class="w-100" />
+                        </div>
+                        <div class="col-auto">
+                            <select name="type" id="type" onchange="javascript:setaddressee(this, to)">
+                                <option>Contacts</option>
+                                {% if sendalliance %}<option value="alliance">Alliance</option>{% endif %}
+                                {% for to in tos %}<option value="{{to.to_user}}">{{to.to_user}}</option>{% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-auto d-flex align-items-center">
+                            <input type="checkbox" class="me-1" name="bbcode" id="bbcode" value="1">
+                            <label for="bbcode">Utiliser bbcode</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="row gx-3 align-items-center">
+                <div class="col-2 text-end">
+                    <span class="text-normal">Objet</span>
+                </div>
+                <div class="col">
+                    <input type="text" name="subject" value="{{subject}}" maxlength="64" class="w-100" />
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="row gx-3">
+                <div class="col-2 text-end pt-1">
+                    <span class="text-normal">Message</span>
+                </div>
+                <div class="col">
+                    <textarea name="message" rows="10" class="w-100">{{message}}</textarea>
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="row gx-3">
+                <div class="col-2"></div>
+                <div class="col">
+                    <span class="text-danger">Pas d'insulte, restez courtois, merci.</span>
+                </div>
+                <div class="col-auto">
+                    <input type="submit" name="sendmail" value="Envoyer" />
+                </div>
+            </div>
+        </div>
+    </div>
 </form>
-</table>
-<script>onload=function() { if(document.newmail.to.value.length == 0) var o=document.newmail.to; else var o=document.newmail.message; o.focus(); o.value = o.value; if({{mail_credits}} > 0) check('sendcredits'); }</script>
+
 {% endblock %}

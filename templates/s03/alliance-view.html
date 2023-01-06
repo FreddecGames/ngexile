@@ -29,7 +29,7 @@
 {% endif %}
 
 {% for rank in ranks %}
-<tr class="item"><td><div id="stats"><span class="label">{{rank.rank_label}}:</span> <span class="value">{% for member in rank.members %}{% if member.first %}<a href="/s03/mails/?to={{member.member}}">{{member.member}}</a>{% endif %}{% if member.other %}, <a href="/s03/mails/?to={{member.member}}">{{member.member}}</a>{% endif %}{% endfor %}</span></div></td></tr>
+<tr class="item"><td><div id="stats"><span class="label">{{rank.rank_label}}:</span> <span class="value">{% for member in rank.members %}{% if member.first %}<a href="/s03/mail-new/?to={{member.member}}">{{member.member}}</a>{% endif %}{% if member.other %}, <a href="/s03/mail-new/?to={{member.member}}">{{member.member}}</a>{% endif %}{% endfor %}</span></div></td></tr>
 {% endfor %}
 <tr class="item"><td><div id="stats"><span class="label">Nombre de membres:</span> <span class="value">{{members}} / {{max_members}}</span></div></td></tr>
 {% if website %}<tr class="item"><td><div id="stats"><span class="label">Site web:</span> <span class="value"><a href="{{website_url}}">{{website_url}}</a></span></div></td></tr>{% endif %}

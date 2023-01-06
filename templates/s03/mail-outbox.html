@@ -1,6 +1,6 @@
 {% extends 's03/layout.html' %}
-{% load tz %}
 
+{% load tz %}
 
 {% block content %}
 
@@ -8,40 +8,50 @@
     <div class="nav-item"><a href="/s03/mail-inbox/" class="nav-link">Reçu</a></div>
     <div class="nav-item"><a href="/s03/mail-outbox/" class="nav-link active">Envoyé</a></div>
     <div class="nav-item"><a href="/s03/mail-new/" class="nav-link">Composer</a></div>
-    <div class="nav-item"><a href="/s03/mail-blacklist/" class="nav-link">Nations ignorées</a></div>
+    <div class="nav-item"><a href="/s03/mail-blacklist/" class="nav-link">Nations bloquées</a></div>
 </div>
 
-<div id="mails">
-<table class="default" width="100%">
-
-<tr class="title"><td colspan=2>Messages envoyés</td></tr>
-
-{% if nav %}<tr class="nav"><td colspan=2 align=left>Page {{page_display}}, Messages {{min}}-{{max}}. Aller à
-{% for p in ps %}&nbsp;{% if p.link %}<a href="?a=sent&start={{p.page_link}}">{% endif %}{% if p.selected %}<span class="selected">{% endif %}{{p.page_id}}{% if p.selected %}</span>{% endif %}{% if p.link %}</a>{% endif %}{% endfor %}.
-</td></tr>{% endif %}
-
-{% for mail in mails %}
-<tr id="mail{{mail.index}}" class="item{% if mail.new_mail %}highlight{% endif %}">
-	<td width="1%" rowspan=1 align=center valign=top nowrap>
-	{% if mail.reply %}<a href="?to={{mail.sent_to}}" title="Nouveau message à {{mail.sent_to}}">{% endif %}
-	{% if mail.avatar %}<img src="{{mail.avatar_url}}" width=64 height=64 class="avatar">{% endif %}
-	{% if mail.noavatar %}<img src="{{PATH_IMAGES}}interface/noavatar.gif" width=64 height=64 class="avatar">{% endif %}<br><b>{% if mail.admins %}Administrateurs{% endif %}{% if mail.to_alliance %}Alliance{% endif %}{% if mail.nation %}{{mail.sent_to}}{% endif %}</b>
-	{% if mail.reply %}</a>
-	{% if mail.alliance %}<br/><a href="/s03/alliance-view/?tag={{mail.alliancetag}}">[{{mail.alliancetag}}]</a><br/>{% endif %}{% endif %}
-	</td>
-	<td width="90%" valign=top>
-	<div class="subject">
-	{{mail.date|timezone:"Europe/Paris"}} | {{mail.subject}}{% if mail.money %} | Somme envoyée : <img src="{{PATH_IMAGES}}interface/credits.gif" title="Crédits" class="icon" width=16 height=16> {{mail.moneyamount}}{% endif %}</div>
-	<div class="body">{% if mail.html %}{{mail.body|safe}}{% endif %}{% if mail.bbcode %}{{mail.bodybb}}{% endif %}</div>
-	</td>
-</tr>
-{% endfor %}
-
-{% if nav %}<tr class="nav"><td colspan=2 align=left>Page {{page_display}}, Messages {{min}}-{{max}}. Aller à
-{% for p in ps %}&nbsp;{% if p.link %}<a href="?a=sent&start={{p.page_link}}">{% endif %}{% if p.selected %}<span class="selected">{% endif %}{{p.page_id}}{% if p.selected %}</span>{% endif %}{% if p.link %}</a>{% endif %}{% endfor %}.
-</td></tr>{% endif %}
-{% if nomails %}<tr><td colspan=2 align=center>Aucun</td></tr>{% endif %}
-
-</table>
+<div class="card">
+    <div class="list-group list-group-flush">
+        {% for mail in mails %}
+            <div class="list-group-item">
+                <div class="row g-3">
+                    <div class="col-12">
+                        <div class="row gx-3 align-items-center">
+                            <div class="col-auto">
+                                {% if mail.avatar_url %}<img src="{{mail.avatar_url}}" width="48px" class="rounded" />
+                                {% else %}<img src="{{PATH_IMAGES}}interface/noavatar.gif" width="48px" class="rounded" />
+                                {% endif %}
+                            </div>
+                            <div class="col">
+                                <div class="row gx-3">
+                                    <div class="col">
+                                        {% if mail.sent_to %}{{mail.sent_to}} <span class="text-normal">|</span>{% endif %}
+                                        <span class="text-normal">{{mail.date|timezone:"Europe/Paris"}}</span>
+                                    </div>
+                                </div>
+                                <span class="fs-6">{{mail.subject}}</span>
+                            </div>
+                            {% if mail.sent_to %}
+                            <div class="col-auto">
+                                <a href="/s03/mail-new/?to={{mail.sent_to}}">Nouveau</a>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="col-12 text-normal">
+                        {% if mail.html %}{{mail.body|safe|escape}}
+                        {% elif mail.bbcode %}{{mail.bodybb}}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <div class="list-group-item">
+                <span class="text-normal">Aucun message</span>
+            </div>
+        {% endfor %}
+    </div>
 </div>
+
 {% endblock %}

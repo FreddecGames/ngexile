@@ -47,7 +47,7 @@
                     {% elif fleet.action == 4 %}
                     <span class="ms-2">Attente</span>
                     <span class="ms-2 text-yellow"><script>putcountdown1({{fleet.time}}, 'Terminé', '/s03/empire-fleets/')</script></span>
-                    {% elif fleet.action == x %}
+                    {% elif fleet.action == 'x' %}
                     <span class="ms-2 text-danger">Combat</span>
                     {% endif %}
                 </div>

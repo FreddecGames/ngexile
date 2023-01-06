@@ -18,7 +18,7 @@
 {% for planet in planets %}
 <tr class="smallitem">
 	<td><b><a href="/s03/planet-orbit/?planet={{planet.planetid}}">{{planet.planetname}}</a>&nbsp;<a href="/s03/map/?g={{planet.g}}&s={{planet.s}}&p={{planet.p}}">({{planet.g}}.{{planet.s}}.{{planet.p}})</a></b></td>
-	<td align=left>{% for fleet in planet.fleets %}<a title="Écrire à {{fleet.fleetowner}}" href="/s03/mails/?subject=À propos de la flotte {{fleet.fleetname}}&to={{fleet.fleetowner}}" class={% if fleet.ally %}ally{% endif %}{% if fleet.friend %}friend{% endif %}{% if fleet.enemy %}enemy{% endif %}>{% if fleet.alliance %}[{{fleet.tag}}]{% endif %} {{fleet.fleetname}} ({{fleet.fleetsignature}})</a><br/>{% endfor %}</td>
+	<td align=left>{% for fleet in planet.fleets %}<a title="Écrire à {{fleet.fleetowner}}" href="/s03/mail-new/?subject=À propos de la flotte {{fleet.fleetname}}&to={{fleet.fleetowner}}" class={% if fleet.ally %}ally{% endif %}{% if fleet.friend %}friend{% endif %}{% if fleet.enemy %}enemy{% endif %}>{% if fleet.alliance %}[{{fleet.tag}}]{% endif %} {{fleet.fleetname}} ({{fleet.fleetsignature}})</a><br/>{% endfor %}</td>
 </tr>
 {% empty %}
 <tr class="smallitem">
