@@ -15,9 +15,9 @@
     <tr>
         <th class="col sort" onclick="sortTable(0)">Nom</th>
         <th class="col-2 sort" onclick="sortTable(1)">Commandant</th>
-        <th class="col-2 text-end sort" onclick="sortTable(2)">Vaisseaux</th>
-        <th class="col-2 text-end sort" onclick="sortTable(3)">Cargaison</th>
-        <th class="col-4 text-end sort" onclick="sortTable(4)">Action</th>
+        <th class="col-2 text-end sort" onclick="sortTable(2, 'int')">Vaisseaux</th>
+        <th class="col-2 text-end sort" onclick="sortTable(3, 'int')">Cargaison</th>
+        <th class="col-4 text-end sort" onclick="sortTable(4, 'int')">Action</th>
     </tr>
     {% for fleet in fleets %}
     <tr>
@@ -60,7 +60,7 @@
 </table>
 
 <script>
-function sortTable(n) {
+function sortTable(n, type="str") {
 
     var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
     table = document.getElementById("myTable");
@@ -79,6 +79,12 @@ function sortTable(n) {
 
             x = rows[i].getElementsByTagName("TD")[n].getAttribute('sortData');
             y = rows[i + 1].getElementsByTagName("TD")[n].getAttribute('sortData');
+            
+            if (type == "int") {
+            
+                x  = parseInt(x)
+                y  = parseInt(y)
+            }
 
             if (dir == "asc") {
             
