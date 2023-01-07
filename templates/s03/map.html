@@ -4,6 +4,7 @@
 {% load humanize %}
 
 {% block content %}
+
 <script>
     var currGalaxy = "";
     var currSector = "";
@@ -105,7 +106,42 @@
         }
         return "";
     }
-
+    
+    function descRuin(ore, hydrocarbon) {
+    
+        let desc = ''
+        desc += '<div class="row g-1">'
+            if (ore > 0) desc += '<div class="col-12"><div class="row gx-3"><div class="col text-normal">Minerai</div><div class="col-auto">' + ore + '</div></div></div>'
+            if (hydrocarbon > 0) desc += '<div class="col-12"><div class="row gx-3"><div class="col text-normal">Hydrocarbure</div><div class="col-auto">' + hydrocarbon + '</div></div></div>'
+        desc += '</div>'
+        
+        return desc
+    }
+    
+    function descInfo(floor, space, a_ore, a_hydrocarbon, vortex_strength) {
+    
+        let desc = ''
+        desc += '<div class="row g-1">'
+            if (floor > 0) desc += '<div class="col-12"><div class="row gx-3"><div class="col text-normal">Terrain</div><div class="col-auto">' + floor + '</div></div></div>'
+            if (space > 0) desc += '<div class="col-12"><div class="row gx-3"><div class="col text-normal">Espace</div><div class="col-auto">' + space + '</div></div></div>'
+            if (a_ore > 0) desc += '<div class="col-12"><div class="row gx-3"><div class="col text-normal">Abondance minerai</div><div class="col-auto">' + a_ore + '%</div></div></div>'
+            if (a_hydrocarbon > 0) desc += '<div class="col-12"><div class="row gx-3"><div class="col text-normal">Abondance hydrocarbure</div><div class="col-auto">' + a_hydrocarbon + '%</div></div></div>'
+            if (vortex_strength > 0) desc += '<div class="col-12"><div class="row gx-3"><div class="col text-normal">Stabilité vortex</div><div class="col-auto">' + vortex_strength + '</div></div></div>'
+        desc += '</div>'
+        
+        return desc
+    }
+    
+    function descRadar(radar, jammer) {
+    
+        let desc = ''
+        desc += '<div class="row g-1">'
+            if (radar > 0) desc += '<div class="col-12"><div class="row gx-3"><div class="col text-normal">Radar</div><div class="col-auto">' + radar + '</div></div></div>'
+            if (jammer > 0) desc += '<div class="col-12"><div class="row gx-3"><div class="col text-normal">Brouillage</div><div class="col-auto">' + jammer + '</div></div></div>'
+        desc += '</div>'
+        
+        return desc
+    }
 
     function Fl(id,name,tag,owner,rel,signature,fleeing) {
         
@@ -180,20 +216,17 @@
         var c = getRelationClass(rel);
 
         s = '<div class="planet">'+
-            '<table border="0" cellspacing="0" cellpadding="0" width="140">'+
+            '<table border="0" cellspacing="0" cellpadding="0" width="100%">'+
             '<tr>'+
 
             '<td align=right width="38">';
-            if(ore!='0' || hydrocarbon!='0')
-            {
-                s+= '<a href="#" class="none" onclick="return donothide(event)" onfocus="this.onmouseover()" onmouseover="showmenu(\'resources.'+idx+'\',\'Ressources\',\'Minerai: '+ore+'<br>Hydrocarbure: '+hydrocarbon+'\')">'+
-                    '<img id="resources.'+idx+'" width=16 height=16 src="{{PATH_IMAGES}}map/sector/resource.gif">'+
-                    '</a>';
+            if (ore != '0' || hydrocarbon != '0') {
+                s += '<a href="#" class="none" onclick="return donothide(event)" onfocus="this.onmouseover()" onmouseover="showmenu(\'resources.'+idx+'\',\'\',descRuin('+ore+','+hydrocarbon+'))">'+
+                        '<img id="resources.' + idx + '" src="{{PATH_IMAGES}}map/sector/resource.gif" width="16px" />'+
+                     '</a>';
             }
-            else
-                s+= '<img width=1 height=16 src="{{PATH_IMAGES}}interface/spacer.gif">';
-
-            s+= '</td>';
+            else s += '<img width=1 height=16 src="{{PATH_IMAGES}}interface/spacer.gif">';
+            s += '</td>';
 
             s+=	'<td align=center rowspan=4 width="64">'+
                 '<div><img class="planet" src="{{PATH_IMAGES}}planets/p'+img+'.gif" width=64 height=64></div><div class="planettext small">'+idx+'</div>'+
@@ -201,17 +234,10 @@
 
             s+= '<td width="38">';
 
-            if(floor!='' || space!='')
+            if(floor!='' || space!='' || vortex_strength!='0')
             {
-                s+= '<a href="#" class="text-normal small" onclick="return donothide(event)" onfocus="this.onmouseover()" onmouseover="showmenu(\'planet.'+idx+'\',\'Planète\',\'Terrain: '+floor+'<br>Espace: '+space+'<br>Abondance minerai: '+a_ore+'%<br>Abondance hydrocarbure: '+a_hydrocarbon+'%' + (vortex_strength>0?('<br>Stabilité vortex:' + vortex_strength):'') + '\')">'+
+                s+= '<a href="#" class="text-normal small" onclick="return donothide(event)" onfocus="this.onmouseover()" onmouseover="showmenu(\'planet.'+idx+'\',\'\',descInfo(' + floor + ',' + space + ',' + a_ore + ',' + a_hydrocarbon + ',' + vortex_strength + '))">' +
                     '<i id="planet.'+idx+'" class="fa-fw fas fa-info"></i>'+
-                    '</a>';
-            }
-            else
-            if(vortex_strength!='0')
-            {
-                s+= '<a href="#" class=none onclick="return donothide(event)" onfocus="this.onmouseover()" onmouseover="showmenu(\'planet.'+idx+'\',\'Vortex\',\'Stabilité vortex:' + vortex_strength + '\')">'+
-                    '<img id="planet.'+idx+'" width=16 height=16 src="{{PATH_IMAGES}}map/sector/info.gif">'+
                     '</a>';
             }
             else
@@ -227,17 +253,17 @@
             {
                 if(jammer==-1)
                 {
-                    s+= '<a href="#" class="none" onclick="return donothide(event)" onfocus="this.onmouseover()" onmouseover="showmenu(\'radar.'+idx+'\',\'Radar brouillé\',\'\')">'+
+                    s+= '<a href="#" class="none" onclick="return donothide(event)" onfocus="this.onmouseover()" onmouseover="showmenu(\'radar.'+idx+'\',\'Radar brouillé\',\'Radar brouillé\')">'+
                         '<img id="radar.'+idx+'" width=16 height=16 src="{{PATH_IMAGES}}map/sector/radarjammed.gif">';
                 } else
                 if(radar>0 && jammer==0)
                 {
-                    s+= '<a href="#" class="none" onclick="return donothide(event)" onfocus="this.onmouseover()" onmouseover="showmenu(\'radar.'+idx+'\',\'Radar détecté\',\'Puissance: '+radar+'\')">'+
+                    s+= '<a href="#" class="none" onclick="return donothide(event)" onfocus="this.onmouseover()" onmouseover="showmenu(\'radar.'+idx+'\',\'Radar détecté\', descRadar(' + radar + ',' + jammer + '))">'+
                         '<img id="radar.'+idx+'" width=16 height=16 src="{{PATH_IMAGES}}map/sector/radar.gif">';
                 } else
                 if(jammer>0)
                 {
-                    s+= '<a href="#" class="none" onclick="return donothide(event)" onfocus="this.onmouseover()" onmouseover="showmenu(\'radar.'+idx+'\',\'Radar brouillé détecté\',\'Puissance radar: '+radar+'<br/>Brouillage: '+jammer+'\')">'+
+                    s+= '<a href="#" class="none" onclick="return donothide(event)" onfocus="this.onmouseover()" onmouseover="showmenu(\'radar.'+idx+'\',\'Radar brouillé détecté\', descRadar(' + radar + ',' + jammer + '))">'+
                         '<img id="radar.'+idx+'" width=16 height=16 src="{{PATH_IMAGES}}map/sector/radarjammed-known.gif">';
                 }
                         
@@ -353,14 +379,8 @@
             s += loc(p[0], p[1], p[2], p[3], p[4], p[5], p[6], p[7], p[8], p[9], p[10], p[11], p[12], p[13], p[14], p[15], p[16], p[17], p[18], p[19], p[20]);
         }
 
-        s += '<div class="clear"></div>';
-
         var obj = $('mapsectorview');
         obj.innerHTML = s;
-
-        var obj = $('mapsector');
-        obj.style.display = 'block';
-        obj.style.visibility = 'visible';
     }
 
     {% endif %}
@@ -518,27 +538,25 @@
 
 {% elif nav_sector %}
 <div id="map">
-<div id="mapsector" class="mb-3">
-<table cellpadding="0" cellspacing="0">
-<tr class="lh-1">
-    <td><img src="{{PATH_IMAGES}}map/arrow_nw.gif" class=arrow onclick="openSector({{galaxy}},{{sector0}})"></td>
-    <td align=center class=borderup><img src="{{PATH_IMAGES}}map/arrow_n.gif" class=arrow onclick="openSector({{galaxy}},{{sector1}})"></td>
-    <td><img src="{{PATH_IMAGES}}map/arrow_ne.gif" class=arrow onclick="openSector({{galaxy}},{{sector2}})"></td>
-</tr>
-<tr>
-    <td valign="middle" class="borderleft"><img src="{{PATH_IMAGES}}map/arrow_w.gif" class=arrow onclick="openSector({{galaxy}},{{sector7}})"></td>
-    <td>
-    <div class="map" id="mapsectorview"></div>
-    </td>
-    <td valign="middle" class="borderright"><img src="{{PATH_IMAGES}}map/arrow_e.gif" class=arrow onclick="openSector({{galaxy}},{{sector3}})"></td>
-</tr>
-<tr class="lh-1">
-    <td><img src="{{PATH_IMAGES}}map/arrow_sw.gif" class=arrow onclick="openSector({{galaxy}},{{sector6}})"></td>
-    <td align="center" class="borderdown"><img src="{{PATH_IMAGES}}map/arrow_s.gif" class=arrow onclick="openSector({{galaxy}},{{sector5}})"></td>
-    <td><img src="{{PATH_IMAGES}}map/arrow_se.gif" class=arrow onclick="openSector({{galaxy}},{{sector4}})"></td>
-</tr>
-</table>
-</div>
+    <div id="mapsector" class="border rounded" style="border-color:#495057!important;">
+        <table cellpadding="0" cellspacing="0">
+            <tr class="lh-1">
+                <td><a href="#" class="small" onclick="openSector({{galaxy}}, {{sector0}})" data-bs-toggle="tooltip" data-bs-title="Secteur {{galaxy}}.{{sector0}}"><i class="fa-fw fas fa-chevron-up" style="transform: rotate(-45deg);"></i></a></td>
+                <td align="center"><a href="#" class="small" onclick="openSector({{galaxy}}, {{sector1}})" data-bs-toggle="tooltip" data-bs-title="Secteur {{galaxy}}.{{sector1}}"><i class="fa-fw fas fa-chevron-up"></i></a></td>
+                <td><a href="#" class="small" onclick="openSector({{galaxy}}, {{sector2}})" data-bs-toggle="tooltip" data-bs-title="Secteur {{galaxy}}.{{sector2}}"><i class="fa-fw fas fa-chevron-up" style="transform: rotate(45deg);"></i></a></td>
+            </tr>
+            <tr>
+                <td valign="middle"><a href="#" class="small" onclick="openSector({{galaxy}}, {{sector7}})" data-bs-toggle="tooltip" data-bs-title="Secteur {{galaxy}}.{{sector7}}"><i class="fa-fw fas fa-chevron-left"></i></a></td>
+                <td><div class="map" id="mapsectorview"></div></td>
+                <td valign="middle"><a href="#" class="small" onclick="openSector({{galaxy}}, {{sector3}})" data-bs-toggle="tooltip" data-bs-title="Secteur {{galaxy}}.{{sector3}}"><i class="fa-fw fas fa-chevron-right"></i></a></td>
+            </tr>
+            <tr class="lh-1">
+                <td><a href="#" class="small" onclick="openSector({{galaxy}}, {{sector6}})" data-bs-toggle="tooltip" data-bs-title="Secteur {{galaxy}}.{{sector6}}"><i class="fa-fw fas fa-chevron-down" style="transform: rotate(45deg);"></i></a></td>
+                <td align="center"><a href="#" class="small" onclick="openSector({{galaxy}}, {{sector5}})" data-bs-toggle="tooltip" data-bs-title="Secteur {{galaxy}}.{{sector5}}"><i class="fa-fw fas fa-chevron-down"></i></a></td>
+                <td><a href="#" class="small" onclick="openSector({{galaxy}}, {{sector4}})" data-bs-toggle="tooltip" data-bs-title="Secteur {{galaxy}}.{{sector4}}"><i class="fa-fw fas fa-chevron-down" style="transform: rotate(-45deg);"></i></a></td>
+            </tr>
+        </table>
+    </div>
 </div>
 <script>
     displaySector(new Array(0
@@ -558,12 +576,12 @@ function sig(signature) {
 }
 </script>
 {% if movings|length == 0 and enterings|length == 0 and leavings|length == 0 %}
-<div class="card card-body text-center">
+<div class="mt-3 card card-body text-center">
     <span class="text-normal">Aucun mouvement détecté par nos radars</span>
 </div>
 {% endif %}
 {% if movings|length > 0 %}
-<div class="card mb-3">
+<div class="mt-3 card">
     <div class="card-header">
         <span>Flottes sortant du secteur</span>
     </div>
@@ -608,7 +626,7 @@ function sig(signature) {
 </div>
 {% endif %}
 {% if enterings|length > 0 %}
-<div class="card mb-3">
+<div class="mt-3 card">
     <div class="card-header">
         <span>Flottes sortant du secteur</span>
     </div>
@@ -653,7 +671,7 @@ function sig(signature) {
 </div>
 {% endif %}
 {% if leavings|length > 0 %}
-<div class="card mb-3">
+<div class="mt-3 card">
     <div class="card-header">
         <span>Flottes sortant du secteur</span>
     </div>

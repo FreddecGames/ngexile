@@ -72,7 +72,7 @@ div.clear { clear:both; }
     position: absolute; top: 0px; left: 0px; right: 0px;
     height: 52px;
     padding: 0 .75rem;
-    background-color: var(--bs-gray-900);
+    background-color: var(--bs-gray-800);
     display: flex; align-items: center;
 }
 
@@ -84,7 +84,7 @@ div.clear { clear:both; }
 	position: absolute; top: 52px; bottom: 0px; left: 0px;
     overflow-y: auto; overflow-x: hidden; scrollbar-color: rgba(255, 255, 255, .075); scrollbar-width: thin;
 	width: 256px;
-	background-color: var(--bs-gray-700);
+	background-color: var(--bs-gray-800);
     padding-bottom: .75rem;
 }
 
@@ -119,14 +119,16 @@ div#container { margin:6px; padding:6px; text-align:left; width:800px; backgroun
 
 /* menu */
 
-.menu { color: #b5b5b9; display: flex; align-items: center; }
-.menu:link, .menu:visited, .menu:active { color: #b5b5b9; }
+.menu { color: #ced4da; display: flex; align-items: center; }
+.menu:link, .menu:visited, .menu:active { color: #ced4da; }
 .selected:link, .selected:visited, .selected:active { color: #ffa500; }
 .menu:hover, .selected:hover { color: #ffa500; text-decoration: none; }
 
 .lvl1 {
 	padding: .5rem .75rem;
-	background-color: var(--bs-gray-800);
+	background-color: var(--bs-gray-700);
+    border-top: 1px solid #000;
+    border-bottom: 1px solid #000;
 }
 
 .lvl2 {
@@ -491,7 +493,6 @@ div.sector div.resource { color: #ff0; }
 div.sector div.vortex { color: #f0f; }
 
 
-#mapsector { background:transparent; visibility: hidden; display:none; }
 #mapsector table { border-collapse:collapse; border-spacing:0; }
 #mapsector table tr.border { font-size:1px; line-height:1px; }
 #mapsector img.arrow { cursor:pointer; }
@@ -499,7 +500,6 @@ div.sector div.vortex { color: #f0f; }
 #mapsector .borderleft { background:url("/static/assets/styles/s_default/map/border-w.gif") repeat-y; }
 #mapsector .borderright { background:url("/static/assets/styles/s_default/map/border-e.gif") repeat-y; }
 #mapsector .borderdown { background:url("/static/assets/styles/s_default/map/border-s.gif") repeat-x; }
-#mapsectorview { background: #000; width:660px; border: 1px solid #000; }
 #mapsectorview div.planet { float:left; width:20%; height:100px; }
 #mapsectorview .planettext { position:relative; margin-top:-5px; }
 #mapsectorview .planetname { font-size:9px; }
@@ -558,7 +558,7 @@ span.title {
 
 .text-success { color: #0f0!important; }
 .text-danger { color: #f44!important; }
-.text-normal { color: #bcbcc0!important; }
+.text-normal { color: #ced4da!important; }
 .text-player { color: #77f!important; }
 .text-yellow { color: #ff0!important; }
 
@@ -597,18 +597,18 @@ span.title {
 .card {
     --bs-card-spacer-x: .75rem;
     --bs-card-spacer-y: .5rem;
-    --bs-card-bg: var(--bs-gray-700);
+    --bs-card-bg: var(--bs-gray-800);
     --bs-card-border-width: 1px;
     --bs-card-border-color: #000;
     --bs-card-border-radius: .25rem;
     --bs-card-inner-border-radius: calc(.25rem - 1px);
-    --bs-card-cap-bg: var(--bs-gray-800);
+    --bs-card-cap-bg: var(--bs-gray-700);
     --bs-card-cap-padding-y: .5rem;
     --bs-card-cap-padding-x: .75rem;
 }
 
 .list-group {
-    --bs-list-group-bg: var(--bs-gray-700);
+    --bs-list-group-bg: var(--bs-gray-800);
     --bs-list-group-color: #fff;
     --bs-list-group-border-width: 1px;
     --bs-list-group-border-color: #000;
@@ -646,3 +646,25 @@ span.title {
     
     font-family: Roboto, Arial; font-size: 12px;
 }
+
+.table {
+    --bs-table-color: #fff;
+    --bs-table-border-color: #000;
+    
+    margin-bottom: 0;
+}
+
+.table > :not(caption) > * > * { padding: .5rem .75rem; font-weight: normal; }
+
+.table-card { border: 1px solid #000; }
+
+.table-card th { background: var(--bs-gray-700); }
+.table-card th.sort { color: #ffa500; cursor: pointer; }
+.table-card th.sort:hover { color: #c87f0a; }
+
+.table-card td { background: var(--bs-gray-800); }
+
+.table-card tr:first-of-type > *:first-child { border-radius: .25rem 0 0 0; }
+.table-card tr:first-of-type > *:last-child { border-radius: 0 .25rem 0 0; }
+.table-card tr:last-of-type > *:first-child { border-radius: 0 0 0 .25rem; }
+.table-card tr:last-of-type > *:last-child { border-radius: 0 0 .25rem 0; }
