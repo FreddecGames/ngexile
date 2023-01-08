@@ -23,31 +23,22 @@ class View(GlobalView):
         action = request.GET.get("a", "").strip()
         self.username = request.POST.get("name", "").strip()
 
-        if cat == 1:
-            if self.oAllianceRights["leader"] and request.POST.get("submit", "") != "": self.SaveRanks()
+        if self.oAllianceRights["can_invite_player"]:
 
-            if self.oAllianceRights["can_kick_player"]:
-                if action == "kick":
-                    self.username = request.GET.get("name").strip()
-                    oConnExecute("SELECT sp_alliance_kick_member("+str(self.UserId)+","+dosql(self.username)+")")
-        
-        if cat == 2 and self.username != "":
-            if self.oAllianceRights["can_invite_player"]:
-
-                oRs = oConnExecute("SELECT sp_alliance_invite(" + str(self.UserId) + "," + dosql(self.username) + ")")
-                if oRs[0] == 0:
-                    self.invitation_success = "ok"
-                    self.username = ""
-                elif oRs[0] == 1:
-                    self.invitation_success = "norights"
-                elif oRs[0] == 2:
-                    self.invitation_success = "unknown"
-                elif oRs[0] == 3:
-                    self.invitation_success = "already_member"
-                elif oRs[0] == 5:
-                    self.invitation_success = "already_invited"
-                elif oRs[0] == 6:
-                    self.invitation_success = "impossible"
+            oRs = oConnExecute("SELECT sp_alliance_invite(" + str(self.UserId) + "," + dosql(self.username) + ")")
+            if oRs[0] == 0:
+                self.invitation_success = "ok"
+                self.username = ""
+            elif oRs[0] == 1:
+                self.invitation_success = "norights"
+            elif oRs[0] == 2:
+                self.invitation_success = "unknown"
+            elif oRs[0] == 3:
+                self.invitation_success = "already_member"
+            elif oRs[0] == 5:
+                self.invitation_success = "already_invited"
+            elif oRs[0] == 6:
+                self.invitation_success = "impossible"
 
         return self.displayPage(cat)
 
