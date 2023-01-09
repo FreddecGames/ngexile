@@ -16,8 +16,8 @@
         }
         else {
         
-            if (!inprogress) s = level + '/' + levels;
-            else s = 'Niveau ' + (level+1) + ' en cours';
+            if (!inprogress) s = level + ' <small class="text-normal">/' + levels + '</small>';
+            else s = 'Niv. ' + (level + 1);
         }
         
         document.write(s);

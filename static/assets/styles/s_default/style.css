@@ -211,7 +211,7 @@ input.button100 {
 }
 
 input[type=number] {
-    max-width:55px;
+    width:55px;
 }
 
 /* img related */
@@ -553,6 +553,8 @@ span.title {
 }
 
 /* bootstrap */
+
+hr { margin: .5rem 0; }
 
 .text-bg-success { color: #000!important; background-color: #0f0!important; }
 

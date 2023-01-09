@@ -22,12 +22,8 @@ class View(GlobalView):
         self.changes_status = ""
 
         if request.POST.get("submit", "") != "":
-            if cat == 1:
-                self.SaveGeneral()
-            elif cat == 2:
-                self.SaveMotD()
-            elif cat == 3:
-                self.SaveRanks()
+            self.SaveGeneral()
+            self.SaveMotD()
 
         if not self.pageTerminated: return self.displayOptions(cat)
 
@@ -100,7 +96,9 @@ class View(GlobalView):
 
         logo = self.request.POST.get("logo", "").strip()
         description = self.request.POST.get("description", "").strip()
-
+        
+        print(self.request.POST)
+        
         if logo != "" and not isValidURL(logo):
             #logo is invalid
             self.changes_status = "check_logo"

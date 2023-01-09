@@ -1,47 +1,57 @@
 {% extends 's03/layout.html' %}
 
+{% load humanize %}
+
 {% block content %}
-<script type="text/javascript" src='/static/scripts/third-party/tooltip.js?v=1'></script>
-<script>
-tipname = "hint";
-tipwidth = 450;
-tiptext = $("hinttext");
-</script>
 
-<table class="w-100">
-<tr>
-<td align="center">
+    <div class="row g-3">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <span>Consommation énergétique</span>
+                </div>
+                <form method="post" action="?cat={{cat}}&a=submit" class="list-group list-group-flush">{% csrf_token %}
+                    {% for building in buildings %}
+                        <div class="list-group-item {% if building.not_all_enabled %}bg-danger{% endif %}">
+                            <div class="row gx-3 align-items-center">
+                                <div class="col-auto"><img src="{{PATH_IMAGES}}buildings/{{building.id}}.jpg" class="rounded" width="48px" /></div>
+                                <div class="col">
+                                    <div class="row g-1">
+                                        <div class="col-12"><span class="text-normal">{{building.building}}</span></div>
+                                        <div class="col-12">
+                                            <div class="row gx-3 align-items-center">
+                                                <div class="col-5">
+                                                    <div class="row gx-3">
+                                                        <div class="col-4"><img src="{{PATH_IMAGES}}interface/credits.gif" width="16px" class="res" />{{building.upkeep|intcomma}}</div>
+                                                        <div class="col-4"><img src="{{PATH_IMAGES}}interface/energy.gif" width="16px" class="res" />{{building.energy|intcomma}}</div>
+                                                        <div class="col-4"><img src="{{PATH_IMAGES}}interface/workers.gif" width="16px" class="res" />{{building.maintenance|intcomma}}</div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-2">
+                                                    <small class="me-1 text-normal">x</small>
+                                                    <select name="enabled{{building.id}}">{% for count in building.counts %}<option value="{{count.count}}"{% if count.selected %} selected{% endif %}>{{count.count}}</option>{% endfor %}</select>
+                                                    <small class="ms-1 text-normal">=</small>
+                                                </div>
+                                                <div class="col-5">
+                                                    <div class="row gx-3">
+                                                        <div class="col-4"><img src="{{PATH_IMAGES}}interface/credits.gif" width="16px" class="res" />{{building.upkeep_total|intcomma}}</div>
+                                                        <div class="col-4"><img src="{{PATH_IMAGES}}interface/energy.gif" width="16px" class="res" />{{building.energy_total|intcomma}}</div>
+                                                        <div class="col-4"><img src="{{PATH_IMAGES}}interface/workers.gif" width="16px" class="res" />{{building.maintenance_total|intcomma}}</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                    <div class="list-group-item text-end">
+                        <input type="submit" value="Valider" />
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 
-	{% if manage %}
-	<div id="productionmanage">
-	<form method="post" action="?cat={{cat}}&a=submit">{% csrf_token %}
-	<table width="100%" class="default">
-	<tr class="title"><td colspan="5">Consommation énergétique</td></tr>
-	<tr class="header"><td colspan="2">Bâtiment</td><td>Utilisation</td><td>Actif</td><td>Utilisation totale</td></tr>
-	{% for building in buildings %}
-	<tr class="item{% if building.not_all_enabled %}del{% endif %}">
-		<td width="1%"><img src="{{PATH_IMAGES}}buildings/{{building.id}}.jpg" title="{{building.building}}" class="building" width="64" height="64"></td>
-		<td>{{building.building}}</td>
-		<td><table class="clear" width="70">
-			<tr><td width="1%"><img src="{{PATH_IMAGES}}interface/credits.gif" title="Coût de fonctionnement" width="16" height="16"></td><td align="right">{{building.upkeep}}</td></tr>
-			<tr><td width="1%"><img src="{{PATH_IMAGES}}interface/energy_available.gif" title="Energie" width="12" height="12"></td><td align="right">{{building.energy}}</td></tr>
-			<tr><td width="1%"><img src="{{PATH_IMAGES}}interface/workers.gif" title="Maintenance" width="16" height="16"></td><td align="right">{{building.maintenance}}</td></tr>
-		</table>
-		</td>
-		<td align="center"><select name="enabled{{building.id}}">{% for count in building.counts %}<option value="{{count.count}}"{% if count.selected %} selected{% endif %}>{{count.count}}</option>{% endfor %}</select> / {{building.quantity}}</td>
-		<td><table class="clear" width="70">
-			<tr><td width="1%"><img src="{{PATH_IMAGES}}interface/credits.gif" title="Coût de fonctionnement total" width="16" height="16"></td><td align="right">{{building.upkeep_total}}</td></tr>
-			<tr><td width="1%"><img src="{{PATH_IMAGES}}interface/energy_available.gif" title="Energie totale" width="12" height="12"></td><td align="right">{{building.energy_total}}</td></tr>
-			<tr><td width="1%"><img src="{{PATH_IMAGES}}interface/workers.gif" title="Maintenance totale" width="16" height="16"></td><td align="right">{{building.maintenance_total}}</td></tr>
-		</table>
-		</td></tr>
-	{% endfor %}
-	<tr><td colspan="5" align="center"><input type="submit" value="Valider changements"></td></tr>
-	</table>
-	</form>
-	</div>
-	{% endif %}
-</td>
-</tr>
-</table>
 {% endblock %}
