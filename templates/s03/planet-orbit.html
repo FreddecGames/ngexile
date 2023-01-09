@@ -1,104 +1,89 @@
 {% extends 's03/layout.html' %}
 
-
+{% load humanize %}
 
 {% block content %}
-<script type="text/javascript" src='/static/scripts/third-party/tooltip.js?v=1'></script>
-<script>
-tipname = "hint";
-tipwidth = 450;
-tiptext = $("hinttext");
-</script>
 
-<script>
-{% if temp %}
-var cargos = new Array();
-{% for fleet in fleets %}cargos[{{fleet.id}}] = new Array('{{fleet.cargo_ore}}','{{fleet.cargo_hydrocarbon}}','{{fleet.cargo_scientists}}','{{fleet.cargo_soldiers}}','{{fleet.cargo_workers}}');{% endfor %}
+    <div class="row g-3 flex-column">
+    
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <span>Flottes en orbite</span>
+                </div>
+                <div class="list-group list-group-flush">
+                    {% for fleet in fleets %}
+                        <div class="list-group-item">
+                            <div class="row gx-3 align-items-baseline">
+                                <div class="col-auto">
+                                    {% if fleet.owner %}<a href="/s03/fleet-view/?id={{fleet.id}}" class="self">{{fleet.name}}</a>
+                                    {% elif fleet.ally %}<a href="/s03/mail-new/?to={{fleet.name}}" class="ally">{{fleet.name}}</a>
+                                    {% elif fleet.friend %}<a href="/s03/mail-new/?to={{fleet.name}}" class="friend">{{fleet.name}}</a>
+                                    {% elif fleet.enemy %}<a href="/s03/profile-view/?name={{fleet.name}}" class="enemy">{{fleet.name}}</a>
+                                    {% endif %}
+                                </div>
+                                <div class="col small">{{fleet.signature|intcomma}}</div>
+                                <div class="col-auto">
+                                    {% if fleet.recycling %}<span class="text-yellow">Recyclage en cours</span>{% endif %}
+                                    {% if fleet.fighting %}<span class="text-danger">En combat</span>{% endif %}
+                                    {% if fleet.patrolling %}<span class="text-normal">En patrouille</span>{% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    {% empty %}
+                        <div class="list-group-item">
+                            <span class="text-normal">Aucune flotte n'est actuellement à proximité de la planète.</span>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-12">
+            <form method="post" action="?a=new&planet={{planetid}}" class="card">
+                <div class="card-header">
+                    <span>Nouvelle flotte</span>
+                </div>
+                <div class="card-body">
+                    <div class="row g-1 flex-column">
+                        {% if ships|length > 0 %}
+                            <div class="col-12">
+                                <div class="row gx-3">
+                                </div>
+                            </div>
+                            {% for ship in ships %}
+                            <div class="col-12">
+                                <div class="row gx-3 align-items-center">
+                                    <div class="col"><a href="/s03/help/?cat=ships#{{ship.id}}">{{ship.name}}</a></div>
+                                    <div class="col-auto"><small class="text-normal">x</small>{{ship.quantity|intcomma}}</div>
+                                    <div class="col-auto"><input type="number" min="0" value="{{ship.ship_quantity}}" id="s{{ship.id}}" name="s{{ship.id}}" /></div>
+                                    <div class="col-auto"><a href="#" onclick="setval('s{{ship.id}}', {{ship.quantity}}); return false;">max</a></div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                            <div class="col-12"><hr></div>
+                            <div class="col-12">
+                                <div class="row gx-2 align-items-center">
+                                    <div class="col"><span class="text-normal">Nom de flotte</span></div>
+                                    <div class="col-auto"><input type="text" name="name" value="{{fleetname}}" maxlength="16" /></div>
+                                    <div class="col-auto"><input type="submit" value="Former la flotte" /></div>
+                                </div>
+                            </div>
+                            {% if fleet_too_many %}<div class="col-12 text-end"><span class="text-danger">Vous avez atteint le nombre maximum de flottes.</span></div>{% endif %}
+                            {% if fleet_name_already_used %}<div class="col-12 text-end"><span class="text-danger">Le nom de la flotte est déjà utilisé, veuillez en choisir un autre.</span></div>{% endif %}
+                            {% if fleet_name_invalid %}<div class="col-12 text-end"><span class="text-danger">Le nom de la flotte est invalide, il ne peut contenir que des lettres (a-z) et des chiffres (0-9).</span></div>{% endif %}
+                            {% if ship_cant_be_used %}<div class="col-12 text-end"><span class="text-danger">Certains vaisseaux n'ont pu être ajoutés à la flotte car nous ne disposons pas des recherches requises pour les utiliser.</span></div>{% endif %}
+                        {% else %}
+                            <div class="col-12">
+                                <span class="text-normal">Aucun vaisseau n'est disponible.</span>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            {% csrf_token %}
+            </form>
+        </div>
+    
+    </div>
 
-function cargoDesc(id){
-	var c=cargos[id];
-	var s='<table width="100%">';
-	s+='<tr><td width="1%"><img src="{{PATH_IMAGES}}interface/ore.gif" width=16 height=16></td><td align="left">Minerai</td><td width="1%" align="right" class="grey">'+c[0]+'</td></tr>';
-	s+='<tr><td width="1%"><img src="{{PATH_IMAGES}}interface/hydrocarbon.gif" width=16 height=16></td><td>Hydrocarbure</td><td width="1%" align="right" class="grey">'+c[1]+'</td></tr>';
-	s+='<tr><td width="1%"><img src="{{PATH_IMAGES}}interface/scientists.gif" width=16 height=16></td><td>Scientifiques</td><td width="1%" align="right" class="grey">'+c[2]+'</td></tr>';
-	s+='<tr><td width="1%"><img src="{{PATH_IMAGES}}interface/soldiers.gif" width=16 height=16></td><td>Soldats</td><td width="1%" align="right" class="grey">'+c[3]+'</td></tr>';
-	s+='<tr><td width="1%"><img src="{{PATH_IMAGES}}interface/workers.gif" width=16 height=16></td><td>Travailleurs</td><td width="1%" align="right" class="grey">'+c[4]+'</td></tr>';
-	return s+'</table>';
-}
-{% endif %}
-</script>
-
-<div id="orbit">
-<form method="post" action="?a=new&planet={{planetid}}">
-{% csrf_token %}
-<table class="default" width="650">
-<tr class="title"><td colspan=6>Flottes</td></tr>
-<tr class="header"><td>Flotte</td><td>Taille</td><td>Signature</td><td>Cargo</td><td>Action</td><td>Commandant</td></tr>
-
-{% for fleet in fleets %}
-<tr class="smallitem">
-	<td nowrap>
-		{% if fleet.owner %}<a href="/s03/fleet-view/?id={{fleet.id}}"><b>{{fleet.name}}</b></a>{% endif %}
-		{% if fleet.friend %}<p class="friend"><b>{{fleet.name}}</b></p>{% endif %}
-		{% if fleet.ally %}<p class="ally"><b>{{fleet.name}}</b></p>{% endif %}
-		{% if fleet.enemy %}<p class="enemy"><b>{{fleet.name}}</b></p>{% endif %}
-	</td>
-	<td nowrap align="right">{{fleet.size}}</td>
-	<td nowrap align="right">{{fleet.signature}}</td>
-	<td nowrap align="right">{% if fleet.trade %}<a href="/s03/fleet-trade/?id={{id}}" onmouseover="ddrivetip(cargoDesc({{fleet.id}}))" onmouseout="hideddrivetip()">{% endif %}{{fleet.cargo}}{% if fleet.trade %}</a>{% endif %}</td>
-	<td nowrap>
-	{% if fleet.recycling %}<p class="recycling">Recyclage en cours</p>{% endif %}
-	{% if fleet.fighting %}<p class="fighting">En combat</p>{% endif %}
-	{% if fleet.patrolling %}En patrouille{% endif %}
-	</td>
-
-	<td><img src="{{PATH_IMAGES}}interface/commander.gif" class="smallicon" title="Commandant" width=10 height=6>{% if fleet.commander %}<a href="/s03/empire-commanders/#{{fleet.commanderid}}">{{fleet.commandername}}</a>{% endif %}{% if fleet.nocommander %}-{% endif %}</td>
-</tr>
-{% endfor %}
-{% if nofleets %}
-<tr><td colspan=6 align=center>Aucune flotte n'est actuellement à proximité de la planète.</td></tr>
-{% endif %}
-</table>
-
-<br/>
-
-<table class="default" width="450">
-<tr class="title"><td colspan=2>Nouvelle flotte</td></tr>
-{% if new %}
-<tr class="category">
-	<td colspan=2>Nom de flotte <span style="margin:0px 10px;"><input type="text" name="name" value="{{fleetname}}" maxlength="16"></span></td>
-</tr>
-{% for ship in ships %}
-<script>
-description{{ship.id}}="<table><tr valign='top'><td><span class=title>Description</span><br/><br/>{{ship.description|escapejs}}</td><td width='1%' nowrap><span class=title>Caractéristiques</span><br/><br/>"+
-"Signature: <span class=value>{{ship.ship_signature}}</span><br/>Cargo: <span class=value>{{ship.ship_cargo}}</span><br/>Vitesse: <span class=value>{{ship.ship_speed}}</span><br/>Manœuvrabilité: <span class=value>{{ship.ship_handling}}</span>{% if ship.attack %}<br/>Puissance d'attaque: <span class=value>{{ship.ship_turrets}}x{{ship.ship_power}}</span><br/>Ciblage: <span class=value>{{ship.ship_tracking_speed}}</span>{% endif %}<br/>Armure: <span class=value>{{ship.ship_hull}}</span>{% if ship.shield %}<br/>Bouclier: <span class=value>{{ship.ship_shield}}</span>{% endif %}{% if ship.recycler_output %}<br/>Capacité de recyclage: <span class=value>{{ship.ship_recycler_output}}</span>{% endif %}{% if ship.long_distance_capacity %}<br/>Capacité de saut intergalactique: <span class=value>{{ship.ship_long_distance_capacity}}</span>{% endif %}{% if ship.droppods %}<br/>Capacité d'invasion: <span class=value>{{ship.ship_droppods}}</span>{% endif %}</td></tr></table>";
-</script>
-<tr class="smallitem">
-	<td nowrap>
-		<table class=clear width='100%'>
-		<tr><td><a href="/s03/help/?cat=ships#{{ship.id}}" onmouseover="ddrivetip(description{{ship.id}})" onmouseout="hideddrivetip()"><b>{{ship.name}}</b></a></td>
-			<td align="right" width="10%">x{{ship.quantity}}</td>
-		</tr></table>
-	</td>
-	<td align="center" width="15%" nowrap><input type="number" min="0" value="{{ship.ship_quantity}}" id="s{{ship.id}}" name="s{{ship.id}}"> <a href="#" onclick="setval('s{{ship.id}}', {{ship.quantity}}); return false;">max</a></td>
-</tr>
-{% endfor %}
-<tr class="smallitem"><td colspan=2 align=center><input type="submit" value="Former la flotte"></td></tr>
-{% endif %}
-{% if noships %}
-<tr><td colspan=2 align=center>Aucun vaisseau n'est disponible.</td></tr>
-{% endif %}
-
-{% if error %}
-<tr><td colspan=2 align=center>
-{% if fleet_too_many %}<span class="error">Vous avez atteint le nombre maximum de flottes.</span>{% endif %}
-{% if fleet_name_already_used %}<span class="error">Le nom de la flotte est déjà utilisé, veuillez en choisir un autre.</span>{% endif %}
-{% if fleet_name_invalid %}<span class="error">Le nom de la flotte est invalide, il ne peut contenir que des lettres (a-z) et des chiffres (0-9).</span>{% endif %}
-{% if ship_cant_be_used %}<span class="error">Certains vaisseaux n'ont pu être ajoutés à la flotte car nous ne disposons pas des recherches requises pour les utiliser.</span>{% endif %}
-</td></tr>
-{% endif %}
-
-</table>
-</form>
-</div>
 {% endblock %}
