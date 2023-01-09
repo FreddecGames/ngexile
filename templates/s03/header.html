@@ -20,14 +20,14 @@ function previousplanet() {
 
 <div class="mb-3">
     <div class="card card-body bg-dark">
-        <div class="row gx-3 align-items-center flex-nowrap">
+        <div class="row gx-3 align-items-center justify-content-between flex-nowrap">
         
             <div class="col-auto">
                 <a href="#" onclick="previousplanet(); return false;" class="fs-6" data-bs-toggle="tooltip" data-bs-title="Planète Précédente"><i class="fa-fw fas fa-chevron-circle-left"></i></a>
             </div>
             
             <div class="col-auto">
-                <div class="row g-1">
+                <div class="row g-1 flex-column">
                 
                     <div class="col-12">            
                         <select id="planetlist" class="w-100" tabindex="1" onchange="jump(this)">
@@ -42,8 +42,8 @@ function previousplanet() {
                 </div>
             </div>
             
-            <div class="col">
-                <div class="row g-1">
+            <div class="col-auto">
+                <div class="row g-1 flex-column">
             
                     <div class="col-12 text-nowrap">
                         <img src="{{PATH_IMAGES}}interface/ore.gif" class="res" width="16px" height="16px" /><span class="{% if medium_ore %}text-warning{% elif high_ore %}text-danger{% endif %}">{{ore|intcomma}}</span>
@@ -66,8 +66,8 @@ function previousplanet() {
                 </div>
             </div>
             
-            <div class="col">
-                <div class="row g-1">
+            <div class="col-auto">
+                <div class="row g-1 flex-column">
 
                     <div class="col-12 text-nowrap">
                         <img src="{{PATH_IMAGES}}interface/workers.gif" class="res" width="16px" height="16px" /><span class="{% if workers_low %}text-danger{% endif %}">{{workers|intcomma}}</span>
@@ -89,7 +89,7 @@ function previousplanet() {
             </div>
             
             <div class="col-auto">
-                <div class="row g-1">
+                <div class="row g-1 flex-column">
 
                     <div class="col-12 text-nowrap">
                         <img src="{{PATH_IMAGES}}interface/floor.gif" class="res" width="16px" height="16px" /><span>{{floor_occupied|intcomma}}</span>
