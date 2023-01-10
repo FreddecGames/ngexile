@@ -1,24 +1,32 @@
-{% extends 's03/layout.html' %}
-
+{% extends "s03/layout.html" %}
 {% load humanize %}
-
 {% block content %}
-
     <div class="nav nav-tabs mb-3">
-        <div class="nav-item"><a href="/s03/empire-fleets/" class="nav-link">Flottes</a></div>
-        <div class="nav-item"><a href="/s03/empire-orbiting/" class="nav-link active">Flottes en orbite</a></div>
-        <div class="nav-item"><a href="/s03/empire-ground/" class="nav-link">Vaisseaux au sol</a></div>
-        <div class="nav-item"><a href="/s03/empire-stats/" class="nav-link">Détruits / perdus</a></div>
+        <div class="nav-item">
+            <a href="/s03/empire-fleets/" class="nav-link">Flottes</a>
+        </div>
+        <div class="nav-item">
+            <a href="/s03/empire-orbiting/" class="nav-link active">Flottes en orbite</a>
+        </div>
+        <div class="nav-item">
+            <a href="/s03/empire-ground/" class="nav-link">Vaisseaux au sol</a>
+        </div>
+        <div class="nav-item">
+            <a href="/s03/empire-stats/" class="nav-link">Détruits / perdus</a>
+        </div>
     </div>
-
     <div class="row g-3">
         {% for planet in planets %}
             <div class="col-4">
                 <div class="card">
                     <div class="card-header">
                         <div class="row gx-3">
-                            <div class="col"><a href="/s03/map/?g={{planet.g}}&s={{planet.s}}">{{planet.g}}.{{planet.s}}.{{planet.p}}</a></div>
-                            <div class="col-auto"><a href="/s03/planet-orbit/?planet={{planet.planetid}}">{{planet.planetname}}</a></div>
+                            <div class="col">
+                                <a href="/s03/map/?g={{ planet.g }}&s={{ planet.s }}">{{ planet.g }}.{{ planet.s }}.{{ planet.p }}</a>
+                            </div>
+                            <div class="col-auto">
+                                <a href="/s03/planet-orbit/?planet={{ planet.planetid }}">{{ planet.planetname }}</a>
+                            </div>
                         </div>
                     </div>
                     <div class="card-body">
@@ -27,12 +35,21 @@
                                 <div class="col-12">
                                     <div class="row gx-3">
                                         <div class="col">
-                                            {% if fleet.ally %}<a href="/s03/mail-new/?to={{fleet.fleetowner}}" class="ally">{% if fleet.tag %}[{{fleet.tag}}]{% endif %} {{fleet.fleetowner}}</a>
-                                            {% elif fleet.friend %}<a href="/s03/mail-new/?to={{fleet.fleetowner}}" class="friend">{% if fleet.tag %}[{{fleet.tag}}]{% endif %} {{fleet.fleetowner}}</a>
-                                            {% elif fleet.hostile %}<a href="/s03/profile-view/?name={{fleet.fleetowner}}" class="enemy">{% if fleet.tag %}[{{fleet.tag}}]{% endif %} {{fleet.fleetowner}}</a>
+                                            {% if fleet.ally %}
+                                                <a href="/s03/mail-new/?to={{ fleet.fleetowner }}" class="ally">
+                                                    {% if fleet.tag %}[{{ fleet.tag }}]{% endif %}
+                                                {{ fleet.fleetowner }}</a>
+                                            {% elif fleet.friend %}
+                                                <a href="/s03/mail-new/?to={{ fleet.fleetowner }}" class="friend">
+                                                    {% if fleet.tag %}[{{ fleet.tag }}]{% endif %}
+                                                {{ fleet.fleetowner }}</a>
+                                            {% elif fleet.hostile %}
+                                                <a href="/s03/profile-view/?name={{ fleet.fleetowner }}" class="enemy">
+                                                    {% if fleet.tag %}[{{ fleet.tag }}]{% endif %}
+                                                {{ fleet.fleetowner }}</a>
                                             {% endif %}
                                         </div>
-                                        <div class="col-auto">{{fleet.fleetsignature|intcomma}}</div>
+                                        <div class="col-auto">{{ fleet.fleetsignature|intcomma }}</div>
                                     </div>
                                 </div>
                             {% endfor %}
@@ -48,5 +65,4 @@
             </div>
         {% endfor %}
     </div>
-
-{% endblock %}
+{% endblock content %}

@@ -1,40 +1,67 @@
-{% extends 's03/layout.html' %}
+{% extends "s03/layout.html" %}
 {% load tz %}
-
+{% load humanize %
 {% block content %}
-<div id="battle">
-
-<table width="100%" class="default">
-<tr class="title"><td colspan="5">{{planet}} [{{g}}.{{s}}.{{p}}] - {{time|timezone:"Europe/Paris"|date:"d M Y H:i"}} en {{rounds}}&nbsp;round(s)</td></tr>
-
-<tr class="header">
-<td>Flotte</td><td>Vaisseaux</td><td>Perdus</td><td>Détruits</td><td>Après combat</td>
-
-{% for opponent in opponents %}
-<tr class="category {% if opponent.self %}self{% endif %}{% if opponent.friend %}friend{% endif %}{% if opponent.ally %}ally{% endif %}{% if opponent.enemy %}enemy{% endif %}"><td>{% if opponent.attack %}<img src="{{PATH_IMAGES}}interface/stance_attack.gif" alt="Attaque" class="stance">{% endif %}{% if opponent.defend %}<img src="{{PATH_IMAGES}}interface/stance_defend.gif" alt="Rispote" class="stance">{% endif %}<a href="?id={{battleid}}&v={{opponent.view}}{% if opponent.public %}&by={{opponent.userid}}&key={{key}}{% endif %}" class="{% if opponent.self %}self{% endif %}{% if opponent.friend %}friend{% endif %}{% if opponent.ally %}ally{% endif %}{% if opponent.enemy %}enemy{% endif %}">{% if opponent.alliance %}[{{opponent.alliancetag}}] {% endif %}{{opponent.name}}{% if opponent.won %} (vainqueur){% endif %}</a></td><td>{{opponent.count}}</td><td>{{opponent.lost}}</td><td>{{opponent.killed}}</td><td>{{opponent.after}}</td></tr>
-{% for fleet in opponent.fleets %}
-<tr class="category {% if fleet.self %}self{% endif %}{% if fleet.friend %}friend{% endif %}{% if fleet.ally %}ally{% endif %}{% if fleet.enemy %}enemy{% endif %}"><td>{{fleet.name}} (B:{{fleet.mod_shield}} M:{{fleet.mod_handling}} C:{{fleet.mod_tracking_speed}} D:{{fleet.mod_damage}})</td><td>{{fleet.count}}</td><td>{{fleet.lost}}</td><td>{{fleet.killed}}</td><td>{{fleet.after}}</td></tr>
-{% for ship in fleet.ships %}
-<tr class="smallitem">
-<td><span class="dot">&middot;</span>
-{% if ship.label %}{{ship.label}}{% endif %}
-{% if ship.category10 %}Vaisseaux utilitaires{% endif %}
-{% if ship.category11 %}Vaisseaux de déploiement{% endif %}
-{% if ship.category15 %}Vaisseaux tactiques{% endif %}
-{% if ship.category20 %}Vaisseaux légers{% endif %}
-{% if ship.category30 %}Corvettes{% endif %}
-{% if ship.category40 %}Frégates{% endif %}
-{% if ship.category50 %}Croiseurs{% endif %}
-{% if ship.category60 %}Dreadnought{% endif %}
-{% if ship.category80 %}Titan{% endif %}
-{% if ship.category90 %}Plateforme de défense{% endif %}
-</td>
-<td>{{ship.ships}}</td><td>{{ship.lost}}</td><td>{% for kill in ship.kills %}{{kill.killed_name}} x{{kill.killed_count}}<br/>{% endfor %}{% if ship.killed_total %}Total: {{ship.killed}}{% endif %}{% if ship.killed_zero %}0{% endif %}</td><td>{{ship.after}}</td></tr>
-{% endfor %}
-{% endfor %}
-<tr class="smallitem"><td colspan=5>&nbsp;</td></tr>
-{% endfor %}
-</table>
-
-</div>
-{% endblock %}
+    <div class="card">
+        <div class="card-header">
+            <span>Rapport du combat autour de <a href="/s03/map/?g={{g}}&s={{ s }}">{{g }}.{{ s }}.{{p }}</a></span>
+        </div>
+        <div class="card-body">
+            <div class="row g-1 flex-column">
+                <div class="col-12">
+                    <span class="text-normal">Le <span class="text-white">{{ time|timezone:"Europe/Paris"|date:"d M Y H:i" }}</span> en <span class="text-white">{{ rounds }}</span> round(s)</span>
+                </div>
+                {% for opponent in opponents %}
+                    <div class="col-12 mt-3">
+                        <span class="fs-6 {% if opponent.self %}text-player{% elif opponent.friend %}text-friend{% elif opponent.ally %}text-ally{% else %}text-danger{% endif %}">
+                            {% if opponent.alliancetag %}[{{ opponent.alliancetag }}]{% endif %}
+                            {{ opponent.name }}
+                            {% if opponent.won %}(vainqueur){% endif %}
+                        </span>
+                    </div>
+                    {% for fleet in opponent.fleets %}
+                        <div class="col-12 mt-3">
+                            <div class="row gx-3">
+                                <div class="col">
+                                    <span>{{ fleet.name }}<span>
+                                    </div>
+                                    <div class="col-auto">
+                                        <span class="ms-2">B:{{ fleet.mod_shield }}</span> <span class="ms-2">M:{{ fleet.mod_handling }}</span> <span class="ms-2">C:{{ fleet.mod_tracking_speed }}</span> <span class="ms-2">D:{{ fleet.mod_damage }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            {% for ship in fleet.ships %}
+                                <div class="col-12">
+                                    <hr class="my-0">
+                                </div>
+                                <div class="col-12">
+                                    <div class="row gx-3">
+                                        <div class="col-4">
+                                            <span class="text-normal">{{ ship.label }}</span>
+                                        </div>
+                                        <div class="col-3">
+                                            <span class="text-normal">{{ ship.ships }}</span> <small class="text-normal"><i class="fa-fw fas fa-long-arrow-alt-right"></i></small> <span class="{% if ship.after <= 0 %}text-danger{% endif %}">{{ ship.after }}</span>
+                                        </div>
+                                        <div class="col">
+                                            <div class="row gx-3">
+                                                {% for kill in ship.kills %}
+                                                    <div class="col-auto">
+                                                        {{ kill.killed_name }} <small class="text-normal">x</small> {{ kill.killed_count }}
+                                                    </div>
+                                                {% empty %}
+                                                    <div class="col-auto">
+                                                        <span class="text-normal">-</span>
+                                                    </div>
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}

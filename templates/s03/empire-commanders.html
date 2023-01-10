@@ -1,11 +1,9 @@
-{% extends 's03/layout.html' %}
-
+{% extends "s03/layout.html" %}
 {% load tz %}
 {% load humanize %}
-
 {% block content %}
     <div class="row g-3">
-        {% if commander_list %}    
+        {% if commander_list %}
             <script>
                 function confirmFireCommander(name) {
                 
@@ -22,13 +20,19 @@
                 }
             </script>
             {% for commander in commander_list %}
-                <div id="renamebox{{commander.id}}" class="hidden">
+                <div id="renamebox{{ commander.id }}" class="hidden">
                     <form action="?" method="get" class="row gx-1 align-items-center">
                         <input type="hidden" name="a" value="rename">
-                        <input type="hidden" name="id" value="{{commander.id}}">
-                        <div class="col-auto"><input type="text" name="name" maxlength="32" value="{{commander.name}}" /></div>
-                        <div class="col-auto"><input type="submit" value="OK" /></div>
-                        <div class="col-auto"><input type="button" value="X" onclick="hide();" /></div>
+                        <input type="hidden" name="id" value="{{ commander.id }}">
+                        <div class="col-auto">
+                            <input type="text" name="name" maxlength="32" value="{{ commander.name }}" />
+                        </div>
+                        <div class="col-auto">
+                            <input type="submit" value="OK" />
+                        </div>
+                        <div class="col-auto">
+                            <input type="button" value="X" onclick="hide();" />
+                        </div>
                     </form>
                 </div>
             {% endfor %}
@@ -40,7 +44,7 @@
                                 <span>Les commandants de votre empire</span>
                             </div>
                             <div class="col-auto">
-                                <span>{{commander_list|length}} <small class="text-normal">/{{max_commanders}}</small></span>
+                                <span>{{ commander_list|length }} <small class="text-normal">/{{ max_commanders }}</small></span>
                             </div>
                         </div>
                     </div>
@@ -51,8 +55,13 @@
                                     <div class="col-5">
                                         <div class="row g-1">
                                             <div class="col-12">
-                                                <div id="renameref{{commander.id}}">
-                                                    <img src="{{PATH_IMAGES}}interface/commander.gif" width="16px" class="res" /><a href="#" name="{{commander.name}}" onclick="return show('renameref{{commander.id}}','renamebox{{commander.id}}')">{{commander.name}}</a>
+                                                <div id="renameref{{ commander.id }}">
+                                                    <img src="{{ PATH_IMAGES }}interface/commander.gif"
+                                                         width="16px"
+                                                         class="res"/>
+                                                    <a href="#"
+                                                       name="{{ commander.name }}"
+                                                       onclick="return show('renameref{{ commander.id }}','renamebox{{ commander.id }}')">{{ commander.name }}</a>
                                                 </div>
                                             </div>
                                             <div class="col-12">
@@ -61,7 +70,8 @@
                                                         <span class="text-normal">Salaire</span>
                                                     </div>
                                                     <div class="col-7">
-                                                        <img src="{{PATH_IMAGES}}interface/credits.gif" width="16px" class="res" />{{commander.salary|intcomma}}
+                                                        <img src="{{ PATH_IMAGES }}interface/credits.gif" width="16px" class="res" />
+                                                        {{ commander.salary|intcomma }}
                                                     </div>
                                                 </div>
                                             </div>
@@ -70,9 +80,7 @@
                                                     <div class="col-5 text-end">
                                                         <span class="text-normal">Incorporé</span>
                                                     </div>
-                                                    <div class="col-7">
-                                                        {{commander.recruited|timezone:"Europe/Paris"|date:"d M Y H:i"}}
-                                                    </div>
+                                                    <div class="col-7">{{ commander.recruited|timezone:"Europe/Paris"|date:"d M Y H:i" }}</div>
                                                 </div>
                                             </div>
                                             <div class="col-12">
@@ -81,20 +89,24 @@
                                                         <span class="text-normal">Affectation</span>
                                                     </div>
                                                     <div class="col-7">
-                                                        {% if commander.not_assigned %}<span class="text-normal">Aucune</span>
-                                                        {% elif commander.planet_command %}<img src="{{PATH_IMAGES}}interface/planet.gif" width="16px" class="res" /><script>putplanet("{{commander.planetid}}", "{{commander.commandment}}", "{{commander.g}}", "{{commander.s}}", "{{commander.p}}", 2);</script>
+                                                        {% if commander.not_assigned %}
+                                                            <span class="text-normal">Aucune</span>
+                                                        {% elif commander.planet_command %}
+                                                            <img src="{{ PATH_IMAGES }}interface/planet.gif" width="16px" class="res" />
+                                                            <script>putplanet("{{commander.planetid}}", "{{commander.commandment}}", "{{commander.g}}", "{{commander.s}}", "{{commander.p}}", 2);</script>
                                                         {% endif %}
                                                     </div>
                                                 </div>
                                             </div>
                                             {% if commander.can_fire %}
-                                            <div class="col-12">
-                                                <div class="row gx-3 align-items-center">
-                                                    <div class="col-5 text-end">
-                                                        <a href="?a=fire&id={{commander.id}}" onclick="return confirmFireCommander('{{commander.name}}')">Renvoyer</a>
+                                                <div class="col-12">
+                                                    <div class="row gx-3 align-items-center">
+                                                        <div class="col-5 text-end">
+                                                            <a href="?a=fire&id={{ commander.id }}"
+                                                               onclick="return confirmFireCommander('{{ commander.name }}')">Renvoyer</a>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
                                             {% endif %}
                                         </div>
                                     </div>
@@ -115,14 +127,35 @@
                                                         {% if bonus.description21 %}Ciblage de flotte{% endif %}
                                                         {% if bonus.description22 %}Dégats de flotte{% endif %}
                                                         {% if bonus.description23 %}Signature de flotte{% endif %}
-                                                        {{bonus.bonus}}%
+                                                        {{ bonus.bonus }}%
                                                     </span>
                                                 </div>
                                             {% endfor %}
-                                            {% if commander.levelup %}<div class="col-12"><a href="?a=skills&id={{commander.id}}">Répartir les {{commander.points}} points de compétences restants</a></div>{% endif %}
-                                            {% if commander.train %}<div class="col-12"><a href="?a=train&id={{commander.id}}" onclick="return confirmTrain('{{commander.prestige}}')">Entrainement intensif pour <img src="{{PATH_IMAGES}}interface/prestige.gif" width="16px" class="res" />{{commander.prestige}}</a></div>{% endif %}
-                                            {% if commander.cant_train %}<div class="col-12"><span class="text-danger">Vous ne pouvez entrainer ce commandant qu'une fois par jour</span></div>{% endif %}
-                                            {% if commander.cant_train_anymore %}<div class="col-12"><span class="text-danger">Vous ne pouvez pas entrainer ce commandant plus</span></div>{% endif %}
+                                            {% if commander.levelup %}
+                                                <div class="col-12">
+                                                    <a href="?a=skills&id={{ commander.id }}">Répartir les {{ commander.points }} points de compétences restants</a>
+                                                </div>
+                                            {% endif %}
+                                            {% if commander.train %}
+                                                <div class="col-12">
+                                                    <a href="?a=train&id={{ commander.id }}"
+                                                       onclick="return confirmTrain('{{ commander.prestige }}')">Entrainement intensif pour
+                                                        <img src="{{ PATH_IMAGES }}interface/prestige.gif"
+                                                             width="16px"
+                                                             class="res"/>
+                                                    {{ commander.prestige }}</a>
+                                                </div>
+                                            {% endif %}
+                                            {% if commander.cant_train %}
+                                                <div class="col-12">
+                                                    <span class="text-danger">Vous ne pouvez entrainer ce commandant qu'une fois par jour</span>
+                                                </div>
+                                            {% endif %}
+                                            {% if commander.cant_train_anymore %}
+                                                <div class="col-12">
+                                                    <span class="text-danger">Vous ne pouvez pas entrainer ce commandant plus</span>
+                                                </div>
+                                            {% endif %}
                                         </div>
                                     </div>
                                 </div>
@@ -149,7 +182,10 @@
                                     <div class="col-5">
                                         <div class="row g-1">
                                             <div class="col-12">
-                                                <img src="{{PATH_IMAGES}}interface/commander.gif" width="16px" class="res" />{{commander.name}}
+                                                <img src="{{ PATH_IMAGES }}interface/commander.gif"
+                                                     width="16px"
+                                                     class="res"/>
+                                                {{ commander.name }}
                                             </div>
                                             <div class="col-12">
                                                 <div class="row gx-3 align-items-center">
@@ -157,7 +193,8 @@
                                                         <span class="text-normal">Salaire</span>
                                                     </div>
                                                     <div class="col-7">
-                                                        <img src="{{PATH_IMAGES}}interface/credits.gif" width="16px" class="res" />{{commander.salary|intcomma}}
+                                                        <img src="{{ PATH_IMAGES }}interface/credits.gif" width="16px" class="res" />
+                                                        {{ commander.salary|intcomma }}
                                                     </div>
                                                 </div>
                                             </div>
@@ -166,19 +203,18 @@
                                                     <div class="col-5 text-end">
                                                         <span class="text-normal">Repéré</span>
                                                     </div>
-                                                    <div class="col-7">
-                                                        {{commander.added|timezone:"Europe/Paris"|date:"d M Y H:i"}}
-                                                    </div>
+                                                    <div class="col-7">{{ commander.added|timezone:"Europe/Paris"|date:"d M Y H:i" }}</div>
                                                 </div>
                                             </div>
                                             {% if commander.can_engage %}
-                                            <div class="col-12">
-                                                <div class="row gx-3 align-items-center">
-                                                    <div class="col-5 text-end">
-                                                        <a href="?a=engage&id={{commander.id}}" onclick="return confirmEngageCommander('{{commander.name}}')">Embaucher</a>
+                                                <div class="col-12">
+                                                    <div class="row gx-3 align-items-center">
+                                                        <div class="col-5 text-end">
+                                                            <a href="?a=engage&id={{ commander.id }}"
+                                                               onclick="return confirmEngageCommander('{{ commander.name }}')">Embaucher</a>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
                                             {% endif %}
                                         </div>
                                     </div>
@@ -199,11 +235,13 @@
                                                         {% if bonus.description21 %}Ciblage de flotte{% endif %}
                                                         {% if bonus.description22 %}Dégats de flotte{% endif %}
                                                         {% if bonus.description23 %}Signature de flotte{% endif %}
-                                                        {{bonus.bonus}}%
+                                                        {{ bonus.bonus }}%
                                                     </span>
                                                 </div>
                                             {% endfor %}
-                                            {% if commander.levelup %}<div class="col-12">{{commander.points}} points de compétences restants à distribuer</div>{% endif %}
+                                            {% if commander.levelup %}
+                                                <div class="col-12">{{ commander.points }} points de compétences restants à distribuer</div>
+                                            {% endif %}
                                         </div>
                                     </div>
                                 </div>
@@ -282,14 +320,17 @@
                 }
             </script>
             <div class="col-12">
-                <form action="?a=edit&id={{commanderid}}" method="post" class="card">
+                <form action="?a=edit&id={{ commanderid }}" method="post" class="card">
                     <div class="card-header">
                         <div class="row gx-3 align-items-center">
                             <div class="col-auto">
                                 <a href="/s03/empire-commanders/"><i class="fa-fw fas fa-arrow-alt-circle-left"></i></a>
                             </div>
                             <div class="col">
-                                <img src="{{PATH_IMAGES}}interface/commander.gif" width="16px" class="res" />{{name}}
+                                <img src="{{ PATH_IMAGES }}interface/commander.gif"
+                                     width="16px"
+                                     class="res"/>
+                                {{ name }}
                             </div>
                         </div>
                     </div>
@@ -298,7 +339,9 @@
                         <div class="row g-3">
                             <div class="col-12">
                                 <div class="row g-1">
-                                    <div class="col-12"><span class="text-normal">Compétences flotte</span></div>
+                                    <div class="col-12">
+                                        <span class="text-normal">Compétences flotte</span>
+                                    </div>
                                     <script>
                                         addskill('fleet_speed', 'Vitesse', 0.02, {{speed}}, {{max_speed}});
                                         addskill('fleet_shield', 'Bouclier', 0.02, {{shield}}, {{max_shield}});
@@ -311,7 +354,9 @@
                             </div>
                             <div class="col-12">
                                 <div class="row g-1">
-                                    <div class="col-12"><span class="text-normal">Compétences planète</span></div>
+                                    <div class="col-12">
+                                        <span class="text-normal">Compétences planète</span>
+                                    </div>
                                     <script>
                                         addskill('ore','Production de Minerai',0.01,{{ore}},{{max_ore}});
                                         addskill('hydrocarbon','Production d\'hydrocarbure',0.01,{{hydrocarbon}},{{max_hydrocarbon}});
@@ -325,7 +370,7 @@
                             <div class="col-12">
                                 <div class="row gx-3">
                                     <div class="col">
-                                        <span class="text-normal me-2">Points restant</span> <span id="points">{{maxpoints}}</span>
+                                        <span class="text-normal me-2">Points restant</span> <span id="points">{{ maxpoints }}</span>
                                     </div>
                                     <div class="col-auto">
                                         <input type="submit" value="Valider" onclick="return confirmAssign()" />
@@ -338,4 +383,4 @@
             </div>
         {% endif %}
     </div>
-{% endblock %}
+{% endblock content %}

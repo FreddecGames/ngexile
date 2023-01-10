@@ -1,67 +1,127 @@
-{% extends 's03/layout.html' %}
-
+{% extends "s03/layout.html" %}
 {% load humanize %}
-
 {% block content %}
-
     <script>
         function confirmAbandon() { return confirm('Êtes-vous sûr de vouloir abandonner la flotte "{{fleetname}" ?\r\nLes vaisseaux seront endommagés de telle sorte qu\'ils ne pourront être réutilisés !'); }
     </script>
-
     <div id="renamebox" class="hidden">
-        <form action="?id={{fleetid}}" method="post" class="row gx-1 align-items-center">{% csrf_token %}
+        <form action="?id={{ fleetid }}"
+              method="post"
+              class="row gx-1 align-items-center">
+            {% csrf_token %}
             <input type="hidden" name="action" value="rename" />
-            <div class="col-auto"><input type="text" name="newname" value="{{fleetname}}"></div>
-            <div class="col-auto"><input type="submit" value="OK"></div>
-            <div class="col-auto"><input type="button" value="X" onclick="hide();" /></div>
+            <div class="col-auto">
+                <input type="text" name="newname" value="{{ fleetname }}">
+            </div>
+            <div class="col-auto">
+                <input type="submit" value="OK">
+            </div>
+            <div class="col-auto">
+                <input type="button" value="X" onclick="hide();" />
+            </div>
         </form>
     </div>
-
     <div id="commandersbox" class="hidden">
-        <form action="?id={{fleetid}}" method="post" class="row gx-1 align-items-center">{% csrf_token %}
+        <form action="?id={{ fleetid }}"
+              method="post"
+              class="row gx-1 align-items-center">
+            {% csrf_token %}
             <input type="hidden" name="action" value="assigncommander" />
             <div class="col-auto">
                 <select name="commander">
-                    {% if unassigncommander %}<option value="0">Aucun</option>{% endif %}
-                    {% if nocommander %}<option value="0">Aucun</option>{% endif %}
+                    {% if unassigncommander %}
+                        <option value="0">
+                            Aucun
+                        </option>
+                    {% endif %}
+                    {% if nocommander %}
+                        <option value="0">
+                            Aucun
+                        </option>
+                    {% endif %}
                     {% for optgroup in optgroups %}
-                    <optgroup label="{% if optgroup.fleet %}sur Flottes{% endif %}{% if optgroup.planet %}sur Planètes{% endif %}{% if optgroup.none %}Non affectés{% endif %}">
-                        {% for cmd_option in optgroup.cmd_options %}<option value="{{cmd_option.cmd_id}}" {% if cmd_option.selected %}selected{% endif %}>&middot;&nbsp;{{cmd_option.cmd_name}} {% if cmd_option.assigned %}({{cmd_option.name}}){% endif %}{% if cmd_option.unavailable %} (Indisponible){% endif %}</option>{% endfor %}
-                    </optgroup>
-                    {% endfor %}x
+                        <optgroup label="{% if optgroup.fleet %}sur Flottes{% endif %}{% if optgroup.planet %}sur Planètes{% endif %}{% if optgroup.none %}Non affectés{% endif %}">
+                            {% for cmd_option in optgroup.cmd_options %}
+                                <option value="{{ cmd_option.cmd_id }}"
+                                        {% if cmd_option.selected %}selected{% endif %}>
+                                    &middot;&nbsp;{{ cmd_option.cmd_name }}
+                                    {% if cmd_option.assigned %}({{ cmd_option.name }}){% endif %}
+                                    {% if cmd_option.unavailable %}(Indisponible){% endif %}
+                                </option>
+                            {% endfor %}
+                        </optgroup>
+                    {% endfor %}
+                    x
                 </select>
             </div>
-            <div class="col-auto"><input type="submit" class="submit" value="OK" /></div>
-            <div class="col-auto"><input type="button" value="X" onclick="hide();" /></div>
+            <div class="col-auto">
+                <input type="submit" class="submit" value="OK" />
+            </div>
+            <div class="col-auto">
+                <input type="button" value="X" onclick="hide();" />
+            </div>
         </form>
     </div>
-
     {% if invade %}
-    <div id="invadebox" class="hidden">
-        <form action="?id={{fleetid}}" method="post" class="row gx-1 align-items-center">{% csrf_token %}
-            <input type="hidden" name="action" value="invade" />
-            <div class="col-auto">Envahir avec <input id="droppods" type="text" name="droppods" size="6" maxlength="6" align="right" value="{{fleet_droppods}}"> soldats</div>
-            {% if can_take %}<div class="col-auto"><input type="checkbox" id="take" name="take"> Occuper planète (<img src="{{PATH_IMAGES}}interface/prestige.gif" title="Prestige" class="res" width="16px" /> {{prestige}})</div>{% endif %}
-            <div class="col-auto"><input type="submit" class="submit" value="OK"></div>
-            <div class="col-auto"><input type="button" value="X" onclick="hide();" /></div>
-        </form>
-    </div>
+        <div id="invadebox" class="hidden">
+            <form action="?id={{ fleetid }}"
+                  method="post"
+                  class="row gx-1 align-items-center">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="invade" />
+                <div class="col-auto">
+                    Envahir avec
+                    <input id="droppods"
+                           type="text"
+                           name="droppods"
+                           size="6"
+                           maxlength="6"
+                           align="right"
+                           value="{{ fleet_droppods }}">
+                    soldats
+                </div>
+                {% if can_take %}
+                    <div class="col-auto">
+                        <input type="checkbox" id="take" name="take">
+                        Occuper planète (
+                        <img src="{{ PATH_IMAGES }}interface/prestige.gif"
+                             title="Prestige"
+                             class="res"
+                             width="16px"/>
+                        {{ prestige }})
+                    </div>
+                {% endif %}
+                <div class="col-auto">
+                    <input type="submit" class="submit" value="OK">
+                </div>
+                <div class="col-auto">
+                    <input type="button" value="X" onclick="hide();" />
+                </div>
+            </form>
+        </div>
     {% endif %}
-
     <div class="row g-3">
-    
         <div class="col-12">
             <div class="card">
                 <div class="card-header">
                     <div class="row gx-3">
                         <div id="renameref" class="col">
-                            {% if attack %}<img src="{{PATH_IMAGES}}interface/stance_attack.gif" class="stance" width="10px" /> {% endif %}
-                            {% if defend %}<img src="{{PATH_IMAGES}}interface/stance_defend.gif" class="stance" width="10px" /> {% endif %}
-                            {{fleetname}}
+                            {% if attack %}<img src="{{ PATH_IMAGES }}interface/stance_attack.gif"
+     class="stance"
+     width="10px"/>{% endif %}
+                            {% if defend %}<img src="{{ PATH_IMAGES }}interface/stance_defend.gif"
+     class="stance"
+     width="10px"/>{% endif %}
+                            {{ fleetname }}
                         </div>
                         {% if idle %}
-                        <div class="col-auto"><a href="#" onclick="return show('renameref', 'renamebox')">Renommer</a></div>
-                        <div class="col-auto"><a href="?planet={{planetid}}&id={{fleetid}}&action=abandon" onclick="return confirmAbandon()">Abandonner</a></div>
+                            <div class="col-auto">
+                                <a href="#" onclick="return show('renameref', 'renamebox')">Renommer</a>
+                            </div>
+                            <div class="col-auto">
+                                <a href="?planet={{ planetid }}&id={{ fleetid }}&action=abandon"
+                                   onclick="return confirmAbandon()">Abandonner</a>
+                            </div>
                         {% endif %}
                     </div>
                 </div>
@@ -69,36 +129,62 @@
                     <div class="row g-1">
                         <div class="col-12">
                             <div class="row gx-3">
-                                <div class="col-4"><span class="text-normal">Action</span></div>
+                                <div class="col-4">
+                                    <span class="text-normal">Action</span>
+                                </div>
                                 <div class="col">
                                     <div class="row g-1">
                                         <div class="col-12">
                                             <div class="row gx-3">
                                                 <div class="col">
-                                                    {% if patrolling %}En patrouille <span class="text-normal">près de</span> <script>putplanet("{{planetid}}", "{{planetname}}", "{{g}}", "{{s}}", "{{p}}", {{relation}});</script>{% endif %}
-                                                    {% if recycling %}Recyclage en cours <span class="text-normal">près de</span> <script>putplanet("{{planetid}}", "{{planetname}}", "{{g}}", "{{s}}", "{{p}}", {{relation}});</script> <span class="ms-2 text-yellow"><script>putcountdown1({{time}}, 'Cycle terminé', '?id={{fleetid}}')</script></span>{% endif %}
-                                                    {% if fighting %}<span class="text-danger">En combat</span> <span class="text-normal">près de</span> <script>putplanet("{{planetid}}", "{{planetname}}", "{{g}}", "{{s}}", "{{p}}", {{relation}});</script>{% endif %}
-                                                    {% if moving %}En transit {% if from %}<span class="text-normal">de</span> <script>putplanet("{{planetid}}", "{{planetname}}", "{{g}}", "{{s}}", "{{p}}", {{relation}});</script>{% endif %} <span class="text-normal">vers</span> <script>putplanet("{{t_planetid}}", "{{t_planetname}}", "{{t_g}}", "{{t_s}}", "{{t_p}}", {{t_relation}});</script> <span class="ms-2 text-yellow"><script>putcountdown1({{time}}, 'Arrivé', '?id={{fleetid}}')</script></span>{% endif %}
-                                                    {% if waiting %}En attente <span class="ms-2 text-yellow"><script>putcountdown1({{time}}, 'Terminé', '?id={{fleetid}}')</script></span>{% endif %}
+                                                    {% if patrolling %}
+                                                        En patrouille <span class="text-normal">près de</span> <script>putplanet("{{planetid}}", "{{planetname}}", "{{g}}", "{{s}}", "{{p}}", {{relation}});</script>
+                                                    {% endif %}
+                                                    {% if recycling %}
+                                                        Recyclage en cours <span class="text-normal">près de</span> <script>putplanet("{{planetid}}", "{{planetname}}", "{{g}}", "{{s}}", "{{p}}", {{relation}});</script> <span class="ms-2 text-yellow"><script>putcountdown1({{time}}, 'Cycle terminé', '?id={{fleetid}}')</script></span>
+                                                    {% endif %}
+                                                    {% if fighting %}
+                                                        <span class="text-danger">En combat</span> <span class="text-normal">près de</span> <script>putplanet("{{planetid}}", "{{planetname}}", "{{g}}", "{{s}}", "{{p}}", {{relation}});</script>
+                                                    {% endif %}
+                                                    {% if moving %}
+                                                        En transit
+                                                        {% if from %}
+                                                            <span class="text-normal">de</span> <script>putplanet("{{planetid}}", "{{planetname}}", "{{g}}", "{{s}}", "{{p}}", {{relation}});</script>
+                                                        {% endif %}
+                                                        <span class="text-normal">vers</span> <script>putplanet("{{t_planetid}}", "{{t_planetname}}", "{{t_g}}", "{{t_s}}", "{{t_p}}", {{t_relation}});</script> <span class="ms-2 text-yellow"><script>putcountdown1({{time}}, 'Arrivé', '?id={{fleetid}}')</script></span>
+                                                    {% endif %}
+                                                    {% if waiting %}
+                                                        En attente <span class="ms-2 text-yellow"><script>putcountdown1({{time}}, 'Terminé', '?id={{fleetid}}')</script></span>
+                                                    {% endif %}
                                                 </div>
-                                                {% if warp %}<div class="col-auto"><a href="?id={{fleetid}}&action=warp">Emprunter le vortex</a></div>{% endif %}
-                                                {% if waiting %}<div class="col-auto"><a href="?id={{fleetid}}&action=stopwaiting">Stopper</a></div>{% endif %}
+                                                {% if warp %}
+                                                    <div class="col-auto">
+                                                        <a href="?id={{ fleetid }}&action=warp">Emprunter le vortex</a>
+                                                    </div>
+                                                {% endif %}
+                                                {% if waiting %}
+                                                    <div class="col-auto">
+                                                        <a href="?id={{ fleetid }}&action=stopwaiting">Stopper</a>
+                                                    </div>
+                                                {% endif %}
                                             </div>
                                         </div>
                                         {% if actions %}
-                                        <div class="col-12">
-                                            <ul>
-                                                {% for action in actions %}
-                                                <li>
-                                                    {% if action.move %}Aller vers <script>putplanet("{{planetid}}", "{{planetname}}", "{{g}}", "{{s}}", "{{p}}", {{relation}});</script>{% endif %}
-                                                    {% if action.loadall %}Tout charger{% endif %}
-                                                    {% if action.unloadall %}Tout décharger{% endif %}
-                                                    {% if action.recycle %}Récolter les ressources{% endif %}
-                                                    {% if action.waiting %}Attendre{% endif %}
-                                                </li>
-                                                {% endfor %}
-                                            </ul>
-                                        </div>
+                                            <div class="col-12">
+                                                <ul>
+                                                    {% for action in actions %}
+                                                        <li>
+                                                            {% if action.move %}
+                                                                Aller vers <script>putplanet("{{planetid}}", "{{planetname}}", "{{g}}", "{{s}}", "{{p}}", {{relation}});</script>
+                                                            {% endif %}
+                                                            {% if action.loadall %}Tout charger{% endif %}
+                                                            {% if action.unloadall %}Tout décharger{% endif %}
+                                                            {% if action.recycle %}Récolter les ressources{% endif %}
+                                                            {% if action.waiting %}Attendre{% endif %}
+                                                        </li>
+                                                    {% endfor %}
+                                                </ul>
+                                            </div>
                                         {% endif %}
                                     </div>
                                 </div>
@@ -106,98 +192,166 @@
                         </div>
                         <div class="col-12">
                             <div class="row gx-3">
-                                <div class="col-4"><span class="text-normal">Attitude</span></div>
-                                <div class="col">
-                                    {% if attack %}<img src="{{PATH_IMAGES}}interface/stance_attack.gif" class="stance" width="10px" />Attaquer à vue{% endif %}
-                                    {% if defend %}<img src="{{PATH_IMAGES}}interface/stance_defend.gif" class="stance" width="10px" />Riposter aux attaques{% endif %}
+                                <div class="col-4">
+                                    <span class="text-normal">Attitude</span>
                                 </div>
-                                {% if setstance %}
-                                <div class="col-auto">
-                                    {% if setstance_attack %}<a href="?id={{fleetid}}&action=attack">Attaquer</a>
-                                    {% elif setstance_defend %}<a href="?id={{fleetid}}&action=defend">Riposter</a>
+                                <div class="col">
+                                    {% if attack %}
+                                        <img src="{{ PATH_IMAGES }}interface/stance_attack.gif"
+                                             class="stance"
+                                             width="10px"/>
+                                        Attaquer à vue
+                                    {% endif %}
+                                    {% if defend %}
+                                        <img src="{{ PATH_IMAGES }}interface/stance_defend.gif"
+                                             class="stance"
+                                             width="10px"/>
+                                        Riposter aux attaques
                                     {% endif %}
                                 </div>
+                                {% if setstance %}
+                                    <div class="col-auto">
+                                        {% if setstance_attack %}
+                                            <a href="?id={{ fleetid }}&action=attack">Attaquer</a>
+                                        {% elif setstance_defend %}
+                                            <a href="?id={{ fleetid }}&action=defend">Riposter</a>
+                                        {% endif %}
+                                    </div>
                                 {% endif %}
                             </div>
                         </div>
                         <div class="col-12">
                             <div class="row gx-3">
-                                <div class="col-4"><span class="text-normal">Commandement</span></div>
-                                <div id="cmdref" class="col">
-                                    {{fleet_leadership}} <small class="text-normal">/{{fleet_size}}</small> <small class="ms-2 text-normal">Efficacité</small> {{fleet_commander_efficiency}}%
-                                    <span class="ms-2">{% if nocommander %}-{% elif commander %}{{commandername}}{% endif %}</span>
+                                <div class="col-4">
+                                    <span class="text-normal">Commandement</span>
                                 </div>
-                                <div class="col-auto"><a href="#" onclick="return show('cmdref','commandersbox')">Changer</a></div>
+                                <div id="cmdref" class="col">
+                                    {{ fleet_leadership }} <small class="text-normal">/{{ fleet_size }}</small> <small class="ms-2 text-normal">Efficacité</small> {{ fleet_commander_efficiency }}%
+                                    <span class="ms-2">
+                                        {% if nocommander %}
+                                            -
+                                        {% elif commander %}
+                                            {{ commandername }}
+                                        {% endif %}
+                                    </span>
+                                </div>
+                                <div class="col-auto">
+                                    <a href="#" onclick="return show('cmdref','commandersbox')">Changer</a>
+                                </div>
                             </div>
                         </div>
                         {% if not hide_recycling %}
-                        <div class="col-12">
-                            <div class="row gx-3">
-                                <div class="col-4"><span class="text-normal">Recyclage</span></div>
-                                <div class="col">{{recycler_output}} <small class="text-normal">unités /heure</small></div>
-                                {% if recycle %}<div class="col-auto"><a href="?id={{fleetid}}&action=recycle">Recycler</a></div>{% endif %}
-                                {% if recycling %}<div class="col-auto"><a href="?id={{fleetid}}&action=stoprecycling">Stopper</a></div>{% endif %}
+                            <div class="col-12">
+                                <div class="row gx-3">
+                                    <div class="col-4">
+                                        <span class="text-normal">Recyclage</span>
+                                    </div>
+                                    <div class="col">
+                                        {{ recycler_output }} <small class="text-normal">unités /heure</small>
+                                    </div>
+                                    {% if recycle %}
+                                        <div class="col-auto">
+                                            <a href="?id={{ fleetid }}&action=recycle">Recycler</a>
+                                        </div>
+                                    {% endif %}
+                                    {% if recycling %}
+                                        <div class="col-auto">
+                                            <a href="?id={{ fleetid }}&action=stoprecycling">Stopper</a>
+                                        </div>
+                                    {% endif %}
+                                </div>
                             </div>
-                        </div>
                         {% endif %}
                         {% if not hide_droppods %}
+                            <div class="col-12">
+                                <div class="row gx-3">
+                                    <div class="col-4">
+                                        <span class="text-normal">Barges d'invasion</span>
+                                    </div>
+                                    <div id="invaderef" class="col">
+                                        {{ fleet_droppods }} <small class="text-normal">soldats</small>
+                                    </div>
+                                    {% if invade %}
+                                        <div class="col-auto">
+                                            <script>putcountdown2({{invade_time}}, "Invasion possible dans ", '<a href="#" onclick=\'return show("invaderef", "invadebox")\'>Envahir</a>');</script>
+                                            <script>putcountdown1({{invade_time}}, "", "#")</script>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        {% endif %}
                         <div class="col-12">
                             <div class="row gx-3">
-                                <div class="col-4"><span class="text-normal">Barges d'invasion</span></div>
-                                <div id="invaderef" class="col">{{fleet_droppods}} <small class="text-normal">soldats</small></div>
-                                {% if invade %}
-                                <div class="col-auto">
-                                    <script>putcountdown2({{invade_time}}, "Invasion possible dans ", '<a href="#" onclick=\'return show("invaderef", "invadebox")\'>Envahir</a>');</script>
-                                    <script>putcountdown1({{invade_time}}, "", "#")</script>
+                                <div class="col-4">
+                                    <span class="text-normal">Saut intergalactique</span>
                                 </div>
+                                <div class="col">
+                                    <small class="text-normal">signature max</small> <span {% if insufficient_long_distance_capacity %}class="text-danger"{% endif %}>{{ fleet_long_distance_capacity }}</span> <span class="ms-2"><small class="text-normal">stabilité requise</small> <span {% if insufficient_long_distance_capacity %}class="text-danger"{% endif %}>{{ fleet_required_vortex_strength }}</span></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="row gx-3">
+                                <div class="col-4">
+                                    <span class="text-normal">Signature</span>
+                                </div>
+                                <div class="col">
+                                    {{ fleet_real_signature|intcomma }} <span class="ms-2"><small class="text-normal">détectée</small> {{ fleet_signature|intcomma }}</span>
+                                </div>
+                                {% if split %}
+                                    <div class="col-auto">
+                                        <a href="/s03/fleet-split/?id={{ fleetid }}">Scinder</a>
+                                    </div>
                                 {% endif %}
                             </div>
                         </div>
-                        {% endif %}
                         <div class="col-12">
                             <div class="row gx-3">
-                                <div class="col-4"><span class="text-normal">Saut intergalactique</span></div>
-                                <div class="col"><small class="text-normal">signature max</small> <span {% if insufficient_long_distance_capacity %}class="text-danger"{% endif %}>{{fleet_long_distance_capacity}}</span> <span class="ms-2"><small class="text-normal">stabilité requise</small> <span {% if insufficient_long_distance_capacity %}class="text-danger"{% endif %}>{{fleet_required_vortex_strength}}</span></span></div>
+                                <div class="col-4">
+                                    <span class="text-normal">Entretien</span>
+                                </div>
+                                <div class="col">
+                                    <img src="{{ PATH_IMAGES }}interface/credits.gif" class="res" width="16px" />
+                                    {{ fleet_upkeep|intcomma }} <span class="ms-2"><small class="text-normal">x</small> {{ fleet_upkeep_multiplicator }}</span>
+                                </div>
                             </div>
                         </div>
                         <div class="col-12">
                             <div class="row gx-3">
-                                <div class="col-4"><span class="text-normal">Signature</span></div>
-                                <div class="col">{{fleet_real_signature|intcomma}} <span class="ms-2"><small class="text-normal">détectée</small> {{fleet_signature|intcomma}}</span></div>
-                                {% if split %}<div class="col-auto"><a href="/s03/fleet-split/?id={{fleetid}}">Scinder</a></div>{% endif %}
-                            </div>
-                        </div>
-                        <div class="col-12">
-                            <div class="row gx-3">
-                                <div class="col-4"><span class="text-normal">Entretien</span></div>
-                                <div class="col"><img src="{{PATH_IMAGES}}interface/credits.gif" class="res" width="16px" />{{fleet_upkeep|intcomma}} <span class="ms-2"><small class="text-normal">x</small> {{fleet_upkeep_multiplicator}}</span></div>
-                            </div>
-                        </div>
-                        <div class="col-12">
-                            <div class="row gx-3">
-                                <div class="col-4"><span class="text-normal">Vitesse de la flotte</span></div>
-                                <div class="col">{{fleet_speed|intcomma}}</div>
+                                <div class="col-4">
+                                    <span class="text-normal">Vitesse de la flotte</span>
+                                </div>
+                                <div class="col">
+                                    {{ fleet_speed|intcomma }}
+                                </div>
                                 {% if cancel_moving %}
-                                <div class="col-auto"><small class="text-normal">perte du contact</small> <script>putcountdown1({{timelimit}}, "Effective", "");</script></div>
-                                <div class="col-auto"><script>putcountdown2({{timelimit}}, '<a href="?id={{fleetid}}&action=return">Annuler</a>', '');</script></div>
+                                    <div class="col-auto">
+                                        <small class="text-normal">perte du contact</small> <script>putcountdown1({{timelimit}}, "Effective", "");</script>
+                                    </div>
+                                    <div class="col-auto">
+                                        <script>putcountdown2({{timelimit}}, '<a href="?id={{fleetid}}&action=return">Annuler</a>', '');</script>
+                                    </div>
                                 {% endif %}
                             </div>
                         </div>
                         {% if not hide_cargo %}
-                        <div class="col-12">
-                            <div class="row gx-3">
-                                <div class="col-4"><span class="text-normal">Cargaison</span></div>
-                                <div class="col">{{fleet_load|intcomma}} <small class="text-normal">/{{fleet_capacity|intcomma}} unités</small></div>
+                            <div class="col-12">
+                                <div class="row gx-3">
+                                    <div class="col-4">
+                                        <span class="text-normal">Cargaison</span>
+                                    </div>
+                                    <div class="col">
+                                        {{ fleet_load|intcomma }} <small class="text-normal">/{{ fleet_capacity|intcomma }} unités</small>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
                         {% endif %}
                     </div>
                 </div>
             </div>
         </div>
-        
         {% if move_fleet %}
-        <script>
+            <script>
             var tab = new Array();
 
             function fillDest(obj) {
@@ -230,7 +384,7 @@
 
                 if (seconds < 0) {
                 
-                    var s = "<span class=impossible>Saut impossible</span>";
+                    var s = "<span class='text-danger'>Saut impossible</span>";
                     if (traveltime_obj.innerHTML != s) traveltime_obj.innerHTML = s;
                     traveleta_obj.innerHTML = "";
                 }
@@ -292,70 +446,100 @@
             }
             
             window.setTimeout("updatetravel()", 500);
-        </script>        
-        <div class="col-12">
-            <form method="post" action="?id={{fleetid}}" class="card">
-                <div class="card-header">
-                    <span>Déplacement</span>
-                </div>
-                <div class="card-body">
-                    <div class="row g-1">
-                        <div class="col-12">
-                            <div class="row gx-3 align-items-center">
-                                <div class="col-5"><span class="text-normal">Action</span></div>
-                                <div class="col text-end">
-                                    <select name="movetype">
-                                        <option value="0">Aller simple</option>
-                                        <option value="1">Aller décharger puis revenir</option>
-                                        <option value=2>Aller recycler puis revenir</option>
-                                    </select>
+            </script>
+            <div class="col-12">
+                <form method="post" action="?id={{ fleetid }}" class="card">
+                    <div class="card-header">
+                        <span>Déplacement</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-1">
+                            <div class="col-12">
+                                <div class="row gx-3 align-items-center">
+                                    <div class="col-5">
+                                        <span class="text-normal">Action</span>
+                                    </div>
+                                    <div class="col text-end">
+                                        <select name="movetype">
+                                            <option value="0">
+                                                Aller simple
+                                            </option>
+                                            <option value="1">
+                                                Aller décharger puis revenir
+                                            </option>
+                                            <option value=2>
+                                                Aller recycler puis revenir
+                                            </option>
+                                        </select>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="col-12">
-                            <div class="row gx-3 align-items-center">
-                                <div class="col-5"><span class="text-normal">Destination</span></div>
-                                <div class="col text-end">
-                                    <input type="number" min="1" name="g" size="3" maxlength="2" value="{{g}}">
-                                    <input type="number" min="1" name="s" size="3" maxlength="2" value="{{s}}">
-                                    <input type="number" min="1" name="p" size="3" maxlength="2" value="{{p}}">
-                                    <select name="planetlist" tabindex="1" onchange="fillDest(this)">
-                                        {% if planetgroup %}
-                                        <optgroup label="Planètes">
-                                            {% for location in planetgroup %}<option{% if location.selected %} selected{% endif %}>{{location.name}} ({{location.to_g}}.{{location.to_s}}.{{location.to_p}})</option>{% endfor %}
-                                        </optgroup>
-                                        {% endif %}
-                                        {% if fleetgroup %}
-                                        <optgroup label="Vers Flottes">
-                                            {% for location in fleetgroup %}<option{% if location.selected %} selected{% endif %}>{{location.fleet_name}} ({{location.to_g}}.{{location.to_s}}.{{location.to_p}})</option>{% endfor %}
-                                        </optgroup>
-                                        {% endif %}
-                                        {% if merchantplanetsgroup %}
-                                        <optgroup label="Planètes marchandes">
-                                            {% for location in merchantplanetsgroup %}<option{% if location.selected %} selected{% endif %}>Marchand ({{location.to_g}}.{{location.to_s}}.{{location.to_p}})</option>{% endfor %}
-                                        </optgroup>
-                                        {% endif %}
-                                    </select>
+                            <div class="col-12">
+                                <div class="row gx-3 align-items-center">
+                                    <div class="col-5">
+                                        <span class="text-normal">Destination</span>
+                                    </div>
+                                    <div class="col text-end">
+                                        <input type="number" min="1" name="g" size="3" maxlength="2" value="{{g}}">
+                                        <input type="number" min="1" name="s" size="3" maxlength="2" value="{{s}}">
+                                        <input type="number" min="1" name="p" size="3" maxlength="2" value="{{p}}">
+                                        <select name="planetlist" tabindex="1" onchange="fillDest(this)">
+                                            {% if planetgroup %}
+                                                <optgroup label="Planètes">
+                                                    {% for location in planetgroup %}
+                                                        <option{% if location.selected %} selected{% endif %}>
+                                                            {{ location.name }} ({{ location.to_g }}.{{ location.to_s }}.{{ location.to_p }})
+                                                        </option>
+                                                    {% endfor %}
+                                                </optgroup>
+                                            {% endif %}
+                                            {% if fleetgroup %}
+                                                <optgroup label="Vers Flottes">
+                                                    {% for location in fleetgroup %}
+                                                        <option{% if location.selected %} selected{% endif %}>
+                                                            {{ location.fleet_name }} ({{ location.to_g }}.{{ location.to_s }}.{{ location.to_p }})
+                                                        </option>
+                                                    {% endfor %}
+                                                </optgroup>
+                                            {% endif %}
+                                            {% if merchantplanetsgroup %}
+                                                <optgroup label="Planètes marchandes">
+                                                    {% for location in merchantplanetsgroup %}
+                                                        <option{% if location.selected %} selected{% endif %}>
+                                                            Marchand ({{ location.to_g }}.{{ location.to_s }}.{{ location.to_p }})
+                                                        </option>
+                                                    {% endfor %}
+                                                </optgroup>
+                                            {% endif %}
+                                        </select>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="col-12"><hr class="my-1"></div>
-                        <div class="col-12">
-                            <div class="row gx-3 align-items-center justify-content-end">
-                                <div class="col-auto"><img src="{{PATH_IMAGES}}interface/credits.gif" class="res" width="16px" /><span id="travel_cost">0</span></div>
-                                <div class="col-auto"><span id="travel_time">-</span></div>
-                                <div class="col-auto"><input type="submit" value="Envoyer" autofocus="" /></div>
+                            <div class="col-12">
+                                <hr class="my-1">
+                            </div>
+                            <div class="col-12">
+                                <div class="row gx-3 align-items-center justify-content-end">
+                                    <div class="col-auto">
+                                        <img src="{{ PATH_IMAGES }}interface/credits.gif" class="res" width="16px" />
+                                        <span id="travel_cost">0</span>
+                                    </div>
+                                    <div class="col-auto">
+                                        <span id="travel_time">-</span>
+                                    </div>
+                                    <div class="col-auto">
+                                        <input type="submit" value="Envoyer" autofocus="" />
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <input type="hidden" name="action" value="move" />
-                <input type="hidden" name="loop" value="0" />
-            {% csrf_token %}
-            </form>
-        </div>
+                    <input type="hidden" name="action" value="move" />
+                    <input type="hidden" name="loop" value="0" />
+                    {% csrf_token %}
+                </form>
+            </div>
         {% endif %}
-        
         <div class="col-12">
             <div class="card">
                 <div class="card-header">
@@ -363,162 +547,432 @@
                 </div>
                 <div class="card-body">
                     {% if cargo %}
-                    <div class="row g-3 justify-content-center">
-                        {% if fleet_ore %}<div class="col-auto"><img src="/static/assets/interface/ore.gif" class="res" width="16px" />{{fleet_ore|intcomma}}</div>{% endif %}
-                        {% if fleet_hydrocarbon %}<div class="col-auto"><img src="/static/assets/interface/hydrocarbon.gif" class="res" width="16px" />{{fleet_hydrocarbon|intcomma}}</div>{% endif %}
-                        {% if fleet_scientists %}<div class="col-auto"><img src="/static/assets/interface/scientists.gif" class="res" width="16px" />{{fleet_scientists|intcomma}}</div>{% endif %}
-                        {% if fleet_soldiers %}<div class="col-auto"><img src="/static/assets/interface/soldiers.gif" class="res" width="16px" />{{fleet_soldiers|intcomma}}</div>{% endif %}
-                        {% if fleet_workers %}<div class="col-auto"><img src="/static/assets/interface/workers.gif" class="res" width="16px" />{{fleet_workers|intcomma}}</div>{% endif %}
-                    </div>
+                        <div class="row g-3 justify-content-center">
+                            {% if fleet_ore %}
+                                <div class="col-auto">
+                                    <img src="/static/assets/interface/ore.gif" class="res" width="16px" />
+                                    {{ fleet_ore|intcomma }}
+                                </div>
+                            {% endif %}
+                            {% if fleet_hydrocarbon %}
+                                <div class="col-auto">
+                                    <img src="/static/assets/interface/hydrocarbon.gif"
+                                         class="res"
+                                         width="16px"/>
+                                    {{ fleet_hydrocarbon|intcomma }}
+                                </div>
+                            {% endif %}
+                            {% if fleet_scientists %}
+                                <div class="col-auto">
+                                    <img src="/static/assets/interface/scientists.gif"
+                                         class="res"
+                                         width="16px"/>
+                                    {{ fleet_scientists|intcomma }}
+                                </div>
+                            {% endif %}
+                            {% if fleet_soldiers %}
+                                <div class="col-auto">
+                                    <img src="/static/assets/interface/soldiers.gif" class="res" width="16px" />
+                                    {{ fleet_soldiers|intcomma }}
+                                </div>
+                            {% endif %}
+                            {% if fleet_workers %}
+                                <div class="col-auto">
+                                    <img src="/static/assets/interface/workers.gif" class="res" width="16px" />
+                                    {{ fleet_workers|intcomma }}
+                                </div>
+                            {% endif %}
+                        </div>
                     {% elif load %}
-                    <form method="post" action="/s03/fleet-view/?id={{fleetid}}" class="row g-1 flex-column">
-                        <div class="col-12">
-                            <div class="row gx-3 align-items-center">
-                                <div class="col-6"></div>
-                                <div class="col-2 text-end"><span class="text-normal">En soute</span></div>
-                                <div class="col-2"></div>
-                                <div class="col-2 text-end"><span class="text-normal">Sur la planète</span></div>
+                        <form method="post"
+                              action="/s03/fleet-view/?id={{ fleetid }}"
+                              class="row g-1 flex-column">
+                            <div class="col-12">
+                                <div class="row gx-3 align-items-center">
+                                    <div class="col-6">
+                                    </div>
+                                    <div class="col-2 text-end">
+                                        <span class="text-normal">En soute</span>
+                                    </div>
+                                    <div class="col-2">
+                                    </div>
+                                    <div class="col-2 text-end">
+                                        <span class="text-normal">Sur la planète</span>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                        <div class="col-12"><hr class="my-1"></div>
-                        <div class="col-12">
-                            <div class="row gx-3 align-items-center">
-                                <div class="col-4"><img src="/static/assets/interface/ore.gif" class="res" width="16px" /><span class="text-normal">Minerai</span></div>
-                                <div class="col-2 text-end">{{fleet_ore|intcomma}}</div>
-                                <div class="col-2 text-end"><input type="number" min="0" name="unload_ore" id="unload_ore" value="0" size="6" /> <a href="#" onclick="setval('unload_ore', {{fleet_ore}})">max</a></div>
-                                <div class="col-2 text-end">{{planet_ore|intcomma}}</div>
-                                <div class="col-2 text-end"><input type="number" min="0" name="load_ore" id="load_ore" value="0" size="6" /> <a href="#" onclick="setval('load_ore', {{planet_ore}})">max</a></div>
+                            <div class="col-12">
+                                <hr class="my-1">
                             </div>
-                        </div>
-                        <div class="col-12">
-                            <div class="row gx-3 align-items-center">
-                                <div class="col-4"><img src="/static/assets/interface/hydrocarbon.gif" class="res" width="16px" /><span class="text-normal">Hydrocarbure</span></div>
-                                <div class="col-2 text-end">{{fleet_hydrocarbon|intcomma}}</div>
-                                <div class="col-2 text-end"><input type="number" min="0" name="unload_hydrocarbon" id="unload_hydrocarbon" value="0" size="6" /> <a href="#" onclick="setval('unload_hydrocarbon', {{fleet_hydrocarbon}})">max</a></div>
-                                <div class="col-2 text-end">{{planet_hydrocarbon|intcomma}}</div>
-                                <div class="col-2 text-end"><input type="number" min="0" name="load_hydrocarbon" id="load_hydrocarbon" value="0" size="6" /> <a href="#" onclick="setval('load_hydrocarbon', {{planet_hydrocarbon}})">max</a></div>
+                            <div class="col-12">
+                                <div class="row gx-3 align-items-center">
+                                    <div class="col-4">
+                                        <img src="/static/assets/interface/ore.gif" class="res" width="16px" />
+                                        <span class="text-normal">Minerai</span>
+                                    </div>
+                                    <div class="col-2 text-end">
+                                        {{ fleet_ore|intcomma }}
+                                    </div>
+                                    <div class="col-2 text-end">
+                                        <input type="number"
+                                               min="0"
+                                               name="unload_ore"
+                                               id="unload_ore"
+                                               value="0"
+                                               size="6"/>
+                                        <a href="#" onclick="setval('unload_ore', {{ fleet_ore }})">max</a>
+                                    </div>
+                                    <div class="col-2 text-end">
+                                        {{ planet_ore|intcomma }}
+                                    </div>
+                                    <div class="col-2 text-end">
+                                        <input type="number"
+                                               min="0"
+                                               name="load_ore"
+                                               id="load_ore"
+                                               value="0"
+                                               size="6"/>
+                                        <a href="#" onclick="setval('load_ore', {{ planet_ore }})">max</a>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                        <div class="col-12">
-                            <div class="row gx-3 align-items-center">
-                                <div class="col-4"><img src="/static/assets/interface/scientists.gif" class="res" width="16px" /><span class="text-normal">Scientifiques</span></div>
-                                <div class="col-2 text-end">{{fleet_scientists|intcomma}}</div>
-                                <div class="col-2 text-end"><input type="number" min="0" name="unload_scientists" id="unload_scientists" value="0" size="6" /> <a href="#" onclick="setval('unload_scientists', {{fleet_scientists}})">max</a></div>
-                                <div class="col-2 text-end">{{planet_scientists|intcomma}}</div>
-                                <div class="col-2 text-end"><input type="number" min="0" name="load_scientists" id="load_scientists" value="0" size="6" /> <a href="#" onclick="setval('load_scientists', {{planet_scientists}})">max</a></div>
+                            <div class="col-12">
+                                <div class="row gx-3 align-items-center">
+                                    <div class="col-4">
+                                        <img src="/static/assets/interface/hydrocarbon.gif"
+                                             class="res"
+                                             width="16px"/>
+                                        <span class="text-normal">Hydrocarbure</span>
+                                    </div>
+                                    <div class="col-2 text-end">
+                                        {{ fleet_hydrocarbon|intcomma }}
+                                    </div>
+                                    <div class="col-2 text-end">
+                                        <input type="number"
+                                               min="0"
+                                               name="unload_hydrocarbon"
+                                               id="unload_hydrocarbon"
+                                               value="0"
+                                               size="6"/>
+                                        <a href="#"
+                                           onclick="setval('unload_hydrocarbon', {{ fleet_hydrocarbon }})">max</a>
+                                    </div>
+                                    <div class="col-2 text-end">
+                                        {{ planet_hydrocarbon|intcomma }}
+                                    </div>
+                                    <div class="col-2 text-end">
+                                        <input type="number"
+                                               min="0"
+                                               name="load_hydrocarbon"
+                                               id="load_hydrocarbon"
+                                               value="0"
+                                               size="6"/>
+                                        <a href="#"
+                                           onclick="setval('load_hydrocarbon', {{ planet_hydrocarbon }})">max</a>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                        <div class="col-12">
-                            <div class="row gx-3 align-items-center">
-                                <div class="col-4"><img src="/static/assets/interface/soldiers.gif" class="res" width="16px" /><span class="text-normal">Solcats</span></div>
-                                <div class="col-2 text-end">{{fleet_soldiers|intcomma}}</div>
-                                <div class="col-2 text-end"><input type="number" min="0" name="unload_soldiers" id="unload_soldiers" value="0" size="6" /> <a href="#" onclick="setval('unload_soldiers', {{fleet_soldiers}})">max</a></div>
-                                <div class="col-2 text-end">{{planet_soldiers|intcomma}}</div>
-                                <div class="col-2 text-end"><input type="number" min="0" name="load_soldiers" id="load_soldiers" value="0" size="6" /> <a href="#" onclick="setval('load_soldiers', {{planet_soldiers}})">max</a></div>
+                            <div class="col-12">
+                                <div class="row gx-3 align-items-center">
+                                    <div class="col-4">
+                                        <img src="/static/assets/interface/scientists.gif"
+                                             class="res"
+                                             width="16px"/>
+                                        <span class="text-normal">Scientifiques</span>
+                                    </div>
+                                    <div class="col-2 text-end">
+                                        {{ fleet_scientists|intcomma }}
+                                    </div>
+                                    <div class="col-2 text-end">
+                                        <input type="number"
+                                               min="0"
+                                               name="unload_scientists"
+                                               id="unload_scientists"
+                                               value="0"
+                                               size="6"/>
+                                        <a href="#"
+                                           onclick="setval('unload_scientists', {{ fleet_scientists }})">max</a>
+                                    </div>
+                                    <div class="col-2 text-end">
+                                        {{ planet_scientists|intcomma }}
+                                    </div>
+                                    <div class="col-2 text-end">
+                                        <input type="number"
+                                               min="0"
+                                               name="load_scientists"
+                                               id="load_scientists"
+                                               value="0"
+                                               size="6"/>
+                                        <a href="#" onclick="setval('load_scientists', {{ planet_scientists }})">max</a>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                        <div class="col-12">
-                            <div class="row gx-3 align-items-center">
-                                <div class="col-4"><img src="/static/assets/interface/workers.gif" class="res" width="16px" /><span class="text-normal">Travailleurs</span></div>
-                                <div class="col-2 text-end">{{fleet_workers|intcomma}}</div>
-                                <div class="col-2 text-end"><input type="number" min="0" name="unload_workers" id="unload_workers" value="0" size="6" /> <a href="#" onclick="setval('unload_workers', {{fleet_workers}})">max</a></div>
-                                <div class="col-2 text-end">{{planet_workers|intcomma}}</div>
-                                <div class="col-2 text-end"><input type="number" min="0" name="load_workers" id="load_workers" value="0" size="6" /> <a href="#" onclick="setval('load_workers', {{planet_workers}})">max</a></div>
+                            <div class="col-12">
+                                <div class="row gx-3 align-items-center">
+                                    <div class="col-4">
+                                        <img src="/static/assets/interface/soldiers.gif" class="res" width="16px" />
+                                        <span class="text-normal">Solcats</span>
+                                    </div>
+                                    <div class="col-2 text-end">
+                                        {{ fleet_soldiers|intcomma }}
+                                    </div>
+                                    <div class="col-2 text-end">
+                                        <input type="number"
+                                               min="0"
+                                               name="unload_soldiers"
+                                               id="unload_soldiers"
+                                               value="0"
+                                               size="6"/>
+                                        <a href="#" onclick="setval('unload_soldiers', {{ fleet_soldiers }})">max</a>
+                                    </div>
+                                    <div class="col-2 text-end">
+                                        {{ planet_soldiers|intcomma }}
+                                    </div>
+                                    <div class="col-2 text-end">
+                                        <input type="number"
+                                               min="0"
+                                               name="load_soldiers"
+                                               id="load_soldiers"
+                                               value="0"
+                                               size="6"/>
+                                        <a href="#" onclick="setval('load_soldiers', {{ planet_soldiers }})">max</a>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                        <div class="col-12"><hr class="my-1"></div>
-                        <div class="col-12">
-                            <div class="row gx-3 align-items-center justify-content-end">
-                                <div class="col-auto text-end"><a href="#" onclick="return unload_all({{fleet_ore}}, {{fleet_hydrocarbon}}, {{fleet_scientists}}, {{fleet_soldiers}}, {{fleet_workers}})">Tout décharger</a></div>
-                                <div class="col-auto text-end"><a href="#" onclick="return load_all({{planet_ore}}, {{fleet_hydrocarbon}}, {{planet_scientists}}, {{planet_soldiers}}, {{planet_workers}})">Tout charger</a></div>
-                                <div class="col-auto text-center"><input type="submit" value="Transférer" /></div>
+                            <div class="col-12">
+                                <div class="row gx-3 align-items-center">
+                                    <div class="col-4">
+                                        <img src="/static/assets/interface/workers.gif" class="res" width="16px" />
+                                        <span class="text-normal">Travailleurs</span>
+                                    </div>
+                                    <div class="col-2 text-end">
+                                        {{ fleet_workers|intcomma }}
+                                    </div>
+                                    <div class="col-2 text-end">
+                                        <input type="number"
+                                               min="0"
+                                               name="unload_workers"
+                                               id="unload_workers"
+                                               value="0"
+                                               size="6"/>
+                                        <a href="#" onclick="setval('unload_workers', {{ fleet_workers }})">max</a>
+                                    </div>
+                                    <div class="col-2 text-end">
+                                        {{ planet_workers|intcomma }}
+                                    </div>
+                                    <div class="col-2 text-end">
+                                        <input type="number"
+                                               min="0"
+                                               name="load_workers"
+                                               id="load_workers"
+                                               value="0"
+                                               size="6"/>
+                                        <a href="#" onclick="setval('load_workers', {{ planet_workers }})">max</a>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                    {% csrf_token %}
-                    </form>
+                            <div class="col-12">
+                                <hr class="my-1">
+                            </div>
+                            <div class="col-12">
+                                <div class="row gx-3 align-items-center justify-content-end">
+                                    <div class="col-auto text-end">
+                                        <a href="#"
+                                           onclick="return unload_all({{ fleet_ore }}, {{ fleet_hydrocarbon }}, {{ fleet_scientists }}, {{ fleet_soldiers }}, {{ fleet_workers }})">Tout décharger</a>
+                                    </div>
+                                    <div class="col-auto text-end">
+                                        <a href="#"
+                                           onclick="return load_all({{ planet_ore }}, {{ fleet_hydrocarbon }}, {{ planet_scientists }}, {{ planet_soldiers }}, {{ planet_workers }})">Tout charger</a>
+                                    </div>
+                                    <div class="col-auto text-center">
+                                        <input type="submit" value="Transférer" />
+                                    </div>
+                                </div>
+                            </div>
+                            {% csrf_token %}
+                        </form>
                     {% elif unload %}
-                    <form method="post" action="/s03/fleet-view/?id={{fleetid}}" class="row g-1 flex-column">
-                        <div class="col-12">
-                            <div class="row gx-3 align-items-center">
-                                <div class="col-10"></div>
-                                <div class="col-2 text-end"><span class="text-normal">En soute</span></a></div>
-                            </div>
-                        </div>
-                        <div class="col-12"><hr class="my-1"></div>
-                        <div class="col-12">
-                            <div class="row gx-3 align-items-center">
-                                <div class="col-8"><img src="/static/assets/interface/ore.gif" class="res" width="16px" /><span class="text-normal">Minerai</span></div>
-                                <div class="col-2 text-end">{{fleet_ore|intcomma}}</div>
-                                <div class="col-2 text-end"><input type="number" min="0" name="unload_ore" id="unload_ore" value="0" size="6" /> <a href="#" onclick="setval('unload_ore', {{fleet_ore}})">max</a></div>
+                        <form method="post"
+                              action="/s03/fleet-view/?id={{ fleetid }}"
+                              class="row g-1 flex-column">
+                            <div class="col-12">
+                                <div class="row gx-3 align-items-center">
+                                    <div class="col-10">
+                                    </div>
+                                    <div class="col-2 text-end">
+                                        <span class="text-normal">En soute</span></a>
+                                </div>
                             </div>
                         </div>
                         <div class="col-12">
+                            <hr class="my-1">
+                        </div>
+                        <div class="col-12">
                             <div class="row gx-3 align-items-center">
-                                <div class="col-8"><img src="/static/assets/interface/hydrocarbon.gif" class="res" width="16px" /><span class="text-normal">Hydrocarbure</span></div>
-                                <div class="col-2 text-end">{{fleet_hydrocarbon|intcomma}}</div>
-                                <div class="col-2 text-end"><input type="number" min="0" name="unload_hydrocarbon" id="unload_hydrocarbon" value="0" size="6" /> <a href="#" onclick="setval('unload_hydrocarbon', {{fleet_hydrocarbon}})">max</a></div>
+                                <div class="col-8">
+                                    <img src="/static/assets/interface/ore.gif" class="res" width="16px" />
+                                    <span class="text-normal">Minerai</span>
+                                </div>
+                                <div class="col-2 text-end">
+                                    {{ fleet_ore|intcomma }}
+                                </div>
+                                <div class="col-2 text-end">
+                                    <input type="number"
+                                           min="0"
+                                           name="unload_ore"
+                                           id="unload_ore"
+                                           value="0"
+                                           size="6"/>
+                                    <a href="#" onclick="setval('unload_ore', {{ fleet_ore }})">max</a>
+                                </div>
                             </div>
                         </div>
                         <div class="col-12">
                             <div class="row gx-3 align-items-center">
-                                <div class="col-8"><img src="/static/assets/interface/scientists.gif" class="res" width="16px" /><span class="text-normal">Scientifiques</span></div>
-                                <div class="col-2 text-end">{{fleet_scientists|intcomma}}</div>
-                                <div class="col-2 text-end"><input type="number" min="0" name="unload_scientists" id="unload_scientists" value="0" size="6" /> <a href="#" onclick="setval('unload_scientists', {{fleet_scientists}})">max</a></div>
+                                <div class="col-8">
+                                    <img src="/static/assets/interface/hydrocarbon.gif"
+                                         class="res"
+                                         width="16px"/>
+                                    <span class="text-normal">Hydrocarbure</span>
+                                </div>
+                                <div class="col-2 text-end">
+                                    {{ fleet_hydrocarbon|intcomma }}
+                                </div>
+                                <div class="col-2 text-end">
+                                    <input type="number"
+                                           min="0"
+                                           name="unload_hydrocarbon"
+                                           id="unload_hydrocarbon"
+                                           value="0"
+                                           size="6"/>
+                                    <a href="#"
+                                       onclick="setval('unload_hydrocarbon', {{ fleet_hydrocarbon }})">max</a>
+                                </div>
                             </div>
                         </div>
                         <div class="col-12">
                             <div class="row gx-3 align-items-center">
-                                <div class="col-8"><img src="/static/assets/interface/soldiers.gif" class="res" width="16px" /><span class="text-normal">Solcats</span></div>
-                                <div class="col-2 text-end">{{fleet_soldiers|intcomma}}</div>
-                                <div class="col-2 text-end"><input type="number" min="0" name="unload_soldiers" id="unload_soldiers" value="0" size="6" /> <a href="#" onclick="setval('unload_soldiers', {{fleet_soldiers}})">max</a></div>
+                                <div class="col-8">
+                                    <img src="/static/assets/interface/scientists.gif"
+                                         class="res"
+                                         width="16px"/>
+                                    <span class="text-normal">Scientifiques</span>
+                                </div>
+                                <div class="col-2 text-end">
+                                    {{ fleet_scientists|intcomma }}
+                                </div>
+                                <div class="col-2 text-end">
+                                    <input type="number"
+                                           min="0"
+                                           name="unload_scientists"
+                                           id="unload_scientists"
+                                           value="0"
+                                           size="6"/>
+                                    <a href="#"
+                                       onclick="setval('unload_scientists', {{ fleet_scientists }})">max</a>
+                                </div>
                             </div>
                         </div>
                         <div class="col-12">
                             <div class="row gx-3 align-items-center">
-                                <div class="col-8"><img src="/static/assets/interface/workers.gif" class="res" width="16px" /><span class="text-normal">Travailleurs</span></div>
-                                <div class="col-2 text-end">{{fleet_workers|intcomma}}</div>
-                                <div class="col-2 text-end"><input type="number" min="0" name="unload_workers" id="unload_workers" value="0" size="6" /> <a href="#" onclick="setval('unload_workers', {{fleet_workers}})">max</a></div>
+                                <div class="col-8">
+                                    <img src="/static/assets/interface/soldiers.gif" class="res" width="16px" />
+                                    <span class="text-normal">Solcats</span>
+                                </div>
+                                <div class="col-2 text-end">
+                                    {{ fleet_soldiers|intcomma }}
+                                </div>
+                                <div class="col-2 text-end">
+                                    <input type="number"
+                                           min="0"
+                                           name="unload_soldiers"
+                                           id="unload_soldiers"
+                                           value="0"
+                                           size="6"/>
+                                    <a href="#" onclick="setval('unload_soldiers', {{ fleet_soldiers }})">max</a>
+                                </div>
                             </div>
                         </div>
-                        <div class="col-12"><hr class="my-1"></div>
+                        <div class="col-12">
+                            <div class="row gx-3 align-items-center">
+                                <div class="col-8">
+                                    <img src="/static/assets/interface/workers.gif" class="res" width="16px" />
+                                    <span class="text-normal">Travailleurs</span>
+                                </div>
+                                <div class="col-2 text-end">
+                                    {{ fleet_workers|intcomma }}
+                                </div>
+                                <div class="col-2 text-end">
+                                    <input type="number"
+                                           min="0"
+                                           name="unload_workers"
+                                           id="unload_workers"
+                                           value="0"
+                                           size="6"/>
+                                    <a href="#" onclick="setval('unload_workers', {{ fleet_workers }})">max</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <hr class="my-1">
+                        </div>
                         <div class="col-12">
                             <div class="row gx-3 align-items-center justify-content-end">
-                                <div class="col-auto text-end"><a href="#" onclick="return unload_all({{fleet_ore}}, {{fleet_hydrocarbon}}, {{fleet_scientists}}, {{fleet_soldiers}}, {{fleet_workers}})">Tout décharger</a></div>
-                                <div class="col-auto text-center"><input type="submit" value="Transférer" /></div>
+                                <div class="col-auto text-end">
+                                    <a href="#"
+                                       onclick="return unload_all({{ fleet_ore }}, {{ fleet_hydrocarbon }}, {{ fleet_scientists }}, {{ fleet_soldiers }}, {{ fleet_workers }})">Tout décharger</a>
+                                </div>
+                                <div class="col-auto text-center">
+                                    <input type="submit" value="Transférer" />
+                                </div>
                             </div>
                         </div>
-                    {% csrf_token %}
+                        {% csrf_token %}
                     </form>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="col-6">
+        <div class="card">
+            <div class="card-header">
+                <div class="row gx-3">
+                    <div class="col">
+                        <span>Vaisseaux</span>
+                    </div>
+                    {% if manage %}
+                        <div class="col-auto">
+                            <a href="/s03/fleet-ships/?id={{ fleetid }}">Gérer</a>
+                        </div>
+                    {% endif %}
+                    {% if split %}
+                        <div class="col-auto">
+                            <a href="/s03/fleet-split/?id={{ fleetid }}">Scinder</a>
+                        </div>
                     {% endif %}
                 </div>
             </div>
-        </div>
-            
-        <div class="col-6">
-            <div class="card">
-                <div class="card-header">
-                    <div class="row gx-3">
-                        <div class="col"><span>Vaisseaux</span></div>
-                        {% if manage %}<div class="col-auto"><a href="/s03/fleet-ships/?id={{fleetid}}">Gérer</a></div>{% endif %}
-                        {% if split %}<div class="col-auto"><a href="/s03/fleet-split/?id={{fleetid}}">Scinder</a></div>{% endif %}
-                    </div>
-                </div>
-                <div class="card-body">
-                    <div class="row g-1 flex-column">
-                        {% for ship in shiplist %}
+            <div class="card-body">
+                <div class="row g-1 flex-column">
+                    {% for ship in shiplist %}
                         <div class="col-12">
                             <div class="row gx-3">
-                                <div class="col"><a href="/s03/help/?cat=ships#{{ship.id}}">{{ship.name}}</a> <small class="ms-2 text-normal">x</small> {{ship.quantity|intcomma}}</div>
-                                {% if ship.install %}<div class="col-auto"><a href="?id={{fleetid}}&action=install&s={{ship.id}}">Déployer</a></div>{% endif %}
+                                <div class="col">
+                                    <a href="/s03/help/?cat=ships#{{ ship.id }}">{{ ship.name }}</a> <small class="ms-2 text-normal">x</small> {{ ship.quantity|intcomma }}
+                                </div>
+                                {% if ship.install %}
+                                    <div class="col-auto">
+                                        <a href="?id={{ fleetid }}&action=install&s={{ ship.id }}">Déployer</a>
+                                    </div>
+                                {% endif %}
                             </div>
                         </div>
-                        {% endfor %}
-                    </div>
+                    {% endfor %}
                 </div>
             </div>
         </div>
-        
-        {% if fleets|length > 0 %}
+    </div>
+    {% if fleets|length > 0 %}
         <div class="col-6">
             <div class="card">
                 <div class="card-header">
@@ -527,26 +981,34 @@
                 <div class="card-body">
                     <div class="row g-1 flex-column">
                         {% for fleet in fleets %}
-                        <div class="col-12">
-                            <div class="row gx-3">
-                                <div class="col-auto">
-                                    {% if fleet.playerfleet %}<a href="/s03/fleet-view/?id={{fleet.id}}" class="self">{{fleet.name}}</a>
-                                    {% elif fleet.ally %}<a href="/s03/mail-new/?to={{fleet.owner}}" class="ally">{{fleet.owner}}</a>
-                                    {% elif fleet.friend %}<a href="/s03/mail-new/?to={{fleet.owner}}" class="friend">{{fleet.owner}}</a>
-                                    {% elif fleet.enemy %}<a href="/s03/profile-view/?name={{fleet.owner}}" class="enemy">{{fleet.owner}}</a>
+                            <div class="col-12">
+                                <div class="row gx-3">
+                                    <div class="col-auto">
+                                        {% if fleet.playerfleet %}
+                                            <a href="/s03/fleet-view/?id={{ fleet.id }}" class="self">{{ fleet.name }}</a>
+                                        {% elif fleet.ally %}
+                                            <a href="/s03/mail-new/?to={{ fleet.owner }}" class="ally">{{ fleet.owner }}</a>
+                                        {% elif fleet.friend %}
+                                            <a href="/s03/mail-new/?to={{ fleet.owner }}" class="friend">{{ fleet.owner }}</a>
+                                        {% elif fleet.enemy %}
+                                            <a href="/s03/profile-view/?name={{ fleet.owner }}" class="enemy">{{ fleet.owner }}</a>
+                                        {% endif %}
+                                    </div>
+                                    <div class="col small">
+                                        {{ fleet.signature|intcomma }}
+                                    </div>
+                                    {% if fleet.merge %}
+                                        <div class="col-auto">
+                                            <a href="?id={{ fleetid }}&action=merge&with={{ fleet.id }}">Absorber</a>
+                                        </div>
                                     {% endif %}
                                 </div>
-                                <div class="col small">{{fleet.signature|intcomma}}</div>
-                                {% if fleet.merge %}<div class="col-auto"><a href="?id={{fleetid}}&action=merge&with={{fleet.id}}">Absorber</a></div>{% endif %}
                             </div>
-                        </div>
                         {% endfor %}
                     </div>
                 </div>
             </div>
         </div>
-        {% endif %}
-        
-    </div>
-
-{% endblock %}
+    {% endif %}
+</div>
+{% endblock content %}

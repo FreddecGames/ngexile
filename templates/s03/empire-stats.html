@@ -1,16 +1,20 @@
-{% extends 's03/layout.html' %}
-
+{% extends "s03/layout.html" %}
 {% load humanize %}
-
 {% block content %}
-
     <div class="nav nav-tabs mb-3">
-        <div class="nav-item"><a href="/s03/empire-fleets/" class="nav-link">Flottes</a></div>
-        <div class="nav-item"><a href="/s03/empire-orbiting/" class="nav-link">Flottes en orbite</a></div>
-        <div class="nav-item"><a href="/s03/empire-ground/" class="nav-link">Vaisseaux au sol</a></div>
-        <div class="nav-item"><a href="/s03/empire-stats/" class="nav-link active">Détruits / perdus</a></div>
+        <div class="nav-item">
+            <a href="/s03/empire-fleets/" class="nav-link">Flottes</a>
+        </div>
+        <div class="nav-item">
+            <a href="/s03/empire-orbiting/" class="nav-link">Flottes en orbite</a>
+        </div>
+        <div class="nav-item">
+            <a href="/s03/empire-ground/" class="nav-link">Vaisseaux au sol</a>
+        </div>
+        <div class="nav-item">
+            <a href="/s03/empire-stats/" class="nav-link active">Détruits / perdus</a>
+        </div>
     </div>
-
     <div class="row g-3">
         {% if no_ship %}
             <div class="col-12">
@@ -33,8 +37,12 @@
                                 {% if category.id == 40 %}Frégates{% endif %}
                                 {% if category.id == 50 %}Croiseurs{% endif %}
                             </div>
-                            <div class="col-2 text-end"><span class="text-normal">Détruits</span></div>
-                            <div class="col-2 text-end"><span class="text-normal">Perdus</span></div>
+                            <div class="col-2 text-end">
+                                <span class="text-normal">Détruits</span>
+                            </div>
+                            <div class="col-2 text-end">
+                                <span class="text-normal">Perdus</span>
+                            </div>
                         </div>
                     </div>
                     <div class="card-body">
@@ -42,9 +50,11 @@
                             {% for ship in category.ships %}
                                 <div class="col-12">
                                     <div class="row gx-3">
-                                        <div class="col"><a href="/s03/help/?cat=ships#{{ship.id}}">{{ship.name}}</a></div>
-                                        <div class="col-2 text-end">{{ship.killed|intcomma}}</div>
-                                        <div class="col-2 text-end">{{ship.lost|intcomma}}</div>
+                                        <div class="col">
+                                            <a href="/s03/help/?cat=ships#{{ ship.id }}">{{ ship.name }}</a>
+                                        </div>
+                                        <div class="col-2 text-end">{{ ship.killed|intcomma }}</div>
+                                        <div class="col-2 text-end">{{ ship.lost|intcomma }}</div>
                                     </div>
                                 </div>
                             {% endfor %}
@@ -58,12 +68,11 @@
                 <div class="card card-body">
                     <div class="row gx-3">
                         <div class="col">Total</div>
-                        <div class="col-2 text-end">{{kills|intcomma}}</div>
-                        <div class="col-2 text-end">{{losses|intcomma}}</div>
+                        <div class="col-2 text-end">{{ kills|intcomma }}</div>
+                        <div class="col-2 text-end">{{ losses|intcomma }}</div>
                     </div>
                 </div>
             </div>
         {% endif %}
     </div>
-
-{% endblock %}
+{% endblock content %}

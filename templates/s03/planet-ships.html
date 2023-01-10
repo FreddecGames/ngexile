@@ -1,9 +1,6 @@
-{% extends 's03/layout.html' %}
-
+{% extends "s03/layout.html" %}
 {% load humanize %}
-
 {% block content %}
-
     <script>
     var ships = new Array();
     var shiplist = new Array();
@@ -44,110 +41,209 @@
         $("totaltime").innerHTML = formattime(totaltime);
     }
     </script>
-
     <div class="row g-3">
-        
         {% if underconstructions|length > 0 or queues|length > 0 %}
-        <div class="col-12">
-            <div class="card">
-                <div class="card-header">
-                    <span>En cours</span>
-                </div>
-                <div class="list-group list-group-flush">
-                    {% for ship in underconstructions %}
-                        <div class="list-group-item bg-success">
-                            <div class="row gx-3">
-                                <div class="col"><a href="/s03/help/?cat=ships#{{ship.id}}">{{ship.name}}</a></div>
-                                <div class="col-auto"><small class="text-normal">x</small>{{ship.quantity|intcomma}}</div>
-                                <div class="col-auto" style="width:90px;"><img src="{{PATH_IMAGES}}interface/ore.gif" class="res" width="16px" />{{ship.ore|intcomma}}</div>
-                                <div class="col-auto" style="width:90px;"><img src="{{PATH_IMAGES}}interface/hydrocarbon.gif" class="res" width="16px" />{{ship.hydrocarbon|intcomma}}</div>
-                                <div class="col-auto" style="width:75px;"><img src="{{PATH_IMAGES}}interface/energy.gif" class="res" width="16px" />{{ship.energy|intcomma}}</div>
-                                <div class="col-auto" style="width:75px;"><img src="{{PATH_IMAGES}}interface/workers.gif" class="res" width="16px" />{{ship.crew|intcomma}}</div>
-                                <div class="col-auto text-end text-yellow" style="width:75px;"><script>putcountdown1({{ship.remainingtime}}, '');</script></div>
-                                <div class="col-auto text-center" style="width:90px;"><script>putcountdown2({{ship.remainingtime}}, "<a href='?planet={{planetid}}&a=cancel&q={{ship.queueid}}'>Annuler</a>", "<a href='/s03/planet-ships/?planet={{planetid}}'>Terminé</a>");</script></div>
-                            </div>
-                        </div>
-                    {% endfor %}
-                    {% for ship in queues %}
-                        <div class="list-group-item">
-                            <div class="row gx-3">
-                                <div class="col"><a href="/s03/help/?cat=ships#{{ship.id}}">{{ship.name}}</a></div>
-                                <div class="col-auto"><small class="text-normal">x</small>{{ship.quantity|intcomma}}</div>
-                                <div class="col-auto" style="width:90px;"><img src="{{PATH_IMAGES}}interface/ore.gif" class="res" width="16px" />{{ship.ore|intcomma}}</div>
-                                <div class="col-auto" style="width:90px;"><img src="{{PATH_IMAGES}}interface/hydrocarbon.gif" class="res" width="16px" />{{ship.hydrocarbon|intcomma}}</div>
-                                <div class="col-auto" style="width:75px;"><img src="{{PATH_IMAGES}}interface/energy.gif" class="res" width="16px" />{{ship.energy|intcomma}}</div>
-                                <div class="col-auto" style="width:75px;"><img src="{{PATH_IMAGES}}interface/workers.gif" class="res" width="16px" />{{ship.crew|intcomma}}</div>
-                                <div class="col-auto text-end" style="width:75px;"><script language="javascript">document.write(formattime({{ship.remainingtime}}));</script></div>
-                                <div class="col-auto text-center" style="width:90px;"><a href="?planet={{planetid}}&a=cancel&q={{ship.queueid}}">Annuler</a></div>
-                            </div>
-                        </div>
-                    {% endfor %}
-                </div>
-            </div>
-        </div>
-        {% endif %}
-        
-        {% if no_shipyard %}
-        <div class="col-12">
-            <div class="card card-body text-center">
-                <span class="text-danger">Aucun vaisseau n'est constructible.</span>
-            </div>
-        </div>
-        {% else %}
-        <div class="col-12">
-            <form method="post" action="?planet={{planetid}}&a=bui1d" class="card">
-                <div class="card-header">
-                    <span>Construction</span>
-                </div>
-                <div class="card-body">
-                    <div class="row g-1">
-                        {% for category in categories %}
-                            <div class="col-12 text-normal">
-                                {% if category.id == 10 %}Vaisseaux utilitaires{% endif %}
-                                {% if category.id == 11 %}Vaisseaux de déploiement{% endif %}
-                                {% if category.id == 15 %}Vaisseaux tactiques{% endif %}
-                                {% if category.id == 20 %}Vaisseaux légers{% endif %}
-                                {% if category.id == 30 %}Corvettes{% endif %}
-                                {% if category.id == 40 %}Frégates{% endif %}
-                                {% if category.id == 50 %}Croiseurs{% endif %}
-                            </div>
-                            <div class="col-12"><hr class="my-0"></div>
-                            {% for ship in category.ships %}
-                            {% if ship.build %}
-                            <div class="col-12">
-                                <div class="row gx-3 align-items-center">
-                                    <div class="col"><a href="/s03/help/?cat=ships#{{ship.id}}">{{ship.name}}</a></div>
-                                    <div class="col-auto">{% if ship.quantity > 0 %}<small class="text-normal">x</small>{{ship.quantity|intcomma}}{% else %}<small class="text-normal">-</small>{% endif %}</div>
-                                    <div class="col-auto {% if ship.not_enough_ore %}text-danger{% endif %}" style="width:90px;"><img src="{{PATH_IMAGES}}interface/ore.gif" class="res" width="16px" />{{ship.ore|intcomma}}</div>
-                                    <div class="col-auto {% if ship.not_enough_hydrocarbon %}text-danger{% endif %}" style="width:90px;"><img src="{{PATH_IMAGES}}interface/hydrocarbon.gif" class="res" width="16px" />{{ship.hydrocarbon|intcomma}}</div>
-                                    <div class="col-auto {% if ship.not_enough_energy %}text-danger{% endif %}" style="width:75px;"><img src="{{PATH_IMAGES}}interface/energy.gif" class="res" width="16px" />{{ship.energy|intcomma}}</div>
-                                    <div class="col-auto {% if ship.not_enough_crew %}text-danger{% endif %}" style="width:75px;"><img src="{{PATH_IMAGES}}interface/workers.gif" class="res" width="16px" />{{ship.crew|intcomma}}</div>
-                                    <div class="col-auto text-end" style="width:75px;"><script language="javascript">document.write(formattime({{ship.time}}));</script></div>
-                                    <div class="col-auto text-center" style="width:90px;"><input type="number" min="0" name="s{{ship.id}}" onchange="updateNeeds()" size="3" maxlength="5" class="w-100" /></div>
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <span>En cours</span>
+                    </div>
+                    <div class="list-group list-group-flush">
+                        {% for ship in underconstructions %}
+                            <div class="list-group-item bg-success">
+                                <div class="row gx-3">
+                                    <div class="col">
+                                        <a href="/s03/help/?cat=ships#{{ ship.id }}">{{ ship.name }}</a>
+                                    </div>
+                                    <div class="col-auto">
+                                        <small class="text-normal">x</small>{{ ship.quantity|intcomma }}
+                                    </div>
+                                    <div class="col-auto" style="width:90px;">
+                                        <img src="{{ PATH_IMAGES }}interface/ore.gif" class="res" width="16px" />
+                                        {{ ship.ore|intcomma }}
+                                    </div>
+                                    <div class="col-auto" style="width:90px;">
+                                        <img src="{{ PATH_IMAGES }}interface/hydrocarbon.gif"
+                                             class="res"
+                                             width="16px"/>
+                                        {{ ship.hydrocarbon|intcomma }}
+                                    </div>
+                                    <div class="col-auto" style="width:75px;">
+                                        <img src="{{ PATH_IMAGES }}interface/energy.gif" class="res" width="16px" />
+                                        {{ ship.energy|intcomma }}
+                                    </div>
+                                    <div class="col-auto" style="width:75px;">
+                                        <img src="{{ PATH_IMAGES }}interface/workers.gif" class="res" width="16px" />
+                                        {{ ship.crew|intcomma }}
+                                    </div>
+                                    <div class="col-auto text-end text-yellow" style="width:75px;">
+                                        <script>putcountdown1({{ship.remainingtime}}, '');</script>
+                                    </div>
+                                    <div class="col-auto text-center" style="width:90px;">
+                                        <script>putcountdown2({{ship.remainingtime}}, "<a href='?planet={{planetid}}&a=cancel&q={{ship.queueid}}'>Annuler</a>", "<a href='/s03/planet-ships/?planet={{planetid}}'>Terminé</a>");</script>
+                                    </div>
                                 </div>
                             </div>
-                            {% endif %}
-                            {% endfor %}
                         {% endfor %}
-                        <div class="col-12"><hr></div>
-                        <div class="col-12">
-                             <div class="row gx-3 align-items-center">
-                                <div class="col"><span class="text-normal">Total</span></div>
-                                <div class="col-auto" style="width:90px;"><img src="{{PATH_IMAGES}}interface/ore.gif" class="res" width="16px" /><span id="totalore">0</span></div>
-                                <div class="col-auto" style="width:90px;"><img src="{{PATH_IMAGES}}interface/hydrocarbon.gif" class="res" width="16px" /><span id="totalhydrocarbon">0</span></div>
-                                <div class="col-auto" style="width:75px;"><img src="{{PATH_IMAGES}}interface/energy.gif" class="res" width="16px" /><span id="totalenergy">0</span></div>
-                                <div class="col-auto" style="width:75px;"><img src="{{PATH_IMAGES}}interface/workers.gif" class="res" width="16px" /><span id="totalworkers">0</span></div>
-                                <div class="col-auto text-end" style="width:75px;"><span id="totaltime"><script>document.write(formattime(0));</script></span></div>
-                                <div class="col-auto text-center" style="width:90px;"><input type="submit" value="Construire" /></div>
+                        {% for ship in queues %}
+                            <div class="list-group-item">
+                                <div class="row gx-3">
+                                    <div class="col">
+                                        <a href="/s03/help/?cat=ships#{{ ship.id }}">{{ ship.name }}</a>
+                                    </div>
+                                    <div class="col-auto">
+                                        <small class="text-normal">x</small>{{ ship.quantity|intcomma }}
+                                    </div>
+                                    <div class="col-auto" style="width:90px;">
+                                        <img src="{{ PATH_IMAGES }}interface/ore.gif" class="res" width="16px" />
+                                        {{ ship.ore|intcomma }}
+                                    </div>
+                                    <div class="col-auto" style="width:90px;">
+                                        <img src="{{ PATH_IMAGES }}interface/hydrocarbon.gif"
+                                             class="res"
+                                             width="16px"/>
+                                        {{ ship.hydrocarbon|intcomma }}
+                                    </div>
+                                    <div class="col-auto" style="width:75px;">
+                                        <img src="{{ PATH_IMAGES }}interface/energy.gif" class="res" width="16px" />
+                                        {{ ship.energy|intcomma }}
+                                    </div>
+                                    <div class="col-auto" style="width:75px;">
+                                        <img src="{{ PATH_IMAGES }}interface/workers.gif" class="res" width="16px" />
+                                        {{ ship.crew|intcomma }}
+                                    </div>
+                                    <div class="col-auto text-end" style="width:75px;">
+                                        <script language="javascript">document.write(formattime({{ship.remainingtime}}));</script>
+                                    </div>
+                                    <div class="col-auto text-center" style="width:90px;">
+                                        <a href="?planet={{ planetid }}&a=cancel&q={{ ship.queueid }}">Annuler</a>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+        {% if no_shipyard %}
+            <div class="col-12">
+                <div class="card card-body text-center">
+                    <span class="text-danger">Aucun vaisseau n'est constructible.</span>
+                </div>
+            </div>
+        {% else %}
+            <div class="col-12">
+                <form method="post" action="?planet={{ planetid }}&a=bui1d" class="card">
+                    <div class="card-header">
+                        <span>Construction</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-1">
+                            {% for category in categories %}
+                                <div class="col-12 text-normal">
+                                    {% if category.id == 10 %}Vaisseaux utilitaires{% endif %}
+                                    {% if category.id == 11 %}Vaisseaux de déploiement{% endif %}
+                                    {% if category.id == 15 %}Vaisseaux tactiques{% endif %}
+                                    {% if category.id == 20 %}Vaisseaux légers{% endif %}
+                                    {% if category.id == 30 %}Corvettes{% endif %}
+                                    {% if category.id == 40 %}Frégates{% endif %}
+                                    {% if category.id == 50 %}Croiseurs{% endif %}
+                                </div>
+                                <div class="col-12">
+                                    <hr class="my-0">
+                                </div>
+                                {% for ship in category.ships %}
+                                    {% if ship.build %}
+                                        <div class="col-12">
+                                            <div class="row gx-3 align-items-center">
+                                                <div class="col">
+                                                    <a href="/s03/help/?cat=ships#{{ ship.id }}">{{ ship.name }}</a>
+                                                </div>
+                                                <div class="col-auto">
+                                                    {% if ship.quantity > 0 %}
+                                                        <small class="text-normal">x</small>{{ ship.quantity|intcomma }}
+                                                    {% else %}
+                                                        <small class="text-normal">-</small>
+                                                    {% endif %}
+                                                </div>
+                                                <div class="col-auto {% if ship.not_enough_ore %}text-danger{% endif %}"
+                                                     style="width:90px">
+                                                    <img src="{{ PATH_IMAGES }}interface/ore.gif" class="res" width="16px" />
+                                                    {{ ship.ore|intcomma }}
+                                                </div>
+                                                <div class="col-auto {% if ship.not_enough_hydrocarbon %}text-danger{% endif %}"
+                                                     style="width:90px">
+                                                    <img src="{{ PATH_IMAGES }}interface/hydrocarbon.gif"
+                                                         class="res"
+                                                         width="16px"/>
+                                                    {{ ship.hydrocarbon|intcomma }}
+                                                </div>
+                                                <div class="col-auto {% if ship.not_enough_energy %}text-danger{% endif %}"
+                                                     style="width:75px">
+                                                    <img src="{{ PATH_IMAGES }}interface/energy.gif" class="res" width="16px" />
+                                                    {{ ship.energy|intcomma }}
+                                                </div>
+                                                <div class="col-auto {% if ship.not_enough_crew %}text-danger{% endif %}"
+                                                     style="width:75px">
+                                                    <img src="{{ PATH_IMAGES }}interface/workers.gif" class="res" width="16px" />
+                                                    {{ ship.crew|intcomma }}
+                                                </div>
+                                                <div class="col-auto text-end" style="width:75px;">
+                                                    <script language="javascript">document.write(formattime({{ship.time}}));</script>
+                                                </div>
+                                                <div class="col-auto text-center" style="width:90px;">
+                                                    <input type="number"
+                                                           min="0"
+                                                           name="s{{ ship.id }}"
+                                                           onchange="updateNeeds()"
+                                                           size="3"
+                                                           maxlength="5"
+                                                           class="w-100"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                                {% endfor %}
+                            {% endfor %}
+                            <div class="col-12">
+                                <hr>
+                            </div>
+                            <div class="col-12">
+                                <div class="row gx-3 align-items-center">
+                                    <div class="col">
+                                        <span class="text-normal">Total</span>
+                                    </div>
+                                    <div class="col-auto" style="width:90px;">
+                                        <img src="{{ PATH_IMAGES }}interface/ore.gif" class="res" width="16px" />
+                                        <span id="totalore">0</span>
+                                    </div>
+                                    <div class="col-auto" style="width:90px;">
+                                        <img src="{{ PATH_IMAGES }}interface/hydrocarbon.gif"
+                                             class="res"
+                                             width="16px"/>
+                                        <span id="totalhydrocarbon">0</span>
+                                    </div>
+                                    <div class="col-auto" style="width:75px;">
+                                        <img src="{{ PATH_IMAGES }}interface/energy.gif" class="res" width="16px" />
+                                        <span id="totalenergy">0</span>
+                                    </div>
+                                    <div class="col-auto" style="width:75px;">
+                                        <img src="{{ PATH_IMAGES }}interface/workers.gif" class="res" width="16px" />
+                                        <span id="totalworkers">0</span>
+                                    </div>
+                                    <div class="col-auto text-end" style="width:75px;">
+                                        <span id="totaltime"><script>document.write(formattime(0));</script></span>
+                                    </div>
+                                    <div class="col-auto text-center" style="width:90px;">
+                                        <input type="submit" value="Construire" />
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            {% csrf_token %}
-            </form>
-        </div>
+                    {% csrf_token %}
+                </form>
+            </div>
         {% endif %}
-
     </div>
-
-{% endblock %}
+{% endblock content %}

@@ -1,11 +1,7 @@
-{% extends 's03/layout.html' %}
-
+{% extends "s03/layout.html" %}
 {% load humanize %}
-
 {% block content %}
-
     <div class="row g-3 flex-column">
-    
         <div class="col-12">
             <div class="card">
                 <div class="card-header">
@@ -16,13 +12,17 @@
                         <div class="list-group-item">
                             <div class="row gx-3 align-items-baseline">
                                 <div class="col-auto">
-                                    {% if fleet.owner %}<a href="/s03/fleet-view/?id={{fleet.id}}" class="self">{{fleet.name}}</a>
-                                    {% elif fleet.ally %}<a href="/s03/mail-new/?to={{fleet.ownername}}" class="ally">{{fleet.ownername}}</a>
-                                    {% elif fleet.friend %}<a href="/s03/mail-new/?to={{fleet.ownername}}" class="friend">{{fleet.ownername}}</a>
-                                    {% elif fleet.enemy %}<a href="/s03/profile-view/?name={{fleet.ownername}}" class="enemy">{{fleet.ownername}}</a>
+                                    {% if fleet.owner %}
+                                        <a href="/s03/fleet-view/?id={{ fleet.id }}" class="self">{{ fleet.name }}</a>
+                                    {% elif fleet.ally %}
+                                        <a href="/s03/mail-new/?to={{ fleet.ownername }}" class="ally">{{ fleet.ownername }}</a>
+                                    {% elif fleet.friend %}
+                                        <a href="/s03/mail-new/?to={{ fleet.ownername }}" class="friend">{{ fleet.ownername }}</a>
+                                    {% elif fleet.enemy %}
+                                        <a href="/s03/profile-view/?name={{ fleet.ownername }}" class="enemy">{{ fleet.ownername }}</a>
                                     {% endif %}
                                 </div>
-                                <div class="col small">{{fleet.signature|intcomma}}</div>
+                                <div class="col small">{{ fleet.signature|intcomma }}</div>
                                 <div class="col-auto">
                                     {% if fleet.recycling %}<span class="text-yellow">Recyclage en cours</span>{% endif %}
                                     {% if fleet.fighting %}<span class="text-danger">En combat</span>{% endif %}
@@ -38,9 +38,8 @@
                 </div>
             </div>
         </div>
-        
         <div class="col-12">
-            <form method="post" action="?a=new&planet={{planetid}}" class="card">
+            <form method="post" action="?a=new&planet={{ planetid }}" class="card">
                 <div class="card-header">
                     <span>Nouvelle flotte</span>
                 </div>
@@ -48,31 +47,67 @@
                     <div class="row g-1 flex-column">
                         {% if ships|length > 0 %}
                             <div class="col-12">
-                                <div class="row gx-3">
-                                </div>
+                                <div class="row gx-3"></div>
                             </div>
                             {% for ship in ships %}
-                            <div class="col-12">
-                                <div class="row gx-3 align-items-center">
-                                    <div class="col"><a href="/s03/help/?cat=ships#{{ship.id}}">{{ship.name}}</a></div>
-                                    <div class="col-auto"><small class="text-normal">x</small>{{ship.quantity|intcomma}}</div>
-                                    <div class="col-auto"><input type="number" min="0" value="{{ship.ship_quantity}}" id="s{{ship.id}}" name="s{{ship.id}}" /></div>
-                                    <div class="col-auto"><a href="#" onclick="setval('s{{ship.id}}', {{ship.quantity}}); return false;">max</a></div>
+                                <div class="col-12">
+                                    <div class="row gx-3 align-items-center">
+                                        <div class="col">
+                                            <a href="/s03/help/?cat=ships#{{ ship.id }}">{{ ship.name }}</a>
+                                        </div>
+                                        <div class="col-auto">
+                                            <small class="text-normal">x</small>{{ ship.quantity|intcomma }}
+                                        </div>
+                                        <div class="col-auto">
+                                            <input type="number"
+                                                   min="0"
+                                                   value="{{ ship.ship_quantity }}"
+                                                   id="s{{ ship.id }}"
+                                                   name="s{{ ship.id }}"/>
+                                        </div>
+                                        <div class="col-auto">
+                                            <a href="#"
+                                               onclick="setval('s{{ ship.id }}', {{ ship.quantity }}); return false;">max</a>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
                             {% endfor %}
-                            <div class="col-12"><hr></div>
+                            <div class="col-12">
+                                <hr>
+                            </div>
                             <div class="col-12">
                                 <div class="row gx-2 align-items-center">
-                                    <div class="col"><span class="text-normal">Nom de flotte</span></div>
-                                    <div class="col-auto"><input type="text" name="name" value="{{fleetname}}" maxlength="16" /></div>
-                                    <div class="col-auto"><input type="submit" value="Former la flotte" /></div>
+                                    <div class="col">
+                                        <span class="text-normal">Nom de flotte</span>
+                                    </div>
+                                    <div class="col-auto">
+                                        <input type="text" name="name" value="{{ fleetname }}" maxlength="16" />
+                                    </div>
+                                    <div class="col-auto">
+                                        <input type="submit" value="Former la flotte" />
+                                    </div>
                                 </div>
                             </div>
-                            {% if fleet_too_many %}<div class="col-12 text-end"><span class="text-danger">Vous avez atteint le nombre maximum de flottes.</span></div>{% endif %}
-                            {% if fleet_name_already_used %}<div class="col-12 text-end"><span class="text-danger">Le nom de la flotte est déjà utilisé, veuillez en choisir un autre.</span></div>{% endif %}
-                            {% if fleet_name_invalid %}<div class="col-12 text-end"><span class="text-danger">Le nom de la flotte est invalide, il ne peut contenir que des lettres (a-z) et des chiffres (0-9).</span></div>{% endif %}
-                            {% if ship_cant_be_used %}<div class="col-12 text-end"><span class="text-danger">Certains vaisseaux n'ont pu être ajoutés à la flotte car nous ne disposons pas des recherches requises pour les utiliser.</span></div>{% endif %}
+                            {% if fleet_too_many %}
+                                <div class="col-12 text-end">
+                                    <span class="text-danger">Vous avez atteint le nombre maximum de flottes.</span>
+                                </div>
+                            {% endif %}
+                            {% if fleet_name_already_used %}
+                                <div class="col-12 text-end">
+                                    <span class="text-danger">Le nom de la flotte est déjà utilisé, veuillez en choisir un autre.</span>
+                                </div>
+                            {% endif %}
+                            {% if fleet_name_invalid %}
+                                <div class="col-12 text-end">
+                                    <span class="text-danger">Le nom de la flotte est invalide, il ne peut contenir que des lettres (a-z) et des chiffres (0-9).</span>
+                                </div>
+                            {% endif %}
+                            {% if ship_cant_be_used %}
+                                <div class="col-12 text-end">
+                                    <span class="text-danger">Certains vaisseaux n'ont pu être ajoutés à la flotte car nous ne disposons pas des recherches requises pour les utiliser.</span>
+                                </div>
+                            {% endif %}
                         {% else %}
                             <div class="col-12">
                                 <span class="text-normal">Aucun vaisseau n'est disponible.</span>
@@ -80,10 +115,8 @@
                         {% endif %}
                     </div>
                 </div>
-            {% csrf_token %}
+                {% csrf_token %}
             </form>
         </div>
-    
     </div>
-
-{% endblock %}
+{% endblock content %}

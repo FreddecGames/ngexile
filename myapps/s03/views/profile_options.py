@@ -51,69 +51,40 @@ class View(GlobalView):
             self.changes_status = "done"
             query = ""
 
-            if self.optionCat == 1:
-                if avatar != "" and not isValidURL(avatar):
-                    #avatar is invalid
-                    self.changes_status = "check_avatar"
-                else:
-                    # save updated information
-                    query = "UPDATE users SET" + \
-                            " avatar_url=" + dosql(avatar) + ", description=" + dosql(description) + \
-                            " WHERE id=" + str(self.UserId)
-
-            elif self.optionCat == 2:
-
+            if avatar != "" and not isValidURL(avatar):
+                #avatar is invalid
+                self.changes_status = "check_avatar"
+            else:
+                # save updated information
                 query = "UPDATE users SET" + \
-                        " timers_enabled=" + str(timers_enabled) + \
-                        " ,display_alliance_planet_name=" + str(display_alliance_planet_name) + \
-                        " ,score_visibility=" + str(score_visibility)
+                        " avatar_url=" + dosql(avatar) + ", description=" + dosql(description) + \
+                        " WHERE id=" + str(self.UserId)
 
-                if skin == 0:
-                    skin = "s_default"
-                else:
-                    skin = "s_transparent"
+            query = "UPDATE users SET" + \
+                    " timers_enabled=" + str(timers_enabled) + \
+                    " ,display_alliance_planet_name=" + str(display_alliance_planet_name) + \
+                    " ,score_visibility=" + str(score_visibility)
 
-                query = query + ", skin=" + dosql(skin)
+            if skin == 0:
+                skin = "s_default"
+            else:
+                skin = "s_transparent"
 
-                if deletingaccount and not deleteaccount:
-                    query = query + ", deletion_date=NULL"
+            query = query + ", skin=" + dosql(skin)
 
-                if not deletingaccount and deleteaccount:
-                    query = query + ", deletion_date=now() + INTERVAL '2 days'"
+            if deletingaccount and not deleteaccount:
+                query = query + ", deletion_date=NULL"
 
-                query = query + " WHERE id=" + str(self.UserId)
-            elif self.optionCat == 3:
-                if request.POST.get("holidays"):
-                    oRs = oConnExecute("SELECT COALESCE(int4(date_part('epoch', now()-last_holidays)), 10000000) AS holidays_cooldown, (SELECT 1 FROM users_holidays WHERE userid=users.id) FROM users WHERE id="+ str(self.UserId))
+            if not deletingaccount and deleteaccount:
+                query = query + ", deletion_date=now() + INTERVAL '2 days'"
 
-                    if oRs[0] > holidays_breaktime and oRs[1] == None:
-                        query = "INSERT INTO users_holidays(userid, start_time, min_end_time, end_time) VALUES("+str(self.UserId)+",now()+INTERVAL '24 hours', now()+INTERVAL '72 hours', now()+INTERVAL '22 days')"
-                        oConnDoQuery(query)
-
-                        return HttpResponseRedirect("?cat=3")
-
-            elif self.optionCat == 4:
-
-                oConnDoQuery("DELETE FROM users_reports WHERE userid="+str(self.UserId))
-
-                for x in request.POST.getlist("r"):
-                    typ = int(x / 100)
-                    subtyp = x % 100
-                    oConnExecute("INSERT INTO users_reports(userid, type, subtype) VALUES("+str(self.UserId)+","+dosql(typ)+","+dosql(subtyp)+")")
-
-            elif self.optionCat == 5:
-                if autosignature != "":
-                    query = "UPDATE users SET" + \
-                            " autosignature=" + dosql(autosignature) + \
-                            " WHERE id=" + str(self.UserId)
-
-                    oConnDoQuery(query)
+            query = query + " WHERE id=" + str(self.UserId)
 
             if query != "": oConnDoQuery(query)
             DoRedirect = True
 
         if DoRedirect:
-            return HttpResponseRedirect("/s03/profile-options/?cat=" + str(self.optionCat))
+            return HttpResponseRedirect("/s03/profile-options/")
         else:
             return self.displayPage()
 
@@ -222,21 +193,10 @@ class View(GlobalView):
     def displayPage(self):
         content = GetTemplate(self.request, "profile-options")
 
-        content.AssignValue("cat", self.optionCat)
         content.AssignValue("name", self.oPlayerInfo["username"])
 
-        if self.optionCat == 2:
-            self.display_options(content)
-        elif self.optionCat == 3:
-            self.display_holidays(content)
-        elif self.optionCat == 4:
-            self.display_reports(content)
-        elif self.optionCat == 5:
-            self.display_mail(content)
-        elif self.optionCat == 6:
-            self.display_signature(content)
-        else:
-            self.display_general(content)
+        self.display_options(content)
+        self.display_general(content)
 
         if self.changes_status != "":
             content.Parse(self.changes_status)

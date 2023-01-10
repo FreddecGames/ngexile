@@ -1,9 +1,6 @@
-{% extends 's03/layout.html' %}
-
+{% extends "s03/layout.html" %}
 {% load humanize %}
-
 {% block content %}
-
     <div class="row g-3">
         <div class="col-12">
             <div class="card">
@@ -14,21 +11,35 @@
                     <div class="row g-1">
                         <div class="col-12">
                             <div class="row gx-3">
-                                <div class="col-5"><span class="text-normal">Abondance</span></div>
-                                <div class="col-auto"><span>{{a_ore}}%</span> <small class="text-normal">Minerai</small></div>
-                                <div class="col-auto"><span>{{a_hydrocarbon}}%</span> <small class="text-normal">Hydrocarbure</small></div>
+                                <div class="col-5">
+                                    <span class="text-normal">Abondance</span>
+                                </div>
+                                <div class="col-auto">
+                                    <span>{{ a_ore }}%</span> <small class="text-normal">Minerai</small>
+                                </div>
+                                <div class="col-auto">
+                                    <span>{{ a_hydrocarbon }}%</span> <small class="text-normal">Hydrocarbure</small>
+                                </div>
                             </div>
                         </div>
                         <div class="col-12">
                             <div class="row gx-3">
-                                <div class="col-5"><span class="text-normal">Effectifs</span></div>
-                                <div class="col-auto"><span>{{workers|intcomma}}</span> <small class="text-normal">/{{workers_required|intcomma}} requis</small></div>
-                                <div class="col-auto"><span>{{production_percent}}%</span></div>
+                                <div class="col-5">
+                                    <span class="text-normal">Effectifs</span>
+                                </div>
+                                <div class="col-auto">
+                                    <span>{{ workers|intcomma }}</span> <small class="text-normal">/{{ workers_required|intcomma }} requis</small>
+                                </div>
+                                <div class="col-auto">
+                                    <span>{{ production_percent }}%</span>
+                                </div>
                             </div>
                         </div>
                         <div class="col-12">
                             <div class="row gx-3">
-                                <div class="col-5"><span class="text-normal">Condition des installations</span></div>
+                                <div class="col-5">
+                                    <span class="text-normal">Condition des installations</span>
+                                </div>
                                 <div class="col-auto">
                                     {% if condition_excellent %}Excellente{% endif %}
                                     {% if condition_good %}Bonne{% endif %}
@@ -44,8 +55,12 @@
                         </div>
                         <div class="col-12">
                             <div class="row gx-3">
-                                <div class="col-5"><span class="text-normal">Estimation de la production</span></div>
-                                <div class="col-auto"><span>{{final_production}}%</span></div>
+                                <div class="col-5">
+                                    <span class="text-normal">Estimation de la production</span>
+                                </div>
+                                <div class="col-auto">
+                                    <span>{{ final_production }}%</span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -56,10 +71,18 @@
             <div class="card">
                 <div class="card-header">
                     <div class="row gx-3">
-                        <div class="col"><span>Bâtiments</span></div>
-                        <div class="col-2 text-end"><span class="text-normal">Minerai</span></div>
-                        <div class="col-2 text-end"><span class="text-normal">Hydrocarbure</span></div>
-                        <div class="col-2 text-end"><span class="text-normal">Energie</span></div>
+                        <div class="col">
+                            <span>Bâtiments</span>
+                        </div>
+                        <div class="col-2 text-end">
+                            <span class="text-normal">Minerai</span>
+                        </div>
+                        <div class="col-2 text-end">
+                            <span class="text-normal">Hydrocarbure</span>
+                        </div>
+                        <div class="col-2 text-end">
+                            <span class="text-normal">Energie</span>
+                        </div>
                     </div>
                 </div>
                 <div class="card-body">
@@ -67,20 +90,60 @@
                         {% for building in buildings %}
                             <div class="col-12">
                                 <div class="row gx-3">
-                                    <div class="col"><a href="/s03/help/?cat=buildings#{{building.id}}">{{building.name}}</a> <small class="text-normal">x</small> {{building.quantity}}</div>
-                                    <div class="col-2 text-end">{% if building.production_ore > 0 %}<span>{{building.production_ore|intcomma}}</span>{% else %}<small class="text-normal">-</small>{% endif %}</div>
-                                    <div class="col-2 text-end">{% if building.production_hydrocarbon > 0 %}<span>{{building.production_hydrocarbon|intcomma}}</span>{% else %}<small class="text-normal">-</small>{% endif %}</div>
-                                    <div class="col-2 text-end">{% if building.production_energy > 0 %}<span>{{building.production_energy|intcomma}}</span>{% else %}<small class="text-normal">-</small>{% endif %}</div>
+                                    <div class="col">
+                                        <a href="/s03/help/?cat=buildings#{{ building.id }}">{{ building.name }}</a> <small class="text-normal">x</small> {{ building.quantity }}
+                                    </div>
+                                    <div class="col-2 text-end">
+                                        {% if building.production_ore > 0 %}
+                                            <span>{{ building.production_ore|intcomma }}</span>
+                                        {% else %}
+                                            <small class="text-normal">-</small>
+                                        {% endif %}
+                                    </div>
+                                    <div class="col-2 text-end">
+                                        {% if building.production_hydrocarbon > 0 %}
+                                            <span>{{ building.production_hydrocarbon|intcomma }}</span>
+                                        {% else %}
+                                            <small class="text-normal">-</small>
+                                        {% endif %}
+                                    </div>
+                                    <div class="col-2 text-end">
+                                        {% if building.production_energy > 0 %}
+                                            <span>{{ building.production_energy|intcomma }}</span>
+                                        {% else %}
+                                            <small class="text-normal">-</small>
+                                        {% endif %}
+                                    </div>
                                 </div>
                             </div>
                         {% endfor %}
                     </div>
                     <hr>
                     <div class="row gx-3">
-                        <div class="col"><span class="text-normal">Sous total</span></div>
-                        <div class="col-2 text-end"><img src="/static/assets/interface/ore.gif" class="res" width="16px" height="16px"><span>{{production_ore|intcomma}}</span></div>
-                        <div class="col-2 text-end"><img src="/static/assets/interface/hydrocarbon.gif" class="res" width="16px" height="16px"><span>{{production_hydrocarbon|intcomma}}</span></div>
-                        <div class="col-2 text-end"><img src="/static/assets/interface/energy.gif" class="res" width="16px" height="16px"><span>{{production_energy|intcomma}}</span></div>
+                        <div class="col">
+                            <span class="text-normal">Sous total</span>
+                        </div>
+                        <div class="col-2 text-end">
+                            <img src="/static/assets/interface/ore.gif"
+                                 class="res"
+                                 width="16px"
+                                 height="16px">
+                            <span>{{ production_ore|intcomma }}</span>
+                        </div>
+                        <div class="col-2 text-end">
+                            <img src="/static/assets/interface/hydrocarbon.gif"
+                                 class="res"
+                                 width="16px"
+                                 height="16px">
+                            <span>{{ production_hydrocarbon|intcomma }}</span>
+                        </div>
+                        <div class="col-2 text-end">
+                            <img src="/static/assets/interface/energy.gif"
+                                 class="res"
+                                 width="16px"
+                                 height="16px">
+                            <span>{{ production_energy|intcomma }}</span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -90,10 +153,18 @@
                 <div class="card">
                     <div class="card-header">
                         <div class="row gx-3">
-                            <div class="col"><span>Bonus</span></div>
-                            <div class="col-2 text-end"><span class="text-normal">Minerai</span></div>
-                            <div class="col-2 text-end"><span class="text-normal">Hydrocarbure</span></div>
-                            <div class="col-2 text-end"><span class="text-normal">Energie</span></div>
+                            <div class="col">
+                                <span>Bonus</span>
+                            </div>
+                            <div class="col-2 text-end">
+                                <span class="text-normal">Minerai</span>
+                            </div>
+                            <div class="col-2 text-end">
+                                <span class="text-normal">Hydrocarbure</span>
+                            </div>
+                            <div class="col-2 text-end">
+                                <span class="text-normal">Energie</span>
+                            </div>
                         </div>
                     </div>
                     <div class="card-body">
@@ -102,23 +173,69 @@
                                 <div class="col-12">
                                     <div class="row gx-3">
                                         <div class="col">
-                                            {% if item.building %}<a href="/s03/help/?cat=buildings#{{item.id}}">{{item.name}}</a>{% endif %}
-                                            {% if item.commander %}<a href="/s03/empire-commanders/#{{item.id}}">{{item.name}}</a>{% endif %}
-                                            {% if item.research %}<a href="/s03/help/?cat=research#{{item.id}}">{{item.name}}</a> <small class="text-normal">niv.</small> {{item.level}}{% endif %}
+                                            {% if item.building %}<a href="/s03/help/?cat=buildings#{{ item.id }}">{{ item.name }}</a>{% endif %}
+                                            {% if item.commander %}<a href="/s03/empire-commanders/#{{ item.id }}">{{ item.name }}</a>{% endif %}
+                                            {% if item.research %}
+                                                <a href="/s03/help/?cat=research#{{ item.id }}">{{ item.name }}</a> <small class="text-normal">niv.</small> {{ item.level }}
+                                            {% endif %}
                                         </div>
-                                        <div class="col-2 text-end">{% if item.ore_positive %}<span class="text-success">{{item.mod_production_ore}}%</span>{% elif item.ore_negative %}<span class="text-danger">{{item.mod_production_ore}}%</span>{% else %}<small class="text-normal">-</small>{% endif %}</div>
-                                        <div class="col-2 text-end">{% if item.hydrocarbon_positive %}<span class="text-success">{{item.mod_production_hydrocarbon}}%</span>{% elif item.hydrocarbon_negative %}<span class="text-danger">{{item.mod_production_hydrocarbon}}%</span>{% else %}<small class="text-normal">-</small>{% endif %}</div>
-                                        <div class="col-2 text-end">{% if item.energy_positive %}<span class="text-success">{{item.mod_production_energy}}%</span>{% elif item.energy_negative %}<span class="text-danger">{{item.mod_production_energy}}%</span>{% else %}<small class="text-normal">-</small>{% endif %}</div>
+                                        <div class="col-2 text-end">
+                                            {% if item.ore_positive %}
+                                                <span class="text-success">{{ item.mod_production_ore }}%</span>
+                                            {% elif item.ore_negative %}
+                                                <span class="text-danger">{{ item.mod_production_ore }}%</span>
+                                            {% else %}
+                                                <small class="text-normal">-</small>
+                                            {% endif %}
+                                        </div>
+                                        <div class="col-2 text-end">
+                                            {% if item.hydrocarbon_positive %}
+                                                <span class="text-success">{{ item.mod_production_hydrocarbon }}%</span>
+                                            {% elif item.hydrocarbon_negative %}
+                                                <span class="text-danger">{{ item.mod_production_hydrocarbon }}%</span>
+                                            {% else %}
+                                                <small class="text-normal">-</small>
+                                            {% endif %}
+                                        </div>
+                                        <div class="col-2 text-end">
+                                            {% if item.energy_positive %}
+                                                <span class="text-success">{{ item.mod_production_energy }}%</span>
+                                            {% elif item.energy_negative %}
+                                                <span class="text-danger">{{ item.mod_production_energy }}%</span>
+                                            {% else %}
+                                                <small class="text-normal">-</small>
+                                            {% endif %}
+                                        </div>
                                     </div>
                                 </div>
                             {% endfor %}
                         </div>
                         <hr>
                         <div class="row gx-3">
-                            <div class="col"><span class="text-normal">Sous total</span></div>
-                            <div class="col-2 text-end"><img src="/static/assets/interface/ore.gif" class="res" width="16px" height="16px"><span>{{bonus_production_ore|intcomma}}</span></div>
-                            <div class="col-2 text-end"><img src="/static/assets/interface/hydrocarbon.gif" class="res" width="16px" height="16px"><span>{{bonus_production_hydrocarbon|intcomma}}</span></div>
-                            <div class="col-2 text-end"><img src="/static/assets/interface/energy.gif" class="res" width="16px" height="16px"><span>{{bonus_production_energy|intcomma}}</span></div>
+                            <div class="col">
+                                <span class="text-normal">Sous total</span>
+                            </div>
+                            <div class="col-2 text-end">
+                                <img src="/static/assets/interface/ore.gif"
+                                     class="res"
+                                     width="16px"
+                                     height="16px">
+                                <span>{{ bonus_production_ore|intcomma }}</span>
+                            </div>
+                            <div class="col-2 text-end">
+                                <img src="/static/assets/interface/hydrocarbon.gif"
+                                     class="res"
+                                     width="16px"
+                                     height="16px">
+                                <span>{{ bonus_production_hydrocarbon|intcomma }}</span>
+                            </div>
+                            <div class="col-2 text-end">
+                                <img src="/static/assets/interface/energy.gif"
+                                     class="res"
+                                     width="16px"
+                                     height="16px">
+                                <span>{{ bonus_production_energy|intcomma }}</span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -127,13 +244,32 @@
         <div class="col-12">
             <div class="card card-body">
                 <div class="row gx-3">
-                    <div class="col"><span class="text-normal">Production totale</span></div>
-                    <div class="col-2 text-end"><img src="/static/assets/interface/ore.gif" class="res" width="16px" height="16px"><span>{{total_production_ore|intcomma}}</span></div>
-                    <div class="col-2 text-end"><img src="/static/assets/interface/hydrocarbon.gif" class="res" width="16px" height="16px"><span>{{total_production_hydrocarbon|intcomma}}</span></div>
-                    <div class="col-2 text-end"><img src="/static/assets/interface/energy.gif" class="res" width="16px" height="16px"><span>{{total_production_energy|intcomma}}</span></div>
+                    <div class="col">
+                        <span class="text-normal">Production totale</span>
+                    </div>
+                    <div class="col-2 text-end">
+                        <img src="/static/assets/interface/ore.gif"
+                             class="res"
+                             width="16px"
+                             height="16px">
+                        <span>{{ total_production_ore|intcomma }}</span>
+                    </div>
+                    <div class="col-2 text-end">
+                        <img src="/static/assets/interface/hydrocarbon.gif"
+                             class="res"
+                             width="16px"
+                             height="16px">
+                        <span>{{ total_production_hydrocarbon|intcomma }}</span>
+                    </div>
+                    <div class="col-2 text-end">
+                        <img src="/static/assets/interface/energy.gif"
+                             class="res"
+                             width="16px"
+                             height="16px">
+                        <span>{{ total_production_energy|intcomma }}</span>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-    
-{% endblock %}
+{% endblock content %}

@@ -1,10 +1,7 @@
-{% extends 's03/layout.html' %}
-
+{% extends "s03/layout.html" %}
 {% load humanize %}
-
 {% block content %}
-
-<script>
+    <script>
 function showDestroy(id) {
 
 	$("destroy" + id).style.display = "none";
@@ -26,129 +23,211 @@ function refreshPage(url) {
 	else
 		window.location = "?y=" + document.documentElement.scrollTop;
 }
-</script>
-
-<div class="row g-3">
-    {% for category in categories %}
-    <div class="col-12">
-        <div class="card">
-            <div class="card-header">
-                {% if category.id == 10 %}<span>Colonie</span>{% endif %}
-                {% if category.id == 11 %}<span>Construction</span>{% endif %}
-                {% if category.id == 20 %}<span>Production</span>{% endif %}
-                {% if category.id == 21 %}<span>Production de minerai</span>{% endif %}
-                {% if category.id == 22 %}<span>Production d'hydrocarbure</span>{% endif %}
-                {% if category.id == 23 %}<span>Production d'énergie</span>{% endif %}
-                {% if category.id == 30 %}<span>Ressources humaines</span>{% endif %}
-                {% if category.id == 31 %}<span>Stockage de minerai</span>{% endif %}
-                {% if category.id == 32 %}<span>Stockage d'hydrocarbure</span>{% endif %}
-                {% if category.id == 33 %}<span>Stockage d'énergie</span>{% endif %}
-                {% if category.id == 40 %}<span>Armement</span>{% endif %}
-                {% if category.id == 80 %}<span>Espace</span>{% endif %}
-                {% if category.id == 110 %}<span>Evénements</span>{% endif %}
-            </div>
-            <div class="list-group list-group-flush">
-                {% for building in category.buildings %}
-                <div class="list-group-item {% if building.isbuilding %}bg-success{% endif %} {% if building.isdestroying %}bg-danger{% endif %}">
-                    <div class="row gx-3 align-items-center">
-                        <div class="col-auto">
-                            <img src="{{PATH_IMAGES}}buildings/{{building.id}}.jpg" width="48px" class="rounded me-4" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true" data-bs-title="
-                                <div class='row g-3'>
-                                    <div class='col-12'>
-                                        <div class='row g-1'>
-                                            <div class='col-12 text-start fs-6'>{{building.name}}</div>
-                                            <div class='col-12 text-start text-normal '>{{building.description}}</div>
+    </script>
+    <div class="row g-3">
+        {% for category in categories %}
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        {% if category.id == 10 %}<span>Colonie</span>{% endif %}
+                        {% if category.id == 11 %}<span>Construction</span>{% endif %}
+                        {% if category.id == 20 %}<span>Production</span>{% endif %}
+                        {% if category.id == 21 %}<span>Production de minerai</span>{% endif %}
+                        {% if category.id == 22 %}<span>Production d'hydrocarbure</span>{% endif %}
+                        {% if category.id == 23 %}<span>Production d'énergie</span>{% endif %}
+                        {% if category.id == 30 %}<span>Ressources humaines</span>{% endif %}
+                        {% if category.id == 31 %}<span>Stockage de minerai</span>{% endif %}
+                        {% if category.id == 32 %}<span>Stockage d'hydrocarbure</span>{% endif %}
+                        {% if category.id == 33 %}<span>Stockage d'énergie</span>{% endif %}
+                        {% if category.id == 40 %}<span>Armement</span>{% endif %}
+                        {% if category.id == 80 %}<span>Espace</span>{% endif %}
+                        {% if category.id == 110 %}<span>Evénements</span>{% endif %}
+                    </div>
+                    <div class="list-group list-group-flush">
+                        {% for building in category.buildings %}
+                            <div class="list-group-item {% if building.isbuilding %}bg-success{% endif %} {% if building.isdestroying %}bg-danger{% endif %}">
+                                <div class="row gx-3 align-items-center">
+                                    <div class="col-auto">
+                                        <img src="{{ PATH_IMAGES }}buildings/{{ building.id }}.jpg" width="48px" class="rounded me-4" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true" data-bs-title="
+                                            <div class='row g-3'>
+                                                <div class='col-12'>
+                                                    <div class='row g-1'>
+                                                        <div class='col-12 text-start fs-6'>{{ building.name }}</div>
+                                                        <div class='col-12 text-start text-normal '>{{ building.description }}</div>
+                                                    </div>
+                                                </div>
+                                                {% if building.ore_prod or building.hydro_prod or building.energy_prod or building.workers_for_maintenance or building.upkeep or building.upkeep_energy %}
+                                                    <div class='col-12'>
+                                                        <div class='row g-1'>
+                                                            {% if building.ore_prod or building.hydro_prod or building.energy_prod %}
+                                                                <div class='col-12'>
+                                                                    <div class='row gx-3 align-items-center'>
+                                                                        <div class='col-auto'>Production</div>
+                                                                        {% if building.ore_prod %}
+                                                                            <div class='col-auto'>
+                                                                                <img src='{{ PATH_IMAGES }}interface/ore.gif' width='16px' class='res' />
+                                                                                {{ building.ore_prod|intcomma }} <small class='text-normal'>/heure</small>
+                                                                            </div>
+                                                                        {% endif %}
+                                                                        {% if building.hydro_prod %}
+                                                                            <div class='col-auto'>
+                                                                                <img src='{{ PATH_IMAGES }}interface/hydrocarbon.gif'
+                                                                                     width='16px'
+                                                                                     class='res'/>
+                                                                                {{ building.hydro_prod|intcomma }} <small class='text-normal'>/heure</small>
+                                                                            </div>
+                                                                        {% endif %}
+                                                                        {% if building.energy_prod %}
+                                                                            <div class='col-auto'>
+                                                                                <img src='{{ PATH_IMAGES }}interface/energy.gif' width='16px' class='res' />
+                                                                                {{ building.energy_prod|intcomma }} <small class='text-normal'>/heure</small>
+                                                                            </div>
+                                                                        {% endif %}
+                                                                    </div>
+                                                                </div>
+                                                            {% endif %}
+                                                            {% if building.workers_for_maintenance or building.upkeep or building.upkeep_energy %}
+                                                                <div class='col-12'>
+                                                                    <div class='row gx-3 align-items-center'>
+                                                                        <div class='col-auto'>Entretien</div>
+                                                                        {% if building.upkeep_energy %}
+                                                                            <div class='col-auto'>
+                                                                                <img src='{{ PATH_IMAGES }}interface/energy.gif' width='16px' class='res' />
+                                                                                {{ building.upkeep_energy|intcomma }} <small class='text-normal'>/heure</small>
+                                                                            </div>
+                                                                        {% endif %}
+                                                                        {% if building.workers_for_maintenance %}
+                                                                            <div class='col-auto'>
+                                                                                <img src='{{ PATH_IMAGES }}interface/workers.gif' width='16px' class='res' />
+                                                                                {{ building.workers_for_maintenance|intcomma }}
+                                                                            </div>
+                                                                        {% endif %}
+                                                                        {% if building.upkeep %}
+                                                                            <div class='col-auto'>
+                                                                                <img src='{{ PATH_IMAGES }}interface/credits.gif' width='16px' class='res' />
+                                                                                {{ building.upkeep|intcomma }} <small class='text-normal'>/jour</small>
+                                                                            </div>
+                                                                        {% endif %}
+                                                                    </div>
+                                                                </div>
+                                                            {% endif %}
+                                                        </div>
+                                                    </div>
+                                                {% endif %}
+                                            </div>
+                                            " />
                                         </div>
-                                    </div>
-                                    {% if building.ore_prod or building.hydro_prod or building.energy_prod or building.workers_for_maintenance or building.upkeep or building.upkeep_energy %}
-                                    <div class='col-12'>
-                                        <div class='row g-1'>
-                                            {% if building.ore_prod or building.hydro_prod or building.energy_prod %}
-                                            <div class='col-12'>
-                                                <div class='row gx-3 align-items-center'>
-                                                    <div class='col-auto'>Production</div>
-                                                    {% if building.ore_prod %}<div class='col-auto'><img src='{{PATH_IMAGES}}interface/ore.gif' width='16px' class='res' />{{building.ore_prod|intcomma}} <small class='text-normal'>/heure</small></div>{% endif %}
-                                                    {% if building.hydro_prod %}<div class='col-auto'><img src='{{PATH_IMAGES}}interface/hydrocarbon.gif' width='16px' class='res' />{{building.hydro_prod|intcomma}} <small class='text-normal'>/heure</small></div>{% endif %}
-                                                    {% if building.energy_prod %}<div class='col-auto'><img src='{{PATH_IMAGES}}interface/energy.gif' width='16px' class='res' />{{building.energy_prod|intcomma}} <small class='text-normal'>/heure</small></div>{% endif %}
+                                        <div class="col">
+                                            <div class="row g-1">
+                                                <div class="col-12">
+                                                    <div class="row gx-2">
+                                                        <div class="col">
+                                                            <a href="/s03/help/?cat=buildings#{{ building.id }}">{{ building.name }}</a>
+                                                        </div>
+                                                        {% if building.quantity > 0 %}
+                                                            <div class="col-auto">
+                                                                <small class="text-normal">x</small>{{ building.quantity }}
+                                                            </div>
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+                                                <div class="col-12">
+                                                    <div class="row gx-3">
+                                                        <div class="col-4">
+                                                            <img src="{{ PATH_IMAGES }}interface/ore.gif" width="16px" class="res" />
+                                                            <span {% if building.not_enough_ore %}class="text-danger"{% endif %}>{{ building.ore|intcomma }}</span>
+                                                        </div>
+                                                        <div class="col-4">
+                                                            <img src="{{ PATH_IMAGES }}interface/floor.gif" width="16px" class="res" />
+                                                            <span {% if building.not_enough_floor %}class="text-danger"{% endif %}>{{ building.floor|intcomma }}</span>
+                                                        </div>
+                                                        <div class="col-4">
+                                                            <img src="{{ PATH_IMAGES }}interface/workers_idle.gif"
+                                                                 width="16px"
+                                                                 class="res"/>
+                                                            <span {% if building.not_enough_workers %}class="text-danger"{% endif %}>{{ building.workers|intcomma }}</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-12">
+                                                    <div class="row gx-3">
+                                                        <div class="col-4">
+                                                            <img src="{{ PATH_IMAGES }}interface/hydrocarbon.gif"
+                                                                 width="16px"
+                                                                 class="res"/>
+                                                            <span {% if building.not_enough_hydrocarbon %}class="text-danger"{% endif %}>{{ building.hydrocarbon|intcomma }}</span>
+                                                        </div>
+                                                        <div class="col-4">
+                                                            <img src="{{ PATH_IMAGES }}interface/space.gif" width="16px" class="res" />
+                                                            <span {% if building.not_enough_space %}class="text-danger"{% endif %}>{{ building.space|intcomma }}</span>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
-                                            {% endif %}
-                                            {% if building.workers_for_maintenance or building.upkeep or building.upkeep_energy %}
-                                            <div class='col-12'>
-                                                <div class='row gx-3 align-items-center'>
-                                                    <div class='col-auto'>Entretien</div>
-                                                    {% if building.upkeep_energy %}<div class='col-auto'><img src='{{PATH_IMAGES}}interface/energy.gif' width='16px' class='res' />{{building.upkeep_energy|intcomma}} <small class='text-normal'>/heure</small></div>{% endif %}
-                                                    {% if building.workers_for_maintenance %}<div class='col-auto'><img src='{{PATH_IMAGES}}interface/workers.gif' width='16px' class='res' />{{building.workers_for_maintenance|intcomma}}</div>{% endif %}
-                                                    {% if building.upkeep %}<div class='col-auto'><img src='{{PATH_IMAGES}}interface/credits.gif' width='16px' class='res' />{{building.upkeep|intcomma}} <small class='text-normal'>/jour</small></div>{% endif %}
+                                        </div>
+                                        <div class="col-3 text-center">
+                                            {% if building.isbuilding %}
+                                                <div class="text-yellow">
+                                                    <script>putcountdown1({{building.remainingtime}}, '');</script>
                                                 </div>
-                                            </div>
+                                                <div>
+                                                    <script>putcountdown2({{building.remainingtime}}, '<a href="#" onclick="refreshPage(\'/s03/planet-buildings/?planet={{planetid}}&a=cancel&b={{building.id}}\'); return false;">Annuler</a>', '<a href="#" onclick="refreshPage(); return false;">Terminé</a>');</script>
+                                                </div>
+                                            {% elif building.isdestroying %}
+                                                <div class="text-yellow">
+                                                    <script>putcountdown1({{building.nextdestroytime}}, '');</script>
+                                                </div>
+                                                <div>
+                                                    <script>putcountdown2({{building.nextdestroytime}}, '<a href="#" onclick="refreshPage(\'/s03/planet-buildings/?planet={{planetid}}&a=cancel&b={{building.id}}\'); return false;">Annuler</a>', '<a href="#" onclick="refreshPage(); return false;">Terminé</a>');</script>
+                                                </div>
+                                            {% elif building.buildings_required %}
+                                                <span class="text-danger">Bâtiment requis</span>
+                                            {% elif building.limitreached %}
+                                                <span class="text-success">Limite atteinte</span>
+                                            {% elif building.built %}
+                                                <span class="text-success">Bâtiment construit</span>
+                                            {% elif building.build %}
+                                                <a href="#"
+                                                   onclick="refreshPage('?planet={{ planetid }}&a=build&c=0&b={{ building.id }}'); return false;">
+                                                    <div>
+                                                        <script>document.write(formattime({{building.time}}));</script>
+                                                    </div>
+                                                    <div>
+                                                        Construire
+                                                    </div>
+                                                </a>
+                                            {% else %}
+                                                <div>
+                                                    <script>document.write(formattime({{building.time}}));</script>
+                                                </div>
+                                                {% if building.not_enough_ore or building.not_enough_hydrocarbon or building.not_enough_workers %}
+                                                    <div>
+                                                        <span class="text-danger">Ressources insuffisantes</span>
+                                                    </div>
+                                                {% endif %}
+                                                {% if building.not_enough_floor or building.not_enough_space %}
+                                                    <div>
+                                                        <span class="text-danger">Pas assez de place</span>
+                                                    </div>
+                                                {% endif %}
+                                            {% endif %}
+                                        </div>
+                                        <div class="col-2 text-center">
+                                            {% if building.workers_required %}<span class="text-danger">Pas assez de travailleurs</span>{% endif %}
+                                            {% if building.required %}<span class="text-danger">Bâtiment requis</span>{% endif %}
+                                            {% if building.capacity %}<span class="text-danger">Stockage requis</span>{% endif %}
+                                            {% if building.destroy %}
+                                                <span id="destroy{{ building.id }}"><a href="?" onclick="return showDestroy({{ building.id }});">Démolir</a></span>
+                                                <span id="destroyConfirm{{ building.id }}" style="display:none;"><a href="#"
+   onclick="refreshPage('?planet={{ planetid }}&a=destroy&b={{ building.id }}'); return false;">Confirmer</a></span>
                                             {% endif %}
                                         </div>
                                     </div>
-                                    {% endif %}
                                 </div>
-                            " />
-                        </div>
-                        <div class="col">
-                            <div class="row g-1">
-                                <div class="col-12">
-                                    <div class="row gx-2">
-                                        <div class="col"><a href="/s03/help/?cat=buildings#{{building.id}}">{{building.name}}</a></div>
-                                        {% if building.quantity > 0 %}<div class="col-auto"><small class="text-normal">x</small>{{building.quantity}}</div>{% endif %}
-                                    </div>
-                                </div>
-                                <div class="col-12">
-                                    <div class="row gx-3">
-                                        <div class="col-4"><img src="{{PATH_IMAGES}}interface/ore.gif" width="16px" class="res" /><span {% if building.not_enough_ore %}class="text-danger"{% endif %}>{{building.ore|intcomma}}</span></div>
-                                        <div class="col-4"><img src="{{PATH_IMAGES}}interface/floor.gif" width="16px" class="res" /><span {% if building.not_enough_floor %}class="text-danger"{% endif %}>{{building.floor|intcomma}}</span></div>
-                                        <div class="col-4"><img src="{{PATH_IMAGES}}interface/workers_idle.gif" width="16px" class="res" /><span {% if building.not_enough_workers %}class="text-danger"{% endif %}>{{building.workers|intcomma}}</span></div>
-                                    </div>
-                                </div>
-                                <div class="col-12">
-                                    <div class="row gx-3">
-                                        <div class="col-4"><img src="{{PATH_IMAGES}}interface/hydrocarbon.gif" width="16px" class="res" /><span {% if building.not_enough_hydrocarbon %}class="text-danger"{% endif %}>{{building.hydrocarbon|intcomma}}</span></div>
-                                        <div class="col-4"><img src="{{PATH_IMAGES}}interface/space.gif" width="16px" class="res" /><span {% if building.not_enough_space %}class="text-danger"{% endif %}>{{building.space|intcomma}}</span></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-3 text-center">
-                            {% if building.isbuilding %}
-                            <div class="text-yellow"><script>putcountdown1({{building.remainingtime}}, '');</script></div>
-                            <div><script>putcountdown2({{building.remainingtime}}, '<a href="#" onclick="refreshPage(\'/s03/planet-buildings/?planet={{planetid}}&a=cancel&b={{building.id}}\'); return false;">Annuler</a>', '<a href="#" onclick="refreshPage(); return false;">Terminé</a>');</script></div>
-                            {% elif building.isdestroying %}
-                            <div class="text-yellow"><script>putcountdown1({{building.nextdestroytime}}, '');</script></div>
-                            <div><script>putcountdown2({{building.nextdestroytime}}, '<a href="#" onclick="refreshPage(\'/s03/planet-buildings/?planet={{planetid}}&a=cancel&b={{building.id}}\'); return false;">Annuler</a>', '<a href="#" onclick="refreshPage(); return false;">Terminé</a>');</script></div>
-                            {% elif building.buildings_required %}<span class="text-danger">Bâtiment requis</span>
-                            {% elif building.limitreached %}<span class="text-success">Limite atteinte</span>
-                            {% elif building.built %}<span class="text-success">Bâtiment construit</span>
-                            {% elif building.build %}
-                            <a href="#" onclick="refreshPage('?planet={{planetid}}&a=build&c=0&b={{building.id}}'); return false;">
-                                <div><script>document.write(formattime({{building.time}}));</script></div>
-                                <div>Construire</div>
-                            </a>
-                            {% else %}
-                            <div><script>document.write(formattime({{building.time}}));</script></div>
-                            {% if building.not_enough_ore or building.not_enough_hydrocarbon or building.not_enough_workers %}<div><span class="text-danger">Ressources insuffisantes</span></div>{% endif %}
-                            {% if building.not_enough_floor or building.not_enough_space %}<div><span class="text-danger">Pas assez de place</span></div>{% endif %}
-                            {% endif %}
-                        </div>
-                        <div class="col-2 text-center">
-                            {% if building.workers_required %}<span class="text-danger">Pas assez de travailleurs</span>{% endif %}
-                            {% if building.required %}<span class="text-danger">Bâtiment requis</span>{% endif %}
-                            {% if building.capacity %}<span class="text-danger">Stockage requis</span>{% endif %}
-                            {% if building.destroy %}
-                            <span id="destroy{{building.id}}"><a href="?" onclick="return showDestroy({{building.id}});">Démolir</a></span>
-                            <span id="destroyConfirm{{building.id}}" style="display:none;"><a href="#" onclick="refreshPage('?planet={{planetid}}&a=destroy&b={{building.id}}'); return false;">Confirmer</a></span>
-                            {% endif %}
+                            {% endfor %}
                         </div>
                     </div>
                 </div>
-                {% endfor %}
-            </div>
+            {% endfor %}
         </div>
-    </div>
-    {% endfor %}
-</div>
-
-{% endblock %}
+    {% endblock content %}

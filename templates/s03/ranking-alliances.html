@@ -1,35 +1,41 @@
-{% extends 's03/layout.html' %}
-
+{% extends "s03/layout.html" %}
 {% load humanize %}
-
 {% block content %}
-
     <div class="nav nav-tabs mb-3">
-        <div class="nav-item"><a href="/s03/ranking-players/" class="nav-link">Joueurs</a></div>
-        <div class="nav-item"><a href="/s03/ranking-alliances/" class="nav-link active">Alliances</a></div>
+        <div class="nav-item">
+            <a href="/s03/ranking-players/" class="nav-link">Joueurs</a>
+        </div>
+        <div class="nav-item">
+            <a href="/s03/ranking-alliances/" class="nav-link active">Alliances</a>
+        </div>
     </div>
-
     <div class="card">
         <div class="list-group list-group-flush">
             {% for alliance in alliances %}
                 <div class="list-group-item {% if alliance.playeralliance %}bg-success{% endif %}">
                     <div class="row gx-3 align-items-center">
                         <div class="col-auto">
-                            <span>{{alliance.place}}.</span>
+                            <span>{{ alliance.place }}.</span>
                         </div>
                         <div class="col">
-                            <a href="/s03/alliance-view/?tag={{alliance.tag}}">[{{alliance.tag}}] {{alliance.name}}</a>
+                            <a href="/s03/alliance-view/?tag={{ alliance.tag }}">[{{ alliance.tag }}] {{ alliance.name }}</a>
                         </div>
                         <div class="col-3 text-end">
                             <div class="row g-1">
-                                <div class="col-12">{{alliance.members}} <small class="text-normal">membres</small></div>
-                                <div class="col-12">{{alliance.stat_colonies}} <small class="text-normal">planètes</small></div>
+                                <div class="col-12">
+                                    {{ alliance.members }} <small class="text-normal">membres</small>
+                                </div>
+                                <div class="col-12">
+                                    {{ alliance.stat_colonies }} <small class="text-normal">planètes</small>
+                                </div>
                             </div>
                         </div>
                         <div class="col-3 text-end">
                             <div class="row g-1">
-                                <div class="col-12">{{alliance.score|intcomma}}</div>
-                                <div class="col-12 {% if alliance.score_delta > 0 %}text-success{% else %}text-danger{% endif %}">{{alliance.score_delta|intcomma}}</div>
+                                <div class="col-12">{{ alliance.score|intcomma }}</div>
+                                <div class="col-12 {% if alliance.score_delta > 0 %}text-success{% else %}text-danger{% endif %}">
+                                    {{ alliance.score_delta|intcomma }}
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -41,5 +47,4 @@
             {% endfor %}
         </div>
     </div>
-
-{% endblock %}
+{% endblock content %}

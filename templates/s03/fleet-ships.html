@@ -1,9 +1,6 @@
-{% extends 's03/layout.html' %}
-
+{% extends "s03/layout.html" %}
 {% load humanize %}
-
 {% block content %}
-
     <script>
         var fleetcapacity = 0;
         var fleetload = {{fleet_load}};
@@ -43,57 +40,100 @@
             else document.forms.ships.submit();
         }
     </script>
-
-    <form method="post" action="/s03/fleet-ships/?id={{fleetid}}" class="card">
+    <form method="post"
+          action="/s03/fleet-ships/?id={{ fleetid }}"
+          class="card">
         <div class="card-header">
             <div class="row gx-3">
-                <div class="col-auto"><a href="/s03/fleet-view/?id={{fleetid}}"><i class="fa-fw fas fa-arrow-circle-left"></i></a></div>
+                <div class="col-auto">
+                    <a href="/s03/fleet-view/?id={{ fleetid }}"><i class="fa-fw fas fa-arrow-circle-left"></i></a>
+                </div>
                 <div class="col">Gestion des vaisseaux</div>
-                <div class="col-auto"><small class="text-normal">flotte</small></div>
-                <div class="col-auto"><span class="text-player">{{fleetname}}</span></div>
+                <div class="col-auto">
+                    <small class="text-normal">flotte</small>
+                </div>
+                <div class="col-auto">
+                    <span class="text-player">{{ fleetname }}</span>
+                </div>
             </div>
         </div>
         <div class="card-body">
             <div class="row g-1 flex-column">
                 <div class="col-12">
                     <div class="row gx-3 align-items-center">
-                        <div class="col"><span class="text-normal">Vaisseau</span></div>
-                        <div class="col-2"><span class="text-normal">Cargo</span></div>
-                        <div class="col-auto text-end" style="width:75px;"><span class="text-normal">Quantité</span></div>
-                        <div class="col-2"><span class="text-normal">Retirer</span></div>
-                        <div class="col-auto text-end" style="width:75px;"><span class="text-normal">Au sol</span></div>
-                        <div class="col-2"><span class="text-normal">Ajouter</span></div>
+                        <div class="col">
+                            <span class="text-normal">Vaisseau</span>
+                        </div>
+                        <div class="col-2">
+                            <span class="text-normal">Cargo</span>
+                        </div>
+                        <div class="col-auto text-end" style="width:75px;">
+                            <span class="text-normal">Quantité</span>
+                        </div>
+                        <div class="col-2">
+                            <span class="text-normal">Retirer</span>
+                        </div>
+                        <div class="col-auto text-end" style="width:75px;">
+                            <span class="text-normal">Au sol</span>
+                        </div>
+                        <div class="col-2">
+                            <span class="text-normal">Ajouter</span>
+                        </div>
                     </div>
                 </div>
-                <div class="col-12"><hr class="my-1"></div>            
+                <div class="col-12">
+                    <hr class="my-1">
+                </div>
                 {% for ship in shiplist %}
                     <script>ships.push(new Array({{ship.id}}, {{ship.cargo_capacity}}, {{ship.quantity}}, {{ship.available}}));</script>
                     <div class="col-12">
                         <div class="row gx-3 align-items-center">
-                            <div class="col"><span class="text-normal">{{ship.name}}</span></div>
-                            <div class="col-2">{{ship.cargo_capacity|intcomma}}</div>
-                            <div class="col-auto text-end" style="width:75px;">{{ship.quantity|intcomma}}</div>
-                            <div class="col-2"><input type="number" id="removeship{{ship.id}}" name="removeship{{ship.id}}" size="8" /> <a href="javascript:setval('removeship{{ship.id}}', {{ship.quantity}})">max</a></div>
-                            <div class="col-auto text-end" style="width:75px;">{{ship.available|intcomma}}</div>
-                            <div class="col-2"><input type="number" id="addship{{ship.id}}" name="addship{{ship.id}}" size="8" /> <a href="javascript:setval('addship{{ship.id}}', {{ship.available}})">max</a></div>
+                            <div class="col">
+                                <span class="text-normal">{{ ship.name }}</span>
+                            </div>
+                            <div class="col-2">{{ ship.cargo_capacity|intcomma }}</div>
+                            <div class="col-auto text-end" style="width:75px;">{{ ship.quantity|intcomma }}</div>
+                            <div class="col-2">
+                                <input type="number"
+                                       id="removeship{{ ship.id }}"
+                                       name="removeship{{ ship.id }}"
+                                       size="8"/>
+                                <a href="javascript:setval('removeship{{ ship.id }}', {{ ship.quantity }})">max</a>
+                            </div>
+                            <div class="col-auto text-end" style="width:75px;">{{ ship.available|intcomma }}</div>
+                            <div class="col-2">
+                                <input type="number"
+                                       id="addship{{ ship.id }}"
+                                       name="addship{{ ship.id }}"
+                                       size="8"/>
+                                <a href="javascript:setval('addship{{ ship.id }}', {{ ship.available }})">max</a>
+                            </div>
                         </div>
                     </div>
                 {% endfor %}
-                <div class="col-12"><hr class="my-1"></div>
+                <div class="col-12">
+                    <hr class="my-1">
+                </div>
                 <div class="col-12">
                     <div class="row gx-3 align-items-center">
-                        <div class="col"><span class="text-normal">Capacité</span> <span id="load" class="ms-2">{{fleet_load|intcomma}}</span> <small class="text-normal">/<span id="capacity">{{fleet_capacity|intcomma}}</span> unités</small></div>
-                        <div class="col-auto"><a href="javascript:remove_all()">Tout retirer</a></div>
-                        <div class="col-auto"><a href="javascript:add_all()">Tout ajouter</a></div>
-                        <div class="col-auto"><input type="button" value="Transférer" onclick="javascript:submitchanges()"></div>
+                        <div class="col">
+                            <span class="text-normal">Capacité</span> <span id="load" class="ms-2">{{ fleet_load|intcomma }}</span> <small class="text-normal">/<span id="capacity">{{ fleet_capacity|intcomma }}</span> unités</small>
+                        </div>
+                        <div class="col-auto">
+                            <a href="javascript:remove_all()">Tout retirer</a>
+                        </div>
+                        <div class="col-auto">
+                            <a href="javascript:add_all()">Tout ajouter</a>
+                        </div>
+                        <div class="col-auto">
+                            <input type="button" value="Transférer" onclick="javascript:submitchanges()">
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
         <input type="hidden" name="transfer_ships" value="1">
-    {% csrf_token %}
+        {% csrf_token %}
     </form>
-    
     <script>window.setTimeout("updatecargo()", 100);</script>
-
-{% endblock %}
+{% endblock content %}

@@ -1,8 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
 
-html, body {
-	height: 100%; width: 100%;
-}
+html, body { height: 100%; width: 100%; }
 
 body {
 	background-color: #000;
@@ -15,53 +13,8 @@ a:link, a:visited, a:active, a:hover { text-decoration: none; }
 
 p {	margin: 0 0 .75rem 0; }
 
-
-
-/* ul li */
-
 ul { list-style-type:disc; margin-top:10px; margin-bottom:10px; }
 ul li { margin-left:20px; margin-top:4px; }
-
-ul.requirements { list-style-type:disc; margin-top:0px; padding-top:5px; padding-left: 20px; margin-bottom:0px; margin-left:0; }
-ul.requirements li { line-height:13px; margin-left:0px; margin-top:0px; }
-
-/* dl dd */
-dl.spy {
-	margin:10px 0.5em;
-}
-
-dl.spy dt {
-	margin-top:12px;
-	font-weight:bold;
-	color:white;
-}
-
-dl.spy dd {
-	padding-top:4px;
-	color:#BCBCC0;
-}
-
-dl.spy dd span.highlight {
-	color:white;
-}
-
-
-p.shiprequirement { margin:0; margin-left:20px; color:#ddd}
-
-
-div.clear { clear:both; }
-
-#chat { overflow:auto; height:490px; color:#ccc; }
-#chat .highlight { color:#1DD1D3; }
-#chat .player { color:#FFFFFF; }
-#chat .newday { text-align:center; font-weight:bold; color:#FFFFFF; margin-top:5px; }
-#chat .smiley { vertical-align:-3px; }
-#chatline { width:100%; height: 18px; }
-
-#chatform { text-align:left; }
-#joinchatform { display:none; visibility:hidden; }
-
-/* layout */
 
 #super {
 	position: relative;
@@ -100,24 +53,11 @@ div.clear { clear:both; }
 @media (min-width: 992px) { #page { max-width: 720px; } }
 @media (min-width: 1200px) { #page { max-width: 720px; } }
 
-
-
-
-div#container { margin:6px; padding:6px; text-align:left; width:800px; background: url('/static/assets/interface/grad100.gif') repeat-x #3c3c3c; border: #222 1px solid; }
-
-#gameover { font-size:36px; padding:10px; color:#f44; font-weight: bold; text-align: center; }
-#start { font-size:36px; padding:10px; color:#4f4; font-weight: bold; text-align: center; }
-#holidays { font-size:36px; padding:10px; color:#44f; font-weight: bold; text-align: center; }
-#playername { font-size:20px; padding:10px; color:#fff; font-weight: bold; text-align: center; }
-
 .none {display:block; text-decoration:none;}
 .none:link {text-decoration:none;}
 .none:visited {text-decoration:none;}
 .none:active {text-decoration:none;}
 .none:hover {text-decoration:none;}
-
-
-/* menu */
 
 .menu { color: #ced4da; display: flex; align-items: center; }
 .menu:link, .menu:visited, .menu:active { color: #ced4da; }
@@ -135,108 +75,20 @@ div#container { margin:6px; padding:6px; text-align:left; width:800px; backgroun
 	padding: .25rem .75rem .25rem 1.5rem;
 }
 
-
-
-
-
-/* forms elements */
-
-.warning, .error {
-	color:#f00;
-	font-weight: bold;
-	text-align: center;
-}
-
-.warning2, .error2 {
-	color:#f61;
-	font-weight: bold;
-	text-align: center;
-}
-
-.message {
-	text-align: center;
-}
-
-/* form css */
-
-#form form {
-	margin:0; padding:0;
-}
-
-#form .button {
-	margin:15px 0px;
-	border: 1px solid #bbb;
-}
-
-
-/* general */
-
-select {
-    background-color: #555;
+select, input, textarea {
+	background-color:#555;
 	border: #888 1px solid;
     color: #ddd;
     padding: 0.125rem 0.5rem; height: 24px;
     border-radius: .25rem;
 }
 
-input, textarea {
-	background-color:#555;
-	border: #888 1px solid;
-    color: #ddd;
-    padding: 0.125rem 0.5rem;
-    border-radius: .25rem;
-}
+input[type=number] { width: 55px; }
 
-input.signaturelink { width:600px; }
-
-input.button {		
-	background-color: #555;
-	border: #999 1px solid;
-	color:#eee;
-	padding:2px 5px 2px 5px;
-}
-
-.checkbox, .radio { 
+.checkbox { 
 	margin:0px 4px 0px 0px; padding:0;
 	border:0;
 	background-color: transparent;	
-}
-
-input.button100 {
-	background-color:#444;
-	border:#999 1px solid;
-	color:#eee;
-	padding:2px 5px 2px 5px;
-	width:100px;
-}
-
-input[type=number] {
-    width:55px;
-}
-
-/* img related */
-
-img.icon {
-	margin:-4px 2px;
-}
-
-img.smallicon {
-	margin:-1px 4px 0px 0px;
-}
-
-img.avatar {
-	margin: 2px;
-	border: #777 1px solid;
-}
-
-img.building {
-	margin: 2px;
-	border: #777 1px solid;
-}
-
-img.report {
-	margin: 2px;
-	border: #777 1px solid;
 }
 
 img.res {
@@ -244,99 +96,16 @@ img.res {
 	vertical-align: -4px;
 }
 
-img.planet {
-	clear:both;
-	border: #000 1px solid;
-}
-
-img.wallet {
-	margin: 2px;
-	border: #777 1px solid;
-}
-
-img.smallplanet {
-	vertical-align: middle;
-	border: #777 1px solid;
-}
-
 img.stance {
 	margin-right:2px;
 	vertical-align: -1px;
 }
 
-img.idleworkers {
-	clear:both;
-	margin-bottom:-2px;
-	margin-right:2px;
-	text-align: right;
-}
-
-/* main table*/
-
-table.default { width: 100%; }
-
-.default tr { background-color: #3c3c3c; }
-.default td { padding:2px; border: #555 1px solid; }
-
-.default tr.title { background: url('/static/assets/interface/grad50.gif') repeat-x #3c3c3c; text-align: center; }
-.default tr.bigtitle td { background: url('/static/assets/interface/grad50.gif') repeat-x #3c3c3c; text-align: center; font-size: 12px; }
-.default tr.header { background: url('/static/assets/interface/grad50.gif') repeat-x #3c3c3c; text-align: center; }
-.default tr.category { background: url('/static/assets/interface/grad50.gif') repeat-x #3c3c3c; text-align: left; }
-
-.default tr.item { background: url('/static/assets/interface/grad100.gif') repeat-x #3c3c3c; }
-.default tr.itemdel { background: url('/static/assets/interface/grad100_destroy.gif') repeat-x #780000; }
-.default tr.itemhighlight { background: url('/static/assets/interface/grad100_highlight.gif') repeat-x #005A00; }
-.default tr.itemally { background: url('/static/assets/interface/grad100_ally.gif') repeat-x #2C4E2A; }
-
-.default tr.odd { background: #303030; }
-.default tr.even { background: #3c3c3c; }
-
-.default tr.smallitem { background: url('/static/assets/interface/grad50.gif') repeat-x #3c3c3c; }
-.default tr.smallitemhighlight { background: url('/static/assets/interface/grad50_highlight.gif') repeat-x #005A00; }
-.default tr.smallitempna { background: url('/static/assets/interface/grad50_highlight.gif') repeat-x #005A00; }
-
-.default tr.verysmallitem { background: url('/static/assets/interface/grad25.gif') repeat-x #3c3c3c; }
-
-.default tr.ranking_nap { background: url('/static/assets/interface/grad25_nap.gif') repeat-x #785800; }
-.default tr.ranking_war { background: url('/static/assets/interface/grad100_destroy.gif') repeat-x #780000; }
-.default tr.ranking_alliance { background: url('/static/assets/interface/grad25_alliance.gif') repeat-x #106810; }
-
-.default tr.giftitem { background: url('/static/assets/interface/grad50_gift.gif') repeat-x #2E4E2A; }
-.default tr.taxchangeditem { background: url('/static/assets/interface/grad50_taxchanged.gif') repeat-x #4E4A2A; }
-.default tr.memberleftitem { background: url('/static/assets/interface/grad50_memberleft.gif') repeat-x #4E2A2A; }
-
-table.clear, tr.clear, .clear tr, .clear td, td.clear { padding: .125rem .5rem; border:0; background: transparent; }
-
-tr.clear { height:4px; }
-
-table.tableheader {
-	background-color: #151515;
-    width: 100%;
-}
-table.tableheader td { padding: .125rem .5rem; }
 
 
-/* navigation when multiple pages are available */
-.default tr.nav td { background: #333333; color:#B5B5B9; }
-.default tr.nav td span.selected { color: #fff; font-weight: bold; }
 
-
-/* tabs */
-
-ul.vtabs { list-style-type: none; margin: 0; }
-ul.vtabs li { height: 21px; background:none; padding: 0; margin: 0px 2px 2px 2px; background:#333; border: 1px solid #444; }
-ul.vtabs li.active { background:url('/static/assets/interface/grad25.gif') repeat-x; border: 1px solid #555;}
-ul.vtabs a { display: block; text-decoration: none; padding: 4px 30px 4px 4px; }
-
-
-/* colors */
-.destroy{color:#f44;}
-.white{color:#fff;}
-.grey{color:#BCBCC0;}
-.cant_fire{color:#BCBCC0;}
 
 /* warnings */
-.impossible {color: #f44;}
 .ok {color: #0f0;}
 .notenough {color: #f44;}
 .low {color: #f44;}

@@ -1,42 +1,72 @@
-{% extends 's03/layout.html' %}
-
+{% extends "s03/layout.html" %}
 {% load humanize %}
-
 {% block content %}
-
     <div class="row g-3">
         <div class="col-12">
             <div class="card">
                 <div class="card-header">
                     <span>Consommation énergétique</span>
                 </div>
-                <form method="post" action="?cat={{cat}}&a=submit" class="list-group list-group-flush">{% csrf_token %}
+                <form method="post"
+                      action="?cat={{ cat }}&a=submit"
+                      class="list-group list-group-flush">
+                    {% csrf_token %}
                     {% for building in buildings %}
                         <div class="list-group-item {% if building.not_all_enabled %}bg-danger{% endif %}">
                             <div class="row gx-3 align-items-center">
-                                <div class="col-auto"><img src="{{PATH_IMAGES}}buildings/{{building.id}}.jpg" class="rounded" width="48px" /></div>
+                                <div class="col-auto">
+                                    <img src="{{ PATH_IMAGES }}buildings/{{ building.id }}.jpg"
+                                         class="rounded"
+                                         width="48px"/>
+                                </div>
                                 <div class="col">
                                     <div class="row g-1">
-                                        <div class="col-12"><span class="text-normal">{{building.building}}</span></div>
+                                        <div class="col-12">
+                                            <span class="text-normal">{{ building.building }}</span>
+                                        </div>
                                         <div class="col-12">
                                             <div class="row gx-3 align-items-center">
                                                 <div class="col-5">
                                                     <div class="row gx-3">
-                                                        <div class="col-4"><img src="{{PATH_IMAGES}}interface/credits.gif" width="16px" class="res" />{{building.upkeep|intcomma}}</div>
-                                                        <div class="col-4"><img src="{{PATH_IMAGES}}interface/energy.gif" width="16px" class="res" />{{building.energy|intcomma}}</div>
-                                                        <div class="col-4"><img src="{{PATH_IMAGES}}interface/workers.gif" width="16px" class="res" />{{building.maintenance|intcomma}}</div>
+                                                        <div class="col-4">
+                                                            <img src="{{ PATH_IMAGES }}interface/credits.gif" width="16px" class="res" />
+                                                            {{ building.upkeep|intcomma }}
+                                                        </div>
+                                                        <div class="col-4">
+                                                            <img src="{{ PATH_IMAGES }}interface/energy.gif" width="16px" class="res" />
+                                                            {{ building.energy|intcomma }}
+                                                        </div>
+                                                        <div class="col-4">
+                                                            <img src="{{ PATH_IMAGES }}interface/workers.gif" width="16px" class="res" />
+                                                            {{ building.maintenance|intcomma }}
+                                                        </div>
                                                     </div>
                                                 </div>
                                                 <div class="col-2">
                                                     <small class="me-1 text-normal">x</small>
-                                                    <select name="enabled{{building.id}}">{% for count in building.counts %}<option value="{{count.count}}"{% if count.selected %} selected{% endif %}>{{count.count}}</option>{% endfor %}</select>
+                                                    <select name="enabled{{ building.id }}">
+                                                        {% for count in building.counts %}
+                                                            <option value="{{ count.count }}"{% if count.selected %} selected{% endif %}>
+                                                                {{ count.count }}
+                                                            </option>
+                                                        {% endfor %}
+                                                    </select>
                                                     <small class="ms-1 text-normal">=</small>
                                                 </div>
                                                 <div class="col-5">
                                                     <div class="row gx-3">
-                                                        <div class="col-4"><img src="{{PATH_IMAGES}}interface/credits.gif" width="16px" class="res" />{{building.upkeep_total|intcomma}}</div>
-                                                        <div class="col-4"><img src="{{PATH_IMAGES}}interface/energy.gif" width="16px" class="res" />{{building.energy_total|intcomma}}</div>
-                                                        <div class="col-4"><img src="{{PATH_IMAGES}}interface/workers.gif" width="16px" class="res" />{{building.maintenance_total|intcomma}}</div>
+                                                        <div class="col-4">
+                                                            <img src="{{ PATH_IMAGES }}interface/credits.gif" width="16px" class="res" />
+                                                            {{ building.upkeep_total|intcomma }}
+                                                        </div>
+                                                        <div class="col-4">
+                                                            <img src="{{ PATH_IMAGES }}interface/energy.gif" width="16px" class="res" />
+                                                            {{ building.energy_total|intcomma }}
+                                                        </div>
+                                                        <div class="col-4">
+                                                            <img src="{{ PATH_IMAGES }}interface/workers.gif" width="16px" class="res" />
+                                                            {{ building.maintenance_total|intcomma }}
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -53,5 +83,4 @@
             </div>
         </div>
     </div>
-
-{% endblock %}
+{% endblock content %}

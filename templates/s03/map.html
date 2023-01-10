@@ -1,11 +1,8 @@
-{% extends 's03/layout.html' %}
-
+{% extends "s03/layout.html" %}
 {% load l10n %}
 {% load humanize %}
-
 {% block content %}
-
-<script>
+    <script>
     var currGalaxy = "";
     var currSector = "";
 
@@ -347,7 +344,7 @@
             else
             if(rel==-3 && isNaN(parseInt(img))) n+= '';
             else
-            if(rel==-3) n+= '<span class="grey">inhabitée</span>';
+            if(rel==-3) n+= '<span class="text-normal">inhabitée</span>';
             else
             {
                 if(name=='') name=owner;
@@ -384,181 +381,347 @@
     }
 
     {% endif %}
-</script>
-    
-<div class="card card-body mb-3">
-    <form method="get" action="?" class="row gx-3 align-items-center justify-content-center">
-        <div class="col-auto"><a href="#" onclick="openGalaxy(''); return false;">Univers</a></div>
-        <div class="col-auto">
-            <div class="row gx-2 align-items-center">
-                <div class="col-auto">{% if galaxy_link %}<a href="#" onclick="openGalaxy(currGalaxy); return false;">{% endif %}Galaxie{% if galaxy_link %}</a>{% endif %}</div>
-                <div class="col-auto"><input type="text" name="g" id="locgalaxy" size="2" maxlength="2" autocomplete="off" value="{{galaxy}}"></div>
-                <div class="col-auto">Secteur</div>
-                <div class="col-auto"><input type="text" name="s" id="locsector" size="2" maxlength="2" autocomplete="off" value="{{sector}}"></div>
+    </script>
+    <div class="card card-body mb-3">
+        <form method="get"
+              action="?"
+              class="row gx-3 align-items-center justify-content-center">
+            <div class="col-auto">
+                <a href="#" onclick="openGalaxy(''); return false;">Univers</a>
             </div>
-        </div>
-        <div class="col-auto"><input type="submit" value="Localiser"></div>
-    </form>
-</div>
-
-{% if nav_universe %}
-<div class="row g-1 align-items-center justify-content-center">
-    {% for galaxy in galaxies %}
-        <div class="col-auto">
-            <a href="/s03/map/?g={{galaxy.galaxyid}}" onmouseover="setLocGalaxy({{galaxy.galaxyid}})" class="d-block rounded border {% if galaxy.hasplanet %}border-player{% elif galaxy.hasally %}border-success{% elif galaxy.hasenemy %}border-danger{% endif %}">
-                <div><img src="/static/assets/galaxies/01.jpg" class="rounded" /></div>
-                <div class="text-center"><small>{{galaxy.galaxyid}}</small></div>
-            </a>
-        </div>
-    {% endfor %}
-</div>
-
-{% elif nav_galaxy %}
-<div class="row gx-3">
-    <div class="col">
-        <div id="mapgalaxyview"></div>
-        <script>displayGalaxy({{galaxy}}, '{{mapgalaxy}}');</script>
+            <div class="col-auto">
+                <div class="row gx-2 align-items-center">
+                    <div class="col-auto">
+                        {% if galaxy_link %}<a href="#" onclick="openGalaxy(currGalaxy); return false;">{% endif %}
+                        Galaxie
+                        {% if galaxy_link %}</a>{% endif %}
+                    </div>
+                    <div class="col-auto">
+                        <input type="text"
+                               name="g"
+                               id="locgalaxy"
+                               size="2"
+                               maxlength="2"
+                               autocomplete="off"
+                               value="{{ galaxy }}">
+                    </div>
+                    <div class="col-auto">
+                        Secteur
+                    </div>
+                    <div class="col-auto">
+                        <input type="text"
+                               name="s"
+                               id="locsector"
+                               size="2"
+                               maxlength="2"
+                               autocomplete="off"
+                               value="{{ sector }}">
+                    </div>
+                </div>
+            </div>
+            <div class="col-auto">
+                <input type="submit" value="Localiser">
+            </div>
+        </form>
     </div>
-    <div class="col-3">
-        <div class="row g-3">
-            <div class="col-12">
-                <div class="card">
-                    <div class="card-header">
-                        <span>Prix GM 1000 unités</span>
-                    </div>
-                    <div class="card-body">
-                        <div class="row g-1">
-                            <div class="col-12">
-                                <div class="row gx-2 align-items-center">
-                                    <div class="col"><span class="text-normal">Minerai</span></div>
-                                    <div class="col-auto"><img src="{{PATH_IMAGES}}interface/credits.gif" width="16px" class="res" /><span class="text-white">{{price_ore|intcomma}}</span></div>
-                                </div>
-                            </div>    
-                            <div class="col-12">
-                                <div class="row gx-2 align-items-center">
-                                    <div class="col"><span class="text-normal">Hydrocarbure</span></div>
-                                    <div class="col-auto"><img src="{{PATH_IMAGES}}interface/credits.gif" width="16px" class="res" /><span class="text-white">{{price_hydrocarbon|intcomma}}</span></div>
-                                </div>
-                            </div>    
-                        </div>    
-                    </div>    
-                </div>    
-            </div>
-            {% if protected_until > 0 %}
-            <div class="col-12">
-                <div class="card card-body">
-                    <div class="row gx-2 align-items-center">
-                        <div class="col"><span class="text-normal">Ouverture</span></div>
-                        <div class="col-auto"><script>document.write(formattime({{protected_until}}))</script></div>
-                    </div>    
+    {% if nav_universe %}
+        <div class="row g-1 align-items-center justify-content-center">
+            {% for galaxy in galaxies %}
+                <div class="col-auto">
+                    <a href="/s03/map/?g={{ galaxy.galaxyid }}"
+                       onmouseover="setLocGalaxy({{ galaxy.galaxyid }})"
+                       class="d-block rounded border {% if galaxy.hasplanet %}border-player{% elif galaxy.hasally %}border-success{% elif galaxy.hasenemy %}border-danger{% endif %}">
+                        <div>
+                            <img src="/static/assets/galaxies/01.jpg" class="rounded" />
+                        </div>
+                        <div class="text-center">
+                            <small>{{ galaxy.galaxyid }}</small>
+                        </div>
+                    </a>
                 </div>
-            </div>
-            {% endif %}
-            {% if sov_tag_1 %}
-            <div class="col-12">
-                <div class="card card-body">
-                    <div class="row g-1">
-                        <div class="col-12">
-                            <div class="row gx-2 align-items-center">
-                                <div class="col"><span class="text-normal">{{sov_tag_1}}</span></div>
-                                <div class="col-auto">{{sov_perc_1}}%</div>
-                            </div>
-                        </div>
-                        {% if sov_tag_2 %}
-                        <div class="col-12">
-                            <div class="row gx-2 align-items-center">
-                                <div class="col"><span class="text-normal">{{sov_tag_2}}</span></div>
-                                <div class="col-auto">{{sov_perc_2}}%</div>
-                            </div>
-                        </div>
-                        {% endif %}
-                        {% if sov_tag_3 %}
-                        <div class="col-12">
-                            <div class="row gx-2 align-items-center">
-                                <div class="col"><span class="text-normal">{{sov_tag_3}}</span></div>
-                                <div class="col-auto">{{sov_perc_3}}%</div>
-                            </div>
-                        </div>
-                        {% endif %}
-                    </div>
+            {% endfor %}
+        </div>
+    {% elif nav_galaxy %}
+        <div class="row gx-3">
+            <div class="col">
+                <div id="mapgalaxyview">
                 </div>
+                <script>displayGalaxy({{galaxy}}, '{{mapgalaxy}}');</script>
             </div>
-            {% endif %}
-            <div class="col-12">
-                <div class="card card-body">
-                    <div class="row g-1">
-                        <div class="col-12">
-                            <div class="row gx-2 align-items-center">
-                                <div class="col"><span class="text-normal">Ressources</span></div>
-                                <div class="col-auto"><div class="sector"><div class="resource"><i class="fa-fw fas fa-circle"></i></div></div></div>
+            <div class="col-3">
+                <div class="row g-3">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <span>Prix GM 1000 unités</span>
+                            </div>
+                            <div class="card-body">
+                                <div class="row g-1">
+                                    <div class="col-12">
+                                        <div class="row gx-2 align-items-center">
+                                            <div class="col">
+                                                <span class="text-normal">Minerai</span>
+                                            </div>
+                                            <div class="col-auto">
+                                                <img src="{{ PATH_IMAGES }}interface/credits.gif" width="16px" class="res" />
+                                                <span class="text-white">{{ price_ore|intcomma }}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="row gx-2 align-items-center">
+                                            <div class="col">
+                                                <span class="text-normal">Hydrocarbure</span>
+                                            </div>
+                                            <div class="col-auto">
+                                                <img src="{{ PATH_IMAGES }}interface/credits.gif" width="16px" class="res" />
+                                                <span class="text-white">{{ price_hydrocarbon|intcomma }}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
+                    </div>
+                    {% if protected_until > 0 %}
                         <div class="col-12">
-                            <div class="row gx-2 align-items-center">
-                                <div class="col"><span class="text-normal">Vortex</span></div>
-                                <div class="col-auto"><div class="sector"><div class="vortex"><i class="fa-fw fas fa-circle"></i></div></div></div>
-                            </div>
-                        </div>    
-                        <div class="col-12">
-                            <div class="row gx-2 align-items-center">
-                                <div class="col"><span class="text-normal">Guilde Marchande</span></div>
-                                <div class="col-auto"><div class="sector"><div class="friend"><i class="fa-fw fas fa-circle"></i></div></div></div>
-                            </div>
-                        </div>
-                        <div class="col-12">
-                            <div class="row gx-2 align-items-center">
-                                <div class="col"><span class="text-normal">Planète alliée</span></div>
-                                <div class="col-auto"><div class="sector"><div class="ally"><i class="fa-fw fas fa-circle"></i></div></div></div>
+                            <div class="card card-body">
+                                <div class="row gx-2 align-items-center">
+                                    <div class="col">
+                                        <span class="text-normal">Ouverture</span>
+                                    </div>
+                                    <div class="col-auto">
+                                        <script>document.write(formattime({{protected_until}}))</script>
+                                    </div>
+                                </div>
                             </div>
                         </div>
+                    {% endif %}
+                    {% if sov_tag_1 %}
                         <div class="col-12">
-                            <div class="row gx-2 align-items-center">
-                                <div class="col"><span class="text-normal">Planète colonisée</span></div>
-                                <div class="col-auto"><div class="sector"><div class="player"><i class="fa-fw fas fa-circle"></i></div></div></div>
+                            <div class="card card-body">
+                                <div class="row g-1">
+                                    <div class="col-12">
+                                        <div class="row gx-2 align-items-center">
+                                            <div class="col">
+                                                <span class="text-normal">{{ sov_tag_1 }}</span>
+                                            </div>
+                                            <div class="col-auto">
+                                                {{ sov_perc_1 }}%
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% if sov_tag_2 %}
+                                        <div class="col-12">
+                                            <div class="row gx-2 align-items-center">
+                                                <div class="col">
+                                                    <span class="text-normal">{{ sov_tag_2 }}</span>
+                                                </div>
+                                                <div class="col-auto">
+                                                    {{ sov_perc_2 }}%
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                                    {% if sov_tag_3 %}
+                                        <div class="col-12">
+                                            <div class="row gx-2 align-items-center">
+                                                <div class="col">
+                                                    <span class="text-normal">{{ sov_tag_3 }}</span>
+                                                </div>
+                                                <div class="col-auto">
+                                                    {{ sov_perc_3 }}%
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                                </div>
                             </div>
                         </div>
-                        <div class="col-12">
-                            <div class="row gx-2 align-items-center">
-                                <div class="col"><span class="text-normal">Planète enemie</span></div>
-                                <div class="col-auto"><div class="sector"><div class="hostile"><i class="fa-fw fas fa-circle"></i></div></div></div>
-                            </div>
-                        </div>    
-                        <div class="col-12">
-                            <div class="row gx-2 align-items-center">
-                                <div class="col"><span class="text-normal">Planète libre</span></div>
-                                <div class="col-auto"><div class="sector"><div class="uninhabited"><i class="fa-fw fas fa-circle"></i></div></div></div>
+                    {% endif %}
+                    <div class="col-12">
+                        <div class="card card-body">
+                            <div class="row g-1">
+                                <div class="col-12">
+                                    <div class="row gx-2 align-items-center">
+                                        <div class="col">
+                                            <span class="text-normal">Ressources</span>
+                                        </div>
+                                        <div class="col-auto">
+                                            <div class="sector">
+                                                <div class="resource">
+                                                    <i class="fa-fw fas fa-circle"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="row gx-2 align-items-center">
+                                        <div class="col">
+                                            <span class="text-normal">Vortex</span>
+                                        </div>
+                                        <div class="col-auto">
+                                            <div class="sector">
+                                                <div class="vortex">
+                                                    <i class="fa-fw fas fa-circle"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="row gx-2 align-items-center">
+                                        <div class="col">
+                                            <span class="text-normal">Guilde Marchande</span>
+                                        </div>
+                                        <div class="col-auto">
+                                            <div class="sector">
+                                                <div class="friend">
+                                                    <i class="fa-fw fas fa-circle"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="row gx-2 align-items-center">
+                                        <div class="col">
+                                            <span class="text-normal">Planète alliée</span>
+                                        </div>
+                                        <div class="col-auto">
+                                            <div class="sector">
+                                                <div class="ally">
+                                                    <i class="fa-fw fas fa-circle"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="row gx-2 align-items-center">
+                                        <div class="col">
+                                            <span class="text-normal">Planète colonisée</span>
+                                        </div>
+                                        <div class="col-auto">
+                                            <div class="sector">
+                                                <div class="player">
+                                                    <i class="fa-fw fas fa-circle"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="row gx-2 align-items-center">
+                                        <div class="col">
+                                            <span class="text-normal">Planète enemie</span>
+                                        </div>
+                                        <div class="col-auto">
+                                            <div class="sector">
+                                                <div class="hostile">
+                                                    <i class="fa-fw fas fa-circle"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="row gx-2 align-items-center">
+                                        <div class="col">
+                                            <span class="text-normal">Planète libre</span>
+                                        </div>
+                                        <div class="col-auto">
+                                            <div class="sector">
+                                                <div class="uninhabited">
+                                                    <i class="fa-fw fas fa-circle"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>    
-</div>
-
-{% elif nav_sector %}
-<div id="map">
-    <div id="mapsector" class="border rounded" style="border-color:#495057!important;">
-        <table cellpadding="0" cellspacing="0">
-            <tr class="lh-1">
-                <td><a href="#" class="small" onclick="openSector({{galaxy}}, {{sector0}})" data-bs-toggle="tooltip" data-bs-title="Secteur {{galaxy}}.{{sector0}}"><i class="fa-fw fas fa-chevron-up" style="transform: rotate(-45deg);"></i></a></td>
-                <td align="center"><a href="#" class="small" onclick="openSector({{galaxy}}, {{sector1}})" data-bs-toggle="tooltip" data-bs-title="Secteur {{galaxy}}.{{sector1}}"><i class="fa-fw fas fa-chevron-up"></i></a></td>
-                <td><a href="#" class="small" onclick="openSector({{galaxy}}, {{sector2}})" data-bs-toggle="tooltip" data-bs-title="Secteur {{galaxy}}.{{sector2}}"><i class="fa-fw fas fa-chevron-up" style="transform: rotate(45deg);"></i></a></td>
-            </tr>
-            <tr>
-                <td valign="middle"><a href="#" class="small" onclick="openSector({{galaxy}}, {{sector7}})" data-bs-toggle="tooltip" data-bs-title="Secteur {{galaxy}}.{{sector7}}"><i class="fa-fw fas fa-chevron-left"></i></a></td>
-                <td><div class="map" id="mapsectorview"></div></td>
-                <td valign="middle"><a href="#" class="small" onclick="openSector({{galaxy}}, {{sector3}})" data-bs-toggle="tooltip" data-bs-title="Secteur {{galaxy}}.{{sector3}}"><i class="fa-fw fas fa-chevron-right"></i></a></td>
-            </tr>
-            <tr class="lh-1">
-                <td><a href="#" class="small" onclick="openSector({{galaxy}}, {{sector6}})" data-bs-toggle="tooltip" data-bs-title="Secteur {{galaxy}}.{{sector6}}"><i class="fa-fw fas fa-chevron-down" style="transform: rotate(45deg);"></i></a></td>
-                <td align="center"><a href="#" class="small" onclick="openSector({{galaxy}}, {{sector5}})" data-bs-toggle="tooltip" data-bs-title="Secteur {{galaxy}}.{{sector5}}"><i class="fa-fw fas fa-chevron-down"></i></a></td>
-                <td><a href="#" class="small" onclick="openSector({{galaxy}}, {{sector4}})" data-bs-toggle="tooltip" data-bs-title="Secteur {{galaxy}}.{{sector4}}"><i class="fa-fw fas fa-chevron-down" style="transform: rotate(-45deg);"></i></a></td>
-            </tr>
-        </table>
-    </div>
-</div>
-<script>
+    {% elif nav_sector %}
+        <div id="map">
+            <div id="mapsector"
+                 class="border rounded"
+                 style="border-color:#495057!important">
+                <table cellpadding="0" cellspacing="0">
+                    <tr class="lh-1">
+                        <td>
+                            <a href="#"
+                               class="small"
+                               onclick="openSector({{ galaxy }}, {{ sector0 }})"
+                               data-bs-toggle="tooltip"
+                               data-bs-title="Secteur {{ galaxy }}.{{ sector0 }}"><i class="fa-fw fas fa-chevron-up" style="transform: rotate(-45deg);"></i></a>
+                        </td>
+                        <td align="center">
+                            <a href="#"
+                               class="small"
+                               onclick="openSector({{ galaxy }}, {{ sector1 }})"
+                               data-bs-toggle="tooltip"
+                               data-bs-title="Secteur {{ galaxy }}.{{ sector1 }}"><i class="fa-fw fas fa-chevron-up"></i></a>
+                        </td>
+                        <td>
+                            <a href="#"
+                               class="small"
+                               onclick="openSector({{ galaxy }}, {{ sector2 }})"
+                               data-bs-toggle="tooltip"
+                               data-bs-title="Secteur {{ galaxy }}.{{ sector2 }}"><i class="fa-fw fas fa-chevron-up" style="transform: rotate(45deg);"></i></a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td valign="middle">
+                            <a href="#"
+                               class="small"
+                               onclick="openSector({{ galaxy }}, {{ sector7 }})"
+                               data-bs-toggle="tooltip"
+                               data-bs-title="Secteur {{ galaxy }}.{{ sector7 }}"><i class="fa-fw fas fa-chevron-left"></i></a>
+                        </td>
+                        <td>
+                            <div class="map" id="mapsectorview">
+                            </div>
+                        </td>
+                        <td valign="middle">
+                            <a href="#"
+                               class="small"
+                               onclick="openSector({{ galaxy }}, {{ sector3 }})"
+                               data-bs-toggle="tooltip"
+                               data-bs-title="Secteur {{ galaxy }}.{{ sector3 }}"><i class="fa-fw fas fa-chevron-right"></i></a>
+                        </td>
+                    </tr>
+                    <tr class="lh-1">
+                        <td>
+                            <a href="#"
+                               class="small"
+                               onclick="openSector({{ galaxy }}, {{ sector6 }})"
+                               data-bs-toggle="tooltip"
+                               data-bs-title="Secteur {{ galaxy }}.{{ sector6 }}"><i class="fa-fw fas fa-chevron-down" style="transform: rotate(45deg);"></i></a>
+                        </td>
+                        <td align="center">
+                            <a href="#"
+                               class="small"
+                               onclick="openSector({{ galaxy }}, {{ sector5 }})"
+                               data-bs-toggle="tooltip"
+                               data-bs-title="Secteur {{ galaxy }}.{{ sector5 }}"><i class="fa-fw fas fa-chevron-down"></i></a>
+                        </td>
+                        <td>
+                            <a href="#"
+                               class="small"
+                               onclick="openSector({{ galaxy }}, {{ sector4 }})"
+                               data-bs-toggle="tooltip"
+                               data-bs-title="Secteur {{ galaxy }}.{{ sector4 }}"><i class="fa-fw fas fa-chevron-down" style="transform: rotate(-45deg);"></i></a>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <script>
     displaySector(new Array(0
         {% for planet in locations %},new Array('{% if planet.planet %}{{planet.planet_img}}{% endif %}{% if planet.vortex %}vortex{% endif %}{% if planet.asteroids %}asteroids{% endif %}{% if planet.clouds %}clouds{% endif %}', '{{planet.alliancetag}}','{{planet.planetid}}','{{planet.ownername}}','{{planet.planetname}}',{{planet.relation}},{{planet.radarstrength}},{{planet.radarjamming}},'{{planet.ore}}','{{planet.hydrocarbon}}','{{planet.floor}}','{{planet.space}}', '{{planet.a_ore}}','{{planet.a_hydrocarbon}}','{{planet.vortex_strength}}',{% if planet.frozen %}true{% endif %}{% if planet.active %}false{% endif %},{{planet.parked}}
         ,new Array({% if planet.orbit %}0{% for fleet in planet.fleets %},new Array({{fleet.fleetid}},'{{fleet.fleetname}}','{{fleet.alliancetag}}','{{fleet.fleetowner}}',{{fleet.relation}},{{fleet.signature}},0{% if fleet.fleeing %}1{% endif %}){% endfor %}{% endif %})
@@ -566,159 +729,216 @@
         ,'{{planet.buy_ore}}','{{planet.buy_hydrocarbon}}'
         ){% endfor %}
     ));
-</script>
-{% if radar %}
-<script>
+        </script>
+        {% if radar %}
+            <script>
 function sig(signature) {
 
 	if (signature > 0) document.write(formatnumber(signature))
 	else document.write('Indéterminé')
 }
-</script>
-{% if movings|length == 0 and enterings|length == 0 and leavings|length == 0 %}
-<div class="mt-3 card card-body text-center">
-    <span class="text-normal">Aucun mouvement détecté par nos radars</span>
-</div>
-{% endif %}
-{% if movings|length > 0 %}
-<div class="mt-3 card">
-    <div class="card-header">
-        <span>Mouvements dans le secteur</span>
-    </div>
-    <div class="list-group list-group-flush">
-        {% for fleet in movings %}
-        <div class="list-group-item">
-            <div class="row gx-2 flex-nowrap align-items-baseline">
-                <div class="col-auto">
-                    {% if fleet.relation == 2 %}
-                        {% if fleet.stance %}<img src="{{PATH_IMAGES}}interface/stance_attack.gif" class="stance" width="10" height="10" />
-                        {% else %}<img src="{{PATH_IMAGES}}interface/stance_defend.gif" class="stance" width="10" height="10" />
-                        {% endif %}
-                        <a href="/s03/fleet-view/?id={{fleet.fleetid}}" class="self">{{fleet.fleetname}}</a>
-                    {% else %}
-                        {% if fleet.alliancetag %}<a href="/s03/alliance-view/?tag={{fleet.alliancetag}}" class="{% if fleet.relation == 1 or fleet.relation == 0 %}text-success{% else %}text-danger{% endif %}">[{{fleet.alliancetag}}]</a>{% endif %}
-                        <a href="/s03/mail-new/?to={{fleet.name}}" class="{% if fleet.relation == 1 or fleet.relation == 0 %}text-success{% else %}text-danger{% endif %}">{{fleet.name}}</a>
-                    {% endif %}
+            </script>
+            {% if movings|length == 0 and enterings|length == 0 and leavings|length == 0 %}
+                <div class="mt-3 card card-body text-center">
+                    <span class="text-normal">Aucun mouvement détecté par nos radars</span>
                 </div>
-                <div class="col small">
-                    <script>sig({{fleet.signature}})</script>
+            {% endif %}
+            {% if movings|length > 0 %}
+                <div class="mt-3 card">
+                    <div class="card-header">
+                        <span>Mouvements dans le secteur</span>
+                    </div>
+                    <div class="list-group list-group-flush">
+                        {% for fleet in movings %}
+                            <div class="list-group-item">
+                                <div class="row gx-2 flex-nowrap align-items-baseline">
+                                    <div class="col-auto">
+                                        {% if fleet.relation == 2 %}
+                                            {% if fleet.stance %}
+                                                <img src="{{ PATH_IMAGES }}interface/stance_attack.gif"
+                                                     class="stance"
+                                                     width="10"
+                                                     height="10"/>
+                                            {% else %}
+                                                <img src="{{ PATH_IMAGES }}interface/stance_defend.gif"
+                                                     class="stance"
+                                                     width="10"
+                                                     height="10"/>
+                                            {% endif %}
+                                            <a href="/s03/fleet-view/?id={{ fleet.fleetid }}" class="self">{{ fleet.fleetname }}</a>
+                                        {% else %}
+                                            {% if fleet.alliancetag %}
+                                                <a href="/s03/alliance-view/?tag={{ fleet.alliancetag }}"
+                                                   class="{% if fleet.relation == 1 or fleet.relation == 0 %}text-success{% else %}text-danger{% endif %}">[{{ fleet.alliancetag }}]</a>
+                                            {% endif %}
+                                            <a href="/s03/mail-new/?to={{ fleet.name }}"
+                                               class="{% if fleet.relation == 1 or fleet.relation == 0 %}text-success{% else %}text-danger{% endif %}">{{ fleet.name }}</a>
+                                        {% endif %}
+                                    </div>
+                                    <div class="col small">
+                                        <script>sig({{fleet.signature}})</script>
+                                    </div>
+                                    <div class="col-auto">
+                                        {% if fleet.f_planetid %}
+                                            <script>putplanet('{{fleet.f_planetid}}', '{{fleet.f_planetname}}', '{{fleet.f_g}}', '{{fleet.f_s}}', '{{fleet.f_p}}', {{fleet.f_relation}})</script>
+                                        {% else %}
+                                            <span class="text-normal">Planète inconnue</span>
+                                        {% endif %}
+                                    </div>
+                                    <div class="col-auto text-normal">
+                                        <i class="fa-fw fas fa-long-arrow-alt-right"></i>
+                                    </div>
+                                    <div class="col-auto">
+                                        {% if fleet.t_planetid %}
+                                            <script>putplanet('{{fleet.t_planetid}}', '{{fleet.t_planetname}}', '{{fleet.t_g}}', '{{fleet.t_s}}', '{{fleet.t_p}}', {{fleet.t_relation}})</script>
+                                        {% else %}
+                                            <span class="text-normal">Planète inconnue</span>
+                                        {% endif %}
+                                    </div>
+                                    <div class="col-auto text-yellow">
+                                        <script>putcountdown1({{fleet.time}}, 'Terminé', '/s03/empire-view/')</script>
+                                    </div>
+                                </div>
+                            </div>
+                        {% empty %}
+                            <div class="list-group-item">
+                                <span class="text-normal">Aucun mouvement en cours</span>
+                            </div>
+                        {% endfor %}
+                    </div>
                 </div>
-                <div class="col-auto">
-                    {% if fleet.f_planetid %}<script>putplanet('{{fleet.f_planetid}}', '{{fleet.f_planetname}}', '{{fleet.f_g}}', '{{fleet.f_s}}', '{{fleet.f_p}}', {{fleet.f_relation}})</script>
-                    {% else %}<span class="text-normal">Planète inconnue</span>
-                    {% endif %}
+            {% endif %}
+            {% if enterings|length > 0 %}
+                <div class="mt-3 card">
+                    <div class="card-header">
+                        <span>Flottes entrant dans le secteur</span>
+                    </div>
+                    <div class="list-group list-group-flush">
+                        {% for fleet in enterings %}
+                            <div class="list-group-item">
+                                <div class="row gx-2 flex-nowrap align-items-baseline">
+                                    <div class="col-auto">
+                                        {% if fleet.relation == 2 %}
+                                            {% if fleet.stance %}
+                                                <img src="{{ PATH_IMAGES }}interface/stance_attack.gif"
+                                                     class="stance"
+                                                     width="10"
+                                                     height="10"/>
+                                            {% else %}
+                                                <img src="{{ PATH_IMAGES }}interface/stance_defend.gif"
+                                                     class="stance"
+                                                     width="10"
+                                                     height="10"/>
+                                            {% endif %}
+                                            <a href="/s03/fleet-view/?id={{ fleet.fleetid }}" class="self">{{ fleet.fleetname }}</a>
+                                        {% else %}
+                                            {% if fleet.alliancetag %}
+                                                <a href="/s03/alliance-view/?tag={{ fleet.alliancetag }}"
+                                                   class="{% if fleet.relation == 1 or fleet.relation == 0 %}text-success{% else %}text-danger{% endif %}">[{{ fleet.alliancetag }}]</a>
+                                            {% endif %}
+                                            <a href="/s03/mail-new/?to={{ fleet.name }}"
+                                               class="{% if fleet.relation == 1 or fleet.relation == 0 %}text-success{% else %}text-danger{% endif %}">{{ fleet.name }}</a>
+                                        {% endif %}
+                                    </div>
+                                    <div class="col small">
+                                        <script>sig({{fleet.signature}})</script>
+                                    </div>
+                                    <div class="col-auto">
+                                        {% if fleet.f_planetid %}
+                                            <script>putplanet('{{fleet.f_planetid}}', '{{fleet.f_planetname}}', '{{fleet.f_g}}', '{{fleet.f_s}}', '{{fleet.f_p}}', {{fleet.f_relation}})</script>
+                                        {% else %}
+                                            <span class="text-normal">Planète inconnue</span>
+                                        {% endif %}
+                                    </div>
+                                    <div class="col-auto text-normal">
+                                        <i class="fa-fw fas fa-long-arrow-alt-right"></i>
+                                    </div>
+                                    <div class="col-auto">
+                                        {% if fleet.t_planetid %}
+                                            <script>putplanet('{{fleet.t_planetid}}', '{{fleet.t_planetname}}', '{{fleet.t_g}}', '{{fleet.t_s}}', '{{fleet.t_p}}', {{fleet.t_relation}})</script>
+                                        {% else %}
+                                            <span class="text-normal">Planète inconnue</span>
+                                        {% endif %}
+                                    </div>
+                                    <div class="col-auto text-yellow">
+                                        <script>putcountdown1({{fleet.time}}, 'Terminé', '/s03/empire-view/')</script>
+                                    </div>
+                                </div>
+                            </div>
+                        {% empty %}
+                            <div class="list-group-item">
+                                <span class="text-normal">Aucun mouvement en cours</span>
+                            </div>
+                        {% endfor %}
+                    </div>
                 </div>
-                <div class="col-auto text-normal"><i class="fa-fw fas fa-long-arrow-alt-right"></i></div>
-                <div class="col-auto">
-                    {% if fleet.t_planetid %}<script>putplanet('{{fleet.t_planetid}}', '{{fleet.t_planetname}}', '{{fleet.t_g}}', '{{fleet.t_s}}', '{{fleet.t_p}}', {{fleet.t_relation}})</script>
-                    {% else %}<span class="text-normal">Planète inconnue</span>
-                    {% endif %}
+            {% endif %}
+            {% if leavings|length > 0 %}
+                <div class="mt-3 card">
+                    <div class="card-header">
+                        <span>Flottes sortant du secteur</span>
+                    </div>
+                    <div class="list-group list-group-flush">
+                        {% for fleet in leavings %}
+                            <div class="list-group-item">
+                                <div class="row gx-2 flex-nowrap align-items-baseline">
+                                    <div class="col-auto">
+                                        {% if fleet.relation == 2 %}
+                                            {% if fleet.stance %}
+                                                <img src="{{ PATH_IMAGES }}interface/stance_attack.gif"
+                                                     class="stance"
+                                                     width="10"
+                                                     height="10"/>
+                                            {% else %}
+                                                <img src="{{ PATH_IMAGES }}interface/stance_defend.gif"
+                                                     class="stance"
+                                                     width="10"
+                                                     height="10"/>
+                                            {% endif %}
+                                            <a href="/s03/fleet-view/?id={{ fleet.fleetid }}" class="self">{{ fleet.fleetname }}</a>
+                                        {% else %}
+                                            {% if fleet.alliancetag %}
+                                                <a href="/s03/alliance-view/?tag={{ fleet.alliancetag }}"
+                                                   class="{% if fleet.relation == 1 or fleet.relation == 0 %}text-success{% else %}text-danger{% endif %}">[{{ fleet.alliancetag }}]</a>
+                                            {% endif %}
+                                            <a href="/s03/mail-new/?to={{ fleet.name }}"
+                                               class="{% if fleet.relation == 1 or fleet.relation == 0 %}text-success{% else %}text-danger{% endif %}">{{ fleet.name }}</a>
+                                        {% endif %}
+                                    </div>
+                                    <div class="col small">
+                                        <script>sig({{fleet.signature}})</script>
+                                    </div>
+                                    <div class="col-auto">
+                                        {% if fleet.f_planetid %}
+                                            <script>putplanet('{{fleet.f_planetid}}', '{{fleet.f_planetname}}', '{{fleet.f_g}}', '{{fleet.f_s}}', '{{fleet.f_p}}', {{fleet.f_relation}})</script>
+                                        {% else %}
+                                            <span class="text-normal">Planète inconnue</span>
+                                        {% endif %}
+                                    </div>
+                                    <div class="col-auto text-normal">
+                                        <i class="fa-fw fas fa-long-arrow-alt-right"></i>
+                                    </div>
+                                    <div class="col-auto">
+                                        {% if fleet.t_planetid %}
+                                            <script>putplanet('{{fleet.t_planetid}}', '{{fleet.t_planetname}}', '{{fleet.t_g}}', '{{fleet.t_s}}', '{{fleet.t_p}}', {{fleet.t_relation}})</script>
+                                        {% else %}
+                                            <span class="text-normal">Planète inconnue</span>
+                                        {% endif %}
+                                    </div>
+                                    <div class="col-auto text-yellow">
+                                        <script>putcountdown1({{fleet.time}}, 'Terminé', '/s03/empire-view/')</script>
+                                    </div>
+                                </div>
+                            </div>
+                        {% empty %}
+                            <div class="list-group-item">
+                                <span class="text-normal">Aucun mouvement en cours</span>
+                            </div>
+                        {% endfor %}
+                    </div>
                 </div>
-                <div class="col-auto text-yellow"><script>putcountdown1({{fleet.time}}, 'Terminé', '/s03/empire-view/')</script></div>
-            </div>
-        </div>
-        {% empty %}
-        <div class="list-group-item">
-            <span class="text-normal">Aucun mouvement en cours</span>
-        </div>
-        {% endfor %}
-    </div>
-</div>
-{% endif %}
-{% if enterings|length > 0 %}
-<div class="mt-3 card">
-    <div class="card-header">
-        <span>Flottes entrant dans le secteur</span>
-    </div>
-    <div class="list-group list-group-flush">
-        {% for fleet in enterings %}
-        <div class="list-group-item">
-            <div class="row gx-2 flex-nowrap align-items-baseline">
-                <div class="col-auto">
-                    {% if fleet.relation == 2 %}
-                        {% if fleet.stance %}<img src="{{PATH_IMAGES}}interface/stance_attack.gif" class="stance" width="10" height="10" />
-                        {% else %}<img src="{{PATH_IMAGES}}interface/stance_defend.gif" class="stance" width="10" height="10" />
-                        {% endif %}
-                        <a href="/s03/fleet-view/?id={{fleet.fleetid}}" class="self">{{fleet.fleetname}}</a>
-                    {% else %}
-                        {% if fleet.alliancetag %}<a href="/s03/alliance-view/?tag={{fleet.alliancetag}}" class="{% if fleet.relation == 1 or fleet.relation == 0 %}text-success{% else %}text-danger{% endif %}">[{{fleet.alliancetag}}]</a>{% endif %}
-                        <a href="/s03/mail-new/?to={{fleet.name}}" class="{% if fleet.relation == 1 or fleet.relation == 0 %}text-success{% else %}text-danger{% endif %}">{{fleet.name}}</a>
-                    {% endif %}
-                </div>
-                <div class="col small">
-                    <script>sig({{fleet.signature}})</script>
-                </div>
-                <div class="col-auto">
-                    {% if fleet.f_planetid %}<script>putplanet('{{fleet.f_planetid}}', '{{fleet.f_planetname}}', '{{fleet.f_g}}', '{{fleet.f_s}}', '{{fleet.f_p}}', {{fleet.f_relation}})</script>
-                    {% else %}<span class="text-normal">Planète inconnue</span>
-                    {% endif %}
-                </div>
-                <div class="col-auto text-normal"><i class="fa-fw fas fa-long-arrow-alt-right"></i></div>
-                <div class="col-auto">
-                    {% if fleet.t_planetid %}<script>putplanet('{{fleet.t_planetid}}', '{{fleet.t_planetname}}', '{{fleet.t_g}}', '{{fleet.t_s}}', '{{fleet.t_p}}', {{fleet.t_relation}})</script>
-                    {% else %}<span class="text-normal">Planète inconnue</span>
-                    {% endif %}
-                </div>
-                <div class="col-auto text-yellow"><script>putcountdown1({{fleet.time}}, 'Terminé', '/s03/empire-view/')</script></div>
-            </div>
-        </div>
-        {% empty %}
-        <div class="list-group-item">
-            <span class="text-normal">Aucun mouvement en cours</span>
-        </div>
-        {% endfor %}
-    </div>
-</div>
-{% endif %}
-{% if leavings|length > 0 %}
-<div class="mt-3 card">
-    <div class="card-header">
-        <span>Flottes sortant du secteur</span>
-    </div>
-    <div class="list-group list-group-flush">
-        {% for fleet in leavings %}
-        <div class="list-group-item">
-            <div class="row gx-2 flex-nowrap align-items-baseline">
-                <div class="col-auto">
-                    {% if fleet.relation == 2 %}
-                        {% if fleet.stance %}<img src="{{PATH_IMAGES}}interface/stance_attack.gif" class="stance" width="10" height="10" />
-                        {% else %}<img src="{{PATH_IMAGES}}interface/stance_defend.gif" class="stance" width="10" height="10" />
-                        {% endif %}
-                        <a href="/s03/fleet-view/?id={{fleet.fleetid}}" class="self">{{fleet.fleetname}}</a>
-                    {% else %}
-                        {% if fleet.alliancetag %}<a href="/s03/alliance-view/?tag={{fleet.alliancetag}}" class="{% if fleet.relation == 1 or fleet.relation == 0 %}text-success{% else %}text-danger{% endif %}">[{{fleet.alliancetag}}]</a>{% endif %}
-                        <a href="/s03/mail-new/?to={{fleet.name}}" class="{% if fleet.relation == 1 or fleet.relation == 0 %}text-success{% else %}text-danger{% endif %}">{{fleet.name}}</a>
-                    {% endif %}
-                </div>
-                <div class="col small">
-                    <script>sig({{fleet.signature}})</script>
-                </div>
-                <div class="col-auto">
-                    {% if fleet.f_planetid %}<script>putplanet('{{fleet.f_planetid}}', '{{fleet.f_planetname}}', '{{fleet.f_g}}', '{{fleet.f_s}}', '{{fleet.f_p}}', {{fleet.f_relation}})</script>
-                    {% else %}<span class="text-normal">Planète inconnue</span>
-                    {% endif %}
-                </div>
-                <div class="col-auto text-normal"><i class="fa-fw fas fa-long-arrow-alt-right"></i></div>
-                <div class="col-auto">
-                    {% if fleet.t_planetid %}<script>putplanet('{{fleet.t_planetid}}', '{{fleet.t_planetname}}', '{{fleet.t_g}}', '{{fleet.t_s}}', '{{fleet.t_p}}', {{fleet.t_relation}})</script>
-                    {% else %}<span class="text-normal">Planète inconnue</span>
-                    {% endif %}
-                </div>
-                <div class="col-auto text-yellow"><script>putcountdown1({{fleet.time}}, 'Terminé', '/s03/empire-view/')</script></div>
-            </div>
-        </div>
-        {% empty %}
-        <div class="list-group-item">
-            <span class="text-normal">Aucun mouvement en cours</span>
-        </div>
-        {% endfor %}
-    </div>
-</div>
-{% endif %}
-{% endif %}
-
-{% endif %}
-
-<script>setLoc('{{galaxy}}','{{sector}}');</script>
-
-{% endblock %}
+            {% endif %}
+        {% endif %}
+    {% endif %}
+    <script>setLoc('{{galaxy}}','{{sector}}');</script>
+{% endblock content %}

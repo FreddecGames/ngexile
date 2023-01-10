@@ -1,65 +1,70 @@
-{% extends 's03/layout.html' %}
-
+{% extends "s03/layout.html" %}
 {% load humanize %}
-
 {% block content %}
-
-<div class="nav nav-tabs mb-3">
-    <div class="nav-item"><a href="/s03/empire-fleets/" class="nav-link active">Flottes</a></div>
-    <div class="nav-item"><a href="/s03/empire-orbiting/" class="nav-link">Flottes en orbite</a></div>
-    <div class="nav-item"><a href="/s03/empire-ground/" class="nav-link">Vaisseaux au sol</a></div>
-    <div class="nav-item"><a href="/s03/empire-stats/" class="nav-link">Détruits / perdus</a></div>
-</div>  
-
-<table id="myTable" class="table table-card">
-    <tr>
-        <th class="col sort" onclick="sortTable(0)">Nom</th>
-        <th class="col-2 sort" onclick="sortTable(1)">Commandant</th>
-        <th class="col-2 text-end sort" onclick="sortTable(2, 'int')">Vaisseaux</th>
-        <th class="col-2 text-end sort" onclick="sortTable(3, 'int')">Cargaison</th>
-        <th class="col-4 text-end sort" onclick="sortTable(4, 'int')">Action</th>
-    </tr>
-    {% for fleet in fleets %}
-    <tr>
-        <td class="col" sortData="'{{fleet.name}}'">
-            {% if fleet.stance %}<img src="{{PATH_IMAGES}}interface/stance_attack.gif" class="stance" width="10" height="10" />
-            {% else %}<img src="{{PATH_IMAGES}}interface/stance_defend.gif" class="stance" width="10" height="10" />
-            {% endif %}
-            <a href="/s03/fleet-view/?id={{fleet.id}}">{{fleet.name}}</a>
-            <small class="ms-1">{{fleet.signature|intcomma}}</small>
-        </td>
-        <td class="col-2 text-end" sortData="'{{fleet.commandername}}'">
-            {% if fleet.commandername %}
-                {{fleet.commandername}}
-            {% endif %}
-        </td>
-        <td class="col-2 text-end" sortData="{{fleet.size}}">
-            {{fleet.size|intcomma}}
-        </td>
-        <td class="col-2 text-end" sortData="{{fleet.cargo_load}}">
-            {{fleet.cargo_load|intcomma}}
-        </td>
-        <td class="col-4 text-end" sortData="{{fleet.action}}">
-            <script>putplanet('{{fleet.planetid}}', '{{fleet.planetname}}', '{{fleet.g}}', '{{fleet.s}}', '{{fleet.p}}', {{fleet.relation}})</script>
-            {% if fleet.t_planetid %}
-            <small class="text-normal"><i class="fa-fw fas fa-long-arrow-alt-right"></i></small>
-            <script>putplanet('{{fleet.t_planetid}}', '{{fleet.t_planetname}}', '{{fleet.t_g}}', '{{fleet.t_s}}', '{{fleet.t_p}}', {{fleet.t_relation}})</script>
-            <span class="ms-2 text-yellow"><script>putcountdown1({{fleet.time}}, 'Terminé', '/s03/empire-fleets/')</script></span>
-            {% elif fleet.action == 2 %}
-            <span class="ms-2">Recyclage</span>
-            <span class="ms-2 text-yellow"><script>putcountdown1({{fleet.time}}, 'Terminé', '/s03/empire-fleets/')</script></span>
-            {% elif fleet.action == 4 %}
-            <span class="ms-2">Attente</span>
-            <span class="ms-2 text-yellow"><script>putcountdown1({{fleet.time}}, 'Terminé', '/s03/empire-fleets/')</script></span>
-            {% elif fleet.action == 'x' %}
-            <span class="ms-2 text-danger">Combat</span>
-            {% endif %}
-        </td>
-    </tr>
-    {% endfor %}
-</table>
-
-<script>
+    <div class="nav nav-tabs mb-3">
+        <div class="nav-item">
+            <a href="/s03/empire-fleets/" class="nav-link active">Flottes</a>
+        </div>
+        <div class="nav-item">
+            <a href="/s03/empire-orbiting/" class="nav-link">Flottes en orbite</a>
+        </div>
+        <div class="nav-item">
+            <a href="/s03/empire-ground/" class="nav-link">Vaisseaux au sol</a>
+        </div>
+        <div class="nav-item">
+            <a href="/s03/empire-stats/" class="nav-link">Détruits / perdus</a>
+        </div>
+    </div>
+    <table id="myTable" class="table table-card">
+        <tr>
+            <th class="col sort" onclick="sortTable(0)">Nom</th>
+            <th class="col-2 sort" onclick="sortTable(1)">Commandant</th>
+            <th class="col-2 text-end sort" onclick="sortTable(2, 'int')">Vaisseaux</th>
+            <th class="col-2 text-end sort" onclick="sortTable(3, 'int')">Cargaison</th>
+            <th class="col-4 text-end sort" onclick="sortTable(4, 'int')">Action</th>
+        </tr>
+        {% for fleet in fleets %}
+            <tr>
+                <td class="col" sortData="'{{ fleet.name }}'">
+                    {% if fleet.stance %}
+                        <img src="{{ PATH_IMAGES }}interface/stance_attack.gif"
+                             class="stance"
+                             width="10"
+                             height="10"/>
+                    {% else %}
+                        <img src="{{ PATH_IMAGES }}interface/stance_defend.gif"
+                             class="stance"
+                             width="10"
+                             height="10"/>
+                    {% endif %}
+                    <a href="/s03/fleet-view/?id={{ fleet.id }}">{{ fleet.name }}</a>
+                    <small class="ms-1">{{ fleet.signature|intcomma }}</small>
+                </td>
+                <td class="col-2 text-end" sortData="'{{ fleet.commandername }}'">
+                    {% if fleet.commandername %}{{ fleet.commandername }}{% endif %}
+                </td>
+                <td class="col-2 text-end" sortData="{{ fleet.size }}">{{ fleet.size|intcomma }}</td>
+                <td class="col-2 text-end" sortData="{{ fleet.cargo_load }}">{{ fleet.cargo_load|intcomma }}</td>
+                <td class="col-4 text-end" sortData="{{ fleet.action }}">
+                    <script>putplanet('{{fleet.planetid}}', '{{fleet.planetname}}', '{{fleet.g}}', '{{fleet.s}}', '{{fleet.p}}', {{fleet.relation}})</script>
+                    {% if fleet.t_planetid %}
+                        <small class="text-normal"><i class="fa-fw fas fa-long-arrow-alt-right"></i></small>
+                        <script>putplanet('{{fleet.t_planetid}}', '{{fleet.t_planetname}}', '{{fleet.t_g}}', '{{fleet.t_s}}', '{{fleet.t_p}}', {{fleet.t_relation}})</script>
+                        <span class="ms-2 text-yellow"><script>putcountdown1({{fleet.time}}, 'Terminé', '/s03/empire-fleets/')</script></span>
+                    {% elif fleet.action == 2 %}
+                        <span class="ms-2">Recyclage</span>
+                        <span class="ms-2 text-yellow"><script>putcountdown1({{fleet.time}}, 'Terminé', '/s03/empire-fleets/')</script></span>
+                    {% elif fleet.action == 4 %}
+                        <span class="ms-2">Attente</span>
+                        <span class="ms-2 text-yellow"><script>putcountdown1({{fleet.time}}, 'Terminé', '/s03/empire-fleets/')</script></span>
+                    {% elif fleet.action == 'x' %}
+                        <span class="ms-2 text-danger">Combat</span>
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+    <script>
 function sortTable(n, type="str") {
 
     var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
@@ -117,6 +122,5 @@ function sortTable(n, type="str") {
         }
     }
 }
-</script>
-
-{% endblock %}
+    </script>
+{% endblock content %}

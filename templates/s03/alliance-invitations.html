@@ -1,33 +1,58 @@
-{% extends 's03/layout.html' %}
-
+{% extends "s03/layout.html" %}
 {% block content %}
-
     <div class="nav nav-tabs mb-3">
         {% if allianceId %}
-        <div class="nav-item"><a href="/s03/alliance-view/" class="nav-link">Vue d'ensemble</a></div>
-        {% if show_management %}<div class="nav-item"><a href="/s03/alliance-manage/" class="nav-link">Gestion</a></div>{% endif %}
-        {% if show_management %}<div class="nav-item"><a href="/s03/alliance-ranks/" class="nav-link">Grades</a></div>{% endif %}
-        {% if show_members %}<div class="nav-item"><a href="/s03/alliance-members/" class="nav-link">Membres</a></div>{% endif %}
-        {% if show_members %}<div class="nav-item"><a href="/s03/alliance-recruit/" class="nav-link">Recrutement</a></div>{% endif %}
-        <div class="nav-item"><a href="/s03/alliance-wars/" class="nav-link">Guerres</a></div>
-        {% if show_reports %}<div class="nav-item"><a href="/s03/alliance-reports/" class="nav-link">Rapports</a></div>{% endif %}
-        <div class="nav-item"><a href="/s03/alliance-invitations/" class="nav-link active">Invitations</a></div>
-        {% else %}
-        <div class="nav-item"><a href="/s03/alliance-invitations/" class="nav-link active">Invitations</a></div>
-        <div class="nav-item"><a href="/s03/alliance-create/" class="nav-link">Création</a></div>
-        {% endif %}    
-    </div>
-    
-    <div class="row g-3 flex-column">
-
-        {% if cant_join %}
-         <div class="col-12">
-            <div class="card card-body text-center">
-                <span class="text-danger">Vous êtes actuellement en train de quitter votre ancienne alliance, il vous est actuellement impossible de rejoindre une autre alliance.</span>
+            <div class="nav-item">
+                <a href="/s03/alliance-view/" class="nav-link">Vue d'ensemble</a>
             </div>
-        </div>
+            {% if show_management %}
+                <div class="nav-item">
+                    <a href="/s03/alliance-manage/" class="nav-link">Gestion</a>
+                </div>
+            {% endif %}
+            {% if show_management %}
+                <div class="nav-item">
+                    <a href="/s03/alliance-ranks/" class="nav-link">Grades</a>
+                </div>
+            {% endif %}
+            {% if show_members %}
+                <div class="nav-item">
+                    <a href="/s03/alliance-members/" class="nav-link">Membres</a>
+                </div>
+            {% endif %}
+            {% if show_members %}
+                <div class="nav-item">
+                    <a href="/s03/alliance-recruit/" class="nav-link">Recrutement</a>
+                </div>
+            {% endif %}
+            <div class="nav-item">
+                <a href="/s03/alliance-wars/" class="nav-link">Guerres</a>
+            </div>
+            {% if show_reports %}
+                <div class="nav-item">
+                    <a href="/s03/alliance-reports/" class="nav-link">Rapports</a>
+                </div>
+            {% endif %}
+            <div class="nav-item">
+                <a href="/s03/alliance-invitations/" class="nav-link active">Invitations</a>
+            </div>
+        {% else %}
+            <div class="nav-item">
+                <a href="/s03/alliance-invitations/" class="nav-link active">Invitations</a>
+            </div>
+            <div class="nav-item">
+                <a href="/s03/alliance-create/" class="nav-link">Création</a>
+            </div>
         {% endif %}
-
+    </div>
+    <div class="row g-3 flex-column">
+        {% if cant_join %}
+            <div class="col-12">
+                <div class="card card-body text-center">
+                    <span class="text-danger">Vous êtes actuellement en train de quitter votre ancienne alliance, il vous est actuellement impossible de rejoindre une autre alliance.</span>
+                </div>
+            </div>
+        {% endif %}
         <div class="col-12">
             <div class="card">
                 <div class="card-header">
@@ -38,46 +63,51 @@
                         {% for invitation in invitations %}
                             <div class="col-12">
                                 <div class="row gx-3">
-                                    <div class="col"><a href="/s03/alliance-view/?tag={{invitation.tag}}">[{{invitation.tag}}] {{invitation.name}}</a></div>
+                                    <div class="col">
+                                        <a href="/s03/alliance-view/?tag={{ invitation.tag }}">[{{ invitation.tag }}] {{ invitation.name }}</a>
+                                    </div>
                                     <div class="col-auto">
-                                        {% if invitation.accept %}<a href="?a=accept&tag={{invitation.tag}}">Accepter</a>{% endif %}
+                                        {% if invitation.accept %}<a href="?a=accept&tag={{ invitation.tag }}">Accepter</a>{% endif %}
                                         {% if invitation.cant_accept %}<span class="text-danger">Déjà dans une alliance</span>{% endif %}
                                         {% if invitation.cant_join %}<span class="text-danger">Impossible de rejoindre</span>{% endif %}
-                                        - <a href="?a=decline&tag={{invitation.tag}}">Refuser</a>
+                                        - <a href="?a=decline&tag={{ invitation.tag }}">Refuser</a>
                                     </div>
                                 </div>
                             </div>
                         {% empty %}
-                            <div class="col-12 text-center"><span class="text-normal">Aucune invitation</span></div>
+                            <div class="col-12 text-center">
+                                <span class="text-normal">Aucune invitation</span>
+                            </div>
                         {% endfor %}
                     </div>
                 </div>
             </div>
         </div>
-        
         {% if leave %}
-        <div class="col-12">
-            <form action="?a=leave" method="post" class="card">
-                <div class="card-header">
-                    <span>Quitter l'alliance</span>
-                </div>
-                <div class="card-body">
-                    <div class="row g-1 flex-column">
-                        <div class="col-12 text-center"><span class="text-warning">Attention, vous ne pourrez pas créer ou rejoindre d'alliance pendant {{hours_before_rejoin}} heures.</span></div>
-                        <div class="col-12 text-center">
-                            <input type="checkbox" class="checkbox" name="leave" id="leave" value="1">
-                            <label for="leave">Je quitte mon alliance actuelle</label>
-                        </div>
-                        <div class="col-12 text-center">
-                            <input type="submit" name="submit" value="Valider"></td></tr>
-                        </div>
+            <div class="col-12">
+                <form action="?a=leave" method="post" class="card">
+                    <div class="card-header">
+                        <span>Quitter l'alliance</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-1 flex-column">
+                            <div class="col-12 text-center">
+                                <span class="text-warning">Attention, vous ne pourrez pas créer ou rejoindre d'alliance pendant {{ hours_before_rejoin }} heures.</span>
+                            </div>
+                            <div class="col-12 text-center">
+                                <input type="checkbox" class="checkbox" name="leave" id="leave" value="1">
+                                <label for="leave">Je quitte mon alliance actuelle</label>
+                            </div>
+                            <div class="col-12 text-center">
+                                <input type="submit" name="submit" value="Valider">
+                            </td>
+                        </tr>
                     </div>
                 </div>
+            </div>
             {% csrf_token %}
-            </form>
-        </div>
-        {% endif %}
-
+        </form>
     </div>
-
-{% endblock %}
+{% endif %}
+</div>
+{% endblock content %}

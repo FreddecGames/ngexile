@@ -1,51 +1,58 @@
-{% extends 's03/layout.html' %}
-
+{% extends "s03/layout.html" %}
 {% load humanize %}
-
 {% block content %}
-
-<div class="nav nav-tabs mb-3">
-    <div class="nav-item"><a href="/s03/ranking-players/" class="nav-link active">Joueurs</a></div>
-    <div class="nav-item"><a href="/s03/ranking-alliances/" class="nav-link">Alliances</a></div>
-</div>
-
-<div class="card">
-    <div class="list-group list-group-flush">
-        {% for player in players %}
-        <div class="list-group-item {% if player.self %}bg-info{% elif player.ally %}bg-success{% endif %}">
-            <div class="row gx-3 align-items-center">
-                <div class="col-auto">
-                    {% if player.avatar_url %}<img src="{{player.avatar_url}}" width="48px" class="rounded" />
-                    {% else %}<img src="{{PATH_IMAGES}}interface/noavatar.gif" width="48px" class="rounded" />
-                    {% endif %}
-                </div>
-                <div class="col-auto" style="width:35px;">
-                    {{player.place}}.
-                </div>
-                <div class="col">
-                    <div class="row g-1">
-                        <div class="col-12">
-                            {% if player.name %}<a href="/s03/profile-view/?name={{player.username}}">{{player.username}}</a>
-                            {% else %}<span class="text-normal">Inconnu</span>
-                            {% endif %}
-                        </div>
-                        <div class="col-12">
-                            {% if player.alliance %}<a href="/s03/alliance-view/?tag={{player.alliancetag}}">[{{player.alliancetag}}] {{player.alliancename}}</a>
-                            {% else %}<span class="text-normal">Indépendant</span>
-                            {% endif %}
-                        </div>
-                    </div>
-                </div>
-                <div class="col-auto">
-                    <div class="row g-1">
-                        <div class="col-12 text-end">{{player.score|intcomma}}</div>
-                        <div class="col-12 text-end"><span class="{% if player.score_delta > 0%}text-success{% else %}text-danger{% endif %}">{{player.score_delta|intcomma}}</span></div>
-                    </div>
-                </div>
-            </div>
+    <div class="nav nav-tabs mb-3">
+        <div class="nav-item">
+            <a href="/s03/ranking-players/" class="nav-link active">Joueurs</a>
         </div>
-        {% endfor %}
+        <div class="nav-item">
+            <a href="/s03/ranking-alliances/" class="nav-link">Alliances</a>
+        </div>
     </div>
-</div>
-
-{% endblock %}
+    <div class="card">
+        <div class="list-group list-group-flush">
+            {% for player in players %}
+                <div class="list-group-item {% if player.self %}bg-info{% elif player.ally %}bg-success{% endif %}">
+                    <div class="row gx-3 align-items-center">
+                        <div class="col-auto">
+                            {% if player.avatar_url %}
+                                <img src="{{ player.avatar_url }}" width="48px" class="rounded" />
+                            {% else %}
+                                <img src="{{ PATH_IMAGES }}interface/noavatar.gif"
+                                     width="48px"
+                                     class="rounded"/>
+                            {% endif %}
+                        </div>
+                        <div class="col-auto" style="width:35px;">{{ player.place }}.</div>
+                        <div class="col">
+                            <div class="row g-1">
+                                <div class="col-12">
+                                    {% if player.name %}
+                                        <a href="/s03/profile-view/?name={{ player.username }}">{{ player.username }}</a>
+                                    {% else %}
+                                        <span class="text-normal">Inconnu</span>
+                                    {% endif %}
+                                </div>
+                                <div class="col-12">
+                                    {% if player.alliance %}
+                                        <a href="/s03/alliance-view/?tag={{ player.alliancetag }}">[{{ player.alliancetag }}] {{ player.alliancename }}</a>
+                                    {% else %}
+                                        <span class="text-normal">Indépendant</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <div class="row g-1">
+                                <div class="col-12 text-end">{{ player.score|intcomma }}</div>
+                                <div class="col-12 text-end">
+                                    <span class="{% if player.score_delta > 0 %}text-success{% else %}text-danger{% endif %}">{{ player.score_delta|intcomma }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock content %}

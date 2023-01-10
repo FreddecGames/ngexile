@@ -1,82 +1,104 @@
-{% extends 's03/layout.html' %}
-
+{% extends "s03/layout.html" %}
 {% block content %}
-
-<div class="nav nav-tabs mb-3">
-    <div class="nav-item"><a href="/s03/mail-inbox/" class="nav-link">Reçu</a></div>
-    <div class="nav-item"><a href="/s03/mail-outbox/" class="nav-link">Envoyé</a></div>
-    <div class="nav-item"><a href="/s03/mail-new/" class="nav-link active">Composer</a></div>
-    <div class="nav-item"><a href="/s03/mail-blacklist/" class="nav-link">Nations bloquées</a></div>
-</div>
-
-<script>
+    <div class="nav nav-tabs mb-3">
+        <div class="nav-item">
+            <a href="/s03/mail-inbox/" class="nav-link">Reçu</a>
+        </div>
+        <div class="nav-item">
+            <a href="/s03/mail-outbox/" class="nav-link">Envoyé</a>
+        </div>
+        <div class="nav-item">
+            <a href="/s03/mail-new/" class="nav-link active">Composer</a>
+        </div>
+        <div class="nav-item">
+            <a href="/s03/mail-blacklist/" class="nav-link">Nations bloquées</a>
+        </div>
+    </div>
+    <script>
     function setaddressee(obj, input) {
     
         if (obj.selectedIndex > 0) input.value = obj.options[obj.selectedIndex].text;
         else input.value = '';
     }
-</script>
-
-<form method="post" action="?" class="card card-body">
-    {% csrf_token %}
-    <div class="row g-1">
-        <div class="col-12">
-            <div class="row gx-3 align-items-center">
-                <div class="col-2 text-end">
-                    <span class="text-normal">Destinataire</span>
-                </div>
-                <div class="col">
-                    <div class="row gx-3 align-items-center">
-                        <div class="col">
-                            <input type="text" id="to" name="to" value="{{mailto}}" maxlength="128" class="w-100" />
-                        </div>
-                        <div class="col-auto">
-                            <select name="type" id="type" onchange="javascript:setaddressee(this, to)">
-                                <option>Contacts</option>
-                                {% if sendalliance %}<option value="alliance">Alliance</option>{% endif %}
-                                {% for to in tos %}<option value="{{to.to_user}}">{{to.to_user}}</option>{% endfor %}
-                            </select>
-                        </div>
-                        <div class="col-auto d-flex align-items-center">
-                            <input type="checkbox" class="me-1" name="bbcode" id="bbcode" value="1">
-                            <label for="bbcode">Utiliser bbcode</label>
+    </script>
+    <form method="post" action="?" class="card card-body">
+        {% csrf_token %}
+        <div class="row g-1">
+            <div class="col-12">
+                <div class="row gx-3 align-items-center">
+                    <div class="col-2 text-end">
+                        <span class="text-normal">Destinataire</span>
+                    </div>
+                    <div class="col">
+                        <div class="row gx-3 align-items-center">
+                            <div class="col">
+                                <input type="text"
+                                       id="to"
+                                       name="to"
+                                       value="{{ mailto }}"
+                                       maxlength="128"
+                                       class="w-100"/>
+                            </div>
+                            <div class="col-auto">
+                                <select name="type" id="type" onchange="javascript:setaddressee(this, to)">
+                                    <option>
+                                        Contacts
+                                    </option>
+                                    {% if sendalliance %}
+                                        <option value="alliance">
+                                            Alliance
+                                        </option>
+                                    {% endif %}
+                                    {% for to in tos %}
+                                        <option value="{{ to.to_user }}">
+                                            {{ to.to_user }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-auto d-flex align-items-center">
+                                <input type="checkbox" class="me-1" name="bbcode" id="bbcode" value="1">
+                                <label for="bbcode">Utiliser bbcode</label>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="col-12">
-            <div class="row gx-3 align-items-center">
-                <div class="col-2 text-end">
-                    <span class="text-normal">Objet</span>
+            <div class="col-12">
+                <div class="row gx-3 align-items-center">
+                    <div class="col-2 text-end">
+                        <span class="text-normal">Objet</span>
+                    </div>
+                    <div class="col">
+                        <input type="text"
+                               name="subject"
+                               value="{{ subject }}"
+                               maxlength="64"
+                               class="w-100"/>
+                    </div>
                 </div>
-                <div class="col">
-                    <input type="text" name="subject" value="{{subject}}" maxlength="64" class="w-100" />
+            </div>
+            <div class="col-12">
+                <div class="row gx-3">
+                    <div class="col-2 text-end pt-1">
+                        <span class="text-normal">Message</span>
+                    </div>
+                    <div class="col">
+                        <textarea name="message" rows="10" class="w-100">{{message}}</textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="row gx-3">
+                    <div class="col-2"></div>
+                    <div class="col">
+                        <span class="text-danger">Pas d'insulte, restez courtois, merci.</span>
+                    </div>
+                    <div class="col-auto">
+                        <input type="submit" name="sendmail" value="Envoyer" />
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="col-12">
-            <div class="row gx-3">
-                <div class="col-2 text-end pt-1">
-                    <span class="text-normal">Message</span>
-                </div>
-                <div class="col">
-                    <textarea name="message" rows="10" class="w-100">{{message}}</textarea>
-                </div>
-            </div>
-        </div>
-        <div class="col-12">
-            <div class="row gx-3">
-                <div class="col-2"></div>
-                <div class="col">
-                    <span class="text-danger">Pas d'insulte, restez courtois, merci.</span>
-                </div>
-                <div class="col-auto">
-                    <input type="submit" name="sendmail" value="Envoyer" />
-                </div>
-            </div>
-        </div>
-    </div>
-</form>
-
-{% endblock %}
+    </form>
+{% endblock content %}
