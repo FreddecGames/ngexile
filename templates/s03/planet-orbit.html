@@ -17,9 +17,9 @@
                             <div class="row gx-3 align-items-baseline">
                                 <div class="col-auto">
                                     {% if fleet.owner %}<a href="/s03/fleet-view/?id={{fleet.id}}" class="self">{{fleet.name}}</a>
-                                    {% elif fleet.ally %}<a href="/s03/mail-new/?to={{fleet.name}}" class="ally">{{fleet.name}}</a>
-                                    {% elif fleet.friend %}<a href="/s03/mail-new/?to={{fleet.name}}" class="friend">{{fleet.name}}</a>
-                                    {% elif fleet.enemy %}<a href="/s03/profile-view/?name={{fleet.name}}" class="enemy">{{fleet.name}}</a>
+                                    {% elif fleet.ally %}<a href="/s03/mail-new/?to={{fleet.ownername}}" class="ally">{{fleet.ownername}}</a>
+                                    {% elif fleet.friend %}<a href="/s03/mail-new/?to={{fleet.ownername}}" class="friend">{{fleet.ownername}}</a>
+                                    {% elif fleet.enemy %}<a href="/s03/profile-view/?name={{fleet.ownername}}" class="enemy">{{fleet.ownername}}</a>
                                     {% endif %}
                                 </div>
                                 <div class="col small">{{fleet.signature|intcomma}}</div>

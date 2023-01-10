@@ -1,84 +1,99 @@
 {% extends 's03/layout.html' %}
 
+{% load humanize %}
+
 {% block content %}
-<script>
-var fleetcapacity=0;
-var fleetload={{fleet_load}};
-var ships=new Array();
 
-function updatecargo() {
-	fleetcapacity = 0;
+    <script>
+        var fleetcapacity = 0;
+        var fleetload = {{fleet_load}};
+        var ships = new Array();
 
-	for(i=0;i<ships.length;i++)
-	{
-		fleetcapacity = fleetcapacity + ships[i][1]*ships[i][2] + Math.min(getval("addship"+ships[i][0]), ships[i][3])*ships[i][1] - Math.min(getval("removeship"+ships[i][0]), ships[i][2])*ships[i][1];
-	}
+        function updatecargo() {
+        
+            fleetcapacity = 0;
 
-	var obj = document.getElementById("capacity");
-	if(obj.innerHTML != fleetcapacity) obj.innerHTML = formatnumber(fleetcapacity);
+            for (i = 0; i < ships.length; i++) {
+                fleetcapacity = fleetcapacity + ships[i][1] * ships[i][2] + Math.min(getval("addship" + ships[i][0]), ships[i][3]) * ships[i][1] - Math.min(getval("removeship" + ships[i][0]), ships[i][2]) * ships[i][1];
+            }
 
-	window.setTimeout("updatecargo()", 100);
-}
+            var obj = document.getElementById("capacity");
+            if (obj.innerHTML != fleetcapacity) obj.innerHTML = formatnumber(fleetcapacity);
 
-function add_all() {
-	for(i=0;i<ships.length;i++)
-	{
-		setval("addship"+ships[i][0], ships[i][3]);
-	}
-}
+            window.setTimeout("updatecargo()", 100);
+        }
 
-function remove_all() {
-	for(i=0;i<ships.length;i++)
-	{
-		setval("removeship"+ships[i][0], ships[i][2]);
-	}
-}
+        function add_all() {
+            for (i = 0; i < ships.length; i++) {
+                setval("addship" + ships[i][0], ships[i][3]);
+            }
+        }
 
-function submitchanges() {
-	if(fleetload > fleetcapacity)
-	{
-		alert("La capacité de votre flotte est plus faible que son chargement actuel");
-		return false;
-	}
-	else
-		document.forms.ships.submit();
-}
-</script>
+        function remove_all() {
+            for(i=0;i<ships.length;i++) {
+                setval("removeship" + ships[i][0], ships[i][2]);
+            }
+        }
 
-<div id="fleetships">
-<form method="post" action="/s03/fleet-ships/?id={{fleetid}}" name="ships">{% csrf_token %}
-<input type="hidden" name="transfer_ships" value="1">
-<table class="default">
-	<tr class="title"><td colspan="6">{{fleetname}} - Gestion des vaisseaux</td></tr>
-	<tr class="header"><td>Vaisseau</td><td>Cargo</td><td>Quantité</td><td>Retirer</td><td>Au sol</td><td>Ajouter</td></tr>
-	{% for ship in shiplist %}
-	<tr>
-		<td>{{ship.name}}</td>
-		<td align=right>{{ship.cargo_capacity}}</td>
-		<td align=right>{{ship.quantity}}</td>
-		<td><input type="text" id="removeship{{ship.id}}" name="removeship{{ship.id}}" size=8> <a href="javascript:setval('removeship{{ship.id}}', {{ship.quantity}})">max</a></td>
-		<td align=right>{{ship.available}}</td>
-		<td><input type="text" id="addship{{ship.id}}" name="addship{{ship.id}}" size=8> <a href="javascript:setval('addship{{ship.id}}', {{ship.available}})">max</a></td>
-		<script>ships.push(new Array({{ship.id}},{{ship.cargo_capacity}},{{ship.quantity}},{{ship.available}}));</script>
-	</tr>
-	{% endfor %}
-	<tr>
-		<td colspan=2>&nbsp;</td>
-		<td colspan=2 align=center><a href="javascript:remove_all()">Tout retirer</a></td>
-		<td colspan=2 align=center><a href="javascript:add_all()">Tout ajouter</a></td>
-	</tr>
+        function submitchanges() {
+            if (fleetload > fleetcapacity) {
+                alert("La capacité de votre flotte est plus faible que son chargement actuel");
+                return false;
+            }
+            else document.forms.ships.submit();
+        }
+    </script>
 
-	<tr>
-	<td>Capacité</td>
-	<td colspan=6>
-	<span id="load">{{fleet_load}}</span> / <span id="capacity">{{fleet_capacity}}</span> unités
-	</td>
-	</tr>
-	<tr><td colspan=6 align=center>
-	<input type="button" value="< Retour" onclick="javascript:window.location.href='/s03/fleet-view/?id={{fleetid}}'">&nbsp;<input type="button" value="Transférer" onclick="javascript:submitchanges()">
-	</td></tr>
-</table>
-</form>
-<script>window.setTimeout("updatecargo()", 100);</script>
-</div>
+    <form method="post" action="/s03/fleet-ships/?id={{fleetid}}" class="card">
+        <div class="card-header">
+            <div class="row gx-3">
+                <div class="col-auto"><a href="/s03/fleet-view/?id={{fleetid}}"><i class="fa-fw fas fa-arrow-circle-left"></i></a></div>
+                <div class="col">Gestion des vaisseaux</div>
+                <div class="col-auto"><small class="text-normal">flotte</small></div>
+                <div class="col-auto"><span class="text-player">{{fleetname}}</span></div>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="row g-1 flex-column">
+                <div class="col-12">
+                    <div class="row gx-3 align-items-center">
+                        <div class="col"><span class="text-normal">Vaisseau</span></div>
+                        <div class="col-2"><span class="text-normal">Cargo</span></div>
+                        <div class="col-auto text-end" style="width:75px;"><span class="text-normal">Quantité</span></div>
+                        <div class="col-2"><span class="text-normal">Retirer</span></div>
+                        <div class="col-auto text-end" style="width:75px;"><span class="text-normal">Au sol</span></div>
+                        <div class="col-2"><span class="text-normal">Ajouter</span></div>
+                    </div>
+                </div>
+                <div class="col-12"><hr class="my-1"></div>            
+                {% for ship in shiplist %}
+                    <script>ships.push(new Array({{ship.id}}, {{ship.cargo_capacity}}, {{ship.quantity}}, {{ship.available}}));</script>
+                    <div class="col-12">
+                        <div class="row gx-3 align-items-center">
+                            <div class="col"><span class="text-normal">{{ship.name}}</span></div>
+                            <div class="col-2">{{ship.cargo_capacity|intcomma}}</div>
+                            <div class="col-auto text-end" style="width:75px;">{{ship.quantity|intcomma}}</div>
+                            <div class="col-2"><input type="number" id="removeship{{ship.id}}" name="removeship{{ship.id}}" size="8" /> <a href="javascript:setval('removeship{{ship.id}}', {{ship.quantity}})">max</a></div>
+                            <div class="col-auto text-end" style="width:75px;">{{ship.available|intcomma}}</div>
+                            <div class="col-2"><input type="number" id="addship{{ship.id}}" name="addship{{ship.id}}" size="8" /> <a href="javascript:setval('addship{{ship.id}}', {{ship.available}})">max</a></div>
+                        </div>
+                    </div>
+                {% endfor %}
+                <div class="col-12"><hr class="my-1"></div>
+                <div class="col-12">
+                    <div class="row gx-3 align-items-center">
+                        <div class="col"><span class="text-normal">Capacité</span> <span id="load" class="ms-2">{{fleet_load|intcomma}}</span> <small class="text-normal">/<span id="capacity">{{fleet_capacity|intcomma}}</span> unités</small></div>
+                        <div class="col-auto"><a href="javascript:remove_all()">Tout retirer</a></div>
+                        <div class="col-auto"><a href="javascript:add_all()">Tout ajouter</a></div>
+                        <div class="col-auto"><input type="button" value="Transférer" onclick="javascript:submitchanges()"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <input type="hidden" name="transfer_ships" value="1">
+    {% csrf_token %}
+    </form>
+    
+    <script>window.setTimeout("updatecargo()", 100);</script>
+
 {% endblock %}
