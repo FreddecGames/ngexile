@@ -19,33 +19,30 @@
     </div>
 
     <div class="card">
-        <div class="card-header">
+        <div class="card-header text-center">
             <span class="fs-6">[{{tag}}] {{name}}</span>
         </div>
         <div class="card-body">
             <div class="row g-1">
-                {% if logo_url %}<div class="col-12 text-center"><img src="{{logo_url}}" /></div>
-                {% else %}<div class="col-12 text-center"><span class="text-normal">Pas de logo</span></div>
-                {% endif %}
-                {% if description %}<div class="col-12 text-center">{{description|escape|safe}}</div>
-                {% else %}<div class="col-12 text-center"><span class="text-normal">Pas de description</span></div>
-                {% endif %}
+                {% if logo_url %}<div class="col-12 text-center"><img src="{{logo_url}}" /></div>{% endif %}
                 <div class="col-12">
-                    <div class="row g-1">
-                        {% for rank in ranks %}
-                            <div class="col-12">
-                                <div class="row gx-3">
-                                    <div class="col-3 text-end"><span class="text-normal">{{rank.rank_label}}</span></div>
-                                    <div class="col">
-                                        <div class="row gx-3">
-                                            {% for member in rank.members %}<div class="col-auto"><a href="/s03/mail-new/?to={{member.member}}">{{member.member}}</a></div>{% endfor %}
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        {% endfor %}
+                    <div class="row gx-3">
+                        <div class="col-3 text-end"><span class="text-normal">Description</span></div>
+                        <div class="col">{% if description %}{{description|escape|safe}}{% else %}<span class="text-normal">Pas de description</span>{% endif %}</div>
                     </div>
                 </div>
+                {% for rank in ranks %}
+                    <div class="col-12">
+                        <div class="row gx-3">
+                            <div class="col-3 text-end"><span class="text-normal">{{rank.rank_label}}</span></div>
+                            <div class="col">
+                                <div class="row gx-3">
+                                    {% for member in rank.members %}<div class="col-auto"><a href="/s03/mail-new/?to={{member.member}}">{{member.member}}</a></div>{% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
                 <div class="col-12">
                     <div class="row gx-3">
                         <div class="col-3 text-end"><span class="text-normal">Nombre de membres</span></div>
