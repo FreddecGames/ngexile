@@ -34,7 +34,7 @@
                             <div class="row g-1">
                                 <div class="col-12">{{ alliance.score|intcomma }}</div>
                                 <div class="col-12 {% if alliance.score_delta > 0 %}text-success{% else %}text-danger{% endif %}">
-                                    {{ alliance.score_delta|intcomma }}
+                                    {% if alliance.score_delta > 0 %}<span>+</span>{% endif %}{{ alliance.score_delta|intcomma }}
                                 </div>
                             </div>
                         </div>

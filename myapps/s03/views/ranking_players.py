@@ -7,72 +7,43 @@ class View(GlobalView):
         response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
 
-        self.selected_menu = "ranking"
+        self.selected_menu = 'ranking'
 
-        content = GetTemplate(self.request, "ranking-players")
+        content = GetTemplate(self.request, 'ranking-players')
 
-        query = "SELECT username, v.score, v.score_prestige," + \
-                "COALESCE(date_part('day', now()-lastactivity), 15), alliances.name, alliances.tag, v.id, avatar_url, v.alliance_id, v.score-v.previous_score AS score_delta," + \
-                "score_visibility = 2 OR (score_visibility = 1 AND alliance_id IS NOT NULL AND alliance_id="+str(sqlValue(self.AllianceId))+") OR v.id="+str(self.UserId) + \
-                " FROM vw_players v" + \
-                "    LEFT JOIN alliances ON ((score_visibility = 2 OR v.id="+str(self.UserId)+" OR (score_visibility = 1 AND alliance_id IS NOT NULL AND alliance_id="+str(sqlValue(self.AllianceId))+")) AND alliances.id=v.alliance_id)" + \
-                " ORDER BY v.score DESC"
-        oRss = oConnExecuteAll(query)
+        query = 'SELECT users.id, username, users.score, avatar_url,' + \
+                ' alliance_id, alliances.name, alliances.tag, avatar_url, (users.score - users.previous_score) AS score_delta,' + \
+                ' (score_visibility = 2 OR (score_visibility = 1 AND alliance_id IS NOT NULL AND alliance_id=' + str(sqlValue(self.AllianceId)) + ') OR users.id=' + str(self.UserId) + ') AS score_visibility' + \
+                ' FROM vw_players AS users' + \
+                '    LEFT JOIN alliances ON ((score_visibility = 2 OR users.id=' + str(self.UserId) + ' OR (score_visibility = 1 AND alliance_id IS NOT NULL AND alliance_id=' + str(sqlValue(self.AllianceId)) + ')) AND alliances.id = alliance_id)' + \
+                ' ORDER BY users.score DESC'
+        dbRows = oConnRows(query)
 
-        i = 1
         list = []
-        content.AssignValue("players", list)
-        for oRs in oRss:
+        content.AssignValue('players', list)
+        
+        i = 1
+        for dbRow in dbRows:
+        
             item = {}
             list.append(item)
             
-            item["place"] = i
-            item["username"] = oRs[0]
-
-            visible = oRs[10]
-
-            if visible and oRs[4]:
-                item["alliancename"] = oRs[4]
-                item["alliancetag"] = oRs[5]
-                item["alliance"] = True
-            else:
-                item["noalliance"] = True
-
-            item["score"] = oRs[1]
-            item["score_battle"] = oRs[2]
-            if visible:
-                item["score_delta"] = oRs[9]
-                if oRs[9] > 0: item["plus"] = True
-                if oRs[9] < 0: item["minus"] = True
-            else:
-                item["score_delta"] = ""
-
-            item["stat_colonies"] = oRs[2]
-            item["last_login"] = oRs[3]
-
-            if oRs[3] <= 7:
-                item["recently"] = True
-            elif oRs[3] <= 14:
-                item["1weekplus"] = True
-            elif oRs[3] > 14:
-                item["2weeksplus"] = True
-
-            if visible:
-                if oRs[6] == self.UserId:
-                    item["self"] = True
-                elif self.AllianceId and oRs[8] == self.AllianceId:
-                    item["ally"] = True
-
-                # show avatar only if top 10
-                if oRs[7] == None or oRs[7] == "":
-                    item["noavatar"] = True
-                else:
-                    item["avatar_url"] = oRs[7]
-                    item["avatar"] = True
-
-                item["name"] = True
-            else:
-                item["name_na"] = True
+            item['place'] = i
+            
+            item['score'] = dbRow['score']
+            
+            if dbRow['score_visibility']:
+            
+                item['username'] = dbRow['username']
+                item['avatar_url'] = dbRow['avatar_url']
+                item['score_delta'] = dbRow['score_delta']
+                
+                if dbRow['tag']:
+                    item['alliance_tag'] = dbRow['tag']
+                    item['alliance_name'] = dbRow['name']
+                    
+                if dbRow['id'] == self.UserId: item['self'] = True
+                elif self.AllianceId and dbRow['alliance_id'] == self.AllianceId: item['ally'] = True
 
             i = i + 1
 

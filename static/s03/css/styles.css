@@ -3,6 +3,9 @@
 html, body { height: 100%; width: 100%; }
 
 body {
+    background-image: url("/static/img/background.jpg");
+    background-size: cover;
+    background-position: center;
 	background-color: #000;
 	font-family: Roboto, Arial; font-size: 12px; color: #fff;
 }
@@ -120,6 +123,7 @@ div.sector div.hostile { color: #f00; }
 div.sector div.resource { color: #ff0; }
 div.sector div.vortex { color: #f0f; }
 
+#mapsector { background-color: #000; }
 #mapsector table { border-collapse:collapse; border-spacing:0; }
 #mapsector table tr.border { font-size:1px; line-height:1px; }
 
