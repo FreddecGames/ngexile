@@ -195,7 +195,7 @@
                                                     <input type="number"
                                                            min="0"
                                                            name="s{{ ship.id }}"
-                                                           onchange="updateNeeds()"
+                                                           onkeyup="updateNeeds()"
                                                            size="3"
                                                            maxlength="5"
                                                            class="w-100"/>
@@ -229,7 +229,7 @@
                                     </div>
                                     <div class="col-auto" style="width:75px;">
                                         <img src="{{ PATH_IMAGES }}interface/workers.gif" class="res" width="16px" />
-                                        <span id="totalworkers">0</span>
+                                        <span id="totalcrew">0</span>
                                     </div>
                                     <div class="col-auto text-end" style="width:75px;">
                                         <span id="totaltime"><script>document.write(formattime(0));</script></span>
