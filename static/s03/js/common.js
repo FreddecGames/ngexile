@@ -106,12 +106,12 @@ function planet_str(id, name, g, s, p, rel) {
     
     switch (rel) {
         
-        case 2: var col = 'self'; break;
-        case 1: var col = 'ally'; break;
-        case 0:	var col = 'friend'; break;
-        case -1: var col = 'enemy'; break;
-        case -2: var col = 'enemy'; break;
-        case -3: var col = 'neutral'; break;
+        case 2: var col = 'text-player'; break;
+        case 1: var col = 'text-success'; break;
+        case 0:	var col = 'text-success'; break;
+        case -1: var col = 'text-danger'; break;
+        case -2: var col = 'text-danger'; break;
+        case -3: var col = 'text-normal'; break;
     }
 
     return '<a href="/s03/map/?g=' + g + '&s=' + s + '" class="' + col + '">' + g + '.' + s + '.' + p + '</a>'
