@@ -12,7 +12,7 @@
     <div class="card">
         <div class="list-group list-group-flush">
             {% for alliance in alliances %}
-                <div class="list-group-item {% if alliance.playeralliance %}bg-success{% endif %}">
+                <div class="list-group-item {% if alliance.player_alliance %}bg-success{% endif %}">
                     <div class="row gx-3 align-items-center">
                         <div class="col-auto">
                             <span>{{ alliance.place }}.</span>
@@ -26,7 +26,7 @@
                                     {{ alliance.members }} <small class="text-normal">membres</small>
                                 </div>
                                 <div class="col-12">
-                                    {{ alliance.stat_colonies }} <small class="text-normal">planètes</small>
+                                    {{ alliance.planets }} <small class="text-normal">planètes</small>
                                 </div>
                             </div>
                         </div>

@@ -12,7 +12,7 @@
         {% endfor %}
     {% endfor %}
 
-    function updateNeeds(){
+    function updateNeeds() {
     
         var ore = 0;
         var hydrocarbon = 0;
@@ -52,27 +52,27 @@
                         {% for ship in underconstructions %}
                             <div class="list-group-item bg-success">
                                 <div class="row gx-3">
-                                    <div class="col">
+                                    <div class="col-12">
                                         <a href="/s03/help/?cat=ships#{{ ship.id }}">{{ ship.name }}</a>
                                     </div>
-                                    <div class="col-auto">
+                                    <div class="col">
                                         <small class="text-normal">x</small>{{ ship.quantity|intcomma }}
                                     </div>
-                                    <div class="col-auto" style="width:90px;">
+                                    <div class="col-auto" style="width:100px;">
                                         <img src="{{ PATH_IMAGES }}interface/ore.gif" class="res" width="16px" />
                                         {{ ship.ore|intcomma }}
                                     </div>
-                                    <div class="col-auto" style="width:90px;">
+                                    <div class="col-auto" style="width:100px;">
                                         <img src="{{ PATH_IMAGES }}interface/hydrocarbon.gif"
                                              class="res"
                                              width="16px"/>
                                         {{ ship.hydrocarbon|intcomma }}
                                     </div>
-                                    <div class="col-auto" style="width:75px;">
+                                    <div class="col-auto" style="width:100px;">
                                         <img src="{{ PATH_IMAGES }}interface/energy.gif" class="res" width="16px" />
                                         {{ ship.energy|intcomma }}
                                     </div>
-                                    <div class="col-auto" style="width:75px;">
+                                    <div class="col-auto" style="width:100px;">
                                         <img src="{{ PATH_IMAGES }}interface/workers.gif" class="res" width="16px" />
                                         {{ ship.crew|intcomma }}
                                     </div>
@@ -88,27 +88,27 @@
                         {% for ship in queues %}
                             <div class="list-group-item">
                                 <div class="row gx-3">
-                                    <div class="col">
+                                    <div class="col-12">
                                         <a href="/s03/help/?cat=ships#{{ ship.id }}">{{ ship.name }}</a>
                                     </div>
-                                    <div class="col-auto">
+                                    <div class="col">
                                         <small class="text-normal">x</small>{{ ship.quantity|intcomma }}
                                     </div>
-                                    <div class="col-auto" style="width:90px;">
+                                    <div class="col-auto" style="width:100px;">
                                         <img src="{{ PATH_IMAGES }}interface/ore.gif" class="res" width="16px" />
                                         {{ ship.ore|intcomma }}
                                     </div>
-                                    <div class="col-auto" style="width:90px;">
+                                    <div class="col-auto" style="width:100px;">
                                         <img src="{{ PATH_IMAGES }}interface/hydrocarbon.gif"
                                              class="res"
                                              width="16px"/>
                                         {{ ship.hydrocarbon|intcomma }}
                                     </div>
-                                    <div class="col-auto" style="width:75px;">
+                                    <div class="col-auto" style="width:100px;">
                                         <img src="{{ PATH_IMAGES }}interface/energy.gif" class="res" width="16px" />
                                         {{ ship.energy|intcomma }}
                                     </div>
-                                    <div class="col-auto" style="width:75px;">
+                                    <div class="col-auto" style="width:100px;">
                                         <img src="{{ PATH_IMAGES }}interface/workers.gif" class="res" width="16px" />
                                         {{ ship.crew|intcomma }}
                                     </div>
@@ -156,10 +156,10 @@
                                     {% if ship.build %}
                                         <div class="col-12">
                                             <div class="row gx-3 align-items-center">
-                                                <div class="col">
+                                                <div class="col-12">
                                                     <a href="/s03/help/?cat=ships#{{ ship.id }}">{{ ship.name }}</a>
                                                 </div>
-                                                <div class="col-auto">
+                                                <div class="col">
                                                     {% if ship.quantity > 0 %}
                                                         <small class="text-normal">x</small>{{ ship.quantity|intcomma }}
                                                     {% else %}
@@ -167,24 +167,24 @@
                                                     {% endif %}
                                                 </div>
                                                 <div class="col-auto {% if ship.not_enough_ore %}text-danger{% endif %}"
-                                                     style="width:90px">
+                                                     style="width:100px">
                                                     <img src="{{ PATH_IMAGES }}interface/ore.gif" class="res" width="16px" />
                                                     {{ ship.ore|intcomma }}
                                                 </div>
                                                 <div class="col-auto {% if ship.not_enough_hydrocarbon %}text-danger{% endif %}"
-                                                     style="width:90px">
+                                                     style="width:100px">
                                                     <img src="{{ PATH_IMAGES }}interface/hydrocarbon.gif"
                                                          class="res"
                                                          width="16px"/>
                                                     {{ ship.hydrocarbon|intcomma }}
                                                 </div>
                                                 <div class="col-auto {% if ship.not_enough_energy %}text-danger{% endif %}"
-                                                     style="width:75px">
+                                                     style="width:100px">
                                                     <img src="{{ PATH_IMAGES }}interface/energy.gif" class="res" width="16px" />
                                                     {{ ship.energy|intcomma }}
                                                 </div>
                                                 <div class="col-auto {% if ship.not_enough_crew %}text-danger{% endif %}"
-                                                     style="width:75px">
+                                                     style="width:100px">
                                                     <img src="{{ PATH_IMAGES }}interface/workers.gif" class="res" width="16px" />
                                                     {{ ship.crew|intcomma }}
                                                 </div>
@@ -213,21 +213,21 @@
                                     <div class="col">
                                         <span class="text-normal">Total</span>
                                     </div>
-                                    <div class="col-auto" style="width:90px;">
+                                    <div class="col-auto" style="width:100px;">
                                         <img src="{{ PATH_IMAGES }}interface/ore.gif" class="res" width="16px" />
                                         <span id="totalore">0</span>
                                     </div>
-                                    <div class="col-auto" style="width:90px;">
+                                    <div class="col-auto" style="width:100px;">
                                         <img src="{{ PATH_IMAGES }}interface/hydrocarbon.gif"
                                              class="res"
                                              width="16px"/>
                                         <span id="totalhydrocarbon">0</span>
                                     </div>
-                                    <div class="col-auto" style="width:75px;">
+                                    <div class="col-auto" style="width:100px;">
                                         <img src="{{ PATH_IMAGES }}interface/energy.gif" class="res" width="16px" />
                                         <span id="totalenergy">0</span>
                                     </div>
-                                    <div class="col-auto" style="width:75px;">
+                                    <div class="col-auto" style="width:100px;">
                                         <img src="{{ PATH_IMAGES }}interface/workers.gif" class="res" width="16px" />
                                         <span id="totalcrew">0</span>
                                     </div>

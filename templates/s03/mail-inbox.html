@@ -28,14 +28,14 @@
     function ignore(name) {
     
         if (confirm('Êtes-vous sûr de vouloir bloquer les messages en provenance du joueur "' + name + '" ?'))
-            openURL("/s03/mail-inbox/?a=ignore&user=" + name, evalResponse);
+            window.location.href = "/s03/mail-inbox/?a=ignore&user=" + name
             
         return false;
     }
     
     function unignore(name) {
-    
-        openURL("/s03/mail-inbox/?a=unignore&user=" + name, evalResponse);
+        
+        window.location.href = "/s03/mail-inbox/?a=unignore&user=" + name
         return false;
     }
     </script>

@@ -26,10 +26,10 @@
             }
 
             if (rOrig > parseInt(document.getElementById("capacityOrig").innerHTML) || rOrig < 0)
-                rOrig = '<span class="full">' + rOrig + '</span>';
+                rOrig = '<span class="text-danger">' + rOrig + '</span>';
                 
             if (rNew > parseInt(document.getElementById("capacityNew").innerHTML) || rNew < 0)
-                rNew = '<span class="full">' + rNew + '</span>';
+                rNew = '<span class="text-danger">' + rNew + '</span>';
 
             document.getElementById("loadOrig").innerHTML = rOrig;
             document.getElementById("loadNew").innerHTML = rNew;

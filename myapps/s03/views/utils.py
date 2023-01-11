@@ -144,7 +144,7 @@ def GetTemplate(request, name):
 
     result.template = "s03/" + name + ".html"
 
-    result.AssignValue("PATH_IMAGES", "/static/assets/")
+    result.AssignValue("PATH_IMAGES", "/static/s03/img/")
 
     return result
 

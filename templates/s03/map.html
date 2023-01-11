@@ -94,12 +94,12 @@
 
     function getRelationClass(rel) {
         switch(rel){
-            case 2: return "self"; break;
-            case 1: return "ally"; break;
-            case 0:	return "friend"; break;
-            case -1: return "enemy"; break;
-            case -2: return "enemy"; break;
-            case -3: return "neutral"; break;
+            case 2: return "text-player"; break;
+            case 1: return "text-success"; break;
+            case 0:	return "text-success"; break;
+            case -1: return "text-danger"; break;
+            case -2: return "text-danger"; break;
+            case -3: return "text-normal"; break;
         }
         return "";
     }
@@ -146,7 +146,7 @@
         s += '<div class="row gx-2 align-items-baseline">'
         
         if(rel==2 || id != 0)
-            s += '<div class="col"><a title="Inspecter la flotte '+name+'" href="/s03/fleet-view/?id=' + id + '" class="self">'+(tag!=''?'['+tag+'] ':'')+name+'</a></div>';
+            s += '<div class="col"><a title="Inspecter la flotte '+name+'" href="/s03/fleet-view/?id=' + id + '" class="text-player">'+(tag!=''?'['+tag+'] ':'')+name+'</a></div>';
         else
         {
             var c = getRelationClass(rel);
@@ -432,7 +432,7 @@
                        onmouseover="setLocGalaxy({{ galaxy.galaxyid }})"
                        class="d-block rounded border {% if galaxy.hasplanet %}border-player{% elif galaxy.hasally %}border-success{% elif galaxy.hasenemy %}border-danger{% endif %}">
                         <div>
-                            <img src="/static/assets/galaxies/01.jpg" class="rounded" />
+                            <img src="{{ PATH_IMAGES }}galaxies/01.jpg" class="rounded" />
                         </div>
                         <div class="text-center">
                             <small>{{ galaxy.galaxyid }}</small>
@@ -591,7 +591,7 @@
                                         </div>
                                         <div class="col-auto">
                                             <div class="sector">
-                                                <div class="ally">
+                                                <div class="text-success">
                                                     <i class="fa-fw fas fa-circle"></i>
                                                 </div>
                                             </div>
@@ -605,7 +605,7 @@
                                         </div>
                                         <div class="col-auto">
                                             <div class="sector">
-                                                <div class="player">
+                                                <div class="text-player">
                                                     <i class="fa-fw fas fa-circle"></i>
                                                 </div>
                                             </div>
@@ -619,7 +619,7 @@
                                         </div>
                                         <div class="col-auto">
                                             <div class="sector">
-                                                <div class="hostile">
+                                                <div class="text-danger">
                                                     <i class="fa-fw fas fa-circle"></i>
                                                 </div>
                                             </div>
@@ -765,7 +765,7 @@ function sig(signature) {
                                                      width="10"
                                                      height="10"/>
                                             {% endif %}
-                                            <a href="/s03/fleet-view/?id={{ fleet.fleetid }}" class="self">{{ fleet.fleetname }}</a>
+                                            <a href="/s03/fleet-view/?id={{ fleet.fleetid }}" class="text-player">{{ fleet.fleetname }}</a>
                                         {% else %}
                                             {% if fleet.alliancetag %}
                                                 <a href="/s03/alliance-view/?tag={{ fleet.alliancetag }}"
@@ -830,7 +830,7 @@ function sig(signature) {
                                                      width="10"
                                                      height="10"/>
                                             {% endif %}
-                                            <a href="/s03/fleet-view/?id={{ fleet.fleetid }}" class="self">{{ fleet.fleetname }}</a>
+                                            <a href="/s03/fleet-view/?id={{ fleet.fleetid }}" class="text-player">{{ fleet.fleetname }}</a>
                                         {% else %}
                                             {% if fleet.alliancetag %}
                                                 <a href="/s03/alliance-view/?tag={{ fleet.alliancetag }}"
@@ -895,7 +895,7 @@ function sig(signature) {
                                                      width="10"
                                                      height="10"/>
                                             {% endif %}
-                                            <a href="/s03/fleet-view/?id={{ fleet.fleetid }}" class="self">{{ fleet.fleetname }}</a>
+                                            <a href="/s03/fleet-view/?id={{ fleet.fleetid }}" class="text-player">{{ fleet.fleetname }}</a>
                                         {% else %}
                                             {% if fleet.alliancetag %}
                                                 <a href="/s03/alliance-view/?tag={{ fleet.alliancetag }}"

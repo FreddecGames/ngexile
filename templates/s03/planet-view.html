@@ -131,13 +131,12 @@
             {% csrf_token %}
             <input type='hidden' name='action' value='rename'>
             <input type='text'
-                   class="editbox"
                    name='name'
                    size="28"
                    maxlength="16"
                    value='{{ planet_name }}'>
             &nbsp;
-            <input type='submit' value='OK' class=submitok>
+            <input type='submit' value='OK'>
             &nbsp;
             <img src='{{ PATH_IMAGES }}interface/close.gif'
                  width="12"
@@ -153,7 +152,6 @@
             <input type='hidden' name='action' value='firescientists'>
             <input type='hidden' name='planet' value='{{ planet_id }}'>
             <input type='text'
-                   class="editbox"
                    name='amount'
                    id="scientistsXXX"
                    size="8"
@@ -162,7 +160,6 @@
             &nbsp;
             <input type='submit'
                    value='OK'
-                   class="submitok"
                    onclick="return confirmScientists(XXX)">
             &nbsp;
             <img src='{{ PATH_IMAGES }}interface/close.gif'
@@ -178,7 +175,6 @@
             {% csrf_token %}
             <input type='hidden' name='action' value='firesoldiers'>
             <input type='text'
-                   class="editbox"
                    name='amount'
                    id="soldiersXXX"
                    size="8"
@@ -187,7 +183,6 @@
             &nbsp;
             <input type='submit'
                    value='OK'
-                   class="submitok"
                    onclick="return confirmSoldiers(XXX)">
             &nbsp;
             <img src='{{ PATH_IMAGES }}interface/close.gif'
@@ -203,7 +198,6 @@
             {% csrf_token %}
             <input type='hidden' name='action' value='fireworkers'>
             <input type='text'
-                   class="editbox"
                    name='amount'
                    id="workersXXX"
                    size="8"
@@ -212,7 +206,6 @@
             &nbsp;
             <input type='submit'
                    value='OK'
-                   class="submitok"
                    onclick="return confirmWorkers(XXX)">
             &nbsp;
             <img src='{{ PATH_IMAGES }}interface/close.gif'
@@ -227,7 +220,7 @@
         <form action='?planet={{ planet_id }}' method='post'>
             {% csrf_token %}
             <input type='hidden' name='action' value='assigncommander'>
-            <select name='commander' class="editbox">
+            <select name='commander'>
                 {% if unassign %}
                     <option value='0'>
                         Renvoyer
@@ -250,7 +243,7 @@
                 {% endfor %}
             </select>
             &nbsp;
-            <input type='submit' value='OK' class=submitok>
+            <input type='submit' value='OK'>
             &nbsp;
             <img src='{{ PATH_IMAGES }}interface/close.gif'
                  width="12"

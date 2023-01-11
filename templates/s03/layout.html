@@ -10,14 +10,13 @@
               rel="stylesheet"
               integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65"
               crossorigin="anonymous">
-        <link href="{{ PATH_IMAGES }}styles/s_default/style.css"
+        <link href="/static/s03/css/styles.css"
               type="text/css"
               rel="stylesheet"
               media="all"/>
         <script type="text/javascript" src="/static/js/vendor-fontawesome.js"></script>
-        <script type="text/javascript" src="/static/scripts/common.js"></script>
-        <script type="text/javascript" src="/static/scripts/third-party/ajax1.js"></script>
-        <script type="text/javascript" src="/static/scripts/time.js"></script>
+        <script type="text/javascript" src="/static/s03/js/common.js"></script>
+        <script type="text/javascript" src="/static/s03/js/time.js"></script>
         {% if scroll %}<script>function loaded() { scrollTo(0, {{scrolly }}); }</script>{% endif %}
     </head>
     <body{% if scroll %} onload="loaded()"{% endif %}>

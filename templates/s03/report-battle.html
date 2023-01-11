@@ -13,7 +13,7 @@
                 </div>
                 {% for opponent in opponents %}
                     <div class="col-12 mt-3">
-                        <span class="fs-6 {% if opponent.self %}text-player{% elif opponent.friend %}text-friend{% elif opponent.ally %}text-ally{% else %}text-danger{% endif %}">
+                        <span class="fs-6 {% if opponent.self %}text-player{% elif opponent.friend %}text-success{% elif opponent.ally %}text-success{% else %}text-danger{% endif %}">
                             {% if opponent.alliancetag %}[{{ opponent.alliancetag }}]{% endif %}
                             {{ opponent.name }}
                             {% if opponent.won %}(vainqueur){% endif %}

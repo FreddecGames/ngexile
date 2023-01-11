@@ -13,13 +13,13 @@
                             <div class="row gx-3 align-items-baseline">
                                 <div class="col-auto">
                                     {% if fleet.owner %}
-                                        <a href="/s03/fleet-view/?id={{ fleet.id }}" class="self">{{ fleet.name }}</a>
+                                        <a href="/s03/fleet-view/?id={{ fleet.id }}" class="text-player">{{ fleet.name }}</a>
                                     {% elif fleet.ally %}
-                                        <a href="/s03/mail-new/?to={{ fleet.ownername }}" class="ally">{{ fleet.ownername }}</a>
+                                        <a href="/s03/mail-new/?to={{ fleet.ownername }}" class="text-success">{{ fleet.ownername }}</a>
                                     {% elif fleet.friend %}
-                                        <a href="/s03/mail-new/?to={{ fleet.ownername }}" class="friend">{{ fleet.ownername }}</a>
+                                        <a href="/s03/mail-new/?to={{ fleet.ownername }}" class="text-success">{{ fleet.ownername }}</a>
                                     {% elif fleet.enemy %}
-                                        <a href="/s03/profile-view/?name={{ fleet.ownername }}" class="enemy">{{ fleet.ownername }}</a>
+                                        <a href="/s03/profile-view/?name={{ fleet.ownername }}" class="text-danger">{{ fleet.ownername }}</a>
                                     {% endif %}
                                 </div>
                                 <div class="col small">{{ fleet.signature|intcomma }}</div>

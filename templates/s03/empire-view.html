@@ -154,13 +154,13 @@ function sig(signature) {
                                                      width="10"
                                                      height="10"/>
                                             {% endif %}
-                                            <a href="/s03/fleet-view/?id={{ fleet.id }}" class="self">{{ fleet.name }}</a>
+                                            <a href="/s03/fleet-view/?id={{ fleet.id }}" class="text-player">{{ fleet.name }}</a>
                                         {% elif fleet.ally %}
-                                            <a href="/s03/mail-new/?to={{ fleet.name }}" class="ally">{{ fleet.name }}</a>
+                                            <a href="/s03/mail-new/?to={{ fleet.name }}" class="text-success">{{ fleet.name }}</a>
                                         {% elif fleet.friend %}
-                                            <a href="/s03/mail-new/?to={{ fleet.name }}" class="friend">{{ fleet.name }}</a>
+                                            <a href="/s03/mail-new/?to={{ fleet.name }}" class="text-success">{{ fleet.name }}</a>
                                         {% elif fleet.hostile %}
-                                            <a href="/s03/profile-view/?name={{ fleet.name }}" class="enemy">{{ fleet.name }}</a>
+                                            <a href="/s03/profile-view/?name={{ fleet.name }}" class="text-danger">{{ fleet.name }}</a>
                                         {% endif %}
                                     </div>
                                     <div class="col small">
@@ -287,7 +287,7 @@ function sig(signature) {
                     </div>
                     <div class="list-group-item">
                         <span class="text-normal">Les coûts d'entretien et de fonctionnement estimés pour la prochaine période s'élèvent à</span>
-                        <img src="/static/assets/interface/credits.gif" class="res" width="16px">
+                        <img src="{{ PATH_IMAGES }}interface/credits.gif" class="res" width="16px">
                         {{ total_estimation|intcomma }}.
                     </div>
                 </div>

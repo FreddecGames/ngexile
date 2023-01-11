@@ -36,15 +36,15 @@
                                     <div class="row gx-3">
                                         <div class="col">
                                             {% if fleet.ally %}
-                                                <a href="/s03/mail-new/?to={{ fleet.fleetowner }}" class="ally">
+                                                <a href="/s03/mail-new/?to={{ fleet.fleetowner }}" class="text-success">
                                                     {% if fleet.tag %}[{{ fleet.tag }}]{% endif %}
                                                 {{ fleet.fleetowner }}</a>
                                             {% elif fleet.friend %}
-                                                <a href="/s03/mail-new/?to={{ fleet.fleetowner }}" class="friend">
+                                                <a href="/s03/mail-new/?to={{ fleet.fleetowner }}" class="text-success">
                                                     {% if fleet.tag %}[{{ fleet.tag }}]{% endif %}
                                                 {{ fleet.fleetowner }}</a>
                                             {% elif fleet.hostile %}
-                                                <a href="/s03/profile-view/?name={{ fleet.fleetowner }}" class="enemy">
+                                                <a href="/s03/profile-view/?name={{ fleet.fleetowner }}" class="text-danger">
                                                     {% if fleet.tag %}[{{ fleet.tag }}]{% endif %}
                                                 {{ fleet.fleetowner }}</a>
                                             {% endif %}
