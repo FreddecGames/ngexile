@@ -540,6 +540,27 @@
                 </form>
             </div>
         {% endif %}
+        <script>
+            function load_all(o, h, s, so, w) {
+            
+                setval('load_ore', o);
+                setval('load_hydrocarbon', h);
+                setval('load_scientists', s);
+                setval('load_soldiers', so);
+                setval('load_workers', w);
+                return false;
+            }
+
+            function unload_all(o, h, s, so, w) {
+            
+                setval('unload_ore', o);
+                setval('unload_hydrocarbon', h);
+                setval('unload_scientists', s);
+                setval('unload_soldiers', so);
+                setval('unload_workers', w);
+                return false;
+            }
+        </script>
         <div class="col-12">
             <div class="card">
                 <div class="card-header">
