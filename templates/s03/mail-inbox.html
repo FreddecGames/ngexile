@@ -28,14 +28,8 @@
     function ignore(name) {
     
         if (confirm('Êtes-vous sûr de vouloir bloquer les messages en provenance du joueur "' + name + '" ?'))
-            window.location.href = "/s03/mail-inbox/?a=ignore&user=" + name
+            return true
             
-        return false;
-    }
-    
-    function unignore(name) {
-        
-        window.location.href = "/s03/mail-inbox/?a=unignore&user=" + name
         return false;
     }
     </script>
@@ -46,11 +40,13 @@
                     <div id="mail{{ mail.index }}" class="list-group-item">
                         <div class="row gx-3">
                             <div class="col-auto pt-3">
-                                <input type="checkbox"
-                                       class="checkbox"
-                                       name="checked_mails"
-                                       value="{{ mail.mailid }}"
-                                       onclick="donotclick({{ mail.index }}, event)"/>
+                                <div class="form-check">
+                                    <input type="checkbox"
+                                           class="form-check-input"
+                                           name="checked_mails"
+                                           value="{{ mail.mailid }}"
+                                           onclick="donotclick({{ mail.index }}, event)"/>
+                                </div>
                             </div>
                             <div class="col">
                                 <div class="row g-3">
@@ -75,9 +71,13 @@
                                                 <span class="fs-6">{{ mail.subject }}</span>
                                             </div>
                                             <div class="col-auto">
-                                                {% if mail.ignore %}<a href="#" onclick="return ignore('{{ mail.from }}')" class="me-2">Bloquer</a>{% endif %}
+                                                {% if mail.ignore %}
+                                                    <a href="/s03/mail-inbox/?a=ignore&user={{ mail.from }}"
+                                                       onclick="return ignore('{{ mail.from }}')"
+                                                       class="me-2">Bloquer</a>
+                                                {% endif %}
                                                 {% if mail.ignored %}
-                                                    <span class="text-danger">Bloqué</span> <a href="#" onclick="return unignore('{{ mail.from }}')" class="mx-2">Débloquer</a>
+                                                    <span class="text-danger">Bloqué</span> <a href="/s03/mail-inbox/?a=unignore&user={{ mail.from }}" class="mx-2">Débloquer</a>
                                                 {% endif %}
                                                 {% if mail.from %}<a href="?a=reply&mailid={{ mail.mailid }}">Répondre</a>{% endif %}
                                             </div>

@@ -41,13 +41,15 @@
                             <span class="text-normal">Compteurs</span>
                         </div>
                         <div class="col my-1">
-                            <input type="checkbox"
-                                   class="checkbox"
-                                   name="timers_enabled"
-                                   id="timers_enabled"
-                                   value="1"
-                                   {% if timers_enabled %} checked{% endif %}>
-                            <label for="timers_enabled">Afficher le temps restant en temps réel</label>
+                            <div class="form-check">
+                                <input type="checkbox"
+                                       class="form-check-input"
+                                       name="timers_enabled"
+                                       id="timers_enabled"
+                                       value="1"
+                                       {% if timers_enabled %} checked{% endif %}>
+                                <label class="form-check-label" for="timers_enabled">Afficher le temps restant en temps réel</label>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -78,20 +80,28 @@
                         </div>
                         <div class="col py-1">
                             {% if delete_account %}
-                                <input type="checkbox" class="checkbox" name="delete" id="delete" value="1">
-                                <label for="delete">Cochez cette case pour supprimer votre compte (2 jours de délai)</label>
+                                <div class="form-check">
+                                    <input type="checkbox"
+                                           class="form-check-input"
+                                           name="delete"
+                                           id="delete"
+                                           value="1">
+                                    <label class="form-check-label" for="delete">Cochez cette case pour supprimer votre compte (2 jours de délai)</label>
+                                </div>
                             {% endif %}
                             {% if account_deleting %}
-                                <input type="hidden" class="checkbox" name="deleting" value="1">
-                                <input type="checkbox"
-                                       class="checkbox"
-                                       name="delete"
-                                       id="delete"
-                                       value="1"
-                                       checked>
-                                <label for="delete">
-                                    Votre compte sera supprimé dans <script>putcountdown1({{remainingtime}},"");</script>
-                                </label>
+                                <div class="form-check">
+                                    <input type="hidden" name="deleting" value="1">
+                                    <input type="checkbox"
+                                           class="form-check-input"
+                                           name="delete"
+                                           id="delete"
+                                           value="1"
+                                           checked>
+                                    <label class="form-check-label" for="delete">
+                                        Votre compte sera supprimé dans <script>putcountdown1({{remainingtime}},"");</script>
+                                    </label>
+                                </div>
                             {% endif %}
                         </div>
                     </div>

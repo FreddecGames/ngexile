@@ -176,7 +176,7 @@ class GlobalView(BaseMixin, View):
         # Fill the planet list
         #
         if self.url_extra_params != "":
-            tpl_header.AssignValue("url", "?" + url_extra_params + "&planet=")
+            tpl_header.AssignValue("url", "?" + self.url_extra_params + "&planet=")
         else:
             tpl_header.AssignValue("url", "?planet=")
 

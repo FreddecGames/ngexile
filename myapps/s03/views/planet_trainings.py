@@ -9,8 +9,6 @@ class View(GlobalView):
 
         self.selected_menu = "trainings"
 
-        self.showHeader = True
-
         self.train_error = 0
 
         Action = request.GET.get("a", "").lower()

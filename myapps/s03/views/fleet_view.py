@@ -25,7 +25,7 @@ class View(GlobalView):
             self.action_result = "error_trade"
 
         if fleetid == 0:
-            return HttpResponseRedirect("/s03/orbit/")
+            return HttpResponseRedirect("/s03/planet-orbit/")
 
         self.RetrieveFleetOwnerId(fleetid)
 

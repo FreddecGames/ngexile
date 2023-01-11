@@ -90,11 +90,12 @@ select, input, textarea {
 
 input[type=number] { width: 55px; }
 
-.checkbox { 
-	margin:0px 4px 0px 0px; padding:0;
-	border:0;
-	background-color: transparent;	
-}
+input[type=checkbox] { min-height: auto; }
+
+.form-check { min-height: 0; padding-left: 1.5em; }
+.form-check .form-check-input { margin-right: .5rem; border-color: #000; }
+.form-check-input:checked { background-color: #ffa500; border-color: #ffa500; }
+.form-check-input:focus { border-color: #000; outline: 0;  box-shadow: none; }
 
 img.res {
 	margin-right:4px;

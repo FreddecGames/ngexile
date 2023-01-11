@@ -118,16 +118,17 @@ class View(GlobalView):
 
             if query != "False":
                 oConnDoQuery("UPDATE messages SET deleted=True WHERE (" + query + ") AND ownerid = " + str(self.UserId))
-
+        
         if request.GET.get("a", "") == "ignore":
+            print(dosql(request.GET.get("user")))
             oConnExecute("SELECT sp_ignore_sender(" + str(self.UserId) + "," + dosql(request.GET.get("user")) + ")")
 
-            return self.return_ignored_users
+            return self.display_mails()
 
         if request.GET.get("a", "") == "unignore":
             oConnDoQuery("DELETE FROM messages_ignore_list WHERE userid=" + str(self.UserId) + " AND ignored_userid=(SELECT id FROM users WHERE lower(username)=lower(" + dosql(request.GET.get("user")) + "))")
 
-            return self.return_ignored_users()
+            return self.display_mails()
 
         if self.compose:
             return self.display_compose_form(self.mailto, self.mailsubject, self.mailbody, self.moneyamount)

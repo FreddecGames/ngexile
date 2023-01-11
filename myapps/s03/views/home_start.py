@@ -10,13 +10,13 @@ class View(BaseMixin, View):
         userId = int(request.session.get(sUser, 0))
         if not userId or userId == 0: return HttpResponseRedirect('/s03/')
 
-        result = oConnExecute('SELECT username FROM users WHERE id=' + str(userId))
-        if not result: return HttpResponseRedirect('/s03/')
-        username = result[0]
+        dbRow = oConnRow('SELECT username FROM users WHERE id=' + str(userId))
+        if dbRow['username']: return HttpResponseRedirect('/s03/')
 
         #--- post
 
         result = 0
+        username = ''
 
         newName = request.POST.get('name', '')
         if newName != '':
@@ -32,9 +32,9 @@ class View(BaseMixin, View):
             if result == 0:
             
                 galaxy = int(request.POST.get('galaxy', 0))
-                result = oConnExecute('SELECT sp_reset_account(' + str(userId) + ',' + str(galaxy) + ')')
+                dbRow = oConnRow('SELECT sp_reset_account(' + str(userId) + ',' + str(galaxy) + ') AS result')
 
-                if result[0] == 0:
+                if dbRow['result'] == 0:
                     
                     orientation = int(request.POST.get('orientation', 0))
                     oConnDoQuery('UPDATE users SET orientation=' + str(orientation) + ' WHERE id=' + str(userId))
@@ -54,7 +54,7 @@ class View(BaseMixin, View):
                         oConnDoQuery('INSERT INTO researches(userid, researchid, level) VALUES(' + str(userId) + ', 31, 1)')
                         oConnDoQuery('INSERT INTO researches(userid, researchid, level) VALUES(' + str(userId) + ', 32, 1)')
 
-                    oConnExecute('SELECT sp_update_researches(' + str(userId) + ')')
+                    oConnDoQuery('SELECT sp_update_researches(' + str(userId) + ')')
 
                     return HttpResponseRedirect('/s03/empire-view/')
 
@@ -69,12 +69,12 @@ class View(BaseMixin, View):
         list = []
         content.AssignValue('galaxies', list)
         
-        results = oConnExecuteAll('SELECT id, recommended FROM sp_get_galaxy_info(' + str(userId) + ')')
-        for result in results:
+        dbRows = oConnRows('SELECT id, recommended FROM sp_get_galaxy_info(' + str(userId) + ')')
+        for dbRow in dbRows:
 
             item = {}
-            item['id'] = result[0]
-            item['recommendation'] = result[1]
+            item['id'] = dbRow['id']
+            item['recommendation'] = dbRow['recommended']
 
             list.append(item)
 

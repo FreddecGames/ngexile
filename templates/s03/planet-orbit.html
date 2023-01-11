@@ -19,7 +19,8 @@
                                     {% elif fleet.friend %}
                                         <a href="/s03/mail-new/?to={{ fleet.ownername }}" class="text-success">{{ fleet.ownername }}</a>
                                     {% elif fleet.enemy %}
-                                        <a href="/s03/profile-view/?name={{ fleet.ownername }}" class="text-danger">{{ fleet.ownername }}</a>
+                                        <a href="/s03/profile-view/?name={{ fleet.ownername }}"
+                                           class="text-danger">{{ fleet.ownername }}</a>
                                     {% endif %}
                                 </div>
                                 <div class="col small">{{ fleet.signature|intcomma }}</div>

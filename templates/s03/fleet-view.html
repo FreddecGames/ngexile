@@ -82,13 +82,17 @@
                 </div>
                 {% if can_take %}
                     <div class="col-auto">
-                        <input type="checkbox" id="take" name="take">
-                        Occuper planète (
-                        <img src="{{ PATH_IMAGES }}interface/prestige.gif"
-                             title="Prestige"
-                             class="res"
-                             width="16px"/>
-                        {{ prestige }})
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input" id="take" name="take">
+                            <label class="form-check-label" for="take">
+                                Occuper planète (
+                                <img src="{{ PATH_IMAGES }}interface/prestige.gif"
+                                     title="Prestige"
+                                     class="res"
+                                     width="16px"/>
+                                {{ prestige }})
+                            </label>
+                        </div>
                     </div>
                 {% endif %}
                 <div class="col-auto">
@@ -593,7 +597,9 @@
                             {% endif %}
                             {% if fleet_soldiers %}
                                 <div class="col-auto">
-                                    <img src="{{ PATH_IMAGES }}interface/soldiers.gif" class="res" width="16px" />
+                                    <img src="{{ PATH_IMAGES }}interface/soldiers.gif"
+                                         class="res"
+                                         width="16px"/>
                                     {{ fleet_soldiers|intcomma }}
                                 </div>
                             {% endif %}
@@ -731,7 +737,9 @@
                             <div class="col-12">
                                 <div class="row gx-3 align-items-center">
                                     <div class="col-4">
-                                        <img src="{{ PATH_IMAGES }}interface/soldiers.gif" class="res" width="16px" />
+                                        <img src="{{ PATH_IMAGES }}interface/soldiers.gif"
+                                             class="res"
+                                             width="16px"/>
                                         <span class="text-normal">Solcats</span>
                                     </div>
                                     <div class="col-2 text-end">
@@ -897,7 +905,9 @@
                         <div class="col-12">
                             <div class="row gx-3 align-items-center">
                                 <div class="col-8">
-                                    <img src="{{ PATH_IMAGES }}interface/soldiers.gif" class="res" width="16px" />
+                                    <img src="{{ PATH_IMAGES }}interface/soldiers.gif"
+                                         class="res"
+                                         width="16px"/>
                                     <span class="text-normal">Solcats</span>
                                 </div>
                                 <div class="col-2 text-end">

@@ -17,6 +17,7 @@ from .views import empire_commanders
 from .views import empire_fleets
 from .views import empire_ground
 from .views import empire_orbiting
+from .views import empire_planets
 from .views import empire_reports
 from .views import empire_stats
 from .views import empire_techs
@@ -76,6 +77,7 @@ urlpatterns = [
     path('empire-fleets/', empire_fleets.View.as_view()),
     path('empire-ground/', empire_ground.View.as_view()),
     path('empire-orbiting/', empire_orbiting.View.as_view()),
+    path('empire-planets/', empire_planets.View.as_view()),
     path('empire-reports/', empire_reports.View.as_view()),
     path('empire-stats/', empire_stats.View.as_view()),
     path('empire-techs/', empire_techs.View.as_view()),

@@ -95,8 +95,14 @@
                                 <span class="text-warning">Attention, vous ne pourrez pas créer ou rejoindre d'alliance pendant {{ hours_before_rejoin }} heures.</span>
                             </div>
                             <div class="col-12 text-center">
-                                <input type="checkbox" class="checkbox" name="leave" id="leave" value="1">
-                                <label for="leave">Je quitte mon alliance actuelle</label>
+                                <div class="form-check">
+                                    <input type="checkbox"
+                                           class="form-check-input"
+                                           name="leave"
+                                           id="leave"
+                                           value="1">
+                                    <label class="form-check-label" for="leave">Je quitte mon alliance actuelle</label>
+                                </div>
                             </div>
                             <div class="col-12 text-center">
                                 <input type="submit" name="submit" value="Valider">
