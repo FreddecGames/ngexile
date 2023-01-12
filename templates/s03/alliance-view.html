@@ -1,4 +1,5 @@
 {% extends "s03/layout.html" %}
+{% load humanize %}
 {% block content %}
     <div class="nav nav-tabs mb-3">
         <div class="nav-item">
@@ -98,6 +99,17 @@
                         </div>
                         <div class="col">
                             {{ members }} <small class="text-normal">/{{ max_members }}</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="row gx-3">
+                        <div class="col-3 text-end">
+                            <span class="text-normal">Portefeuille</span>
+                        </div>
+                        <div class="col">
+                            <img src="{{ PATH_IMAGES }}interface/credits.gif" class="res" width="16px" />
+                            {{ alliance_credits|intcomma }}
                         </div>
                     </div>
                 </div>

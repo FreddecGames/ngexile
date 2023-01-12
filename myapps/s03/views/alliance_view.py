@@ -26,7 +26,7 @@ class View(GlobalView):
         self.selected_menu = "alliance"
 
         query = "SELECT id, name, tag, description, created, (SELECT count(*) FROM users WHERE alliance_id=alliances.id)," + \
-                " logo_url, website_url, max_members" + \
+                " logo_url, website_url, max_members, credits" + \
                 " FROM alliances"
 
         if alliance_tag == None:
@@ -47,6 +47,7 @@ class View(GlobalView):
             content.AssignValue("created", created)
             content.AssignValue("members", oRs[5])
             content.AssignValue("max_members", oRs[8])
+            content.AssignValue("alliance_credits", oRs[9])
 
             if oRs[6] and oRs[6] != "":
                 content.AssignValue("logo_url", oRs[6])

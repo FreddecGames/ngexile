@@ -56,7 +56,10 @@
                                     <div class="col-3 text-end">
                                         <span class="text-normal">Solde</span>
                                     </div>
-                                    <div class="col-auto">{{ alliance_credits|intcomma }}</div>
+                                    <div class="col-auto">
+                                        <img src="{{ PATH_IMAGES }}interface/credits.gif" class="res" width="16px" />
+                                        {{ alliance_credits|intcomma }}
+                                    </div>
                                 </div>
                             </div>
                             <div class="col-12">
@@ -64,7 +67,12 @@
                                     <div class="col-3 text-end">
                                         <span class="text-normal">Dernière 24 heures</span>
                                     </div>
-                                    <div class="col-auto">{{ last24h|intcomma }}</div>
+                                    <div class="col-auto">
+                                        <img src="{{ PATH_IMAGES }}interface/credits.gif" class="res" width="16px" />
+                                        <span class="{% if last24h > 0 %}text-success{% else %}text-danger{% endif %}">
+                                            {% if last24h > 0 %}+{% endif %}
+                                        {{ last24h|intcomma }}</span>
+                                    </div>
                                 </div>
                             </div>
                             <div class="col-12">
@@ -135,9 +143,13 @@
                                 <div class="col-auto">
                                     <span class="text-normal">{{ entry.date }}</span>
                                 </div>
-                                <div class="col">{{ entry.destination }}</div>
+                                <div class="col">{{ entry.source }}</div>
                                 <div class="col-auto">
-                                    {% if entry.type == 4 %}<span class="text-normal">Vente GM</span>{% endif %}
+                                    {% if entry.type == 1 %}
+                                        <span class="text-normal">Vente GM</span>
+                                    {% else %}
+                                        {{ entry.type }}
+                                    {% endif %}
                                 </div>
                                 <div class="col-3 text-end">
                                     <img src="{{ PATH_IMAGES }}interface/credits.gif" class="res" width="16px" />
