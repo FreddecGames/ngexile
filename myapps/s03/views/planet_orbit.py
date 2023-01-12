@@ -8,7 +8,7 @@ class View(GlobalView):
         response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
         
-        self.selected_menu = "orbit"
+        self.selectedMenu = "orbit"
 
         self.showHeader = True
 

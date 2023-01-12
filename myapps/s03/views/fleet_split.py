@@ -7,7 +7,7 @@ class View(GlobalView):
         response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
 
-        self.selected_menu = "fleets"
+        self.selectedMenu = "fleets"
 
         self.fleet_split_error = 0
         self.e_no_error = 0

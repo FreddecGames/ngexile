@@ -26,7 +26,7 @@ class View(GlobalView):
         
         #--- get
 
-        self.selected_menu = 'market'
+        self.selectedMenu = 'market'
 
         content = GetTemplate(self.request, 'market-sell')
 
@@ -50,12 +50,12 @@ class View(GlobalView):
             list.append(item)
             
             item['index'] = i
-            item['img'] = self.planetimg(dbRow['id'], dbRow['floor'])
+            item['img'] = getPlanetImg(dbRow['id'], dbRow['floor'])
             
             if dbRow['id'] == self.CurrentPlanet: item['is_current'] = True
             
-            item['ore_level'] = self.getpercent(dbRow['ore_count'], dbRow['ore_capacity'], 10)
-            item['hydrocarbon_level'] = self.getpercent(dbRow['hydrocarbon_count'], dbRow['hydrocarbon_capacity'], 10)
+            item['ore_level'] = getPercent(dbRow['ore_count'], dbRow['ore_capacity'], 10)
+            item['hydrocarbon_level'] = getPercent(dbRow['hydrocarbon_count'], dbRow['hydrocarbon_capacity'], 10)
 
             item['ore_max'] = min(10000, int(dbRow['ore_count'] / 1000))
             item['hydrocarbon_max'] = min(10000, int(dbRow['hydrocarbon_count'] / 1000))

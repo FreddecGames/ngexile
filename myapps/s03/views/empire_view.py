@@ -7,7 +7,7 @@ class View(GlobalView):
         response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
         
-        self.selected_menu = "empire"
+        self.selectedMenu = "empire"
         
         content = GetTemplate(request, "empire-view")
 
@@ -239,14 +239,14 @@ class View(GlobalView):
     
                 # display planet names f (from) and t (to)
     
-                fleet["f_planetname"] = self.getPlanetName(item[8], item[23], item[18], item[7])
+                fleet["f_planetname"] = getPlanetName(item[8], item[23], item[18], item[7])
                 fleet["f_planetid"] = item[6]
                 fleet["f_g"] = item[9]
                 fleet["f_s"] = item[10]
                 fleet["f_p"] = item[11]
                 fleet["f_relation"] = item[8]
     
-                fleet["t_planetname"] = self.getPlanetName(item[14], item[24], item[19], item[13])
+                fleet["t_planetname"] = getPlanetName(item[14], item[24], item[19], item[13])
                 fleet["t_planetid"] = item[12]
                 fleet["t_g"] = item[15]
                 fleet["t_s"] = item[16]

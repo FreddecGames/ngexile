@@ -7,7 +7,7 @@ class View(GlobalView):
         response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
         
-        self.selected_menu = "buildings"
+        self.selectedMenu = "buildings"
         
         self.showHeader = True
         
@@ -28,25 +28,9 @@ class View(GlobalView):
     
             elif Action== "destroy":
                 self.DestroyBuilding(BuildingId)
-        
-        y = ToInt(request.GET.get("y"),"")
-        scriptname = request.META.get("SCRIPT_NAME")
-        
-        if y != "":
-            request.session["scrollExpire"] = 5/(24*3600) # allow 5 seconds
-            request.session["scrollPage"] = scriptname
-            request.session["scrolly"] = y
-            
-            return HttpResponseRedirect(scriptname + "?planet=" + str(self.CurrentPlanet))
-        else:
-            
-            # if scrolly is stored in the session and is still valid, set the scrolly of the displayed page
-            if request.session.get("scrolly") != "" and request.session.get("scrollExpire", 0) > 0 and request.session.get("scrollPage") == scriptname:
-                self.scrollY = request.session.get("scrolly")
-                request.session["scrolly"] = ""
-            
-            self.RetrievePlanetInfo()
-            return self.ListBuildings()
+                
+        self.RetrievePlanetInfo()
+        return self.ListBuildings()
 
     def RetrievePlanetInfo(self):
         # Retrieve recordset of current planet

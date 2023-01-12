@@ -8,7 +8,7 @@ class View(GlobalView):
         if response:
             return response
 
-        self.selected_menu = "reports"
+        self.selectedMenu = "reports"
 
         invasionid = ToInt(request.GET.get("id"), 0)
 

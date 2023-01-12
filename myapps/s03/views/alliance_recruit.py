@@ -7,7 +7,7 @@ class View(GlobalView):
         response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
 
-        self.selected_menu = "alliance.members"
+        self.selectedMenu = "alliance.members"
 
         if self.AllianceId == None: return HttpResponseRedirect("/s03/alliance-view/")
         if not self.oAllianceRights["leader"] and not self.oAllianceRights["can_see_members_info"]: return HttpResponseRedirect("/s03/alliance-view/")

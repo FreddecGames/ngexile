@@ -8,10 +8,7 @@ class View(GlobalView):
         response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
 
-        self.selected_menu = "profile"
-
-        if request.GET.get("frame") == "1":
-            oConnDoQuery("UPDATE users SET inframe=True WHERE id="+ str(self.UserId))
+        self.selectedMenu = "profile"
 
         holidays_breaktime = 7*24*60*60 # time before being able to set the holidays again
 
@@ -20,14 +17,6 @@ class View(GlobalView):
 
         avatar = request.POST.get("avatar", "").strip()
         description = request.POST.get("description", "").strip()
-
-        timers_enabled = ToInt(request.POST.get("timers_enabled"), 0)
-        if timers_enabled == 1: timers_enabled = True
-        else: timers_enabled = False
-
-        display_alliance_planet_name = ToInt(request.POST.get("display_alliance_planet_name"), 0)
-        if display_alliance_planet_name == 1: display_alliance_planet_name = True
-        else: display_alliance_planet_name = False
         
         score_visibility = ToInt(request.POST.get("score_visibility"), 0)
         if score_visibility < 0 or score_visibility > 2: score_visibility = 0
@@ -57,20 +46,9 @@ class View(GlobalView):
             else:
                 # save updated information
                 query = "UPDATE users SET" + \
-                        " avatar_url=" + dosql(avatar) + ", description=" + dosql(description) + \
-                        " WHERE id=" + str(self.UserId)
+                        " avatar_url=" + dosql(avatar) + ", description=" + dosql(description)
 
-            query = "UPDATE users SET" + \
-                    " timers_enabled=" + str(timers_enabled) + \
-                    " ,display_alliance_planet_name=" + str(display_alliance_planet_name) + \
-                    " ,score_visibility=" + str(score_visibility)
-
-            if skin == 0:
-                skin = "s_default"
-            else:
-                skin = "s_transparent"
-
-            query = query + ", skin=" + dosql(skin)
+            query = query + ", score_visibility=" + str(score_visibility)
 
             if deletingaccount and not deleteaccount:
                 query = query + ", deletion_date=NULL"
@@ -79,7 +57,7 @@ class View(GlobalView):
                 query = query + ", deletion_date=now() + INTERVAL '2 days'"
 
             query = query + " WHERE id=" + str(self.UserId)
-
+            
             if query != "": oConnDoQuery(query)
             DoRedirect = True
 
@@ -121,7 +99,7 @@ class View(GlobalView):
 
     def display_options(self, content):
 
-        oRs = oConnExecute("SELECT int4(date_part('epoch', deletion_date-now())), timers_enabled, display_alliance_planet_name, email, score_visibility, skin FROM users WHERE id="+str(self.UserId))
+        oRs = oConnExecute("SELECT int4(date_part('epoch', deletion_date-now())), timers_enabled, display_alliance_planet_name, email, score_visibility FROM users WHERE id="+str(self.UserId))
 
         if oRs[0] == None:
             content.Parse("delete_account")
@@ -129,11 +107,7 @@ class View(GlobalView):
             content.AssignValue("remainingtime", oRs[0])
             content.Parse("account_deleting")
 
-        if oRs[1]: content.Parse("timers_enabled")
-        if oRs[2]: content.Parse("display_alliance_planet_name")
         content.Parse("score_visibility_" + str(oRs[4]))
-
-        content.Parse("skin_" + str(oRs[5]))
 
         content.AssignValue("email", str(oRs[3]))
 

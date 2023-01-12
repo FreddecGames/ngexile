@@ -14,7 +14,7 @@
                                          class="rounded"/>
                                 </div>
                                 <div class="col-12 text-center">
-                                    <a href="/s03/map/?g={{ planet.g }}&s={{ planet.s }}">{{ planet.galaxy }}.{{ planet.sector }}.{{ planet.planet }}</a>
+                                    <a href="/s03/map/?g={{ planet.galaxy }}&s={{ planet.sector }}">{{ planet.galaxy }}.{{ planet.sector }}.{{ planet.planet }}</a>
                                 </div>
                             </div>
                         </div>
@@ -56,7 +56,7 @@
                                                          height="16px">
                                                     <span class="{% if planet.ore_level >= 90 %}text-danger{% elif planet.ore_level >= 70 %}text-warning{% endif %}">{{ planet.ore|intcomma }}</span>
                                                     <small class="ms-1 text-normal">/{{ planet.ore_capacity|intcomma }}</small>
-                                                    <small class="ms-1 text-success">+{{ planet.ore_production|intcomma }}</small>
+                                                    <small class="ms-1 {% if planet.ore_production_anormal %}text-warning{% else %}text-success{% endif %}">+{{ planet.ore_production|intcomma }}</small>
                                                 </div>
                                                 <div class="col-12 text-nowrap">
                                                     <img src="/static/s03/img/interface/hydrocarbon.gif"
@@ -65,7 +65,7 @@
                                                          height="16px">
                                                     <span class="{% if planet.hydrocarbon_level >= 90 %}text-danger{% elif planet.hydrocarbon_level >= 70 %}text-warning{% endif %}">{{ planet.hydrocarbon|intcomma }}</span>
                                                     <small class="ms-1 text-normal">/{{ planet.hydrocarbon_capacity|intcomma }}</small>
-                                                    <small class="ms-1 text-success">+{{ planet.hydrocarbon_production|intcomma }}</small>
+                                                    <small class="ms-1 {% if planet.hydrocarbon_production_anormal %}text-warning{% else %}text-success{% endif %}">+{{ planet.hydrocarbon_production|intcomma }}</small>
                                                 </div>
                                                 <div class="col-12 text-nowrap">
                                                     <img src="/static/s03/img/interface/energy.gif"
@@ -74,7 +74,7 @@
                                                          height="16px">
                                                     <span>{{ planet.energy|intcomma }}</span>
                                                     <small class="ms-1 text-normal">/{{ planet.energy_capacity|intcomma }}</small>
-                                                    <small class="ms-1 text-success">+{{ planet.energy_balance|intcomma }}</small>
+                                                    <small class="ms-1 {% if planet.energy_balance > 0 %}text-success{% else %}text-danger{% endif %}">{{ planet.energy_balance|intcomma }}</small>
                                                 </div>
                                             </div>
                                         </div>

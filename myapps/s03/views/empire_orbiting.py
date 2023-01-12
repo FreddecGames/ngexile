@@ -7,12 +7,7 @@ class View(GlobalView):
         response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
 
-        self.selected_menu = "fleets"
-
-        return self.listFleetsOrbiting()
-
-    # list fleets not belonging to the player that are near his planets
-    def listFleetsOrbiting(self):
+        self.selectedMenu = "fleets"
 
         content = GetTemplate(self.request, "empire-orbiting")
 

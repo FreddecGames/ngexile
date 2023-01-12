@@ -8,7 +8,7 @@ class View(GlobalView):
         response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
 
-        self.selected_menu = "profile"
+        self.selectedMenu = "profile"
 
         return self.display_nation()
 
@@ -148,7 +148,7 @@ class View(GlobalView):
                         i["time"] = 0
 
                     i["relation"] = rs[12]
-                    i["planetname"] = self.getPlanetName(rs[12], rs[23], rs[11], rs[6])
+                    i["planetname"] = getPlanetName(rs[12], rs[23], rs[11], rs[6])
 
                     if oRs[3] == rAlliance:
                         i["ally"] = True
@@ -166,7 +166,7 @@ class View(GlobalView):
                         i["t_s"] = rs[16]
                         i["t_p"] = rs[17]
                         i["t_relation"] = rs[20]
-                        i["t_planetname"] = self.getPlanetName(rs[20], rs[24], rs[19], rs[14])
+                        i["t_planetname"] = getPlanetName(rs[20], rs[24], rs[19], rs[14])
 
                         i["moving"] = True
                     else:

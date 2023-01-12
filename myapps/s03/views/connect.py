@@ -16,7 +16,6 @@ class View(BaseMixin, View):
         rs = oConnExecute('SELECT id, lastplanetid, privilege, resets FROM sp_account_connect(' + str(request.user.id) + ', 1036,' + dosql(ipaddress) + ',' + dosql(forwardedfor) + ',' + dosql(useragent) + ', 0)')
         
         request.session[sUser] = rs[0]
-        request.session[sPlanet] = rs[1]
         
         result = oConnExecute('SELECT username FROM users WHERE id=' + str(rs[0]))
         if not result[0]: return HttpResponseRedirect('/s03/home-start/')

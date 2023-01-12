@@ -8,9 +8,9 @@ class View(GlobalView):
         if response: return response
 
         if self.AllianceId == None:
-            self.selected_menu = "alliance"
+            self.selectedMenu = "alliance"
         else:
-            self.selected_menu = "alliance"
+            self.selectedMenu = "alliance"
 
         self.sLeaveCost = "leavealliancecost"
 

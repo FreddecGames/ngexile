@@ -7,7 +7,7 @@ class View(GlobalView):
         response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
 
-        self.selected_menu = "production"
+        self.selectedMenu = "production"
 
         self.showHeader = True
 
@@ -350,7 +350,7 @@ class View(GlobalView):
             
             item["energy"] = oRs[12]
             item["effective_energy"] = oRs[13]
-            item["loss"] = self.getpercent(oRs[12]-oRs[13], oRs[12], 1)
+            item["loss"] = getPercent(oRs[12]-oRs[13], oRs[12], 1)
 
             if oRs[0] == self.CurrentPlanet:
                 sending = sending + 1
@@ -432,7 +432,5 @@ class View(GlobalView):
         self.content.Parse("cat2")
         self.content.Parse("cat3")
         self.content.Parse("nav")
-
-        url_extra_params = "cat=" + str(self.cat)
 
         return self.Display(self.content)

@@ -28,7 +28,7 @@ class View(GlobalView):
         
         #--- get
         
-        self.selected_menu = "trainings"
+        self.selectedMenu = "trainings"
         
         self.showHeader = True
 

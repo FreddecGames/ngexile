@@ -17,7 +17,7 @@ class View(GlobalView):
         
         #--- get
         
-        self.selected_menu = 'alliance'
+        self.selectedMenu = 'alliance'
 
         content = GetTemplate(self.request, 'alliance-wallet')
 

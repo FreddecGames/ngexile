@@ -7,7 +7,7 @@ class View(GlobalView):
         response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
 
-        self.selected_menu = "alliance"
+        self.selectedMenu = "alliance"
 
         cat = ToInt(request.GET.get("cat"), 0)
 

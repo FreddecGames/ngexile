@@ -261,7 +261,7 @@
                         </div>
                         <div class="list-group list-group-flush">
                             {% for building in category.buildings %}
-                                <div class="list-group-item">
+                                <div id="{{ building.id }}" class="list-group-item">
                                     <div class="row gx-3">
                                         <div class="col-auto">
                                             <img src="{{ PATH_IMAGES }}buildings/{{ building.id }}.jpg"
@@ -273,7 +273,6 @@
                                         <div class="col">
                                             <div class="row g-1 flex-column">
                                                 <div class="col-12">
-                                                    <a name="{{ building.id }}"></a>
                                                     <span>{{ building.name }}</span>
                                                 </div>
                                                 <div class="col-12">
@@ -455,10 +454,9 @@
                         </div>
                         <div class="list-group list-group-flush">
                             {% for research in category.researches %}
-                                <div class="list-group-item">
+                                <div id="{{ research.id }}" class="list-group-item">
                                     <div class="row g-1 flex-column">
                                         <div class="col-12">
-                                            <a name="{{ research.id }}"></a>
                                             <span>
                                                 {{ research.name }}
                                             </span>
@@ -506,10 +504,9 @@
                         </div>
                         <div class="list-group list-group-flush">
                             {% for ship in category.ships %}
-                                <div class="list-group-item">
+                                <div id="{{ ship.id }}" class="list-group-item">
                                     <div class="row g-1 flex-column">
                                         <div class="col-12">
-                                            <a name="{{ research.id }}"></a>
                                             <span class="fs-6">
                                                 {{ ship.name }}
                                             </span>

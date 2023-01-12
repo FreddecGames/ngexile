@@ -7,7 +7,7 @@ class View(GlobalView):
         response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
 
-        self.selected_menu = "alliance"
+        self.selectedMenu = "alliance"
 
         tag = request.GET.get("tag")
 
@@ -23,7 +23,7 @@ class View(GlobalView):
 
         content = GetTemplate(self.request, "alliance-view")
 
-        self.selected_menu = "alliance"
+        self.selectedMenu = "alliance"
 
         query = "SELECT id, name, tag, description, created, (SELECT count(*) FROM users WHERE alliance_id=alliances.id)," + \
                 " logo_url, website_url, max_members, credits" + \
@@ -33,7 +33,7 @@ class View(GlobalView):
             query = query + " WHERE id=" + str(self.AllianceId) + " LIMIT 1"
         else:
             query = query + " WHERE tag=upper(" + dosql(alliance_tag) + ") LIMIT 1"
-            self.selected_menu = "ranking"
+            self.selectedMenu = "ranking"
 
         oRs = oConnExecute(query)
 

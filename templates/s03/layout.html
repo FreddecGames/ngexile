@@ -17,16 +17,11 @@
         <script type="text/javascript" src="/static/js/vendor-fontawesome.js"></script>
         <script type="text/javascript" src="/static/s03/js/common.js"></script>
         <script type="text/javascript" src="/static/s03/js/time.js"></script>
-        {% if scroll %}<script>function loaded() { scrollTo(0, {{scrolly }}); }</script>{% endif %}
     </head>
-    <body{% if scroll %} onload="loaded()"{% endif %}>
+    <body>
         <div id="hint" onclick="donothide(event)">
             <div id="hinttext" class="card card-body bg-dark"></div>
         </div>
-        <script>
-            var timers_enabled = {{timers_enabled}};
-            var startTime;
-        </script>
         <div id="super">
             <div id="topbar">
                 <div class="flex-grow-1 row gx-4 align-items-center">
@@ -140,7 +135,7 @@
                             <div>Compte "{{ username }}" - impossible d'envoyer de messages</div>
                         </div>
                     {% endif %}
-                    {% if creditswarning %}
+                    {% if bankruptcy_hours %}
                         <div class="alert alert-warning">
                             <div>
                                 <b>Fonds insuffisants</b>
@@ -150,7 +145,7 @@
                             </div>
                             <div>
                                 Vous avez
-                                {% if hours %}{{ bankruptcy_hours }} heure(s){% endif %}
+                                {{ bankruptcy_hours }} heure(s)
                                 pour faire revenir l'argent de la trésorerie dans le positif avant qu'un coup d'état n'éclate et que vous soyiez chassé de votre poste.
                             </div>
                             <div>
@@ -158,12 +153,12 @@
                             </div>
                         </div>
                     {% endif %}
-                    {% if deleting %}
+                    {% if deletion_date %}
                         <div class="alert alert-danger">
                             <div>
                                 <b>Suppression du compte en cours</b>
                             </div>
-                            <div>Ce compte sera effacé le {{ delete_datetime|date:"D d M Y" }} à {{ delete_datetime|time }}</div>
+                            <div>Ce compte sera effacé le {{ deletion_date|date:"D d M Y" }} à {{ deletion_date|time }}</div>
                         </div>
                     {% endif %}
                     {% if context %}

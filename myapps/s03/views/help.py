@@ -9,7 +9,7 @@ class View(GlobalView):
         
         #--- get
         
-        self.selected_menu = "help"
+        self.selectedMenu = "help"
 
         content = GetTemplate(self.request, "help")
         

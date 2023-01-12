@@ -34,9 +34,10 @@ function Counter(name, seconds, display, endContent, onFinished){
 
 				return false;
 			} else
-			if(s > 0 && (this.display == null) && timers_enabled)
+			if(s > 0 && this.display == null) {            
 				this.obj.innerHTML = formatRemainingTime(s);
-
+            }
+            
 			return true;
 		}catch(e){
 			return false;
@@ -58,6 +59,7 @@ function startCountdown(name, seconds, displayCountdown, endContent, onFinished)
 }
 
 function updateCounters(){
+    
 	for(var x in counters){
 		if(counters[x] != null)
 			if(!counters[x].update()) counters[x] = null;

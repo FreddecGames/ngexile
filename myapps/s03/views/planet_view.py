@@ -8,7 +8,7 @@ class View(GlobalView):
         response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
 
-        self.selected_menu = "planet"
+        self.selectedMenu = "planet"
 
         self.showHeader = True
 
@@ -35,8 +35,6 @@ class View(GlobalView):
 
                 oConnDoQuery(query)
 
-                self.InvalidatePlanetList()
-
         elif request.POST.get("action") == "firescientists":
             amount = ToInt(request.POST.get("amount"), 0)
             oConnExecute("SELECT sp_dismiss_staff(" + str(self.UserId) + "," + str(self.CurrentPlanet) + "," + str(amount) + ",0,0)")
@@ -49,7 +47,6 @@ class View(GlobalView):
 
         elif request.POST.get("action") == "abandon":
             oConnExecute("SELECT sp_abandon_planet(" + str(self.UserId) + "," + str(self.CurrentPlanet) + ")")
-            self.InvalidatePlanetList()
             return HttpResponseRedirect("/s03/empire-view/")
 
         elif request.POST.get("action") == "resources_price":
@@ -87,7 +84,7 @@ class View(GlobalView):
         if oRs:
             content.AssignValue("planet_id", oRs[0])
             content.AssignValue("planet_name", oRs[1])
-            content.AssignValue("planet_img", self.planetimg(oRs[0], oRs[18]))
+            content.AssignValue("planet_img", getPlanetImg(oRs[0], oRs[18]))
 
             content.AssignValue("pla_g", oRs[2])
             content.AssignValue("pla_s", oRs[3])

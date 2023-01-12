@@ -7,7 +7,7 @@ class View(GlobalView):
         response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
         
-        self.selected_menu = "map"
+        self.selectedMenu = "map"
 
         self.showHeader = True
 
@@ -153,7 +153,7 @@ class View(GlobalView):
 
                 if display_from:
                     # Assign the name of the owner if is not an ally planet
-                    fleet["f_planetname"] = self.getPlanetName(oRs[18], oRs[28], oRs[17], oRs[12])
+                    fleet["f_planetname"] = getPlanetName(oRs[18], oRs[28], oRs[17], oRs[12])
                     fleet["f_planetid"] = oRs[11]
                     fleet["f_g"] = oRs[13]
                     fleet["f_s"] = oRs[14]
@@ -169,7 +169,7 @@ class View(GlobalView):
 
                 if display_to:
                     # Assign the planet name if possible otherwise the name of the owner
-                    fleet["t_planetname"] = self.getPlanetName(oRs[26], oRs[29], oRs[25], oRs[20])
+                    fleet["t_planetname"] = getPlanetName(oRs[26], oRs[29], oRs[25], oRs[20])
                     fleet["t_planetid"] = oRs[19]
                     fleet["t_g"] = oRs[21]
                     fleet["t_s"] = oRs[22]
@@ -385,9 +385,6 @@ class View(GlobalView):
 
             rel = oRs[5]
 
-            if rel == rAlliance and not self.hasRight("can_use_alliance_radars"):
-                rel = rWar
-
             if rel == rFriend and not oRs[25] and oRs[3] != 3:
                 rel = rWar
 
@@ -413,7 +410,7 @@ class View(GlobalView):
                         #    alliance and own planets 
                         #    planets where we got a fleet or (a fleet of an alliance member and can_use_alliance_radars)
                         #    planets that our radar can detect
-                        if (self.hasRight("can_use_alliance_radars") and ( (rel >= rAlliance) or i[5] )) or radarstrength > oRs[9] or i[10]:
+                        if (( (rel >= rAlliance) or i[5] )) or radarstrength > oRs[9] or i[10]:
     
                             fleet = {}
                             fleetcount = fleetcount + 1
@@ -444,9 +441,6 @@ class View(GlobalView):
                             elif i[3] == rAlliance:
                                 allyfleetcount = allyfleetcount + 1
                                 friendfleetcount = friendfleetcount + 1
-    
-                                if self.hasRight("can_order_other_fleets") and i[9]:
-                                    fleet["fleetid"] = i[1]
     
                             elif i[3] == rFriend:
                                 friendfleetcount = friendfleetcount + 1
@@ -534,10 +528,7 @@ class View(GlobalView):
                     displayPlanetInfo = True
                     displayResources = True
                 elif rel == rAlliance:
-                    if self.displayAlliancePlanetName:
-                        planet["planetname"] = oRs[2]
-                    else:
-                        planet["planetname"] = ""
+                    planet["planetname"] = ""
 
                     displayElements = True
                     displayPlanetInfo = True

@@ -9,7 +9,7 @@ class View(GlobalView):
         
         #--- get
         
-        self.selected_menu = 'ranking'
+        self.selectedMenu = 'ranking'
 
         content = GetTemplate(self.request, 'ranking-players')
 

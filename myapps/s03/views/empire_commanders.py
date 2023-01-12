@@ -24,7 +24,7 @@ class View(GlobalView):
         self.max_build = 3
         self.max_ship = 3
 
-        self.selected_menu = "commanders"
+        self.selectedMenu = "commanders"
 
         CommanderId = ToInt(request.GET.get("id"), 0)
         NewName = request.GET.get("name")
@@ -163,8 +163,6 @@ class View(GlobalView):
 
         if available_commanders_count == 0: content.Parse("available_commanders_nocommander")
         if commanders_count == 0: content.Parse("commanders_nocommander")
-
-        self.FillHeaderCredits(content)
 
         return self.Display(content)
 

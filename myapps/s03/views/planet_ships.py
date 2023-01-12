@@ -7,7 +7,7 @@ class View(GlobalView):
         response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
         
-        self.selected_menu = "ships"
+        self.selectedMenu = "ships"
 
         self.showHeader = True
 
@@ -124,13 +124,13 @@ class View(GlobalView):
                 " FROM vw_ships WHERE planetid=" + str(self.CurrentPlanet)
 
         if self.ShipFilter == 1:
-            self.selected_menu = "shipyard_military"
+            self.selectedMenu = "shipyard_military"
             query = query + " AND weapon_power > 0 AND required_shipid IS NULL" # military ships only
         elif self.ShipFilter == 2:
-            self.selected_menu = "shipyard_unarmed"
+            self.selectedMenu = "shipyard_unarmed"
             query = query + " AND weapon_power = 0 AND required_shipid IS NULL" # non-military ships
         elif self.ShipFilter == 3:
-            self.selected_menu = "shipyard_upgrade"
+            self.selectedMenu = "shipyard_upgrade"
             query = query + " AND required_shipid IS NOT NULL" # upgrade ships only
         query = query + " ORDER BY category, id"
         
@@ -272,7 +272,7 @@ class View(GlobalView):
     # List all the available ships for recycling
     def ListRecycleShips(self):
 
-        self.selected_menu = "shipyard_recycle"
+        self.selectedMenu = "shipyard_recycle"
 
         # list ships that are on the planet
         query = "SELECT id, category, name, int4(cost_ore * const_recycle_ore(planet_ownerid)) AS cost_ore, int4(cost_hydrocarbon * const_recycle_hydrocarbon(planet_ownerid)) AS cost_hydrocarbon, cost_credits, workers, crew, capacity," + \

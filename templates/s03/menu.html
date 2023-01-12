@@ -66,6 +66,6 @@ document.write('<div class="py-1">')
 
 document.write('</div>')
 
-{% if new_mail %}setMailsCount({{new_mail}}){% endif %}
-{% if new_report %}setReportsCount({{new_report}}){% endif %}
+{% if new_mail > 0 %}setMailsCount({{new_mail}}){% endif %}
+{% if new_report > 0 %}setReportsCount({{new_report}}){% endif %}
 </script>

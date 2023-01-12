@@ -7,15 +7,12 @@ class View(GlobalView):
         response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
         
-        self.selected_menu = "fleets"
+        self.selectedMenu = "fleets"
 
         self.action_result = ""
         self.move_fleet_result = ""
         self.can_command_alliance_fleets = -1
         self.can_install_building = False
-
-        if self.AllianceId and self.hasRight("can_order_other_fleets"):
-            self.can_command_alliance_fleets = self.AllianceId
 
         self.fleet_owner_id = self.UserId
 
@@ -336,7 +333,7 @@ class View(GlobalView):
         content.AssignValue("s", oRs[13])
         content.AssignValue("p", oRs[14])
         content.AssignValue("relation", oRs[17])
-        content.AssignValue("planetname", self.getPlanetName(oRs[17], oRs[41], oRs[16], oRs[11]))
+        content.AssignValue("planetname", getPlanetName(oRs[17], oRs[41], oRs[16], oRs[11]))
         
         if oRs[34] == -1 or oRs[34] == 1: # fleet is moving when dest_planetid is not None
 
@@ -346,7 +343,7 @@ class View(GlobalView):
             content.AssignValue("t_s", oRs[21])
             content.AssignValue("t_p", oRs[22])
             content.AssignValue("t_relation", oRs[25])
-            content.AssignValue("t_planetname", self.getPlanetName(oRs[25], oRs[42], oRs[24], oRs[19]))
+            content.AssignValue("t_planetname", getPlanetName(oRs[25], oRs[42], oRs[24], oRs[19]))
 
             # display Cancel Move orders if fleet has covered less than 100 units of distance, or during 2 minutes
             # and if from_planet is not None
@@ -527,9 +524,6 @@ class View(GlobalView):
         if oRs[34] == 0 and oRs[17] == rSelf:
             self.CurrentPlanet = oRs[10]
             self.showHeader = True
-        else:
-            self.FillHeaderCredits(content)
-            content.Parse("header_credits")
         
         #
         # display the list of ships in the fleet
@@ -658,9 +652,6 @@ class View(GlobalView):
         if oRs[0] >= 0:
             # set as the new planet in == it has been colonized, the player expects to see its new planet after colonization
             self.CurrentPlanet = oRs[0]
-
-            # invalidate planet list to reload it in == a planet has been colonized
-            self.InvalidatePlanetList()
         elif oRs[0] == -7:
             self.action_result = "error_max_planets_reached"
         elif oRs[0] == -8:
@@ -723,7 +714,6 @@ class View(GlobalView):
             self.action_result = "error_invade_enemy_ships"
 
         if res > 0:
-            self.InvalidatePlanetList()
             return HttpResponseRedirect("/s03/invasion/?id=" + str(res) + "+fleetid=" + str(fleetid))
 
     def ExecuteOrder(self, fleetid):

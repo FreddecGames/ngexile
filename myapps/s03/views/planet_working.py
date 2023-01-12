@@ -7,7 +7,7 @@ class View(GlobalView):
         response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
 
-        self.selected_menu = "working"
+        self.selectedMenu = "working"
 
         self.showHeader = True
 
@@ -87,7 +87,5 @@ class View(GlobalView):
         self.content.Parse("cat2")
         self.content.Parse("cat3")
         self.content.Parse("nav")
-
-        url_extra_params = "cat=" + str(self.cat)
 
         return self.Display(self.content)

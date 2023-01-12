@@ -7,7 +7,7 @@ class View(GlobalView):
         response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
         
-        self.selected_menu = "reports"
+        self.selectedMenu = "reports"
 
         cat = ToInt(request.GET.get("cat", ""), 0)
 
@@ -135,7 +135,7 @@ class View(GlobalView):
                 content.AssignValue("total_newreports", total_newreports)
                 content.Parse("tabnav_000_new")
             
-            if not self.IsImpersonating():
+            if not self.request.user.is_impersonate:
                 # flag only the current category of reports as read
                 if cat != 0:
                     oConnDoQuery("UPDATE reports SET read_date = now() WHERE ownerid = " + str(self.UserId) + " AND type = "+str(cat)+ " AND read_date is null AND datetime <= now()")

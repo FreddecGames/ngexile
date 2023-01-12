@@ -23,7 +23,6 @@ rSelf = 2
 # session constant names
 
 sUser = "user"
-sPlanet = "planet"
 
 # SQL functions
 
@@ -237,3 +236,24 @@ def isValidObjectName(myName):
     else:
         p = re.compile("^[a-zA-Z0-9\- ]+$")
         return p.match(myName)
+
+# util functions
+    
+def getPlanetName(relation, radar_strength, ownerName, planetName):
+
+    if relation == rSelf: return planetName if planetName else ""
+    elif relation == rAlliance: return ownerName if ownerName else ""
+    elif relation == rFriend: return ownerName if ownerName else ""
+    elif radar_strength > 0: return ownerName if ownerName else ""
+    else: return ""
+
+def getPlanetImg(id, floor):
+
+    img = 1 + (floor + id) % 21
+    if img < 10: img = "0" + str(img)
+    return str(img)
+
+def getPercent(current, max, slice):
+
+    if (current >= max) or (max == 0): return 100
+    else: return slice * int(100 * current / max / slice)

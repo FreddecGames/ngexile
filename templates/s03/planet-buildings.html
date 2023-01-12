@@ -18,10 +18,10 @@ function refreshPage(url) {
 		if ((url == lasturl) && (lastcall != null) && (new Date().getTime() - lastcall < 3000)) return;
 		lasturl = url;
 		lastcall = new Date().getTime();
-		window.location = url + "&y=" + document.documentElement.scrollTop;
+		window.location = url + "&y=" + $("content").scrollTop
 	}
 	else
-		window.location = "?y=" + document.documentElement.scrollTop;
+		window.location = "?y=" + $("content").scrollTop
 }
     </script>
     <div class="row g-3">

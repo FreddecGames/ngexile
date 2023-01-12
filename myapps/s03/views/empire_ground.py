@@ -7,12 +7,8 @@ class View(GlobalView):
         response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
 
-        self.selected_menu = "fleets"
+        self.selectedMenu = "fleets"
 
-        return self.ListStandby()
-
-    # List the fleets owned by the player
-    def ListStandby(self):
         content = GetTemplate(self.request, "empire-ground")
 
         # list the ships

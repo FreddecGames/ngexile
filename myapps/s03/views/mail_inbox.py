@@ -8,7 +8,7 @@ class View(GlobalView):
         response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
 
-        self.selected_menu = "mails"
+        self.selectedMenu = "mails"
 
         self.compose = False
         self.mailto = ""
@@ -56,7 +56,7 @@ class View(GlobalView):
                 self.compose = True
 
         # send email
-        elif request.POST.get("sendmail", "") != "" and not self.IsImpersonating():
+        elif request.POST.get("sendmail", "") != "" and not self.request.user.is_impersonate:
 
             self.compose = True
 
@@ -148,7 +148,7 @@ class View(GlobalView):
     #
     def display_mails(self):
 
-        self.selected_menu = "mails"
+        self.selectedMenu = "mails"
 
         content = GetTemplate(self.request, "mail-inbox")
 
@@ -269,7 +269,7 @@ class View(GlobalView):
 
         if i == 0: content.Parse("nomails")
 
-        if not self.IsImpersonating():
+        if not self.request.user.is_impersonate:
             oRs = oConnDoQuery("UPDATE messages SET read_date = now() WHERE ownerid = " + str(self.UserId) + " AND read_date IS NULL" )
 
         return self.Display(content)
@@ -279,7 +279,7 @@ class View(GlobalView):
     #
     def display_mails_sent(self):
 
-        self.selected_menu = "mails"
+        self.selectedMenu = "mails"
 
         content = GetTemplate(self.request, "mail-outbox")
 
@@ -394,7 +394,7 @@ class View(GlobalView):
         return self.Display(content)
 
     def display_ignore_list(self):
-        self.selected_menu = "mails"
+        self.selectedMenu = "mails"
 
         content = GetTemplate(self.request, "mail-blacklist")
 
@@ -443,7 +443,7 @@ class View(GlobalView):
     # fill combobox with previously sent to
     def display_compose_form(self, mailto, subject, body, credits):
 
-        self.selected_menu = "mails"
+        self.selectedMenu = "mails"
 
         content = GetTemplate(self.request, "mail-new")
 
@@ -477,12 +477,6 @@ class View(GlobalView):
         if (self.oAllianceRights):
             if self.oAllianceRights["can_mail_alliance"]: content.Parse("sendalliance")
 
-        # if is a payed account, append the autosignature text to message body
-        if self.oPlayerInfo["paid"]:
-            oRs = oConnExecute("SELECT autosignature FROM users WHERE id="+userid)
-            if oRs:
-                body = body  + oRs[0]
-
         # re-assign previous values
         content.AssignValue("mailto", mailto)
         content.AssignValue("subject", subject)
@@ -499,7 +493,5 @@ class View(GlobalView):
             content.Parse("error")
 
         if self.bbcode: content.Parse("bbcode")
-
-        self.FillHeaderCredits(content)
 
         return self.Display(content)

@@ -7,7 +7,7 @@ class View(GlobalView):
         response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
         
-        self.selected_menu = "techs"
+        self.selectedMenu = "techs"
 
         oConnExecute("SELECT sp_update_researches(" + str(self.UserId) + ")")
 
@@ -117,8 +117,6 @@ class View(GlobalView):
                     research["complete"] = True
 
         content.AssignValue("categories", categories)
-        
-        self.FillHeaderCredits(content)
 
         return self.Display(content)
 
