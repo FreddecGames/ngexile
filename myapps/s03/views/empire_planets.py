@@ -19,7 +19,9 @@ class View(GlobalView):
                 ' scientists, scientists_capacity,' + \
                 ' soldiers, soldiers_capacity,' + \
                 ' floor_occupied, floor,' + \
-                ' space_occupied, space' + \
+                ' space_occupied, space,' + \
+                ' commanderid, (SELECT name FROM commanders WHERE id = planets.commanderid) AS commandername,' + \
+                ' upkeep, energy_consumption' + \
                 ' FROM vw_planets AS planets' + \
                 ' WHERE planets.floor > 0 AND planets.space > 0 AND planets.ownerid=' + str(self.UserId) + \
                 ' ORDER BY planets.id'
@@ -41,5 +43,6 @@ class View(GlobalView):
             dbRow['hydrocarbon_level'] = self.getpercent(dbRow['hydrocarbon'], dbRow['hydrocarbon_capacity'], 10)
             
             if dbRow['soldiers'] * 250 < dbRow['workers'] + dbRow['scientists']: item['soldiers_low'] = True
+            dbRow['soldiers_upkeep'] = int((dbRow['workers'] + dbRow['scientists']) / 250)
         
         return self.Display(content)
