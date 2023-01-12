@@ -1,7 +1,6 @@
 {% extends "s03/layout.html" %}
 {% load humanize %}
 {% block content %}
-
     <div class="nav nav-tabs mb-3">
         <div class="nav-item">
             <a href="/s03/market-buy/" class="nav-link active">Achats</a>
@@ -10,7 +9,6 @@
             <a href="/s03/market-sell/" class="nav-link">Ventes</a>
         </div>
     </div>
-
     <script>
         var planets = new Array(0{% for planet in planets %}{% if planet.can_buy %}, new Array({{planet.id}}, {{planet.ore_max}}, {{planet.hydrocarbon_max}}, {{planet.price_ore}}, {{planet.price_hydrocarbon}}){% endif %}{% endfor %});
 
@@ -51,7 +49,6 @@
             obj.innerHTML = formatnumber(total);
         }
     </script>
-
     <form method="post" action="." class="card">
         <div class="list-group list-group-flush">
             {% for planet in planets %}
@@ -59,15 +56,23 @@
                     <div class="row gx-3 align-items-center">
                         <div class="col-auto">
                             <div class="row g-1 flex-column">
-                                <div class="col-12 text-center"><img src="{{PATH_IMAGES}}planets/p{{planet.img}}.gif" width="48px" class="rounded" /></div>
-                                <div class="col-12 text-center"><a href="/s03/map/?g={{planet.g}}&s={{planet.s}}">{{planet.galaxy}}.{{planet.sector}}.{{planet.planet}}</a></div>
+                                <div class="col-12 text-center">
+                                    <img src="{{ PATH_IMAGES }}planets/p{{ planet.img }}.gif"
+                                         width="48px"
+                                         class="rounded"/>
+                                </div>
+                                <div class="col-12 text-center">
+                                    <a href="/s03/map/?g={{ planet.g }}&s={{ planet.s }}">{{ planet.galaxy }}.{{ planet.sector }}.{{ planet.planet }}</a>
+                                </div>
                             </div>
                         </div>
                         <div class="col">
                             <div class="row g-1 flex-column">
                                 <div class="col-12">
                                     <div class="row gx-3">
-                                        <div class="col"><a href="/s03/planet-view/?planet={{planet.id}}">{{planet.name}}</a></div>
+                                        <div class="col">
+                                            <a href="/s03/planet-view/?planet={{ planet.id }}">{{ planet.name }}</a>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="col-12">
@@ -75,13 +80,19 @@
                                         <div class="col-4">
                                             <div class="row g-1 flex-column">
                                                 <div class="col-12 text-nowrap">
-                                                    <img src="/static/s03/img/interface/ore.gif" class="res" width="16px" height="16px">
+                                                    <img src="/static/s03/img/interface/ore.gif"
+                                                         class="res"
+                                                         width="16px"
+                                                         height="16px">
                                                     <span class="{% if planet.ore_level >= 90 %}text-danger{% elif planet.ore_level >= 70 %}text-warning{% endif %}">{{ planet.ore_count|intcomma }}</span>
                                                     <small class="ms-1 text-normal">/{{ planet.ore_capacity|intcomma }}</small>
                                                     <small class="ms-1 text-success">+{{ planet.ore_production|intcomma }}</small>
                                                 </div>
                                                 <div class="col-12 text-nowrap">
-                                                    <img src="/static/s03/img/interface/hydrocarbon.gif" class="res" width="16px" height="16px">
+                                                    <img src="/static/s03/img/interface/hydrocarbon.gif"
+                                                         class="res"
+                                                         width="16px"
+                                                         height="16px">
                                                     <span class="{% if planet.hydrocarbon_level >= 90 %}text-danger{% elif planet.hydrocarbon_level >= 70 %}text-warning{% endif %}">{{ planet.hydrocarbon_count|intcomma }}</span>
                                                     <small class="ms-1 text-normal">/{{ planet.hydrocarbon_capacity|intcomma }}</small>
                                                     <small class="ms-1 text-success">+{{ planet.hydrocarbon_production|intcomma }}</small>
@@ -91,17 +102,23 @@
                                         {% if planet.buying %}
                                             <div class="col">
                                                 <div class="row g-1 flex-column">
-                                                    {% if planet.buying_ore > 0%}
-                                                    <div class="col-12 text-nowrap">
-                                                        <img src="/static/s03/img/interface/ore.gif" class="res" width="16px" height="16px">
-                                                        <span>{{ planet.buying_ore|intcomma }}</span>
-                                                    </div>
+                                                    {% if planet.buying_ore > 0 %}
+                                                        <div class="col-12 text-nowrap">
+                                                            <img src="/static/s03/img/interface/ore.gif"
+                                                                 class="res"
+                                                                 width="16px"
+                                                                 height="16px">
+                                                            <span>{{ planet.buying_ore|intcomma }}</span>
+                                                        </div>
                                                     {% endif %}
-                                                    {% if planet.buying_hydrocarbon > 0%}
-                                                    <div class="col-12 text-nowrap">
-                                                        <img src="/static/s03/img/interface/hydrocarbon.gif" class="res" width="16px" height="16px">
-                                                        <span>{{ planet.buying_hydrocarbon|intcomma }}</span>
-                                                    </div>
+                                                    {% if planet.buying_hydrocarbon > 0 %}
+                                                        <div class="col-12 text-nowrap">
+                                                            <img src="/static/s03/img/interface/hydrocarbon.gif"
+                                                                 class="res"
+                                                                 width="16px"
+                                                                 height="16px">
+                                                            <span>{{ planet.buying_hydrocarbon|intcomma }}</span>
+                                                        </div>
                                                     {% endif %}
                                                 </div>
                                             </div>
@@ -114,24 +131,66 @@
                                                 <div class="row g-1 flex-column">
                                                     <div class="col-12 text-nowrap">
                                                         <div class="row gx-3 align-items-center">
-                                                            <div class="col-auto"><input type="number" min="0" id="o{{planet.id}}" name="o{{planet.id}}" value="" onkeyup="updateprice({{planet.index}})" size="3" maxlength="4" /></div>
-                                                            <div class="col-auto"><small class="text-normal">x</small> {{ 1000|intcomma }}</div>
-                                                            <div class="col-auto"><img src="{{PATH_IMAGES}}/interface/credits.gif" class="res" width="16px" height="16px" /> {{ planet.price_ore|floatformat:2 }}</div>
-                                                            <div class="col-auto"><a href="javascript:setval('o{{planet.id}}', {{planet.ore_max}}); updateprice({{planet.index}})">max</a></div>
+                                                            <div class="col-auto">
+                                                                <input type="number"
+                                                                       min="0"
+                                                                       id="o{{ planet.id }}"
+                                                                       name="o{{ planet.id }}"
+                                                                       value=""
+                                                                       onkeyup="updateprice({{ planet.index }})"
+                                                                       size="3"
+                                                                       maxlength="4"/>
+                                                            </div>
+                                                            <div class="col-auto">
+                                                                <small class="text-normal">x</small> {{ 1000|intcomma }}
+                                                            </div>
+                                                            <div class="col-auto">
+                                                                <img src="{{ PATH_IMAGES }}interface/credits.gif"
+                                                                     class="res"
+                                                                     width="16px"
+                                                                     height="16px"/>
+                                                                {{ planet.price_ore|floatformat:2 }}
+                                                            </div>
+                                                            <div class="col-auto">
+                                                                <a href="javascript:setval('o{{ planet.id }}', {{ planet.ore_max }}); updateprice({{ planet.index }})">max</a>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                     <div class="col-12 text-nowrap">
                                                         <div class="row gx-3 align-items-center">
-                                                            <div class="col-auto"><input type="number" min="0" id="h{{planet.id}}" name="h{{planet.id}}" value="" onkeyup="updateprice({{planet.index}})" size="3" maxlength="4" /></div>
-                                                            <div class="col-auto"><small class="text-normal">x</small> {{ 1000|intcomma }}</div>
-                                                            <div class="col-auto"><img src="{{PATH_IMAGES}}/interface/credits.gif" class="res" width="16px" height="16px" /> {{ planet.price_hydrocarbon|floatformat:2 }}</div>
-                                                            <div class="col-auto"><a href="javascript:setval('h{{planet.id}}', {{planet.hydrocarbon_max}}); updateprice({{planet.index}})">max</a></div>
+                                                            <div class="col-auto">
+                                                                <input type="number"
+                                                                       min="0"
+                                                                       id="h{{ planet.id }}"
+                                                                       name="h{{ planet.id }}"
+                                                                       value=""
+                                                                       onkeyup="updateprice({{ planet.index }})"
+                                                                       size="3"
+                                                                       maxlength="4"/>
+                                                            </div>
+                                                            <div class="col-auto">
+                                                                <small class="text-normal">x</small> {{ 1000|intcomma }}
+                                                            </div>
+                                                            <div class="col-auto">
+                                                                <img src="{{ PATH_IMAGES }}interface/credits.gif"
+                                                                     class="res"
+                                                                     width="16px"
+                                                                     height="16px"/>
+                                                                {{ planet.price_hydrocarbon|floatformat:2 }}
+                                                            </div>
+                                                            <div class="col-auto">
+                                                                <a href="javascript:setval('h{{ planet.id }}', {{ planet.hydrocarbon_max }}); updateprice({{ planet.index }})">max</a>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
                                             <div class="col-auto text-end">
-                                                <img src="{{PATH_IMAGES}}/interface/credits.gif" class="res" width="16px" height="16px" /> <span id="totalprice{{planet.id}}">0</span>
+                                                <img src="{{ PATH_IMAGES }}interface/credits.gif"
+                                                     class="res"
+                                                     width="16px"
+                                                     height="16px"/>
+                                                <span id="totalprice{{ planet.id }}">0</span>
                                             </div>
                                         {% endif %}
                                         {% if planet.cant_buy_enemy %}
@@ -162,7 +221,11 @@
                         <span class="text-normal">Total</span>
                     </div>
                     <div class="col-auto">
-                        <img src="{{PATH_IMAGES}}/interface/credits.gif" class="res" width="16px" height="16px" /> <span id="total">0</span>
+                        <img src="{{ PATH_IMAGES }}interface/credits.gif"
+                             class="res"
+                             width="16px"
+                             height="16px"/>
+                        <span id="total">0</span>
                     </div>
                     <div class="col-auto">
                         <input type="submit" value="Acheter" />
@@ -173,5 +236,4 @@
         <input type="hidden" name="action" value="buy" />
         {% csrf_token %}
     </form>
-
 {% endblock %}

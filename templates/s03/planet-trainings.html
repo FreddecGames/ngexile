@@ -58,144 +58,144 @@
                                     </div>
                                     <div class="col-auto text-center" style="width:90px;">
                                         <a href="?planet={{ planetid }}&a=cancel&q={{ item.queueid }}">Annuler</a>
-                                        </div>
                                     </div>
                                 </div>
-                            {% endfor %}
-                        </div>
+                            </div>
+                        {% endfor %}
                     </div>
                 </div>
-            {% endif %}
-            <div class="col-12">
-                <form action="." method="post" class="card">
-                    <input type="hidden" name="action" value="train" />
-                    <div class="card-header">
-                        <span>Entraînement</span>
-                    </div>
-                    <div class="card-body">
-                        <div class="row g-1">
-                            <div class="col-12">
-                                <div class="row gx-3 align-items-center">
-                                    <div class="col">
-                                        <img src="{{ PATH_IMAGES }}interface/scientists.gif"
-                                             class="res"
-                                             width="16px"/>
-                                        <a href="/s03/help/#scientists">Scientifiques</a>
-                                    </div>
-                                    <div class="col-auto" style="width:100px;">
-                                        <img src="{{ PATH_IMAGES }}interface/ore.gif" class="res" width="16px" />
-                                        {{ scientist_ore|intcomma }}
-                                    </div>
-                                    <div class="col-auto" style="width:100px;">
-                                        <img src="{{ PATH_IMAGES }}interface/hydrocarbon.gif"
-                                             class="res"
-                                             width="16px"/>
-                                        {{ scientist_hydrocarbon|intcomma }}
-                                    </div>
-                                    <div class="col-auto" style="width:100px;">
-                                        <img src="{{ PATH_IMAGES }}interface/credits.gif" class="res" width="16px" />
-                                        {{ scientist_credits|intcomma }}
-                                    </div>
-                                    <div class="col-auto text-end" style="width:100px;">
-                                        {{ scientists|intcomma }} <small class="text-normal">/{{ scientists_capacity|intcomma }}</small>
-                                    </div>
-                                    <div class="col-auto text-center" style="width:90px;">
-                                        {% if input_scientists %}
-                                            <input type="number"
-                                                   min="0"
-                                                   name="scientists"
-                                                   id="scientists"
-                                                   size="5"
-                                                   maxlength="5"
-                                                   onkeyup="updateNeeds()"
-                                                   class="w-100"/>
-                                        {% endif %}
-                                        {% if max_scientists %}<span class="text-danger">Maximum atteint</span>{% endif %}
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-12">
-                                <div class="row gx-3 align-items-center">
-                                    <div class="col">
-                                        <img src="{{ PATH_IMAGES }}interface/soldiers.gif"
-                                             class="res"
-                                             width="16px"/>
-                                        <a href="/s03/help/#soldiers">Soldats</a>
-                                    </div>
-                                    <div class="col-auto" style="width:100px;">
-                                        <img src="{{ PATH_IMAGES }}interface/ore.gif" class="res" width="16px" />
-                                        {{ soldier_ore|intcomma }}
-                                    </div>
-                                    <div class="col-auto" style="width:100px;">
-                                        <img src="{{ PATH_IMAGES }}interface/hydrocarbon.gif"
-                                             class="res"
-                                             width="16px"/>
-                                        {{ soldier_hydrocarbon|intcomma }}
-                                    </div>
-                                    <div class="col-auto" style="width:100px;">
-                                        <img src="{{ PATH_IMAGES }}interface/credits.gif" class="res" width="16px" />
-                                        {{ soldier_credits|intcomma }}
-                                    </div>
-                                    <div class="col-auto text-end" style="width:100px;">
-                                        {{ soldiers|intcomma }} <small class="text-normal">/{{ soldiers_capacity|intcomma }}</small>
-                                    </div>
-                                    <div class="col-auto text-center" style="width:90px;">
-                                        {% if input_soldiers %}
-                                            <input type="number"
-                                                   min="0"
-                                                   name="soldiers"
-                                                   id="soldiers"
-                                                   size="5"
-                                                   maxlength="5"
-                                                   onkeyup="updateNeeds()"
-                                                   class="w-100"/>
-                                        {% endif %}
-                                        {% if max_soldiers %}<span class="text-danger">Maximum atteint</span>{% endif %}
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-12">
-                                <hr>
-                            </div>
-                            <div class="col-12">
-                                <div class="row gx-3 align-items-center">
-                                    <div class="col">
-                                        <span class="text-normal">Total</span>
-                                    </div>
-                                    <div class="col-auto" style="width:100px;">
-                                        <img src="{{ PATH_IMAGES }}interface/ore.gif" class="res" width="16px" />
-                                        <span id="totalore">0</span>
-                                    </div>
-                                    <div class="col-auto" style="width:100px;">
-                                        <img src="{{ PATH_IMAGES }}interface/hydrocarbon.gif"
-                                             class="res"
-                                             width="16px"/>
-                                        <span id="totalhydrocarbon">0</span>
-                                    </div>
-                                    <div class="col-auto" style="width:100px;">
-                                        <img src="{{ PATH_IMAGES }}interface/credits.gif" class="res" width="16px" />
-                                        <span id="totalcredits">0</span>
-                                    </div>
-                                    <div class="col-auto text-end" style="width:100px;"></div>
-                                    <div class="col-auto text-center" style="width:90px;">
-                                        <input type="submit" value="Entraîner" class="w-100" />
-                                    </div>
-                                </div>
-                            </div>
-                            {% if not_enough_workers %}
-                                <div class="col-12 text-end">
-                                    <span class="text-danger">Ressources ou nombre de travailleurs insuffisant.</span>
-                                </div>
-                            {% endif %}
-                            {% if cant_train_now %}
-                                <div class="col-12 text-end">
-                                    <span class="text-danger">Vous ne disposez pas des bâtiments nécessaires pour la formation des scientifiques ou des soldats demandés.</span>
-                                </div>
-                            {% endif %}
-                        </div>
-                    </div>
-                    {% csrf_token %}
-                </form>
             </div>
+        {% endif %}
+        <div class="col-12">
+            <form action="." method="post" class="card">
+                <input type="hidden" name="action" value="train" />
+                <div class="card-header">
+                    <span>Entraînement</span>
+                </div>
+                <div class="card-body">
+                    <div class="row g-1">
+                        <div class="col-12">
+                            <div class="row gx-3 align-items-center">
+                                <div class="col">
+                                    <img src="{{ PATH_IMAGES }}interface/scientists.gif"
+                                         class="res"
+                                         width="16px"/>
+                                    <a href="/s03/help/#scientists">Scientifiques</a>
+                                </div>
+                                <div class="col-auto" style="width:100px;">
+                                    <img src="{{ PATH_IMAGES }}interface/ore.gif" class="res" width="16px" />
+                                    {{ scientist_ore|intcomma }}
+                                </div>
+                                <div class="col-auto" style="width:100px;">
+                                    <img src="{{ PATH_IMAGES }}interface/hydrocarbon.gif"
+                                         class="res"
+                                         width="16px"/>
+                                    {{ scientist_hydrocarbon|intcomma }}
+                                </div>
+                                <div class="col-auto" style="width:100px;">
+                                    <img src="{{ PATH_IMAGES }}interface/credits.gif" class="res" width="16px" />
+                                    {{ scientist_credits|intcomma }}
+                                </div>
+                                <div class="col-auto text-end" style="width:100px;">
+                                    {{ scientists|intcomma }} <small class="text-normal">/{{ scientists_capacity|intcomma }}</small>
+                                </div>
+                                <div class="col-auto text-center" style="width:90px;">
+                                    {% if input_scientists %}
+                                        <input type="number"
+                                               min="0"
+                                               name="scientists"
+                                               id="scientists"
+                                               size="5"
+                                               maxlength="5"
+                                               onkeyup="updateNeeds()"
+                                               class="w-100"/>
+                                    {% endif %}
+                                    {% if max_scientists %}<span class="text-danger">Maximum atteint</span>{% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="row gx-3 align-items-center">
+                                <div class="col">
+                                    <img src="{{ PATH_IMAGES }}interface/soldiers.gif"
+                                         class="res"
+                                         width="16px"/>
+                                    <a href="/s03/help/#soldiers">Soldats</a>
+                                </div>
+                                <div class="col-auto" style="width:100px;">
+                                    <img src="{{ PATH_IMAGES }}interface/ore.gif" class="res" width="16px" />
+                                    {{ soldier_ore|intcomma }}
+                                </div>
+                                <div class="col-auto" style="width:100px;">
+                                    <img src="{{ PATH_IMAGES }}interface/hydrocarbon.gif"
+                                         class="res"
+                                         width="16px"/>
+                                    {{ soldier_hydrocarbon|intcomma }}
+                                </div>
+                                <div class="col-auto" style="width:100px;">
+                                    <img src="{{ PATH_IMAGES }}interface/credits.gif" class="res" width="16px" />
+                                    {{ soldier_credits|intcomma }}
+                                </div>
+                                <div class="col-auto text-end" style="width:100px;">
+                                    {{ soldiers|intcomma }} <small class="text-normal">/{{ soldiers_capacity|intcomma }}</small>
+                                </div>
+                                <div class="col-auto text-center" style="width:90px;">
+                                    {% if input_soldiers %}
+                                        <input type="number"
+                                               min="0"
+                                               name="soldiers"
+                                               id="soldiers"
+                                               size="5"
+                                               maxlength="5"
+                                               onkeyup="updateNeeds()"
+                                               class="w-100"/>
+                                    {% endif %}
+                                    {% if max_soldiers %}<span class="text-danger">Maximum atteint</span>{% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <hr>
+                        </div>
+                        <div class="col-12">
+                            <div class="row gx-3 align-items-center">
+                                <div class="col">
+                                    <span class="text-normal">Total</span>
+                                </div>
+                                <div class="col-auto" style="width:100px;">
+                                    <img src="{{ PATH_IMAGES }}interface/ore.gif" class="res" width="16px" />
+                                    <span id="totalore">0</span>
+                                </div>
+                                <div class="col-auto" style="width:100px;">
+                                    <img src="{{ PATH_IMAGES }}interface/hydrocarbon.gif"
+                                         class="res"
+                                         width="16px"/>
+                                    <span id="totalhydrocarbon">0</span>
+                                </div>
+                                <div class="col-auto" style="width:100px;">
+                                    <img src="{{ PATH_IMAGES }}interface/credits.gif" class="res" width="16px" />
+                                    <span id="totalcredits">0</span>
+                                </div>
+                                <div class="col-auto text-end" style="width:100px;"></div>
+                                <div class="col-auto text-center" style="width:90px;">
+                                    <input type="submit" value="Entraîner" class="w-100" />
+                                </div>
+                            </div>
+                        </div>
+                        {% if not_enough_workers %}
+                            <div class="col-12 text-end">
+                                <span class="text-danger">Ressources ou nombre de travailleurs insuffisant.</span>
+                            </div>
+                        {% endif %}
+                        {% if cant_train_now %}
+                            <div class="col-12 text-end">
+                                <span class="text-danger">Vous ne disposez pas des bâtiments nécessaires pour la formation des scientifiques ou des soldats demandés.</span>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% csrf_token %}
+            </form>
         </div>
-    {% endblock content %}
+    </div>
+{% endblock content %}

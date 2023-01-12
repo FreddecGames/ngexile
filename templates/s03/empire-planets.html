@@ -8,23 +8,41 @@
                     <div class="row gx-3 align-items-center">
                         <div class="col-auto">
                             <div class="row g-1 flex-column">
-                                <div class="col-12 text-center"><img src="{{PATH_IMAGES}}planets/p{{planet.img}}.gif" width="48px" class="rounded" /></div>
-                                <div class="col-12 text-center"><a href="/s03/map/?g={{planet.g}}&s={{planet.s}}">{{planet.galaxy}}.{{planet.sector}}.{{planet.planet}}</a></div>
+                                <div class="col-12 text-center">
+                                    <img src="{{ PATH_IMAGES }}planets/p{{ planet.img }}.gif"
+                                         width="48px"
+                                         class="rounded"/>
+                                </div>
+                                <div class="col-12 text-center">
+                                    <a href="/s03/map/?g={{ planet.g }}&s={{ planet.s }}">{{ planet.galaxy }}.{{ planet.sector }}.{{ planet.planet }}</a>
+                                </div>
                             </div>
                         </div>
                         <div class="col">
                             <div class="row g-1 flex-column">
                                 <div class="col-12">
                                     <div class="row gx-3">
-                                        <div class="col"><a href="/s03/planet-view/?planet={{planet.id}}">{{planet.name}}</a></div>
+                                        <div class="col">
+                                            <a href="/s03/planet-view/?planet={{ planet.id }}">{{ planet.name }}</a>
+                                        </div>
                                         {% if planet.commanderid %}
+                                            <div class="col-auto">
+                                                <img src="/static/s03/img/interface/commander.gif"
+                                                     class="res"
+                                                     width="16px"
+                                                     height="16px">
+                                                <a href="/s03/empire-commanders/#{{ planet.commander_name }}">{{ planet.commandername }}</a>
+                                            </div>
+                                        {% endif %}
                                         <div class="col-auto">
-                                            <img src="/static/s03/img/interface/commander.gif" class="res" width="16px" height="16px">
-                                            <a href="/s03/empire-commanders/#{{planet.commander_name}}">{{planet.commandername}}</a>
-                                        </div>{% endif %}
-                                        <div class="col-auto"><a href="/s03/planet-buildings/?planet={{planet.id}}">Bâtiments</a></div>
-                                        <div class="col-auto"><a href="/s03/planet-ships/?planet={{planet.id}}">Chantier Spatial</a></div>
-                                        <div class="col-auto"><a href="/s03/planet-trainings/?planet={{planet.id}}">Entraînement</a></div>
+                                            <a href="/s03/planet-buildings/?planet={{ planet.id }}">Bâtiments</a>
+                                        </div>
+                                        <div class="col-auto">
+                                            <a href="/s03/planet-ships/?planet={{ planet.id }}">Chantier Spatial</a>
+                                        </div>
+                                        <div class="col-auto">
+                                            <a href="/s03/planet-trainings/?planet={{ planet.id }}">Entraînement</a>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="col-12">
@@ -32,19 +50,28 @@
                                         <div class="col-4">
                                             <div class="row g-1 flex-column">
                                                 <div class="col-12 text-nowrap">
-                                                    <img src="/static/s03/img/interface/ore.gif" class="res" width="16px" height="16px">
+                                                    <img src="/static/s03/img/interface/ore.gif"
+                                                         class="res"
+                                                         width="16px"
+                                                         height="16px">
                                                     <span class="{% if planet.ore_level >= 90 %}text-danger{% elif planet.ore_level >= 70 %}text-warning{% endif %}">{{ planet.ore|intcomma }}</span>
                                                     <small class="ms-1 text-normal">/{{ planet.ore_capacity|intcomma }}</small>
                                                     <small class="ms-1 text-success">+{{ planet.ore_production|intcomma }}</small>
                                                 </div>
                                                 <div class="col-12 text-nowrap">
-                                                    <img src="/static/s03/img/interface/hydrocarbon.gif" class="res" width="16px" height="16px">
+                                                    <img src="/static/s03/img/interface/hydrocarbon.gif"
+                                                         class="res"
+                                                         width="16px"
+                                                         height="16px">
                                                     <span class="{% if planet.hydrocarbon_level >= 90 %}text-danger{% elif planet.hydrocarbon_level >= 70 %}text-warning{% endif %}">{{ planet.hydrocarbon|intcomma }}</span>
                                                     <small class="ms-1 text-normal">/{{ planet.hydrocarbon_capacity|intcomma }}</small>
                                                     <small class="ms-1 text-success">+{{ planet.hydrocarbon_production|intcomma }}</small>
                                                 </div>
                                                 <div class="col-12 text-nowrap">
-                                                    <img src="/static/s03/img/interface/energy.gif" class="res" width="16px" height="16px">
+                                                    <img src="/static/s03/img/interface/energy.gif"
+                                                         class="res"
+                                                         width="16px"
+                                                         height="16px">
                                                     <span>{{ planet.energy|intcomma }}</span>
                                                     <small class="ms-1 text-normal">/{{ planet.energy_capacity|intcomma }}</small>
                                                     <small class="ms-1 text-success">+{{ planet.energy_balance|intcomma }}</small>
@@ -54,18 +81,27 @@
                                         <div class="col-4">
                                             <div class="row g-1 flex-column">
                                                 <div class="col-12 text-nowrap">
-                                                    <img src="/static/s03/img/interface/workers.gif" class="res" width="16px" height="16px">
+                                                    <img src="/static/s03/img/interface/workers.gif"
+                                                         class="res"
+                                                         width="16px"
+                                                         height="16px">
                                                     <span class="{% if planet.workers_for_maintenance > planet.workers %}text-danger{% endif %}">{{ planet.workers|intcomma }}</span>
                                                     <small class="ms-1 text-normal">/{{ planet.workers_capacity|intcomma }}</small>
                                                     <small class="ms-1 text-success">{{ planet.workers_idle|intcomma }}</small>
                                                 </div>
                                                 <div class="col-12 text-nowrap">
-                                                    <img src="/static/s03/img/interface/scientists.gif" class="res" width="16px" height="16px">
+                                                    <img src="/static/s03/img/interface/scientists.gif"
+                                                         class="res"
+                                                         width="16px"
+                                                         height="16px">
                                                     <span>{{ planet.scientists|intcomma }}</span>
                                                     <small class="ms-1 text-normal">/{{ planet.scientists_capacity|intcomma }}</small>
                                                 </div>
                                                 <div class="col-12 text-nowrap">
-                                                    <img src="/static/s03/img/interface/soldiers.gif" class="res" width="16px" height="16px">
+                                                    <img src="/static/s03/img/interface/soldiers.gif"
+                                                         class="res"
+                                                         width="16px"
+                                                         height="16px">
                                                     <span class="{% if planet.soldiers_low %}text-danger{% endif %}">{{ planet.soldiers|intcomma }}</span>
                                                     <small class="ms-1 text-normal">/{{ planet.soldiers_capacity|intcomma }}</small>
                                                 </div>
@@ -74,15 +110,24 @@
                                         <div class="col-2">
                                             <div class="row g-1 flex-column">
                                                 <div class="col-12 text-nowrap">
-                                                    <img src="/static/s03/img/interface/workers.gif" class="res" width="16px" height="16px">
+                                                    <img src="/static/s03/img/interface/workers.gif"
+                                                         class="res"
+                                                         width="16px"
+                                                         height="16px">
                                                     <span>{{ planet.workers_for_maintenance|intcomma }}</span>
                                                 </div>
                                                 <div class="col-12 text-nowrap">
-                                                    <img src="/static/s03/img/interface/credits.gif" class="res" width="16px" height="16px">
+                                                    <img src="/static/s03/img/interface/credits.gif"
+                                                         class="res"
+                                                         width="16px"
+                                                         height="16px">
                                                     <span>{{ planet.upkeep|intcomma }}</span>
                                                 </div>
                                                 <div class="col-12 text-nowrap">
-                                                    <img src="/static/s03/img/interface/soldiers.gif" class="res" width="16px" height="16px">
+                                                    <img src="/static/s03/img/interface/soldiers.gif"
+                                                         class="res"
+                                                         width="16px"
+                                                         height="16px">
                                                     <span>{{ planet.soldiers_upkeep|intcomma }}</span>
                                                 </div>
                                             </div>
@@ -90,12 +135,18 @@
                                         <div class="col-2">
                                             <div class="row g-1 flex-column">
                                                 <div class="col-12 text-nowrap">
-                                                    <img src="/static/s03/img/interface/floor.gif" class="res" width="16px" height="16px">
+                                                    <img src="/static/s03/img/interface/floor.gif"
+                                                         class="res"
+                                                         width="16px"
+                                                         height="16px">
                                                     <span>{{ planet.floor_occupied|intcomma }}</span>
                                                     <small class="ms-1 text-normal">/{{ planet.floor|intcomma }}</small>
                                                 </div>
                                                 <div class="col-12 text-nowrap">
-                                                    <img src="/static/s03/img/interface/space.gif" class="res" width="16px" height="16px">
+                                                    <img src="/static/s03/img/interface/space.gif"
+                                                         class="res"
+                                                         width="16px"
+                                                         height="16px">
                                                     <span>{{ planet.space_occupied|intcomma }}</span>
                                                     <small class="ms-1 text-normal">/{{ planet.space|intcomma }}</small>
                                                 </div>

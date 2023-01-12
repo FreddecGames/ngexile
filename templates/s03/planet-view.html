@@ -9,7 +9,7 @@
     </script>
     <div class="row g-3 flex-column">
         <div class="col-12">
-            <div class="card">    
+            <div class="card">
                 <div class="card-header">
                     <span>Vue d'ensemble</span>
                 </div>
@@ -130,7 +130,7 @@
             </div>
         </div>
         <div class="col-12">
-            <form action="?planet={{planet_id}}" method="post" class="card">
+            <form action="?planet={{ planet_id }}" method="post" class="card">
                 <div class="card-header">
                     <span>Achat de ressources</span>
                 </div>
@@ -138,17 +138,30 @@
                     <div class="row g-1 flex-column">
                         <div class="col-12">
                             <div class="row gx-3 align-items-center">
-                                <div class="col-4"><span class="text-normal">Prix pour {{ 1000|intcomma }} minerai</span></div>
-                                <div class="col-auto"><input type="number" name="buy_ore" value="{{buy_ore}}" maxlength="5" /></div>
+                                <div class="col-4">
+                                    <span class="text-normal">Prix pour {{ 1000|intcomma }} minerai</span>
+                                </div>
+                                <div class="col-auto">
+                                    <input type="number" name="buy_ore" value="{{ buy_ore }}" maxlength="5" />
+                                </div>
                             </div>
                         </div>
                         <div class="col-12">
                             <div class="row gx-3 align-items-center">
-                                <div class="col-4"><span class="text-normal">Prix pour {{ 1000|intcomma }} hydrocarbure</span></div>
-                                <div class="col-auto"><input type="number" name="buy_hydrocarbon" value="{{buy_hydrocarbon}}" maxlength="5" /></div>
+                                <div class="col-4">
+                                    <span class="text-normal">Prix pour {{ 1000|intcomma }} hydrocarbure</span>
+                                </div>
+                                <div class="col-auto">
+                                    <input type="number"
+                                           name="buy_hydrocarbon"
+                                           value="{{ buy_hydrocarbon }}"
+                                           maxlength="5"/>
+                                </div>
                             </div>
                         </div>
-                        <div class="col-12"><hr></div>
+                        <div class="col-12">
+                            <hr>
+                        </div>
                         <div class="col-12 text-end">
                             <input type="submit" value="Mettre à jour" />
                         </div>

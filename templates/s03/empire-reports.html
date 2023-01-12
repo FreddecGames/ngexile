@@ -276,7 +276,7 @@
                                 {% elif message.type == 131 %}
                                     La nation <a href="/s03/profile-view/?name={{ message.nation }}">{{ message.nation }}</a> a décidé de quitter notre alliance.
                                 {% elif message.type == 132 %}
-                                    La nation <a href="/s03/profile-view/?name={{ message.nation }}">{{ message.nation }}</a> va être exclue de l'alliance<script>if('{{message.username }}'!='') document.write(' (action décidée par <a href="/s03/profile-view/?name={{message.username }}">{{message.username}}</a>)');</script>.
+                                    La nation <a href="/s03/profile-view/?name={{ message.nation }}">{{ message.nation }}</a> va être exclue de l'alliance<script>if('{{message.username }}'!='') document.write(' (action décidée par <a href="/s03/profile-view/?name={{message.username }}">{{message.username }}</a>)');</script>.
                                 {% elif message.type == 150 %}
                                     Notre alliance n'a pas pu honorer son contrat et payer les
                                     <img src="{{ PATH_IMAGES }}interface/credits.gif"
