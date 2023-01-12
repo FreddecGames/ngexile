@@ -6,7 +6,9 @@ class View(GlobalView):
 
         response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
-
+        
+        #--- get
+        
         self.selected_menu = 'planets'
 
         content = GetTemplate(self.request, 'empire-planets')
@@ -39,10 +41,10 @@ class View(GlobalView):
             
             if dbRow['id'] == self.CurrentPlanet: item['is_current'] = True
             
-            dbRow['ore_level'] = self.getpercent(dbRow['ore'], dbRow['ore_capacity'], 10)
-            dbRow['hydrocarbon_level'] = self.getpercent(dbRow['hydrocarbon'], dbRow['hydrocarbon_capacity'], 10)
+            item['ore_level'] = self.getpercent(dbRow['ore'], dbRow['ore_capacity'], 10)
+            item['hydrocarbon_level'] = self.getpercent(dbRow['hydrocarbon'], dbRow['hydrocarbon_capacity'], 10)
             
             if dbRow['soldiers'] * 250 < dbRow['workers'] + dbRow['scientists']: item['soldiers_low'] = True
-            dbRow['soldiers_upkeep'] = int((dbRow['workers'] + dbRow['scientists']) / 250)
+            item['soldiers_upkeep'] = int((dbRow['workers'] + dbRow['scientists']) / 250)
         
         return self.Display(content)

@@ -40,6 +40,9 @@ from .views import mail_new
 
 from .views import map
 
+from .views import market_buy
+from .views import market_sell
+
 from .views import planet_buildings
 from .views import planet_orbit
 from .views import planet_production
@@ -99,6 +102,9 @@ urlpatterns = [
     path('mail-new/', mail_new.View.as_view()),
 
     path('map/', map.View.as_view()),
+
+    path('market-buy/', market_buy.View.as_view()),
+    path('market-sell/', market_sell.View.as_view()),
     
     path('planet-buildings/', planet_buildings.View.as_view()),
     path('planet-orbit/', planet_orbit.View.as_view()),

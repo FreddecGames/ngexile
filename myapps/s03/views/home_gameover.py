@@ -10,14 +10,14 @@ class View(BaseMixin, View):
         userId = int(request.session.get(sUser, 0))
         if not userId or userId == 0: return HttpResponseRedirect('/s03/')
 
-        result = oConnExecute('SELECT int4(count(1)) FROM nav_planet WHERE ownerid=' + str(userId))
-        planets = result[0]
+        dbRow = oConnRow('SELECT int4(count(1)) FROM nav_planet WHERE ownerid=' + str(userId))
+        planets = dbRow['count']
 
-        result = oConnExecute('SELECT username, resets, credits_bankruptcy, int4(score_research) FROM users WHERE id=' + str(userId))
-        username = oRs[0]
-        resets = oRs[1]
-        bankruptcy = oRs[2]
-        research_done = oRs[3]
+        dbRow = oConnRow('SELECT username, resets, credits_bankruptcy, int4(score_research) FROM users WHERE id=' + str(userId))
+        username = dbRow['username']
+        resets = dbRow['resets']
+        bankruptcy = dbRow['credits_bankruptcy']
+        research_done = dbRow['score_research']
 
         if planets > 0 and bankruptcy > 0: return HttpResponseRedirect('/s03/')
 
@@ -43,9 +43,9 @@ class View(BaseMixin, View):
                     oConnDoQuery('UPDATE commanders SET name=' + dosql(request.POST.get('username')) + ' WHERE name=' + dosql(username) + ' AND ownerid=' + str(userId))
                     
             if changeNameError == '':
-                oRs = oConnExecute('SELECT sp_reset_account(' + str(userId) + ',' + str(ToInt(request.POST.get('galaxy'), 1)) + ')')
-                if oRs[0] == 0: return HttpResponseRedirect('/s03/empire-view/')
-                else: resetError = oRs[0]
+                dbRow = oConnRow('SELECT sp_reset_account(' + str(userId) + ',' + str(ToInt(request.POST.get('galaxy'), 1)) + ') AS result')
+                if dbRow['result'] == 0: return HttpResponseRedirect('/s03/empire-view/')
+                else: resetError = dbRow['result']
 
         elif action == 'abandon':
             oConnDoQuery('UPDATE users SET deletion_date=now() WHERE id=' + str(userId))
@@ -63,12 +63,12 @@ class View(BaseMixin, View):
             list = []
             content.AssignValue('galaxies', list)
             
-            oRss = oConnExecuteAll('SELECT id, recommended FROM sp_get_galaxy_info(' + str(userId) + ')')
-            for oRs in oRss:
+            dbRows = oConnRows('SELECT id, recommended FROM sp_get_galaxy_info(' + str(userId) + ')')
+            for dbRow in dbRows:
                 
                 item = {}
-                item['id'] = oRs[0]
-                item['recommendation'] = oRs[1]
+                item['id'] = dbRow['id']
+                item['recommendation'] = dbRow['recommended']
                 
                 list.append(item)
 

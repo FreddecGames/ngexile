@@ -6,26 +6,31 @@ class View(GlobalView):
 
         response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
+        
+        #--- post
+                
+        self.train_error = 0
 
+        action = request.POST.get("action", "").lower()
+        if action == "train":
+        
+            trainScientists = ToInt(request.POST.get("scientists"), 0)
+            trainSoldiers = ToInt(request.POST.get("soldiers"), 0)
+            
+            dbRow = oConnRow("SELECT sp_start_training(" + str(self.UserId) + "," + str(self.CurrentPlanet) + "," + str(trainScientists) + "," + str(trainSoldiers) + ") AS result")
+            if dbRow: self.train_error = dbRow['result']
+            else: self.train_error = 1
+            
+        elif action == "cancel":
+        
+            queueId = ToInt(request.GET.get("q"), 0)
+            oConnDoQuery("SELECT sp_cancel_training(" + str(self.CurrentPlanet) + ", " + str(queueId) + ")")
+        
+        #--- get
+        
         self.selected_menu = "trainings"
         
         self.showHeader = True
-        
-        self.train_error = 0
-
-        Action = request.GET.get("a", "").lower()
-        trainScientists = ToInt(request.POST.get("scientists"),0)
-        trainSoldiers = ToInt(request.POST.get("soldiers"),0)
-        queueId = ToInt(request.GET.get("q"),0)
-
-        if Action == "train":
-            self.Train(trainScientists, trainSoldiers)
-        elif Action == "cancel":
-            self.CancelTraining(queueId)
-
-        return self.DisplayTraining()
-
-    def DisplayTraining(self):
 
         content = GetTemplate(self.request, "planet-trainings")
 
@@ -36,13 +41,13 @@ class View(GlobalView):
                 " FROM sp_get_training_price(" + str(self.UserId) + ")"
         oRs = oConnExecute(query)
 
-        if oRs:
-            content.AssignValue("scientist_ore", oRs[0])
-            content.AssignValue("scientist_hydrocarbon", oRs[1])
-            content.AssignValue("scientist_credits", oRs[2])
-            content.AssignValue("soldier_ore", oRs[3])
-            content.AssignValue("soldier_hydrocarbon", oRs[4])
-            content.AssignValue("soldier_credits", oRs[5])
+        content.AssignValue("scientist_ore", oRs[0])
+        content.AssignValue("scientist_hydrocarbon", oRs[1])
+        content.AssignValue("scientist_credits", oRs[2])
+        
+        content.AssignValue("soldier_ore", oRs[3])
+        content.AssignValue("soldier_hydrocarbon", oRs[4])
+        content.AssignValue("soldier_credits", oRs[5])
 
         query = "SELECT scientists, scientists_capacity, soldiers, soldiers_capacity, workers FROM vw_planets WHERE id="+str(self.CurrentPlanet)
         oRs = oConnExecute(query)
@@ -129,17 +134,3 @@ class View(GlobalView):
             i = i + 1
 
         return self.Display(content)
-
-    def Train(self, Scientists, Soldiers):
-
-        oRs = connExecuteRetry("SELECT * FROM sp_start_training(" + str(self.UserId) + "," + str(self.CurrentPlanet) + "," + str(Scientists) + "," + str(Soldiers) + ")")
-
-        if oRs:
-            self.train_error = oRs[0]
-        else:
-            self.train_error = 1
-
-    def CancelTraining(self, queueId):
-        connExecuteRetryNoRecords("SELECT * FROM sp_cancel_training(" + str(self.CurrentPlanet) + ", " + str(queueId) + ")")
-        return HttpResponseRedirect("?")
-

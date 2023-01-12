@@ -6,26 +6,23 @@ class View(GlobalView):
 
         response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
-
+        
+        #--- get
+        
         self.selected_menu = "help"
 
+        content = GetTemplate(self.request, "help")
+        
         cat = request.GET.get("cat", "")
-
         if cat == "" or cat != "buildings" and cat != "research" and cat != "ships" and cat != "tags":
             cat = "general"
 
-        return self.display_help(cat)
-
-    def display_help(self, cat):
-
-        content = GetTemplate(self.request, "help")
-
-        if cat == "buildings":# display help on buildings
+        if cat == "buildings":
+        
             query = "SELECT id, category," + \
                     "cost_ore, cost_hydrocarbon, workers, floor, space, production_ore, production_hydrocarbon, energy_production, workers*maintenance_factor/100.0, upkeep, energy_consumption," + \
                     "storage_ore, storage_hydrocarbon, storage_energy" + \
                     " FROM sp_list_available_buildings(" + str(self.UserId) + ") WHERE not is_planet_element"
-
             oRss = oConnExecuteAll(query)
 
             category = -1

@@ -74,8 +74,8 @@ function previousplanet() {
                              width="16px"
                              height="16px"/>
                         <span class="{% if medium_ore %}text-warning{% elif high_ore %}text-danger{% endif %}">{{ ore|intcomma }}</span>
-                        <small class="text-normal">/{{ ore_capacity|intcomma }}</small>
-                        <small class="{% if normal_ore_production %}text-success{% elif medium_ore_production %}text-warning{% endif %}">+{{ ore_production|intcomma }}</small>
+                        <small class="ms-1 text-normal">/{{ ore_capacity|intcomma }}</small>
+                        <small class="ms-1 {% if normal_ore_production %}text-success{% elif medium_ore_production %}text-warning{% endif %}">+{{ ore_production|intcomma }}</small>
                     </div>
                     <div class="col-12 text-nowrap">
                         <img src="{{ PATH_IMAGES }}interface/hydrocarbon.gif"
@@ -83,8 +83,8 @@ function previousplanet() {
                              width="16px"
                              height="16px"/>
                         <span class="{% if medium_hydrocarbon %}text-warning{% elif high_hydrocarbon %}text-danger{% endif %}">{{ hydrocarbon|intcomma }}</span>
-                        <small class="text-normal">/{{ hydrocarbon_capacity|intcomma }}</small>
-                        <small class="{% if normal_hydrocarbon_production %}text-success{% elif medium_hydrocarbon_production %}text-warning{% endif %}">+{{ hydrocarbon_production|intcomma }}</small>
+                        <small class="ms-1 text-normal">/{{ hydrocarbon_capacity|intcomma }}</small>
+                        <small class="ms-1 {% if normal_hydrocarbon_production %}text-success{% elif medium_hydrocarbon_production %}text-warning{% endif %}">+{{ hydrocarbon_production|intcomma }}</small>
                     </div>
                     <div class="col-12 text-nowrap">
                         <img src="{{ PATH_IMAGES }}interface/energy.gif"
@@ -92,8 +92,8 @@ function previousplanet() {
                              width="16px"
                              height="16px"/>
                         <span>{{ energy|intcomma }}</span>
-                        <small class="text-normal">/{{ energy_capacity|intcomma }}</small>
-                        <small class="{% if energy_production_minus %}text-danger{% else %}text-success{% endif %}">
+                        <small class="ms-1 text-normal">/{{ energy_capacity|intcomma }}</small>
+                        <small class="ms-1 {% if energy_production_minus %}text-danger{% else %}text-success{% endif %}">
                             {% if energy_production > 0 %}+{% endif %}
                         {{ energy_production|intcomma }}</small>
                     </div>
@@ -107,8 +107,8 @@ function previousplanet() {
                              width="16px"
                              height="16px"/>
                         <span class="{% if workers_low %}text-danger{% endif %}">{{ workers|intcomma }}</span>
-                        <small class="text-normal">/{{ workers_capacity|intcomma }}</small>
-                        <small class="{% if workers_idle <= 0 %}text-danger{% else %}text-success{% endif %}">{{ workers_idle|intcomma }}</small>
+                        <small class="ms-1 text-normal">/{{ workers_capacity|intcomma }}</small>
+                        <small class="ms-1 {% if workers_idle <= 0 %}text-danger{% else %}text-success{% endif %}">{{ workers_idle|intcomma }}</small>
                     </div>
                     <div class="col-12 text-nowrap">
                         <img src="{{ PATH_IMAGES }}interface/scientists.gif"
@@ -116,7 +116,7 @@ function previousplanet() {
                              width="16px"
                              height="16px"/>
                         <span class="{% if scientists_low %}text-danger{% endif %}">{{ scientists|intcomma }}</span>
-                        <small class="text-normal">/{{ scientists_capacity|intcomma }}</small>
+                        <small class="ms-1 text-normal">/{{ scientists_capacity|intcomma }}</small>
                     </div>
                     <div class="col-12 text-nowrap">
                         <img src="{{ PATH_IMAGES }}interface/soldiers.gif"
@@ -124,7 +124,7 @@ function previousplanet() {
                              width="16px"
                              height="16px"/>
                         <span class="{% if soldiers_low %}text-danger{% endif %}">{{ soldiers|intcomma }}</span>
-                        <small class="text-normal">/{{ soldiers_capacity|intcomma }}</small>
+                        <small class="ms-1 text-normal">/{{ soldiers_capacity|intcomma }}</small>
                     </div>
                 </div>
             </div>
@@ -136,7 +136,7 @@ function previousplanet() {
                              width="16px"
                              height="16px"/>
                         <span>{{ floor_occupied|intcomma }}</span>
-                        <small class="text-normal">/{{ floor|intcomma }}</small>
+                        <small class="ms-1 text-normal">/{{ floor|intcomma }}</small>
                     </div>
                     <div class="col-12 text-nowrap">
                         <img src="{{ PATH_IMAGES }}interface/space.gif"
@@ -144,7 +144,7 @@ function previousplanet() {
                              width="16px"
                              height="16px"/>
                         <span>{{ space_occupied|intcomma }}</span>
-                        <small class="text-normal">/{{ space|intcomma }}</small>
+                        <small class="ms-1 text-normal">/{{ space|intcomma }}</small>
                     </div>
                 </div>
             </div>

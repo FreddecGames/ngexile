@@ -6,7 +6,9 @@ class View(GlobalView):
 
         response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
-
+        
+        #--- get
+        
         self.selected_menu = 'ranking'
 
         content = GetTemplate(self.request, 'ranking-alliances')

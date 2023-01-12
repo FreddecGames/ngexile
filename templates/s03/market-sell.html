@@ -1,0 +1,151 @@
+{% extends "s03/layout.html" %}
+{% load humanize %}
+{% block content %}
+
+    <div class="nav nav-tabs mb-3">
+        <div class="nav-item">
+            <a href="/s03/market-buy/" class="nav-link">Achats</a>
+        </div>
+        <div class="nav-item">
+            <a href="/s03/market-sell/" class="nav-link active">Ventes</a>
+        </div>
+    </div>
+
+    <script>
+        var planets = [];
+        {% for planet in planets %}
+            planets.push({ id:{{planet.id}}, oreMax:{{planet.ore_max}}, hydroMax:{{planet.hydrocarbon_max}}, orePrice:{{planet.price_ore}}, hydroPrice:{{planet.price_hydrocarbon}}, total:0 });
+        {% endfor %}
+        
+        function getPlanet(id) {
+            
+            for (var i = 0; i < planets.length; i++)
+                if (planets[i].id == id)
+                    return planets[i]
+                    
+            return null;
+        }
+        
+        function updateprice(id) {
+        
+            var planet = getPlanet(id);
+
+            var ore_q = getval("o" + planet.id);
+            if (ore_q > planet.oreMax) { ore_q = planet.oreMax; setval("o" + planet.id, planet.oreMax); }
+
+            var hydro_q = getval("h" + planet.id);
+            if (hydro_q > planet.hydroMax) { hydro_q = planet.hydroMax; setval("h" + planet.id, planet.hydroMax); }
+
+            var ore_price = planet.orePrice;
+            var hydro_price = planet.hydroPrice;
+            var price = ore_q * ore_price + hydro_q * hydro_price;
+
+            var obj = $("totalprice" + planet.id);
+            if ((obj != null) && (obj.innerHTML != price)) {
+            
+                obj.innerHTML = formatnumber(price);
+                computetotal();
+            }
+        }
+
+        function computetotal() {
+        
+            var total = 0;
+
+            for (var i = 0; i < planets.length; i++) {
+            
+                var planet = planets[i];
+                var obj = $("totalprice" + planet.id);
+                total += parseInt(obj.innerHTML.replace(" ",""));
+            }
+            
+            var obj = $("total");
+            obj.innerHTML = formatnumber(total);
+        }
+    </script>
+
+    <form method="post" action="." class="card">
+        <div class="list-group list-group-flush">
+            {% for planet in planets %}
+                <div class="list-group-item {% if planet.is_current %}bg-success{% endif %}">
+                    <div class="row gx-3 align-items-center">
+                        <div class="col-auto">
+                            <div class="row g-1 flex-column">
+                                <div class="col-12 text-center"><img src="{{PATH_IMAGES}}planets/p{{planet.img}}.gif" width="48px" class="rounded" /></div>
+                                <div class="col-12 text-center"><a href="/s03/map/?g={{planet.g}}&s={{planet.s}}">{{planet.galaxy}}.{{planet.sector}}.{{planet.planet}}</a></div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="row g-1 flex-column">
+                                <div class="col-12">
+                                    <div class="row gx-3">
+                                        <div class="col"><a href="/s03/planet-view/?planet={{planet.id}}">{{planet.name}}</a></div>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="row gx-3 flex-nowrap align-items-center">
+                                        <div class="col-4">
+                                            <div class="row g-1 flex-column">
+                                                <div class="col-12 text-nowrap">
+                                                    <img src="/static/s03/img/interface/ore.gif" class="res" width="16px" height="16px">
+                                                    <span class="{% if planet.ore_level >= 90 %}text-danger{% elif planet.ore_level >= 70 %}text-warning{% endif %}">{{ planet.ore_count|intcomma }}</span>
+                                                    <small class="ms-1 text-normal">/{{ planet.ore_capacity|intcomma }}</small>
+                                                    <small class="ms-1 text-success">+{{ planet.ore_production|intcomma }}</small>
+                                                </div>
+                                                <div class="col-12 text-nowrap">
+                                                    <img src="/static/s03/img/interface/hydrocarbon.gif" class="res" width="16px" height="16px">
+                                                    <span class="{% if planet.hydrocarbon_level >= 90 %}text-danger{% elif planet.hydrocarbon_level >= 70 %}text-warning{% endif %}">{{ planet.hydrocarbon_count|intcomma }}</span>
+                                                    <small class="ms-1 text-normal">/{{ planet.hydrocarbon_capacity|intcomma }}</small>
+                                                    <small class="ms-1 text-success">+{{ planet.hydrocarbon_production|intcomma }}</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col">
+                                            <div class="row g-1 flex-column">
+                                                <div class="col-12 text-nowrap">
+                                                    <div class="row gx-3 align-items-center">
+                                                        <div class="col-auto"><input type="number" min="0" id="o{{planet.id}}" name="o{{planet.id}}" value="" onkeyup="updateprice({{planet.id}})" size="3" maxlength="4" /></div>
+                                                        <div class="col-auto"><small class="text-normal">x</small> {{ 1000|intcomma }}</div>
+                                                        <div class="col-auto"><img src="{{PATH_IMAGES}}/interface/credits.gif" class="res" width="16px" height="16px" /> {{ planet.price_ore|floatformat:2 }}</div>
+                                                        <div class="col-auto"><a href="javascript:setval('o{{planet.id}}', {{planet.ore_max}}); updateprice({{planet.id}})">max</a></div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-12 text-nowrap">
+                                                    <div class="row gx-3 align-items-center">
+                                                        <div class="col-auto"><input type="number" min="0" id="h{{planet.id}}" name="h{{planet.id}}" value="" onkeyup="updateprice({{planet.id}})" size="3" maxlength="4" /></div>
+                                                        <div class="col-auto"><small class="text-normal">x</small> {{ 1000|intcomma }}</div>
+                                                        <div class="col-auto"><img src="{{PATH_IMAGES}}/interface/credits.gif" class="res" width="16px" height="16px" /> {{ planet.price_hydrocarbon|floatformat:2 }}</div>
+                                                        <div class="col-auto"><a href="javascript:setval('h{{planet.id}}', {{planet.hydrocarbon_max}}); updateprice({{planet.id}})">max</a></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-auto text-end">
+                                            <img src="{{PATH_IMAGES}}/interface/credits.gif" class="res" width="16px" height="16px" /> <span id="totalprice{{planet.id}}">0</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+            <div class="list-group-item">
+                <div class="row gx-3 align-items-center">
+                    <div class="col">
+                        <span class="text-normal">Total</span>
+                    </div>
+                    <div class="col-auto">
+                        <img src="{{PATH_IMAGES}}/interface/credits.gif" class="res" width="16px" height="16px" /> <span id="total">0</span>
+                    </div>
+                    <div class="col-auto">
+                        <input type="submit" value="Vendre" />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <input type="hidden" name="action" value="sell" />
+        {% csrf_token %}
+    </form>
+
+{% endblock %}

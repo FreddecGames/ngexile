@@ -430,7 +430,7 @@
                 <div class="col-auto">
                     <a href="/s03/map/?g={{ galaxy.galaxyid }}"
                        onmouseover="setLocGalaxy({{ galaxy.galaxyid }})"
-                       class="d-block rounded border {% if galaxy.hasplanet %}border-player{% elif galaxy.hasally %}border-success{% elif galaxy.hasenemy %}border-danger{% endif %}">
+                       class="d-block rounded border bg-black {% if galaxy.hasplanet %}border-player{% elif galaxy.hasally %}border-success{% elif galaxy.hasenemy %}border-danger{% endif %}">
                         <div>
                             <img src="{{ PATH_IMAGES }}galaxies/01.jpg" class="rounded" />
                         </div>
