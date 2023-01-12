@@ -33,8 +33,8 @@ class View(GlobalView):
         query = 'SELECT planets.id, planets.name, planets.galaxy, planets.sector, planets.planet, planets.floor,' + \
                 ' planets.ore AS ore_count, planets.ore_production, planets.ore_capacity,' + \
                 ' planets.hydrocarbon AS hydrocarbon_count, planets.hydrocarbon_production, planets.hydrocarbon_capacity,' + \
-                ' (sp_market_price((sp_get_resource_price(0, galaxy)).sell_ore, planet_stock_ore)) AS price_ore,' + \
-                ' (sp_market_price((sp_get_resource_price(0, galaxy)).sell_hydrocarbon, planet_stock_hydrocarbon)) AS price_hydrocarbon' + \
+                ' (sp_market_price((sp_get_resource_price(0, galaxy)).sell_ore, planet_stock_ore))::real AS price_ore,' + \
+                ' (sp_market_price((sp_get_resource_price(0, galaxy)).sell_hydrocarbon, planet_stock_hydrocarbon))::real AS price_hydrocarbon' + \
                 ' FROM vw_planets AS planets' + \
                 ' WHERE planets.floor > 0 AND planets.space > 0 AND planets.ownerid=' + str(self.UserId) + \
                 ' ORDER BY planets.id'

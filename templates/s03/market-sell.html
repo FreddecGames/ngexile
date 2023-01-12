@@ -42,6 +42,7 @@
             if ((obj != null) && (obj.innerHTML != price)) {
             
                 obj.innerHTML = formatnumber(price);
+                obj.innerHTML = formatnumber(parseInt(obj.innerHTML.replace(" ","")))
                 computetotal();
             }
         }

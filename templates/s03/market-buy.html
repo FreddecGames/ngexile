@@ -14,7 +14,7 @@
 
         function updateprice(id) {
         
-            var planet = planets[id];
+            var planet = planets[id + 1];
 
             var ore_q = getval("o" + planet[0]);
             if (ore_q > planet[1]) { ore_q = planet[1]; setval("o" + planet[0], planet[1]); }
@@ -30,6 +30,7 @@
             if ((obj != null) && (obj.innerHTML != price)) {
             
                 obj.innerHTML = formatnumber(price);
+                obj.innerHTML = formatnumber(parseInt(obj.innerHTML.replace(" ","")))
                 computetotal();
             }
         }
@@ -38,7 +39,7 @@
         
             var total = 0;
 
-            for (var i = 0; i < planets.length; i++) {
+            for (var i = 1; i < planets.length; i++) {
             
                 var planet = planets[i];
                 var obj = $("totalprice" + planet[0]);
