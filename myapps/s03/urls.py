@@ -11,6 +11,7 @@ from .views import alliance_ranks
 from .views import alliance_recruit
 from .views import alliance_reports
 from .views import alliance_view
+from .views import alliance_wallet
 from .views import alliance_wars
 
 from .views import empire_commanders
@@ -74,6 +75,7 @@ urlpatterns = [
     path('alliance-recruit/', alliance_recruit.View.as_view()),
     path('alliance-reports/', alliance_reports.View.as_view()),
     path('alliance-view/', alliance_view.View.as_view()),
+    path('alliance-wallet/', alliance_wallet.View.as_view()),
     path('alliance-wars/', alliance_wars.View.as_view()),
 
     path('empire-commanders/', empire_commanders.View.as_view()),

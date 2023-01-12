@@ -27,7 +27,7 @@ class View(GlobalView):
             self.valid_tag = self.isValidAlliancetag(self.tag)
             self.valid_description = self.isValiddescription(self.description)
 
-            if self.valid_name and self.valid_tag:
+            if self.valid_name and self.valid_tag and self.valid_description:
 
                 oRs = oConnExecute("SELECT sp_create_alliance(" + str(self.UserId) + "," + dosql(self.name) + "," + dosql(self.tag) + "," + dosql(self.description) + ")")
 
@@ -35,7 +35,25 @@ class View(GlobalView):
                 if self.create_result >= -1:
                     return HttpResponseRedirect("/s03/alliance-view/")
 
-        return self.DisplayAllianceCreate()
+        content = GetTemplate(self.request, "alliance-create")
+
+        if self.oPlayerInfo["can_join_alliance"]:
+            if self.create_result == -2: content.Parse("name_already_used")
+            if self.create_result == -3: content.Parse("tag_already_used")
+
+            if not self.valid_name: content.Parse("invalid_name")
+
+            if not self.valid_tag: content.Parse("invalid_tag")
+
+            content.AssignValue("name", self.name)
+            content.AssignValue("tag", self.tag)
+            content.AssignValue("description", self.description)
+
+            content.Parse("create")
+        else:
+            content.Parse("cant_create")
+
+        return self.Display(content)
 
     #
     # return if the given self.name is valid for an alliance
@@ -61,25 +79,3 @@ class View(GlobalView):
 
     def isValiddescription(self, description):
         return len(description) < 8192
-
-    def DisplayAllianceCreate(self):
-
-        content = GetTemplate(self.request, "alliance-create")
-
-        if self.oPlayerInfo["can_join_alliance"]:
-            if self.create_result == -2: content.Parse("name_already_used")
-            if self.create_result == -3: content.Parse("tag_already_used")
-
-            if not self.valid_name: content.Parse("invalid_name")
-
-            if not self.valid_tag: content.Parse("invalid_tag")
-
-            content.AssignValue("name", self.name)
-            content.AssignValue("tag", self.tag)
-            content.AssignValue("description", self.description)
-
-            content.Parse("create")
-        else:
-            content.Parse("cant_create")
-
-        return self.Display(content)

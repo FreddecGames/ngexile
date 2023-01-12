@@ -3,7 +3,7 @@
     <div class="nav nav-tabs mb-3">
         {% if allianceId %}
             <div class="nav-item">
-                <a href="/s03/alliance-view/" class="nav-link">Vue d'ensemble</a>
+                <a href="/s03/alliance-view/" class="nav-link text-nowrap">Vue d'ensemble</a>
             </div>
             {% if show_management %}
                 <div class="nav-item">
@@ -25,6 +25,9 @@
                     <a href="/s03/alliance-recruit/" class="nav-link">Recrutement</a>
                 </div>
             {% endif %}
+            <div class="nav-item">
+                <a href="/s03/alliance-wallet/" class="nav-link">Portefeuille</a>
+            </div>
             <div class="nav-item">
                 <a href="/s03/alliance-wars/" class="nav-link">Guerres</a>
             </div>
@@ -94,8 +97,8 @@
                             <div class="col-12 text-center">
                                 <span class="text-warning">Attention, vous ne pourrez pas créer ou rejoindre d'alliance pendant {{ hours_before_rejoin }} heures.</span>
                             </div>
-                            <div class="col-12 text-center">
-                                <div class="form-check">
+                            <div class="col-12">
+                                <div class="form-check d-flex justify-content-center">
                                     <input type="checkbox"
                                            class="form-check-input"
                                            name="leave"

@@ -2,7 +2,7 @@
 {% block content %}
     <div class="nav nav-tabs mb-3">
         <div class="nav-item">
-            <a href="/s03/alliance-view/" class="nav-link">Vue d'ensemble</a>
+            <a href="/s03/alliance-view/" class="nav-link text-nowrap">Vue d'ensemble</a>
         </div>
         {% if show_management %}
             <div class="nav-item">
@@ -24,6 +24,9 @@
                 <a href="/s03/alliance-recruit/" class="nav-link">Recrutement</a>
             </div>
         {% endif %}
+        <div class="nav-item">
+            <a href="/s03/alliance-wallet/" class="nav-link">Portefeuille</a>
+        </div>
         <div class="nav-item">
             <a href="/s03/alliance-wars/" class="nav-link active">Guerres</a>
         </div>
@@ -86,53 +89,55 @@
                 </div>
             </div>
         </div>
-        <div class="col-12">
-            <form action="?cat={{ cat }}&a=new" method="post" class="card">
-                <div class="card-header">
-                    <span>Déclarer la guerre</span>
-                </div>
-                <div class="card-body">
-                    <div class="row g-1 flex-column">
-                        <div class="col-12 text-center">
-                            <span class="text-normal">Veuillez indiquer le tag de l'alliance à laquelle déclarer la guerre. Toute guerre a un coût. Le coût est proportionnel à la force des alliances actuellement en guerre contre l'alliance ciblée.</span>
-                        </div>
-                        <div class="col-12">
-                            <div class="row gx-2 align-items-center justify-content-center">
-                                <div class="col-auto">
-                                    <span class="text-normal">Tag</span>
-                                </div>
-                                <div class="col-auto">
-                                    <input type="text" name="tag" value="{{ tag }}" maxlength="4" />
-                                </div>
-                                <div class="col-auto">
-                                    <input type="submit" name="submit" value="Déclarer">
-                                </div>
-                            </div>
-                        </div>
-                        {% if norights %}
-                            <div class="text-center">
-                                <span class="text-danger">Vous n'êtes pas en droit de faire une telle demande</span>
-                            </div>
-                        {% endif %}
-                        {% if unknown %}
-                            <div class="text-center">
-                                <span class="text-danger">Aucune alliance avec un tel tag n'a été trouvée</span>
-                            </div>
-                        {% endif %}
-                        {% if already_at_war %}
-                            <div class="text-center">
-                                <span class="text-danger">Nous sommes déjà en guerre contre cette alliance !</span>
-                            </div>
-                        {% endif %}
-                        {% if not_enough_credits %}
-                            <div class="text-center">
-                                <span class="text-danger">Pas assez de crédits !</span>
-                            </div>
-                        {% endif %}
+        {% if show_management %}
+            <div class="col-12">
+                <form action="?cat={{ cat }}&a=new" method="post" class="card">
+                    <div class="card-header">
+                        <span>Déclarer la guerre</span>
                     </div>
-                </div>
-                {% csrf_token %}
-            </form>
-        </div>
+                    <div class="card-body">
+                        <div class="row g-1 flex-column">
+                            <div class="col-12 text-center">
+                                <span class="text-normal">Veuillez indiquer le tag de l'alliance à laquelle déclarer la guerre. Toute guerre a un coût. Le coût est proportionnel à la force des alliances actuellement en guerre contre l'alliance ciblée.</span>
+                            </div>
+                            <div class="col-12">
+                                <div class="row gx-2 align-items-center justify-content-center">
+                                    <div class="col-auto">
+                                        <span class="text-normal">Tag</span>
+                                    </div>
+                                    <div class="col-auto">
+                                        <input type="text" name="tag" value="{{ tag }}" maxlength="4" />
+                                    </div>
+                                    <div class="col-auto">
+                                        <input type="submit" name="submit" value="Déclarer">
+                                    </div>
+                                </div>
+                            </div>
+                            {% if norights %}
+                                <div class="text-center">
+                                    <span class="text-danger">Vous n'êtes pas en droit de faire une telle demande</span>
+                                </div>
+                            {% endif %}
+                            {% if unknown %}
+                                <div class="text-center">
+                                    <span class="text-danger">Aucune alliance avec un tel tag n'a été trouvée</span>
+                                </div>
+                            {% endif %}
+                            {% if already_at_war %}
+                                <div class="text-center">
+                                    <span class="text-danger">Nous sommes déjà en guerre contre cette alliance !</span>
+                                </div>
+                            {% endif %}
+                            {% if not_enough_credits %}
+                                <div class="text-center">
+                                    <span class="text-danger">Pas assez de crédits !</span>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% csrf_token %}
+                </form>
+            </div>
+        {% endif %}
     </div>
 {% endblock content %}

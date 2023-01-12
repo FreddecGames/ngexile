@@ -52,7 +52,7 @@ class View(GlobalView):
 
                 reportType = oRs[0]*100+oRs[1]
 
-                if reportType != 140 and reportType != 141 and reportType != 142 and reportType != 133:
+                if reportType != 140 and reportType != 141 and reportType != 142:
                     report = {}
 
                     report["type"] = reportType
@@ -120,9 +120,8 @@ class View(GlobalView):
             #
             query = "SELECT r.type, int4(COUNT(1)) " + \
                     " FROM reports AS r" + \
-                    " WHERE datetime <= now()" + \
-                    " GROUP BY r.type, r.ownerid, r.read_date" + \
-                    " HAVING r.ownerid = " + str(self.UserId) + " AND read_date is null"
+                    " WHERE datetime <= now() AND read_date is null AND r.ownerid = " + str(self.UserId) + \
+                    " GROUP BY r.type, r.ownerid, r.read_date"
             oRss = oConnExecuteAll(query)
             
             total_newreports = 0

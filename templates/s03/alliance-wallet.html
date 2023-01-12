@@ -1,0 +1,159 @@
+{% extends "s03/layout.html" %}
+{% load humanize %}
+{% block content %}
+    <div class="nav nav-tabs mb-3">
+        <div class="nav-item">
+            <a href="/s03/alliance-view/" class="nav-link text-nowrap">Vue d'ensemble</a>
+        </div>
+        {% if show_management %}
+            <div class="nav-item">
+                <a href="/s03/alliance-manage/" class="nav-link">Gestion</a>
+            </div>
+        {% endif %}
+        {% if show_management %}
+            <div class="nav-item">
+                <a href="/s03/alliance-ranks/" class="nav-link">Grades</a>
+            </div>
+        {% endif %}
+        {% if show_members %}
+            <div class="nav-item">
+                <a href="/s03/alliance-members/" class="nav-link">Membres</a>
+            </div>
+        {% endif %}
+        {% if show_members %}
+            <div class="nav-item">
+                <a href="/s03/alliance-recruit/" class="nav-link">Recrutement</a>
+            </div>
+        {% endif %}
+        <div class="nav-item">
+            <a href="/s03/alliance-wallet/" class="nav-link active">Portefeuille</a>
+        </div>
+        <div class="nav-item">
+            <a href="/s03/alliance-wars/" class="nav-link">Guerres</a>
+        </div>
+        {% if show_reports %}
+            <div class="nav-item">
+                <a href="/s03/alliance-reports/" class="nav-link">Rapports</a>
+            </div>
+        {% endif %}
+        <div class="nav-item">
+            <a href="/s03/alliance-invitations/" class="nav-link">Invitations</a>
+        </div>
+    </div>
+    <div class="row g-3 flex-column">
+        <div class="col-12">
+            <div class="card card-body">
+                <div class="row gx-3 align-items-center">
+                    <div class="col-auto">
+                        <img src="{{ PATH_IMAGES }}interface/wallet.jpg"
+                             class="rounded"
+                             width="48px"/>
+                    </div>
+                    <div class="col">
+                        <div class="row g-1 flex-column">
+                            <div class="col-12">
+                                <div class="row gx-3">
+                                    <div class="col-3 text-end">
+                                        <span class="text-normal">Solde</span>
+                                    </div>
+                                    <div class="col-auto">{{ alliance_credits|intcomma }}</div>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="row gx-3">
+                                    <div class="col-3 text-end">
+                                        <span class="text-normal">Dernière 24 heures</span>
+                                    </div>
+                                    <div class="col-auto">{{ last24h|intcomma }}</div>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="row gx-3">
+                                    <div class="col-3 text-end">
+                                        <span class="text-normal">Taxe</span>
+                                    </div>
+                                    <div class="col-auto">{{ alliance_tax|floatformat:1 }}%</div>
+                                    {% if notax %}
+                                        <div class="col-auto">
+                                            <span class="text-success">Exonéré</span>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% if show_management %}
+            <div class="col-12">
+                <form action="." method="post"class="card">
+                    <div class="card-header">
+                        <span>Modification de la taxe</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-1 flex-column">
+                            <div class="col-12">
+                                <span class="text-normal">Veuillez choisir un taux de taxe pour tous les membres de l'alliance. Chaque vente effectuée auprès de la Guilde Marchande se verra taxé par le taux établi par le responsable de l'alliance ou le trésorier. Les membres de l'alliance ayant moins de 2 planètes sont exonérés de cette taxe.</span>
+                            </div>
+                            <div class="col-12">
+                                <div class="row gx-2 align-items-center justify-content-center">
+                                    <div class="col-auto">
+                                        <span class="text-normal">Taux</span>
+                                    </div>
+                                    <div class="col-auto">
+                                        <select name="taxrate">
+                                            {% for tax in taxes %}
+                                                <option value="{{ tax.taxrate }}"
+                                                        {% if tax.tax == alliance_tax %}selected{% endif %}>
+                                                    {{ tax.tax|floatformat:1 }}%
+                                                </option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div class="col-auto">
+                                        <input type="submit" value="Modifier" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <input type="hidden" name="action" value="set_tax" />
+                    {% csrf_token %}
+                </form>
+            </div>
+        {% endif %}
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <span>Liste des opérations</span>
+                </div>
+                <div class="list-group list-group-flush">
+                    {% for entry in entries %}
+                        <div class="list-group-item">
+                            <div class="row gx-3 align-items-center">
+                                <div class="col-auto">
+                                    <span class="text-normal">{{ entry.date }}</span>
+                                </div>
+                                <div class="col">{{ entry.destination }}</div>
+                                <div class="col-auto">
+                                    {% if entry.type == 4 %}<span class="text-normal">Vente GM</span>{% endif %}
+                                </div>
+                                <div class="col-3 text-end">
+                                    <img src="{{ PATH_IMAGES }}interface/credits.gif" class="res" width="16px" />
+                                    <span class="{% if entry.credits > 0 %}text-success{% else %}text-danger{% endif %}">
+                                        {% if entry.credits > 0 %}+{% endif %}
+                                    {{ entry.credits }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    {% empty %}
+                        <div class="list-group-item text-center">
+                            <span class="text-normal">Aucun prélèvement</span>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}

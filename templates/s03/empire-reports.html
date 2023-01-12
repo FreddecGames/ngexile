@@ -95,6 +95,8 @@
                                             Départ de membre.
                                         {% elif message.type == 132 %}
                                             Exclusion de membre.
+                                        {% elif message.type == 133 %}
+                                            Modification de la taxe.
                                         {% elif message.type == 150 %}
                                             Impossibilité de payer le tribut.
                                         {% elif message.type == 151 %}
@@ -277,6 +279,8 @@
                                     La nation <a href="/s03/profile-view/?name={{ message.nation }}">{{ message.nation }}</a> a décidé de quitter notre alliance.
                                 {% elif message.type == 132 %}
                                     La nation <a href="/s03/profile-view/?name={{ message.nation }}">{{ message.nation }}</a> va être exclue de l'alliance<script>if('{{message.username }}'!='') document.write(' (action décidée par <a href="/s03/profile-view/?name={{message.username }}">{{message.username }}</a>)');</script>.
+                                {% elif message.type == 133 %}
+                                    La taxe d'alliance sur les ventes de ressources à la Guilde Marchande a été modifiée. Voir le <a href="/s03/alliance-wallet/">portefeuille</a> de l'alliance.
                                 {% elif message.type == 150 %}
                                     Notre alliance n'a pas pu honorer son contrat et payer les
                                     <img src="{{ PATH_IMAGES }}interface/credits.gif"

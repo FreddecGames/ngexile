@@ -38,9 +38,6 @@ class View(GlobalView):
                 if oRs[0] == 0:
                     return HttpResponseRedirect("/s03/alliance-view/")
 
-        return self.DisplayInvitations()
-
-    def DisplayInvitations(self):
         content = GetTemplate(self.request, "alliance-invitations")
 
         oRs = oConnExecute("SELECT date_part('epoch', const_interval_before_join_new_alliance()) / 3600")
