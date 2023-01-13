@@ -8,129 +8,79 @@ class View(GlobalView):
         if response: return response
         
         #--- post
-                
-        self.train_error = 0
-
-        action = request.POST.get("action", "").lower()
-        if action == "train":
         
-            trainScientists = ToInt(request.POST.get("scientists"), 0)
-            trainSoldiers = ToInt(request.POST.get("soldiers"), 0)
-            
-            dbRow = oConnRow("SELECT sp_start_training(" + str(self.UserId) + "," + str(self.CurrentPlanet) + "," + str(trainScientists) + "," + str(trainSoldiers) + ") AS result")
-            if dbRow: self.train_error = dbRow['result']
-            else: self.train_error = 1
-            
-        elif action == "cancel":
+        action = self.request.POST.get('action', '')
         
-            queueId = ToInt(request.POST.get("q"), 0)
-            oConnDoQuery("SELECT sp_cancel_training(" + str(self.CurrentPlanet) + ", " + str(queueId) + ")")
+        if action == 'train':
+        
+            trainSoldiers = ToInt(request.POST.get('soldiers'), 0)
+            trainScientists = ToInt(request.POST.get('scientists'), 0)            
+            dbRow = oConnRow('SELECT sp_start_training(' + str(self.UserId) + ',' + str(self.CurrentPlanet) + ',' + str(trainScientists) + ',' + str(trainSoldiers) + ') AS result')
+            if dbRow['result'] != 0: messages.error(request, 'training_error_' + str(dbRow['result']))
+            
+            return HttpResponseRedirect('/s03/planet-trainings/')
+            
+        elif action == 'cancel':
+        
+            queueId = ToInt(request.POST.get('q'), 0)
+            oConnDoQuery('SELECT sp_cancel_training(' + str(self.CurrentPlanet) + ', ' + str(queueId) + ')')
+            
+            return HttpResponseRedirect('/s03/planet-trainings/')
         
         #--- get
         
-        self.selectedMenu = "trainings"
+        self.selectedMenu = 'trainings'
         
         self.showHeader = True
 
-        content = GetTemplate(self.request, "planet-trainings")
-
-        content.AssignValue("planetid", str(self.CurrentPlanet))
-
-        query = "SELECT scientist_ore, scientist_hydrocarbon, scientist_credits," + \
-                " soldier_ore, soldier_hydrocarbon, soldier_credits" + \
-                " FROM sp_get_training_price(" + str(self.UserId) + ")"
-        oRs = oConnExecute(query)
-
-        content.AssignValue("scientist_ore", oRs[0])
-        content.AssignValue("scientist_hydrocarbon", oRs[1])
-        content.AssignValue("scientist_credits", oRs[2])
+        content = GetTemplate(self.request, 'planet-trainings')
         
-        content.AssignValue("soldier_ore", oRs[3])
-        content.AssignValue("soldier_hydrocarbon", oRs[4])
-        content.AssignValue("soldier_credits", oRs[5])
+        # training prices
+        
+        query = 'SELECT scientist_ore, scientist_hydrocarbon, scientist_credits,' + \
+                ' soldier_ore, soldier_hydrocarbon, soldier_credits' + \
+                ' FROM sp_get_training_price(' + str(self.UserId) + ')'
+        dbRow = oConnRow(query)
+        content.AssignValue('price', dbRow)
+        
+        # current population
+        
+        query = 'SELECT scientists, scientists_capacity, soldiers, soldiers_capacity FROM vw_planets WHERE id=' + str(self.CurrentPlanet)
+        dbRow = oConnRow(query)
+        content.AssignValue('pop', dbRow)
 
-        query = "SELECT scientists, scientists_capacity, soldiers, soldiers_capacity, workers FROM vw_planets WHERE id="+str(self.CurrentPlanet)
-        oRs = oConnExecute(query)
+        # trainings in progress
+        
+        query = 'SELECT id, scientists, soldiers, int4(date_part(\'epoch\', end_time-now())) AS remainingtime' + \
+                ' FROM planet_training_pending WHERE planetid=' + str(self.CurrentPlanet) + ' AND end_time IS NOT NULL' + \
+                ' ORDER BY start_time'
+        dbRows = oConnRows(query)
 
-        if oRs:
-            content.AssignValue("scientists", oRs[0])
-            content.AssignValue("scientists_capacity", oRs[1])
-
-            content.AssignValue("soldiers", oRs[2])
-            content.AssignValue("soldiers_capacity", oRs[3])
-            if oRs[2]*250 < oRs[0]+oRs[4]: content.Parse("not_enough_soldiers")
-
-            if oRs[0] < oRs[1]:
-                content.Parse("input_scientists")
-            else:
-                content.Parse("max_scientists")
-
-            if oRs[2] < oRs[3]:
-                content.Parse("input_soldiers")
-            else:
-                content.Parse("max_soldiers")
-
-        if self.train_error != 0:
-            if self.train_error == 5: content.Parse("cant_train_now")
-            else: content.Parse("not_enough_workers")
-
-            content.Parse("error")
-
-        # training in process
-        query = "SELECT id, scientists, soldiers, int4(date_part('epoch', end_time-now()))" + \
-                " FROM planet_training_pending WHERE planetid="+str(self.CurrentPlanet)+" AND end_time IS NOT NULL" + \
-                " ORDER BY start_time"
-        oRss = oConnExecuteAll(query)
-
-        i = 0
         list = []
-        content.AssignValue("trainings", list)
-        for oRs in oRss:
-            item = {}
-            list.append(item)
+        content.AssignValue('trainings', list)
+        
+        for dbRow in dbRows:
             
-            item["queueid"] = oRs[0]
-            item["remainingtime"] = oRs[3]
+            item = dbRow
+            list.append(item)
 
-            if oRs[1] > 0:
-                item["quantity"] = oRs[1]
-                item["scientists"] = True
+        # trainings in queue
+        
+        query = 'SELECT planet_training_pending.id, planet_training_pending.scientists, planet_training_pending.soldiers,' + \
+                '    int4(ceiling(1.0*planet_training_pending.scientists/GREATEST(1, training_scientists)) * date_part(\'epoch\', INTERVAL \'1 hour\')) AS remainingtimescientists,' + \
+                '    int4(ceiling(1.0*planet_training_pending.soldiers/GREATEST(1, training_soldiers)) * date_part(\'epoch\', INTERVAL \'1 hour\')) AS remainingtimesoldiers' + \
+                ' FROM planet_training_pending' + \
+                '    JOIN nav_planet ON (nav_planet.id=planet_training_pending.planetid)' + \
+                ' WHERE planetid=' + str(self.CurrentPlanet) + ' AND end_time IS NULL' + \
+                ' ORDER BY start_time'
+        dbRows = oConnRows(query)
 
-            if oRs[2] > 0:
-                item["quantity"] = oRs[2]
-                item["soldiers"] = True
-
-            i = i + 1
-
-        # queue
-        query = "SELECT planet_training_pending.id, planet_training_pending.scientists, planet_training_pending.soldiers," + \
-                "    int4(ceiling(1.0*planet_training_pending.scientists/GREATEST(1, training_scientists)) * date_part('epoch', INTERVAL '1 hour'))," + \
-                "    int4(ceiling(1.0*planet_training_pending.soldiers/GREATEST(1, training_soldiers)) * date_part('epoch', INTERVAL '1 hour'))" + \
-                " FROM planet_training_pending" + \
-                "    JOIN nav_planet ON (nav_planet.id=planet_training_pending.planetid)" + \
-                " WHERE planetid="+str(self.CurrentPlanet)+" AND end_time IS NULL" + \
-                " ORDER BY start_time"
-        oRss = oConnExecuteAll(query)
-
-        i = 0
         list = []
-        content.AssignValue("queues", list)
-        for oRs in oRss:
-            item = {}
-            list.append(item)
+        content.AssignValue('queues', list)
+        
+        for dbRow in dbRows:
             
-            item["queueid"] = oRs[0]
-
-            if oRs[1] > 0:
-                item["quantity"] = oRs[1]
-                item["remainingtime"] = oRs[3]
-                item["scientists"] = True
-
-            if oRs[2] > 0:
-                item["quantity"] = oRs[2]
-                item["remainingtime"] = oRs[4]
-                item["soldiers"] = True
-
-            i = i + 1
+            item = dbRow
+            list.append(item)
 
         return self.Display(content)

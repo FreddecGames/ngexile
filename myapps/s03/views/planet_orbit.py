@@ -43,6 +43,8 @@ class View(GlobalView):
 
         content.AssignValue('error', error)
         
+        # orbitting fleets
+        
         query = 'SELECT id, name, owner_name, signature, planet_owner_relation AS relation, action, engaged' + \
                 ' FROM vw_fleets' + \
                 ' WHERE planetid=' + str(self.CurrentPlanet) + ' AND action != 1 AND action != -1' + \
@@ -56,7 +58,9 @@ class View(GlobalView):
             
             item = dbRow
             list.append(item)
-
+        
+        # ground ships
+        
         query = 'SELECT shipid AS id, quantity, label AS name' + \
                 ' FROM planet_ships LEFT JOIN db_ships ON (planet_ships.shipid = db_ships.id)' + \
                 ' WHERE planetid=' + str(self.CurrentPlanet) + \

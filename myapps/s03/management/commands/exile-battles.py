@@ -162,7 +162,7 @@ class Command(BaseCommand):
                     else:
                         query = "UPDATE fleets SET engaged=false, action=4, action_end_time=now()"
                         if Rounds > 5: query = query + ", idle_since=now()"
-                        query = query & " WHERE engaged AND action=0 AND planetid=" + str(planetid)
+                        query = query + " WHERE engaged AND action=0 AND planetid=" + str(planetid)
                         oConnDoQuery(query)
                         
             time.sleep(0.5)

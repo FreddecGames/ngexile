@@ -4,6 +4,7 @@ import re
 
 from math import sqrt
 
+from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import connection
 from django.http import HttpResponseRedirect
