@@ -442,6 +442,34 @@ class TShipsGroup:
             else:
                 return 0
 
+    def FindTargetList(self):
+        TargetList = []
+
+        # Retrieve the possible targets from the list of enemy ships
+
+        for Grp in self.FOwner.FEnemyGroups:
+            if (Grp.FWeaponDamages > 0) and (Grp.FRemainingShips > 0):
+                TargetList.append(Grp)
+
+        # If no prioritary targets, fill the secondary targets
+        if len(TargetList) == 0:
+            self.FHasPriorityTargets = False
+
+            for Grp in self.FOwner.FEnemyGroups:
+                if (Grp.FRemainingShips > 0):
+                    TargetList.append(Grp)
+
+        if len(TargetList) > 0:
+            # Sort the list by priority
+            shuffle(TargetList)
+            TargetList = sorted(TargetList, key=cmp_to_key(self.PrioritySort))
+
+            Result = TargetList
+        else:
+            Result = None
+
+        return Result
+        
     def FindTarget(self):
         TargetList = []
 

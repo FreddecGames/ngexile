@@ -74,12 +74,12 @@ class View(GlobalView):
         hasWon = oRs[7]
         showEnemyDetails = oRs[9] or hasWon or rounds > 1
 
-        query = "SELECT fleet_id, shipid, destroyed_shipid, sum(count)" + \
+        query = "SELECT fleet_id, shipid, destroyed_shipid, sum(count), battles_fleets_ships_kills.id AS killid" + \
                 " FROM battles_fleets" + \
                 "    INNER JOIN battles_fleets_ships_kills ON (battles_fleets.id=fleetid)" + \
                 " WHERE battleid=" + str(battleid) + \
-                " GROUP BY fleet_id, shipid, destroyed_shipid" + \
-                " ORDER BY sum(count) DESC"
+                " GROUP BY fleet_id, shipid, destroyed_shipid, killid" + \
+                " ORDER BY killid, sum(count)"
         killsArray = oConnExecuteAll(query)
 
         query = "SELECT owner_name, fleet_name, shipid, shipcategory, shiplabel, count, lost, killed, won, relation1, owner_id , relation2, fleet_id, attacked, mod_shield, mod_handling, mod_tracking_speed, mod_damage, alliancetag" + \

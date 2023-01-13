@@ -1,5 +1,7 @@
 from .utils import *
 
+from myapps.s03.battle import *
+
 class GlobalView(BaseMixin, View):
 
     CurrentPlanet = None
@@ -120,7 +122,50 @@ class GlobalView(BaseMixin, View):
             if self.oAllianceRights["leader"] or self.oAllianceRights["can_see_members_info"]: tpl.Parse("show_members")
         
         if self.showHeader == True: self.FillHeader(tpl)
-
+        
+        '''
+        ###########################
+        
+        query = 'SELECT * FROM db_ships ORDER BY category, id'
+        dbRows = oConnRows(query)
+        
+        for currentShip in dbRows:
+            
+            if currentShip['id'] < 601:
+                
+                battle = TBattle()
+                
+                battle.AddShips(0, 0, currentShip['id'], currentShip['hull'], currentShip['shield'], currentShip['handling'], currentShip['weapon_ammo'], currentShip['weapon_tracking_speed'], currentShip['weapon_turrets'], \
+                        {'EM': currentShip['weapon_dmg_em'], 'Explosive': currentShip['weapon_dmg_explosive'], 'Kinetic': currentShip['weapon_dmg_kinetic'], 'Thermal': currentShip['weapon_dmg_thermal']}, \
+                        {'Hull': 100.0, 'Shield': 100.0, 'Handling': 100.0, 'Tracking_speed': 100.0, 'Damage': 100.0}, \
+                        {'EM': currentShip['resist_em'], 'Explosive': currentShip['resist_explosive'], 'Kinetic': currentShip['resist_kinetic'], 'Thermal': currentShip['resist_thermal']}, \
+                        1, True, currentShip['tech'])
+                
+                for enemyShip in dbRows:
+                    if enemyShip['id'] < 601:
+                        battle.AddShips(1, 0, enemyShip['id'], enemyShip['hull'], enemyShip['shield'], enemyShip['handling'], enemyShip['weapon_ammo'], enemyShip['weapon_tracking_speed'], enemyShip['weapon_turrets'], \
+                                {'EM': enemyShip['weapon_dmg_em'], 'Explosive': enemyShip['weapon_dmg_explosive'], 'Kinetic': enemyShip['weapon_dmg_kinetic'], 'Thermal': enemyShip['weapon_dmg_thermal']}, \
+                                {'Hull': 100.0, 'Shield': 100.0, 'Handling': 100.0, 'Tracking_speed': 100.0, 'Damage': 100.0}, \
+                                {'EM': enemyShip['resist_em'], 'Explosive': enemyShip['resist_explosive'], 'Kinetic': enemyShip['resist_kinetic'], 'Thermal': enemyShip['resist_thermal']}, \
+                                1, True, enemyShip['tech'])
+                
+                battle.BeginFight()
+                
+                targetList = battle.FPlayers[0].FGroups[0].FindTargetList()
+                
+                if battle.FPlayers[0].FGroups[0].FWeapon_turrets > 0:
+                    print('#####')
+                    dbRow = oConnRow('SELECT label FROM db_ships WHERE id=' + str(battle.FPlayers[0].FGroups[0].FId))
+                    print(dbRow['label'])
+                    if targetList:
+                        for target in targetList:
+                            dbRow = oConnRow('SELECT label FROM db_ships WHERE id=' + str(target.FId))                
+                            print('\t' + dbRow['label'])
+                    print('#####')
+        
+        ##########################
+        '''
+        
         return render(self.request, tpl.template, tpl.data)
     
     def FillMenu(self, tpl):
