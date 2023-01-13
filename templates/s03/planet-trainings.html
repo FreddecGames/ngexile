@@ -26,7 +26,7 @@
                     <div class="list-group list-group-flush">
                         {% for item in trainings %}
                             <div class="list-group-item bg-success">
-                                <div class="row gx-3">
+                                <div class="row gx-3 align-items-center">
                                     <div class="col">
                                         {% if item.scientists %}<a href="/s03/help/#scientists">Scientifiques</a>{% endif %}
                                         {% if item.soldiers %}<a href="/s03/help/#soldiers">Soldats</a>{% endif %}
@@ -38,7 +38,7 @@
                                         <script>putcountdown1({{item.remainingtime}},"&nbsp;");</script>
                                     </div>
                                     <div class="col-auto text-center" style="width:90px;">
-                                        <script>putcountdown2({{item.remainingtime}}, "<a href='?planet={{planetid}}&a=cancel&q={{item.queueid}}'>Annuler</a>", "<a href='/s03/planet-trainings/'>Terminé</a>");</script>
+                                        <script>putcountdown2({{item.remainingtime}}, '<form action="." method="post">{% csrf_token %}<input type="hidden" name="action" value="cancel" /><input type="hidden" name="q" value="{{ item.queueid }}" /><input type="submit" value="Annuler" class="w-100" /></form>', "<a href='/s03/planet-trainings/'>Terminé</a>");</script>
                                     </div>
                                 </div>
                             </div>
@@ -57,7 +57,7 @@
                                         <script>document.write(formattime({{item.remainingtime}}));</script>
                                     </div>
                                     <div class="col-auto text-center" style="width:90px;">
-                                        <a href="?planet={{ planetid }}&a=cancel&q={{ item.queueid }}">Annuler</a>
+                                        <form action="." method="post">{% csrf_token %}<input type="hidden" name="action" value="cancel" /><input type="hidden" name="q" value="{{ item.queueid }}" /><input type="submit" value="Annuler" class="w-100" /></form>
                                     </div>
                                 </div>
                             </div>

@@ -233,8 +233,6 @@ hr { margin: .5rem 0; }
 
 .tooltip-inner { border: 1px solid #000; }
 
-.bs-tooltip-auto[data-popper-placement^=right] .tooltip-arrow::before, .bs-tooltip-end .tooltip-arrow::before { border-right-color: #000; }
-
 .table {
     --bs-table-color: #fff;
     --bs-table-border-color: #000;

@@ -108,7 +108,7 @@ function previousplanet() {
                              height="16px"/>
                         <span class="{% if planet.workers_for_maintenance > planet.workers %}text-danger{% endif %}">{{ planet.workers|intcomma }}</span>
                         <small class="ms-1 text-normal">/{{ planet.workers_capacity|intcomma }}</small>
-                        <small class="ms-1 {% if workers_idle <= 0 %}text-danger{% else %}text-success{% endif %}">{{ planet.workers_idle|intcomma }}</small>
+                        <small class="ms-1 {% if planet.workers_idle <= 0 %}text-danger{% else %}text-success{% endif %}">{{ planet.workers_idle|intcomma }}</small>
                     </div>
                     <div class="col-12 text-nowrap">
                         <img src="{{ PATH_IMAGES }}interface/scientists.gif"

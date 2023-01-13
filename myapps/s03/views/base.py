@@ -159,6 +159,8 @@ class GlobalView(BaseMixin, View):
         dbRow['ore_level'] = getPercent(dbRow['ore'], dbRow['ore_capacity'], 10)
         dbRow['hydrocarbon_level'] = getPercent(dbRow['hydrocarbon'], dbRow['hydrocarbon_capacity'], 10)
         
+        dbRow['workers_idle'] = dbRow['workers'] - dbRow['workers_busy']
+        
         if dbRow['soldiers'] * 250 < dbRow['workers'] + dbRow['scientists']: dbRow['soldiers_low'] = True
 
         if dbRow['mod_production_ore'] < 0 or dbRow['workers'] < dbRow['workers_for_maintenance']: dbRow['ore_production_anormal'] = True

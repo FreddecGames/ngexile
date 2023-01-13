@@ -12,22 +12,22 @@
                         <div class="list-group-item">
                             <div class="row gx-3 align-items-baseline">
                                 <div class="col-auto">
-                                    {% if fleet.owner %}
+                                    {% if fleet.relation == 2 %}
                                         <a href="/s03/fleet-view/?id={{ fleet.id }}" class="text-player">{{ fleet.name }}</a>
-                                    {% elif fleet.ally %}
-                                        <a href="/s03/mail-new/?to={{ fleet.ownername }}" class="text-success">{{ fleet.ownername }}</a>
-                                    {% elif fleet.friend %}
-                                        <a href="/s03/mail-new/?to={{ fleet.ownername }}" class="text-success">{{ fleet.ownername }}</a>
-                                    {% elif fleet.enemy %}
-                                        <a href="/s03/profile-view/?name={{ fleet.ownername }}"
-                                           class="text-danger">{{ fleet.ownername }}</a>
+                                    {% elif fleet.relation == 1 %}
+                                        <a href="/s03/mail-new/?to={{ fleet.owner_name }}" class="text-success">{{ fleet.owner_name }}</a>
+                                    {% elif fleet.relation == 0 %}
+                                        <a href="/s03/mail-new/?to={{ fleet.owner_name }}" class="text-success">{{ fleet.owner_name }}</a>
+                                    {% elif fleet.relation < 0 %}
+                                        <a href="/s03/profile-view/?name={{ fleet.owner_name }}"
+                                           class="text-danger">{{ fleet.owner_name }}</a>
                                     {% endif %}
                                 </div>
                                 <div class="col small">{{ fleet.signature|intcomma }}</div>
                                 <div class="col-auto">
-                                    {% if fleet.recycling %}<span class="text-yellow">Recyclage en cours</span>{% endif %}
-                                    {% if fleet.fighting %}<span class="text-danger">En combat</span>{% endif %}
-                                    {% if fleet.patrolling %}<span class="text-normal">En patrouille</span>{% endif %}
+                                    {% if fleet.action == 2 %}<span class="text-yellow">Recyclage en cours</span>{% endif %}
+                                    {% if fleet.engaged %}<span class="text-danger">En combat</span>{% endif %}
+                                    {% if not fleet.engaged and fleet.action == 0 %}<span class="text-normal">En patrouille</span>{% endif %}
                                 </div>
                             </div>
                         </div>
@@ -40,7 +40,7 @@
             </div>
         </div>
         <div class="col-12">
-            <form method="post" action="?a=new&planet={{ planetid }}" class="card">
+            <form method="post" action="." class="card">
                 <div class="card-header">
                     <span>Nouvelle flotte</span>
                 </div>
@@ -89,24 +89,14 @@
                                     </div>
                                 </div>
                             </div>
-                            {% if fleet_too_many %}
+                            {% if error == 'fleet_too_many' %}
                                 <div class="col-12 text-end">
                                     <span class="text-danger">Vous avez atteint le nombre maximum de flottes.</span>
                                 </div>
                             {% endif %}
-                            {% if fleet_name_already_used %}
-                                <div class="col-12 text-end">
-                                    <span class="text-danger">Le nom de la flotte est déjà utilisé, veuillez en choisir un autre.</span>
-                                </div>
-                            {% endif %}
-                            {% if fleet_name_invalid %}
+                            {% if error == 'fleet_name_invalid' %}
                                 <div class="col-12 text-end">
                                     <span class="text-danger">Le nom de la flotte est invalide, il ne peut contenir que des lettres (a-z) et des chiffres (0-9).</span>
-                                </div>
-                            {% endif %}
-                            {% if ship_cant_be_used %}
-                                <div class="col-12 text-end">
-                                    <span class="text-danger">Certains vaisseaux n'ont pu être ajoutés à la flotte car nous ne disposons pas des recherches requises pour les utiliser.</span>
                                 </div>
                             {% endif %}
                         {% else %}
@@ -116,6 +106,7 @@
                         {% endif %}
                     </div>
                 </div>
+                <input type="hidden" name="action" value="create" />
                 {% csrf_token %}
             </form>
         </div>

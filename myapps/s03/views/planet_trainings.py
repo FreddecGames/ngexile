@@ -23,7 +23,7 @@ class View(GlobalView):
             
         elif action == "cancel":
         
-            queueId = ToInt(request.GET.get("q"), 0)
+            queueId = ToInt(request.POST.get("q"), 0)
             oConnDoQuery("SELECT sp_cancel_training(" + str(self.CurrentPlanet) + ", " + str(queueId) + ")")
         
         #--- get

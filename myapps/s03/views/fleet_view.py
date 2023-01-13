@@ -701,7 +701,7 @@ class View(GlobalView):
 
     def Invade(self, fleetid, droppods, take):
         oRs = oConnExecute("SELECT sp_invade_planet(" + str(self.fleet_owner_id) + "," + str(fleetid) + ","+ str(droppods) +"," + str(ToBool(take, False)) +")")
-
+        print(oRs)
         res = oRs[0]
         
         if res == -1:
@@ -721,6 +721,7 @@ class View(GlobalView):
         if self.request.POST.get("action") == "invade":
             droppods = ToInt(self.request.POST.get("droppods"), 0)
             self.Invade(fleetid, droppods, self.request.POST.get("take") != "")
+            
         elif self.request.POST.get("action") == "rename":
             fleetname = self.request.POST.get("newname").strip()
             if isValidObjectName(fleetname):
