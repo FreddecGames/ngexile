@@ -53,7 +53,7 @@ class View(GlobalView):
 
         if oRs == None:
             if nation != "":
-                return self.display_nation_search(nation)
+                return HttpResponseRedirect('/s03/profile-view/')
             else:
                 return HttpResponseRedirect("/s03/profile-view/")
 

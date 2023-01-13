@@ -33,7 +33,7 @@ class View(GlobalView):
         query = "SELECT id, name, attackonsight, engaged, size, signature, speed, remaining_time, commanderid, commandername," + \
                 " planetid, planet_name, planet_galaxy, planet_sector, planet_planet, planet_ownerid, planet_owner_name, planet_owner_relation," + \
                 " destplanetid, destplanet_name, destplanet_galaxy, destplanet_sector, destplanet_planet, destplanet_ownerid, destplanet_owner_name, destplanet_owner_relation," + \
-                " action, cargo_ore, cargo_hydrocarbon, cargo_scientists, cargo_soldiers, cargo_workers" + \
+                " action, cargo_ore, cargo_hydrocarbon, cargo_scientists, cargo_soldiers, cargo_workers, ownerid, owner_name" + \
                 " FROM vw_fleets " + \
                 " WHERE planetid="+ str(self.CurrentPlanet) +" AND action != 1 AND action != -1" + \
                 " ORDER BY upper(name)"
@@ -56,8 +56,8 @@ class View(GlobalView):
                 fleet["size"] = oRs[4]
                 fleet["signature"] = oRs[5]
 
-                fleet["ownerid"] = oRs[20]
-                fleet["ownername"] = oRs[21]
+                fleet["ownerid"] = oRs[32]
+                fleet["ownername"] = oRs[33]
 
                 fleet["cargo"] = oRs[27]+oRs[28]+oRs[29]+oRs[30]+oRs[31]
                 fleet["cargo_ore"] = oRs[27]
