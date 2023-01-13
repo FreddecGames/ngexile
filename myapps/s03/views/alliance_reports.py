@@ -20,7 +20,9 @@ class View(GlobalView):
     def display_reports(self, cat):
 
         content = GetTemplate(self.request, "empire-reports")
-
+    
+        content.Parse("taballiance")
+        
         query = "SELECT type, subtype, datetime, battleid, fleetid, fleet_name," + \
                 " planetid, planet_name, galaxy, sector, planet," + \
                 " researchid, 0, read_date," + \

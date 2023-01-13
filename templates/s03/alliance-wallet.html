@@ -68,7 +68,6 @@
                                         <span class="text-normal">Dernière 24 heures</span>
                                     </div>
                                     <div class="col-auto">
-                                        <img src="{{ PATH_IMAGES }}interface/credits.gif" class="res" width="16px" />
                                         <span class="{% if last24h > 0 %}text-success{% else %}text-danger{% endif %}">
                                             {% if last24h > 0 %}+{% endif %}
                                         {{ last24h|intcomma }}</span>
@@ -132,6 +131,34 @@
             </div>
         {% endif %}
         <div class="col-12">
+            <form action="." method="post"class="card">
+                <div class="card-header">
+                    <span>Don de credit à l'alliance</span>
+                </div>
+                {% if can_give %}
+                <div class="card-body">
+                    <div class="row gx-2 align-items-center justify-content-center">
+                        <div class="col-auto">
+                            <span class="text-normal">Somme</span>
+                        </div>
+                        <div class="col-auto">
+                            <input type="number" min="0" name="credits" value="0" size="8" maxlength="8" /> <span class="text-normal">crédits</span>
+                        </div>
+                        <div class="col-auto">
+                            <input type="submit" value="Donner" />
+                        </div>
+                    </div>
+                </div>
+                {% else %}
+                <div class="card-body text-center">
+                    <span class="text-warning">Impossible de faire un don avant deux semaines de jeu.</span>
+                </div>
+                {% endif %}
+                <input type="hidden" name="action" value="give" />
+                {% csrf_token %}
+            </form>
+        </div>
+        <div class="col-12">
             <div class="card">
                 <div class="card-header">
                     <span>Liste des opérations</span>
@@ -145,7 +172,9 @@
                                 </div>
                                 <div class="col">{{ entry.source }}</div>
                                 <div class="col-auto">
-                                    {% if entry.type == 1 %}
+                                    {% if entry.type == 0 %}
+                                        <span class="text-normal">Don</span>
+                                    {% elif entry.type == 1 %}
                                         <span class="text-normal">Vente GM</span>
                                     {% else %}
                                         {{ entry.type }}
