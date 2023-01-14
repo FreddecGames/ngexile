@@ -16,13 +16,6 @@
         $('totalcredits').innerHTML = formatnumber(credits);
     }
     </script>
-    {% if messages %}
-        {% for message in messages %}
-            <div class="alert alert-{{ message.tags }}">
-                {{ message }}
-            </div>
-        {% endfor %}
-    {% endif %}
     <div class="row g-3 flex-column">
         {% if trainings|length > 0 or queues|length > 0 %}
             <div class="col-12">

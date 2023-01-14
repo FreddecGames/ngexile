@@ -49,7 +49,7 @@ class View(GlobalView):
             # List the reports returned by the query
             #
             list = []
-            content.AssignValue('messages', list)
+            content.AssignValue('reports', list)
             for oRs in oRss:
                 reportType = oRs[0]*100+oRs[1]
                 if reportType != 133:

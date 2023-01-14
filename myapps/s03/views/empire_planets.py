@@ -18,8 +18,8 @@ class View(GlobalView):
                 ' hydrocarbon, hydrocarbon_production, hydrocarbon_capacity, mod_production_hydrocarbon,' + \
                 ' energy, (energy_production - energy_consumption) AS energy_balance, energy_capacity,' + \
                 ' workers, workers_capacity, (workers - workers_busy) AS workers_idle, workers_for_maintenance,' + \
-                ' scientists, scientists_capacity,' + \
-                ' soldiers, soldiers_capacity,' + \
+                ' scientists, scientists_capacity, (SELECT int4(COALESCE(sum(scientists), 0)) FROM planet_training_pending WHERE planetid = planets.id) AS scientists_training,' + \
+                ' soldiers, soldiers_capacity, (SELECT int4(COALESCE(sum(soldiers), 0)) FROM planet_training_pending WHERE planetid = planets.id) AS soldiers_training,' + \
                 ' floor_occupied, floor,' + \
                 ' space_occupied, space,' + \
                 ' commanderid, (SELECT name FROM commanders WHERE id = planets.commanderid) AS commandername,' + \

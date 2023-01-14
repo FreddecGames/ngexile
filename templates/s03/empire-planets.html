@@ -96,6 +96,7 @@
                                                          height="16px">
                                                     <span>{{ planet.scientists|intcomma }}</span>
                                                     <small class="ms-1 text-normal">/{{ planet.scientists_capacity|intcomma }}</small>
+                                                    {% if planet.scientists_training > 0 %}<small class="ms-1 text-success">+{{ planet.scientists_training|intcomma }}</small>{% endif %}
                                                 </div>
                                                 <div class="col-12 text-nowrap">
                                                     <img src="/static/s03/img/interface/soldiers.gif"
@@ -104,6 +105,7 @@
                                                          height="16px">
                                                     <span class="{% if planet.soldiers_low %}text-danger{% endif %}">{{ planet.soldiers|intcomma }}</span>
                                                     <small class="ms-1 text-normal">/{{ planet.soldiers_capacity|intcomma }}</small>
+                                                    {% if planet.soldiers_training > 0 %}<small class="ms-1 text-success">+{{ planet.soldiers_training|intcomma }}</small>{% endif %}
                                                 </div>
                                             </div>
                                         </div>

@@ -113,7 +113,7 @@ class View(GlobalView):
 
                     reports.append(report)
                     
-            content.AssignValue("messages", reports)
+            content.AssignValue("reports", reports)
 
             #
             # List how many new reports there are for each category

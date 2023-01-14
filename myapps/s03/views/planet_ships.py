@@ -153,7 +153,7 @@ class View(GlobalView):
 
         count = 0
         for oRs in oRss:
-            if (oRs["quantity"] > 0) or oRs["research_requirements_met"]:
+            if (oRs["quantity"] > 0) or (oRs["research_requirements_met"] and oRs["buildings_requirements_met"]):
                 CatId = oRs["category"]
 
                 if CatId != lastCategory:

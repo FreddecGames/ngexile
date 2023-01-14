@@ -9,29 +9,30 @@ class View(GlobalView):
         
         #--- post
         
-        error = ''
         action = self.request.POST.get('action', '')
         
         if action == 'create':
             
             fleetname = self.request.POST.get('name', '').strip()
             if not isValidObjectName(fleetname):
-                error = 'fleet_name_invalid'
+                messages.error(request, 'create_fleet_error_name_invalid')
+                return HttpResponseRedirect('/s03/planet-orbit/')
+                
+            dbRow = oConnRow('SELECT sp_create_fleet(' + str(self.UserId) + ',' + str(self.CurrentPlanet) + ',' + dosql(fleetname) + ') AS id')
+            fleetid = dbRow['id']
+            if fleetid < 0:
+                messages.error(request, 'create_fleet_error_name_too_many')
+                return HttpResponseRedirect('/s03/planet-orbit/')
             
-            if error == '':
-            
-                dbRow = oConnRow('SELECT sp_create_fleet(' + str(self.UserId) + ',' + str(self.CurrentPlanet) + ',' + dosql(fleetname) + ') AS id')
-                fleetid = dbRow['id']
-                if fleetid < 0: error = 'fleet_too_many'
-            
-            if error == '':
-            
-                dbRows = oConnRows('SELECT id FROM db_ships')
-                for dbRow in dbRows:
-                    quantity = ToInt(self.request.POST.get('s' + str(dbRow['id'])), 0)
-                    if quantity > 0:
-                        oConnDoQuery('SELECT sp_transfer_ships_to_fleet(' + str(self.UserId) + ', ' + str(fleetid) + ', ' + str(dbRow['id']) + ', ' + str(quantity) + ')')
-                oConnDoQuery('DELETE FROM fleets WHERE size=0 AND id=' + str(fleetid) + ' AND ownerid=' + str(self.UserId))
+            dbRows = oConnRows('SELECT id FROM db_ships')
+            for dbRow in dbRows:
+                quantity = ToInt(self.request.POST.get('s' + str(dbRow['id'])), 0)
+                if quantity > 0:
+                    dbRow = oConnRow('SELECT sp_transfer_ships_to_fleet(' + str(self.UserId) + ', ' + str(fleetid) + ', ' + str(dbRow['id']) + ', ' + str(quantity) + ') AS result')
+                    if dbRow['result'] != 0: messages.error(request, 'transfer_ships_to_fleet_error_' + str(dbRow['result']))
+                    
+            oConnDoQuery('DELETE FROM fleets WHERE size=0 AND id=' + str(fleetid) + ' AND ownerid=' + str(self.UserId))
+            return HttpResponseRedirect('/s03/planet-orbit/')
         
         #--- get
         
@@ -40,8 +41,6 @@ class View(GlobalView):
         self.showHeader = True
         
         content = GetTemplate(self.request, 'planet-orbit')
-
-        content.AssignValue('error', error)
         
         # orbitting fleets
         

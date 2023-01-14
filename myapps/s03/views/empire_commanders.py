@@ -264,7 +264,7 @@ class View(GlobalView):
                 "    ,mod_construction_speed_buildings=mod_construction_speed_buildings + 0.05*" + str(build) + \
                 "    ,mod_construction_speed_ships=mod_construction_speed_ships + 0.05*" + str(ship) + \
                 "    ,points=points-" + str(total) + \
-                " WHERE ownerid=" + str(self.UserId) + " AND id=" + str(CommanderId) + " AND points >= " + str(total)
+                " WHERE ownerid=" + str(self.UserId) + " AND id=" + str(CommanderId)
 
         oConnDoQuery(query)
 

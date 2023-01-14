@@ -13,17 +13,18 @@ class View(GlobalView):
         
         if action == 'train':
         
-            trainSoldiers = ToInt(request.POST.get('soldiers'), 0)
-            trainScientists = ToInt(request.POST.get('scientists'), 0)            
-            dbRow = oConnRow('SELECT sp_start_training(' + str(self.UserId) + ',' + str(self.CurrentPlanet) + ',' + str(trainScientists) + ',' + str(trainSoldiers) + ') AS result')
-            if dbRow['result'] != 0: messages.error(request, 'training_error_' + str(dbRow['result']))
+            soldiers = ToInt(request.POST.get('soldiers'), 0)
+            scientists = ToInt(request.POST.get('scientists'), 0)            
+            dbRow = oConnRow('SELECT sp_start_training(' + str(self.UserId) + ',' + str(self.CurrentPlanet) + ',' + str(scientists) + ',' + str(soldiers) + ') AS result')
+            if dbRow['result'] != 0: messages.error(request, 'start_training_error_' + str(dbRow['result']))
             
             return HttpResponseRedirect('/s03/planet-trainings/')
             
         elif action == 'cancel':
         
             queueId = ToInt(request.POST.get('q'), 0)
-            oConnDoQuery('SELECT sp_cancel_training(' + str(self.CurrentPlanet) + ', ' + str(queueId) + ')')
+            dbRow = oConnRow('SELECT sp_cancel_training(' + str(self.CurrentPlanet) + ', ' + str(queueId) + ') AS result')
+            if dbRow['result'] != 0: messages.error(request, 'cancel_training_error_' + str(dbRow['result']))
             
             return HttpResponseRedirect('/s03/planet-trainings/')
         
