@@ -6,8 +6,8 @@ class View(GlobalView):
 
         response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
-
-        self.selectedMenu = "alliance"
+        
+        #--- post
 
         self.name = ""
         self.tag = ""
@@ -23,9 +23,9 @@ class View(GlobalView):
             self.tag = request.POST.get("alliancetag", "").strip()
             self.description = request.POST.get("description", "").strip()
 
-            self.valid_name = self.isValidAlliancename(self.name)
-            self.valid_tag = self.isValidAlliancetag(self.tag)
-            self.valid_description = self.isValiddescription(self.description)
+            self.valid_name = isValidAlliancename(self.name)
+            self.valid_tag = isValidAlliancetag(self.tag)
+            self.valid_description = isValiddescription(self.description)
 
             if self.valid_name and self.valid_tag and self.valid_description:
 
@@ -34,6 +34,10 @@ class View(GlobalView):
                 self.create_result = oRs[0]
                 if self.create_result >= -1:
                     return HttpResponseRedirect("/s03/alliance-view/")
+        
+        #--- get
+
+        self.selectedMenu = "alliance"
 
         content = GetTemplate(self.request, "alliance-create")
 
@@ -54,28 +58,3 @@ class View(GlobalView):
             content.Parse("cant_create")
 
         return self.Display(content)
-
-    #
-    # return if the given self.name is valid for an alliance
-    #
-    def isValidAlliancename(self, myname):
-
-        if myname == "" or len(myname) < 4 or len(myname) > 32:
-            return False
-        else:
-            p = re.compile("^[a-zA-Z0-9]+([ ]?[.]?[\-]?[ ]?[a-zA-Z0-9]+)*$")
-            return p.match(myname)
-
-    #
-    # return if the given self.tag is valid
-    #
-    def isValidAlliancetag(self, tag):
-
-        if tag == "" or len(tag) < 2 or len(tag) > 4:
-            return False
-        else:
-            p = re.compile("^[a-zA-Z0-9]+$")
-            return p.match(tag)
-
-    def isValiddescription(self, description):
-        return len(description) < 8192

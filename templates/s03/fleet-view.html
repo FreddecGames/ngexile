@@ -172,24 +172,22 @@
                                                     </div>
                                                 {% endif %}
                                             </div>
+                                            {% if actions %}
+                                            <ul>
+                                                {% for action in actions %}
+                                                    <li>
+                                                        {% if action.move %}
+                                                            Aller vers <script>putplanet("{{planetid}}", "{{planetname}}", "{{g}}", "{{s}}", "{{p}}", {{relation}});</script>
+                                                        {% endif %}
+                                                        {% if action.loadall %}Tout charger{% endif %}
+                                                        {% if action.unloadall %}Tout décharger{% endif %}
+                                                        {% if action.recycle %}Récolter les ressources{% endif %}
+                                                        {% if action.waiting %}Attendre{% endif %}
+                                                    </li>
+                                                {% endfor %}
+                                            </ul>
+                                            {% endif %}
                                         </div>
-                                        {% if actions %}
-                                            <div class="col-12">
-                                                <ul>
-                                                    {% for action in actions %}
-                                                        <li>
-                                                            {% if action.move %}
-                                                                Aller vers <script>putplanet("{{planetid}}", "{{planetname}}", "{{g}}", "{{s}}", "{{p}}", {{relation}});</script>
-                                                            {% endif %}
-                                                            {% if action.loadall %}Tout charger{% endif %}
-                                                            {% if action.unloadall %}Tout décharger{% endif %}
-                                                            {% if action.recycle %}Récolter les ressources{% endif %}
-                                                            {% if action.waiting %}Attendre{% endif %}
-                                                        </li>
-                                                    {% endfor %}
-                                                </ul>
-                                            </div>
-                                        {% endif %}
                                     </div>
                                 </div>
                             </div>

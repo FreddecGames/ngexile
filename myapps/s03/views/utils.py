@@ -238,6 +238,25 @@ def isValidObjectName(myName):
         p = re.compile("^[a-zA-Z0-9\- ]+$")
         return p.match(myName)
 
+def isValidAlliancename(self, myname):
+
+    if myname == "" or len(myname) < 4 or len(myname) > 32:
+        return False
+    else:
+        p = re.compile("^[a-zA-Z0-9]+([ ]?[.]?[\-]?[ ]?[a-zA-Z0-9]+)*$")
+        return p.match(myname)
+
+def isValidAlliancetag(self, tag):
+
+    if tag == "" or len(tag) < 2 or len(tag) > 4:
+        return False
+    else:
+        p = re.compile("^[a-zA-Z0-9]+$")
+        return p.match(tag)
+
+def isValiddescription(self, description):
+    return len(description) < 8192
+
 # util functions
     
 def getPlanetName(relation, radar_strength, ownerName, planetName):

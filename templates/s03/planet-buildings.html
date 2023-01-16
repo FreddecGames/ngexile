@@ -138,8 +138,10 @@ function refreshPage(url) {
                                                             <span {% if building.not_enough_ore %}class="text-danger"{% endif %}>{{ building.ore|intcomma }}</span>
                                                         </div>
                                                         <div class="col-4">
+                                                        {% if building.floor > 0 %}
                                                             <img src="{{ PATH_IMAGES }}interface/floor.gif" width="16px" class="res" />
                                                             <span {% if building.not_enough_floor %}class="text-danger"{% endif %}>{{ building.floor|intcomma }}</span>
+                                                        {% endif %}
                                                         </div>
                                                         <div class="col-4">
                                                             <img src="{{ PATH_IMAGES }}interface/workers_idle.gif"
@@ -158,8 +160,16 @@ function refreshPage(url) {
                                                             <span {% if building.not_enough_hydrocarbon %}class="text-danger"{% endif %}>{{ building.hydrocarbon|intcomma }}</span>
                                                         </div>
                                                         <div class="col-4">
+                                                        {% if building.space > 0 %}
                                                             <img src="{{ PATH_IMAGES }}interface/space.gif" width="16px" class="res" />
                                                             <span {% if building.not_enough_space %}class="text-danger"{% endif %}>{{ building.space|intcomma }}</span>
+                                                        {% endif %}
+                                                        </div>
+                                                        <div class="col-4">
+                                                        {% if building.prestige > 0 %}
+                                                            <img src="{{ PATH_IMAGES }}interface/prestige.gif" width="16px" class="res" />
+                                                            <span {% if building.not_enough_prestige %}class="text-danger"{% endif %}>{{ building.prestige|intcomma }}</span>
+                                                        {% endif %}
                                                         </div>
                                                     </div>
                                                 </div>
@@ -200,7 +210,7 @@ function refreshPage(url) {
                                                 <div>
                                                     <script>document.write(formattime({{building.time}}));</script>
                                                 </div>
-                                                {% if building.not_enough_ore or building.not_enough_hydrocarbon or building.not_enough_workers %}
+                                                {% if building.not_enough_ore or building.not_enough_hydrocarbon or building.not_enough_workers or building.not_enough_prestige %}
                                                     <div>
                                                         <span class="text-danger">Ressources insuffisantes</span>
                                                     </div>

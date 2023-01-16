@@ -16,8 +16,7 @@ a:link, a:visited, a:active, a:hover { text-decoration: none; }
 
 p {	margin: 0 0 .75rem 0; }
 
-ul { list-style-type:disc; margin-top:10px; margin-bottom:10px; }
-ul li { margin-left:20px; margin-top:4px; }
+ul { margin-bottom: 0px; }
 
 #super {
 	position: relative;
@@ -145,6 +144,10 @@ hr { margin: .5rem 0; }
 .text-normal { color: #ced4da!important; }
 .text-player { color: #0ff!important; }
 .text-yellow { color: #ff0!important; }
+
+a.text-success:hover { color: #c87f0a!important; }
+a.text-danger:hover { color: #c87f0a!important; }
+a.text-player:hover { color: #c87f0a!important; }
 
 .bg-danger { background-color: #700000!important; }
 .bg-success { background-color: #005400!important; }
