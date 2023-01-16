@@ -63,7 +63,7 @@ class Command(BaseCommand):
                     
                     # let's the battle begin !
                     battle.BeginFight()
-                    while Rounds > 1 and battle.NextRound(1):
+                    while Rounds > 0 and battle.NextRound(1):
                         Rounds = Rounds - 1
                     battle.EndFight()
                     
