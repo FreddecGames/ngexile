@@ -1,0 +1,75 @@
+{% extends "ng0/layout.html" %}
+{% load humanize %}
+{% block content %}
+    <div class="nav nav-tabs mb-3">
+        <div class="nav-item">
+            <a href="/ng0/alliance-invitations/" class="nav-link">Invitations</a>
+        </div>
+        <div class="nav-item">
+            <a href="/ng0/alliance-create/" class="nav-link active">Création</a>
+        </div>
+    </div>
+    {% if create %}
+        <form method="post" action="?a=new">
+            {% csrf_token %}
+            <div class="card">
+                <div class="card-header">
+                    <span>Formez une alliance, dirigez la et imposez-vous dans la galaxie !</span>
+                </div>
+                <div class="card-body">
+                    <p class="text-normal">
+                        Choisissez un nom et un tag d'alliance. Le tag sera affiché à coté des noms des membres de l'alliance, et est en général un diminutif ou l'acronyme du nom de l'alliance. Par exemple : La Grande Alliance / LGA.
+                    </p>
+                    <p class="text-normal">
+                        Les frais de création d'alliance s'élèvent à
+                        <img src="/static/ng0/img/credit.png" width="16px" class="res" />
+                        <span class="text-white">{{ 10000|intcomma }}</span>.
+                    </p>
+                    <div class="row g-2">
+                        <div class="col-12">
+                            <div class="row gx-2 align-items-center">
+                                <div class="col-4 text-end">Nom de l'alliance</div>
+                                <div class="col-4">
+                                    <input type="text"
+                                           name="alliancename"
+                                           maxlength="32"
+                                           size="32"
+                                           value="{{ name }}">
+                                </div>
+                            </div>
+                            {% if name_already_used %}
+                                <div class="mt-1 text-center text-danger">Ce nom est déjà utilisé, veuillez en choisir un autre.</div>
+                            {% endif %}
+                            {% if invalid_name %}
+                                <div class="mt-1 text-center text-danger">Entrez un nom de 4 à 32 lettres (A-Z, 0-9, -, .).</div>
+                            {% endif %}
+                        </div>
+                        <div class="col-12">
+                            <div class="row gx-2 align-items-center">
+                                <div class="col-4 text-end">Tag de l'alliance</div>
+                                <div class="col-4">
+                                    <input type="text"
+                                           name="alliancetag"
+                                           maxlength="4"
+                                           size="32"
+                                           value="{{ tag }}">
+                                </div>
+                            </div>
+                            {% if tag_already_used %}
+                                <div class="mt-1 text-center text-danger">Ce tag est déjà utilisé, veuillez en choisir un autre.</div>
+                            {% endif %}
+                            {% if invalid_tag %}
+                                <div class="mt-1 text-center text-danger">Le tag doit être composé de 2 à 4 lettres.</div>
+                            {% endif %}
+                        </div>
+                        <div class="col-12 text-center">
+                            <input type="submit" value="Créer" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    {% else %}
+        <span class="text-danger">Vous avez récemment quitté une alliance, il vous est actuellement impossible d'en créer une nouvelle.</span>
+    {% endif %}
+{% endblock content %}

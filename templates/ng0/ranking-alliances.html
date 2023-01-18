@@ -1,0 +1,51 @@
+{% extends "ng0/layout.html" %}
+{% load humanize %}
+{% block content %}
+    <div class="nav nav-tabs mb-3">
+        <div class="nav-item">
+            <a href="/ng0/ranking-players/" class="nav-link">Joueurs</a>
+        </div>
+        <div class="nav-item">
+            <a href="/ng0/ranking-alliances/" class="nav-link active">Alliances</a>
+        </div>
+    </div>
+    <div class="card">
+        <div class="list-group list-group-flush">
+            {% for alliance in alliances %}
+                <div class="list-group-item {% if alliance.player_alliance %}bg-success{% endif %}">
+                    <div class="row gx-3 align-items-center">
+                        <div class="col-auto">
+                            <span>{{ alliance.place }}.</span>
+                        </div>
+                        <div class="col">
+                            <a href="/ng0/alliance-view/?tag={{ alliance.tag }}">[{{ alliance.tag }}] {{ alliance.name }}</a>
+                        </div>
+                        <div class="col-3 text-end">
+                            <div class="row g-1">
+                                <div class="col-12">
+                                    {{ alliance.members }} <small class="text-normal">membres</small>
+                                </div>
+                                <div class="col-12">
+                                    {{ alliance.planets }} <small class="text-normal">planètes</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-3 text-end">
+                            <div class="row g-1">
+                                <div class="col-12">{{ alliance.score|intcomma }}</div>
+                                <div class="col-12 {% if alliance.score_delta > 0 %}text-success{% else %}text-danger{% endif %}">
+                                    {% if alliance.score_delta > 0 %}<span>+</span>{% endif %}
+                                    {{ alliance.score_delta|intcomma }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <div class="list-group-item">
+                    <span class="text-normal">Aucune alliance</span>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock content %}

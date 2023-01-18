@@ -1,0 +1,71 @@
+<script>
+let defaultTitle = document.title
+
+function setTitle(title) { document.title = defaultTitle + ' - ' + title }
+
+function putMenuLevel1(url, content) { document.write('<a href="' + url + '" class="menu lvl1"><span class="col pe-3">' + content + '</span><i class="fa-fw fas fa-chevron-down"></i></a>') }
+
+function putMenuLevel2(url, content, name, label, selectedMenu) {
+
+    let selected = (name == selectedMenu) ? ' selected' : ''
+    document.write('<a href="' + url + '" class="menu lvl2' + selected + '"><div class="flex-grow-1 row gx-2 align-items-baseline"><i class="fa-fw fas fa-caret-right pe-2"></i><div class="col">' + content + '</div></div></a>')
+    
+    if (selected) setTitle(label)
+}
+
+function setMailsCount(count) {
+
+	let elem = $('mailscount')
+	if (count > 0) elem.innerHTML = count
+	else elem.innerHTML = ''
+}
+
+function setReportsCount(count) {
+
+	let elem = $('reportscount')
+	if (count > 0) elem.innerHTML = count
+	else elem.innerHTML = ''
+}
+
+putMenuLevel1('/ng0/mail-inbox/', 'Communication')
+document.write('<div class="py-1">')
+
+    putMenuLevel2('/ng0/empire-reports/', '<div class="row gx-2 align-items-baseline"><div class="col">Rapports</div><div class="col-auto text-success"><span id="reportscount" class="badge text-bg-success"></span></div></div>', 'reports', 'Rapports', '{{selectedmenu}}')
+    putMenuLevel2('/ng0/mail-inbox/', '<div class="row gx-2 align-items-baseline"><div class="col">Mails</div><div class="col-auto text-success"><span id="mailscount" class="badge text-bg-success"></span></div></div>', 'mails', 'Mails', '{{selectedmenu}}')
+
+document.write('</div>')
+putMenuLevel1('/ng0/empire-view/', 'Empire')
+document.write('<div class="py-1">')
+
+    putMenuLevel2('/ng0/empire-view/', 'Vue d\'ensemble', 'empire', 'Vue d\'ensemble', '{{selectedmenu}}')
+    putMenuLevel2('/ng0/empire-planets/', 'Planètes', 'planets', 'Planètes', '{{selectedmenu}}')
+    putMenuLevel2('/ng0/market-buy/', 'Commerce', 'market', 'Commerce', '{{selectedmenu}}')
+    putMenuLevel2('/ng0/empire-commanders/', 'Commandants', 'commanders', 'Commandants', '{{selectedmenu}}')
+    putMenuLevel2('/ng0/empire-fleets/', 'Flottes', 'fleets', 'Flottes', '{{selectedmenu}}')
+    putMenuLevel2('/ng0/empire-techs/', 'Recherches', 'techs', 'Recherches', '{{selectedmenu}}')
+    putMenuLevel2('/ng0/alliance-view/', 'Alliance', 'alliance', 'Alliance', '{{selectedmenu}}')
+
+document.write('</div>')
+putMenuLevel1('/ng0/map/', 'Galaxie')
+document.write('<div class="py-1">')
+
+    putMenuLevel2('/ng0/map/?g={{cur_g}}&s={{cur_s}}', 'Carte spatiale', 'map', 'Carte spatiale', '{{selectedmenu}}')
+    putMenuLevel2('/ng0/ranking-players/', 'Classement', 'ranking', 'Classement', '{{selectedmenu}}')
+
+document.write('</div>')
+putMenuLevel1('/ng0/planet-view/?planet={{planetid}}', '<div class="row gx-2 align-items-baseline"><div class="col">Planète</div><div class="col-auto">{{cur_g}}.{{cur_s}}.{{cur_p}}</div></div>')
+document.write('<div class="py-1">')
+
+    putMenuLevel2('/ng0/planet-view/?planet={{planetid}}', 'Vue d\'ensemble', 'planet', 'Vue d\'ensemble', '{{selectedmenu}}')
+    putMenuLevel2('/ng0/planet-production/?planet={{planetid}}', 'Production', 'production', 'Production', '{{selectedmenu}}')
+    putMenuLevel2('/ng0/planet-working/?planet={{planetid}}', 'Fonctionnement', 'working', 'Fonctionnement', '{{selectedmenu}}')
+    putMenuLevel2('/ng0/planet-buildings/?planet={{planetid}}', 'Bâtiments', 'buildings', 'Bâtiments', '{{selectedmenu}}')
+    putMenuLevel2('/ng0/planet-ships/?planet={{planetid}}', 'Chantier spatial', 'ships', 'Chantier spatial', '{{selectedmenu}}')
+    putMenuLevel2('/ng0/planet-trainings/?planet={{planetid}}', 'Entraînement', 'trainings', 'Entraînement', '{{selectedmenu}}')
+    putMenuLevel2('/ng0/planet-orbit/?planet={{planetid}}', 'Orbite', 'orbit', 'Orbite', '{{selectedmenu}}')
+
+document.write('</div>')
+
+{% if new_mail > 0 %}setMailsCount({{new_mail}}){% endif %}
+{% if new_report > 0 %}setReportsCount({{new_report}}){% endif %}
+</script>

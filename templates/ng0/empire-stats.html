@@ -1,0 +1,78 @@
+{% extends "ng0/layout.html" %}
+{% load humanize %}
+{% block content %}
+    <div class="nav nav-tabs mb-3">
+        <div class="nav-item">
+            <a href="/ng0/empire-fleets/" class="nav-link">Flottes</a>
+        </div>
+        <div class="nav-item">
+            <a href="/ng0/empire-orbiting/" class="nav-link">Flottes en orbite</a>
+        </div>
+        <div class="nav-item">
+            <a href="/ng0/empire-ground/" class="nav-link">Vaisseaux au sol</a>
+        </div>
+        <div class="nav-item">
+            <a href="/ng0/empire-stats/" class="nav-link active">Détruits / perdus</a>
+        </div>
+    </div>
+    <div class="row g-3">
+        {% if no_ship %}
+            <div class="col-12">
+                <div class="card card-body">
+                    <span class="text-normal">Vous n'avez détruit et/ou perdu aucun vaisseau</span>
+                </div>
+            </div>
+        {% endif %}
+        {% for category in cats %}
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="row gx-3">
+                            <div class="col">
+                                {% if category.id == 10 %}Vaisseaux utilitaires{% endif %}
+                                {% if category.id == 11 %}Vaisseaux de déploiement{% endif %}
+                                {% if category.id == 15 %}Vaisseaux tactiques{% endif %}
+                                {% if category.id == 20 %}Vaisseaux légers{% endif %}
+                                {% if category.id == 30 %}Corvettes{% endif %}
+                                {% if category.id == 40 %}Frégates{% endif %}
+                                {% if category.id == 50 %}Croiseurs{% endif %}
+                            </div>
+                            <div class="col-2 text-end">
+                                <span class="text-normal">Détruits</span>
+                            </div>
+                            <div class="col-2 text-end">
+                                <span class="text-normal">Perdus</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-1">
+                            {% for ship in category.ships %}
+                                <div class="col-12">
+                                    <div class="row gx-3">
+                                        <div class="col">
+                                            <a href="/ng0/help/?cat=ships#{{ ship.id }}">{{ ship.name }}</a>
+                                        </div>
+                                        <div class="col-2 text-end">{{ ship.killed|intcomma }}</div>
+                                        <div class="col-2 text-end">{{ ship.lost|intcomma }}</div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+        {% if total %}
+            <div class="col-12">
+                <div class="card card-body">
+                    <div class="row gx-3">
+                        <div class="col">Total</div>
+                        <div class="col-2 text-end">{{ kills|intcomma }}</div>
+                        <div class="col-2 text-end">{{ losses|intcomma }}</div>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+{% endblock content %}

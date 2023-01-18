@@ -1,0 +1,386 @@
+{% extends "ng0/layout.html" %}
+{% load tz %}
+{% load humanize %}
+{% block content %}
+    <div class="row g-3">
+        {% if commander_list %}
+            <script>
+                function confirmFireCommander(name) {
+                
+                    if (confirm('Êtes-vous sûr de vouloir vous séparer du commandant "' + name + '" ?')) {
+                        if (confirm('Êtes-vous VRAIMENT sûr de vouloir vous séparer du commandant "' + name + '" ?\nNote: Les commandants renvoyés ne peuvent pas être récupérés !'))
+                            return true;
+                    }
+                    
+                    return false;
+                }
+
+                function confirmTrain(prestige) {
+                    return confirm('Êtes-vous sûr de vouloir effectuer un entraînement intensif pour ' + prestige + ' points de prestige ?');
+                }
+            </script>
+            {% for commander in commander_list %}
+                <div id="renamebox{{ commander.id }}" class="hidden">
+                    <form action="?" method="get" class="row gx-1 align-items-center">
+                        <input type="hidden" name="a" value="rename">
+                        <input type="hidden" name="id" value="{{ commander.id }}">
+                        <div class="col-auto">
+                            <input type="text" name="name" maxlength="32" value="{{ commander.name }}" />
+                        </div>
+                        <div class="col-auto">
+                            <input type="submit" value="OK" />
+                        </div>
+                        <div class="col-auto">
+                            <input type="button" value="X" onclick="hide();" />
+                        </div>
+                    </form>
+                </div>
+            {% endfor %}
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="row gx-3 align-items-center">
+                            <div class="col">
+                                <span>Les commandants de votre empire</span>
+                            </div>
+                            <div class="col-auto">
+                                <span>{{ commander_list|length }} <small class="text-normal">/{{ max_commanders }}</small></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="list-group list-group-flush">
+                        {% for commander in commander_list %}
+                            <div class="list-group-item">
+                                <div class="row gx-3">
+                                    <div class="col-5">
+                                        <div class="row g-1">
+                                            <div class="col-12">
+                                                <div id="renameref{{ commander.id }}">
+                                                    <img src="/static/ng0/img/commander.gif"
+                                                         width="16px"
+                                                         class="res"/>
+                                                    <a href="#"
+                                                       name="{{ commander.name }}"
+                                                       onclick="return show('renameref{{ commander.id }}','renamebox{{ commander.id }}')">{{ commander.name }}</a>
+                                                </div>
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="row gx-3 align-items-center">
+                                                    <div class="col-5 text-end">
+                                                        <span class="text-normal">Salaire</span>
+                                                    </div>
+                                                    <div class="col-7">
+                                                        <img src="/static/ng0/img/credit.png" width="16px" class="res" />
+                                                        {{ commander.salary|intcomma }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="row gx-3 align-items-center">
+                                                    <div class="col-5 text-end">
+                                                        <span class="text-normal">Incorporé</span>
+                                                    </div>
+                                                    <div class="col-7">{{ commander.recruited|timezone:"Europe/Paris"|date:"d M Y H:i" }}</div>
+                                                </div>
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="row gx-3 align-items-center">
+                                                    <div class="col-5 text-end">
+                                                        <span class="text-normal">Affectation</span>
+                                                    </div>
+                                                    <div class="col-7">
+                                                        {% if commander.not_assigned %}
+                                                            <span class="text-normal">Aucune</span>
+                                                        {% elif commander.planet_command %}
+                                                            <img src="/static/ng0/img/planet.gif" width="16px" class="res" />
+                                                            <script>putplanet("{{commander.planetid}}", "{{commander.commandment}}", "{{commander.g}}", "{{commander.s}}", "{{commander.p}}", 2);</script>
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            {% if commander.can_fire %}
+                                                <div class="col-12">
+                                                    <div class="row gx-3 align-items-center">
+                                                        <div class="col-5 text-end">
+                                                            <a href="?a=fire&id={{ commander.id }}"
+                                                               onclick="return confirmFireCommander('{{ commander.name }}')">Renvoyer</a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <div class="col-7">
+                                        <div class="row g-1">
+                                            {% for bonus in commander.bonuses %}
+                                                <div class="col-12">
+                                                    <span class="text-success">
+                                                        {% if bonus.description14 %}Production de minerai{% endif %}
+                                                        {% if bonus.description15 %}Production d'hydrocarbure{% endif %}
+                                                        {% if bonus.description16 %}Production d'énergie{% endif %}
+                                                        {% if bonus.description17 %}Formation des travailleurs{% endif %}
+                                                        {% if bonus.description24 %}Vitesse de construction des bâtiments{% endif %}
+                                                        {% if bonus.description25 %}Vitesse de construction des vaisseaux{% endif %}
+                                                        {% if bonus.description18 %}Vitesse de flotte{% endif %}
+                                                        {% if bonus.description19 %}Bouclier de flotte{% endif %}
+                                                        {% if bonus.description20 %}Manœuvrabilité de flotte{% endif %}
+                                                        {% if bonus.description21 %}Ciblage de flotte{% endif %}
+                                                        {% if bonus.description22 %}Dégats de flotte{% endif %}
+                                                        {% if bonus.description23 %}Signature de flotte{% endif %}
+                                                        {{ bonus.bonus }}%
+                                                    </span>
+                                                </div>
+                                            {% endfor %}
+                                            {% if commander.levelup %}
+                                                <div class="col-12">
+                                                    <a href="?a=skills&id={{ commander.id }}">Répartir les {{ commander.points }} points de compétences restants</a>
+                                                </div>
+                                            {% endif %}
+                                            {% if commander.train %}
+                                                <div class="col-12">
+                                                    <a href="?a=train&id={{ commander.id }}"
+                                                       onclick="return confirmTrain('{{ commander.prestige }}')">Entrainement intensif pour
+                                                        <img src="/static/ng0/img/prestige.gif"
+                                                             width="16px"
+                                                             class="res"/>
+                                                    {{ commander.prestige }}</a>
+                                                </div>
+                                            {% endif %}
+                                            {% if commander.cant_train %}
+                                                <div class="col-12">
+                                                    <span class="text-danger">Vous ne pouvez entrainer ce commandant qu'une fois par jour</span>
+                                                </div>
+                                            {% endif %}
+                                            {% if commander.cant_train_anymore %}
+                                                <div class="col-12">
+                                                    <span class="text-danger">Vous ne pouvez pas entrainer ce commandant plus</span>
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% empty %}
+                            <div class="list-group-item">
+                                <span class="text-normal">Aucun commandant</span>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+        {% if available_commanders %}
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <span>Commandants pouvant être recrutés</span>
+                    </div>
+                    <div class="list-group list-group-flush">
+                        {% for commander in available_commanders %}
+                            <div class="list-group-item">
+                                <div class="row gx-3">
+                                    <div class="col-5">
+                                        <div class="row g-1">
+                                            <div class="col-12">
+                                                <img src="/static/ng0/img/commander.gif"
+                                                     width="16px"
+                                                     class="res"/>
+                                                {{ commander.name }}
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="row gx-3 align-items-center">
+                                                    <div class="col-5 text-end">
+                                                        <span class="text-normal">Salaire</span>
+                                                    </div>
+                                                    <div class="col-7">
+                                                        <img src="/static/ng0/img/credit.png" width="16px" class="res" />
+                                                        {{ commander.salary|intcomma }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="row gx-3 align-items-center">
+                                                    <div class="col-5 text-end">
+                                                        <span class="text-normal">Repéré</span>
+                                                    </div>
+                                                    <div class="col-7">{{ commander.added|timezone:"Europe/Paris"|date:"d M Y H:i" }}</div>
+                                                </div>
+                                            </div>
+                                            {% if commander.can_engage %}
+                                                <div class="col-12">
+                                                    <div class="row gx-3 align-items-center">
+                                                        <div class="col-5 text-end">
+                                                            <a href="?a=engage&id={{ commander.id }}"
+                                                               onclick="return confirmEngageCommander('{{ commander.name }}')">Embaucher</a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <div class="col-7">
+                                        <div class="row g-1">
+                                            {% for bonus in commander.bonuses %}
+                                                <div class="col-12">
+                                                    <span class="text-success">
+                                                        {% if bonus.description14 %}Production de minerai{% endif %}
+                                                        {% if bonus.description15 %}Production d'hydrocarbure{% endif %}
+                                                        {% if bonus.description16 %}Production d'énergie{% endif %}
+                                                        {% if bonus.description17 %}Formation des travailleurs{% endif %}
+                                                        {% if bonus.description24 %}Vitesse de construction des bâtiments{% endif %}
+                                                        {% if bonus.description25 %}Vitesse de construction des vaisseaux{% endif %}
+                                                        {% if bonus.description18 %}Vitesse de flotte{% endif %}
+                                                        {% if bonus.description19 %}Bouclier de flotte{% endif %}
+                                                        {% if bonus.description20 %}Manœuvrabilité de flotte{% endif %}
+                                                        {% if bonus.description21 %}Ciblage de flotte{% endif %}
+                                                        {% if bonus.description22 %}Dégats de flotte{% endif %}
+                                                        {% if bonus.description23 %}Signature de flotte{% endif %}
+                                                        {{ bonus.bonus }}%
+                                                    </span>
+                                                </div>
+                                            {% endfor %}
+                                            {% if commander.levelup %}
+                                                <div class="col-12">{{ commander.points }} points de compétences restants à distribuer</div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% empty %}
+                            <div class="list-group-item">
+                                <span class="text-normal">Aucun commandant</span>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+        {% if editcommander %}
+            <script>
+                function confirmAssign() {
+                
+                    var s = "";
+                    var obj = document.getElementById('points');
+                    if (obj.innerHTML != "0") s = "Note: Vous pourrez assigner les points restants plus tard.\r\n";
+                    return confirm("Les compétences assignées à ce commandant seront définitives.\r\n" + s + "\r\nÊtes-vous sûr de votre choix ?");
+                }
+
+                var count = 0;
+                var skills = [];
+                var points = {{maxpoints}};
+
+                function sk(i, j) {
+                
+                    var skill = skills[i];
+                    var inp = $(skill.name);
+
+                    if (points - j < 0) return false;
+
+                    var pointsInSkill = parseInt(inp.value);
+
+                    if(pointsInSkill + j >= 0 && points-j >= 0) {
+                    
+                        pointsInSkill += j;
+
+                        var obj = $('span'+skill.name);
+
+                        if ((skill.value + pointsInSkill * skill.inc).toFixed(2) > skill.max) {
+                        
+                            alert('Limite atteinte pour cette compétence (' + ((skill.max - 1) * 100).toFixed(0) + ')');
+                            return false;
+                        }
+
+                        obj.innerHTML = Math.round((skill.value + pointsInSkill*skill.inc - 1) * 100);
+                        inp.value = pointsInSkill;
+
+                        points -= j;
+                    }
+
+                    $('points').innerHTML = points;
+
+                    return false;
+                }
+
+                function addskill(name, label, increase, value, max) {
+                
+                    skills[count] = { name:name, inc:increase, value:value, max:max };
+                                    
+                    document.write('<div class="col-12">');       
+                        document.write('<div class="row gx-3 align-items-center">');       
+                            document.write('<input type="hidden" id="' + name + '" name="' + name + '" value="0">');
+                            document.write('<div class="col-auto" style="width:35px;"></div>');
+                            document.write('<div class="col">' + label + ' <small class="ms-2 text-normal">max ' + Math.round((max - 1) * 100) + '%</small></div>');
+                            document.write('<div class="col-auto"><span class="text-success">+<span id="span' + name + '">' + Math.round((value - 1) * 100) + '</span>%</span></div>');
+                            document.write('<div class="col-auto"><a href="" onclick="return sk(' + count + ', 1)" ondblclick="return sk(' + count + ', 1)"><i class="fa-fw fas fa-plus-circle"></i></a></div>');
+                            document.write('<div class="col-auto"><a href="" onclick="return sk(' + count + ', -1)" ondblclick="return sk(' + count + ', -1)"><i class="fa-fw fas fa-minus-circle"></i></a></div>');
+                        document.write('</div>');     
+                    document.write('</div>');     
+                    
+                    count++;
+                }
+            </script>
+            <div class="col-12">
+                <form action="?a=edit&id={{ commanderid }}" method="post" class="card">
+                    <div class="card-header">
+                        <div class="row gx-3 align-items-center">
+                            <div class="col-auto">
+                                <a href="/ng0/empire-commanders/"><i class="fa-fw fas fa-arrow-alt-circle-left"></i></a>
+                            </div>
+                            <div class="col">
+                                <img src="/static/ng0/img/commander.gif"
+                                     width="16px"
+                                     class="res"/>
+                                {{ name }}
+                            </div>
+                        </div>
+                    </div>
+                    {% csrf_token %}
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <div class="row g-1">
+                                    <div class="col-12">
+                                        <span class="text-normal">Compétences flotte</span>
+                                    </div>
+                                    <script>
+                                        addskill('fleet_speed', 'Vitesse', 0.02, {{speed}}, {{max_speed}});
+                                        addskill('fleet_shield', 'Bouclier', 0.02, {{shield}}, {{max_shield}});
+                                        addskill('fleet_handling', 'Manœuvrabilité', 0.05, {{handling}}, {{max_handling}});
+                                        addskill('fleet_targeting', 'Acquisition cibles', 0.05, {{targeting}}, {{max_targeting}});
+                                        addskill('fleet_damages', 'Dégats augmentés', 0.02, {{damages}}, {{max_damages}});
+                                        addskill('fleet_signature', 'Atténuation signature', 0.02, {{signature}}, {{max_signature}});
+                                    </script>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="row g-1">
+                                    <div class="col-12">
+                                        <span class="text-normal">Compétences planète</span>
+                                    </div>
+                                    <script>
+                                        addskill('ore','Production de Minerai',0.01,{{ore}},{{max_ore}});
+                                        addskill('hydrocarbon','Production d\'hydrocarbure',0.01,{{hydrocarbon}},{{max_hydrocarbon}});
+                                        addskill('energy','Production d\'énergie',0.1,{{energy}},{{max_energy}});
+                                        addskill('workers','Formation des travailleurs',0.1,{{workers}},{{max_workers}});
+                                        addskill('buildindspeed','Vitesse de construction des bâtiments',0.05,{{build}},{{max_build}});
+                                        addskill('shipconstructionspeed','Vitesse de construction des vaisseaux',0.05,{{ship}},{{max_ship}});
+                                    </script>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="row gx-3">
+                                    <div class="col">
+                                        <span class="text-normal me-2">Points restant</span> <span id="points">{{ maxpoints }}</span>
+                                    </div>
+                                    <div class="col-auto">
+                                        <input type="submit" value="Valider" onclick="return confirmAssign()" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        {% endif %}
+    </div>
+{% endblock content %}

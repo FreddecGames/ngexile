@@ -1,0 +1,116 @@
+{% extends "ng0/layout.html" %}
+{% load humanize %}
+{% block content %}
+    <div class="card">
+        <div class="card-header">
+            <span>Rapport d'invasion de <script>putplanet("{{planetid}}", "{{planetname}}", "{{g}}", "{{s}}", "{{p}}", {{relation}});</script> par {{ fleet_owner }}</span>
+        </div>
+        <div class="card-body">
+            <div class="row g-1 flex-column">
+                {% if succeeded %}
+                    <div class="col-12 text-center">
+                        <span>La nation <a href="/ng0/nation/?name={{ fleet_owner }}">{{ fleet_owner }}</a> s'est emparée de <script>putplanet("{{planetid }}", "{{planetname }}", "{{g }}", "{{s }}", "{{p }}", {{relation}});</script>.</span>
+                    </div>
+                {% else %}
+                    <div class="col-12 text-center">
+                        <span><script>putplanet("{{planetid}}", "{{planetname}}", "{{g}}", "{{s}}", "{{p}}", {{relation}});</script> a été défendue avec succès.</span>
+                    </div>
+                {% endif %}
+                <div class="col-12 mt-3">
+                    <div class="row gx-3">
+                        <div class="col-auto">
+                            <span class="text-normal">Envahisseur</span>
+                        </div>
+                        <div class="col-auto">
+                            <span class="{% if ally %}text-success{% endif %}{% if enemy %}text-danger{% endif %}">{{ fleet_owner }}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <hr class="my-1">
+                </div>
+                <div class="col-12">
+                    <div class="row gx-3">
+                        <div class="col-auto">
+                            <span class="text-normal">Soldats</span>
+                        </div>
+                        <div class="col-auto">
+                            <span>{{ soldiers_total|intcomma }}</span>
+                        </div>
+                        <div class="col-auto">
+                            <span>{{ soldiers_lost|intcomma }}</span>
+                        </div>
+                        <div class="col-auto">
+                            <span>{{ soldiers_alive|intcomma }}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 mt-3">
+                    <div class="row gx-3">
+                        <div class="col-auto">
+                            <span class="text-normal">Défenseur</span>
+                        </div>
+                        <div class="col-auto">
+                            <span class="{% if ally %}text-success{% endif %}{% if enemy %}text-danger{% endif %}">{{ fleet_owner }}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <hr class="my-1">
+                </div>
+                <div class="col-12">
+                    <div class="row gx-3">
+                        <div class="col-auto">
+                            <span class="text-normal">Soldats</span>
+                        </div>
+                        <div class="col-auto">
+                            <span>{{ def_soldiers_total|intcomma }}</span>
+                        </div>
+                        <div class="col-auto">
+                            <span>{{ def_soldiers_lost|intcomma }}</span>
+                        </div>
+                        <div class="col-auto">
+                            <span>{{ def_soldiers_alive|intcomma }}</span>
+                        </div>
+                    </div>
+                </div>
+                {% if scientists %}
+                    <div class="col-12">
+                        <div class="row gx-3">
+                            <div class="col-auto">
+                                <span class="text-normal">Scientifiques</span>
+                            </div>
+                            <div class="col-auto">
+                                <span>{{ def_scientists_total|intcomma }}</span>
+                            </div>
+                            <div class="col-auto">
+                                <span>{{ def_scientists_lost|intcomma }}</span>
+                            </div>
+                            <div class="col-auto">
+                                <span>{{ def_scientists_alive|intcomma }}</span>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+                {% if workers %}
+                    <div class="col-12">
+                        <div class="row gx-3">
+                            <div class="col-auto">
+                                <span class="text-normal">Travailleurs</span>
+                            </div>
+                            <div class="col-auto">
+                                <span>{{ def_workers_total|intcomma }}</span>
+                            </div>
+                            <div class="col-auto">
+                                <span>{{ def_workers_lost|intcomma }}</span>
+                            </div>
+                            <div class="col-auto">
+                                <span>{{ def_workers_alive|intcomma }}</span>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock content %}
