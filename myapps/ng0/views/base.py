@@ -49,9 +49,7 @@ class BaseView(LoginRequiredMixin, View):
         
         if self.currentPlanet == None:
 
-            self.currentPlanet = dbRow('SELECT id, galaxy, sector, planet AS number, name, planet_floor AS floor FROM nav_planet WHERE planet_floor > 0 AND planet_space > 0 AND id=' + str(self.profile['lastplanetid']) + ' and ownerid=' + str(self.profile['id']))
-            print(self.currentPlanet)
-            
+            self.currentPlanet = dbRow('SELECT id, galaxy, sector, planet AS number, name, planet_floor AS floor FROM nav_planet WHERE planet_floor > 0 AND planet_space > 0 AND id=' + str(self.profile['lastplanetid']) + ' and ownerid=' + str(self.profile['id']))            
             return
     
         self.currentPlanet = oConnExecute('SELECT id, galaxy, sector, planet AS number, name, planet_floor AS floor FROM nav_planet WHERE planet_floor > 0 AND planet_space > 0 AND ownerid=' + str(self.profile['id']) + ' LIMIT 1')

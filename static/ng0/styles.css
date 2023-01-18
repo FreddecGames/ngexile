@@ -1,21 +1,23 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
 
 :root {
+    --bs-yellow: #ff0;
+    
     --bs-primary: #ffa500;
     --bs-secondary: #4176ef;
     --bs-success: #0f0;
-    --bs-info: #03a9f4;
+    --bs-info: #3dd5f3;
     --bs-warning: #fa9f1b;
-    --bs-danger: #df5645;
+    --bs-danger: #ff7a87;
     --bs-light: var(--bs-gray-700);
     --bs-dark: var(--bs-gray-900);
     
     --bs-primary-rgb: 255,165,0;
     --bs-secondary-rgb: 65,118,239;
     --bs-success-rgb: 0,255,0;
-    --bs-info-rgb: 3,169,244;
+    --bs-info-rgb: 61,213,243;
     --bs-warning-rgb: 250,159,27;
-    --bs-danger-rgb: 223,86,69;
+    --bs-danger-rgb: 255,122,135;
     --bs-light-rgb: 73,80,87;
     --bs-dark-rgb: 36,41,49;
     
@@ -224,7 +226,7 @@ a:link, a:visited, a:active, a:hover { text-decoration: none; }
 }
 
 .badge {
-    --bs-badge-font-size: 0.85em;
+    --bs-badge-font-size: 0.75em;
     --bs-badge-font-weight: 400;
 }
 
@@ -265,6 +267,17 @@ a:link, a:visited, a:active, a:hover { text-decoration: none; }
 .h6, h6 { font-size: .85rem; }
 
 /* Custom */
+
+.text-yellow { color: var(--bs-yellow); }
+
+.link-danger { color: var(--bs-danger)!important; }
+.link-danger:focus, .link-danger:hover { color: var(--bs-link-hover-color)!important; }
+
+.link-success { color: var(--bs-success)!important; }
+.link-success:focus, .link-success:hover { color: var(--bs-link-hover-color)!important; }
+
+.link-info { color: var(--bs-info)!important; }
+.link-info:focus, .link-info:hover { color: var(--bs-link-hover-color)!important; }
 
 .px-3 {
     padding-right: .75rem!important; padding-left: .75rem!important;

@@ -114,7 +114,7 @@ function planet_str(id, name, g, s, p, rel) {
         case -3: var col = 'link-normal'; break;
     }
 
-    return '<a href="/ng0/map/?g=' + g + '&s=' + s + '" class="' + col + '"><i class="fa-fw fas fa-map"></i> ' + g + '.' + s + '.' + p + '</a>'
+    return '<a href="/ng0/map/?g=' + g + '&s=' + s + '" class="' + col + '">' + g + '.' + s + '.' + p + '</a>'
 }
 
 function putplanet(id, name, g, s, p, rel) { document.write(planet_str(id, name, g, s, p, rel)) }
