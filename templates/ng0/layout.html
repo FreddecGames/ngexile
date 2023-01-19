@@ -87,7 +87,7 @@
                     <div class="leftnav-inner-top px-3 pb-2">
                         <div class="d-flex align-items-center py-2">
                             <div class="col-auto pe-2">
-                                {% if profile.avatar_url %}
+                                {% if cavatar_url %}
                                     <img src="{{ profile.avatar_url }}" width="42px" class="rounded-circle" />
                                 {% else %}
                                     <img src="/static/ng0/img/noavatar.png"
@@ -195,18 +195,6 @@
                                         </div>
                                     </div>
                                 </a>
-                                <a href="/ng0/market-buy/"
-                                   class="nav-link {% if selectedMenu == 'market' %}active{% endif %}">
-                                    <div class="row gx-3 align-items-center">
-                                        <div class="col-auto d-flex">
-                                            <i class="fas fa-fw fa-store fs-6"></i>
-                                        </div>
-                                        <div class="col">{% translate 'Market' %}</div>
-                                        <div class="col-auto d-flex">
-                                            <i class="fas fa-fw fa-chevron-right"></i>
-                                        </div>
-                                    </div>
-                                </a>
                                 <a href="/ng0/empire-fleets/"
                                    class="nav-link {% if selectedMenu == 'fleets' %}active{% endif %}">
                                     <div class="row gx-3 align-items-center">
@@ -283,7 +271,7 @@
                                             {% translate 'Ranking' %}
                                         </div>
                                         <div class="col-auto">
-                                            {{ stats.ranking|intcomma }} <small>/{{ stats.players|intcomma }}</small>
+                                            {{ profile.ranking|intcomma }} <small>/{{ profile.players|intcomma }}</small>
                                         </div>
                                         <div class="col-auto d-flex">
                                             <i class="fas fa-fw fa-chevron-right"></i>

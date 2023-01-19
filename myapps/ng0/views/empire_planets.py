@@ -22,32 +22,29 @@ class View(BaseView):
                 ' soldiers, soldiers_capacity, (SELECT int4(COALESCE(sum(soldiers), 0)) FROM planet_training_pending WHERE planetid = planets.id) AS soldiers_training,' + \
                 ' floor_occupied, floor,' + \
                 ' space_occupied, space,' + \
-                ' commanderid, (SELECT name FROM commanders WHERE id = planets.commanderid) AS commandername,' + \
-                ' upkeep, energy_consumption' + \
+                ' commanderid,' + \
+                ' upkeep' + \
                 ' FROM vw_planets AS planets' + \
                 ' WHERE planets.floor > 0 AND planets.space > 0 AND planets.ownerid=' + str(self.profile['id']) + \
                 ' ORDER BY planets.id'
-        dbRows = dbRows(query)
+        results = dbRows(query)        
+        planets = results
         
-        list = []
-        content.assignValue('planets', list)
-        
-        for dbRow in dbRows:
-        
-            item = dbRow
-            list.append(item)
+        for planet in planets:
+                    
+            planet['img'] = getPlanetImg(planet['id'], planet['floor'])
             
-            item['img'] = getPlanetImg(dbRow['id'], dbRow['floor'])
+            if planet['id'] == self.currentPlanet['id']: planet['is_current'] = True
             
-            if dbRow['id'] == self.currentPlanet['id']: item['is_current'] = True
+            planet['ore_level'] = getPercent(planet['ore'], planet['ore_capacity'], 10)
+            planet['hydrocarbon_level'] = getPercent(planet['hydrocarbon'], planet['hydrocarbon_capacity'], 10)
             
-            item['ore_level'] = getPercent(dbRow['ore'], dbRow['ore_capacity'], 10)
-            item['hydrocarbon_level'] = getPercent(dbRow['hydrocarbon'], dbRow['hydrocarbon_capacity'], 10)
-            
-            if dbRow['soldiers'] * 250 < dbRow['workers'] + dbRow['scientists']: item['soldiers_low'] = True
-            item['soldiers_upkeep'] = int((dbRow['workers'] + dbRow['scientists']) / 250)
+            if planet['soldiers'] * 250 < planet['workers'] + planet['scientists']: planet['soldiers_low'] = True
+            planet['soldiers_upkeep'] = int((planet['workers'] + planet['scientists']) / 250)
 
-            if dbRow['mod_production_ore'] < 0 or dbRow['workers'] < dbRow['workers_for_maintenance']: item['ore_production_anormal'] = True
-            if dbRow['mod_production_hydrocarbon'] < 0 or dbRow['workers'] < dbRow['workers_for_maintenance']: item['hydrocarbon_production_anormal'] = True
+            if planet['mod_production_ore'] < 0 or planet['workers'] < planet['workers_for_maintenance']: planet['ore_production_anormal'] = True
+            if planet['mod_production_hydrocarbon'] < 0 or planet['workers'] < planet['workers_for_maintenance']: planet['hydrocarbon_production_anormal'] = True
+        
+        content.assignValue('planets', planets)
         
         return self.display(content)
