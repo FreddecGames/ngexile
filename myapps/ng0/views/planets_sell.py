@@ -26,43 +26,33 @@ class View(BaseView):
         
         #--- get
 
-        self.selectedMenu = 'market'
+        self.selectedMenu = 'planets'
 
-        content = getTemplateContext(self.request, 'market-sell')
+        content = getTemplateContext(self.request, 'planets-sell')
 
         query = 'SELECT planets.id, planets.name, planets.galaxy, planets.sector, planets.planet, planets.floor,' + \
-                ' planets.ore AS ore_count, planets.ore_production, planets.ore_capacity,' + \
-                ' planets.hydrocarbon AS hydrocarbon_count, planets.hydrocarbon_production, planets.hydrocarbon_capacity,' + \
+                ' planets.ore AS ore, planets.ore_production, planets.ore_capacity,' + \
+                ' planets.hydrocarbon AS hydrocarbon, planets.hydrocarbon_production, planets.hydrocarbon_capacity,' + \
                 ' (sp_market_price((sp_get_resource_price(0, galaxy)).sell_ore, planet_stock_ore))::real AS price_ore,' + \
                 ' (sp_market_price((sp_get_resource_price(0, galaxy)).sell_hydrocarbon, planet_stock_hydrocarbon))::real AS price_hydrocarbon' + \
                 ' FROM vw_planets AS planets' + \
                 ' WHERE planets.floor > 0 AND planets.space > 0 AND planets.ownerid=' + str(self.profile['id']) + \
                 ' ORDER BY planets.id'
-        dbRows = dbRows(query)
+        results = dbRows(query)
+        planets = results
         
-        list = []
-        content.assignValue('planets', list)
-        
-        i = 0
-        for dbRow in dbRows:
-        
-            item = dbRow
-            list.append(item)
+        for planet in planets:
             
-            item['index'] = i
-            item['img'] = getPlanetImg(dbRow['id'], dbRow['floor'])
+            planet['img'] = getPlanetImg(planet['id'], planet['floor'])
             
-            if dbRow['id'] == self.currentPlanet['id']: item['is_current'] = True
+            if planet['id'] == self.currentPlanet['id']: planet['is_current'] = True
             
-            item['ore_level'] = getPercent(dbRow['ore_count'], dbRow['ore_capacity'], 10)
-            item['hydrocarbon_level'] = getPercent(dbRow['hydrocarbon_count'], dbRow['hydrocarbon_capacity'], 10)
+            planet['ore_level'] = getPercent(planet['ore'], planet['ore_capacity'], 10)
+            planet['hydrocarbon_level'] = getPercent(planet['hydrocarbon'], planet['hydrocarbon_capacity'], 10)
 
-            item['ore_max'] = min(10000, int(dbRow['ore_count'] / 1000))
-            item['hydrocarbon_max'] = min(10000, int(dbRow['hydrocarbon_count'] / 1000))
+            planet['ore_max'] = min(10000, int(planet['ore'] / 1000))
+            planet['hydrocarbon_max'] = min(10000, int(planet['hydrocarbon'] / 1000))
             
-            item['price_ore'] = str(dbRow['price_ore']).replace(',', '.')
-            item['price_hydrocarbon'] = str(dbRow['price_hydrocarbon']).replace(',', '.')
-            
-            i = i + 1
+        content.assignValue('planets', planets)
             
         return self.display(content)

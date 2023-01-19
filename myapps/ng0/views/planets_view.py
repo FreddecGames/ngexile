@@ -11,7 +11,7 @@ class View(BaseView):
         
         self.selectedMenu = 'planets'
 
-        content = getTemplateContext(self.request, 'empire-planets')
+        content = getTemplateContext(self.request, 'planets-view')
         
         query = 'SELECT planets.id, planets.name, planets.galaxy, planets.sector, planets.planet,' + \
                 ' ore, ore_production, ore_capacity, mod_production_ore,' + \

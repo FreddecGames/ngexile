@@ -16,9 +16,7 @@ from .views import alliance_wars
 
 from .views import empire_commanders
 from .views import empire_fleets
-from .views import empire_ground
 from .views import empire_orbiting
-from .views import empire_planets
 from .views import empire_reports
 from .views import empire_stats
 from .views import empire_techs
@@ -39,9 +37,6 @@ from .views import mail_new
 
 from .views import map
 
-from .views import market_buy
-from .views import market_sell
-
 from .views import planet_buildings
 from .views import planet_orbit
 from .views import planet_production
@@ -49,6 +44,11 @@ from .views import planet_ships
 from .views import planet_trainings
 from .views import planet_view
 from .views import planet_working
+
+from .views import planets_buy
+from .views import planets_ground
+from .views import planets_sell
+from .views import planets_view
 
 from .views import profile_view
 from .views import profile_options
@@ -78,9 +78,7 @@ urlpatterns = [
 
     path('empire-commanders/', empire_commanders.View.as_view()),
     path('empire-fleets/', empire_fleets.View.as_view()),
-    path('empire-ground/', empire_ground.View.as_view()),
     path('empire-orbiting/', empire_orbiting.View.as_view()),
-    path('empire-planets/', empire_planets.View.as_view()),
     path('empire-reports/', empire_reports.View.as_view()),
     path('empire-stats/', empire_stats.View.as_view()),
     path('empire-techs/', empire_techs.View.as_view()),
@@ -100,9 +98,6 @@ urlpatterns = [
     path('mail-new/', mail_new.View.as_view()),
 
     path('map/', map.View.as_view()),
-
-    path('market-buy/', market_buy.View.as_view()),
-    path('market-sell/', market_sell.View.as_view()),
     
     path('planet-buildings/', planet_buildings.View.as_view()),
     path('planet-orbit/', planet_orbit.View.as_view()),
@@ -111,6 +106,11 @@ urlpatterns = [
     path('planet-trainings/', planet_trainings.View.as_view()),
     path('planet-view/', planet_view.View.as_view()),
     path('planet-working/', planet_working.View.as_view()),
+
+    path('planets-buy/', planets_buy.View.as_view()),
+    path('planets-ground/', planets_ground.View.as_view()),
+    path('planets-sell/', planets_sell.View.as_view()),
+    path('planets-view/', planets_view.View.as_view()),
     
     path('profile-view/', profile_view.View.as_view()),
     path('profile-options/', profile_options.View.as_view()),

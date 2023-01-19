@@ -5,23 +5,23 @@
     <div class="content-block">
         <div class="nav nav-tabs">
             <div class="nav-item">
-                <a href="/ng0/empire-planets/" class="nav-link text-nowrap">{% translate 'Overview' %}</a>
+                <a href="/ng0/planets-view/" class="nav-link text-nowrap">{% translate 'Overview' %}</a>
             </div>
             <div class="nav-item">
-                <a href="/ng0/market-buy/" class="nav-link text-nowrap active">{% translate 'Buying resources' %}</a>
+                <a href="/ng0/planets-buy/" class="nav-link text-nowrap">{% translate 'Buying resources' %}</a>
             </div>
             <div class="nav-item">
-                <a href="/ng0/market-sell/" class="nav-link text-nowrap">{% translate 'Selling resources' %}</a>
+                <a href="/ng0/planets-sell/" class="nav-link text-nowrap active">{% translate 'Selling resources' %}</a>
             </div>
             <div class="nav-item">
-                <a href="/ng0/fleets-ground/" class="nav-link text-nowrap">{% translate 'Ships ground' %}</a>
+                <a href="/ng0/planets-ground/" class="nav-link text-nowrap">{% translate 'Ships ground' %}</a>
             </div>
         </div>
     </div>
     <script>
         var planets = [];
         {% for planet in planets %}
-            planets.push({ id:{{ planet.id }}, oreMax:{{ planet.ore_max }}, hydroMax:{{ planet.hydrocarbon_max }}, orePrice:parseFloat({{ planet.price_ore }}), hydroPrice:parseFloat({{ planet.price_hydrocarbon }}) });
+            planets.push({ id:{{planet.id}}, oreMax:{{planet.ore_max}}, hydroMax:{{planet.hydrocarbon_max}}, orePrice:parseFloat({{planet.price_ore}}), hydroPrice:parseFloat({{planet.price_hydrocarbon}}), total:0 });
         {% endfor %}
         
         function getPlanet(id) {
@@ -32,7 +32,7 @@
                     
             return null;
         }
-
+        
         function updatePrices(id) {
         
             var planet = getPlanet(id);
@@ -149,74 +149,72 @@
                                         </div>
                                     </div>
                                     <div class="col-12 col-lg-5">
-                                        {% if planet.can_buy %}
-                                            <div class="row g-1 flex-column">
-                                                <div class="col-12">
-                                                    <div class="row gx-2 align-items-center justify-content-end flex-nowrap">
-                                                        <div class="col-auto d-flex">
-                                                            <img src="/static/ng0/img/credit.png"
-                                                                 width="12px"
-                                                                 height="12px"
-                                                                 data-bs-toggle="tooltip"
-                                                                 data-bs-placement="top"
-                                                                 data-bs-title="{% translate 'Coin' %}">
-                                                        </div>
-                                                        <div class="col-auto">{{ planet.price_ore|floatformat:2 }}</div>
-                                                        <div class="col-auto">
-                                                            <small>{{ 1000|intcomma }}</small>
-                                                            <small class="text-normal">x</small>
-                                                        </div>
-                                                        <div class="col-auto">
-                                                            <input type="number"
-                                                                   class="form-control"
-                                                                   min="0"
-                                                                   id="o{{ planet.id }}"
-                                                                   name="o{{ planet.id }}"
-                                                                   value=""
-                                                                   oninput="updatePrices({{ planet.id }})"
-                                                                   size="3"
-                                                                   maxlength="4"
-                                                                   style="width:75px"/>
-                                                        </div>
-                                                        <div class="col-auto">
-                                                            <a href="javascript:setval('o{{ planet.id }}', {{ planet.ore_max }}); updatePrices({{ planet.id }})">max</a>
-                                                        </div>
+                                        <div class="row g-1 flex-column">
+                                            <div class="col-12">
+                                                <div class="row gx-2 align-items-center justify-content-end flex-nowrap">
+                                                    <div class="col-auto d-flex">
+                                                        <img src="/static/ng0/img/credit.png"
+                                                             width="12px"
+                                                             height="12px"
+                                                             data-bs-toggle="tooltip"
+                                                             data-bs-placement="top"
+                                                             data-bs-title="{% translate 'Coin' %}">
                                                     </div>
-                                                </div>
-                                                <div class="col-12">
-                                                    <div class="row gx-2 align-items-center justify-content-end flex-nowrap">
-                                                        <div class="col-auto d-flex">
-                                                            <img src="/static/ng0/img/credit.png"
-                                                                 width="12px"
-                                                                 height="12px"
-                                                                 data-bs-toggle="tooltip"
-                                                                 data-bs-placement="top"
-                                                                 data-bs-title="{% translate 'Coin' %}">
-                                                        </div>
-                                                        <div class="col-auto">{{ planet.price_hydrocarbon|floatformat:2 }}</div>
-                                                        <div class="col-auto">
-                                                            <small>{{ 1000|intcomma }}</small>
-                                                            <small class="text-normal">x</small>
-                                                        </div>
-                                                        <div class="col-auto">
-                                                            <input type="number"
-                                                                   class="form-control"
-                                                                   min="0"
-                                                                   id="h{{ planet.id }}"
-                                                                   name="h{{ planet.id }}"
-                                                                   value=""
-                                                                   oninput="updatePrices({{ planet.id }})"
-                                                                   size="3"
-                                                                   maxlength="4"
-                                                                   style="width:75px"/>
-                                                        </div>
-                                                        <div class="col-auto">
-                                                            <a href="javascript:setval('h{{ planet.id }}', {{ planet.hydrocarbon_max }}); updatePrices({{ planet.id }})">max</a>
-                                                        </div>
+                                                    <div class="col-auto">{{ planet.price_ore|floatformat:2 }}</div>
+                                                    <div class="col-auto">
+                                                        <small>{{ 1000|intcomma }}</small>
+                                                        <small class="text-normal">x</small>
+                                                    </div>
+                                                    <div class="col-auto">
+                                                        <input type="number"
+                                                               class="form-control"
+                                                               min="0"
+                                                               id="o{{ planet.id }}"
+                                                               name="o{{ planet.id }}"
+                                                               value=""
+                                                               oninput="updatePrices({{ planet.id }})"
+                                                               size="3"
+                                                               maxlength="4"
+                                                               style="width:75px"/>
+                                                    </div>
+                                                    <div class="col-auto">
+                                                        <a href="javascript:setval('o{{ planet.id }}', {{ planet.ore_max }}); updatePrices({{ planet.id }})">max</a>
                                                     </div>
                                                 </div>
                                             </div>
-                                        {% endif %}
+                                            <div class="col-12">
+                                                <div class="row gx-2 align-items-center justify-content-end flex-nowrap">
+                                                    <div class="col-auto d-flex">
+                                                        <img src="/static/ng0/img/credit.png"
+                                                             width="12px"
+                                                             height="12px"
+                                                             data-bs-toggle="tooltip"
+                                                             data-bs-placement="top"
+                                                             data-bs-title="{% translate 'Coin' %}">
+                                                    </div>
+                                                    <div class="col-auto">{{ planet.price_hydrocarbon|floatformat:2 }}</div>
+                                                    <div class="col-auto">
+                                                        <small>{{ 1000|intcomma }}</small>
+                                                        <small class="text-normal">x</small>
+                                                    </div>
+                                                    <div class="col-auto">
+                                                        <input type="number"
+                                                               class="form-control"
+                                                               min="0"
+                                                               id="h{{ planet.id }}"
+                                                               name="h{{ planet.id }}"
+                                                               value=""
+                                                               oninput="updatePrices({{ planet.id }})"
+                                                               size="3"
+                                                               maxlength="4"
+                                                               style="width:75px"/>
+                                                    </div>
+                                                    <div class="col-auto">
+                                                        <a href="javascript:setval('h{{ planet.id }}', {{ planet.hydrocarbon_max }}); updatePrices({{ planet.id }})">max</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                     <div class="col-12 col-lg-2">
                                         <div class="row gx-2 align-items-center justify-content-end flex-nowrap">
@@ -255,14 +253,14 @@
                                 <span id="total" class="text-white">0</span>
                             </div>
                             <div class="col-auto">
-                                <input type="submit" class="btn btn-primary" value="{% translate 'Buy' %}" />
+                                <input type="submit" class="btn btn-primary" value="{% translate 'Sell' %}" />
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <input type="hidden" name="action" value="buy" />
+        <input type="hidden" name="action" value="sell" />
         {% csrf_token %}
     </form>
 {% endblock %}

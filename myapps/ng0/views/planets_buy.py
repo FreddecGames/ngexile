@@ -28,7 +28,7 @@ class View(BaseView):
 
         self.selectedMenu = 'planets'
 
-        content = getTemplateContext(self.request, 'market-buy')
+        content = getTemplateContext(self.request, 'planets-buy')
 
         query = 'SELECT planets.id, planets.name, planets.galaxy, planets.sector, planets.planet, planets.floor,' + \
                 ' planets.ore AS ore, planets.ore_production, planets.ore_capacity,' + \
@@ -41,7 +41,7 @@ class View(BaseView):
                 ' (sp_get_resource_price(' + str(self.profile['id']) + ', planets.galaxy)).buy_ore::real AS price_ore,' + \
                 ' (sp_get_resource_price(' + str(self.profile['id']) + ', planets.galaxy)).buy_hydrocarbon::real AS price_hydrocarbon' + \
                 ' FROM vw_planets AS planets' + \
-                '    LEFT JOIN market_purchases AS market ON (market.planetid = planets.id)' + \
+                '  LEFT JOIN market_purchases AS market ON (market.planetid = planets.id)' + \
                 ' WHERE planets.floor > 0 AND planets.space > 0 AND planets.ownerid=' + str(self.profile['id']) + \
                 ' ORDER BY planets.id'
         results = dbRows(query)

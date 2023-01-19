@@ -1,0 +1,320 @@
+{% extends "ng0/layout.html" %}
+{% load i18n %}
+{% load humanize %}
+{% block content %}
+    <div class="content-block">
+        <div class="nav nav-tabs">
+            <div class="nav-item">
+                <a href="/ng0/planets-view/" class="nav-link text-nowrap">{% translate 'Overview' %}</a>
+            </div>
+            <div class="nav-item">
+                <a href="/ng0/planets-buy/" class="nav-link text-nowrap active">{% translate 'Buying resources' %}</a>
+            </div>
+            <div class="nav-item">
+                <a href="/ng0/planets-sell/" class="nav-link text-nowrap">{% translate 'Selling resources' %}</a>
+            </div>
+            <div class="nav-item">
+                <a href="/ng0/planets-ground/" class="nav-link text-nowrap">{% translate 'Ships ground' %}</a>
+            </div>
+        </div>
+    </div>
+    <script>
+        var planets = [];
+        {% for planet in planets %}
+            planets.push({ id:{{ planet.id }}, oreMax:{{ planet.ore_max }}, hydroMax:{{ planet.hydrocarbon_max }}, orePrice:parseFloat({{ planet.price_ore }}), hydroPrice:parseFloat({{ planet.price_hydrocarbon }}) });
+        {% endfor %}
+        
+        function getPlanet(id) {
+            
+            for (var i = 0; i < planets.length; i++)
+                if (planets[i].id == id)
+                    return planets[i]
+                    
+            return null;
+        }
+
+        function updatePrices(id) {
+        
+            var planet = getPlanet(id);
+
+            var ore_q = getval("o" + planet.id);
+            if (ore_q > planet.oreMax) { ore_q = planet.oreMax; setval("o" + planet.id, planet.oreMax); }
+
+            var hydro_q = getval("h" + planet.id);
+            if (hydro_q > planet.hydroMax) { hydro_q = planet.hydroMax; setval("h" + planet.id, planet.hydroMax); }
+
+            var ore_price = planet.orePrice;
+            var hydro_price = planet.hydroPrice;
+            var price = ore_q * ore_price + hydro_q * hydro_price;
+
+            var obj = $("totalprice" + planet.id);
+            if ((obj != null) && (obj.innerHTML != price)) {
+            
+                obj.innerHTML = formatnumber(price);
+                obj.innerHTML = formatnumber(parseInt(obj.innerHTML.replace(" ","")))
+                computeTotal();
+            }
+        }
+
+        function computeTotal() {
+        
+            var total = 0;
+
+            for (var i = 0; i < planets.length; i++) {
+            
+                var planet = planets[i];
+                var obj = $("totalprice" + planet.id);
+                total += parseInt(obj.innerHTML.replace(" ",""));
+            }
+            
+            var obj = $("total");
+            obj.innerHTML = formatnumber(total);
+        }
+    </script>
+    <form method="post"
+          action="."
+          class="flex-grow-1 d-flex flex-column h-100"
+          style="overflow:auto">
+        <div class="flex-grow-1" style="overflow:auto">
+            {% for planet in planets %}
+                <div class="content-block">
+                    <div class="card">
+                        <div class="card-header h6 {% if planet.is_current %}bg-success{% endif %}">
+                            <div class="row gx-3 align-items-center">
+                                <div class="col-auto">
+                                    <img src="/static/ng0/img/planet{{ planet.img }}.png"
+                                         width="24px"
+                                         class="rounded"/>
+                                </div>
+                                <div class="col-auto">
+                                    <a href="/ng0/map/?g={{ planet.galaxy }}&s={{ planet.sector }}"
+                                       data-bs-toggle="tooltip"
+                                       data-bs-placement="top"
+                                       data-bs-title="{% translate 'View map' %}"/>{{ planet.galaxy }}.{{ planet.sector }}.{{ planet.planet }}</a>
+                                </div>
+                                <div class="col">
+                                    <span class="d-none d-lg-inline text-white">{{ planet.name }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="list-group list-group-flush">
+                            <div class="list-group-item {% if planet.is_current %}bg-success{% endif %}">
+                                <div class="row gx-3 gy-3 align-items-center">
+                                    <div class="col-12 col-lg-5">
+                                        <div class="row g-1 flex-column">
+                                            <div class="col-12">
+                                                <div class="row gx-2 align-items-center justify-content-end flex-nowrap">
+                                                    <div class="col-auto d-flex">
+                                                        <img src="/static/ng0/img/ore.png"
+                                                             width="12px"
+                                                             height="12px"
+                                                             data-bs-toggle="tooltip"
+                                                             data-bs-placement="top"
+                                                             data-bs-title="{% translate 'Ore' %}">
+                                                    </div>
+                                                    <div class="col d-lg-none">
+                                                        <span>{% translate 'Ore' %}</span>
+                                                    </div>
+                                                    <div class="col-auto">
+                                                        <small class="{% if planet.ore_production_anormal %}text-warning{% else %}text-success{% endif %}">+{{ planet.ore_production|intcomma }}</small>
+                                                    </div>
+                                                    <div class="col-auto">
+                                                        <span class="{% if planet.ore_level >= 90 %}text-danger{% elif planet.ore_level >= 70 %}text-warning{% else %}text-white{% endif %}">{{ planet.ore|intcomma }}</span>
+                                                        <small class="text-normal">/{{ planet.ore_capacity|intcomma }}</small>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="row gx-2 align-items-center justify-content-end flex-nowrap">
+                                                    <div class="col-auto d-flex">
+                                                        <img src="/static/ng0/img/hydro.png"
+                                                             width="12px"
+                                                             height="12px"
+                                                             data-bs-toggle="tooltip"
+                                                             data-bs-placement="top"
+                                                             data-bs-title="{% translate 'Hydro' %}">
+                                                    </div>
+                                                    <div class="col d-lg-none">
+                                                        <span>{% translate 'Hydro' %}</span>
+                                                    </div>
+                                                    <div class="col-auto">
+                                                        <small class="{% if planet.hydrocarbon_production_anormal %}text-warning{% else %}text-success{% endif %}">+{{ planet.hydrocarbon_production|intcomma }}</small>
+                                                    </div>
+                                                    <div class="col-auto">
+                                                        <span class="{% if planet.hydrocarbon_level >= 90 %}text-danger{% elif planet.hydrocarbon_level >= 70 %}text-warning{% else %}text-white{% endif %}">{{ planet.hydrocarbon|intcomma }}</span>
+                                                        <small class="text-normal">/{{ planet.hydrocarbon_capacity|intcomma }}</small>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% if planet.buying %}
+                                        <div class="col-12 col-lg-7 text-end">
+                                            <div class="row gx-3 justify-content-end">
+                                                {% if planet.buying_ore > 0 %}
+                                                    <div class="col-auto">
+                                                        <div class="row gx-1 align-items-center">
+                                                            <div class="col-auto">
+                                                                <img src="/static/ng0/img/ore.png"
+                                                                     width="12px"
+                                                                     height="12px"
+                                                                     data-bs-toggle="tooltip"
+                                                                     data-bs-placement="top"
+                                                                     data-bs-title="{% translate 'Ore' %}">
+                                                            </div>
+                                                            <div class="col-auto">
+                                                                <span class="text-white">{{ planet.buying_ore|intcomma }}</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                {% endif %}
+                                                {% if planet.buying_hydrocarbon > 0 %}
+                                                    <div class="col-auto">
+                                                        <div class="row gx-1 align-items-center">
+                                                            <div class="col-auto">
+                                                                <img src="/static/ng0/img/hydro.png"
+                                                                     width="12px"
+                                                                     height="12px"
+                                                                     data-bs-toggle="tooltip"
+                                                                     data-bs-placement="top"
+                                                                     data-bs-title="{% translate 'Hydro' %}">
+                                                            </div>
+                                                            <div class="col-auto">
+                                                                <span class="text-white">{{ planet.buying_hydrocarbon|intcomma }}</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                {% endif %}
+                                            </div>
+                                            <span class="text-success">{% translate 'Delivery in progress' %}</span>
+                                        </div>
+                                    {% elif planet.cant_buy_enemy %}
+                                        <div class="col-12 col-lg-7 text-end">
+                                            <span class="text-danger">{% translate 'No buying available since ennemy fleets are orbitting' %}</span>
+                                        </div>
+                                    {% elif planet.cant_buy_worker %}
+                                        <div class="col-12 col-lg-7 text-end">
+                                            <span class="text-danger">{% translate 'No buying since there are not enough workers' %}</span>
+                                        </div>
+                                    {% elif planet.cant_buy_merchant %}
+                                        <div class="col-12 col-lg-7 text-end">
+                                            <span class="text-danger">{% translate 'No buying since there is no Merchant Guild in this galaxy' %}</span>
+                                        </div>
+                                    {% elif planet.can_buy %}
+                                        <div class="col-12 col-lg-5">
+                                            <div class="row g-1 flex-column">
+                                                <div class="col-12">
+                                                    <div class="row gx-2 align-items-center justify-content-end flex-nowrap">
+                                                        <div class="col-auto d-flex">
+                                                            <img src="/static/ng0/img/credit.png"
+                                                                 width="12px"
+                                                                 height="12px"
+                                                                 data-bs-toggle="tooltip"
+                                                                 data-bs-placement="top"
+                                                                 data-bs-title="{% translate 'Coin' %}">
+                                                        </div>
+                                                        <div class="col-auto">{{ planet.price_ore|floatformat:2 }}</div>
+                                                        <div class="col-auto">
+                                                            <small>{{ 1000|intcomma }}</small>
+                                                            <small class="text-normal">x</small>
+                                                        </div>
+                                                        <div class="col-auto">
+                                                            <input type="number"
+                                                                   class="form-control"
+                                                                   min="0"
+                                                                   id="o{{ planet.id }}"
+                                                                   name="o{{ planet.id }}"
+                                                                   value=""
+                                                                   oninput="updatePrices({{ planet.id }})"
+                                                                   size="3"
+                                                                   maxlength="4"
+                                                                   style="width:75px"/>
+                                                        </div>
+                                                        <div class="col-auto">
+                                                            <a href="javascript:setval('o{{ planet.id }}', {{ planet.ore_max }}); updatePrices({{ planet.id }})">max</a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-12">
+                                                    <div class="row gx-2 align-items-center justify-content-end flex-nowrap">
+                                                        <div class="col-auto d-flex">
+                                                            <img src="/static/ng0/img/credit.png"
+                                                                 width="12px"
+                                                                 height="12px"
+                                                                 data-bs-toggle="tooltip"
+                                                                 data-bs-placement="top"
+                                                                 data-bs-title="{% translate 'Coin' %}">
+                                                        </div>
+                                                        <div class="col-auto">{{ planet.price_hydrocarbon|floatformat:2 }}</div>
+                                                        <div class="col-auto">
+                                                            <small>{{ 1000|intcomma }}</small>
+                                                            <small class="text-normal">x</small>
+                                                        </div>
+                                                        <div class="col-auto">
+                                                            <input type="number"
+                                                                   class="form-control"
+                                                                   min="0"
+                                                                   id="h{{ planet.id }}"
+                                                                   name="h{{ planet.id }}"
+                                                                   value=""
+                                                                   oninput="updatePrices({{ planet.id }})"
+                                                                   size="3"
+                                                                   maxlength="4"
+                                                                   style="width:75px"/>
+                                                        </div>
+                                                        <div class="col-auto">
+                                                            <a href="javascript:setval('h{{ planet.id }}', {{ planet.hydrocarbon_max }}); updatePrices({{ planet.id }})">max</a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-12 col-lg-2">
+                                            <div class="row gx-2 align-items-center justify-content-end flex-nowrap">
+                                                <div class="col-auto d-flex">
+                                                    <img src="/static/ng0/img/credit.png" width="12px" height="12px"/>
+                                                </div>
+                                                <div class="col-auto">
+                                                    <span id="totalprice{{ planet.id }}" class="text-white">0</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        <div class="content-block">
+            <div class="card">
+                <div class="list-group list-group-flush">
+                    <div class="list-group-item">
+                        <div class="row gx-2 align-items-center">
+                            <div class="col">
+                                <span class="text-normal">Total</span>
+                            </div>
+                            <div class="col-auto d-flex">
+                                <img src="/static/ng0/img/credit.png"
+                                     width="12px"
+                                     height="12px"
+                                     data-bs-toggle="tooltip"
+                                     data-bs-placement="top"
+                                     data-bs-title="{% translate 'Coin' %}">
+                            </div>
+                            <div class="col-auto">
+                                <span id="total" class="text-white">0</span>
+                            </div>
+                            <div class="col-auto">
+                                <input type="submit" class="btn btn-primary" value="{% translate 'Buy' %}" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <input type="hidden" name="action" value="buy" />
+        {% csrf_token %}
+    </form>
+{% endblock %}
