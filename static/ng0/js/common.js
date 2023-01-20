@@ -100,6 +100,24 @@ function addThousands(nStr, outD, sep) {
 
 function formatnumber(n) { return addThousands(n, '.', ' ') }
 
+function nFormatter(num) {
+    
+    const lookup = [
+        { value: 1, symbol: "" },
+        { value: 1e3, symbol: "k" },
+        { value: 1e6, symbol: '<small class="ms-1">M</small>' },
+        { value: 1e9, symbol: "G" },
+        { value: 1e12, symbol: "T" },
+        { value: 1e15, symbol: "P" },
+        { value: 1e18, symbol: "E" },
+    ]
+    
+    var item = lookup.slice().reverse().find(function(item) { return num >= item.value })
+    
+    const rx = /\.0+$|(\.[0-9]*[1-9])0+$/
+    return item ? (num / item.value).toFixed(2).replace(rx, "$1") + item.symbol : "0"
+}
+
 /* Planet */
 
 function planet_str(id, name, g, s, p, rel) {

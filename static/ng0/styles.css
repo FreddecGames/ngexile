@@ -28,7 +28,9 @@
     --bs-body-font-size: .75rem;
     
     --bs-link-color: #ffa500;
+    --bs-link-color-rgb: 255,165,0;
     --bs-link-hover-color: #c87f0a;
+    --bs-link-hover-color-rgb: 200,127,10;
     
     --bs-border-color: #505864;
 }
@@ -144,7 +146,7 @@ body {
 }
 
 .content {
-    position: absolute; top: 48px; bottom: 0; right: 0;
+    position: absolute; top: 48px; bottom: 0; right: 0; left: 0;
     min-width: 0; max-width: 100vw;
     background-color: var(--bs-gray-900);
 }
@@ -256,6 +258,7 @@ a:link, a:visited, a:active, a:hover { text-decoration: none; }
 }
 
 .tooltip {
+    --bs-tooltip-color: #fff;
     --bs-tooltip-padding-x: .75rem;
     --bs-tooltip-padding-y: .5rem;
     --bs-tooltip-max-width: 25rem;

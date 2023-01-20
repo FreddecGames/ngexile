@@ -136,10 +136,10 @@ class View(GlobalView):
                     else: fleet["enemy"] = True
                     
                     if not showEnemyDetails and oRs[9] < rFriend:
-                        fleet["mod_shield"] = "?"
-                        fleet["mod_handling"] = "?"
-                        fleet["mod_tracking_speed"] = "?"
-                        fleet["mod_damage"] = "?"
+                        fleet["mod_shield"] = "???"
+                        fleet["mod_handling"] = "???"
+                        fleet["mod_tracking_speed"] = "???"
+                        fleet["mod_damage"] = "???"
                     else:
                         fleet["mod_shield"] = oRs[14]
                         fleet["mod_handling"] = oRs[15]
@@ -155,13 +155,13 @@ class View(GlobalView):
                         
                         category = oRs[3]
                         if category != lastCategory:
-                            ship = { "ships":0, "lost":0, "killed":0, "after":0 }
+                            ship = { "label":oRs[4], "ships":0, "lost":0, "killed":0, "after":0 }
                             fleet['ships'].append(ship)
                             
                             ship["category" + str(category)] = True
                             
                             lastCategory = category
-                    
+                        
                         ship["ships"] += oRs[5]
                         ship["lost"] += oRs[6]
                         ship["killed"] += oRs[7]

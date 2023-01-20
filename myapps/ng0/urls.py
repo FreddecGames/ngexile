@@ -26,6 +26,8 @@ from .views import fleet_ships
 from .views import fleet_split
 from .views import fleet_view
 
+from .views import fleets_idle
+
 from .views import home_gameover
 from .views import home_start
 from .views import home_wait
@@ -87,6 +89,8 @@ urlpatterns = [
     path('fleet-ships/', fleet_ships.View.as_view()),
     path('fleet-split/', fleet_split.View.as_view()),
     path('fleet-view/', fleet_view.View.as_view()),
+    
+    path('fleets-idle/', fleets_idle.View.as_view()),
     
     path('home-gameover/', home_gameover.View.as_view()),
     path('home-start/', home_start.View.as_view()),
