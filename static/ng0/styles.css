@@ -307,6 +307,11 @@ a:link, a:visited, a:active, a:hover { text-decoration: none; }
 .link-info { color: var(--bs-info)!important; }
 .link-info:focus, .link-info:hover { color: var(--bs-link-hover-color)!important; }
 
+.text-bg-primary {
+    color: #000!important;
+    background-color: rgba(var(--bs-primary-rgb), var(--bs-bg-opacity, 1))!important;
+}
+
 .px-3 {
     padding-right: .75rem!important; padding-left: .75rem!important;
 }

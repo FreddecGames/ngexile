@@ -1,126 +1,134 @@
 {% extends "ng0/layout.html" %}
-{% load humanize %}
+{% load i18n %}
 {% block content %}
-    <div class="nav nav-tabs mb-3">
-        <div class="nav-item">
-            <a href="/ng0/empire-fleets/" class="nav-link active">Flottes</a>
-        </div>
-        <div class="nav-item">
-            <a href="/ng0/empire-orbiting/" class="nav-link">Flottes en orbite</a>
-        </div>
-        <div class="nav-item">
-            <a href="/ng0/empire-ground/" class="nav-link">Vaisseaux au sol</a>
-        </div>
-        <div class="nav-item">
-            <a href="/ng0/empire-stats/" class="nav-link">Détruits / perdus</a>
+    <div class="content-block pb-2">
+        <div class="row gx-3">
+            <div class="col-auto">
+                <span>Filter</span>
+            </div>
+            <div class="col">
+                <div class="row gx-3 gy-1 align-items-center">
+                    <div class="col-auto d-flex">
+                        <a href="." {% if filter == 'all' %}class="badge text-bg-primary"{% endif %}>All {% if counter.all > 0 %}<small>({{ counter.all }})</small>{% endif %}</a>
+                    </div>
+                    <div class="col-auto d-flex">
+                        <a href="?filter=idling" {% if filter == 'idling' %}class="badge text-bg-primary"{% endif %}>Idling {% if counter.idling > 0 %}<small>({{ counter.idling }})</small>{% endif %}</a>
+                    </div>
+                    <div class="col-auto d-flex">
+                        <a href="?filter=moving" {% if filter == 'moving' %}class="badge text-bg-primary"{% endif %}>Moving {% if counter.moving > 0 %}<small>({{ counter.moving }})</small>{% endif %}</a>
+                    </div>
+                    <div class="col-auto d-flex">
+                        <a href="?filter=recycling" {% if filter == 'recycling' %}class="badge text-bg-primary"{% endif %}>Recycling {% if counter.recycling > 0 %}<small>({{ counter.recycling }})</small>{% endif %}</a>
+                    </div>
+                    <div class="col-auto d-flex">
+                        <a href="?filter=waiting" {% if filter == 'waiting' %}class="badge text-bg-primary"{% endif %}>Waiting {% if counter.waiting > 0 %}<small>({{ counter.waiting }})</small>{% endif %}</a>
+                    </div>
+                    <div class="col-auto d-flex">
+                        <a href="?filter=fighting" {% if filter == 'fighting' %}class="badge text-bg-primary"{% endif %}>Fighting {% if counter.fighting > 0 %}<small>({{ counter.fighting }})</small>{% endif %}</a>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-    <table id="myTable" class="table table-card">
-        <tr>
-            <th class="col sort" onclick="sortTable(0)">Nom</th>
-            <th class="col-2 sort" onclick="sortTable(1)">Commandant</th>
-            <th class="col-2 text-end sort" onclick="sortTable(2, 'int')">Vaisseaux</th>
-            <th class="col-2 text-end sort" onclick="sortTable(3, 'int')">Cargaison</th>
-            <th class="col-4 text-end sort" onclick="sortTable(4, 'int')">Action</th>
-        </tr>
-        {% for fleet in fleets %}
-            <tr>
-                <td class="col" sortData="'{{ fleet.name }}'">
-                    {% if fleet.stance %}
-                        <img src="/static/ng0/img/stance_attack.gif"
-                             class="stance"
-                             width="10"
-                             height="10"/>
-                    {% else %}
-                        <img src="/static/ng0/img/stance_defend.gif"
-                             class="stance"
-                             width="10"
-                             height="10"/>
-                    {% endif %}
-                    <a href="/ng0/fleet-view/?id={{ fleet.id }}">{{ fleet.name }}</a>
-                    <small class="ms-1">{{ fleet.signature|intcomma }}</small>
-                </td>
-                <td class="col-2 text-end" sortData="'{{ fleet.commandername }}'">
-                    {% if fleet.commandername %}{{ fleet.commandername }}{% endif %}
-                </td>
-                <td class="col-2 text-end" sortData="{{ fleet.size }}">{{ fleet.size|intcomma }}</td>
-                <td class="col-2 text-end" sortData="{{ fleet.cargo_load }}">{{ fleet.cargo_load|intcomma }}</td>
-                <td class="col-4 text-end" sortData="{{ fleet.action }}">
-                    <script>putplanet('{{fleet.planetid}}', '{{fleet.planetname}}', '{{fleet.g}}', '{{fleet.s}}', '{{fleet.p}}', {{fleet.relation}})</script>
-                    {% if fleet.t_planetid %}
-                        <small class="text-normal"><i class="fa-fw fas fa-long-arrow-alt-right"></i></small>
-                        <script>putplanet('{{fleet.t_planetid}}', '{{fleet.t_planetname}}', '{{fleet.t_g}}', '{{fleet.t_s}}', '{{fleet.t_p}}', {{fleet.t_relation}})</script>
-                        <span class="ms-2 text-yellow"><script>putcountdown1({{fleet.time}}, 'Terminé', '/ng0/empire-fleets/')</script></span>
-                    {% elif fleet.action == 2 %}
-                        <span class="ms-2">Recyclage</span>
-                        <span class="ms-2 text-yellow"><script>putcountdown1({{fleet.time}}, 'Terminé', '/ng0/empire-fleets/')</script></span>
-                    {% elif fleet.action == 4 %}
-                        <span class="ms-2">Attente</span>
-                        <span class="ms-2 text-yellow"><script>putcountdown1({{fleet.time}}, 'Terminé', '/ng0/empire-fleets/')</script></span>
-                    {% elif fleet.action == 'x' %}
-                        <span class="ms-2 text-danger">Combat</span>
-                    {% endif %}
-                </td>
-            </tr>
-        {% endfor %}
-    </table>
-    <script>
-function sortTable(n, type="str") {
-
-    var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
-    table = document.getElementById("myTable");
-    switching = true;
-
-    dir = "asc";
-
-    while (switching) {
-
-        switching = false;
-        rows = table.rows;
-
-        for (i = 1; i < (rows.length - 1); i++) {
-
-            shouldSwitch = false;
-
-            x = rows[i].getElementsByTagName("TD")[n].getAttribute('sortData');
-            y = rows[i + 1].getElementsByTagName("TD")[n].getAttribute('sortData');
-            
-            if (type == "int") {
-            
-                x  = parseInt(x)
-                y  = parseInt(y)
-            }
-
-            if (dir == "asc") {
-            
-                if (x > y) {
-
-                    shouldSwitch = true;
-                    break;
-                }
-            } else if (dir == "desc") {
-            
-                if (x < y) {
-
-                    shouldSwitch = true;
-                    break;
-                }
-            }
-        }
-        
-        if (shouldSwitch) {
-
-            rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
-            switching = true;
-
-            switchcount ++;
-            
-        } else if (switchcount == 0 && dir == "asc") {
-        
-            dir = "desc";
-            switching = true;
-        }
-    }
-}
-    </script>
+    <div class="flex-grow-1 d-flex flex-column h-100" style="overflow:auto">
+        <div class="content-block">
+            <div class="row g-2">
+                {% for fleet in fleets %}
+                    <div class="col-12 col-lg-6">
+                        <div class="card">
+                            <div class="card-header pb-0">
+                                <div class="row gx-3 align-items-center">
+                                    <div class="col d-flex align-items-center">
+                                        {% if fleet.attackonsight %}
+                                            <img src="/static/ng0/img/stance_attack.png" width="12px" class="me-1" data-bs-toggle="tooltip" data-bs-title="{% translate 'Attack on sight' %}" />
+                                        {% else %}
+                                            <img src="/static/ng0/img/stance_defend.png" width="12px" class="me-1" data-bs-toggle="tooltip" data-bs-title="{% translate 'Ripost on attack' %}" />
+                                        {% endif %}
+                                        <span class="fs-6 text-white">{{ fleet.name }}</span>
+                                    </div>
+                                    <div class="col-auto">
+                                        <a href="#" data-bs-toggle="tooltip" data-bs-title="{% translate 'View fleet' %}">View</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="row gx-3 mb-1">
+                                    <div class="col-auto d-flex align-items-center">
+                                        <img src="/static/ng0/img/signature.png" width="12px" class="me-1" data-bs-toggle="tooltip" data-bs-title="{% translate 'Signature' %}" />
+                                        <span><script>document.write(nFormatter({{ fleet.signature }}))</script></span>
+                                    </div>
+                                    <div class="col-auto d-flex align-items-center">
+                                        <img src="/static/ng0/img/ships.png" width="12px" class="me-1" data-bs-toggle="tooltip" data-bs-title="{% translate 'Ships' %}" />
+                                        <span><script>document.write(nFormatter({{ fleet.size }}))</script></span>
+                                    </div>
+                                    {% if fleet.cargo > 0 %}
+                                        <div class="col-auto d-flex align-items-center">
+                                            <img src="/static/ng0/img/cargo.png" width="12px" class="me-1" data-bs-toggle="tooltip" data-bs-title="{% translate 'Cargo' %}" />
+                                            <span><script>document.write(nFormatter({{ fleet.cargo }}))</script></span>
+                                        </div>
+                                    {% endif %}
+                                    {% if fleet.commanderid %}
+                                        <div class="col-auto">
+                                            <a href="/ng0/empire-commanders/" data-bs-toggle="tooltip" data-bs-title="{% translate 'View Commander' %}"><i class="fas fa-fw fa-user-astronaut"></i> {{ fleet.commandername }}</a>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                {% if fleet.engaged %}
+                                    <div class="row justify-content-between">
+                                        <div class="col">
+                                            <span class="text-danger me-1">{% translate 'Fighting at' %}</span>
+                                            <script>putplanet('', '', '{{ fleet.planet_galaxy }}', '{{ fleet.planet_sector }}', '{{ fleet.planet_planet }}', {{ fleet.planet_owner_relation }})</script>
+                                        </div>
+                                    </div>
+                                {% elif fleet.action == 0 %}
+                                    <div class="row justify-content-between">
+                                        <div class="col">
+                                            <span class="me-1">{% translate 'Idling at' %}</span>
+                                            <script>putplanet('', '', '{{ fleet.planet_galaxy }}', '{{ fleet.planet_sector }}', '{{ fleet.planet_planet }}', {{ fleet.planet_owner_relation }})</script>
+                                        </div>
+                                    </div>
+                                {% elif fleet.action == 1 %}
+                                    <div class="row justify-content-between">
+                                        <div class="col">
+                                            <span class="me-1">{% translate 'Moving from' %}</span>
+                                            <script>putplanet('', '', '{{ fleet.planet_galaxy }}', '{{ fleet.planet_sector }}', '{{ fleet.planet_planet }}', {{ fleet.planet_owner_relation }})</script>
+                                            <span class="mx-1">{% translate 'to' %}</span>
+                                            <script>putplanet('', '', '{{ fleet.destplanet_galaxy }}', '{{ fleet.destplanet_sector }}', '{{ fleet.destplanet_planet }}', {{ fleet.destplanet_owner_relation }})</script>
+                                        </div>
+                                        <div class="col-auto">
+                                            <span class="text-yellow"><script>putcountdown1({{ fleet.remaining_time }}, 'Terminé', '/s03/empire-fleets/')</script></span>
+                                        </div>
+                                    </div>
+                                {% elif fleet.action == 2 %}
+                                    <div class="row justify-content-between">
+                                        <div class="col">
+                                            <span class="me-1">{% translate 'Recycling at' %}</span>
+                                            <script>putplanet('', '', '{{ fleet.planet_galaxy }}', '{{ fleet.planet_sector }}', '{{ fleet.planet_planet }}', {{ fleet.planet_owner_relation }})</script>
+                                        </div>
+                                        <div class="col-auto">
+                                            <span class="text-yellow"><script>putcountdown1({{ fleet.remaining_time }}, 'Terminé', '/s03/empire-fleets/')</script></span>
+                                        </div>
+                                    </div>
+                                {% elif fleet.action == 4 %}
+                                    <div class="row justify-content-between">
+                                        <div class="col">
+                                            <span class="me-1">{% translate 'Waiting at' %}</span>
+                                            <script>putplanet('', '', '{{ fleet.planet_galaxy }}', '{{ fleet.planet_sector }}', '{{ fleet.planet_planet }}', {{ fleet.planet_owner_relation }})</script>
+                                        </div>
+                                        <div class="col-auto">
+                                            <span class="text-yellow"><script>putcountdown1({{ fleet.remaining_time }}, 'Terminé', '/s03/empire-fleets/')</script></span>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                {% empty %}
+                    <div class="col-12">
+                        <span>{% translate 'No fleet' %}</span>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
 {% endblock content %}
