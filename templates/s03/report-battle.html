@@ -22,45 +22,58 @@
                     {% for fleet in opponent.fleets %}
                         <div class="col-12 mt-3">
                             <div class="row gx-3">
-                                <div class="col">
+                                <div class="col-auto pe-1">
+                                    {% if fleet.attack %}
+                                        <img src="{{ PATH_IMAGES }}interface/stance_attack.gif"
+                                             class="stance"
+                                             width="10"
+                                             height="10"/>
+                                    {% endif %}
+                                    {% if fleet.defend %}
+                                        <img src="{{ PATH_IMAGES }}interface/stance_defend.gif"
+                                             class="stance"
+                                             width="10"
+                                             height="10"/>
+                                    {% endif %}
+                                </div>
+                                <div class="ps-0 col">
                                     <span>{{ fleet.name }}<span>
+                                </div>
+                                <div class="col-auto">
+                                    <span class="ms-2">B:{{ fleet.mod_shield }}</span> <span class="ms-2">M:{{ fleet.mod_handling }}</span> <span class="ms-2">C:{{ fleet.mod_tracking_speed }}</span> <span class="ms-2">D:{{ fleet.mod_damage }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        {% for ship in fleet.ships %}
+                            <div class="col-12">
+                                <hr class="my-0">
+                            </div>
+                            <div class="col-12">
+                                <div class="row gx-3">
+                                    <div class="col-4">
+                                        <span class="text-normal">{{ ship.label }}</span>
                                     </div>
-                                    <div class="col-auto">
-                                        <span class="ms-2">B:{{ fleet.mod_shield }}</span> <span class="ms-2">M:{{ fleet.mod_handling }}</span> <span class="ms-2">C:{{ fleet.mod_tracking_speed }}</span> <span class="ms-2">D:{{ fleet.mod_damage }}</span>
+                                    <div class="col-3">
+                                        <span class="text-normal">{{ ship.ships }}</span> <small class="text-normal"><i class="fa-fw fas fa-long-arrow-alt-right"></i></small> <span class="{% if ship.after <= 0 %}text-danger{% endif %}">{{ ship.after }}</span>
+                                    </div>
+                                    <div class="col">
+                                        <div class="row gx-3">
+                                            {% for kill in ship.kills %}
+                                                <div class="col-auto">
+                                                    {{ kill.killed_name }} <small class="text-normal">x</small> {{ kill.killed_count }}
+                                                </div>
+                                            {% empty %}
+                                                <div class="col-auto">
+                                                    <span class="text-normal">-</span>
+                                                </div>
+                                            {% endfor %}
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                            {% for ship in fleet.ships %}
-                                <div class="col-12">
-                                    <hr class="my-0">
-                                </div>
-                                <div class="col-12">
-                                    <div class="row gx-3">
-                                        <div class="col-4">
-                                            <span class="text-normal">{{ ship.label }}</span>
-                                        </div>
-                                        <div class="col-3">
-                                            <span class="text-normal">{{ ship.ships }}</span> <small class="text-normal"><i class="fa-fw fas fa-long-arrow-alt-right"></i></small> <span class="{% if ship.after <= 0 %}text-danger{% endif %}">{{ ship.after }}</span>
-                                        </div>
-                                        <div class="col">
-                                            <div class="row gx-3">
-                                                {% for kill in ship.kills %}
-                                                    <div class="col-auto">
-                                                        {{ kill.killed_name }} <small class="text-normal">x</small> {{ kill.killed_count }}
-                                                    </div>
-                                                {% empty %}
-                                                    <div class="col-auto">
-                                                        <span class="text-normal">-</span>
-                                                    </div>
-                                                {% endfor %}
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            {% endfor %}
                         {% endfor %}
                     {% endfor %}
-                </div>
+                {% endfor %}
             </div>
         </div>
     </div>

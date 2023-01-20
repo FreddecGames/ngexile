@@ -107,9 +107,6 @@ class View(GlobalView):
                     
                     if ispubliclink: opponent["public"] = True
                     
-                    if oRs[13]: opponent["attack"] = True
-                    else: opponent["defend"] = True
-                    
                     if oRs[18]:
                         opponent["alliancetag"] = oRs[18]
                         opponent["alliance"] = True
@@ -127,6 +124,9 @@ class View(GlobalView):
                 if fleetId != lastFleetId:
                     fleet = { 'ships':[], "count":0,  "lost":0, "killed":0, "after":0 }
                     opponent['fleets'].append(fleet)
+                    
+                    if oRs[13]: fleet["attack"] = True
+                    else: fleet["defend"] = True
                     
                     fleet["name"] = oRs[1]
                         
