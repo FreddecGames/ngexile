@@ -1,6 +1,29 @@
 {% extends "s03/layout.html" %}
 {% load humanize %}
 {% block content %}
+    <div class="nav nav-tabs mb-3">
+        <div class="nav-item">
+            <a href="/s03/planet-view/?planet={{planetid}}" class="nav-link">Vue d'ensemble</a>
+        </div>
+        <div class="nav-item">
+            <a href="/s03/planet-production/?planet={{planetid}}" class="nav-link">Production</a>
+        </div>
+        <div class="nav-item">
+            <a href="/s03/planet-working/?planet={{planetid}}" class="nav-link">Fonctionnement</a>
+        </div>
+        <div class="nav-item">
+            <a href="/s03/planet-buildings/?planet={{planetid}}" class="nav-link">Bâtiments</a>
+        </div>
+        <div class="nav-item">
+            <a href="/s03/planet-ships/?planet={{planetid}}" class="nav-link">Chantier spatial</a>
+        </div>
+        <div class="nav-item">
+            <a href="/s03/planet-trainings/?planet={{planetid}}" class="nav-link active">Entraînement</a>
+        </div>
+        <div class="nav-item">
+            <a href="/s03/planet-orbit/?planet={{planetid}}" class="nav-link">Orbite</a>
+        </div>
+    </div>
     <script>
     function updateNeeds() {
     

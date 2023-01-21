@@ -23,7 +23,7 @@
             <div id="hinttext" class="card card-body bg-dark"></div>
         </div>
         <div id="super">
-            <div id="topbar">
+            <div id="topbar" class="bg-dark">
                 <div class="flex-grow-1 row gx-4 align-items-center">
                     <div class="col-auto">
                         <div class="row gx-2 align-items-center">
@@ -31,7 +31,10 @@
                                 <img src="/static/img/logo.png" width="32px" class="rounded" />
                             </div>
                             <div class="col-auto">
-                                <span class="fs-6">[s03] NG Exile</span>
+                                <span class="fs-6">NG Exile</span>
+                            </div>
+                            <div class="col-auto">
+                                <span class="badge text-bg-secondary">s03</span>
                             </div>
                         </div>
                     </div>
@@ -57,6 +60,54 @@
                     </div>
                     <div class="col-auto">
                         <div class="row gx-3 align-items-center justify-content-center">
+                            <div class="col-auto">
+                                <a href="/s03/mail-inbox/" class="link-light position-relative">
+                                    <span class="fs-6"><i class="fa-fw fas fa-envelope"
+                                       data-bs-toggle="tooltip"
+                                       data-bs-title="Mails"></i></span>
+                                    {% if new_mail > 0 %}<span class="position-absolute top-0 start-100 translate-middle badge text-bg-success">{{ new_mail }}</span>{% endif %}
+                                </a>
+                            </div>
+                            <div class="col-auto">
+                                <a href="/s03/empire-reports/" class="link-light position-relative">
+                                    <span class="fs-6"><i class="fa-fw fas fa-bell"
+                                       data-bs-toggle="tooltip"
+                                       data-bs-title="Rapports"></i></span>
+                                    {% if new_report > 0 %}<span class="position-absolute top-0 start-100 translate-middle badge text-bg-success">{{ new_report }}</span>{% endif %}
+                                </a>
+                            </div>
+                            <div class="col-auto">
+                                <a href="/s03/help/" class="link-light">
+                                    <span class="fs-6"><i class="fa-fw fas fa-question-circle"
+                                       data-bs-toggle="tooltip"
+                                       data-bs-title="Aide"></i></span>
+                                </a>
+                            </div>
+                            <div class="col-auto">
+                                <a href="/s03/profile-view/" class="link-light">
+                                    <span class="fs-6"><i class="fa-fw fas fa-user-circle"
+                                       data-bs-toggle="tooltip"
+                                       data-bs-title="Options"></i></span>
+                                </a>
+                            </div>
+                            <div class="col-auto">
+                                <a href="/accounts/logout/" class="link-danger">
+                                    <span class="fs-6"><i class="fa-fw fas fa-sign-out-alt"
+                                       data-bs-toggle="tooltip"
+                                       data-bs-title="Déconnexion"></i></span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="leftnav" class="bg-dark">
+                <div class="w-100 h-100 d-flex flex-column">
+                    <div id="leftnav-top">
+                        {% include 's03/menu.html' %}
+                    </div>
+                    <div id="leftnav-bottom">
+                        <div class="row gx-3 align-items-center justify-content-around">
                             <form class="col-auto"
                                   action="https://www.paypal.com/cgi-bin/webscr"
                                   method="post"
@@ -100,31 +151,8 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-auto">
-                        <div class="row gx-2 align-items-center justify-content-center">
-                            <div class="col-auto">
-                                <a href="/s03/help/" class="fs-5"><i class="fa-fw fas fa-question-circle"
-   data-bs-toggle="tooltip"
-   data-bs-placement="left"
-   data-bs-title="Aide"></i></a>
-                            </div>
-                            <div class="col-auto">
-                                <a href="/s03/profile-view/" class="fs-5"><i class="fa-fw fas fa-user-circle"
-   data-bs-toggle="tooltip"
-   data-bs-placement="left"
-   data-bs-title="Options"></i></a>
-                            </div>
-                            <div class="col-auto">
-                                <a href="/accounts/logout/" class="fs-5"><i class="fa-fw fas fa-sign-out-alt"
-   data-bs-toggle="tooltip"
-   data-bs-placement="left"
-   data-bs-title="Déconnexion"></i></a>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </div>
-            <div id="leftnav">{% include 's03/menu.html' %}</div>
             <div id="content">
                 <div id="page">
                     {% if impersonating %}
