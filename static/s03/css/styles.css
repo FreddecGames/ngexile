@@ -91,6 +91,8 @@ input[type=number] { width: 55px; }
 
 input[type=checkbox] { min-height: auto; }
 
+input[type=submit]:disabled { opacity: .5; }
+
 .form-check { min-height: 0; padding-left: 1.5em; }
 .form-check .form-check-input { margin-right: .5rem; border-color: #000; }
 .form-check-input:checked { background-color: #ffa500; border-color: #ffa500; }

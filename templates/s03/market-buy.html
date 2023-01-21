@@ -48,6 +48,10 @@
             
             var obj = $("total");
             obj.innerHTML = formatnumber(total);
+            
+            var btn = $("submit");
+            if (total > {{ credits }}) { btn.disabled = true }
+            else { btn.disabled = false }
         }
     </script>
     <form method="post" action="." class="card">
@@ -229,7 +233,7 @@
                         <span id="total">0</span>
                     </div>
                     <div class="col-auto">
-                        <input type="submit" value="Acheter" />
+                        <input id="submit" type="submit" value="Acheter" />
                     </div>
                 </div>
             </div>
