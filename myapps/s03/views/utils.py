@@ -238,7 +238,7 @@ def isValidObjectName(myName):
         p = re.compile("^[a-zA-Z0-9\- ]+$")
         return p.match(myName)
 
-def isValidAlliancename(self, myname):
+def isValidAlliancename(myname):
 
     if myname == "" or len(myname) < 4 or len(myname) > 32:
         return False
@@ -246,7 +246,7 @@ def isValidAlliancename(self, myname):
         p = re.compile("^[a-zA-Z0-9]+([ ]?[.]?[\-]?[ ]?[a-zA-Z0-9]+)*$")
         return p.match(myname)
 
-def isValidAlliancetag(self, tag):
+def isValidAlliancetag(tag):
 
     if tag == "" or len(tag) < 2 or len(tag) > 4:
         return False
@@ -254,7 +254,7 @@ def isValidAlliancetag(self, tag):
         p = re.compile("^[a-zA-Z0-9]+$")
         return p.match(tag)
 
-def isValiddescription(self, description):
+def isValiddescription(description):
     return len(description) < 8192
 
 # util functions

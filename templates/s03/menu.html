@@ -6,7 +6,7 @@ function setTitle(title) { document.title = defaultTitle + ' - ' + title }
 function putMenuLevel2(url, content, name, label, selectedMenu) {
 
     let selected = (name == selectedMenu) ? ' text-bg-primary' : ''
-    document.write('<div class="px-3 py-0"><a href="' + url + '" class="menu lvl2' + selected + '"><div class="flex-grow-1 row gx-2 align-items-baseline"><div class="col">' + content + '</div><div class="col-auto"><i class="fa-fw fas fa-chevron-right"></i></div></div></a></div>')
+    document.write('<div class="px-2 py-0"><a href="' + url + '" class="menu lvl2' + selected + '"><div class="flex-grow-1 row gx-2 align-items-baseline"><div class="col">' + content + '</div><div class="col-auto"><i class="fa-fw fas fa-chevron-right"></i></div></div></a></div>')
     
     if (selected) setTitle(label)
 }
