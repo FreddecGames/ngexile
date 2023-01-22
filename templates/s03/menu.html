@@ -20,7 +20,7 @@ putMenuLevel2('/s03/empire-techs/', '<i class="fa-fw fas fa-flask me-2"></i> Rec
 putMenuLevel2('/s03/alliance-view/', '<i class="fa-fw fas fa-users me-2"></i> Alliance', 'alliance', 'Alliance', '{{selectedmenu}}')
 
 putMenuLevel2('/s03/map/?g={{cur_g}}&s={{cur_s}}', '<i class="fa-fw fas fa-map me-2"></i> Carte spatiale', 'map', 'Carte spatiale', '{{selectedmenu}}')
-putMenuLevel2('/s03/ranking-players/', '<i class="fa-fw fas fa-signal me-2"></i> Classement', 'ranking', 'Classement', '{{selectedmenu}}')
+putMenuLevel2('/s03/ranking-players/', '<div class="row gx-2 align-items-baseline"><div class="col"><i class="fa-fw fas fa-signal me-2"></i> Classement</div><div class="col-auto">{{ranking}} <small>/{{ranking_players}}</small></div></div>', 'ranking', 'Classement', '{{selectedmenu}}')
 
 putMenuLevel2('/s03/planet-view/?planet={{planetid}}', '<div class="row gx-2 align-items-baseline"><div class="col"><i class="fa-fw fas fa-globe me-2"></i> Planète</div><div class="col-auto">{{cur_g}}.{{cur_s}}.{{cur_p}}</div></div>', 'planet', 'Planète {{cur_g}}.{{cur_s}}.{{cur_p}}', '{{selectedmenu}}')
 </script>

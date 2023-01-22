@@ -98,7 +98,9 @@ class GlobalView(BaseMixin, View):
 
     def Display(self, tpl):
         
-        dbRow = oConnRow("SELECT credits, prestige_points FROM users WHERE id=" + str(self.UserId))
+        dbRow = oConnRow("SELECT avatar_url, username, credits, prestige_points FROM users WHERE id=" + str(self.UserId))
+        tpl.AssignValue("avatar_url", dbRow['avatar_url'])
+        tpl.AssignValue("username", dbRow['username'])
         tpl.AssignValue("credits", dbRow['credits'])
         tpl.AssignValue("prestige_points", dbRow['prestige_points'])
 
@@ -184,6 +186,20 @@ class GlobalView(BaseMixin, View):
         tpl.AssignValue("cur_p", ((self.CurrentPlanet - 1) % 25) + 1)
     
         tpl.AssignValue("selectedmenu", self.selectedMenu)
+        
+        query = "SELECT int4(count(1)) AS ranking_players, (SELECT int4(count(1)) FROM vw_players WHERE score >= " + str(self.oPlayerInfo["score"]) + ") AS ranking FROM vw_players"
+        result = oConnRow(query)
+        
+        tpl.AssignValue("ranking", result["ranking"])
+        tpl.AssignValue("ranking_players", result["ranking_players"])
+            
+        if self.AllianceId:
+        
+            query = "SELECT tag, name FROM alliances WHERE id=" + str(self.AllianceId)
+            result = oConnRow(query)
+            
+            tpl.AssignValue("alliance_tag", result["tag"])
+            tpl.AssignValue("alliance_name", result["name"])
 
     def FillHeader(self, tpl):
     

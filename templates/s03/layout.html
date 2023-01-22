@@ -1,3 +1,4 @@
+{% load i18n %}
 {% load humanize %}
 <!doctype html>
 <html lang="en">
@@ -25,7 +26,7 @@
         <div id="super">
             <div id="topbar" class="bg-dark">
                 <div class="flex-grow-1 row gx-4 align-items-center">
-                    <div class="col-auto">
+                    <div class="col-auto" style="width:256px;">
                         <div class="row gx-2 align-items-center">
                             <div class="col-auto">
                                 <img src="/static/img/logo.png" width="32px" class="rounded" />
@@ -39,62 +40,37 @@
                         </div>
                     </div>
                     <div class="col-auto">
-                        <div class="row gx-1 align-items-center">
+                        <div class="row gx-0 align-items-center">
                             <div class="col-auto">
-                                <img src="{{ PATH_IMAGES }}interface/credits.gif" width="16px" />
-                            </div>
-                            <div class="col-auto">
-                                <span {% if credits < 0 %}class="text-danger"{% endif %}>{{ credits|intcomma }}</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col">
-                        <div class="row gx-1 align-items-center">
-                            <div class="col-auto">
-                                <img src="{{ PATH_IMAGES }}interface/prestige.gif" width="16px" />
-                            </div>
-                            <div class="col-auto">
-                                <span>{{ prestige_points|intcomma }}</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-auto">
-                        <div class="row gx-3 align-items-center justify-content-center">
-                            <div class="col-auto">
-                                <a href="/s03/mail-inbox/" class="link-light position-relative">
-                                    <span class="fs-6"><i class="fa-fw fas fa-envelope"
-                                       data-bs-toggle="tooltip"
-                                       data-bs-title="Mails"></i></span>
-                                    {% if new_mail > 0 %}<span class="position-absolute top-0 start-100 translate-middle badge text-bg-success">{{ new_mail }}</span>{% endif %}
+                                <a href="/s03/mail-inbox/" class="menu lvl2 position-relative {% if selectedmenu == 'mails' %}text-bg-primary{% endif %}">
+                                    <i class="fa-fw fas fa-envelope me-2"></i>
+                                    <span>Mails</span>
+                                    {% if new_mail > 0 %}<span class="position-absolute top-0 start-0 badge text-bg-success">{{ new_mail }}</span>{% endif %}                                    
                                 </a>
                             </div>
                             <div class="col-auto">
-                                <a href="/s03/empire-reports/" class="link-light position-relative">
-                                    <span class="fs-6"><i class="fa-fw fas fa-bell"
-                                       data-bs-toggle="tooltip"
-                                       data-bs-title="Rapports"></i></span>
-                                    {% if new_report > 0 %}<span class="position-absolute top-0 start-100 translate-middle badge text-bg-success">{{ new_report }}</span>{% endif %}
+                                <a href="/s03/empire-reports/" class="menu lvl2 position-relative {% if selectedmenu == 'reports' %}text-bg-primary{% endif %}">
+                                    <i class="fa-fw fas fa-bell me-2"></i>
+                                    <span>Rapports</span>
+                                    {% if new_report > 0 %}<span class="position-absolute top-0 start-0 badge text-bg-success">{{ new_report }}</span>{% endif %}
                                 </a>
                             </div>
                             <div class="col-auto">
-                                <a href="/s03/help/" class="link-light">
-                                    <span class="fs-6"><i class="fa-fw fas fa-question-circle"
-                                       data-bs-toggle="tooltip"
-                                       data-bs-title="Aide"></i></span>
+                                <a href="/s03/help/" class="menu lvl2 {% if selectedmenu == 'help' %}text-bg-primary{% endif %}">
+                                    <i class="fa-fw fas fa-question-circle me-2"></i>
+                                    <span>Aide</span>
                                 </a>
                             </div>
                             <div class="col-auto">
-                                <a href="/s03/profile-view/" class="link-light">
-                                    <span class="fs-6"><i class="fa-fw fas fa-user-circle"
-                                       data-bs-toggle="tooltip"
-                                       data-bs-title="Options"></i></span>
+                                <a href="/s03/profile-view/" class="menu lvl2 {% if selectedmenu == 'profile' %}text-bg-primary{% endif %}">
+                                    <i class="fa-fw fas fa-user-circle me-2"></i>
+                                    <span>Profile</span>
                                 </a>
                             </div>
                             <div class="col-auto">
-                                <a href="/accounts/logout/" class="link-danger">
-                                    <span class="fs-6"><i class="fa-fw fas fa-sign-out-alt"
-                                       data-bs-toggle="tooltip"
-                                       data-bs-title="Déconnexion"></i></span>
+                                <a href="/accounts/logout/" class="menu lvl2">
+                                    <i class="fa-fw fas fa-sign-out-alt me-2 text-danger"></i>
+                                    <span class="text-danger">Déconnexion</span>
                                 </a>
                             </div>
                         </div>
@@ -104,10 +80,78 @@
             <div id="leftnav" class="bg-dark">
                 <div class="w-100 h-100 d-flex flex-column">
                     <div id="leftnav-top">
-                        {% include 's03/menu.html' %}
+                        <div class="px-3 py-2">
+                            <div class="d-flex">
+                                <div class="col-auto pe-3">
+                                    {% if avatar_url %}
+                                        <img src="{{ avatar_url }}" width="42px" height="42px" class="rounded-circle" />
+                                    {% else %}
+                                        <img src="{{ PATH_IMAGES }}interface/noavatar.gif"
+                                             width="42px"
+                                             class="rounded-circle"/>
+                                    {% endif %}
+                                </div>
+                                <div class="col text-truncate">
+                                    <div class="row g-1">
+                                        <div class="col-12">
+                                            <span class="text-player">{{ username }}</span>
+                                        </div>
+                                        <div class="col-12 text-truncate">
+                                            {% if alliance_tag %}
+                                                <a href="/ng0/alliance-view/"
+                                                   data-bs-toggle="tooltip"
+                                                   data-bs-placement="top"
+                                                   data-bs-title="{% translate 'View alliance' %}">[{{ alliance_tag }}] {{ alliance_name }}</a>
+                                            {% else %}
+                                                {% translate 'Indépendant' %}
+                                            {% endif %}
+                                        </div>
+                                        <div class="col-12">
+                                            <div class="row gx-3 align-items-center">
+                                                <div class="col-auto">
+                                                    <img src="{{ PATH_IMAGES }}interface/credits.gif" width="16px" class="res" />
+                                                    <span class="{% if credits < 0 %}text-danger{% else %}text-white{% endif %}">{{ credits|intcomma }}</span>
+                                                </div>
+                                                <div class="col-auto">
+                                                    <img src="{{ PATH_IMAGES }}interface/prestige.gif" width="16px" class="res"/>
+                                                    <span class="text-white">{{ prestige_points|intcomma }}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% if impersonating %}
+                            <div class="px-2 py-2">
+                                <div class="px-3 py-2 rounded text-bg-warning">
+                                    <div><span class="fw-bold">Impersonisation</span></div>
+                                    <div><a href="/impersonate/stop/" class="text-danger">Revenir au compte de départ</a></div>
+                                </div>
+                            </div>
+                        {% endif %}
+                        {% if bankruptcy_hours %}
+                            <div class="px-2 py-2">
+                                <div class="px-3 py-2 rounded text-bg-warning">
+                                    <div><span class="fw-bold">Fonds insuffisants</span></div>
+                                    <div>Vous avez {{ bankruptcy_hours }} heure(s) pour faire revenir l'argent de la trésorerie dans le positif avant qu'un coup d'état n'éclate et que vous soyiez chassé de votre poste.</div>
+                                </div>
+                            </div>
+                        {% endif %}
+                        {% if deletion_date %}
+                            <div class="px-2 py-2">
+                                <div class="px-3 py-2 rounded text-bg-danger">
+                                    <div><span class="fw-bold">Suppression du compte en cours</span></div>
+                                    <div>Ce compte sera effacé le {{ deletion_date|date:"D d M Y" }} à {{ deletion_date|time }}</div>
+                                </div>
+                            </div>
+                        {% endif %}
+                        <div class="py-2">
+                            {% include 's03/menu.html' %}
+                        </div>
                     </div>
                     <div id="leftnav-bottom">
-                        <div class="row gx-3 align-items-center justify-content-around">
+                        <div class="pb-3 row gx-3 align-items-center justify-content-around">
                             <form class="col-auto"
                                   action="https://www.paypal.com/cgi-bin/webscr"
                                   method="post"
@@ -150,48 +194,11 @@
                                 </a>
                             </div>
                         </div>
-                        <div class="mt-2 text-center">
-                            <span class="text-normal">Aider le dev !</span>
-                        </div>
                     </div>
                 </div>
             </div>
             <div id="content">
                 <div id="page">
-                    {% if impersonating %}
-                        <div class="alert alert-info">
-                            <div>
-                                <b>Impersonisation</b> (<a href="/impersonate/stop/" style="color:#f00">Revenir au compte de départ</a>)
-                            </div>
-                            <div>Compte "{{ username }}" - impossible d'envoyer de messages</div>
-                        </div>
-                    {% endif %}
-                    {% if bankruptcy_hours %}
-                        <div class="alert alert-warning">
-                            <div>
-                                <b>Fonds insuffisants</b>
-                            </div>
-                            <div>
-                                Nous sommes actuellement en déficit, cette situation est tolérable pendant un moment mais nous devons réagir. Nous pouvons soit alléger nos coûts d'entretien, soit augmenter nos revenus en vendant une plus grande partie de notre production.
-                            </div>
-                            <div>
-                                Vous avez
-                                {{ bankruptcy_hours }} heure(s)
-                                pour faire revenir l'argent de la trésorerie dans le positif avant qu'un coup d'état n'éclate et que vous soyiez chassé de votre poste.
-                            </div>
-                            <div>
-                                Chaque heure passée en déficit, le nombre d'heures avant le coup d'état diminue d'une heure. Celui-ci remonte chaque heure passée dans le positif.
-                            </div>
-                        </div>
-                    {% endif %}
-                    {% if deletion_date %}
-                        <div class="alert alert-danger">
-                            <div>
-                                <b>Suppression du compte en cours</b>
-                            </div>
-                            <div>Ce compte sera effacé le {{ deletion_date|date:"D d M Y" }} à {{ deletion_date|time }}</div>
-                        </div>
-                    {% endif %}
                     {% if context %}
                         {% include 's03/header.html' %}
                     {% endif %}
