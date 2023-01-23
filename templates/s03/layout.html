@@ -23,54 +23,74 @@
         <div id="hint" onclick="donothide(event)">
             <div id="hinttext" class="card card-body bg-dark"></div>
         </div>
-        <div id="super">
+        <div id="super" class="root">
             <div id="topbar" class="bg-dark">
-                <div class="flex-grow-1 row gx-4 align-items-center">
-                    <div class="col-auto" style="width:256px;">
+                <div class="flex-grow-1 row gx-3 align-items-center">
+                    <div class="col">
                         <div class="row gx-2 align-items-center">
                             <div class="col-auto">
                                 <img src="/static/img/logo.png" width="32px" class="rounded" />
                             </div>
-                            <div class="col-auto">
+                            <div class="col-auto d-none d-md-block">
                                 <span class="fs-6">NG Exile</span>
                             </div>
-                            <div class="col-auto">
+                            <div class="col-auto d-none d-md-block">
                                 <span class="badge text-bg-secondary">s03</span>
                             </div>
                         </div>
                     </div>
-                    <div class="col-auto">
+                    <div class="col-auto px-0">
                         <div class="row gx-0 align-items-center">
                             <div class="col-auto">
                                 <a href="/s03/mail-inbox/" class="menu lvl2 position-relative {% if selectedmenu == 'mails' %}text-bg-primary{% endif %}">
-                                    <i class="fa-fw fas fa-envelope me-2"></i>
-                                    <span>Mails</span>
-                                    {% if new_mail > 0 %}<span class="position-absolute top-0 start-0 badge text-bg-success">{{ new_mail }}</span>{% endif %}                                    
+                                    <i class="fa-fw fas fa-envelope"></i>
+                                    <span class="ms-2 d-none d-md-block">Mails</span>
+                                    {% if new_mail > 0 %}<span class="position-absolute top-0 end-0 badge text-bg-success">{{ new_mail }}</span>{% endif %}                                    
                                 </a>
                             </div>
                             <div class="col-auto">
                                 <a href="/s03/empire-reports/" class="menu lvl2 position-relative {% if selectedmenu == 'reports' %}text-bg-primary{% endif %}">
-                                    <i class="fa-fw fas fa-bell me-2"></i>
-                                    <span>Rapports</span>
-                                    {% if new_report > 0 %}<span class="position-absolute top-0 start-0 badge text-bg-success">{{ new_report }}</span>{% endif %}
+                                    <i class="fa-fw fas fa-bell"></i>
+                                    <span class="ms-2 d-none d-md-block">Rapports</span>
+                                    {% if new_report > 0 %}<span class="position-absolute top-0 end-0 badge text-bg-success">{{ new_report }}</span>{% endif %}
                                 </a>
                             </div>
                             <div class="col-auto">
                                 <a href="/s03/help/" class="menu lvl2 {% if selectedmenu == 'help' %}text-bg-primary{% endif %}">
-                                    <i class="fa-fw fas fa-question-circle me-2"></i>
-                                    <span>Aide</span>
+                                    <i class="fa-fw fas fa-question-circle"></i>
+                                    <span class="ms-2 d-none d-md-block">Aide</span>
                                 </a>
                             </div>
                             <div class="col-auto">
                                 <a href="/s03/profile-view/" class="menu lvl2 {% if selectedmenu == 'profile' %}text-bg-primary{% endif %}">
-                                    <i class="fa-fw fas fa-user-circle me-2"></i>
-                                    <span>Profile</span>
+                                    <i class="fa-fw fas fa-user-circle"></i>
+                                    <span class="ms-2 d-none d-md-block">Profile</span>
                                 </a>
                             </div>
                             <div class="col-auto">
                                 <a href="/accounts/logout/" class="menu lvl2">
-                                    <i class="fa-fw fas fa-sign-out-alt me-2 text-danger"></i>
-                                    <span class="text-danger">Déconnexion</span>
+                                    <i class="fa-fw fas fa-sign-out-alt text-danger"></i>
+                                    <span class="ms-2 text-danger d-none d-md-block">Déconnexion</span>
+                                </a>
+                            </div>
+                            <div class="col-auto">
+                                <a class="menu lvl2 leftnav-toggler d-md-none">
+                                    <div class="position-relative">
+                                        <i class="fa-fw fas fa-bars"></i>
+                                        {% if profile.deletion_date %}
+                                            <span class="badge badge-top rounded bg-danger p-1">
+                                                <span class="visually-hidden">{% translate 'Account deletion' %}</span>
+                                            </span>
+                                        {% elif profile.bankruptcy_hours > 0 %}
+                                            <span class="badge badge-top rounded bg-warning p-1">
+                                                <span class="visually-hidden">{% translate 'Bankruptcy risk' %}</span>
+                                            </span>
+                                        {% elif profile.is_impersonating %}
+                                            <span class="badge badge-top rounded bg-warning p-1">
+                                                <span class="visually-hidden">{% translate 'Impersonating' %}</span>
+                                            </span>
+                                        {% endif %}
+                                    </div>
                                 </a>
                             </div>
                         </div>
@@ -151,7 +171,7 @@
                         </div>
                     </div>
                     <div id="leftnav-bottom">
-                        <div class="pb-3 row gx-3 align-items-center justify-content-around">
+                        <div class="pb-md-3 row gx-3 align-items-center justify-content-around">
                             <form class="col-auto"
                                   action="https://www.paypal.com/cgi-bin/webscr"
                                   method="post"
@@ -227,6 +247,18 @@
         <script>
             const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
             const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+
+            const root = document.getElementById('super')
+
+            document.querySelectorAll('.leftnav-toggler').forEach(e => {
+                e.addEventListener('click', () => {
+                    window.innerWidth < 992 || !root.classList.contains('leftnav-shown') ? root.classList.toggle('leftnav-shown') : root.classList.toggle('leftnav-shown')
+                })
+            })
+
+            document.addEventListener('click', e => {
+                e.target.classList.contains('root') && root.classList.remove('leftnav-shown')
+            })
         </script>
     </body>
 </html>
