@@ -12,7 +12,7 @@ class View(GlobalView):
         content = GetTemplate(self.request, "empire-ground")
 
         # list the ships
-        query = "SELECT nav_planet.id, nav_planet.name, nav_planet.galaxy, nav_planet.sector, nav_planet.planet, shipid, quantity" + \
+        query = "SELECT nav_planet.id, nav_planet.name, nav_planet.galaxy, nav_planet.sector, nav_planet.planet, shipid, quantity, floor" + \
                 " FROM planet_ships" + \
                 "    INNER JOIN nav_planet ON (planet_ships.planetid = nav_planet.id)" + \
                 " WHERE nav_planet.ownerid =" + str(self.UserId) + \
@@ -33,7 +33,8 @@ class View(GlobalView):
                     list.append(planet)
                     
                     lastplanetid = oRs[0]
-
+                    
+                    planet['img'] = getPlanetImg(oRs[0], oRs[7])
                     planet["planetid"] = oRs[0]
                     planet["planetname"] = oRs[1]
                     planet["g"] = oRs[2]

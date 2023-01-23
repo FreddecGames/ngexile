@@ -39,6 +39,7 @@
         $('totalcredits').innerHTML = formatnumber(credits);
     }
     </script>
+    <div class="scroll-content pe-1" style="height:calc(100% - 44px - 94px);">
     <div class="row g-3 flex-column">
         {% if trainings|length > 0 or queues|length > 0 %}
             <div class="col-12">
@@ -226,4 +227,5 @@
             </form>
         </div>
     </div>
+</div>
 {% endblock content %}

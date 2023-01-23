@@ -71,6 +71,7 @@
         document.write(s);
     }
     </script>
+    <div class="scroll-content pe-1" style="height:calc(100% - 44px);">
     <form action="?cat={{ cat }}" method="post" class="card">
         <div class="card-header">
             <div class="row gx-3">
@@ -136,4 +137,5 @@
     </div>
     {% csrf_token %}
 </form>
+    </div>
 {% endblock content %}

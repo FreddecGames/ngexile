@@ -30,6 +30,7 @@
         function confirmSoldiers(id) { return window.confirm('Êtes-vous sûr de vouloir renvoyer ' + getval('soldiers' + id) + ' soldats ?'); }
         function confirmWorkers(id) { return window.confirm('Êtes-vous sûr de vouloir renvoyer ' + getval('workers' + id) + ' travailleurs ?'); }
     </script>
+    <div class="scroll-content pe-1" style="height:calc(100% - 44px - 94px);">
     <div class="row g-3 flex-column">
         <div class="col-12">
             <div class="card">
@@ -194,6 +195,7 @@
                 {% csrf_token %}
             </form>
         </div>
+    </div>
     </div>
     <div id="renamebox" class="hidden">
         <form action='?planet={{ planet_id }}' method='post'>

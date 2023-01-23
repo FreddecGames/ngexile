@@ -7,6 +7,7 @@ body {
     background-size: cover;
     background-position: center;
 	background-color: #000;
+    background-attachment: fixed;
 	font-family: Roboto, Arial; font-size: 12px; color: #fff;
 }
 
@@ -39,7 +40,7 @@ ul { margin-bottom: 0px; }
     position: absolute; top: 0px; left: 0px; right: 0px;
     height: 52px;
     padding: 0 .75rem;
-    background-color: var(--bs-gray-800);
+    background-color: var(--bs-dark);
     display: flex; align-items: center;
 }
 
@@ -50,7 +51,7 @@ ul { margin-bottom: 0px; }
 #leftnav {
 	position: absolute; top: 0px; bottom: 0px; left: 0px;
 	width: 256px;
-	background-color: var(--bs-gray-800);
+    background-color: var(--bs-dark);
     transition: transform .5s ease;
 }
 :not(.leftnav-shown) #leftnav {
@@ -67,6 +68,8 @@ ul { margin-bottom: 0px; }
 #leftnav-top {
     flex-grow: 1;
     overflow-y: auto; overflow-x: hidden; scrollbar-color: rgba(255, 255, 255, .075); scrollbar-width: thin;
+	background-color: var(--bs-gray-800);
+    border-radius: 0 .375rem .375rem 0
 }
 
 #leftnav-bottom {

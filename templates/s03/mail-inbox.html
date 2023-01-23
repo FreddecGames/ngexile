@@ -33,6 +33,7 @@
         return false;
     }
     </script>
+    <div class="scroll-content pe-1" style="height:calc(100% - 44px);">
     <form method="post" action="?" class="card">
         <div class="list-group list-group-flush">
             {% if mails|length > 0 %}
@@ -106,4 +107,5 @@
         </div>
         {% csrf_token %}
     </form>
+    </div>
 {% endblock content %}

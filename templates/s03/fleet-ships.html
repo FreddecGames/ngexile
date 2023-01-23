@@ -40,6 +40,7 @@
             else document.forms.ships.submit();
         }
     </script>
+    <div class="scroll-content pe-1" style="height:calc(100% - 44px);">
     <form method="post"
           id="ships"
           action="/s03/fleet-ships/?id={{ fleetid }}"
@@ -136,5 +137,6 @@
         <input type="hidden" name="transfer_ships" value="1">
         {% csrf_token %}
     </form>
+    </div>
     <script>window.setTimeout("updatecargo()", 100);</script>
 {% endblock content %}

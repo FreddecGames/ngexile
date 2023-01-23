@@ -47,6 +47,7 @@ function refreshPage(url) {
 		window.location = "?y=" + $("content").scrollTop
 }
     </script>
+    <div class="scroll-content pe-1" style="height:calc(100% - 44px - 94px);">
     <div class="row g-3">
         {% for category in categories %}
             <div class="col-12">
@@ -263,4 +264,5 @@ function refreshPage(url) {
                 </div>
             {% endfor %}
         </div>
+    </div>
     {% endblock content %}

@@ -8,6 +8,7 @@
             <a href="/s03/profile-options/" class="nav-link active">Options</a>
         </div>
     </div>
+    <div class="scroll-content pe-1" style="height:calc(100% - 44px);">
     <form method="post" action="?cat={{ cat }}" class="card">
         <div class="card-body">
             <div class="row g-1">
@@ -103,4 +104,5 @@
         </div>
         {% csrf_token %}
     </form>
+</div>
 {% endblock content %}

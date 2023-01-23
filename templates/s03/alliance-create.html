@@ -9,6 +9,7 @@
             <a href="/s03/alliance-create/" class="nav-link active">Création</a>
         </div>
     </div>
+    <div class="scroll-content pe-1" style="height:calc(100% - 44px);">
     {% if create %}
         <form method="post" action="?a=new">
             {% csrf_token %}
@@ -72,4 +73,5 @@
     {% else %}
         <span class="text-danger">Vous avez récemment quitté une alliance, il vous est actuellement impossible d'en créer une nouvelle.</span>
     {% endif %}
+    </div>
 {% endblock content %}

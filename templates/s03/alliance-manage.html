@@ -39,6 +39,7 @@
             <a href="/s03/alliance-invitations/" class="nav-link">Invitations</a>
         </div>
     </div>
+    <div class="scroll-content pe-1" style="height:calc(100% - 44px);">
     <form method="post" action="?cat=1" class="card">
         {% csrf_token %}
         <div class="card-body">
@@ -126,4 +127,5 @@
             </div>
         </div>
     </form>
+    </div>
 {% endblock content %}

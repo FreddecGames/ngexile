@@ -140,6 +140,7 @@
             else return true;
         }
     </script>
+    <div class="scroll-content pe-1" style="height:calc(100% - 44px);">
     <form method="post"
           action="?id={{ fleetid }}"
           onsubmit="return submitchanges()"
@@ -372,6 +373,7 @@
         <input type="hidden" name="split" value="1" />
         {% csrf_token %}
     </form>
+    </div>
     <script>window.setTimeout("updatecargo()", 200);</script>
     <script>window.setTimeout("updateresources()", 200);</script>
 {% endblock content %}

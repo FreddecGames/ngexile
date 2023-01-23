@@ -2,6 +2,7 @@
 {% load tz %}
 {% load humanize %}
 {% block content %}
+    <div class="scroll-content pe-1" style="height:calc(100%);">
     <div class="row g-3">
         {% if commander_list %}
             <script>
@@ -385,5 +386,6 @@
                 </form>
             </div>
         {% endif %}
+    </div>
     </div>
 {% endblock content %}

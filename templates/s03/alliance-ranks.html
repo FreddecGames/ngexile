@@ -53,6 +53,7 @@
             return true;
         }
     </script>
+    <div class="scroll-content pe-1" style="height:calc(100% - 44px);">
     <form method="post"
           action="."
           onsubmit="return check()"
@@ -194,4 +195,5 @@
         <input type="hidden" name="action" value="save" />
         {% csrf_token %}
     </form>
+    </div>
 {% endblock content %}

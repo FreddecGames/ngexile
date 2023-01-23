@@ -1,6 +1,8 @@
 {% extends "s03/layout.html" %}
 {% load humanize %}
 {% block content %}
+    <div class="scroll-content pe-1" style="height:calc(100%);">
+
     <div class="card">
         <div class="card-header">
             <span>Rapport d'invasion de <script>putplanet("{{planetid}}", "{{planetname}}", "{{g}}", "{{s}}", "{{p}}", {{relation}});</script> par {{ fleet_owner }}</span>
@@ -113,4 +115,5 @@
             </div>
         </div>
     </div>
+</div>
 {% endblock content %}

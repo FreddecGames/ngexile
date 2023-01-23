@@ -21,6 +21,7 @@
         else input.value = '';
     }
     </script>
+    <div class="scroll-content pe-1" style="height:calc(100% - 44px);">
     <form method="post" action="?" class="card card-body">
         {% csrf_token %}
         <div class="row g-1">
@@ -107,4 +108,5 @@
             </div>
         </div>
     </form>
+    </div>
 {% endblock content %}

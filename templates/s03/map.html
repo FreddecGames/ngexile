@@ -382,6 +382,7 @@
 
     {% endif %}
     </script>
+    <div class="scroll-content pe-1" style="height:calc(100% - 44px);">
     <div class="card card-body mb-3">
         <form method="get"
               action="?"
@@ -940,5 +941,6 @@ function sig(signature) {
             {% endif %}
         {% endif %}
     {% endif %}
+    </div>
     <script>setLoc('{{galaxy}}','{{sector}}');</script>
 {% endblock content %}

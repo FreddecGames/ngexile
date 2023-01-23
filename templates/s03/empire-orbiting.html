@@ -9,12 +9,10 @@
             <a href="/s03/empire-orbiting/" class="nav-link active">Flottes en orbite</a>
         </div>
         <div class="nav-item">
-            <a href="/s03/empire-ground/" class="nav-link">Vaisseaux au sol</a>
-        </div>
-        <div class="nav-item">
             <a href="/s03/empire-stats/" class="nav-link">Détruits / perdus</a>
         </div>
     </div>
+    <div class="scroll-content pe-1" style="height:calc(100% - 44px);">
     <div class="row g-3">
         {% for planet in planets %}
             <div class="col-4">
@@ -65,5 +63,6 @@
                 </div>
             </div>
         {% endfor %}
+    </div>
     </div>
 {% endblock content %}
