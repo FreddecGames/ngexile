@@ -70,7 +70,7 @@
         var obj = $(objet);
         var max = $("map").offsetWidth + get_left($("map"));
         var x = (get_left(obj)+16);
-        var y = (get_top(obj)-2) - $("content").scrollTop;
+        var y = (get_top(obj)-2) - $("content-scroll").scrollTop;
 
         hinttext.innerHTML = txt;
 
@@ -151,7 +151,7 @@
         {
             var c = getRelationClass(rel);
 
-            s += '<div class="col"><a title="Écrire à '+owner+'" href="/s03/mail-new/?subject=À propos de la flotte '+name+'&to='+owner+'" class="' + c+ '">' +(tag!=''?'['+tag+'] ':'')+name+'</a></div>';
+            s += '<div class="col"><a title="Écrire à '+owner+'" href="/s03/mail-new/?subject=À propos de la flotte '+name+'&to='+owner+'" class="' + c+ '">' +(tag!=''?'['+tag+'] ':'')+owner+'</a></div>';
         }
 
         if(signature > 0)
@@ -382,8 +382,8 @@
 
     {% endif %}
     </script>
-    <div class="scroll-content pe-1" style="height:calc(100% - 44px);">
-    <div class="card card-body mb-3">
+    <div id="content-scroll" class="scroll-content pe-1" style="height:calc(100% - 44px - 52px);">
+    <div class="card card-body mb-2">
         <form method="get"
               action="?"
               class="row gx-3 align-items-center justify-content-center">
@@ -740,12 +740,12 @@ function sig(signature) {
 }
             </script>
             {% if movings|length == 0 and enterings|length == 0 and leavings|length == 0 %}
-                <div class="mt-3 card card-body text-center">
+                <div class="mt-2 card card-body text-center">
                     <span class="text-normal">Aucun mouvement détecté par nos radars</span>
                 </div>
             {% endif %}
             {% if movings|length > 0 %}
-                <div class="mt-3 card">
+                <div class="mt-2 card">
                     <div class="card-header">
                         <span>Mouvements dans le secteur</span>
                     </div>
@@ -810,7 +810,7 @@ function sig(signature) {
                 </div>
             {% endif %}
             {% if enterings|length > 0 %}
-                <div class="mt-3 card">
+                <div class="mt-2 card">
                     <div class="card-header">
                         <span>Flottes entrant dans le secteur</span>
                     </div>
@@ -875,7 +875,7 @@ function sig(signature) {
                 </div>
             {% endif %}
             {% if leavings|length > 0 %}
-                <div class="mt-3 card">
+                <div class="mt-2 card">
                     <div class="card-header">
                         <span>Flottes sortant du secteur</span>
                     </div>

@@ -69,7 +69,6 @@ ul { margin-bottom: 0px; }
     flex-grow: 1;
     overflow-y: auto; overflow-x: hidden; scrollbar-color: rgba(255, 255, 255, .075); scrollbar-width: thin;
 	background-color: var(--bs-gray-800);
-    border-radius: 0 .375rem .375rem 0
 }
 
 #leftnav-bottom {
@@ -256,6 +255,8 @@ a.text-player:hover { color: #c87f0a!important; }
 
     overflow-x: auto; overflow-y: hidden; flex-wrap: nowrap;
 }
+
+.nav-tabs .nav-link { white-space: nowrap; }
 
 .tooltip {
     --bs-tooltip-bg: #000;

@@ -16,8 +16,8 @@ function previousplanet() {
     jump(obj)
 }
 </script>
-<div class="mb-3">
-    <div class="card card-body bg-dark">
+<div class="mb-2">
+    <div class="card card-body" style="overflow-x: auto;">
         <div class="row gx-3 align-items-center justify-content-between flex-nowrap">
             <div class="col-auto">
                 <a href="#"
@@ -65,6 +65,13 @@ function previousplanet() {
                         </div>
                     {% endif %}
                 </div>
+            </div>
+            <div class="col-auto">
+                <a href="#"
+                   onclick="nextplanet(); return false;"
+                   class="fs-6"
+                   data-bs-toggle="tooltip"
+                   data-bs-title="Planète Suivante"><i class="fa-fw fas fa-chevron-circle-right"></i></a>
             </div>
             <div class="col-auto">
                 <div class="row g-1 flex-column">
@@ -147,13 +154,6 @@ function previousplanet() {
                         <small class="ms-1 text-normal">/{{ planet.space|intcomma }}</small>
                     </div>
                 </div>
-            </div>
-            <div class="col-auto">
-                <a href="#"
-                   onclick="nextplanet(); return false;"
-                   class="fs-6"
-                   data-bs-toggle="tooltip"
-                   data-bs-title="Planète Suivante"><i class="fa-fw fas fa-chevron-circle-right"></i></a>
             </div>
         </div>
     </div>
