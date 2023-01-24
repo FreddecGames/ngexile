@@ -38,42 +38,34 @@
         </script>
         <div id="super">
             <div id="top" class="d-flex align-items-center">
-                <div class="col-auto" style="width:256px;">
-                    <div class="px-3">
-                        <div class="row gx-2 align-items-center">
-                            <div class="col-auto">
-                                <img src="/static/img/logo.png" width="32px" class="rounded" />
-                            </div>
-                            <div class="col-auto">
-                                <span class="fs-6">NG Exile</span>
-                            </div>
-                            <div class="col-auto">
-                                <span class="badge text-bg-secondary">s03</span>
-                            </div>
+                <div class="px-3">
+                    <div class="row gx-3 align-items-center">
+                        <div class="col-auto">
+                            <img src="/static/img/logo.png" width="32px" class="rounded" />
                         </div>
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="px-3">
-                        <div class="row gx-3 align-items-center">
-                            <div class="col-auto">
-                                <img src="{{ PATH_IMAGES }}interface/credits.gif"
-                                     class="res"
-                                     data-bs-toggle="tooltip"
-                                     data-bs-title="Crédits"
-                                     width="16"
-                                     height="16">
-                                <span class="{% if credits <= 0 %}text-danger{% endif %}">{{ credits|intcomma }}</span>
-                            </div>
-                            <div class="col-auto">
-                                <img src="{{ PATH_IMAGES }}interface/prestige.gif"
-                                     class="res"
-                                     data-bs-toggle="tooltip"
-                                     data-bs-title="Prestige"
-                                     width="16"
-                                     height="16">
-                                <span>{{ prestige_points|intcomma }}</span>
-                            </div>
+                        <div class="col-auto">
+                            <span class="fs-5">NG Exile</span>
+                        </div>
+                        <div class="col-auto">
+                            <span class="badge text-bg-secondary">s03</span>
+                        </div>
+                        <div class="col-auto">
+                            <img src="{{ PATH_IMAGES }}interface/credits.gif"
+                                 class="res"
+                                 data-bs-toggle="tooltip"
+                                 data-bs-title="Crédits"
+                                 width="16"
+                                 height="16">
+                            <span class="{% if credits <= 0 %}text-danger{% endif %}">{{ credits|intcomma }}</span>
+                        </div>
+                        <div class="col-auto">
+                            <img src="{{ PATH_IMAGES }}interface/prestige.gif"
+                                 class="res"
+                                 data-bs-toggle="tooltip"
+                                 data-bs-title="Prestige"
+                                 width="16"
+                                 height="16">
+                            <span>{{ prestige_points|intcomma }}</span>
                         </div>
                     </div>
                 </div>

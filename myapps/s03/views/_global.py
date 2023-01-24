@@ -79,7 +79,7 @@ class GlobalView(ExileMixin, View):
                 return ""
 
     def IsPlayerAccount(self):
-        return self.request.session.get(sPrivilege) > -50 and self.request.session.get(sPrivilege) < 50
+        return True
 
     def IsImpersonating(self):
         return self.request.user.is_impersonate
@@ -582,18 +582,11 @@ class GlobalView(ExileMixin, View):
                 self.request.COOKIES["username"] = self.oPlayerInfo["username"]
         '''
         
-        if self.IsPlayerAccount():
-            # Redirect to locked page
-            if self.oPlayerInfo["privilege"] == -1: return HttpResponseRedirect("/s03/locked/")
-    
-            # Redirect to holidays page
-            if self.oPlayerInfo["privilege"] == -2: return HttpResponseRedirect("/s03/holidays/")
-    
-            # Redirect to wait page
-            if self.oPlayerInfo["privilege"] == -3: return HttpResponseRedirect("/s03/wait/")
-    
-            # Redirect to game-over page
-            if self.oPlayerInfo["credits_bankruptcy"] <= 0: return HttpResponseRedirect("/s03/game-over/")
+        if self.oPlayerInfo["privilege"] == -1: return HttpResponseRedirect("/s03/locked/")
+        if self.oPlayerInfo["privilege"] == -2: return HttpResponseRedirect("/s03/holidays/")
+        if self.oPlayerInfo["privilege"] == -3: return HttpResponseRedirect("/s03/wait/")
+        
+        if self.oPlayerInfo["credits_bankruptcy"] <= 0: return HttpResponseRedirect("/s03/game-over/")
 
         self.AllianceId = self.oPlayerInfo["alliance_id"]
         self.AllianceRank = self.oPlayerInfo["alliance_rank"]
@@ -658,14 +651,7 @@ class GlobalView(ExileMixin, View):
     
         # if player owns no planets then the game is over
         if oRs == None:
-            if self.IsPlayerAccount():
-                return HttpResponseRedirect("/s03/game-over/")
-            else:
-                self.CurrentPlanet = 0
-                self.CurrentGalaxyId = 0
-                self.CurrentSectorId = 0
-    
-                return
+            return HttpResponseRedirect("/s03/game-over/")
     
         # assign planet id
         self.CurrentPlanet = oRs[0]

@@ -118,7 +118,7 @@ class View(GlobalView):
         typ = 1
 
         nation = self.request.POST.get("nation_name", "")
-        oRs = oConnExecute("SELECT id FROM users WHERE (privilege=-2 OR privilege=0) AND upper(login) = upper(" + dosql(nation) + ")")
+        oRs = oConnExecute("SELECT id FROM users WHERE (privilege=-2 OR privilege=0) AND upper(username) = upper(" + dosql(nation) + ")")
         if oRs == None:
             self.intell_error = self.e_player_not_exists
             return
