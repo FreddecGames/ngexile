@@ -1,4 +1,6 @@
-from .base import *
+# -*- coding: utf-8 -*-
+
+from myapps.s03.views._global import *
 
 class View(GlobalView):
 
@@ -7,7 +9,7 @@ class View(GlobalView):
         response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
 
-        self.selectedMenu = "fleets"
+        self.selected_menu = "fleets"
 
         self.e_no_error = 0
         self.e_bad_destination = 1
@@ -18,7 +20,7 @@ class View(GlobalView):
         fleetid = request.GET.get("id", "")
 
         if fleetid == None or fleetid == "":
-            return HttpResponseRedirect("/s03/empire-fleets/")
+            return HttpResponseRedirect("/s03/fleets/")
 
         fleetid = int(fleetid)
 
@@ -30,7 +32,7 @@ class View(GlobalView):
     # display fleet info
     def DisplayFleet(self, fleetid):
 
-        content = GetTemplate(self.request, "fleet-ships")
+        content = GetTemplate(self.request, "s03/fleet-ships")
 
         # retrieve fleet name, size, position, destination
         query = "SELECT id, name, attackonsight, engaged, size, signature, speed, remaining_time, commanderid, commandername," + \
@@ -42,11 +44,11 @@ class View(GlobalView):
 
         # if fleet doesn't exist, redirect to the list of fleets
         if oRs == None:
-            return HttpResponseRedirect("/s03/empire-fleets/")
+            return HttpResponseRedirect("/s03/fleets/")
 
         # if fleet is moving or engaged, go back to the fleets
         if oRs[7] or oRs[3]:
-            return HttpResponseRedirect("/s03/fleet-view/?id=" + str(fleetid))
+            return HttpResponseRedirect("/s03/fleet/?id=" + str(fleetid))
 
         content.AssignValue("fleetid", fleetid)
         content.AssignValue("fleetname", oRs[1])
@@ -127,9 +129,9 @@ class View(GlobalView):
 
             if oRs == None:
                 if self.fleet_planet > 0:
-                    return HttpResponseRedirect("/s03/planet-orbit/?planet=" + str(self.fleet_planet))
+                    return HttpResponseRedirect("/s03/orbit/?planet=" + str(self.fleet_planet))
                 else:
-                    return HttpResponseRedirect("/s03/empire-fleets/")
+                    return HttpResponseRedirect("/s03/fleets/")
 
     def ExecuteOrder(self, fleetid):
         if ToInt(self.request.POST.get("transfer_ships"), 0) == 1:

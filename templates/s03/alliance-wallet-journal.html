@@ -1,0 +1,86 @@
+{% extends 's03/alliance-wallet.html' %}
+{% load humanize %}
+{% block page %}
+    <table class="default" width="100%">
+        <tr>
+            <td colspan=7>
+                <form action="?" method=post>
+                    {% csrf_token %}
+                    <div style="float:left">
+                        <input type="checkbox"
+                               class="checkbox"
+                               id="gifts"
+                               name="gifts"
+                               value="1"
+                               {% if gifts_checked %} checked{% endif %}>
+                        <label for=gifts>Financements et dons</label>
+                        &nbsp;
+                        <input type="checkbox"
+                               class="checkbox"
+                               id="settax"
+                               name="settax"
+                               value="1"
+                               {% if settax_checked %} checked{% endif %}>
+                        <label for=settax>Modifications de taxe</label>
+                        &nbsp;
+                        <input type="checkbox"
+                               class="checkbox"
+                               id="taxes"
+                               name="taxes"
+                               value="1"
+                               {% if taxes_checked %} checked{% endif %}>
+                        <label for=taxes>Taxes collectées</label>
+                        &nbsp;
+                        <input type="checkbox"
+                               class="checkbox"
+                               id="kicksbreaks"
+                               name="kicksbreaks"
+                               value="1"
+                               {% if kicksbreaks_checked %} checked{% endif %}>
+                        <label for=kicksbreaks>Exclusions et Ruptures de pacte</label>
+                    </div>
+                    <div align=right>
+                        <input type=submit name=refresh value="Actualiser">
+                    </div>
+                </form>
+            </td>
+        </tr>
+        <tr class="header">
+            <td>Date</td>
+            <td>Type</td>
+            <td>Source</td>
+            <td>Destinataire</td>
+            <td>Crédit</td>
+            <td>Débit</td>
+            <td>Description</td>
+        </tr>
+        {% for entry in entries %}
+            <tr class="{% if entry.gift %}gift{% endif %}{% if entry.taxchanged %}taxchanged{% endif %}{% if entry.member_left %}memberleft{% endif %}item">
+                <td>{{ entry.date }}</td>
+                <td nowrap>
+                    {% if entry.gift %}Don{% endif %}
+                    {% if entry.tax %}Taxe{% endif %}
+                    {% if entry.member_left %}Départ du membre{% endif %}
+                    {% if entry.member_kicked %}Exclusion du membre{% endif %}
+                    {% if entry.money_request %}Financement{% endif %}
+                    {% if entry.taxchanged %}Taxe changée{% endif %}
+                    {% if entry.nap_broken %}PNA rompu{% endif %}
+                    {% if entry.war_bill %}Guerre{% endif %}
+                    {% if entry.tribute %}Tribut{% endif %}
+                </td>
+                <td nowrap>{{ entry.source }}</td>
+                <td nowrap>{{ entry.destination }}</td>
+                <td align=right nowrap>{{ entry.income|intcomma }}</td>
+                <td align=right nowrap>{{ entry.outcome|intcomma }}</td>
+                <td>
+                    {% if entry.taxchanged %}Nouvelle taxe:{% endif %}
+                    {{ entry.description }}
+                </td>
+            </tr>
+        {% empty %}
+            <tr>
+                <td colspan=7 align=center>Aucun mouvement effectué récemment</td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock %}

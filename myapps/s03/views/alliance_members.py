@@ -1,4 +1,6 @@
-from .base import *
+# -*- coding: utf-8 -*-
+
+from myapps.s03.views._global import *
 
 class View(GlobalView):
 
@@ -7,10 +9,10 @@ class View(GlobalView):
         response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
 
-        self.selectedMenu = "alliance.members"
+        self.selected_menu = "alliance.members"
 
-        if self.AllianceId == None: return HttpResponseRedirect("/s03/alliance-view/")
-        if not self.oAllianceRights["leader"] and not self.oAllianceRights["can_see_members_info"]: return HttpResponseRedirect("/s03/alliance-view/")
+        if self.AllianceId == None: return HttpResponseRedirect("/s03/alliance/")
+        if not self.oAllianceRights["leader"] and not self.oAllianceRights["can_see_members_info"]: return HttpResponseRedirect("/s03/alliance/")
 
         self.invitation_success = ""
 
@@ -259,7 +261,7 @@ class View(GlobalView):
     #
     def displayPage(self, cat):
 
-        content = GetTemplate(self.request, "alliance-members")
+        content = GetTemplate(self.request, "s03/alliance-members")
 
         content.AssignValue("cat", cat)
 
@@ -290,4 +292,4 @@ class View(GlobalView):
             oConnDoQuery(query)
 
         # if leader demotes himself
-        if ToInt(self.request.POST.get("player" + str(self.UserId)), 100) > 0: return HttpResponseRedirect("/s03/alliance-view/")
+        if ToInt(self.request.POST.get("player" + str(self.UserId)), 100) > 0: return HttpResponseRedirect("/s03/alliance/")

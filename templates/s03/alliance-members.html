@@ -1,141 +1,271 @@
 {% extends "s03/layout.html" %}
 {% load humanize %}
 {% block content %}
-    <div class="nav nav-tabs mb-3">
-        <div class="nav-item">
-            <a href="/s03/alliance-view/" class="nav-link text-nowrap">Vue d'ensemble</a>
-        </div>
-        {% if show_management %}
-            <div class="nav-item">
-                <a href="/s03/alliance-manage/" class="nav-link">Gestion</a>
-            </div>
-        {% endif %}
-        {% if show_management %}
-            <div class="nav-item">
-                <a href="/s03/alliance-ranks/" class="nav-link">Grades</a>
-            </div>
-        {% endif %}
-        {% if show_members %}
-            <div class="nav-item">
-                <a href="/s03/alliance-members/" class="nav-link active">Membres</a>
-            </div>
-        {% endif %}
-        {% if show_members %}
-            <div class="nav-item">
-                <a href="/s03/alliance-recruit/" class="nav-link">Recrutement</a>
-            </div>
-        {% endif %}
-        <div class="nav-item">
-            <a href="/s03/alliance-wallet/" class="nav-link">Portefeuille</a>
-        </div>
-        <div class="nav-item">
-            <a href="/s03/alliance-wars/" class="nav-link">Guerres</a>
-        </div>
-        {% if show_reports %}
-            <div class="nav-item">
-                <a href="/s03/alliance-reports/" class="nav-link">Rapports</a>
-            </div>
-        {% endif %}
-        <div class="nav-item">
-            <a href="/s03/alliance-invitations/" class="nav-link">Invitations</a>
-        </div>
-    </div>
-    <script>
-    function showKick(name) {
-    
-        $("kick" + name).style.display = "none";
-        $("kickConfirm" + name).style.display = "block";
-        $("kickConfirm" + name).style.visibility = "visible";
-        return false;
-    }
+    {% if members %}
+        <script>
+{% if recruit %}
+function showKick(name)
+{
+	$("kick"+name).style.display = "none";
+	$("kickConfirm"+name).style.display = "block";
+	$("kickConfirm"+name).style.visibility = "visible";
+	return false;
+}
+{% endif %}
 
-    var ranks = new Array();
-    {% for rank in ranks %}    ranks[{{rank.rank_id}}] = '{{rank.rank_label}}';{% endfor %}
+var ranks = new Array();
+{% for rank in ranks %}ranks[{{rank.rank_id}}] = '{{rank.rank_label}}';{% endfor %}
 
-    function displayStatus(id, rank, manage) {
-    
-        var s = '';
-        if (!manage) {
-        
-            s = '<input type="text" value="' + ranks[rank] + '" disabled class="opacity-50" />';
-        }
-        else {
-        
-            s = '<select name="player' + id + '" class="w-100">';
-            for (var x in ranks) {
-                s += '<option value="' + x + '"' + (rank == x ? ' selected' : '') + '>' + ranks[x] + '</option>';
-            }
-            s += '</select>';
-        }
+function showSubmit(){ $("SubmitChanges").className = "item"; }
 
-        document.write(s);
-    }
-    </script>
-    <div class="scroll-content pe-1" style="height:calc(100% - 44px);">
-    <form action="?cat={{ cat }}" method="post" class="card">
-        <div class="card-header">
-            <div class="row gx-3">
-                <div class="col">
-                    <span>Membre</span>
-                </div>
-                <div class="col-3">
-                    <span class="text-normal">Score</span>
-                </div>
-                <div class="col-auto" style="width:75px;">
-                    <span class="text-normal">Planètes</span>
-                </div>
-                <div class="col-3">
-                    <span class="text-normal">Grade</span>
-                </div>
-                <div class="col-auto" style="width:75px;"></div>
-            </div>
-        </div>
-        <div class="card-body">
-            <div class="row g-1 flex-column">
-                {% for player in players %}
-                    <div class="col-12">
-                        <div class="row gx-3 align-items-center">
-                            <div class="col">
-                                <a href="/s03/profile-view/?name={{ player.name }}">{{ player.name }}</a>
-                                <small class="ms-2 text-normal">
-                                    {% if player.orientation1 %}Marchand{% endif %}
-                                    {% if player.orientation2 %}Militaire{% endif %}
-                                    {% if player.orientation3 %}Scientifique{% endif %}
-                                </small>
-                            </div>
-                            <div class="col-3">
-                                {% if player.scoreshown %}
-                                    {{ player.score|intcomma }} <small class="ms-2 {% if player.score_delta > 0 %}text-success{% else %}text-danger{% endif %}">
-                                    {% if player.score_delta > 0 %}+{% endif %}
-                                {{ player.score_delta|intcomma }}</small>
+function displayStatus(id,rank,manage,kick){
+	var s = '';
+
+	if(!manage)
+		s = ranks[rank];
+	else
+	{
+		s = '<select name="player'+id+'" onchange="showSubmit()">';
+		for(var x in ranks){
+			s += '<option value="'+x+'"'+(rank==x?' selected':'')+'>'+ranks[x]+'</option>';
+		}
+		s += '</select>';
+	}
+
+	document.write(s);
+}
+        </script>
+    {% endif %}
+    <table width="850" cellpadding="0" cellspacing="0">
+        <tr>
+            <td align=center>
+                {% if nav %}
+                    <div>
+                        <ul class="htabs">
+                            {% if cat1 %}
+                                <li{% if cat1_selected %} class="active"{% endif %}>
+                                    <a href="?cat=1">Membres</a>
+                                </li>
                             {% endif %}
-                            {% if player.score_na %}<span class="text-normal">Non publié</span>{% endif %}
-                        </div>
-                        <div class="col-auto" style="width:75px;">{{ player.stat_colonies|intcomma }}</div>
-                        <div class="col-3">
-                            <script>displayStatus({{player.id}}, {{player.rank}}, 0{% if player.manage %}1{% endif %}, 0{% if player.kick %}1{% endif %});</script>
-                        </div>
-                        <div class="col-auto text-end" style="width:75px;">
-                            {% if player.kick %}
-                                <span id="kick{{ player.id }}" onclick="return showKick({{ player.id }});"><a href="?#">Exclure</a></span>
-                                <span id="kickConfirm{{ player.id }}" class="hidden"><a href="?cat={{ cat }}&a=kick&name={{ player.name }}">Confirmer</a></span>
+                            {% if cat2 %}
+                                <li{% if cat2_selected %} class="active"{% endif %}>
+                                    <a href="?cat=2">Invitations</a>
+                                </li>
                             {% endif %}
-                            {% if player.leaving_time %}
-                                <script>putcountdown1({{player.leaving_time}}, "Terminé", "?cat={{cat}}");</script>
-                            {% endif %}
-                        </div>
+                        </ul>
                     </div>
-                </div>
-                <div class="col-12">
-                    <hr class="my-1">
-                </div>
-            {% endfor %}
-            <div class="col-12 text-center">
-                <input type="submit" name="submit" value="Valider changements">
+                {% endif %}
+                <div>
+                    {% if members %}
+                        <form action="?cat={{ cat }}" method="post">
+                            {% csrf_token %}
+                            <table class="default" width="100%">
+                                <tr class="title">
+                                    <td colspan="7">Nations ralliées</td>
+                                </tr>
+                                <tr class="header">
+                                    <td>
+                                        <a href="?cat={{ cat }}&col=1{% if r1 %}&r=1{% endif %}">Nation</a>
+                                    </td>
+                                    <td>
+                                        <a href="?cat={{ cat }}&col=2{% if r2 %}&r=2{% endif %}">Développement</a>
+                                    </td>
+                                    <td>
+                                        <a href="?cat={{ cat }}&col=3{% if r3 %}&r=3{% endif %}">Colonies</a>
+                                    </td>
+                                    <td>
+                                        <a href="?cat={{ cat }}&col=4{% if r4 %}&r=4{% endif %}">Crédits</a>
+                                    </td>
+                                    <td>
+                                        <a href="?cat={{ cat }}&col=5{% if r5 %}&r=5{% endif %}">Dernière activité</a>
+                                    </td>
+                                    <td>
+                                        <a href="?cat={{ cat }}&col=6{% if r6 %}&r=6{% endif %}">Date de ralliement</a>
+                                    </td>
+                                    <td>
+                                        <a href="?cat={{ cat }}&col=7{% if r7 %}&r=7{% endif %}">Statut</a>
+                                    </td>
+                                </tr>
+                                {% for player in players %}
+                                    <tr>
+                                        <td>
+                                            {{ player.place }}. <a href="/s03/nation/?name={{ player.name }}"
+    title="Afficher les infos sur {{ player.name }}">{{ player.name }}</a>
+                                            <br/>
+                                            <span class="grey">
+                                                {% if player.orientation1 %}Marchand{% endif %}
+                                                {% if player.orientation2 %}Militaire{% endif %}
+                                                {% if player.orientation3 %}Scientifique{% endif %}
+                                                {% if player.orientation4 %}Seigneur de guerre{% endif %}
+                                            </span>
+                                        </td>
+                                        <td align="right">
+                                            {% if player.scoreshown %}
+                                                {{ player.score|intcomma }}
+                                                <br/>
+                                                <span {% if player.score_plus %} class="plus"{% endif %}
+                                                      {% if player.score_minus %} class="minus"{% endif %}>
+                                                    {% if player.score_plus %}+{% endif %}
+                                                {{ player.score_delta|intcomma }}</span>
+                                            {% endif %}
+                                            {% if player.score_na %}<span class="grey">Non publié</span>{% endif %}
+                                        </td>
+                                        <td align="right">{{ player.stat_colonies }}</td>
+                                        <td align="right">
+                                            <img src="{{ PATH_IMAGES }}/interface/credits.gif"
+                                                 title="Crédits"
+                                                 class="res"
+                                                 width="16"
+                                                 height="16">
+                                            {% if player.lowcredits %}<span class="low">{% endif %}
+                                            {{ player.credits|intcomma }}
+                                            {% if player.lowcredits %}</span>{% endif %}
+                                        </td>
+                                        <td align="right">
+                                            {% if player.banned %}<span class="banned">Compte suspendu</span>{% endif %}
+                                            {% if player.onholidays %}<span class="onholidays">En vacances</span>{% endif %}
+                                            {% if player.online %}<span class="recent">En ligne</span>{% endif %}
+                                            {% if player.less1h %}<span class="recent">&lt; 1 heure</span>{% endif %}
+                                            {% if player.hours %}<span class="recent">{{ player.hours_delay }} heure(s)</span>{% endif %}
+                                            {% if player.days %}<span class="fewdays">{{ player.days_delay }} jour(s)</span>{% endif %}
+                                            {% if player.1weekplus %}<span class="fewweeks">&gt;1 semaine</span>{% endif %}
+                                            {% if player.2weeksplus %}<span class="fewweeks">&gt;2 semaines</span>{% endif %}
+                                        </td>
+                                        <td>{{ player.joined }}</td>
+                                        <td id="statusref{{ player.id }}">
+                                            <script>displayStatus({{player.id}},{{player.rank}},0{% if player.manage %}1{% endif %},0{% if player.kick %}1{% endif %});</script>
+                                            {% if player.kick %}
+                                                - <span id="kick{{ player.id }}" onclick="return showKick({{ player.id }});"><a href="?#">Exclure</a></span><span id="kickConfirm{{ player.id }}" class="hidden">Coût:
+                                                <img src="{{ PATH_IMAGES }}/interface/credits.gif"
+                                                     title="Crédits"
+                                                     class="res"
+                                                     width="16"
+                                                     height="16">
+                                            {{ player.kick_price|intcomma }}&nbsp;<a href="?cat={{ cat }}&a=kick&name={{ player.name }}">Confirmer</a></span>
+                                        {% endif %}
+                                        {% if player.leaving %}
+                                            &nbsp;<span class="warning">Quitte: <script>putcountdown1({{player.leaving_time}}, "Terminé", "?cat={{cat}}");</script></span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            <tr>
+                                <td class="justhidden">
+                                </td>
+                                <td align="right">
+                                    {% if score %}
+                                        {{ total_score|intcomma }}
+                                        <br/>
+                                        <span {% if total_plus %} class="plus"{% endif %}
+                                              {% if total_minus %} class="minus"{% endif %}>
+                                            {% if total_plus %}+{% endif %}
+                                        {{ total_score_delta|intcomma }}</span>
+                                    {% endif %}
+                                    {% if score_na %}<span class="grey">Non publié</span>{% endif %}
+                                </td>
+                                <td align="right">
+                                    {{ total_colonies|intcomma }}
+                                </td>
+                                <td align="right">
+                                    <img src="{{ PATH_IMAGES }}/interface/credits.gif"
+                                         title="Crédits"
+                                         class="res"
+                                         width="16"
+                                         height="16">
+                                    {{ total_credits|intcomma }}
+                                </td>
+                                <td colspan="3" class="justhidden">
+                                </td>
+                            </tr>
+                            <tr id="SubmitChanges" class="hidden">
+                                <td colspan="6" align="center">
+                                    <input type="submit" name="submit" value="Valider changements">
+                                </td>
+                            </tr>
+                        </table>
+                    </form>
+                {% endif %}
+                {% if invitations %}
+                    <form action="?cat={{ cat }}" method="post">
+                        {% csrf_token %}
+                        <table class="default" width="100%">
+                            <tr class=title>
+                                <td>
+                                    Inviter une nation à rallier notre alliance
+                                </td>
+                            </tr>
+                            <tr class=item align=center>
+                                <td>
+                                    Nation
+                                    <input type="text" name="name" value="{{ player }}">
+                                    <br/>
+                                    <br/>
+                                    <input type="submit" name="submit" value="Rallier">
+                                </td>
+                            </tr>
+                            {% if message %}
+                                <tr>
+                                    <td class="error">
+                                        {% if ok %}Nation invitée{% endif %}
+                                        {% if norights %}Vous n'êtes pas en droit de rallier de nouvelles nations{% endif %}
+                                        {% if unknown %}Aucune nation répondant à ce nom n'a été trouvée{% endif %}
+                                        {% if already_member %}Cette nation est déjà membre de notre alliance !{% endif %}
+                                        {% if already_invited %}Cette nation a déjà été invitée récemment{% endif %}
+                                        {% if impossible %}Cette nation ne peut être invitée{% endif %}
+                                    </td>
+                                </tr>
+                            {% endif %}
+                        </table>
+                    </form>
+                    <br/>
+                    <table class="default" width="100%">
+                        <tr class="title">
+                            <td colspan=4>
+                                Invitations de ralliement en cours...
+                            </td>
+                        </tr>
+                        <tr class="header">
+                            <td>
+                                Nation
+                            </td>
+                            <td>
+                                Date d'invitation
+                            </td>
+                            <td>
+                                Invité par
+                            </td>
+                            <td>
+                                Réponse
+                            </td>
+                        </tr>
+                        {% for invitation in invits %}
+                            <tr class="smallitem">
+                                <td>
+                                    {{ invitation.name }}
+                                </td>
+                                <td>
+                                    {{ invitation.date }}
+                                </td>
+                                <td>
+                                    {{ invitation.recruiter }}&nbsp;
+                                </td>
+                                <td>
+                                    {% if invitation.waiting %}En attente{% endif %}
+                                    {% if invitation.declined %}Refusée{% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        {% if noinvitations %}
+                            <tr>
+                                <td colspan=4 align=center>
+                                    Aucune invitation
+                                </td>
+                            </tr>
+                        {% endif %}
+                    </table>
+                {% endif %}
             </div>
-        </div>
-    </div>
-    {% csrf_token %}
-</form>
-    </div>
-{% endblock content %}
+        </td>
+    </tr>
+</table>
+{% endblock %}

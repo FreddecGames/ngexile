@@ -1,0 +1,99 @@
+{% extends "s03/layout.html" %}
+{% load humanize %}
+{% block content %}
+    {% if invasion_report %}
+        <table class="default" width="60%">
+            <tr class="title">
+                <td colspan=4 align=center>
+                    Rapport d'invasion de <script>putplanet("{{planetid}}","{{planetname}}","{{g}}","{{s}}","{{p}}",{{relation}});</script> par {{ fleet_owner }}
+                </td>
+            </tr>
+            {% if report %}
+                <tr class="category">
+                    <td>Troupes</td>
+                    <td>
+                        Effectif
+                        <td>Pertes</td>
+                        <td>Après Combat</td>
+                    </tr>
+                    {% if attacker %}
+                        <tr class="category {% if ally %}ally{% endif %}{% if enemy %}enemy{% endif %}">
+                            <td>{{ fleet_owner }}</td>
+                            <td>{{ soldiers_total }}</td>
+                            <td>{{ soldiers_lost }}</td>
+                            <td>{{ soldiers_alive }}</td>
+                        </tr>
+                    {% endif %}
+                    <tr class="item">
+                        <td>
+                            <span class="dot">&middot;</span>Soldats
+                        </td>
+                        <td>{{ soldiers_total }}</td>
+                        <td>{{ soldiers_lost }}</td>
+                        <td>{{ soldiers_alive }}</td>
+                    </tr>
+                    {% if defender %}
+                        <tr class="category {% if ally %}ally{% endif %}{% if enemy %}enemy{% endif %}">
+                            <td>{{ planet_owner }}</td>
+                            <td>{{ def_total }}</td>
+                            <td>{{ def_losts }}</td>
+                            <td>{{ def_alive }}</td>
+                        </tr>
+                    {% endif %}
+                    <tr class="item">
+                        <td>
+                            <span class="dot">&middot;</span>Soldats
+                        </td>
+                        <td>{{ def_soldiers_total }}</td>
+                        <td>{{ def_soldiers_lost }}</td>
+                        <td>{{ def_soldiers_alive }}</td>
+                    </tr>
+                    {% if workers %}
+                        <tr class="smallitem">
+                            <td>
+                                <span class="dot">&middot;</span>Travailleurs
+                            </td>
+                            <td>{{ def_workers_total }}</td>
+                            <td>{{ def_workers_lost }}</td>
+                            <td>{{ def_workers_alive }}</td>
+                        </tr>
+                    {% endif %}
+                    {% if scientists %}
+                        <tr class="smallitem">
+                            <td>
+                                <span class="dot">&middot;</span>Scientifiques
+                            </td>
+                            <td>{{ def_scientists_total }}</td>
+                            <td>
+                                {{ def_scientists_lost }}
+                            </td>
+                            <td>
+                                {{ def_scientists_alive }}
+                            </td>
+                        </tr>
+                    {% endif %}
+                {% endif %}
+                {% if not_succeeded %}
+                    <tr>
+                        <td colspan=4 align=center>
+                            <script>putplanet("{{planetid}}","{{planetname}}","{{g}}","{{s}}","{{p}}",{{relation}});</script> a été défendue avec succès.
+                        </td>
+                    </tr>
+                {% endif %}
+                {% if succeeded %}
+                    <tr>
+                        <td colspan=4 align=center>
+                            La nation <a href="/s03/nation/?name={{ fleet_owner }}">{{ fleet_owner }}</a> s'est emparée de <script>putplanet("{{planetid}}","{{planetname}}","{{g}}","{{s}}","{{p}}",{{relation}});</script>.
+                        </td>
+                    </tr>
+                {% endif %}
+                {% if justdone %}
+                    <tr>
+                        <td colspan=4 align=center>
+                            <a href="/s03/fleet/?id={{ fleetid }}">Continuer</a>
+                        </td>
+                    </tr>
+                {% endif %}
+            </table>
+        {% endif %}
+    {% endblock %}

@@ -1,4 +1,8 @@
-from .base import *
+# -*- coding: utf-8 -*-
+
+from myapps.s03.views._global import *
+
+from myapps.s03.lib.accounts import *
 
 class View(GlobalView):
 
@@ -7,7 +11,7 @@ class View(GlobalView):
         response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
 
-        self.selectedMenu = "fleets"
+        self.selected_menu = "fleets"
 
         self.fleet_split_error = 0
         self.e_no_error = 0
@@ -20,7 +24,7 @@ class View(GlobalView):
         fleetid = ToInt(request.GET.get("id"), 0)
 
         if fleetid == 0:
-            return HttpResponseRedirect("/s03/empire-fleets/")
+            return HttpResponseRedirect("/s03/fleets/")
 
         response = self.ExecuteOrder(fleetid)
         if response: return response
@@ -30,7 +34,10 @@ class View(GlobalView):
     # display fleet info
     def DisplayExchangeForm(self, fleetid):
 
-        content = GetTemplate(self.request, "fleet-split")
+        if self.request.session.get(sPrivilege) > 100:
+            content = GetTemplate(self.request, "s03/fleet-split")
+        else:
+            content = GetTemplate(self.request, "s03/fleet-split-old")
 
         # retrieve fleet name, size, position, destination
         query = "SELECT id, name, attackonsight, engaged, size, signature, speed, remaining_time, commanderid, commandername," + \
@@ -44,11 +51,11 @@ class View(GlobalView):
 
         # if fleet doesn't exist, redirect to the list of fleets
         if oRs == None:
-            return HttpResponseRedirect("/s03/empire-fleets/")
+            return HttpResponseRedirect("/s03/fleets/")
 
         # if fleet is moving or engaged, go back to the fleets
         if oRs[24] != 0:
-            return HttpResponseRedirect("/s03/fleet-view/?id=" + str(fleetid))
+            return HttpResponseRedirect("/s03/fleet/?id=" + str(fleetid))
 
         content.AssignValue("fleetid", fleetid)
         content.AssignValue("fleetname", oRs[1])
@@ -251,7 +258,7 @@ class View(GlobalView):
         query = "DELETE FROM fleets WHERE ownerid=" + str(self.UserId) + " AND size=0"
         oConnDoQuery(query)
 
-        return HttpResponseRedirect("/s03/fleet-view/?id="+str(newfleetid))
+        return HttpResponseRedirect("/s03/fleet/?id="+str(newfleetid))
 
     def ExecuteOrder(self, fleetid):
         if self.request.POST.get("split") == "1":

@@ -1,54 +1,87 @@
 {% extends "s03/layout.html" %}
 {% load humanize %}
 {% block content %}
-    <div class="nav nav-tabs mb-3">
-        <div class="nav-item">
-            <a href="/s03/ranking-players/" class="nav-link">Joueurs</a>
-        </div>
-        <div class="nav-item">
-            <a href="/s03/ranking-alliances/" class="nav-link active">Alliances</a>
-        </div>
-    </div>
-        <div class="scroll-content pe-1" style="height:calc(100% - 44px);">
-
-    <div class="card">
-        <div class="list-group list-group-flush">
-            {% for alliance in alliances %}
-                <div class="list-group-item {% if alliance.player_alliance %}bg-success{% endif %}">
-                    <div class="row gx-3 align-items-center">
-                        <div class="col-auto">
-                            <span>{{ alliance.place }}.</span>
-                        </div>
-                        <div class="col">
-                            <a href="/s03/alliance-view/?tag={{ alliance.tag }}">[{{ alliance.tag }}] {{ alliance.name }}</a>
-                        </div>
-                        <div class="col-3 text-end">
-                            <div class="row g-1">
-                                <div class="col-12">
-                                    {{ alliance.members }} <small class="text-normal">membres</small>
-                                </div>
-                                <div class="col-12">
-                                    {{ alliance.planets }} <small class="text-normal">planètes</small>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-3 text-end">
-                            <div class="row g-1">
-                                <div class="col-12">{{ alliance.score|intcomma }}</div>
-                                <div class="col-12 {% if alliance.score_delta > 0 %}text-success{% else %}text-danger{% endif %}">
-                                    {% if alliance.score_delta > 0 %}<span>+</span>{% endif %}
-                                    {{ alliance.score_delta|intcomma }}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            {% empty %}
-                <div class="list-group-item">
-                    <span class="text-normal">Aucune alliance</span>
-                </div>
-            {% endfor %}
-        </div>
-    </div>
-</div>
-{% endblock content %}
+    <table class="default" width="600">
+        <tr class="header">
+            <td>
+                <a href="?col=7{% if r7 %}&r=7{% endif %}{% if search_params %}&a={{ param_a }}{% endif %}">Tag</a>&nbsp;<a href="?col=1{% if r1 %}&r=1{% endif %}{% if search_params %}&a={{ param_a }}{% endif %}">Alliance</a>
+            </td>
+            {% if hide %}
+                <td>
+                    <a href="?col=2{% if r2 %}&r=2{% endif %}{% if search_params %}&a={{ param_a }}{% endif %}">Score</a>
+                </td>
+                <td>
+                    <a href="?col=5{% if r5 %}&r=5{% endif %}{% if search_params %}&a={{ param_a }}{% endif %}">Moyenne</a>
+                </td>
+            {% endif %}
+            <td>
+                <a href="?col=3{% if r3 %}&r=3{% endif %}{% if search_params %}&a={{ param_a }}{% endif %}">Membres</a>
+            </td>
+            <td>
+                <a href="?col=4{% if r4 %}&r=4{% endif %}{% if search_params %}&a={{ param_a }}{% endif %}">Colonies</a>
+            </td>
+            <td>
+                <a href="?col=6{% if r6 %}&r=6{% endif %}{% if search_params %}&a={{ param_a }}{% endif %}">Date de création</a>
+            </td>
+        </tr>
+        {% if nav %}
+            <tr class="nav">
+                <td colspan=2 align=left>
+                    Page {{ page_display }}, Messages {{ min }}-{{ max }}. Aller à
+                    {% for p in ps %}
+                        &nbsp;
+                        {% if p.link %}<a href="?a=sent&start={{ p.page_link }}">{% endif %}
+                        {% if p.selected %}<span class="selected">{% endif %}
+                        {{ p.page_id }}
+                        {% if p.selected %}</span>{% endif %}
+                        {% if p.link %}</a>{% endif %}
+                    {% endfor %}
+                    .
+                </td>
+            </tr>
+        {% endif %}
+        {% for alliance in alliances %}
+            <tr {% if alliance.playeralliance %} class=ranking_alliance{% endif %}
+                {% if alliance.nap %} class=ranking_nap{% endif %}
+                {% if alliance.war %} class=ranking_war{% endif %}>
+                <td>
+                    {{ alliance.place }}. <a href="/s03/alliance/?tag={{ alliance.tag }}">[{{ alliance.tag }}] {{ alliance.name }}</a>
+                </td>
+                {% if alliance.hide %}
+                    <td align="right">
+                        {{ alliance.score|intcomma }}
+                        <br/>
+                        <span {% if alliance.plus %} class="plus"{% endif %}
+                              {% if alliance.minus %} class="minus"{% endif %}>
+                            {% if alliance.plus %}+{% endif %}
+                        {{ alliance.score_delta|intcomma }}</span>
+                    </td>
+                    <td align=right>{{ alliance.score_average|intcomma }}</td>
+                {% endif %}
+                <td align=right>{{ alliance.members }} / {{ alliance.max_members }}</td>
+                <td align=right>{{ alliance.stat_colonies }}</td>
+                <td>{{ alliance.created }}</td>
+            </tr>
+        {% empty %}
+            <tr>
+                <td colspan=4 align=center>Aucune alliance trouvée.</td>
+            </tr>
+        {% endfor %}
+        {% if nav %}
+            <tr class="nav">
+                <td colspan=2 align=left>
+                    Page {{ page_display }}, Messages {{ min }}-{{ max }}. Aller à
+                    {% for p in ps %}
+                        &nbsp;
+                        {% if p.link %}<a href="?a=sent&start={{ p.page_link }}">{% endif %}
+                        {% if p.selected %}<span class="selected">{% endif %}
+                        {{ p.page_id }}
+                        {% if p.selected %}</span>{% endif %}
+                        {% if p.link %}</a>{% endif %}
+                    {% endfor %}
+                    .
+                </td>
+            </tr>
+        {% endif %}
+    </table>
+{% endblock %}

@@ -1,0 +1,241 @@
+{% extends "s03/layout.html" %}
+{% load humanize %}
+{% block content %}
+    {% include 's03/header-credits.html' %}
+    <div id=upkeep>
+        <table class=default width=600>
+            <tr class=header>
+                <td>Élément</td>
+                <td colspan=2>Coût</td>
+                {% if t %}<td>Multiplicateur</td>{% endif %}
+                <td>Coût estimé</td>
+            </tr>
+            <tr class=smallitem>
+                <td>
+                    <img src="{{ PATH_IMAGES }}/interface/upkeep_commander.gif"
+                         class="res"
+                         title="commandant"
+                         width="16"
+                         height="16">
+                    Commandants ({{ commanders_quantity|intcomma }})
+                </td>
+                <td colspan=2 align=right>
+                    <img src="{{ PATH_IMAGES }}/interface/credits.gif"
+                         class="res"
+                         title="Crédits"
+                         width="16"
+                         height="16">
+                    {{ commanders_salary|intcomma }}
+                </td>
+                {% if t %}
+                    <td align=right>
+                        <img src="{{ PATH_IMAGES }}/interface/credits.gif"
+                             class="res"
+                             title="Crédits"
+                             width="16"
+                             height="16">
+                        {{ commanders_cost|intcomma }}
+                    </td>
+                {% endif %}
+                <td align=right>
+                    <img src="{{ PATH_IMAGES }}/interface/credits.gif"
+                         class="res"
+                         title="Crédits"
+                         width="16"
+                         height="16">
+                    {{ commanders_estimated_cost|intcomma }}
+                </td>
+            </tr>
+            <tr class=smallitem>
+                <td>
+                    <img src="{{ PATH_IMAGES }}/interface/planet.gif"
+                         class="res"
+                         title="Colonie"
+                         width="16"
+                         height="16">
+                    Colonies ({{ planets_quantity|intcomma }})
+                </td>
+                <td colspan=2 align=right>
+                    <img src="{{ PATH_IMAGES }}/interface/credits.gif"
+                         class="res"
+                         title="Crédits"
+                         width="16"
+                         height="16">
+                    {{ planets_cost|intcomma }}
+                </td>
+                <td align=right>
+                    <img src="{{ PATH_IMAGES }}/interface/credits.gif"
+                         class="res"
+                         title="Crédits"
+                         width="16"
+                         height="16">
+                    {{ planets_estimated_cost|intcomma }}
+                </td>
+            </tr>
+            <tr class=clear>
+                <td colspan=4></td>
+            </tr>
+            <tr class=header>
+                <td>Élément</td>
+                <td>Effectif</td>
+                <td>Multiplicateur</td>
+                <td>Coût estimé</td>
+            </tr>
+            <tr class=smallitem>
+                <td>
+                    <img src="{{ PATH_IMAGES }}/interface/scientists.gif"
+                         class="res"
+                         title="Scientifiques"
+                         width="16"
+                         height="16">
+                    Scientifiques
+                </td>
+                <td align=right>{{ scientists_quantity|intcomma }}</td>
+                <td align=right>
+                    <img src="{{ PATH_IMAGES }}/interface/credits.gif"
+                         class="res"
+                         title="Crédits"
+                         width="16"
+                         height="16">
+                    {{ scientists_cost|intcomma }}
+                </td>
+                <td align=right>
+                    <img src="{{ PATH_IMAGES }}/interface/credits.gif"
+                         class="res"
+                         title="Crédits"
+                         width="16"
+                         height="16">
+                    {{ scientists_estimated_cost|intcomma }}
+                </td>
+            </tr>
+            <tr class=smallitem>
+                <td>
+                    <img src="{{ PATH_IMAGES }}/interface/soldiers.gif"
+                         class="res"
+                         title="Soldats"
+                         width="16"
+                         height="16">
+                    Soldats
+                </td>
+                <td align=right>{{ soldiers_quantity|intcomma }}</td>
+                <td align=right>
+                    <img src="{{ PATH_IMAGES }}/interface/credits.gif"
+                         class="res"
+                         title="Crédits"
+                         width="16"
+                         height="16">
+                    {{ soldiers_cost|intcomma }}
+                </td>
+                <td align=right>
+                    <img src="{{ PATH_IMAGES }}/interface/credits.gif"
+                         class="res"
+                         title="Crédits"
+                         width="16"
+                         height="16">
+                    {{ soldiers_estimated_cost|intcomma }}
+                </td>
+            </tr>
+            <tr class=clear>
+                <td colspan=4></td>
+            </tr>
+            <tr class=header>
+                <td>Élément</td>
+                <td>Coût</td>
+                <td>Multiplicateur</td>
+                <td>Coût estimé</td>
+            </tr>
+            <tr class=smallitem>
+                <td>
+                    <img src="{{ PATH_IMAGES }}/interface/fleets.gif"
+                         class="res"
+                         title="Vaisseaux"
+                         width="16"
+                         height="16">
+                    Vaisseaux
+                </td>
+                <td align=right>{{ ships_signature|intcomma }}</td>
+                <td align=right>
+                    <img src="{{ PATH_IMAGES }}/interface/credits.gif"
+                         class="res"
+                         title="Crédits"
+                         width="16"
+                         height="16">
+                    {{ ships_cost|intcomma }}
+                </td>
+                <td align=right>
+                    <img src="{{ PATH_IMAGES }}/interface/credits.gif"
+                         class="res"
+                         title="Crédits"
+                         width="16"
+                         height="16">
+                    {{ ships_estimated_cost|intcomma }}
+                </td>
+            </tr>
+            <tr class=smallitem>
+                <td>
+                    <img src="{{ PATH_IMAGES }}/interface/fleets.gif"
+                         class="res"
+                         title="Vaisseaux en position"
+                         width="16"
+                         height="16">
+                    Vaisseaux en position
+                </td>
+                <td align=right>{{ ships_in_position_signature|intcomma }}</td>
+                <td align=right>
+                    <img src="{{ PATH_IMAGES }}/interface/credits.gif"
+                         class="res"
+                         title="Crédits"
+                         width="16"
+                         height="16">
+                    {{ ships_in_position_cost|intcomma }}
+                </td>
+                <td align=right>
+                    <img src="{{ PATH_IMAGES }}/interface/credits.gif"
+                         class="res"
+                         title="Crédits"
+                         width="16"
+                         height="16">
+                    {{ ships_in_position_estimated_cost|intcomma }}
+                </td>
+            </tr>
+            <tr class=smallitem>
+                <td>
+                    <img src="{{ PATH_IMAGES }}/interface/fleets.gif"
+                         class="res"
+                         title="Vaisseaux posés"
+                         width="16"
+                         height="16">
+                    Vaisseaux posés
+                </td>
+                <td align=right>{{ ships_parked_signature|intcomma }}</td>
+                <td align=right>
+                    <img src="{{ PATH_IMAGES }}/interface/credits.gif"
+                         class="res"
+                         title="Crédits"
+                         width="16"
+                         height="16">
+                    {{ ships_parked_cost|intcomma }}
+                </td>
+                <td align=right>
+                    <img src="{{ PATH_IMAGES }}/interface/credits.gif"
+                         class="res"
+                         title="Crédits"
+                         width="16"
+                         height="16">
+                    {{ ships_parked_estimated_cost|intcomma }}
+                </td>
+            </tr>
+            <tr class=smallitem>
+                <td colspan=3></td>
+                <td align=right>
+                    <img src="{{ PATH_IMAGES }}/interface/credits.gif"
+                         class="res"
+                         title="Crédits"
+                         width="16"
+                         height="16">
+                    {{ total_estimation|intcomma }}
+                </td>
+            </tr>
+        </table>
+    </div>
+{% endblock %}

@@ -1,9 +1,8 @@
-{% load i18n %}
 {% load humanize %}
 <!doctype html>
-<html lang="en">
+<html>
     <head>
-        <title>[s03] NG Exile</title>
+        <title>[{{ server }}] NG Exile</title>
         <link rel="shortcut icon" href="/static/favicon.ico">
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -11,226 +10,70 @@
               rel="stylesheet"
               integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65"
               crossorigin="anonymous">
-        <link href="/static/s03/css/styles.css"
+        <link href="{{ PATH_IMAGES }}/styles/{{ skin }}/style.css?v=0"
               type="text/css"
               rel="stylesheet"
               media="all"/>
         <script type="text/javascript" src="/static/js/vendor-fontawesome.js"></script>
-        <script type="text/javascript" src="/static/s03/js/common.js"></script>
-        <script type="text/javascript" src="/static/s03/js/time.js"></script>
+        <script type="text/javascript" src='/static/scripts/lang.js?v=1'></script>
+        <script type="text/javascript" src='/static/scripts/common.js?v=1'></script>
+        <script type="text/javascript" src='/static/scripts/third-party/ajax1.js?v=1'></script>
+        <script type="text/javascript" src='/static/scripts/planet.js?v=1'></script>
+        <script type="text/javascript" src='/static/scripts/time.js?v=1'></script>
+        {% if scroll %}<script>function loaded(){scrollTo(0,{{scrolly }});}</script>{% endif %}
     </head>
-    <body>
+    <body{% if scroll %} onload="loaded()"{% endif %}>
         <div id="hint" onclick="donothide(event)">
-            <div id="hinttext" class="card card-body bg-dark"></div>
+            <div class="rtop">
+                <b class="r1"></b><b class="r2"></b><b class="r3"></b><b class="r4"></b>
+            </div>
+            <div id="hinttext"></div>
+            <div class="rbottom">
+                <b class="r4"></b><b class="r3"></b><b class="r2"></b><b class="r1"></b>
+            </div>
         </div>
-        <div id="super" class="root">
-            <div id="topbar">
-                <div class="flex-grow-1 row gx-3 align-items-center">
-                    <div class="col">
+        <script>
+var timers_enabled={{timers_enabled}};
+var startTime;
+        </script>
+        <div id="super">
+            <div id="top" class="d-flex align-items-center">
+                <div class="col-auto" style="width:256px;">
+                    <div class="px-3">
                         <div class="row gx-2 align-items-center">
                             <div class="col-auto">
                                 <img src="/static/img/logo.png" width="32px" class="rounded" />
                             </div>
-                            <div class="col-auto d-none d-md-block">
+                            <div class="col-auto">
                                 <span class="fs-6">NG Exile</span>
                             </div>
-                            <div class="col-auto d-none d-md-block">
+                            <div class="col-auto">
                                 <span class="badge text-bg-secondary">s03</span>
                             </div>
                         </div>
                     </div>
-                    <div class="col-auto px-0">
-                        <div class="row gx-0 align-items-center">
-                            <div class="col-auto">
-                                <a href="/s03/mail-inbox/" class="menu lvl2 position-relative {% if selectedmenu == 'mails' %}text-bg-primary{% endif %}">
-                                    <i class="fa-fw fas fa-envelope"></i>
-                                    <span class="ms-2 d-none d-md-block">Mails</span>
-                                    {% if new_mail > 0 %}<span class="position-absolute top-0 end-0 badge text-bg-success">{{ new_mail }}</span>{% endif %}                                    
-                                </a>
-                            </div>
-                            <div class="col-auto">
-                                <a href="/s03/empire-reports/" class="menu lvl2 position-relative {% if selectedmenu == 'reports' %}text-bg-primary{% endif %}">
-                                    <i class="fa-fw fas fa-bell"></i>
-                                    <span class="ms-2 d-none d-md-block">Rapports</span>
-                                    {% if new_report > 0 %}<span class="position-absolute top-0 end-0 badge text-bg-success">{{ new_report }}</span>{% endif %}
-                                </a>
-                            </div>
-                            <div class="col-auto">
-                                <a href="/s03/help/" class="menu lvl2 {% if selectedmenu == 'help' %}text-bg-primary{% endif %}">
-                                    <i class="fa-fw fas fa-question-circle"></i>
-                                    <span class="ms-2 d-none d-md-block">Aide</span>
-                                </a>
-                            </div>
-                            <div class="col-auto">
-                                <a href="/s03/profile-view/" class="menu lvl2 {% if selectedmenu == 'profile' %}text-bg-primary{% endif %}">
-                                    <i class="fa-fw fas fa-user-circle"></i>
-                                    <span class="ms-2 d-none d-md-block">Profile</span>
-                                </a>
-                            </div>
-                            <div class="col-auto">
-                                <a href="/accounts/logout/" class="menu lvl2">
-                                    <i class="fa-fw fas fa-sign-out-alt text-danger"></i>
-                                    <span class="ms-2 text-danger d-none d-md-block">Déconnexion</span>
-                                </a>
-                            </div>
-                            <div class="col-auto">
-                                <a class="menu lvl2 leftnav-toggler d-md-none">
-                                    <div class="position-relative">
-                                        <i class="fa-fw fas fa-bars"></i>
-                                        {% if profile.deletion_date %}
-                                            <span class="badge badge-top rounded bg-danger p-1">
-                                                <span class="visually-hidden">{% translate 'Account deletion' %}</span>
-                                            </span>
-                                        {% elif profile.bankruptcy_hours > 0 %}
-                                            <span class="badge badge-top rounded bg-warning p-1">
-                                                <span class="visually-hidden">{% translate 'Bankruptcy risk' %}</span>
-                                            </span>
-                                        {% elif profile.is_impersonating %}
-                                            <span class="badge badge-top rounded bg-warning p-1">
-                                                <span class="visually-hidden">{% translate 'Impersonating' %}</span>
-                                            </span>
-                                        {% endif %}
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
+                </div>
+                <div class="col">
                 </div>
             </div>
-            <div id="leftnav">
-                <div class="w-100 h-100 d-flex flex-column">
-                    <div id="leftnav-top">
-                        <div class="px-3 py-2">
-                            <div class="d-flex">
-                                <div class="col-auto pe-3">
-                                    {% if avatar_url %}
-                                        <img src="{{ avatar_url }}" width="42px" height="42px" class="rounded-circle" />
-                                    {% else %}
-                                        <img src="{{ PATH_IMAGES }}interface/noavatar.gif"
-                                             width="42px"
-                                             class="rounded-circle"/>
-                                    {% endif %}
-                                </div>
-                                <div class="col text-truncate">
-                                    <div class="row g-1">
-                                        <div class="col-12">
-                                            <span class="text-player">{{ username }}</span>
-                                        </div>
-                                        <div class="col-12 text-truncate">
-                                            {% if alliance_tag %}
-                                                <a href="/s03/alliance-view/"
-                                                   data-bs-toggle="tooltip"
-                                                   data-bs-placement="top"
-                                                   data-bs-title="{% translate 'View alliance' %}">[{{ alliance_tag }}] {{ alliance_name }}</a>
-                                            {% else %}
-                                                {% translate 'Indépendant' %}
-                                            {% endif %}
-                                        </div>
-                                        <div class="col-12">
-                                            <div class="row gx-3 align-items-center">
-                                                <div class="col-auto">
-                                                    <img src="{{ PATH_IMAGES }}interface/credits.gif" width="16px" class="res" />
-                                                    <span class="{% if credits < 0 %}text-danger{% else %}text-white{% endif %}">{{ credits|intcomma }}</span>
-                                                </div>
-                                                <div class="col-auto">
-                                                    <img src="{{ PATH_IMAGES }}interface/prestige.gif" width="16px" class="res"/>
-                                                    <span class="text-white">{{ prestige_points|intcomma }}</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        {% if impersonating %}
-                            <div class="px-2 py-2">
-                                <div class="px-3 py-2 rounded text-bg-warning">
-                                    <div><span class="fw-bold">Impersonisation</span></div>
-                                    <div><a href="/impersonate/stop/" class="text-danger">Revenir au compte de départ</a></div>
-                                </div>
-                            </div>
+            <div id="main">
+                {% if menu %}
+                    <div id="leftnav">
+
+                        {% include 's03/menu.html' %}
+                        {% if dev %}
+                            <div>{{ render_time|floatformat:4 }}</div>
+                            <div>Joueurs: {{ players|intcomma }}</div>
                         {% endif %}
-                        {% if bankruptcy_hours %}
-                            <div class="px-2 py-2">
-                                <div class="px-3 py-2 rounded text-bg-warning">
-                                    <div><span class="fw-bold">Fonds insuffisants</span></div>
-                                    <div>Vous avez {{ bankruptcy_hours }} heure(s) pour faire revenir l'argent de la trésorerie dans le positif avant qu'un coup d'état n'éclate et que vous soyiez chassé de votre poste.</div>
-                                </div>
-                            </div>
-                        {% endif %}
-                        {% if deletion_date %}
-                            <div class="px-2 py-2">
-                                <div class="px-3 py-2 rounded text-bg-danger">
-                                    <div><span class="fw-bold">Suppression du compte en cours</span></div>
-                                    <div>Ce compte sera effacé le {{ deletion_date|date:"D d M Y" }} à {{ deletion_date|time }}</div>
-                                </div>
-                            </div>
-                        {% endif %}
-                        <div class="py-2">
-                            {% include 's03/menu.html' %}
-                        </div>
                     </div>
-                    <div id="leftnav-bottom">
-                        <div class="row gx-3 align-items-center justify-content-around">
-                            <form class="col-auto"
-                                  action="https://www.paypal.com/cgi-bin/webscr"
-                                  method="post"
-                                  target="_blank">
-                                <input type="hidden" name="cmd" value="_s-xclick">
-                                <input type="hidden" name="hosted_button_id" value="7XYD7SJFKQ8M4">
-                                <button type="submit"
-                                        class="p-0 border-0 bg-transparent"
-                                        data-bs-toggle="tooltip"
-                                        data-bs-placement="left"
-                                        data-bs-title="Make a donation">
-                                    <img src="/static/img/paypal.png" width="22px" />
-                                </button>
-                            </form>
-                            <div class="col-auto">
-                                <a href="https://ko-fi.com/freddecgames"
-                                   target="_blank"
-                                   data-bs-toggle="tooltip"
-                                   data-bs-placement="left"
-                                   data-bs-title="Buy me a Ko-fi">
-                                    <img src="/static/img/kofi.png" width="22px" />
-                                </a>
-                            </div>
-                            <div class="col-auto">
-                                <a href="https://www.patreon.com/bePatron?u=61283131"
-                                   target="_blank"
-                                   data-bs-toggle="tooltip"
-                                   data-bs-placement="left"
-                                   data-bs-title="Become a Patreon supporter">
-                                    <img src="/static/img/patreon.png" width="22px" />
-                                </a>
-                            </div>
-                            <div class="col-auto">
-                                <a href="https://discord.gg/3UkgeeT9CV"
-                                   target="_blank"
-                                   data-bs-toggle="tooltip"
-                                   data-bs-placement="left"
-                                   data-bs-title="Discord">
-                                    <img src="/static/img/discord.png" width="22px" />
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div id="content">
-                <div id="page">
+                {% endif %}
+                <div{% if menu %} id="content"{% endif %} align="center" class="scroll-content">
                     {% if context %}
-                        {% include 's03/header.html' %}
+                        <div id="status">{% include 's03/header.html' %}</div>
                     {% endif %}
-                    {% if messages %}
-                        {% for message in messages %}
-                            <div class="alert alert-{{ message.tags }}">
-                                {{ message }}
-                            </div>
-                        {% endfor %}
-                    {% endif %}
-                    {% block content %}
-                    {% endblock content %}
+                    <div id="page" class="scroll-content">
+                        {% block content %}{% endblock %}
+                    </div>
                 </div>
             </div>
         </div>
@@ -247,18 +90,6 @@
         <script>
             const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
             const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
-
-            const root = document.getElementById('super')
-
-            document.querySelectorAll('.leftnav-toggler').forEach(e => {
-                e.addEventListener('click', () => {
-                    window.innerWidth < 992 || !root.classList.contains('leftnav-shown') ? root.classList.toggle('leftnav-shown') : root.classList.toggle('leftnav-shown')
-                })
-            })
-
-            document.addEventListener('click', e => {
-                e.target.classList.contains('root') && root.classList.remove('leftnav-shown')
-            })
         </script>
     </body>
 </html>

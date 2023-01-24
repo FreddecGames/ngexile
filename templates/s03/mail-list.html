@@ -1,0 +1,207 @@
+{% extends "s03/layout.html" %}
+{% load tz %}
+{% load humanize %}
+{% load bbcode_tags %}
+{% block content %}
+    <script>
+var senders=new Array();
+{% for mail in mails %}{% if mail.reply %}senders.push(new Array('{{mail.from}}',{{mail.index}},{% if mail.ignore %}false{% endif %}{% if mail.ignored %}true{% endif %}));{% endif %}{% endfor %}
+
+function updatebg(index, event) {
+	var list = document.getElementsByName("checked_mails");
+	var obj = list[index];
+	document.getElementById("mail"+index).className = (obj.checked?"itemdel":"item");
+}
+function check(index, event) {
+	var list = document.getElementsByName("checked_mails");
+
+	if(event.ctrlKey)
+	{
+		for(;index<list.length;index++)
+		{
+			var obj=list[index];
+			obj.checked=true;
+			updatebg(index);
+		}
+	}
+	else
+	{
+		var obj=list[index];
+		obj.checked=!obj.checked;
+		updatebg(index);
+	}
+}
+function donotclick(index, event){ updatebg(index, event); event.cancelBubble = true; }
+
+function ignore(name){
+	if(confirm('Êtes-vous sûr de vouloir bloquer les messages en provenance du joueur "' + name + '" ?'))
+		openURL("/s03/mails/?a=ignore&user="+name, evalResponse);
+	return false;
+}
+function unignore(name){
+	openURL("/s03/mails/?a=unignore&user="+name, evalResponse);
+	return false;
+}
+{% if comment %}reset ignored status of senders{% endif %}
+function resetIgnoredUsers(){ for(var i=0;i<senders.length;i++) senders[i][2] = false; }
+
+{% if comment %}set the status of a user to ignored{% endif %}
+function setIgnored(name){ for(var i=0;i<senders.length;i++) if(senders[i][0] == name) senders[i][2] = true; }
+
+function updateUsers() {
+	var i,obj;
+
+	for(i=0;i<senders.length;i++)
+	{
+		obj = document.getElementById("ignore_"+senders[i][1]);
+		if(obj) obj.className = (senders[i][2]?"hidden":"");
+
+		obj = document.getElementById("ignored_"+senders[i][1]);
+		if(obj) obj.className = (senders[i][2]?"":"hidden");
+	}
+}
+
+function keydown(event) {
+	if(document.all)
+		var x = window.event.keyCode;
+	else
+		var x = event.keyCode;
+	if(x == 46) document.getElementById("delbtn").click();
+}
+document.onkeydown = keydown;
+    </script>
+    <div id="mails">
+        <form method="post" action="?start={{ offset }}" id="mailsform">
+            {% csrf_token %}
+            <table class="default" width="100%">
+                <tr class="title">
+                    <td colspan=3>Messages reçus</td>
+                </tr>
+                {% if nav %}
+                    <tr class="nav">
+                        <td colspan=3 align=left>
+                            Page {{ page_display }}, Messages {{ min }}-{{ max }}. Aller à
+                            {% for p in ps %}
+                                &nbsp;
+                                {% if p.link %}<a href="?start={{ p.page_link }}">{% endif %}
+                                {% if p.selected %}<span class="selected">{% endif %}
+                                {{ p.page_id }}
+                                {% if selected %}</span>{% endif %}
+                                {% if p.link %}</a>{% endif %}
+                            {% endfor %}
+                            .
+                        </td>
+                    </tr>
+                {% endif %}
+                {% for mail in mails %}
+                    <tr id="mail{{ mail.index }}"
+                        class="item{% if mail.new_mail %}highlight{% endif %}">
+                        <td width="1%"
+                            rowspan="1"
+                            align="center"
+                            valign="top"
+                            onclick="check({{ mail.index }},event)">
+                            <input type="checkbox"
+                                   class="checkbox"
+                                   name="checked_mails"
+                                   value="{{ mail.mailid }}"
+                                   onclick="donotclick({{ mail.index }},event)">
+                        </td>
+                        <td width="1%" rowspan=1 align=center valign=top nowrap>
+                            {% if mail.reply %}<a href="/s03/nation/?name={{ mail.from }}"
+   title="Informations sur {{ mail.from }}">{% endif %}
+                            {% if mail.avatar %}<img src="{{ mail.avatar_url }}" width=64 height=64 class="avatar">{% endif %}
+                            {% if mail.noavatar %}<img src="{{ PATH_IMAGES }}/interface/noavatar.gif"
+     width="64"
+     height="64"
+     class="avatar">{% endif %}
+                            <br/>
+                            <b>{{ mail.from }}</b>
+                            {% if mail.reply %}
+                            </a>
+                            {% if mail.alliance %}
+                                <br/>
+                                <a href="/s03/alliance/?tag={{ mail.alliancetag }}">[{{ mail.alliancetag }}]</a>
+                                <br/>
+                            {% endif %}
+                            <div id="ignore_{{ mail.index }}"
+                                 {% if mail.ignored %} class=hidden{% endif %}>
+                                <a href="#"
+                                   onclick="return ignore('{{ mail.from }}')"
+                                   title="Bloque les futurs messages provenant de ce joueur">Bloquer</a>
+                            </div>
+                            <div id="ignored_{{ mail.index }}"
+                                 {% if mail.ignore %} class=hidden{% endif %}>
+                                <a href="#" onclick="return unignore('{{ mail.from }}')"><span class=error>Bloqué</span></a>
+                            </div>
+                        {% endif %}
+                        {% if mail.admin %}
+                            <div>
+                                <a href="/s03/dev-playas/?player={{ mail.from }}">Impersonate</a>
+                            </div>
+                        {% endif %}
+                    </td>
+                    <td valign="top">
+                        <div class="subject">
+                            {{ mail.date|timezone:"Europe/Paris" }} | {{ mail.subject }}
+                            {% if mail.money %}
+                                | Somme reçue :
+                                <img src="{{ PATH_IMAGES }}/interface/credits.gif"
+                                     title="Crédits"
+                                     class="icon"
+                                     width="16"
+                                     height="16">
+                                {{ mail.moneyamount|intcomma }}
+                            {% endif %}
+                            {% if mail.to_admins %}(Aux administrateurs){% endif %}
+                            {% if mail.to_alliance %}(À l'alliance){% endif %}
+                        </div>
+                        <div class="body{% if mail.from_admin %}{% endif %}">
+                            {% if mail.html %}{{ mail.body|safe }}{% endif %}
+                            {% if mail.bbcode %}{{ mail.bodybb|bbcode }}{% endif %}
+                        </div>
+                        <hr/>
+                        <a href="?a=reply&mailid={{ mail.mailid }}"
+                           title="Répondre à {{ mail.from }}">Répondre</a>
+                    </td>
+                </tr>
+            {% endfor %}
+            {% if nomails %}
+                <tr>
+                    <td colspan=3 align=center>Aucun</td>
+                </tr>
+            {% endif %}
+            <tr>
+                <td colspan=3 class=buttons>
+                    <input type="submit"
+                           class="button100"
+                           name="delete"
+                           value="Supprimer"
+                           id="delbtn">
+                    &nbsp;
+                    <input type="button"
+                           class="button100"
+                           name="compose"
+                           value="Nouveau >"
+                           onclick="javascript:window.location.href='?a=new'">
+                </td>
+            </tr>
+            {% if nav %}
+                <tr class="nav">
+                    <td colspan=3 align=left>
+                        Page {{ page_display }}, Messages {{ min }}-{{ max }}. Aller à
+                        {% for p in ps %}
+                            &nbsp;
+                            {% if link %}<a href="?start={{ page_link }}">{% endif %}
+                            {% if selected %}<span class="selected">{% endif %}{{ page_id }}
+                            {% if selected %}</span>{% endif %}
+                            {% if link %}</a>{% endif %}
+                        {% endfor %}
+                        .
+                    </td>
+                </tr>
+            {% endif %}
+        </table>
+    </form>
+</div>
+{% endblock %}

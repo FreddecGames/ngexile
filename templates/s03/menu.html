@@ -1,25 +1,394 @@
+{% load humanize %}
 <script>
-let defaultTitle = document.title
+var menulinks=new Array();
+var activeSection = '';
+var selectedmenu='';
+var sectionmenu='';
+var lastmenulvl=1;
+var lastmenuname='';
+var lastmenuhidden='';
 
-function setTitle(title) { document.title = defaultTitle + ' - ' + title }
+var defaultTitle = document.title;
 
-function putMenuLevel2(url, content, name, label, selectedMenu) {
-
-    let selected = (name == selectedMenu) ? ' text-bg-primary' : ''
-    document.write('<div class="px-2 py-0"><a href="' + url + '" class="menu lvl2' + selected + '"><div class="flex-grow-1 row gx-2 align-items-baseline"><div class="col">' + content + '</div><div class="col-auto"><i class="fa-fw fas fa-chevron-right"></i></div></div></a></div>')
-    
-    if (selected) setTitle(label)
+function setTitle(title){
+	if(title.indexOf("<") > -1)
+		document.title = defaultTitle + ' - ' + title.substring(0,title.indexOf("<"));
+	else
+		document.title = defaultTitle + ' - ' + title;
 }
 
-putMenuLevel2('/s03/empire-view/', '<i class="fa-fw fas fa-crown me-2"></i> Empire', 'empire', 'Empire', '{{selectedmenu}}')
-putMenuLevel2('/s03/empire-planets/', '<i class="fa-fw fas fa-globe me-2"></i> Planètes', 'planets', 'Planètes', '{{selectedmenu}}')
-putMenuLevel2('/s03/empire-commanders/', '<i class="fa-fw fas fa-user-astronaut me-2"></i> Commandants', 'commanders', 'Commandants', '{{selectedmenu}}')
-putMenuLevel2('/s03/empire-fleets/', '<i class="fa-fw fas fa-space-shuttle me-2"></i> Flottes', 'fleets', 'Flottes', '{{selectedmenu}}')
-putMenuLevel2('/s03/empire-techs/', '<i class="fa-fw fas fa-flask me-2"></i> Recherches', 'techs', 'Recherches', '{{selectedmenu}}')
-putMenuLevel2('/s03/alliance-view/', '<i class="fa-fw fas fa-users me-2"></i> Alliance', 'alliance', 'Alliance', '{{selectedmenu}}')
+function putMenu(url,name,label,lvl,x,popup,extended)
+{
+	if(name==activeSection) setTitle(label);
 
-putMenuLevel2('/s03/map/?g={{cur_g}}&s={{cur_s}}', '<i class="fa-fw fas fa-map me-2"></i> Carte spatiale', 'map', 'Carte spatiale', '{{selectedmenu}}')
-putMenuLevel2('/s03/ranking-players/', '<div class="row gx-2 align-items-baseline"><div class="col"><i class="fa-fw fas fa-signal me-2"></i> Classement</div><div class="col-auto">{{ranking}} <small>/{{ranking_players}}</small></div></div>', 'ranking', 'Classement', '{{selectedmenu}}')
+	while(lastmenulvl > lvl) {
+		document.write('<div id="menu_'+lastmenuname+'_'+lastmenulvl+'" class="lvl'+lastmenulvl+'last'+lastmenuhidden+'"></div>');
+		menulinks.push(new Array(lastmenuname+'_'+lastmenulvl,lastmenulvl,true));
+		lastmenulvl--;
+	}
 
-putMenuLevel2('/s03/planet-view/?planet={{planetid}}', '<div class="row gx-2 align-items-baseline"><div class="col"><i class="fa-fw fas fa-globe-europe me-2"></i> Planète</div><div class="col-auto">{{cur_g}}.{{cur_s}}.{{cur_p}}</div></div>', 'planet', 'Planète {{cur_g}}.{{cur_s}}.{{cur_p}}', '{{selectedmenu}}')
+	lastmenulvl = lvl;
+	lastmenuname = name;
+
+	if(lvl==0) return;
+
+	var selected = (name == selectedmenu)?" selected":"";
+	var hidden = (extended || (lvl < 3) || (sectionmenu != "" && name.indexOf(sectionmenu)==0))?"":" hidden";
+	lastmenuhidden = hidden;
+
+	x = false;
+
+	if(!x)
+	{
+		var target=popup?" target=_blank":"";
+
+		if(lvl==1)
+			document.write('<a href="'+url+'" class="menu lvl1 d-flex align-items-baseline"><div class="col">'+label+'</div><div class="col-auto small"><i class="fa-fw fas fa-angle-double-down"></i></div></a>');
+		else
+		{
+			document.write('<a href="'+url+'"'+target+' id="menu_'+name+'" class="menu lvl' + lvl + selected + hidden + '"><span class="px-2"><i class="fa-fw fas fa-caret-right"></i></span>'+label+'</a>');
+			menulinks.push(new Array(name,lvl,false));
+		}
+	}
+	else
+	{
+		url = "return display('" + url + (url.indexOf('?') > -1?"&":"?") + "xml=1');";
+
+		if(lvl==1)
+			document.write('<a href="#" onclick="'+url+'" class="menu lvl1"><img src="{{PATH_IMAGES}}/menu/expand.gif" class="menuExpand">'+label+'</a>');
+		else
+		{
+			document.write('<a href="#" onclick="'+url+'" id="menu_'+name+'" class="menu lvl' + lvl + selected + hidden + '"><span class=dot>&middot;</span>'+label+'</a>');
+			menulinks.push(new Array(name,lvl,false));
+		}
+	}
+}
+
+// update selected menu link
+function setSelectedMenu(name)
+{
+	selectedmenu = name;
+
+	if(name.indexOf("_") == -1)
+	{
+		sectionmenu = "";
+		activeSection = name;
+	}
+	else
+	{
+		sectionmenu = name.split("_")[0] + "_";
+		activeSection = name.split("_")[0];
+	}
+
+	var link,linkname,selected,hidden;
+
+	for(var i=0; i<menulinks.length;i++)
+	{
+		linkname = menulinks[i][0];
+		link = $('menu_'+linkname);
+		selected = (selectedmenu == linkname)?" selected":"";
+		hidden = (menulinks[i][1] < 3 || (sectionmenu != "" && linkname.indexOf(sectionmenu)==0))?"":" hidden";
+
+		if(!menulinks[i][2])
+			link.className = "menu lvl" + menulinks[i][1] + selected + hidden;
+		else
+			link.className = "lvl" + menulinks[i][1] + 'last' + hidden;
+	}
+}
+
+function setMailsCount(nb)
+{
+	var o = $('mailscount');
+	if(nb > 0)
+		o.innerHTML = '('+nb+')';
+	else
+		o.innerHTML = '';
+}
+
+function setReportsCount(nb)
+{
+	var o = $('reportscount');
+	if(nb > 0)
+		o.innerHTML = '('+nb+')';
+	else
+		o.innerHTML = '';
+}
+
+setSelectedMenu('{{selectedmenu}}');
 </script>
+
+<div id="leftnav-top" class="scroll-content">
+        {% if impersonating %}
+            <div class="px-3 py-2 text-bg-warning">
+                <b>Impersonisation</b> (<a href="/impersonate/stop/" style="color:#f00">Revenir au compte de départ</a>)
+                <br/>
+                Compte "{{ login }}" - impossible d'envoyer de messages
+                <br/>
+            </div>
+        {% endif %}
+        {% if onholidays %}
+            <style>
+#onholidays{
+	height:30px;
+	vertical-align:top;
+	position: relative;
+	border-top:1px solid #0f0;
+	border-left:1px solid #0f0;
+	border-right:1px solid #0b0;
+	border-bottom:1px solid #0b0;
+	background-color:#6e6;
+	color:#000;
+}
+            </style>
+            <div id="onholidays">
+                <b>En vacances</b>
+                <br/>
+                Activé le {{ start_datetime|date:"D d M Y" }} à {{ start_datetime|time }}
+                <br/>
+                Désactivable à partir du {{ min_end_datetime|date:"D d M Y" }} à {{ min_end_datetime|time }}
+                <br/>
+                Terminé le {{ end_datetime|date:"D d M Y" }} à {{ end_datetime|time }}
+            </div>
+        {% endif %}
+        {% if creditswarning %}
+            <style>
+#creditswarning{
+	min-height:30px;
+	height:auto !important;
+	height:30px;
+	vertical-align:top;
+	position: relative;
+	border-top:1px solid #ff9257;
+	border-left:1px solid #ff9257;
+	border-right:1px solid #ff782f;
+	border-bottom:1px solid #ff782f;
+	background-color:#ff8543;
+	color:#000;
+}
+            </style>
+            <div id="creditswarning">
+                <b>Fonds insuffisants</b>
+                <br/>
+                Nous sommes actuellement en déficit, cette situation est tolérable pendant un moment mais nous devons réagir. Nous pouvons soit alléger nos coûts d'entretien, soit augmenter nos revenus en vendant une plus grande partie de notre production.
+                <br/>
+                Vous avez
+                {% if hours %}{{ bankruptcy_hours|intcomma }} heure(s){% endif %}
+                pour faire revenir l'argent de la trésorerie dans le positif avant qu'un coup d'état n'éclate et que vous soyiez chassé de votre poste.
+                <br/>
+                Chaque heure passée en déficit, le nombre d'heures avant le coup d'état diminue d'une heure. Celui-ci remonte chaque heure passée dans le positif.
+            </div>
+        {% endif %}
+        {% if deleting %}
+            <style>
+#deleting{
+	height:30px;
+	vertical-align:top;
+	position: relative;
+	border-top:1px solid #f00;
+	border-left:1px solid #f00;
+	border-right:1px solid #b00;
+	border-bottom:1px solid #b00;
+	background-color:#e66;
+	color:#000;
+}
+            </style>
+            <div id="deleting">
+                <b>Suppression du compte en cours</b>
+                <br/>
+                Ce compte sera effacé le {{ delete_datetime|date:"D d M Y" }} à {{ delete_datetime|time }}
+            </div>
+        {% endif %}
+        {% if banned %}
+            <style>
+#banned{
+	height:30px;
+	vertical-align:top;
+	position: relative;
+	border-top:1px solid #fff;
+	border-left:1px solid #fff;
+	border-right:1px solid #bbb;
+	border-bottom:1px solid #bbb;
+	background-color:#999;
+	color:#000;
+}
+#banned table { color:#000; };
+            </style>
+            <div id="banned">
+                <b>Suspendu</b>
+                <br/>
+                <table>
+                    <tr>
+                        <td>Depuis le:</td>
+                        <td>{{ ban_datetime|date:"D d M Y" }} à {{ ban_datetime|time }}</td>
+                    </tr>
+                    {% if expire %}
+                        <tr>
+                            <td>Expire le:</td>
+                            <td>{{ ban_expire_datetime|date:"D d M Y" }} à {{ ban_expire_datetime|time }}</td>
+                        </tr>
+                    {% endif %}
+                    <tr>
+                        <td>Raison:</td>
+                        <td>{{ ban_reason }}</td>
+                    </tr>
+                    <tr>
+                        <td>Raison publique:</td>
+                        <td>{{ ban_reason_public }}</td>
+                    </tr>
+                </table>
+            </div>
+        {% endif %}
+<script>
+
+putMenu("/s03/overview/","empire","Empire",1);
+putMenu("/s03/overview/","overview","Vue d'ensemble",2);
+putMenu("/s03/upkeep/","upkeep","Coût d'entretien",2);
+putMenu("/s03/commanders/","commanders","Commandants",2);
+
+putMenu("/s03/fleets/","fleets","Flottes",2);
+putMenu("/s03/fleets/","fleets_fleets","Flottes",3);
+putMenu("/s03/fleets-orbiting/","fleets_orbiting","Flottes en orbite",3);
+putMenu("/s03/fleets-standby/","fleets_standby","Vaisseaux au sol",3);
+putMenu("/s03/fleets-ships-stats/","fleets_ships_stats","Détruits / perdus",3);
+
+putMenu("/s03/planets/","planets","Planètes",2);
+
+putMenu("/s03/market-sell/","merchants","Marchands",2);
+putMenu("/s03/market-buy/","merchants_buy","Achat",3);
+putMenu("/s03/market-sell/","merchants_sell","Vente",3);
+
+putMenu("/s03/research/","research","Recherche",2);
+
+{% if show_alliance %}
+putMenu("/s03/alliance/","alliance","Alliance",2);
+
+putMenu("/s03/alliance/","alliance_overview","Vue d'ensemble",3);
+{% if show_management %}	putMenu("/s03/alliance-manage/","alliance_manage","Gestion",3);{% endif %}
+{% if show_members %}putMenu("/s03/alliance-members/","alliance_members","Membres",3);{% endif %}
+putMenu("/s03/alliance-naps/","alliance_naps","PNA",3);
+putMenu("/s03/alliance-tributes/","alliance_tributes","Tributs",3);
+putMenu("/s03/alliance-wars/","alliance_wars","Guerres",3);
+putMenu("/s03/alliance-wallet/","alliance_wallet","Portefeuille",3);
+{% if show_reports %}	putMenu("/s03/alliance-reports/","alliance_reports","Rapports",3);{% endif %}
+putMenu("/s03/alliance-invitations/","alliance_invitations","Invitations",3);
+
+putMenu("/s03/alliance-create/","noalliance_create","Création",3);
+putMenu("/s03/alliance-invitations/","noalliance_invitations","Invitations",3);
+{% endif %}
+
+putMenu("/s03/map/","map","Galaxie",1);
+putMenu("/s03/map/?g={{cur_g}}&s={{cur_s}}","map","Carte spatiale",2);
+
+putMenu("/s03/ranking-alliances/","ranking","Alliances",2);
+
+putMenu("/s03/planet/?planet={{planetid}}","planet","Planète ({{cur_g}}.{{cur_s}}.{{cur_p}})",1);
+putMenu("/s03/planet/?planet={{planetid}}","planet","Vue d'ensemble",2);
+putMenu("/s03/production/?planet={{planetid}}","production","Production",2);
+putMenu("/s03/buildings/?planet={{planetid}}","buildings","Infrastructures",2);
+putMenu("/s03/shipyard/?planet={{planetid}}","shipyard","Chantier spatial",2);
+putMenu("/s03/shipyard/?planet={{planetid}}&f=0","shipyard_all","Tous",3);
+putMenu("/s03/shipyard/?planet={{planetid}}&f=1","shipyard_military","Militaire",3);
+putMenu("/s03/shipyard/?planet={{planetid}}&f=2","shipyard_unarmed","Utilitaire",3);
+putMenu("/s03/shipyard/?planet={{planetid}}&f=3","shipyard_upgrade","Upgrade",3);
+putMenu("/s03/shipyard/?planet={{planetid}}&recycle=1","shipyard_recycle","Recyclage",3);
+putMenu("/s03/training/?planet={{planetid}}","training","Entraînement",2);
+putMenu("/s03/orbit/?planet={{planetid}}","orbit","Orbite",2);
+
+putMenu("/s03/market-sell/?planet={{planetid}}","market","Marché",2);
+putMenu("/s03/market-buy/?planet={{planetid}}","market_buy","Achat",3);
+putMenu("/s03/market-sell/?planet={{planetid}}","market_sell","Vente",3);
+
+putMenu("/s03/mails/","mails","Communication",1);
+putMenu("/s03/nation/","nation","Infos nations",2);
+putMenu("/s03/mails/","mails","Messagerie <span id=mailscount></span>",2);
+
+putMenu("/s03/mails/","mails_inbox","Reçu",3);
+putMenu("/s03/mails/?a=sent","mails_sent","Envoyé",3);
+putMenu("/s03/mails/?a=new","mails_compose","Composer",3);
+putMenu("/s03/mails/?a=ignorelist","mails_ignorelist","Nations ignorées",3);
+
+putMenu("/s03/reports/","reports","Rapports <span id=reportscount></span>",2);
+putMenu("/s03/chat/","chat","Salon",2);
+putMenu("/s03/notes/","notes","Notes",2);
+
+{% if show_mercenary %}
+putMenu("/s03/mercenary-intelligence/","intelligence","Mercenaires",1);
+putMenu("/s03/mercenary-intelligence/","intelligence","Espionnage",2);
+{% endif %}
+
+{% if dev %}
+<!-- dev -->
+putMenu("/s03/exile-version/","admin","Admin",1);
+putMenu("/s03/dev-log-errors/","log","Log",2);
+putMenu("/s03/dev-log-errors/","log_errors","Erreurs ({{new_error|intcomma}})",3,0,0,1);
+putMenu("/s03/dev-log-notices/","log_notices","Notices ({{new_notices|intcomma}})",3,0,0,1);
+putMenu("/s03/dev-multi/","log_multi","Multi-comptes",3,0,0,1);
+
+putMenu("/s03/dev-options/","player","Joueur",2);
+putMenu("/s03/dev-options/","player_penalty","Options",3,0,0,1);
+putMenu("/s03/dev-fleets/","player_fleets","Créer des flottes",3,0,0,1);
+putMenu("/s03/dev-connections/","player_connections","Connexions",3,0,0,1);
+putMenu("/s03/dev-multi-users/","player_multi","Multi-comptes",3,0,0,1);
+putMenu("/s03/dev-expenses/","player_expenses","Dépenses",3,0,0,1);
+
+putMenu("/s03/dev-playas/","playas","Jouer en tant que...",2);
+putMenu("/s03/dev-stats/","stats","Statistiques",2);
+{% endif %}
+
+putMenu("/s03/help/","help","Aide",1);
+putMenu("/s03/help/","help","Aide",2);
+putMenu("https://discord.gg/9RHUEhw","forum","Forum",2,0,1);
+
+putMenu("/s03/options/","options","Compte",1);
+putMenu("/s03/options/","options","Options",2);
+putMenu("https://exileng.com/signout/","logout","Déconnexion",2);
+
+{% if new_mail %}setMailsCount({{new_mail}});{% endif %}
+{% if new_report %}setReportsCount({{new_report}});{% endif %}
+</script>
+</div>
+<div id="leftnav-bottom" class="px-3 d-flex align-items-center justify-content-around">
+<div class="flex-grow-1 row gx-3 align-items-center justify-content-around">
+                            <form class="col-auto"
+                                  action="https://www.paypal.com/cgi-bin/webscr"
+                                  method="post"
+                                  target="_blank">
+                                <input type="hidden" name="cmd" value="_s-xclick">
+                                <input type="hidden" name="hosted_button_id" value="7XYD7SJFKQ8M4">
+                                <button type="submit"
+                                        class="p-0 border-0 bg-transparent"
+                                        data-bs-toggle="tooltip"
+                                        data-bs-placement="left"
+                                        data-bs-title="Make a donation">
+                                    <img src="/static/img/paypal.png" width="22px" />
+                                </button>
+                            </form>
+                            <div class="col-auto">
+                                <a href="https://ko-fi.com/freddecgames"
+                                   target="_blank"
+                                   data-bs-toggle="tooltip"
+                                   data-bs-placement="left"
+                                   data-bs-title="Buy me a Ko-fi">
+                                    <img src="/static/img/kofi.png" width="22px" />
+                                </a>
+                            </div>
+                            <div class="col-auto">
+                                <a href="https://www.patreon.com/bePatron?u=61283131"
+                                   target="_blank"
+                                   data-bs-toggle="tooltip"
+                                   data-bs-placement="left"
+                                   data-bs-title="Become a Patreon supporter">
+                                    <img src="/static/img/patreon.png" width="22px" />
+                                </a>
+                            </div>
+                            <div class="col-auto">
+                                <a href="https://discord.gg/3UkgeeT9CV"
+                                   target="_blank"
+                                   data-bs-toggle="tooltip"
+                                   data-bs-placement="left"
+                                   data-bs-title="Discord">
+                                    <img src="/static/img/discord.png" width="22px" />
+                                </a>
+                            </div>
+                        </div>
+</div>

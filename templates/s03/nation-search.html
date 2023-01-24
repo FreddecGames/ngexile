@@ -1,0 +1,18 @@
+{% extends "s03/layout.html" %}
+{% load humanize %}
+{% block content %}
+    <table class="default">
+        <tr class="title">
+            <td>
+                <b>Nations</b>
+            </td>
+        </tr>
+        {% for nation in nations %}
+            <tr>
+                <td>
+                    <a href="?name={{ nation.nation }}">{{ nation.nation }}</a>
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock %}

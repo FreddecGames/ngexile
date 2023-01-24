@@ -1,4 +1,6 @@
-from .base import *
+# -*- coding: utf-8 -*-
+
+from myapps.s03.views._global import *
 
 class View(GlobalView):
 
@@ -7,22 +9,20 @@ class View(GlobalView):
         response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
 
-        self.selectedMenu = "alliance"
+        self.selected_menu = "alliance.reports"
 
         cat = ToInt(request.GET.get("cat"), 0)
 
-        if self.AllianceId == None: return HttpResponseRedirect("/s03/alliance-view/")
-        if not self.oAllianceRights["can_see_reports"]: return HttpResponseRedirect("/s03/alliance-view/")
+        if self.AllianceId == None: return HttpResponseRedirect("/s03/alliance/")
+        if not self.oAllianceRights["can_see_reports"]: return HttpResponseRedirect("/s03/alliance/")
 
         return self.display_reports(cat)
 
     # display list of messages
     def display_reports(self, cat):
 
-        content = GetTemplate(self.request, "empire-reports")
-    
-        content.Parse("taballiance")
-        
+        content = GetTemplate(self.request, "s03/reports")
+
         query = "SELECT type, subtype, datetime, battleid, fleetid, fleet_name," + \
                 " planetid, planet_name, galaxy, sector, planet," + \
                 " researchid, 0, read_date," + \
@@ -49,7 +49,7 @@ class View(GlobalView):
             # List the reports returned by the query
             #
             list = []
-            content.AssignValue('reports', list)
+            content.AssignValue('messages', list)
             for oRs in oRss:
                 reportType = oRs[0]*100+oRs[1]
                 if reportType != 133:

@@ -1,0 +1,381 @@
+{% extends "s03/layout.html" %}
+{% load humanize %}
+{% block content %}
+    <script>
+function getval(objname) { 
+	var obj=document.getElementsByName(objname);
+	if(obj==null || obj[0] == null) return 0;
+	var s = parseInt(obj[0].value, 10);
+	if(isNaN(s)) return 0; else return s;
+}
+function setval(objname, val){ document.getElementsByName(objname)[0].value = val; }
+
+var resources=new Array("ore","hydrocarbon","scientists","soldiers","workers");
+
+function updateresources()
+{
+	var rOrig = {{fleet_load}};
+	var rNew = 0;
+
+	for(i=0;i<resources.length;i++)
+	{
+		rNew += getval("load_" + resources[i]);
+		rOrig -= getval("load_" + resources[i]);
+	}
+
+	if(rOrig > parseInt(document.getElementById("capacityOrig").innerHTML) || rOrig < 0)
+		rOrig = '<span class="full">' + rOrig + '</span>';
+	if(rNew > parseInt(document.getElementById("capacityNew").innerHTML)|| rNew < 0)
+		rNew = '<span class="full">' + rNew + '</span>';
+
+	document.getElementById("loadOrig").innerHTML = rOrig;
+	document.getElementById("loadNew").innerHTML = rNew;
+	window.setTimeout("updateresources()", 200);
+}
+
+function setmaximum(res, res_max)
+{
+	var maxload = parseInt(document.getElementById("capacityNew").innerHTML);
+
+	for(i=0;i<resources.length;i++)
+	{
+		if(resources[i] != res)
+			maxload -= getval("load_" + resources[i]);
+	}
+
+	if(maxload > res_max)
+		maxload = res_max;
+	else
+	if(maxload < 0)
+		maxload = 0;
+
+	document.getElementsByName("load_" + res)[0].value = maxload;
+}
+
+
+function transfer_all()
+{
+	setmaximum('ore', {{available_ore}});
+	setmaximum('hydrocarbon', {{available_hydrocarbon}});
+	setmaximum('scientists', {{available_scientists}});
+	setmaximum('soldiers', {{available_soldiers}});
+	setmaximum('workers', {{available_workers}});
+}
+
+var ships=new Array();
+
+function updatecargo() {
+	var cargoOrig = 0;
+	var cargoNew = 0;
+
+	for(i=0;i<ships.length;i++)
+	{
+		cargoOrig = cargoOrig + ships[i][1]*ships[i][2] - Math.min(getval("transfership"+ships[i][0]), ships[i][2])*ships[i][1];
+		cargoNew = cargoNew + Math.min(getval("transfership"+ships[i][0]), ships[i][2])*ships[i][1];
+	}
+
+	var obj = document.getElementById("capacityOrig");
+	if(obj.innerHTML != cargoOrig) obj.innerHTML = cargoOrig;
+	obj = document.getElementById("capacityOrig2");
+	if(obj.innerHTML != cargoOrig) obj.innerHTML = cargoOrig;
+	obj = document.getElementById("capacityNew");
+	if(obj.innerHTML != cargoOrig) obj.innerHTML = cargoNew;
+	obj = document.getElementById("capacityNew2");
+	if(obj.innerHTML != cargoOrig) obj.innerHTML = cargoNew;
+
+	window.setTimeout("updatecargo()", 200);
+}
+
+function shipsInFleets() {
+	var n = 0;
+	var total = 0;
+	for(i=0;i<ships.length;i++)
+	{
+		 n += getval("transfership"+ships[i][0]);
+		 total += getval("origship"+ships[i][0]);
+	}
+	
+	return false;
+}
+
+function submitchanges() {
+
+	var nbShipsOrig = 0;
+	var nbShipsNew = 0;
+	for(i=0;i<ships.length;i++)
+	{
+		nbShipsOrig = nbShipsOrig + ships[i][2];
+		nbShipsNew = nbShipsNew + Math.min(getval("transfership"+ships[i][0]), ships[i][2]);
+	}
+	nbShipsOrig = nbShipsOrig - nbShipsNew;
+	var e_ressource = false;
+	var e_ship = false;
+
+	for(i=0;i<resources.length;i++)
+	{
+		if (getval("load_" + resources[i])<0 || getval("load_" + resources[i])<0)
+			{e_ressource = true;break;}
+	}
+
+	for(i=0;i<ships.length;i++)
+	{
+		if (getval("transfership" + ships[i][0])<0 || getval("transfer" + ships[i][0])<0)
+			{e_ship = true;break;}
+	}
+
+	if ( e_ressource )
+	{
+		alert("Quantités de ressources incorrectes.");
+		return false;
+	}
+	else if ( e_ship )
+	{
+		alert("Quantités de vaisseaux incorrectes.");
+		return false;
+	}
+	else if( nbShipsOrig==0)
+	{
+		alert("La flotte {fleetname} ne peut contenir zéro vaisseau.");
+		return false;
+	}
+	else if ( nbShipsNew==0 )
+	{
+		alert("La nouvelle flotte ne peut contenir zéro vaisseau.");
+		return false;
+	}
+	/*else if ( cargoOrig > parseInt(document.getElementById("capacityOrig").innerHTML) )
+	{
+		alert("Le chargement de la flotte {fleetname} ne peut dépasser son espace cargo.");
+		return false;
+	}
+	else if ( cargoNew > parseInt(document.getElementById("capacityNew").innerHTML) )
+	{
+		alert("Le chargement de la nouvelle flotte ne peut dépasser son espace cargo.");
+		return false;
+	}*/
+	else
+		return true;
+}
+    </script>
+    <div id="fleetsplit">
+        <form method="post"
+              action="?id={{ fleetid }}"
+              name="transfer"
+              onsubmit="return submitchanges()">
+            {% csrf_token %}
+            <input type="hidden" name="split" value="1">
+            <table class="default">
+                <tr class="title">
+                    <td colspan=4>Diviser la flotte {{ fleetname }}</td>
+                </tr>
+                <tr class="clear">
+                    <td>&nbsp;</td>
+                </tr>
+                {% if error3 %}
+                    <tr>
+                        <td colspan=4 align=center>
+                            <span class="error">La flotte est occupée. Vous ne pouvez diviser une flotte qui combat, ni récolte ou voyage.</span>
+                        </td>
+                    </tr>
+                {% endif %}
+                {% if error2 %}
+                    <tr>
+                        <td colspan=4 align=center>
+                            <span class="error">Le nom de la flotte est déjà utilisé, veuillez en choisir un autre.</span>
+                        </td>
+                    </tr>
+                {% endif %}
+                {% if error1 %}
+                    <tr>
+                        <td colspan=4 align=center>
+                            <span class="error">Le nom de la flotte est invalide, il ne peut contenir que des lettres (a-z) et des chiffres (0-9).</span>
+                        </td>
+                    </tr>
+                {% endif %}
+                <tr class="category">
+                    <td colspan=4 align="center">
+                        Nom de flotte <span style="margin:0px 10px;">
+                        <input type="text" name="newname" value="" maxlength="16">
+                    </span>
+                </td>
+            </tr>
+            <tr class="clear">
+                <td>&nbsp;</td>
+            </tr>
+            <tr class="title">
+                <td colspan=4>Transfert de vaisseaux</td>
+            </tr>
+            <tr class="header">
+                <td>Vaisseau</td>
+                <td>Cargo</td>
+                <td>Quantité</td>
+                <td>Transférer</td>
+            </tr>
+            {% for ship in ships %}
+                <tr>
+                    <td>{{ ship.name }}</td>
+                    <td align="right">{{ ship.cargo_capacity|intcomma }}</td>
+                    <td align="right" name="origship{{ ship.id }}">{{ ship.quantity|intcomma }}</td>
+                    <td>
+                        <input type="number"
+                               min="0"
+                               name="transfership{{ ship.id }}"
+                               value="{{ ship.transfer }}"
+                               size="8">
+                        <a href="javascript:setval('transfership{{ ship.id }}', {{ ship.quantity }})">max</a>
+                    </td>
+                    <script>ships.push(new Array({{ship.id}},{{ship.cargo_capacity}},{{ship.quantity}}));</script>
+                </tr>
+            {% endfor %}
+            <tr>
+                <td colspan>Nouvelle capacité {{ fleetname }}</td>
+                <td colspan=3>
+                    <span id="capacityOrig">{{ fleet_capacity }}</span> unités
+                </td>
+            </tr>
+            <tr>
+                <td colspan>Capacité nouvelle flotte</td>
+                <td colspan=3>
+                    <span id="capacityNew">0</span> unités
+                </td>
+            </tr>
+            <tr class="clear">
+                <td>&nbsp;</td>
+            </tr>
+            <tr class="title">
+                <td colspan=4>Transfert de ressources</td>
+            </tr>
+            <tr class="header">
+                <td>Ressource</td>
+                <td colspan=2>En soute</td>
+                <td>
+                    Transférer
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Minerai
+                </td>
+                <td colspan=2 align=right name="orig_ore">
+                    {{ available_ore|intcomma }}
+                </td>
+                <td>
+                    <input type=number min=0 name="load_ore" value="{{ t_ore }}" size=8>
+                    <a href="javascript:setmaximum('ore', {{ available_ore }})">max</a>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Hydrocarbures
+                </td>
+                <td colspan=2 align=right name="orig_hydrocarbon">
+                    {{ available_hydrocarbon|intcomma }}
+                </td>
+                <td>
+                    <input type="number"
+                           min="0"
+                           name="load_hydrocarbon"
+                           value="{{ t_hydrocarbon }}"
+                           size="8">
+                    <a href="javascript:setmaximum('hydrocarbon', {{ available_hydrocarbon }})">max</a>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Scientifiques
+                </td>
+                <td colspan=2 align=right name="orig_scientists">
+                    {{ available_scientists|intcomma }}
+                </td>
+                <td>
+                    <input type="number"
+                           min="0"
+                           name="load_scientists"
+                           value="{{ t_scientists }}"
+                           size="8">
+                    <a href="javascript:setmaximum('scientists', {{ available_scientists }})">max</a>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Soldats
+                </td>
+                <td colspan=2 align=right name="orig_soldiers">
+                    {{ available_soldiers|intcomma }}
+                </td>
+                <td>
+                    <input type=number min=0 name="load_soldiers" value="{{ t_soldiers }}" size=8>
+                    <a href="javascript:setmaximum('soldiers', {{ available_soldiers }})">max</a>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Travailleurs
+                </td>
+                <td colspan=2 align=right name="orig_workers">
+                    {{ available_workers|intcomma }}
+                </td>
+                <td>
+                    <input type=number min=0 name="load_workers" value="{{ t_workers }}" size=8>
+                    <a href="javascript:setmaximum('workers', {{ available_workers }})">max</a>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    &nbsp;
+                </td>
+                <td colspan=3 align=center>
+                    <a href="javascript:transfer_all()">Tout transférer</a>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Utilisation cargo {{ fleetname }}
+                </td>
+                <td colspan=3>
+                    <span id="loadOrig">{{ fleet_load }}</span> / <span id="capacityOrig2">{{ fleet_capacity }}</span> unités
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Utilisation cargo nouvelle flotte
+                </td>
+                <td colspan=3>
+                    <span id="loadNew">0</span> / <span id="capacityNew2">0</span> unités
+                </td>
+            </tr>
+            <tr>
+                <td colspan=4 align="center">
+                    <input type="button"
+                           value="< Retour"
+                           onclick="window.location.href='/s03/fleet/?id={{ fleetid }}'">
+                    &nbsp;
+                    <input type="submit" value="Diviser">
+                </td>
+            </tr>
+            {% if error3 %}
+                <tr>
+                    <td colspan=4 align=center>
+                        <span class="error">La flotte est occupée. Vous ne pouvez diviser une flotte qui combat, ni récolte ou voyage.</span>
+                    </td>
+                </tr>
+            {% endif %}
+            {% if error2 %}
+                <tr>
+                    <td colspan=4 align=center>
+                        <span class="error">Le nom de la flotte est déjà utilisé, veuillez en choisir un autre.</span>
+                    </td>
+                </tr>
+            {% endif %}
+            {% if error1 %}
+                <tr>
+                    <td colspan=4 align=center>
+                        <span class="error">Le nom de la flotte est invalide, il ne peut contenir que des lettres (a-z) et des chiffres (0-9).</span>
+                    </td>
+                </tr>
+            {% endif %}
+        </table>
+    </form>
+    <script>window.setTimeout("updatecargo()", 200);</script>
+    <script>window.setTimeout("updateresources()", 200);</script>
+{% endblock %}

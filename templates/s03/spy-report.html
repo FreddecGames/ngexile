@@ -1,0 +1,358 @@
+{% extends "s03/layout.html" %}
+{% load humanize %}
+{% block content %}
+    <script>
+function putlevel(level,levels){
+	var s;
+
+	if(levels <= 5)
+		s = '<img src="{{PATH_IMAGES}}/research/level'+levels+'_'+level+'.gif" alt="Niveau '+level+'">';
+	else
+		s = level + '/' + levels;
+	document.write(s);
+}
+    </script>
+    <!-- display nation report -->
+    {% if spynation %}
+        <table class="default" width="800">
+            <tr class="title">
+                <td>Rapport d'espionnage</td>
+            </tr>
+            {% if spotted %}
+                <tr>
+                    <td>
+                        <br/>
+                        <p class="error">
+                            Attention, nos transmissions ont été repérées et la nation {{ nation }} sait que nous avons opéré pour votre compte.
+                        </p>
+                        <br/>
+                    </td>
+                </tr>
+            {% endif %}
+            <tr class="category">
+                <td>Informations au {{ date }} concernant la nation {{ nation }}.</td>
+            </tr>
+            <tr class="item">
+                <td>
+                    Agent :
+                    {% if level == 0 %}Novice{% endif %}
+                    {% if level == 1 %}Initié{% endif %}
+                    {% if level == 2 %}Agent{% endif %}
+                    {% if level == 3 %}Taupe{% endif %}
+                    <br/>
+                    Planètes repérées : {{ nb_planet }}
+                    <br/>
+                    {% if credits %}
+                        Portefeuille : {{ credits|intcomma }} crédits
+                        <br/>
+                    {% endif %}
+                    {% if researches %}Recherches connues : {{ nb_research }}{% endif %}
+                </td>
+            </tr>
+        </table>
+        {% if researches %}
+            <table class="default" width="800">
+                <tr class="header">
+                    <td align="center">Recherche</td>
+                    <td align="center">Niveau</td>
+                </tr>
+                {% for category in categories %}
+                    <tr class="category">
+                        <td colspan=2>
+                            {% if category.id == 10 %}Technologies{% endif %}
+                            {% if category.id == 20 %}Industrie{% endif %}
+                            {% if category.id == 30 %}Empire{% endif %}
+                            {% if category.id == 40 %}Recherche{% endif %}
+                            {% if category.id == 50 %}Technologies militaires{% endif %}
+                            {% if category.id == 90 %}Vaisseaux spatiaux{% endif %}
+                            &nbsp;
+                        </td>
+                    </tr>
+                    {% for research in category.list %}
+                        <tr class="item">
+                            <td>{{ research.research }}</td>
+                            <td align="center">
+                                <script>putlevel({{research.level}},{{research.levels}});</script>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    <tr class="clear">
+                        <td colspan=2>&nbsp;</td>
+                    </tr>
+                {% endfor %}
+            </table>
+        {% endif %}
+        <table width="800" class="default">
+            <tr class="header">
+                <td align="center">Planète</td>
+                <td align="center" colspan=2>Superficie</td>
+                <td align="center" colspan=2>Abondance</td>
+                <td align="center">Vaisseaux au sol</td>
+            </tr>
+            {% for planet in planets %}
+                <tr>
+                    <td align="center">
+                        {{ planet.planet }}&nbsp;<a href="/s03/map/?g={{ planet.g }}&s={{ planet.s }}&p={{ planet.p }}"
+   title="Localiser la planète">({{ planet.g }}.{{ planet.s }}.{{ planet.p }})</a>
+                    </td>
+                    <td align="right" width="1%">
+                        <img src="{{ PATH_IMAGES }}/interface/floor.gif"
+                             class="icon"
+                             title="Terrain"
+                             width="16"
+                             height="16">
+                        {{ planet.floor|intcomma }}
+                    </td>
+                    <td align="right" width="1%">
+                        <img src="{{ PATH_IMAGES }}/interface/space.gif"
+                             class="icon"
+                             title="Espace"
+                             width="16"
+                             height="16">
+                        {{ planet.space|intcomma }}
+                    </td>
+                    <td align="right" width="1%">
+                        <img src="{{ PATH_IMAGES }}/interface/ore.gif"
+                             class="icon"
+                             title="Minerai"
+                             width="16"
+                             height="16">
+                        {{ planet.pct_ore|intcomma }}%
+                    </td>
+                    <td align="right" width="1%">
+                        <img src="{{ PATH_IMAGES }}/interface/hydrocarbon.gif"
+                             class="icon"
+                             title="Hydrocarbure"
+                             width="16"
+                             height="16">
+                        {{ planet.pct_hydrocarbon|intcomma }}%
+                    </td>
+                    <td align="center">
+                        <img src="{{ PATH_IMAGES }}/interface/fleets.gif"
+                             class="icon"
+                             title="Espace"
+                             width="16"
+                             height="16">
+                        {{ planet.ground|intcomma }}
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% endif %}
+    <!-- display planet report -->
+    {% if spyplanet %}
+        <table class="default" width="800">
+            <tr class="title">
+                <td>Rapport d'espionnage</td>
+            </tr>
+            {% if spotted %}
+                <tr>
+                    <td>
+                        <br/>
+                        <p class="error">
+                            Attention, nos transmissions ont été repérées et la nation {{ nation }} sait que nous avons opéré pour votre compte.
+                        </p>
+                        <br/>
+                    </td>
+                </tr>
+            {% endif %}
+            <tr class="category">
+                <td>Informations au {{ date }} concernant la planète {{ location }}.</td>
+            </tr>
+            <tr class="item">
+                <td>
+                    <div id="stats">
+                        <span class="label">Agent:</span><span class="value">
+                            {% if level == 0 %}Novice{% endif %}
+                            {% if level == 1 %}Initié{% endif %}
+                            {% if level == 2 %}Agent{% endif %}
+                            {% if level == 3 %}Infiltrateur{% endif %}
+                        </span>
+                    </div>
+                </td>
+            </tr>
+        </table>
+        <table width="800" class="default">
+            <tr class="category">
+                <td>Informations générales</td>
+            </tr>
+            <tr class="item">
+                <td>
+                    <div id="stats">
+                        <div>
+                            <span class="label">Nom:</span><span class="value">{{ name }}</span>
+                        </div>
+                        <div>
+                            <span class="label">Localisation:</span><span class="value">{{ location }}</span>
+                        </div>
+                        <div>
+                            <span class="label">Nation:</span><span class="value">
+                                {% if owner %}{{ owner }}{% endif %}
+                                {% if no_owner %}aucune{% endif %}
+                            </span>
+                        </div>
+                        <div>
+                            <span class="label">Terrains:</span><span class="value">{{ floor }}</span>
+                        </div>
+                        <div>
+                            <span class="label">Espace:</span><span class="value">{{ space }}</span>
+                        </div>
+                        {% if uncommon %}
+                            <div>
+                                <span class="label">Abondance minerai: </span><span class="value">{{ pct_ore }}%</span>
+                            </div>
+                            <div>
+                                <span class="label">Abondance hydrocarbure: </span><span class="value">{{ pct_hydrocarbon }}%</span>
+                            </div>
+                        {% endif %}
+                        <div>
+                            <span class="label">Vaisseaux au sol (signature): </span><span class="value">
+                                {% if owner %}{{ ground|intcomma }}{% endif %}
+                                {% if no_owner %}-{% endif %}
+                            </span>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            {% if common %}
+                <tr class="category">
+                    <td>
+                        Industrie
+                    </td>
+                </tr>
+                <tr class="item">
+                    <td>
+                        <div id="stats">
+                            <div>
+                                <span class="label">Production minerai: </span><span class="value">{{ ore_prod|intcomma }}</span>
+                            </div>
+                            <div>
+                                <span class="label">Production hydrocarbure: </span><span class="value">{{ hydrocarbon_prod|intcomma }}</span>
+                            </div>
+                            <div>
+                                &nbsp;
+                            </div>
+                            <div>
+                                <span class="label">Reserve / Capacité minerai: </span><span class="value">{{ ore|intcomma }} / {{ ore_capacity|intcomma }}</span>
+                            </div>
+                            <div>
+                                <span class="label">Reserve / Capacité hydrocarbure: </span><span class="value">{{ hydrocarbon|intcomma }} / {{ hydrocarbon_capacity|intcomma }}</span>
+                            </div>
+                            <div>
+                                <span class="label">Consommation / Production énergie: </span><span class="value">{{ energy_consumption|intcomma }} / {{ energy_prod|intcomma }}</span>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            {% endif %}
+            {% if uncommon %}
+                <tr class="category">
+                    <td>
+                        Radar & Orbite
+                    </td>
+                </tr>
+                <tr class="item">
+                    <td>
+                        <div id="stats">
+                            <div>
+                                <span class="label">Puissance radar: </span><span class="value">{{ radar_strength }}</span>
+                            </div>
+                            <div>
+                                <span class="label">Puissance du brouillage: </span><span class="value">{{ radar_jamming }}</span>
+                            </div>
+                            <div>
+                                &nbsp;
+                            </div>
+                            <div>
+                                <span class="label">Minerai en orbite: </span><span class="value">{{ orbit_ore|intcomma }}</span>
+                            </div>
+                            <div>
+                                <span class="label">Hydrocarbure en orbite: </span><span class="value">{{ orbit_hydrocarbon|intcomma }}</span>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            {% endif %}
+            {% if rare %}
+                <tr class="category">
+                    <td>
+                        Population
+                    </td>
+                </tr>
+                <tr class="item">
+                    <td>
+                        <div id="stats">
+                            <div>
+                                <span class="label">Effectif / Capacité travailleurs: </span><span class="value">{{ workers }} / {{ workers_cap }}</span>
+                            </div>
+                            <div>
+                                <span class="label">Effectif / Capacité scientifiques: </span><span class="value">{{ scientists }} / {{ scientists_cap }}</span>
+                            </div>
+                            <div>
+                                <span class="label">Effectif / Capacité soldats: </span><span class="value">{{ soldiers }} / {{ soldiers_cap }}</span>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            {% endif %}
+        </table>
+        {% if buildings %}
+            <br/>
+            <table width="800" class="default">
+                <tr class="title">
+                    <td colspan="2">
+                        Constructions
+                    </td>
+                </tr>
+                <tr class="header">
+                    <td>
+                        Nom
+                    </td>
+                    <td width="1%" nowrap>
+                        Quantité
+                    </td>
+                </td>
+            </tr>
+            {% for building in buildings %}
+                <tr class="item">
+                    <td>
+                        {{ building.building }}
+                    </td>
+                    <td align="center">
+                        {{ building.qty }}
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% endif %}
+    {% if buildings_pending %}
+        <br/>
+        <table width="800" class="default">
+            <tr class="title">
+                <td colspan="2">
+                    Constructions en cours
+                </td>
+            </tr>
+            <tr class="header">
+                <td>
+                    Nom
+                </td>
+                <td width="1%" nowrap>
+                    Fin de construction prévue
+                </td>
+            </td>
+        </tr>
+        {% for building in buildings_pending %}
+            <tr class="item">
+                <td>
+                    {{ building.building }}
+                </td>
+                <td align="center">
+                    {{ building.endtime }}
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endif %}
+{% endif %}
+{% endblock %}

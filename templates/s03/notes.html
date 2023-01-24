@@ -1,0 +1,51 @@
+{% extends "s03/layout.html" %}
+{% load humanize %}
+{% block content %}
+    <script>function update(obj) {document.getElementById("count").innerHTML=obj.value.length}</script>
+    <form method="post" action="/s03/notes/" name="note">
+        {% csrf_token %}
+        <table class="default">
+            <tr class="title">
+                <td>
+                    Notes personnelles (<span id="count">0</span> / {{ maxlength }} caractères)
+                </td>
+            </tr>
+            <tr class="item">
+                <td>
+                    <textarea id="notes"
+                              name="notes"
+                              cols="75"
+                              rows="15"
+                              onKeyUp="update(this)"
+                              onFocus="update(this)">{% if data_notes %}{{data_notes}}{% endif %}</textarea>
+                </td>
+            </tr>
+            <tr class="item">
+                <td class=buttons align=center>
+                    <input type="button"
+                           name="effacer"
+                           value="Effacer"
+                           class="button"
+                           onclick="javascript:document.getElementById('notes').value=''">
+                    &nbsp;
+                    <input type="submit"
+                           name="submit"
+                           id="submit"
+                           value="Enregistrer"
+                           class="button">
+                </td>
+            </tr>
+            {% if error %}
+                <tr class="item">
+                    <td>
+                        <p class=error>
+                            {% if toolong %}Vos notes dépassent la limite de {{ maxlength }} caractères{% endif %}
+                            {% if done %}Notes enregistrées{% endif %}
+                        </p>
+                    </td>
+                </tr>
+            {% endif %}
+        </table>
+    </form>
+    <script>onload=function() { var o=document.getElementById("notes"); o.focus(); o.value = o.value; }</script>
+{% endblock %}

@@ -1,4 +1,8 @@
-from .base import *
+# -*- coding: utf-8 -*-
+
+import re
+
+from myapps.s03.views._global import *
 
 class View(GlobalView):
 
@@ -6,8 +10,8 @@ class View(GlobalView):
 
         response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
-        
-        #--- post
+
+        self.selected_menu = "noalliance.create"
 
         self.name = ""
         self.tag = ""
@@ -23,23 +27,48 @@ class View(GlobalView):
             self.tag = request.POST.get("alliancetag", "").strip()
             self.description = request.POST.get("description", "").strip()
 
-            self.valid_name = isValidAlliancename(self.name)
-            self.valid_tag = isValidAlliancetag(self.tag)
-            self.valid_description = isValiddescription(self.description)
+            self.valid_name = self.isValidAlliancename(self.name)
+            self.valid_tag = (request.session.get(sPrivilege) > 100) or self.isValidAlliancetag(self.tag)
+            self.valid_description = self.isValiddescription(self.description)
 
-            if self.valid_name and self.valid_tag and self.valid_description:
+            if self.valid_name and self.valid_tag:
 
                 oRs = oConnExecute("SELECT sp_create_alliance(" + str(self.UserId) + "," + dosql(self.name) + "," + dosql(self.tag) + "," + dosql(self.description) + ")")
 
                 self.create_result = oRs[0]
                 if self.create_result >= -1:
-                    return HttpResponseRedirect("/s03/alliance-view/")
-        
-        #--- get
+                    return HttpResponseRedirect("/s03/alliance/")
 
-        self.selectedMenu = "alliance"
+        return self.DisplayAllianceCreate()
 
-        content = GetTemplate(self.request, "alliance-create")
+    #
+    # return if the given self.name is valid for an alliance
+    #
+    def isValidAlliancename(self, myname):
+
+        if myname == "" or len(myname) < 4 or len(myname) > 32:
+            return False
+        else:
+            p = re.compile("^[a-zA-Z0-9]+([ ]?[.]?[\-]?[ ]?[a-zA-Z0-9]+)*$")
+            return p.match(myname)
+
+    #
+    # return if the given self.tag is valid
+    #
+    def isValidAlliancetag(self, tag):
+
+        if tag == "" or len(tag) < 2 or len(tag) > 4:
+            return False
+        else:
+            p = re.compile("^[a-zA-Z0-9]+$")
+            return p.match(tag)
+
+    def isValiddescription(self, description):
+        return len(description) < 8192
+
+    def DisplayAllianceCreate(self):
+
+        content = GetTemplate(self.request, "s03/alliance-create")
 
         if self.oPlayerInfo["can_join_alliance"]:
             if self.create_result == -2: content.Parse("name_already_used")

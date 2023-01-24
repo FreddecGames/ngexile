@@ -3,944 +3,901 @@
 {% load humanize %}
 {% block content %}
     <script>
-    var currGalaxy = "";
-    var currSector = "";
-
-    function setLocGalaxy(g){ $("locgalaxy").value = g; }
-    function setLocSector(s){ $("locsector").value = s; }
-    
-    function setLoc(g,s) { currGalaxy = g; currSector = s; setLocGalaxy(g); setLocSector(s); }
-
-    function openGalaxy(g){	window.location = "?g=" + g; }
-    function openSector(g,s){ window.location = "?g=" + g + "&s=" + s; }
-
-    {% if nav_galaxy %}
-    var pl = new Array();
-    pl['0'] = 'hostile';
-    pl['1'] = 'uninhabited';
-    pl['2'] = 'friend';
-    pl['3'] = 'ally';
-    pl['4'] = 'player';
-    pl['5'] = 'resource';
-    pl['6'] = 'resource';
-    pl['7'] = 'vortex';
-    pl['8'] = 'nothing';
-
-    function displayGalaxy(galaxy, m) {
-    
-        var res = "";
-        var pos = 0;
-        for (var i = 1; i < 100; i++) {
-        
-            var s = '<div class="sector" onmouseover="setLocSector(' + i + ')" onclick="openSector(' + galaxy + ',' + i + ')">';
-
-            for (var j = 0; j < 25; j++) {
-                c = pl[m.charAt(pos)];
-                s += '<div class="p' + j + ' ' + c + '" id="' + i + '-' + j + '"><i class="fa-fw fas fa-circle"></i></div>';
-                pos++;
-            }
-
-            s += '</div>';
-
-            res += s;
-        }
-
-        $('mapgalaxyview').innerHTML = res;
-    }
-    {% endif %}
-
-    {% if nav_sector %}
-    function get_left(obj) {
-        var left = obj.offsetLeft;
-        while((obj = obj.offsetParent) != null){ left += obj.offsetLeft; }
-        return left;
-    }
-
-    function get_top(obj) {
-        var top = obj.offsetTop;
-        while((obj = obj.offsetParent) != null){ top += obj.offsetTop; }
-        return top;
-    }
-
-    function showmenu(objet,title,txt) {	
-        var hint = $("hint");
-        var hinttext = $("hinttext");
-        hint.style.visibility = "hidden";
-
-        var obj = $(objet);
-        var max = $("map").offsetWidth + get_left($("map"));
-        var x = (get_left(obj)+16);
-        var y = (get_top(obj)-2) - $("content-scroll").scrollTop;
-
-        hinttext.innerHTML = txt;
-
-        if (x + hint.offsetWidth > max) {
-            x = x - hint.offsetWidth-16;
-        }
-        
-        hint.style.left = x + 'px';
-        hint.style.top = y + 'px';
-        hint.style.visibility = "visible";
-    }
-
-    function hidemenu() {
-        var menu = $("hint");
-        menu.style.visibility = "hidden";
-        menu.style.left = 0;
-        menu.style.top = 0;
-    }
-
-    document.onclick=hidemenu;
-
-    function getRelationClass(rel) {
-        switch(rel){
-            case 2: return "text-player"; break;
-            case 1: return "text-success"; break;
-            case 0:	return "text-success"; break;
-            case -1: return "text-danger"; break;
-            case -2: return "text-danger"; break;
-            case -3: return "text-normal"; break;
-        }
-        return "";
-    }
-    
-    function descRuin(ore, hydrocarbon) {
-    
-        let desc = ''
-        desc += '<div class="row g-1">'
-            if (ore > 0) desc += '<div class="col-12"><div class="row gx-3"><div class="col text-normal">Minerai</div><div class="col-auto">' + ore + '</div></div></div>'
-            if (hydrocarbon > 0) desc += '<div class="col-12"><div class="row gx-3"><div class="col text-normal">Hydrocarbure</div><div class="col-auto">' + hydrocarbon + '</div></div></div>'
-        desc += '</div>'
-        
-        return desc
-    }
-    
-    function descInfo(floor, space, a_ore, a_hydrocarbon, vortex_strength) {
-    
-        let desc = ''
-        desc += '<div class="row g-1">'
-            if (floor > 0) desc += '<div class="col-12"><div class="row gx-3"><div class="col text-normal">Terrain</div><div class="col-auto">' + floor + '</div></div></div>'
-            if (space > 0) desc += '<div class="col-12"><div class="row gx-3"><div class="col text-normal">Espace</div><div class="col-auto">' + space + '</div></div></div>'
-            if (a_ore > 0) desc += '<div class="col-12"><div class="row gx-3"><div class="col text-normal">Abondance minerai</div><div class="col-auto">' + a_ore + '%</div></div></div>'
-            if (a_hydrocarbon > 0) desc += '<div class="col-12"><div class="row gx-3"><div class="col text-normal">Abondance hydrocarbure</div><div class="col-auto">' + a_hydrocarbon + '%</div></div></div>'
-            if (vortex_strength > 0) desc += '<div class="col-12"><div class="row gx-3"><div class="col text-normal">Stabilité vortex</div><div class="col-auto">' + vortex_strength + '</div></div></div>'
-        desc += '</div>'
-        
-        return desc
-    }
-    
-    function descRadar(radar, jammer) {
-    
-        let desc = ''
-        desc += '<div class="row g-1">'
-            if (radar > 0) desc += '<div class="col-12"><div class="row gx-3"><div class="col text-normal">Radar</div><div class="col-auto">' + radar + '</div></div></div>'
-            if (jammer > 0) desc += '<div class="col-12"><div class="row gx-3"><div class="col text-normal">Brouillage</div><div class="col-auto">' + jammer + '</div></div></div>'
-        desc += '</div>'
-        
-        return desc
-    }
-
-    function Fl(id,name,tag,owner,rel,signature,fleeing) {
-        
-        var s = '<div class="col-12">'
-        s += '<div class="row gx-2 align-items-baseline">'
-        
-        if(rel==2 || id != 0)
-            s += '<div class="col"><a title="Inspecter la flotte '+name+'" href="/s03/fleet-view/?id=' + id + '" class="text-player">'+(tag!=''?'['+tag+'] ':'')+name+'</a></div>';
-        else
-        {
-            var c = getRelationClass(rel);
-
-            s += '<div class="col"><a title="Écrire à '+owner+'" href="/s03/mail-new/?subject=À propos de la flotte '+name+'&to='+owner+'" class="' + c+ '">' +(tag!=''?'['+tag+'] ':'')+owner+'</a></div>';
-        }
-
-        if(signature > 0)
-            s += '<div class="col-auto">'+formatnumber(signature)+'</div>';
-        else
-            s += '<div class="col-auto">Indéterminé</div>';
-
-        if(fleeing)	s += '<div class="col-auto">Fuite</div>';
-        
-        s += '</div>'
-        s += '</div>'
-        
-        return s;
-    }
-
-    function descOrbit(idx,planetid,rel,parked) {
-        var s = '<div class="row g-1">';
-        var orbit=orb[idx];
-
-        for(var i=1; i<orbit.length; i++)
-            s += Fl(orbit[i][0], orbit[i][1], orbit[i][2], orbit[i][3], orbit[i][4], orbit[i][5], orbit[i][6]);
-
-        if(parked > 0) {
-        
-            s += '<div class="col-12">'
-            s += '<div class="row gx-2 align-items-baseline">'
-
-            if(rel == 2)
-                s += '<div class="col"><a href="/s03/planet-orbit/?planet='+planetid+'" class="' + getRelationClass(rel) + '">Au sol</a></div>';
-            else
-                s += '<div class="col"><span class="' + getRelationClass(rel) + '">Au sol</div>';
-            
-            s += '<div class="col-auto">' + formatnumber(parked) + '</div>'
-            
-            s += '</div>'
-            s += '</div>'
-        }
-        
-        s += '</div>'
-        
-        return s;
-    }
-
-    function descSpecials(idx) {
-        var s="";
-        var elements=elem[idx];
-
-        for(var i=1; i<elements.length; i++)
-            s += elements[i] + "<br/>";
-
-        return s;
-    }
-
-    var elem=new Array();
-    var orb=new Array();
-    var idx=1;
-
-    function loc(img,alliancetag,id,owner,name,rel,radar,jammer,ore,hydrocarbon,floor,space,a_ore,a_hydrocarbon,vortex_strength,frozen,parked,orbit,elements,b_ore,b_hydrocarbon) {
-        var c = getRelationClass(rel);
-
-        s = '<div class="planet">'+
-            '<table border="0" cellspacing="0" cellpadding="0" width="100%">'+
-            '<tr>'+
-
-            '<td align=right width="38">';
-            if (ore != '0' || hydrocarbon != '0') {
-                s += '<a href="#" class="none" onclick="return donothide(event)" onfocus="this.onmouseover()" onmouseover="showmenu(\'resources.'+idx+'\',\'\',descRuin('+ore+','+hydrocarbon+'))">'+
-                        '<img id="resources.' + idx + '" src="{{PATH_IMAGES}}map/sector/resource.gif" width="16px" />'+
-                     '</a>';
-            }
-            else s += '<img width=1 height=16 src="{{PATH_IMAGES}}interface/spacer.gif">';
-            s += '</td>';
-
-            s+=	'<td align=center rowspan=4 width="64">'+
-                '<div><img class="planet" src="{{PATH_IMAGES}}planets/p'+img+'.gif" width=64 height=64></div><div class="planettext small">'+idx+'</div>'+
-                '</td>';
-
-            s+= '<td width="38">';
-
-            if(floor!='' || space!='' || vortex_strength!='0')
-            {
-                s+= '<a href="#" class="text-normal small" onclick="return donothide(event)" onfocus="this.onmouseover()" onmouseover="showmenu(\'planet.'+idx+'\',\'\',descInfo(' + floor + ',' + space + ',' + a_ore + ',' + a_hydrocarbon + ',' + vortex_strength + '))">' +
-                    '<i id="planet.'+idx+'" class="fa-fw fas fa-info"></i>'+
-                    '</a>';
-            }
-            else
-                s+= '<img width=1 height=16 src="{{PATH_IMAGES}}interface/spacer.gif">';
-
-            s+= '</td></tr>';
-
-
-            s+= '<tr>'+
-                '<td align=right><img width=1 height=16 src="{{PATH_IMAGES}}interface/spacer.gif"></td>'+
-                '<td align=left>';
-            if(radar>0 || jammer!=0)
-            {
-                if(jammer==-1)
-                {
-                    s+= '<a href="#" class="none" onclick="return donothide(event)" onfocus="this.onmouseover()" onmouseover="showmenu(\'radar.'+idx+'\',\'Radar brouillé\',\'Radar brouillé\')">'+
-                        '<img id="radar.'+idx+'" width=16 height=16 src="{{PATH_IMAGES}}map/sector/radarjammed.gif">';
-                } else
-                if(radar>0 && jammer==0)
-                {
-                    s+= '<a href="#" class="none" onclick="return donothide(event)" onfocus="this.onmouseover()" onmouseover="showmenu(\'radar.'+idx+'\',\'Radar détecté\', descRadar(' + radar + ',' + jammer + '))">'+
-                        '<img id="radar.'+idx+'" width=16 height=16 src="{{PATH_IMAGES}}map/sector/radar.gif">';
-                } else
-                if(jammer>0)
-                {
-                    s+= '<a href="#" class="none" onclick="return donothide(event)" onfocus="this.onmouseover()" onmouseover="showmenu(\'radar.'+idx+'\',\'Radar brouillé détecté\', descRadar(' + radar + ',' + jammer + '))">'+
-                        '<img id="radar.'+idx+'" width=16 height=16 src="{{PATH_IMAGES}}map/sector/radarjammed-known.gif">';
-                }
-                        
-                s+= '</a>';
-            }
-            else
-                s+= '<img width=1 height=16 src="{{PATH_IMAGES}}interface/spacer.gif">';
-            s+= '</td></tr>';
-
-            s+= '<tr>';
-
-            s+= '<td align=right>';
-            if(frozen)
-                s+= '<a href="#" class="none" title="En vacances"><img width=16 height=16 src="{{PATH_IMAGES}}map/sector/sleeping.gif"></a>';
-            else
-            if(b_ore != '0' || b_hydrocarbon != '0')
-                s+= '<a href="#" class="none" title="Prix d\'achat" onclick="return donothide(event)" onfocus="this.onmouseover()" onmouseover="showmenu(\'price.'+idx+'\',\'Achat de ressources\',\'' + (b_ore != '0'?'Minerai: ' + b_ore + '<br/>':'') + (b_hydrocarbon != '0'?'Hydrocarbure: ' + b_hydrocarbon + '<br/>':'') + '\')">' +
-                    '<img id="price.'+idx+'" width=16 height=16 src="{{PATH_IMAGES}}interface/credits.gif"></a>';
-            else
-                s+= '<img width=1 height=16 src="{{PATH_IMAGES}}interface/spacer.gif">';
-            s+= '</td>';
-
-            orb[idx] = orbit;
-
-            s+= '<td align=left valign=top>';
-
-            if(parked > 0 || orbit.length > 0)
-            {
-                var enemyfleets = false;
-                for(var k=1; k<orbit.length; k++)
-                    if(orbit[k][4] < 0)
-                        enemyfleets = true;
-
-                if(enemyfleets)
-                    f = "-enemy";
-                else if(orbit.length > 0)
-                    f = "-fleets";
-                else
-                    f = "";
-
-                s+= '<a href="#" class="none" onclick="return donothide(event)" onfocus="this.onmouseover()" onmouseover="showmenu(\'fleets.'+idx+'\',\'Flottes\',descOrbit('+idx+','+id+','+rel+','+parked+'))">'+
-                    '<img id="fleets.'+idx+'" width=16 height=16 src="{{PATH_IMAGES}}map/sector/orbit'+f+'.gif">'+
-                    '</a>';
-            }
-            else
-                s+= '<img width=1 height=16 src="{{PATH_IMAGES}}interface/spacer.gif">';
-
-            s+= '</td></tr>';
-
-            s+= '<tr>';
-
-            elem[idx] = elements;
-
-            s+= '<td align="right">';
-            if(elements.length > 0)
-            {
-                s+= '<a href="#" class=none onclick="return donothide(event)" onfocus="this.onmouseover()" onmouseover="showmenu(\'elements.'+idx+'\',\'Spécial\',descSpecials('+idx+'))">'+
-                    '<img id="elements.'+idx+'" width=16 height=16 src="{{PATH_IMAGES}}map/sector/special.gif">'+
-                    '</a>';
-            }
-            else
-                s+= '<img width="1" height="16" src="{{PATH_IMAGES}}interface/spacer.gif">';
-            s+= '</td>';
-
-            s+= '<td align="left" valign="top"><img width="1" height="16"></td>'+
-                '</tr>';
-
-            s+= '<tr><td colspan="3" align="center" class="small">';
-
-            var n='';
-
-            if(alliancetag != '') n+='<a href="/s03/alliance-view/?tag='+alliancetag+'" class="'+c+'">['+alliancetag+']</a>&nbsp;';
-
-            if(rel==2)
-            {
-                if(floor>0 && space>0)
-                    n+= '<a href="/s03/planet-view/?planet='+id+'" class="'+c+'" title="Inspecter la planète '+name+'">'+name+'</a>';
-                else
-                    n+= '<span class="'+c+'">'+name+'</span>';
-            }
-            else
-            if(rel==-3 && isNaN(parseInt(img))) n+= '';
-            else
-            if(rel==-3) n+= '<span class="text-normal">inhabitée</span>';
-            else
-            {
-                if(name=='') name=owner;
-                if(owner=='')
-                    n+= '<span class="'+c+'" title="Planète occupée">Occupée</span>';
-                else
-                    n+= '<a href="/s03/profile-view/?name='+owner+'" class="'+c+'" title="Voir les informations sur '+owner+'">'+name+'</a>';
-            }
-
-            if(n=='') n = '&nbsp;';
-
-            s += n;
-
-            s+= '</td></tr>'+
-                '</table>'+
-            '</div>';
-
-        idx++;
-
-        return s;
-    }
-
-    function displaySector(arr) {
-        idx = 1;
-
-        var s = "";
-        for(var i=1; i<arr.length; i++) {
-            var p = arr[i];
-            s += loc(p[0], p[1], p[2], p[3], p[4], p[5], p[6], p[7], p[8], p[9], p[10], p[11], p[12], p[13], p[14], p[15], p[16], p[17], p[18], p[19], p[20]);
-        }
-
-        var obj = $('mapsectorview');
-        obj.innerHTML = s;
-    }
-
-    {% endif %}
-    </script>
-    <div id="content-scroll" class="scroll-content pe-1" style="height:calc(100% - 44px - 52px);">
-    <div class="card card-body mb-2">
-        <form method="get"
-              action="?"
-              class="row gx-3 align-items-center justify-content-center">
-            <div class="col-auto">
-                <a href="#" onclick="openGalaxy(''); return false;">Univers</a>
-            </div>
-            <div class="col-auto">
-                <div class="row gx-2 align-items-center">
-                    <div class="col-auto">
-                        {% if galaxy_link %}<a href="#" onclick="openGalaxy(currGalaxy); return false;">{% endif %}
-                        Galaxie
-                        {% if galaxy_link %}</a>{% endif %}
-                    </div>
-                    <div class="col-auto">
-                        <input type="text"
-                               name="g"
-                               id="locgalaxy"
-                               size="2"
-                               maxlength="2"
-                               autocomplete="off"
-                               value="{{ galaxy }}">
-                    </div>
-                    <div class="col-auto">
-                        Secteur
-                    </div>
-                    <div class="col-auto">
-                        <input type="text"
-                               name="s"
-                               id="locsector"
-                               size="2"
-                               maxlength="2"
-                               autocomplete="off"
-                               value="{{ sector }}">
-                    </div>
-                </div>
-            </div>
-            <div class="col-auto">
-                <input type="submit" value="Localiser">
-            </div>
-        </form>
-    </div>
-    {% if nav_universe %}
-        <div class="row g-1 align-items-center justify-content-center">
-            {% for galaxy in galaxies %}
-                <div class="col-auto">
-                    <a href="/s03/map/?g={{ galaxy.galaxyid }}"
-                       onmouseover="setLocGalaxy({{ galaxy.galaxyid }})"
-                       class="d-block rounded border bg-black {% if galaxy.hasplanet %}border-player{% elif galaxy.hasally %}border-success{% elif galaxy.hasenemy %}border-danger{% endif %}">
-                        <div>
-                            <img src="{{ PATH_IMAGES }}galaxies/01.jpg" class="rounded" />
-                        </div>
-                        <div class="text-center">
-                            <small>{{ galaxy.galaxyid }}</small>
-                        </div>
-                    </a>
-                </div>
-            {% endfor %}
-        </div>
-    {% elif nav_galaxy %}
-        <div class="row gx-3">
-            <div class="col">
-                <div id="mapgalaxyview">
-                </div>
-                <script>displayGalaxy({{galaxy}}, '{{mapgalaxy}}');</script>
-            </div>
-            <div class="col-3">
-                <div class="row g-3">
-                    <div class="col-12">
-                        <div class="card">
-                            <div class="card-header">
-                                <span>Prix GM 1000 unités</span>
-                            </div>
-                            <div class="card-body">
-                                <div class="row g-1">
-                                    <div class="col-12">
-                                        <div class="row gx-2 align-items-center">
-                                            <div class="col">
-                                                <span class="text-normal">Minerai</span>
-                                            </div>
-                                            <div class="col-auto">
-                                                <img src="{{ PATH_IMAGES }}interface/credits.gif" width="16px" class="res" />
-                                                <span class="text-white">{{ price_ore|intcomma }}</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-12">
-                                        <div class="row gx-2 align-items-center">
-                                            <div class="col">
-                                                <span class="text-normal">Hydrocarbure</span>
-                                            </div>
-                                            <div class="col-auto">
-                                                <img src="{{ PATH_IMAGES }}interface/credits.gif" width="16px" class="res" />
-                                                <span class="text-white">{{ price_hydrocarbon|intcomma }}</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    {% if protected_until > 0 %}
-                        <div class="col-12">
-                            <div class="card card-body">
-                                <div class="row gx-2 align-items-center">
-                                    <div class="col">
-                                        <span class="text-normal">Ouverture</span>
-                                    </div>
-                                    <div class="col-auto">
-                                        <script>document.write(formattime({{protected_until}}))</script>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    {% endif %}
-                    {% if sov_tag_1 %}
-                        <div class="col-12">
-                            <div class="card card-body">
-                                <div class="row g-1">
-                                    <div class="col-12">
-                                        <div class="row gx-2 align-items-center">
-                                            <div class="col">
-                                                <span class="text-normal">{{ sov_tag_1 }}</span>
-                                            </div>
-                                            <div class="col-auto">
-                                                {{ sov_perc_1 }}%
-                                            </div>
-                                        </div>
-                                    </div>
-                                    {% if sov_tag_2 %}
-                                        <div class="col-12">
-                                            <div class="row gx-2 align-items-center">
-                                                <div class="col">
-                                                    <span class="text-normal">{{ sov_tag_2 }}</span>
-                                                </div>
-                                                <div class="col-auto">
-                                                    {{ sov_perc_2 }}%
-                                                </div>
-                                            </div>
-                                        </div>
-                                    {% endif %}
-                                    {% if sov_tag_3 %}
-                                        <div class="col-12">
-                                            <div class="row gx-2 align-items-center">
-                                                <div class="col">
-                                                    <span class="text-normal">{{ sov_tag_3 }}</span>
-                                                </div>
-                                                <div class="col-auto">
-                                                    {{ sov_perc_3 }}%
-                                                </div>
-                                            </div>
-                                        </div>
-                                    {% endif %}
-                                </div>
-                            </div>
-                        </div>
-                    {% endif %}
-                    <div class="col-12">
-                        <div class="card card-body">
-                            <div class="row g-1">
-                                <div class="col-12">
-                                    <div class="row gx-2 align-items-center">
-                                        <div class="col">
-                                            <span class="text-normal">Ressources</span>
-                                        </div>
-                                        <div class="col-auto">
-                                            <div class="sector">
-                                                <div class="resource">
-                                                    <i class="fa-fw fas fa-circle"></i>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-12">
-                                    <div class="row gx-2 align-items-center">
-                                        <div class="col">
-                                            <span class="text-normal">Vortex</span>
-                                        </div>
-                                        <div class="col-auto">
-                                            <div class="sector">
-                                                <div class="vortex">
-                                                    <i class="fa-fw fas fa-circle"></i>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-12">
-                                    <div class="row gx-2 align-items-center">
-                                        <div class="col">
-                                            <span class="text-normal">Guilde Marchande</span>
-                                        </div>
-                                        <div class="col-auto">
-                                            <div class="sector">
-                                                <div class="friend">
-                                                    <i class="fa-fw fas fa-circle"></i>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-12">
-                                    <div class="row gx-2 align-items-center">
-                                        <div class="col">
-                                            <span class="text-normal">Planète alliée</span>
-                                        </div>
-                                        <div class="col-auto">
-                                            <div class="sector">
-                                                <div class="text-success">
-                                                    <i class="fa-fw fas fa-circle"></i>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-12">
-                                    <div class="row gx-2 align-items-center">
-                                        <div class="col">
-                                            <span class="text-normal">Planète colonisée</span>
-                                        </div>
-                                        <div class="col-auto">
-                                            <div class="sector">
-                                                <div class="text-player">
-                                                    <i class="fa-fw fas fa-circle"></i>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-12">
-                                    <div class="row gx-2 align-items-center">
-                                        <div class="col">
-                                            <span class="text-normal">Planète enemie</span>
-                                        </div>
-                                        <div class="col-auto">
-                                            <div class="sector">
-                                                <div class="text-danger">
-                                                    <i class="fa-fw fas fa-circle"></i>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-12">
-                                    <div class="row gx-2 align-items-center">
-                                        <div class="col">
-                                            <span class="text-normal">Planète libre</span>
-                                        </div>
-                                        <div class="col-auto">
-                                            <div class="sector">
-                                                <div class="uninhabited">
-                                                    <i class="fa-fw fas fa-circle"></i>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    {% elif nav_sector %}
-        <div id="map">
-            <div id="mapsector"
-                 class="border rounded"
-                 style="border-color:#495057!important">
-                <table cellpadding="0" cellspacing="0">
-                    <tr class="lh-1">
-                        <td>
-                            <a href="#"
-                               class="small"
-                               onclick="openSector({{ galaxy }}, {{ sector0 }})"
-                               data-bs-toggle="tooltip"
-                               data-bs-title="Secteur {{ galaxy }}.{{ sector0 }}"><i class="fa-fw fas fa-chevron-up" style="transform: rotate(-45deg);"></i></a>
-                        </td>
-                        <td align="center">
-                            <a href="#"
-                               class="small"
-                               onclick="openSector({{ galaxy }}, {{ sector1 }})"
-                               data-bs-toggle="tooltip"
-                               data-bs-title="Secteur {{ galaxy }}.{{ sector1 }}"><i class="fa-fw fas fa-chevron-up"></i></a>
-                        </td>
-                        <td>
-                            <a href="#"
-                               class="small"
-                               onclick="openSector({{ galaxy }}, {{ sector2 }})"
-                               data-bs-toggle="tooltip"
-                               data-bs-title="Secteur {{ galaxy }}.{{ sector2 }}"><i class="fa-fw fas fa-chevron-up" style="transform: rotate(45deg);"></i></a>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td valign="middle">
-                            <a href="#"
-                               class="small"
-                               onclick="openSector({{ galaxy }}, {{ sector7 }})"
-                               data-bs-toggle="tooltip"
-                               data-bs-title="Secteur {{ galaxy }}.{{ sector7 }}"><i class="fa-fw fas fa-chevron-left"></i></a>
-                        </td>
-                        <td>
-                            <div class="map" id="mapsectorview">
-                            </div>
-                        </td>
-                        <td valign="middle">
-                            <a href="#"
-                               class="small"
-                               onclick="openSector({{ galaxy }}, {{ sector3 }})"
-                               data-bs-toggle="tooltip"
-                               data-bs-title="Secteur {{ galaxy }}.{{ sector3 }}"><i class="fa-fw fas fa-chevron-right"></i></a>
-                        </td>
-                    </tr>
-                    <tr class="lh-1">
-                        <td>
-                            <a href="#"
-                               class="small"
-                               onclick="openSector({{ galaxy }}, {{ sector6 }})"
-                               data-bs-toggle="tooltip"
-                               data-bs-title="Secteur {{ galaxy }}.{{ sector6 }}"><i class="fa-fw fas fa-chevron-down" style="transform: rotate(45deg);"></i></a>
-                        </td>
-                        <td align="center">
-                            <a href="#"
-                               class="small"
-                               onclick="openSector({{ galaxy }}, {{ sector5 }})"
-                               data-bs-toggle="tooltip"
-                               data-bs-title="Secteur {{ galaxy }}.{{ sector5 }}"><i class="fa-fw fas fa-chevron-down"></i></a>
-                        </td>
-                        <td>
-                            <a href="#"
-                               class="small"
-                               onclick="openSector({{ galaxy }}, {{ sector4 }})"
-                               data-bs-toggle="tooltip"
-                               data-bs-title="Secteur {{ galaxy }}.{{ sector4 }}"><i class="fa-fw fas fa-chevron-down" style="transform: rotate(-45deg);"></i></a>
-                        </td>
-                    </tr>
-                </table>
-            </div>
-        </div>
-        <script>
-    displaySector(new Array(0
-        {% for planet in locations %},new Array('{% if planet.planet %}{{planet.planet_img}}{% endif %}{% if planet.vortex %}vortex{% endif %}{% if planet.asteroids %}asteroids{% endif %}{% if planet.clouds %}clouds{% endif %}', '{{planet.alliancetag}}','{{planet.planetid}}','{{planet.ownername}}','{{planet.planetname}}',{{planet.relation}},{{planet.radarstrength}},{{planet.radarjamming}},'{{planet.ore}}','{{planet.hydrocarbon}}','{{planet.floor}}','{{planet.space}}', '{{planet.a_ore}}','{{planet.a_hydrocarbon}}','{{planet.vortex_strength}}',{% if planet.frozen %}true{% endif %}{% if planet.active %}false{% endif %},{{planet.parked}}
-        ,new Array({% if planet.orbit %}0{% for fleet in planet.fleets %},new Array({{fleet.fleetid}},'{{fleet.fleetname}}','{{fleet.alliancetag}}','{{fleet.fleetowner}}',{{fleet.relation}},{{fleet.signature}},0{% if fleet.fleeing %}1{% endif %}){% endfor %}{% endif %})
-        ,new Array({% if planet.elements %}0{% for element in planet.elements %},'{{element.element}}'{% endfor %}{% endif %})
-        ,'{{planet.buy_ore}}','{{planet.buy_hydrocarbon}}'
-        ){% endfor %}
-    ));
-        </script>
-        {% if radar %}
-            <script>
-function sig(signature) {
-
-	if (signature > 0) document.write(formatnumber(signature))
-	else document.write('Indéterminé')
+var currGalaxy="";
+var currSector="";
+
+function setLocGalaxy(g){ $("locgalaxy").value=g; }
+function setLocSector(s){ $("locsector").value=s; }
+function setLoc(g,s) { currGalaxy = g; currSector = s; setLocGalaxy(g); setLocSector(s); }
+
+function openGalaxy(g){	window.location="?g="+g; }
+function openSector(g,s){ window.location="?g="+g+"&s="+s; }
+
+{% if nav_universe %}
+
+function displayUniverse(u) {
+	var s = "";
+
+	for(var i=1; i<u.length; i++) {
+		var g = u[i];
+
+		var c = "";
+		if(g[1]) c = "hasplanets";
+		else
+		if(g[2]) c = "hasallies";
+		else
+		if(g[3]) c = "hasfriends";
+		else
+		if(g[4]) c = "hasenemies";
+		else
+			c = "hasnothing";
+
+		s += '<div class="gal"><div onmouseover="setLocGalaxy('+g[0]+')" onclick="openGalaxy('+g[0]+')"><img src="{{PATH_IMAGES}}/galaxies/01.jpg" title="'+g[0]+'" class="'+c+'"></div><div class=galtext>'+g[0]+'</div></div>';
+	}
+
+	$('mapuniverseview').innerHTML = s;
+
+	var obj = $('mapuniverse');
+	obj.style.display = 'block';
+	obj.style.visibility = 'visible';
 }
-            </script>
-            {% if movings|length == 0 and enterings|length == 0 and leavings|length == 0 %}
-                <div class="mt-2 card card-body text-center">
-                    <span class="text-normal">Aucun mouvement détecté par nos radars</span>
-                </div>
-            {% endif %}
-            {% if movings|length > 0 %}
-                <div class="mt-2 card">
-                    <div class="card-header">
-                        <span>Mouvements dans le secteur</span>
-                    </div>
-                    <div class="list-group list-group-flush">
-                        {% for fleet in movings %}
-                            <div class="list-group-item">
-                                <div class="row gx-2 flex-nowrap align-items-baseline">
-                                    <div class="col-auto">
-                                        {% if fleet.relation == 2 %}
-                                            {% if fleet.stance %}
-                                                <img src="{{ PATH_IMAGES }}interface/stance_attack.gif"
-                                                     class="stance"
-                                                     width="10"
-                                                     height="10"/>
-                                            {% else %}
-                                                <img src="{{ PATH_IMAGES }}interface/stance_defend.gif"
-                                                     class="stance"
-                                                     width="10"
-                                                     height="10"/>
-                                            {% endif %}
-                                            <a href="/s03/fleet-view/?id={{ fleet.fleetid }}" class="text-player">{{ fleet.fleetname }}</a>
-                                        {% else %}
-                                            {% if fleet.alliancetag %}
-                                                <a href="/s03/alliance-view/?tag={{ fleet.alliancetag }}"
-                                                   class="{% if fleet.relation == 1 or fleet.relation == 0 %}text-success{% else %}text-danger{% endif %}">[{{ fleet.alliancetag }}]</a>
-                                            {% endif %}
-                                            <a href="/s03/mail-new/?to={{ fleet.name }}"
-                                               class="{% if fleet.relation == 1 or fleet.relation == 0 %}text-success{% else %}text-danger{% endif %}">{{ fleet.name }}</a>
-                                        {% endif %}
-                                    </div>
-                                    <div class="col small">
-                                        <script>sig({{fleet.signature}})</script>
-                                    </div>
-                                    <div class="col-auto">
-                                        {% if fleet.f_planetid %}
-                                            <script>putplanet('{{fleet.f_planetid}}', '{{fleet.f_planetname}}', '{{fleet.f_g}}', '{{fleet.f_s}}', '{{fleet.f_p}}', {{fleet.f_relation}})</script>
-                                        {% else %}
-                                            <span class="text-normal">Planète inconnue</span>
-                                        {% endif %}
-                                    </div>
-                                    <div class="col-auto text-normal">
-                                        <i class="fa-fw fas fa-long-arrow-alt-right"></i>
-                                    </div>
-                                    <div class="col-auto">
-                                        {% if fleet.t_planetid %}
-                                            <script>putplanet('{{fleet.t_planetid}}', '{{fleet.t_planetname}}', '{{fleet.t_g}}', '{{fleet.t_s}}', '{{fleet.t_p}}', {{fleet.t_relation}})</script>
-                                        {% else %}
-                                            <span class="text-normal">Planète inconnue</span>
-                                        {% endif %}
-                                    </div>
-                                    <div class="col-auto text-yellow">
-                                        <script>putcountdown1({{fleet.time}}, 'Terminé', '/s03/empire-view/')</script>
-                                    </div>
-                                </div>
-                            </div>
-                        {% empty %}
-                            <div class="list-group-item">
-                                <span class="text-normal">Aucun mouvement en cours</span>
-                            </div>
-                        {% endfor %}
-                    </div>
-                </div>
-            {% endif %}
-            {% if enterings|length > 0 %}
-                <div class="mt-2 card">
-                    <div class="card-header">
-                        <span>Flottes entrant dans le secteur</span>
-                    </div>
-                    <div class="list-group list-group-flush">
-                        {% for fleet in enterings %}
-                            <div class="list-group-item">
-                                <div class="row gx-2 flex-nowrap align-items-baseline">
-                                    <div class="col-auto">
-                                        {% if fleet.relation == 2 %}
-                                            {% if fleet.stance %}
-                                                <img src="{{ PATH_IMAGES }}interface/stance_attack.gif"
-                                                     class="stance"
-                                                     width="10"
-                                                     height="10"/>
-                                            {% else %}
-                                                <img src="{{ PATH_IMAGES }}interface/stance_defend.gif"
-                                                     class="stance"
-                                                     width="10"
-                                                     height="10"/>
-                                            {% endif %}
-                                            <a href="/s03/fleet-view/?id={{ fleet.fleetid }}" class="text-player">{{ fleet.fleetname }}</a>
-                                        {% else %}
-                                            {% if fleet.alliancetag %}
-                                                <a href="/s03/alliance-view/?tag={{ fleet.alliancetag }}"
-                                                   class="{% if fleet.relation == 1 or fleet.relation == 0 %}text-success{% else %}text-danger{% endif %}">[{{ fleet.alliancetag }}]</a>
-                                            {% endif %}
-                                            <a href="/s03/mail-new/?to={{ fleet.name }}"
-                                               class="{% if fleet.relation == 1 or fleet.relation == 0 %}text-success{% else %}text-danger{% endif %}">{{ fleet.name }}</a>
-                                        {% endif %}
-                                    </div>
-                                    <div class="col small">
-                                        <script>sig({{fleet.signature}})</script>
-                                    </div>
-                                    <div class="col-auto">
-                                        {% if fleet.f_planetid %}
-                                            <script>putplanet('{{fleet.f_planetid}}', '{{fleet.f_planetname}}', '{{fleet.f_g}}', '{{fleet.f_s}}', '{{fleet.f_p}}', {{fleet.f_relation}})</script>
-                                        {% else %}
-                                            <span class="text-normal">Planète inconnue</span>
-                                        {% endif %}
-                                    </div>
-                                    <div class="col-auto text-normal">
-                                        <i class="fa-fw fas fa-long-arrow-alt-right"></i>
-                                    </div>
-                                    <div class="col-auto">
-                                        {% if fleet.t_planetid %}
-                                            <script>putplanet('{{fleet.t_planetid}}', '{{fleet.t_planetname}}', '{{fleet.t_g}}', '{{fleet.t_s}}', '{{fleet.t_p}}', {{fleet.t_relation}})</script>
-                                        {% else %}
-                                            <span class="text-normal">Planète inconnue</span>
-                                        {% endif %}
-                                    </div>
-                                    <div class="col-auto text-yellow">
-                                        <script>putcountdown1({{fleet.time}}, 'Terminé', '/s03/empire-view/')</script>
-                                    </div>
-                                </div>
-                            </div>
-                        {% empty %}
-                            <div class="list-group-item">
-                                <span class="text-normal">Aucun mouvement en cours</span>
-                            </div>
-                        {% endfor %}
-                    </div>
-                </div>
-            {% endif %}
-            {% if leavings|length > 0 %}
-                <div class="mt-2 card">
-                    <div class="card-header">
-                        <span>Flottes sortant du secteur</span>
-                    </div>
-                    <div class="list-group list-group-flush">
-                        {% for fleet in leavings %}
-                            <div class="list-group-item">
-                                <div class="row gx-2 flex-nowrap align-items-baseline">
-                                    <div class="col-auto">
-                                        {% if fleet.relation == 2 %}
-                                            {% if fleet.stance %}
-                                                <img src="{{ PATH_IMAGES }}interface/stance_attack.gif"
-                                                     class="stance"
-                                                     width="10"
-                                                     height="10"/>
-                                            {% else %}
-                                                <img src="{{ PATH_IMAGES }}interface/stance_defend.gif"
-                                                     class="stance"
-                                                     width="10"
-                                                     height="10"/>
-                                            {% endif %}
-                                            <a href="/s03/fleet-view/?id={{ fleet.fleetid }}" class="text-player">{{ fleet.fleetname }}</a>
-                                        {% else %}
-                                            {% if fleet.alliancetag %}
-                                                <a href="/s03/alliance-view/?tag={{ fleet.alliancetag }}"
-                                                   class="{% if fleet.relation == 1 or fleet.relation == 0 %}text-success{% else %}text-danger{% endif %}">[{{ fleet.alliancetag }}]</a>
-                                            {% endif %}
-                                            <a href="/s03/mail-new/?to={{ fleet.name }}"
-                                               class="{% if fleet.relation == 1 or fleet.relation == 0 %}text-success{% else %}text-danger{% endif %}">{{ fleet.name }}</a>
-                                        {% endif %}
-                                    </div>
-                                    <div class="col small">
-                                        <script>sig({{fleet.signature}})</script>
-                                    </div>
-                                    <div class="col-auto">
-                                        {% if fleet.f_planetid %}
-                                            <script>putplanet('{{fleet.f_planetid}}', '{{fleet.f_planetname}}', '{{fleet.f_g}}', '{{fleet.f_s}}', '{{fleet.f_p}}', {{fleet.f_relation}})</script>
-                                        {% else %}
-                                            <span class="text-normal">Planète inconnue</span>
-                                        {% endif %}
-                                    </div>
-                                    <div class="col-auto text-normal">
-                                        <i class="fa-fw fas fa-long-arrow-alt-right"></i>
-                                    </div>
-                                    <div class="col-auto">
-                                        {% if fleet.t_planetid %}
-                                            <script>putplanet('{{fleet.t_planetid}}', '{{fleet.t_planetname}}', '{{fleet.t_g}}', '{{fleet.t_s}}', '{{fleet.t_p}}', {{fleet.t_relation}})</script>
-                                        {% else %}
-                                            <span class="text-normal">Planète inconnue</span>
-                                        {% endif %}
-                                    </div>
-                                    <div class="col-auto text-yellow">
-                                        <script>putcountdown1({{fleet.time}}, 'Terminé', '/s03/empire-view/')</script>
-                                    </div>
-                                </div>
-                            </div>
-                        {% empty %}
-                            <div class="list-group-item">
-                                <span class="text-normal">Aucun mouvement en cours</span>
-                            </div>
-                        {% endfor %}
-                    </div>
-                </div>
-            {% endif %}
-        {% endif %}
-    {% endif %}
-    </div>
-    <script>setLoc('{{galaxy}}','{{sector}}');</script>
-{% endblock content %}
+{% endif %}
+
+{% if nav_galaxy %}
+
+var blinklist = new Array();
+
+function getCssRule(name){
+	for(var i=0; i<document.styleSheets.length; i++) {
+
+		var theRules = new Array();
+		if(document.styleSheets[i].cssRules)
+			theRules = document.styleSheets[i].cssRules;
+		else 
+		if(document.styleSheets[i].rules)
+			theRules = document.styleSheets[i].rules;
+		else
+			return null;
+
+		for(var j=0; j<theRules.length; j++) 
+			if(theRules[j].selectorText && theRules[j].selectorText.toLowerCase() == '#mapgalaxyview div.sector div.'+name)
+				return theRules[j];
+	}
+
+	return null;
+}
+
+var isFF = navigator.userAgent.indexOf("Firefox") != -1;
+function stopblink(name) {
+	if(isFF) {
+		for(var x in blinklistFF[name]) {
+			rule = $(blinklistFF[name][x]);
+			if(rule) rule.style.display = "block";
+		}
+
+		CurrentBlink = false;
+	}
+	else {
+		var rule = blinklist[name];
+		if(rule) rule.style.visibility = "visible";
+		blinklist[name] = null;	
+	}
+	
+
+}
+function startblink(name) {
+	if(isFF)
+		CurrentBlink = name;
+	else
+		blinklist[name] = getCssRule(name);
+}
+
+if(isFF){ 
+	var CurrentBlink = false; 
+	var blinklistFF = new Array();
+}
+
+function doblinkFF() {
+	if(CurrentBlink){
+		for(var x in blinklistFF[CurrentBlink]) {
+			//alert('blink:'+x);
+			rule = $(blinklistFF[CurrentBlink][x]);
+			if(rule) rule.style.display = (rule.style.display=="block")?"none":"block";
+		}
+	}
+
+	window.setTimeout("doblinkFF()", 1000);
+}
+
+function doblink() {
+	for(var x in blinklist)	{
+		rule = blinklist[x];
+		if(rule) rule.style.visibility = (rule.style.visibility=="visible")?"hidden":"visible";
+	}
+
+	window.setTimeout("doblink()", 1000);
+}
+
+if(isFF)
+	window.setTimeout("doblinkFF()", 1000);
+else
+	window.setTimeout("doblink()", 1000);
+
+
+
+var pl=new Array();
+pl['0']='hostile';
+pl['1']='uninhabited';
+pl['2']='friend';
+pl['3']='ally';
+pl['4']='player';
+pl['5']='resource';
+pl['6']='resource';
+pl['7']='vortex';
+pl['8']='nothing';
+
+function displayGalaxy(galaxy, m, open, ore, hydro, sov_tag_1, sov_perc_1, sov_tag_2, sov_perc_2, sov_tag_3, sov_perc_3) {
+	var res = "";
+
+	var pos = 0;
+	for(var i=1; i<100; i++)
+	{
+		var s = '<div class="sector" onmouseover="setLocSector('+i+')" onclick="openSector('+galaxy+','+i+')">';
+
+		for(var j=0; j<25; j++){
+			c = pl[m.charAt(pos)];
+			s += '<div class="p'+j+' '+c+'" id="'+i+'-'+j+'"></div>';
+			pos++;
+
+			if(isFF) {
+				if(!blinklistFF[c]) blinklistFF[c] = new Array();
+				blinklistFF[c].push(i+'-'+j);
+			}
+		}
+
+		s += '</div>';
+
+		res += s;
+	}
+
+	$('mapgalaxyview').innerHTML = res;
+
+	$('market_ore').innerHTML = ore;
+	$('market_hydrocarbon').innerHTML = hydro;
+	$('market').className = "default";
+
+
+	if (sov_tag_1 != '')
+	{
+		$('sov_tag_1').innerHTML = sov_tag_1;
+		$('sov_perc_1').innerHTML = sov_perc_1 + "%";
+
+		if(sov_tag_2 != '')
+		{
+			$('sov_tag_2').innerHTML = sov_tag_2;
+			$('sov_perc_2').innerHTML = sov_perc_2 + "%";
+		}
+
+		if(sov_tag_3 != '')
+		{
+			$('sov_tag_3').innerHTML = sov_tag_3;
+			$('sov_perc_3').innerHTML = sov_perc_3 + "%";
+		}
+
+		$('sovereignty').className = "default";
+	}
+
+	if(open > 0) {
+		$('gal_open_dt').innerHTML = formattime(open);
+		$('gal_open').className = "default";
+	}
+
+	var obj = $('mapgalaxy');
+	obj.style.display = 'block';
+	obj.style.visibility = 'visible';
+}
+{% endif %}
+
+{% if nav_sector %}
+function get_left(obj) {
+	var left = obj.offsetLeft;
+	while((obj = obj.offsetParent) != null){ left += obj.offsetLeft; }
+	return left;
+}
+
+function get_top(obj) {
+	var top = obj.offsetTop;
+	while((obj = obj.offsetParent) != null){ top += obj.offsetTop; }
+	return top;
+}
+
+function showmenu(objet,title,txt) {	
+	var hint = $("hint");
+	var hinttext = $("hinttext");
+	hint.style.visibility = "hidden";
+
+	var obj = $(objet);
+	var max = $("map").offsetWidth + get_left($("map"));
+	var x = (get_left(obj)+16);
+	var y = (get_top(obj)-2);
+
+	hinttext.innerHTML = "<h6>" + title + "</h6>" + txt;
+
+	if (x + hint.offsetWidth > max) {
+		x = x - hint.offsetWidth-16;
+	}
+	
+	hint.style.left = x + 'px';
+	hint.style.top = y + 'px';
+	hint.style.visibility = "visible";
+}
+
+function hidemenu() {
+	var menu = $("hint");
+	menu.style.visibility = "hidden";
+	menu.style.left = 0;
+	menu.style.top = 0;
+}
+
+document.onclick=hidemenu;
+
+
+function getRelationClass(rel) {
+	switch(rel){
+		case 2: return "self"; break;
+		case 1: return "ally"; break;
+		case 0:	return "friend"; break;
+		case -1: return "enemy"; break;
+		case -2: return "enemy"; break;
+		case -3: return "neutral"; break;
+	}
+	return "";
+}
+
+
+function Fl(id,name,tag,owner,rel,signature,fleeing) {
+	if(rel==2 || id != 0)
+		var s= '<a title="Inspecter la flotte '+name+'" href="/s03/fleet/?id=' + id + '" class="self">'+(tag!=''?'['+tag+'] ':'')+name+'</a>';
+	else
+	{
+		var c = getRelationClass(rel);
+
+		var s = '<a title="Écrire à '+owner+'" href="/s03/mails/?subject=À propos de la flotte '+name+'&to='+owner+'" class="' + c+ '">' +(tag!=''?'['+tag+'] ':'')+name+'</a>';
+	}
+
+	if(signature > 0)
+		s += ' ('+formatnumber(signature)+')';
+	else
+		s += ' (indéterminé)';
+
+	if(fleeing)	s += ' en fuite';
+	return s+'<br/>';
+}
+
+function descOrbit(idx,planetid,rel,parked) {
+	var s="";
+	var orbit=orb[idx];
+
+	for(var i=1; i<orbit.length; i++)
+		s += Fl(orbit[i][0], orbit[i][1], orbit[i][2], orbit[i][3], orbit[i][4], orbit[i][5], orbit[i][6]);
+
+	if(parked > 0) {
+		if(rel == 2)
+			s += '<a href="/s03/orbit/?planet='+planetid+'" class="' + getRelationClass(rel) + '">Au sol: ' + formatnumber(parked) + '</a>';
+		else
+			s += '<span class="' + getRelationClass(rel) + '">Au sol: ' + formatnumber(parked) + '</span>';
+	}
+
+	return s;
+}
+
+function descSpecials(idx) {
+	var s="";
+	var elements=elem[idx];
+
+	for(var i=1; i<elements.length; i++)
+		s += elements[i] + "<br/>";
+
+	return s;
+}
+
+var elem=new Array();
+var orb=new Array();
+var idx=1;
+
+function loc(img,alliancetag,id,owner,name,rel,radar,jammer,ore,hydrocarbon,floor,space,a_ore,a_hydrocarbon,vortex_strength,frozen,parked,orbit,elements,b_ore,b_hydrocarbon) {
+	var c = getRelationClass(rel);
+
+	s = '<div class="planet">'+
+		'<table border="0" cellspacing="0" cellpadding="0" width="140">'+
+		'<tr>'+
+
+		'<td align=right width="38">';
+		if(ore!='0' || hydrocarbon!='0')
+		{
+			s+= '<a href="#" class="none" onclick="return donothide(event)" onfocus="this.onmouseover()" onmouseover="showmenu(\'resources.'+idx+'\',\'Ressources\',\'Minerai: '+ore+'<br>Hydrocarbure: '+hydrocarbon+'\')">'+
+				'<img id="resources.'+idx+'" width=16 height=16 src="{{PATH_IMAGES}}/map/sector/resource.gif">'+
+				'</a>';
+		}
+		else
+			s+= '<img width=1 height=16 src="{{PATH_IMAGES}}/interface/spacer.gif">';
+
+		s+= '</td>';
+
+		s+=	'<td align=center rowspan=4 width="64">'+
+			'<div><img class="planet" src="{{PATH_IMAGES}}/planets/p'+img+'.gif" width=64 height=64></div><div class=planettext>'+idx+'</div>'+
+			'</td>';
+
+		s+= '<td width="38">';
+
+		if(floor!='' || space!='')
+		{
+			s+= '<a href="#" class=none onclick="return donothide(event)" onfocus="this.onmouseover()" onmouseover="showmenu(\'planet.'+idx+'\',\'Planète\',\'Terrain: '+floor+'<br>Espace: '+space+'<br>Abondance minerai: '+a_ore+'%<br>Abondance hydrocarbure: '+a_hydrocarbon+'%' + (vortex_strength>0?('<br>Stabilité vortex:' + vortex_strength):'') + '\')">'+
+				'<img id="planet.'+idx+'" width=16 height=16 src="{{PATH_IMAGES}}/map/sector/info.gif">'+
+				'</a>';
+		}
+		else
+		if(vortex_strength!='0')
+		{
+			s+= '<a href="#" class=none onclick="return donothide(event)" onfocus="this.onmouseover()" onmouseover="showmenu(\'planet.'+idx+'\',\'Vortex\',\'Stabilité vortex:' + vortex_strength + '\')">'+
+				'<img id="planet.'+idx+'" width=16 height=16 src="{{PATH_IMAGES}}/map/sector/info.gif">'+
+				'</a>';
+		}
+		else
+			s+= '<img width=1 height=16 src="{{PATH_IMAGES}}/interface/spacer.gif">';
+
+		s+= '</td></tr>';
+
+
+		s+= '<tr>'+
+			'<td align=right><img width=1 height=16 src="{{PATH_IMAGES}}/interface/spacer.gif"></td>'+
+			'<td align=left>';
+		if(radar>0 || jammer!=0)
+		{
+			if(jammer==-1)
+			{
+				s+= '<a href="#" class="none" onclick="return donothide(event)" onfocus="this.onmouseover()" onmouseover="showmenu(\'radar.'+idx+'\',\'Radar brouillé\',\'\')">'+
+					'<img id="radar.'+idx+'" width=16 height=16 src="{{PATH_IMAGES}}/map/sector/radarjammed.gif">';
+			} else
+			if(radar>0 && jammer==0)
+			{
+				s+= '<a href="#" class="none" onclick="return donothide(event)" onfocus="this.onmouseover()" onmouseover="showmenu(\'radar.'+idx+'\',\'Radar détecté\',\'Puissance: '+radar+'\')">'+
+					'<img id="radar.'+idx+'" width=16 height=16 src="{{PATH_IMAGES}}/map/sector/radar.gif">';
+			} else
+			if(jammer>0)
+			{
+				s+= '<a href="#" class="none" onclick="return donothide(event)" onfocus="this.onmouseover()" onmouseover="showmenu(\'radar.'+idx+'\',\'Radar brouillé détecté\',\'Puissance radar: '+radar+'<br/>Brouillage: '+jammer+'\')">'+
+					'<img id="radar.'+idx+'" width=16 height=16 src="{{PATH_IMAGES}}/map/sector/radarjammed-known.gif">';
+			}
+					
+			s+= '</a>';
+		}
+		else
+			s+= '<img width=1 height=16 src="{{PATH_IMAGES}}/interface/spacer.gif">';
+		s+= '</td></tr>';
+
+		s+= '<tr>';
+
+		s+= '<td align=right>';
+		if(frozen)
+			s+= '<a href="#" class="none" title="En vacances"><img width=16 height=16 src="{{PATH_IMAGES}}/map/sector/sleeping.gif"></a>';
+		else
+		if(b_ore != '0' || b_hydrocarbon != '0')
+			s+= '<a href="#" class="none" title="Prix d\'achat" onclick="return donothide(event)" onfocus="this.onmouseover()" onmouseover="showmenu(\'price.'+idx+'\',\'Achat de ressources\',\'' + (b_ore != '0'?'Minerai: ' + b_ore + '<br/>':'') + (b_hydrocarbon != '0'?'Hydrocarbure: ' + b_hydrocarbon + '<br/>':'') + '\')">' +
+				'<img id="price.'+idx+'" width=16 height=16 src="{{PATH_IMAGES}}/interface/credits.gif"></a>';
+		else
+			s+= '<img width=1 height=16 src="{{PATH_IMAGES}}/interface/spacer.gif">';
+		s+= '</td>';
+
+		orb[idx] = orbit;
+
+		s+= '<td align=left valign=top>';
+
+		if(parked > 0 || orbit.length > 0)
+		{
+			var enemyfleets = false;
+			for(var k=1; k<orbit.length; k++)
+				if(orbit[k][4] < 0)
+					enemyfleets = true;
+
+			if(enemyfleets)
+				f = "-enemy";
+			else if(orbit.length > 0)
+				f = "-fleets";
+			else
+				f = "";
+
+			s+= '<a href="#" class="none" onclick="return donothide(event)" onfocus="this.onmouseover()" onmouseover="showmenu(\'fleets.'+idx+'\',\'Flottes\',descOrbit('+idx+','+id+','+rel+','+parked+'))">'+
+				'<img id="fleets.'+idx+'" width=16 height=16 src="{{PATH_IMAGES}}/map/sector/orbit'+f+'.gif">'+
+				'</a>';
+		}
+		else
+			s+= '<img width=1 height=16 src="{{PATH_IMAGES}}/interface/spacer.gif">';
+
+		s+= '</td></tr>';
+
+		s+= '<tr>';
+
+		elem[idx] = elements;
+
+		s+= '<td align="right">';
+		if(elements.length > 0)
+		{
+			s+= '<a href="#" class=none onclick="return donothide(event)" onfocus="this.onmouseover()" onmouseover="showmenu(\'elements.'+idx+'\',\'Spécial\',descSpecials('+idx+'))">'+
+				'<img id="elements.'+idx+'" width=16 height=16 src="{{PATH_IMAGES}}/map/sector/special.gif">'+
+				'</a>';
+		}
+		else
+			s+= '<img width="1" height="16" src="{{PATH_IMAGES}}/interface/spacer.gif">';
+		s+= '</td>';
+
+		s+= '<td align="left" valign="top"><img width="1" height="16"></td>'+
+			'</tr>';
+
+		s+= '<tr><td colspan="3" align="center" class="planetname">';
+
+		var n='';
+
+		if(alliancetag != '') n+='<a href="/s03/alliance/?tag='+alliancetag+'" class="'+c+'">['+alliancetag+']</a>';
+
+		if(rel==2)
+		{
+			if(floor>0 && space>0)
+				n+= '<a href="/s03/planet/?planet='+id+'" class="'+c+'" title="Inspecter la planète '+name+'">'+name+'</a>';
+			else
+				n+= '<span class="'+c+'">'+name+'</span>';
+		}
+		else
+		if(rel==-3 && isNaN(parseInt(img))) n+= '';
+		else
+		if(rel==-3) n+= '<span class="grey">inhabitée</span>';
+		else
+		{
+			if(name=='') name=owner;
+			if(owner=='')
+				n+= '<span class="'+c+'" title="Planète occupée">Occupée</span>';
+			else
+				n+= '<a href="/s03/nation/?name='+owner+'" class="'+c+'" title="Voir les informations sur '+owner+'">'+name+'</a>';
+		}
+
+		if(n=='') n = '&nbsp;';
+
+		s += n;
+
+		s+= '</td></tr>'+
+			'</table>'+
+		'</div>';
+
+	idx++;
+
+	return s;
+}
+
+function displaySector(arr) {
+	idx = 1;
+
+	var s = "";
+	for(var i=1; i<arr.length; i++) {
+		var p = arr[i];
+		s += loc(p[0], p[1], p[2], p[3], p[4], p[5], p[6], p[7], p[8], p[9], p[10], p[11], p[12], p[13], p[14], p[15], p[16], p[17], p[18], p[19], p[20]);
+	}
+
+	s += '<div class="clear"></div>';
+
+	var obj = $('mapsectorview');
+	obj.innerHTML = s;
+
+	var obj = $('mapsector');
+	obj.style.display = 'block';
+	obj.style.visibility = 'visible';
+}
+
+function r(rel,tag,owner,fleetid,fleet,sig,f_id,f_name,f_g,f_s,f_p,f_rel,t_id,t_name,t_g,t_s,t_p,t_rel,time,losing) {
+	var c = getRelationClass(rel);
+
+	var s = '<tr class="smallitem"><td>';
+	if(tag != '') s+= '<a href="/s03/alliance/?tag='+tag+'" class='+c+'>['+tag+']</a> ';
+	s+= '<a href="/s03/nation/?name='+owner+'" title="Voir les informations sur '+owner+'" class="'+c+'">'+owner+'</a></td><td>';
+	if(rel==2)
+		s+= '<a href="/s03/fleet/?id='+fleetid+'" class="self">'+fleet+'</a>';
+	else
+		s+= '<a href="/s03/mails/?to='+owner+'" class="'+c+'" title="Envoyer un message à '+owner+'">'+fleet+'</a>';
+
+	if(sig > 0)
+		s+= ' ('+formatnumber(sig)+')';
+	else
+		s+= ' (indéterminé)';
+	s+= '</td><td>';
+
+	if(f_id != '')
+		s+= planet_str(f_id,f_name,f_g,f_s,f_p,f_rel);
+	else
+		s+= '<span class="grey">Inconnue</span>';
+	
+	s+= '</td><td>';
+	
+	if(t_id != '')
+		s+= planet_str(t_id,t_name,t_g,t_s,t_p,t_rel);
+	else
+		s+= '<span class="grey">Inconnue</span>';
+
+	s+= '</td><td>'
+	
+	if(losing)
+		s+= 'Perte du signal :&nbsp;<script>putcountdown1('+time+', "Signal perdu", "/s03/overview/");</'+'script>';
+	else
+		s+= '<script>putcountdown1('+time+', "Arrivé", "/s03/overview/");</'+'script>';
+		
+	s+= '</td></tr>';
+
+	document.write(s);
+}
+
+function displayRadar() {
+	var obj = $('mapradar');
+	obj.style.display = 'block';
+	obj.style.visibility = 'visible';
+}
+{% endif %}
+</script>
+<div id="map">
+<p align="center">
+<table>
+<tr valign="top">
+<td width="120">
+<table class="default" width="100%">
+<tr>
+<td>
+<form method="get" action="?">
+<table class="clear">
+<tr>
+<td nowrap colspan="2">
+<a href="#" onclick="openGalaxy(''); return false;">Univers</a>
+</td>
+</tr>
+<tr>
+<td nowrap>
+{% if galaxy_link %}<a href="#" onclick="openGalaxy(currGalaxy); return false;">{% endif %}
+Galaxie
+{% if galaxy_link %}</a>{% endif %}
+</td>
+<td>
+<input type="text" name="g" id="locgalaxy" size="2" maxlength="2" autocomplete="off" value="{{ galaxy }}">
+</td>
+</tr>
+<tr>
+<td nowrap>Secteur</td>
+<td>
+<input type="text" name="s" id="locsector" size="2" maxlength="2" autocomplete="off" value="{{ sector }}">
+</td>
+</tr>
+<tr>
+<td colspan="2">
+<br/>
+</td>
+</tr>
+<tr>
+<td align="center" colspan="2">
+<input type="submit" value="Localiser">
+</td>
+</tr>
+</table>
+</form>
+</td>
+</tr>
+</table>
+<br/>
+<table id="market" class="default hidden" width="100%">
+<tr>
+<td>
+<table class="clear" width="100%">
+<tr>
+<td colspan="2" style="text-align:center; font-weight:bold;">Marché</td>
+</tr>
+<tr>
+<td colspan="2">&nbsp;</td>
+</tr>
+<tr>
+<td>Min.</td>
+<td>
+<img src="{{ PATH_IMAGES }}/interface/credits.gif" title="Crédits" class="icon" width="16" height="16">
+<span id="market_ore"></span>
+</td>
+</tr>
+<tr>
+<td colspan="2">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td>
+Hydro.
+</td>
+<td>
+<img src="{{ PATH_IMAGES }}/interface/credits.gif" title="Crédits" class="icon" width="16" height="16">
+<span id="market_hydrocarbon"></span>
+</td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+<br/>
+<table id="sovereignty" class="default hidden" width="100%">
+<tr>
+<td>
+<table class="clear" width="100%">
+<tr>
+<td colspan="2" style="text-align:center; font-weight:bold;">
+Souveraineté
+</td>
+</tr>
+<tr>
+<td colspan="2">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td id="sov_tag_1">
+</td>
+<td id="sov_perc_1" align="right">
+</td>
+</tr>
+<tr>
+<td colspan="2">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td id="sov_tag_2">
+</td>
+<td id="sov_perc_2" align="right">
+</td>
+</tr>
+<tr>
+<td colspan="2">
+&nbsp;
+</td>
+</tr>
+<tr>
+<td id="sov_tag_3">
+</td>
+<td id="sov_perc_3" align="right">
+</td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+<br/>
+<table id="gal_open" class="default hidden" width="100%">
+<tr>
+<td>
+<table class="clear">
+<tr>
+<td style="text-align:center; font-weight:bold;">
+Ouverture
+</td>
+</tr>
+<tr>
+<td >
+&nbsp;
+</td>
+</tr>
+<tr>
+<td>
+<span id="gal_open_dt"></span>
+</td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+</td>
+<td align="center">
+{% if nav_universe %}
+<div id="mapuniverse">
+<div id="mapuniverseview">
+</div>
+</div>
+<script>displayUniverse(new Array(0{% for galaxy in galaxies %}, new Array({{galaxy.galaxyid}}, 0{% if galaxy.hasplanet %}1{% endif %}, 0{% if galaxy.hasally %}1{% endif %}, 0{% if galaxy.hasfriend %}1{% endif %}, 0{% if galaxy.hasenemy %}1{% endif %}){% endfor %}) );</script>
+{% endif %}
+{% if nav_galaxy %}
+<div id="mapgalaxy">
+<div id="mapgalaxyview">
+</div>
+<div class="clear">
+</div>
+<table width="450" id="maplegend">
+<tr>
+<td onmouseover="startblink('nothing')" onmouseout="stopblink('nothing')">
+<img src="{{ PATH_IMAGES }}map/galaxy/nothing.gif" width=3 height=3>
+Système vide
+</td>
+<td onmouseover="startblink('uninhabited')" onmouseout="stopblink('uninhabited')">
+<img src="{{ PATH_IMAGES }}map/galaxy/uninhabited.gif" width=3 height=3>
+Planète inhabitée
+</td>
+<td onmouseover="startblink('hostile')" onmouseout="stopblink('hostile')">
+<img src="{{ PATH_IMAGES }}map/galaxy/hostile.gif" width=3 height=3>
+Planète hostile
+</td>
+<td onmouseover="startblink('resource')" onmouseout="stopblink('resource')">
+<img src="{{ PATH_IMAGES }}map/galaxy/resource.gif" width=3 height=3>
+Ressources
+</td>
+</tr>
+<tr>
+<td onmouseover="startblink('friend')" onmouseout="stopblink('friend')">
+<img src="{{ PATH_IMAGES }}map/galaxy/friend.gif" width=3 height=3>
+Planète en PNA
+</td>
+<td onmouseover="startblink('ally')" onmouseout="stopblink('ally')">
+<img src="{{ PATH_IMAGES }}map/galaxy/ally.gif" width=3 height=3>
+Planète alliée
+</td>
+<td onmouseover="startblink('player')" onmouseout="stopblink('player')">
+<img src="{{ PATH_IMAGES }}map/galaxy/player.gif" width=3 height=3>
+Planète controlée
+</td>
+<td onmouseover="startblink('vortex')" onmouseout="stopblink('vortex')">
+<img src="{{ PATH_IMAGES }}map/galaxy/vortex.gif" width=3 height=3>
+Vortex
+</td>
+</tr>
+</table>
+</div>
+<script>displayGalaxy({{galaxy}},'{{mapgalaxy}}',{{protected_until}},{{price_ore|unlocalize}},{{price_hydrocarbon|unlocalize}}, '{{sov_tag_1}}', '{{sov_perc_1}}', '{{sov_tag_2}}', '{{sov_perc_2}}', '{{sov_tag_3}}', '{{sov_perc_3}}');</script>
+{% endif %}
+{% if nav_sector %}
+<div id="mapsector">
+<table>
+<tr>
+<td>
+<img src="{{ PATH_IMAGES }}/map/arrow_nw.gif" class=arrow onclick="openSector({{ galaxy }},{{ sector0 }})">
+</td>
+<td align=center class=borderup>
+<img src="{{ PATH_IMAGES }}/map/arrow_n.gif" class=arrow onclick="openSector({{ galaxy }},{{ sector1 }})">
+</td>
+<td>
+<img src="{{ PATH_IMAGES }}/map/arrow_ne.gif" class=arrow onclick="openSector({{ galaxy }},{{ sector2 }})">
+</td>
+</tr>
+<tr>
+<td valign="middle" class="borderleft">
+<img src="{{ PATH_IMAGES }}/map/arrow_w.gif" class=arrow onclick="openSector({{ galaxy }},{{ sector7 }})">
+</td>
+<td>
+<div class="map" id="mapsectorview">
+</div>
+</td>
+<td valign="middle" class="borderright">
+<img src="{{ PATH_IMAGES }}/map/arrow_e.gif" class=arrow onclick="openSector({{ galaxy }},{{ sector3 }})">
+</td>
+</tr>
+<tr>
+<td>
+<img src="{{ PATH_IMAGES }}/map/arrow_sw.gif" class=arrow onclick="openSector({{ galaxy }},{{ sector6 }})">
+</td>
+<td align="center" class="borderdown">
+<img src="{{ PATH_IMAGES }}/map/arrow_s.gif" class=arrow onclick="openSector({{ galaxy }},{{ sector5 }})">
+</td>
+<td>
+<img src="{{ PATH_IMAGES }}/map/arrow_se.gif" class=arrow onclick="openSector({{ galaxy }},{{ sector4 }})">
+</td>
+</tr>
+</table>
+</div>
+<script>
+			displaySector(new Array(0
+				{% for planet in locations %},new Array('{% if planet.planet %}{{planet.planet_img}}{% endif %}{% if planet.vortex %}vortex{% endif %}{% if planet.asteroids %}asteroids{% endif %}{% if planet.clouds %}clouds{% endif %}', '{{planet.alliancetag}}','{{planet.planetid}}','{{planet.ownername}}','{{planet.planetname}}',{{planet.relation}},{{planet.radarstrength}},{{planet.radarjamming}},'{{planet.ore|intcomma}}','{{planet.hydrocarbon|intcomma}}','{{planet.floor}}','{{planet.space}}', '{{planet.a_ore}}','{{planet.a_hydrocarbon}}','{{planet.vortex_strength}}',{% if planet.frozen %}true{% endif %}{% if planet.active %}false{% endif %},{{planet.parked}}
+				,new Array({% if planet.orbit %}0{% for fleet in planet.fleets %},new Array({{fleet.fleetid}},'{{fleet.fleetname}}','{{fleet.alliancetag}}','{{fleet.fleetowner}}',{{fleet.relation}},{{fleet.signature}},0{% if fleet.fleeing %}1{% endif %}){% endfor %}{% endif %})
+				,new Array({% if planet.elements %}0{% for element in planet.elements %},'{{element.element}}'{% endfor %}{% endif %})
+				,'{{planet.buy_ore|intcomma}}','{{planet.buy_hydrocarbon|intcomma}}'
+				){% endfor %}
+			));
+		
+</script>
+{% endif %}
+</td>
+</tr>
+{% if radar %}
+<tr>
+<td colspan="2">
+<div id="mapradar">
+<table class="default" width="100%">
+<tr class="title">
+<td colspan="5">
+Activité Radar
+</td>
+</tr>
+<tr class="header">
+<td>
+Nation
+</td>
+<td>
+Flotte
+</td>
+<td>
+Origine
+</td>
+<td>
+Destination
+</td>
+<td>
+Temps restant
+</td>
+</tr>
+{% if moving %}
+<tr class="category">
+<td colspan="5">
+Mouvements des flottes
+</td>
+</tr>
+{% for fleet in movings %}
+<script>
+	    r({{fleet.relation}},"{{fleet.alliancetag}}","{{fleet.name}}","{{fleet.fleetid}}","{{fleet.fleetname}}",{{fleet.signature}},"{{fleet.f_planetid}}","{{fleet.f_planetname}}","{{fleet.f_g}}","{{fleet.f_s}}","{{fleet.f_p}}",{{fleet.f_relation}},"{{fleet.t_planetid}}","{{fleet.t_planetname}}","{{fleet.t_g}}","{{fleet.t_s}}","{{fleet.t_p}}",{{fleet.t_relation}},{{fleet.time}}, {% if fleet.losing %}true{% endif %}{% if fleet.timeleft %}false{% endif %});
+	
+</script>
+{% empty %}
+<tr class="smallitem">
+<td colspan="5" align="center">
+Aucun mouvement détecté
+</td>
+</tr>
+{% endfor %}
+{% endif %}
+{% if entering %}
+<tr class="category">
+<td colspan="5">
+Flottes entrant dans le secteur
+</td>
+</tr>
+{% for fleet in enterings %}
+<script>
+	    r({{fleet.relation}},"{{fleet.alliancetag}}","{{fleet.name}}","{{fleet.fleetid}}","{{fleet.fleetname}}",{{fleet.signature}},"{{fleet.f_planetid}}","{{fleet.f_planetname}}","{{fleet.f_g}}","{{fleet.f_s}}","{{fleet.f_p}}",{{fleet.f_relation}},"{{fleet.t_planetid}}","{{fleet.t_planetname}}","{{fleet.t_g}}","{{fleet.t_s}}","{{fleet.t_p}}",{{fleet.t_relation}},{{fleet.time}}, {% if fleet.losing %}true{% endif %}{% if fleet.timeleft %}false{% endif %});
+	
+</script>
+{% empty %}
+<tr class="smallitem">
+<td align="center" colspan="5">
+Aucune flotte détectée
+</td>
+</tr>
+{% endfor %}
+{% endif %}
+{% if leaving %}
+<tr class="category">
+<td colspan="5">
+Flottes sortant du secteur
+</td>
+</tr>
+{% for fleet in leavings %}
+<script>
+	    r({{fleet.relation}},"{{fleet.alliancetag}}","{{fleet.name}}","{{fleet.fleetid}}","{{fleet.fleetname}}",{{fleet.signature}},"{{fleet.f_planetid}}","{{fleet.f_planetname}}","{{fleet.f_g}}","{{fleet.f_s}}","{{fleet.f_p}}",{{fleet.f_relation}},"{{fleet.t_planetid}}","{{fleet.t_planetname}}","{{fleet.t_g}}","{{fleet.t_s}}","{{fleet.t_p}}",{{fleet.t_relation}},{{fleet.time}}, {% if fleet.losing %}true{% endif %}{% if fleet.timeleft %}false{% endif %});
+	
+</script>
+{% empty %}
+<tr class="smallitem">
+<td colspan="5" align="center">
+Aucune flotte détectée
+</td>
+</tr>
+{% endfor %}
+{% endif %}
+</table>
+</div>
+<script>
+	displayRadar();
+	
+</script>
+</td>
+</tr>
+{% endif %}
+</table>
+</p>
+</div>
+<script>
+setLoc('{{galaxy}}','{{sector}}');
+</script>
+{% endblock %}

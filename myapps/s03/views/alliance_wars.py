@@ -1,4 +1,6 @@
-from .base import *
+# -*- coding: utf-8 -*-
+
+from myapps.s03.views._global import *
 
 class View(GlobalView):
 
@@ -7,7 +9,7 @@ class View(GlobalView):
         response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
 
-        self.selectedMenu = "alliance"
+        self.selected_menu = "alliance.wars"
 
         self.result = ""
         self.cease_success = ""
@@ -23,7 +25,7 @@ class View(GlobalView):
 
         # redirect the player to the alliance page if he is not part of an alliance
         if self.AllianceId == None:
-            return HttpResponseRedirect("/s03/alliance-view/")
+            return HttpResponseRedirect("/s03/alliance/")
 
         action = request.GET.get("a", "")
         self.tag = ""
@@ -179,11 +181,13 @@ class View(GlobalView):
             content.Parse("newwar")
 
     def displayPage(self, cat):
-        content = GetTemplate(self.request, "alliance-wars")
+        content = GetTemplate(self.request, "s03/alliance-wars")
         content.AssignValue("cat", cat)
 
-        self.displayWars(content)
-        self.displayDeclaration(content)
+        if cat == 1:
+            self.displayWars(content)
+        elif cat == 2:
+            self.displayDeclaration(content)
 
         content.Parse("cat" + str(cat) + "_selected")
 

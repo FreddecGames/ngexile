@@ -1,0 +1,131 @@
+{% extends "s03/layout.html" %}
+{% load tz %}
+{% load humanize %}
+{% load bbcode_tags %}
+{% block content %}
+    <form method="get" action="/s03/nation/">
+        {% csrf_token %}
+        <table class="default">
+            <tr class="title">
+                <td colspan="2">
+                    <b>Saisissez le nom d'une nation :</b>&nbsp;
+                    <input type="text" size="14" maxlength="14" name="name" value="">
+                    <br/>
+                </td>
+            </tr>
+            <tr class="item">
+                <td align="center" colspan="2">
+                    <table class="clear">
+                        <tr>
+                            <td>
+                                {% if avatar %}<img src="{{ avatar_url }}" width=64 height=64 class="avatar">{% endif %}
+                                {% if noavatar %}<img src="{{ PATH_IMAGES }}/interface/noavatar.gif"
+     width="64"
+     height="64"
+     class="avatar">{% endif %}
+                            </td>
+                            <td valign="top">
+                                {% if alliancetag %}
+                                    <a href="/s03/alliance/?tag={{ alliancetag }}"
+                                       class="{% if self %}self{% endif %}{% if ally %}ally{% endif %}{% if friend %}friend{% endif %}{% if enemy %}enemy{% endif %}">[{{ alliancetag }}]</a>&nbsp;
+                                {% endif %}
+                                <span class="{% if self %}self{% endif %}{% if ally %}ally{% endif %}{% if friend %}friend{% endif %}{% if enemy %}enemy{% endif %}">{{ name }}</span>,
+                                {% if alliancetag %}
+                                    {{ rank_label }}
+                                {% else %}
+                                    indépendant
+                                {% endif %}
+                                <br/>
+                                Date d'arrivée:&nbsp;{{ regdate|timezone:"Europe/Paris"|date:"d M Y H:i" }}
+                                <br/>
+                                <br/>
+                                {% if sendmail %}
+                                    <a href="/s03/mails/?a=new&b={{ name }}"
+                                       title="Nouveau message à {{ name }}">Envoyer un message</a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            {% if description %}
+                <tr class="item">
+                    <td colspan="2">
+                        <p>{{ description|safe }}</p>
+                    </td>
+                </tr>
+            {% endif %}
+            {% if alliances %}
+                <tr class="category">
+                    <td>Alliance</td>
+                    <td>Rallié</td>
+                </tr>
+                {% for item in alliances %}
+                    <tr class="item">
+                        <td>[{{ item.history_tag }}] {{ item.history_name }}</td>
+                        <td>De {{ item.joined }} à {{ item.left }}</td>
+                    </tr>
+                {% endfor %}
+            {% endif %}
+            {% if allied %}
+                <tr class="category">
+                    <td>Planètes colonisées</td>
+                    <td>Flottes</td>
+                </tr>
+                <tr class="item" valign="top">
+                    <td>
+                        <table class="clear">
+                            {% for planet in planets %}
+                                <tr>
+                                    <td>
+                                        <a href="/s03/map/?g={{ planet.g }}&s={{ planet.s }}"
+                                           title="Localiser la planète {{ planet.planetname }}">{{ planet.planetname }}&nbsp;({{ planet.g }}.{{ planet.s }}.{{ planet.p }})</a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            {% if noplanets %}
+                                <tr>
+                                    <td>Aucune planète</td>
+                                </tr>
+                            {% endif %}
+                        </table>
+                    </td>
+                    <td>
+                        <table class="clear" width="100%">
+                            {% for fleet in fleets %}
+                                <tr>
+                                    <td nowrap>
+                                        {% if fleet.owned %}<a href="/s03/fleet/?id={{ fleet.fleetid }}">{% endif %}
+                                        {% if fleet.ally %}<span class="ally">{% endif %}
+                                        {{ fleet.fleetname }}
+                                        {% if fleet.owned %}</a>{% endif %}
+                                        {% if fleet.ally %}</span>{% endif %}
+                                        &nbsp;({{ fleet.signature|intcomma }})
+                                    </td>
+                                    <td>
+                                        <script>putplanet("{{fleet.planetid}}","{{fleet.planetname}}","{{fleet.g}}","{{fleet.s}}","{{fleet.p}}",{{fleet.relation}});</script>
+                                    </td>
+                                    <td nowrap>
+                                        {% if fleet.recycling %}
+                                            Recyclage - (<script>putcountdown1({{fleet.time}}, 'Cycle terminé', '/s03/nation/?')</script>)
+                                        {% endif %}
+                                        {% if fleet.patrolling %}En patrouille{% endif %}
+                                        {% if fleet.fighting %}En combat{% endif %}
+                                        {% if fleet.moving %}
+                                            En transit vers <script>putplanet("{{fleet.t_planetid}}","{{fleet.t_planetname}}","{{fleet.t_g}}","{{fleet.t_s}}","{{fleet.t_p}}",{{fleet.t_relation}});</script> - (<script>putcountdown1({{fleet.time}}, 'Arrivé', '/s03/nation/')</script>)
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            {% if nofleets %}
+                                <tr>
+                                    <td>Aucune flotte</td>
+                                </tr>
+                            {% endif %}
+                        </table>
+                    </td>
+                </tr>
+            {% endif %}
+        </table>
+    </form>
+{% endblock %}

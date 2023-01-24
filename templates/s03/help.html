@@ -1,251 +1,212 @@
 {% extends "s03/layout.html" %}
 {% load humanize %}
 {% block content %}
-    {% if tabnav %}
-        <div class="nav nav-tabs mb-3">
-            <div class="nav-item">
-                <a href="/s03/help/?" class="nav-link {% if general %}active{% endif %}">Aide générale</a>
-            </div>
-            <div class="nav-item">
-                <a href="/s03/help/?cat=buildings"
-                   class="nav-link {% if buildings %}active{% endif %}">Construction</a>
-            </div>
-            <div class="nav-item">
-                <a href="/s03/help/?cat=research"
-                   class="nav-link {% if research %}active{% endif %}">Recherche</a>
-            </div>
-            <div class="nav-item">
-                <a href="/s03/help/?cat=ships"
-                   class="nav-link {% if ships %}active{% endif %}">Vaisseaux</a>
-            </div>
-            <div class="nav-item">
-                <a href="/s03/help/?cat=tags"
-                   class="nav-link {% if tags %}active{% endif %}">Balises</a>
-            </div>
-        </div>
-    {% endif %}
-    <div class="scroll-content pe-1" style="height:calc(100% - 44px);">
-    <div class="row g-3">
-        {% if general %}
-            <div class="col-12">
-                <div class="card">
-                    <div class="card-header">
-                        <img src="{{ PATH_IMAGES }}interface/ore.gif"
-                             title="Minerai"
-                             class="res"
-                             width="16"
-                             height="16">
-                        Minerai
-                    </div>
-                    <div class="card-body">
-                        <div class="row g-1 flex-column">
-                            <div class="col-12 text-normal">
-                                L'extraction de minerai est l'activité principale de votre colonie avec la production d'hydrocarbure.
-                            </div>
-                            <div class="col-12 text-normal">
-                                La transformation des minerais en métaux permet la construction des structures de bâtiments, la création des alliages nécessaires au blindage de vos vaisseaux spatiaux.
-                            </div>
-                            <div class="col-12 text-normal">
-                                Le stockage de minerai vous permettra de faire face à une incapacité de production temporaire.
-                            </div>
-                            <div class="col-12 text-normal">
-                                La recherche vous permettra d'optimiser votre production ou de trouver de nouvelles techniques d'extraction.
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-12">
-                <div class="card">
-                    <div class="card-header">
-                        <img src="{{ PATH_IMAGES }}interface/hydrocarbon.gif"
-                             title="Hydrocarbure"
-                             class="res"
-                             width="16"
-                             height="16">
-                        Hydrocarbures
-                    </div>
-                    <div class="card-body">
-                        <div class="row g-1 flex-column">
-                            <div class="col-12 text-normal">
-                                Après extraction dans vos puits, les hydrocarbures (gaz naturel, pétrole) sont transformés afin de produire des plastiques, fibres, solvants et matériaux nécessaires à la réalisation de produits synthétiques et utilisés dans l'élaboration de nouveaux composés chimiques découverts lors de vos travaux de recherche.
-                            </div>
-                            <div class="col-12 text-normal">
-                                Grâce à la recherche, vous pourrez certainement réduire certains coûts et augmenter le rendement des hydrocarbures.
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-12">
-                <div class="card">
-                    <div class="card-header">
-                        <img src="{{ PATH_IMAGES }}interface/energy.gif"
-                             title="Energie"
-                             class="res"
-                             width="16"
-                             height="16">
-                        Energie
-                    </div>
-                    <div class="card-body">
-                        <div class="row g-1 flex-column">
-                            <div class="col-12 text-normal">
-                                Chaque bâtiment ou structure construite a constamment besoin d'énergie pour fonctionner; si les petits bâtiments ont des besoins minimums, la construction de certaines structures pourra requérir un surplus d'énergie que vous devrez assurer avant de pouvoir lancer leur construction.
-                            </div>
-                            <div class="col-12 text-normal">
-                                La recherche devrait pouvoir vous aider à réaliser des générateurs plus puissants ou mettre à profit de nouvelles sources d'énergie.
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-12">
-                <div class="card">
-                    <div class="card-header">
-                        <img src="{{ PATH_IMAGES }}interface/credits.gif"
-                             title="Crédits"
-                             class="res"
-                             width="16"
-                             height="16">
-                        Crédits
-                    </div>
-                    <div class="card-body">
-                        <div class="row g-1 flex-column">
-                            <div class="col-12 text-normal">
-                                Le crédit est la monnaie en vigueur dans la galaxie. Universelle, elle permet d'acheter tout ce qui est à vendre. Vous pourrez augmenter, ou diminuer, votre fortune en marchandant auprès des vendeurs qui se poseront sur votre spatioport.
-                            </div>
-                            <div class="col-12 text-normal">
-                                Vous avez la possibilité de vendre sur le marché ou bien de commercer avec les membres de votre alliance (vente entre joueurs non implémentée).
-                            </div>
-                            <div class="col-12 text-normal">
-                                Plus vous vendez de ressources, plus le payement est rapide. Les marchands payent la moitié à la vente et l'autre moitié lorsque les ressources arrivent à leur planète.
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-12">
-                <div class="card">
-                    <div class="card-header">
-                        <img src="{{ PATH_IMAGES }}interface/scientists.gif"
-                             title="Scientifiques"
-                             class="res"
-                             width="16"
-                             height="16">
-                        Scientifiques
-                    </div>
-                    <div class="card-body">
-                        <div class="row g-1 flex-column">
-                            <div class="col-12 text-normal">
-                                Les scientifiques effectuent toutes les recherches que vous pourrez choisir d'entreprendre. En augmentant le nombre de scientifiques dont vous disposez, les recherches seront plus rapides. Vous pouvez avoir des scientifiques sur toutes vos planètes, ils collaboreront tous sur la même recherche en même temps. Cependant, il est conseillé de grouper vos chercheurs pour maximiser l'efficacité des recherches. La collaboration sera plus efficace entre un nombre réduit de grand groupes de scientifiques plutôt qu'entre de nombreux groupes de petites tailles.
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-12">
-                <div class="card">
-                    <div class="card-header">
-                        <img src="{{ PATH_IMAGES }}interface/soldiers.gif"
-                             title="Soldats"
-                             class="res"
-                             width="16"
-                             height="16">
-                        Soldats
-                    </div>
-                    <div class="card-body">
-                        <div class="row g-1 flex-column">
-                            <div class="col-12 text-normal">
-                                Les soldats font respecter l'ordre dans vos colonies et les protègent des envahisseurs. Ils peuvent aussi être embarqués à bord de vaisseaux pour envahir une planète ennemie que vous convoitez.
-                            </div>
-                            <div class="col-12 text-normal">
-                                S'il n'y a pas assez de soldats dans vos colonies, des vols, voire des émeutes peuvent se produire. Il est admis qu'il faut en général 1 soldat pour 250 colons afin d'éviter ce genre d'incident.
-                            </div>
-                            <div class="col-12 text-normal">Le nombre de soldats est écrit en rouge lorsque celui-ci est jugé insuffisant.</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-12">
-                <div class="card">
-                    <div class="card-header">
-                        <img src="{{ PATH_IMAGES }}interface/workers.gif"
-                             title="Travailleurs"
-                             class="res"
-                             width="16"
-                             height="16">
-                        Travailleurs
-                    </div>
-                    <div class="card-body">
-                        <div class="row g-1 flex-column">
-                            <div class="col-12 text-normal">
-                                Les travailleurs regroupent l'ensemble des professions telles que l'ingénierie, l'électronique, l'architecture, la mécanique, l'avionique, la construction (BTP) ... nécessaires à la mise en chantier de vos projets d'infrastructures (mines, puits, production d'énergie ...) mais aussi tout ce qui concerne la création spatiale pour réaliser vos vaisseaux spatiaux. Plus le projet sera ambitieux, plus le nombre de travailleurs requis sera important.
-                            </div>
-                            <div class="col-12 text-normal">
-                                Au fur et à mesure de la croissance de votre colonie, de plus en plus de civils seront formés afin de devenir travailleur.
-                            </div>
-                            <div class="col-12 text-normal">
-                                Il vous faudra garder au moins 5% des travailleurs nécessaires à la construction d'une infrastructure sur la colonie pour la maintenance et les réparations.
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-12">
-                <div class="card">
-                    <div class="card-header">
-                        <img src="{{ PATH_IMAGES }}interface/commander.gif"
-                             class="res"
-                             width="16"
-                             height="16">
-                        Commandant
-                    </div>
-                    <div class="card-body">
-                        <div class="row g-1 flex-column">
-                            <div class="col-12 text-normal">
-                                Les commandants sont des personnages importants que vous pouvez affecter à une planète ou à une flotte. Les bonus que vous leur attribuez les disposent plus au commandement de l'un ou de l'autre.
-                            </div>
-                            <div class="col-12 text-normal">
-                                Les commandants affectés à une planète permettent de vous donner un bonus d'influence sur celle-ci ce qui permet de pallier à un manque de soldats ou de travailleurs sur le long terme.
-                            </div>
-                            <div class="col-12 text-normal">
-                                Les commandants affectés à une flotte sont pleinement efficaces jusqu'à 20 000 vaisseaux, au-delà, leurs bonus s'atténuent à moins de posséder des vaisseaux offrant des bonus de commandement et allégeant la charge au commandant.
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-12">
-                <div class="card">
-                    <div class="card-header">
-                        <img src="{{ PATH_IMAGES }}interface/prestige.gif"
-                             title="Prestige"
-                             class="res"
-                             width="16"
-                             height="16">
-                        Points de Prestige
-                    </div>
-                    <div class="card-body">
-                        <div class="row g-1 flex-column">
-                            <div class="col-12 text-normal">
-                                Il y a divers moyen de gagner des Points de Prestige, la principale étant en détruisant des vaisseaux militaires ennemis lors des combats (les vaisseaux non armés ne rapportent pas de point).
-                            </div>
-                            <div class="col-12 text-normal">
-                                En général, les vaisseaux légers rapportent 1 point, les corvettes 2 points, les frégates 5 points et les croiseurs 10 points.
-                            </div>
-                            <div class="col-12 text-normal">
-                                Ces points vous serviront pour améliorer vos commandants et pour la construction de certains bâtiments et vaisseaux.
-                            </div>
-                        </div>
-                    </div>
-                </div>
+    <div id="help">
+        {% if tabnav %}
+            <div>
+                <ul class="htabs">
+                    <li{% if general %} class="active"{% endif %}>
+                        <a href="/s03/help/?">Aide générale</a>
+                    </li>
+                    <li{% if buildings %} class="active"{% endif %}>
+                        <a href="/s03/help/?cat=buildings">Construction</a>
+                    </li>
+                    <li{% if research %} class="active"{% endif %} >
+                        <a href="/s03/help/?cat=research">Recherche</a>
+                    </li>
+                    <li{% if ships %} class="active"{% endif %}>
+                        <a href="/s03/help/?cat=ships">Vaisseaux</a>
+                    </li>
+                    <li{% if tags %} class="active"{% endif %}>
+                        <a href="/s03/help/?cat=tags">Balises</a>
+                    </li>
+                </ul>
             </div>
         {% endif %}
-        {% if buildings %}
-            {% for category in categories %}
-                <div class="col-12">
-                    <div class="card">
-                        <div class="card-header">
+        <table class="default" width="100%">
+            {% if general %}
+                <tr class="category">
+                    <td colspan=1>Ressources matérielles et humaines</td>
+                </tr>
+                <tr class="item">
+                    <td>
+                        <div class="label">
+                            <img src="{{ PATH_IMAGES }}/interface/ore.gif"
+                                 title="Minerai"
+                                 class="res"
+                                 width="16"
+                                 height="16">
+                            Minerai
+                        </div>
+                        <div class="description">
+                            L'extraction de minerai est l'activité principale de votre colonie avec la production d'hydrocarbure.
+                            <br>
+                            La transformation des minerais en métaux permet la construction des structures de bâtiments, la création des alliages nécessaires au blindage de vos vaisseaux spatiaux.
+                            <br/>
+                            <br/>
+                            Le stockage de minerai vous permettra de faire face à une incapacité de production temporaire.
+                            <br/>
+                            <br/>
+                            La recherche vous permettra d'optimiser votre production ou de trouver de nouvelles techniques d'extraction.
+                            <br/>
+                        </div>
+                    </td>
+                </td>
+                <tr class="item">
+                    <td>
+                        <div class="label">
+                            <img src="{{ PATH_IMAGES }}/interface/hydrocarbon.gif"
+                                 title="Hydrocarbure"
+                                 class="res"
+                                 width="16"
+                                 height="16">
+                            Hydrocarbures
+                        </div>
+                        <div class="description">
+                            Après extraction dans vos puits, les hydrocarbures (gaz naturel, pétrole) sont transformés afin de produire des plastiques, fibres, solvants et matériaux nécessaires à la réalisation de produits synthétiques et utilisés dans l'élaboration de nouveaux composés chimiques découverts lors de vos travaux de recherche.
+                            <br/>
+                            <br/>
+                            Grâce à la recherche, vous pourrez certainement réduire certains coûts et augmenter le rendement des hydrocarbures.
+                            <br/>
+                        </div>
+                    </td>
+                </td>
+                <tr class="item">
+                    <td>
+                        <div class="label">
+                            <img src="{{ PATH_IMAGES }}/interface/energy.gif"
+                                 title="Energie"
+                                 class="res"
+                                 width="16"
+                                 height="16">
+                            Energie
+                        </div>
+                        <div class="description">
+                            Chaque bâtiment ou structure construite a constamment besoin d'énergie pour fonctionner; si les petits bâtiments ont des besoins minimums, la construction de certaines structures pourra requérir un surplus d'énergie que vous devrez assurer avant de pouvoir lancer leur construction.
+                            <br/>
+                            <br/>
+                            La recherche devrait pouvoir vous aider à réaliser des générateurs plus puissants ou mettre à profit de nouvelles sources d'énergie.
+                            <br/>
+                        </div>
+                    </td>
+                </tr>
+                <tr class="item">
+                    <td>
+                        <div class="label">
+                            <img src="{{ PATH_IMAGES }}/interface/credits.gif"
+                                 title="Crédits"
+                                 class="res"
+                                 width="16"
+                                 height="16">
+                            Crédits
+                        </div>
+                        <div class="description">
+                            Le crédit est la monnaie en vigueur dans la galaxie. Universelle, elle permet d'acheter tout ce qui est à vendre. Vous pourrez augmenter, ou diminuer, votre fortune en marchandant auprès des vendeurs qui se poseront sur votre spatioport.
+                            <br/>
+                            Vous avez la possibilité de vendre sur le marché ou bien de commercer avec les membres de votre alliance (vente entre joueurs non implémentée).
+                            <br/>
+                            Plus vous vendez de ressources, plus le payement est rapide. Les marchands payent la moitié à la vente et l'autre moitié lorsque les ressources arrivent à leur planète.
+                        </div>
+                    </td>
+                </tr>
+                <tr class="item">
+                    <td>
+                        <div class="label">
+                            <img src="{{ PATH_IMAGES }}/interface/scientists.gif"
+                                 title="Scientifiques"
+                                 class="res"
+                                 width="16"
+                                 height="16">
+                            Scientifiques
+                        </div>
+                        <div class="description">
+                            Les scientifiques effectuent toutes les recherches que vous pourrez choisir d'entreprendre. En augmentant le nombre de scientifiques dont vous disposez, les recherches seront plus rapides. Vous pouvez avoir des scientifiques sur toutes vos planètes, ils collaboreront tous sur la même recherche en même temps. Cependant, il est conseillé de grouper vos chercheurs pour maximiser l'efficacité des recherches. La collaboration sera plus efficace entre un nombre réduit de grand groupes de scientifiques plutôt qu'entre de nombreux groupes de petites tailles.
+                        </div>
+                    </td>
+                </tr>
+                <tr class="item">
+                    <td>
+                        <div class="label">
+                            <img src="{{ PATH_IMAGES }}/interface/soldiers.gif"
+                                 title="Soldats"
+                                 class="res"
+                                 width="16"
+                                 height="16">
+                            Soldats
+                        </div>
+                        <div class="description">
+                            Les soldats font respecter l'ordre dans vos colonies et les protègent des envahisseurs. Ils peuvent aussi être embarqués à bord de vaisseaux pour envahir une planète ennemie que vous convoitez.
+                            <br/>
+                            S'il n'y a pas assez de soldats dans vos colonies, des vols, voire des émeutes peuvent se produire. Il est admis qu'il faut en général 1 soldat pour 250 colons afin d'éviter ce genre d'incident.
+                            <br/>
+                            Le nombre de soldats est écrit en rouge lorsque celui-ci est jugé insuffisant.
+                        </div>
+                    </td>
+                </tr>
+                <tr class="item">
+                    <td>
+                        <div class="label">
+                            <img src="{{ PATH_IMAGES }}/interface/workers.gif"
+                                 title="Travailleurs"
+                                 class="res"
+                                 width="16"
+                                 height="16">
+                            Travailleurs
+                        </div>
+                        <div class="description">
+                            Les travailleurs regroupent l'ensemble des professions telles que l'ingénierie, l'électronique, l'architecture, la mécanique, l'avionique, la construction (BTP) ... nécessaires à la mise en chantier de vos projets d'infrastructures (mines, puits, production d'énergie ...) mais aussi tout ce qui concerne la création spatiale pour réaliser vos vaisseaux spatiaux. Plus le projet sera ambitieux, plus le nombre de travailleurs requis sera important.
+                            <br/>
+                            <br/>
+                            Au fur et à mesure de la croissance de votre colonie, de plus en plus de civils seront formés afin de devenir travailleur.
+                            <br/>
+                            <br/>
+                            Il vous faudra garder au moins 5% des travailleurs nécessaires à la construction d'une infrastructure sur la colonie pour la maintenance et les réparations.
+                        </div>
+                    </td>
+                </tr>
+                <tr class="item">
+                    <td>
+                        <div class="label">
+                            <img src="{{ PATH_IMAGES }}/interface/upkeep_commander.gif"
+                                 class="res"
+                                 width="16"
+                                 height="16">
+                            Commandant
+                        </div>
+                        <div class="description">
+                            Les commandants sont des personnages importants que vous pouvez affecter à une planète ou à une flotte. Les bonus que vous leur attribuez les disposent plus au commandement de l'un ou de l'autre.
+                            <br/>
+                            Les commandants affectés à une planète permettent de vous donner un bonus d'influence sur celle-ci ce qui permet de pallier à un manque de soldats ou de travailleurs sur le long terme.
+                            <br/>
+                            Les commandants affectés à une flotte sont pleinement efficaces jusqu'à 20 000 vaisseaux, au-delà, leurs bonus s'atténuent à moins de posséder des vaisseaux offrant des bonus de commandement et allégeant la charge au commandant.
+                        </div>
+                    </td>
+                </tr>
+                <tr class="item">
+                    <td>
+                        <div class="label">Points de Prestige</div>
+                        <div class="description">
+                            Il y a divers moyen de gagner des Points de Prestige, la principale étant en détruisant des vaisseaux militaires ennemis lors des combats (les vaisseaux non armés ne rapportent pas de point).
+                            <br/>
+                            En général, les vaisseaux légers rapportent 1 point, les corvettes 2 points, les frégates 5 points et les croiseurs 10 points.
+                            <br/>
+                            Ces points vous serviront pour améliorer vos commandants et pour la construction de certains bâtiments et vaisseaux.
+                        </div>
+                    </td>
+                </tr>
+            {% endif %}
+            {% if buildings %}
+                <tr class="header">
+                    <td colspan="2">Bâtiment</td>
+                    <td>Ressources</td>
+                    <td>Occupation</td>
+                    <td width="1%">Coût fonctionnement</td>
+                    <td>Production</td>
+                    <td>Stockage</td>
+                </tr>
+                {% for category in categories %}
+                    <tr class="category">
+                        <td colspan="7">
                             {% if category.id == 10 %}Colonie{% endif %}
                             {% if category.id == 11 %}Construction{% endif %}
                             {% if category.id == 20 %}Production{% endif %}
@@ -258,243 +219,266 @@
                             {% if category.id == 33 %}Stockage d'énergie{% endif %}
                             {% if category.id == 40 %}Armement{% endif %}
                             {% if category.id == 80 %}Espace{% endif %}
+                            {% if category.id == 90 %}Défense{% endif %}
+                            {% if category.id == 100 %}Artéfacts et reliques{% endif %}
                             {% if category.id == 110 %}Evénements{% endif %}
-                        </div>
-                        <div class="list-group list-group-flush">
-                            {% for building in category.buildings %}
-                                <div id="{{ building.id }}" class="list-group-item">
-                                    <div class="row gx-3">
-                                        <div class="col-auto">
-                                            <img src="{{ PATH_IMAGES }}buildings/{{ building.id }}.jpg"
-                                                 class="rounded"
-                                                 title="{{ building.name }}"
-                                                 width="48"
-                                                 height="48">
-                                        </div>
-                                        <div class="col">
-                                            <div class="row g-1 flex-column">
-                                                <div class="col-12">
-                                                    <span>{{ building.name }}</span>
-                                                </div>
-                                                <div class="col-12">
-                                                    <span class="text-normal">{{ building.description|safe  }}</span>
-                                                </div>
-                                                <div class="col-12 mt-2">
-                                                    <div class="row gx-3">
-                                                        <div class="col-2">
-                                                            <span class="text-normal">Coûts</span>
-                                                        </div>
-                                                        <div class="col-2">
-                                                            <img src="{{ PATH_IMAGES }}interface/ore.gif"
-                                                                 title="Minerai"
-                                                                 width="16"
-                                                                 height="16">
-                                                            {{ building.ore|intcomma }}
-                                                        </div>
-                                                        <div class="col-2">
-                                                            <img src="{{ PATH_IMAGES }}interface/hydrocarbon.gif"
-                                                                 title="Hydrocarbure"
-                                                                 width="16"
-                                                                 height="16">
-                                                            {{ building.hydrocarbon|intcomma }}
-                                                        </div>
-                                                        <div class="col-2">
-                                                            <img src="{{ PATH_IMAGES }}interface/workers.gif"
-                                                                 title="Travailleurs"
-                                                                 width="16"
-                                                                 height="16">
-                                                            {{ building.workers|intcomma }}
-                                                        </div>
-                                                        {% if building.floor != 0 %}
-                                                            <div class="col-2">
-                                                                <img src="{{ PATH_IMAGES }}interface/floor.gif"
-                                                                     title="Terrain"
-                                                                     width="16"
-                                                                     height="16">
-                                                                {{ building.floor|intcomma }}
-                                                            </div>
-                                                        {% endif %}
-                                                        {% if building.space != 0 %}
-                                                            <div class="col-2">
-                                                                <img src="{{ PATH_IMAGES }}interface/space.gif"
-                                                                     title="Espace"
-                                                                     width="16"
-                                                                     height="16">
-                                                                {{ building.space|intcomma }}
-                                                            </div>
-                                                        {% endif %}
-                                                    </div>
-                                                </div>
-                                                <div class="col-12">
-                                                    <div class="row gx-3">
-                                                        <div class="col-2">
-                                                            <span class="text-normal">Entretien</span>
-                                                        </div>
-                                                        {% if building.upkeep_credits != 0 %}
-                                                            <div class="col-2">
-                                                                <img src="{{ PATH_IMAGES }}interface/credits.gif"
-                                                                     title="Crédits"
-                                                                     width="16"
-                                                                     height="16">
-                                                                {{ building.upkeep_credits|intcomma }}
-                                                            </div>
-                                                        {% endif %}
-                                                        {% if building.upkeep_energy != 0 %}
-                                                            <div class="col-2">
-                                                                <img src="{{ PATH_IMAGES }}interface/energy.gif"
-                                                                     title="Energie"
-                                                                     width="16"
-                                                                     height="16">
-                                                                {{ building.upkeep_energy|intcomma }}
-                                                            </div>
-                                                        {% endif %}
-                                                        {% if building.upkeep_workers != 0 %}
-                                                            <div class="col-2">
-                                                                <img src="{{ PATH_IMAGES }}interface/workers.gif"
-                                                                     title="Travailleurs"
-                                                                     width="16"
-                                                                     height="16">
-                                                                {{ building.upkeep_workers|intcomma }}
-                                                            </div>
-                                                        {% endif %}
-                                                    </div>
-                                                </div>
-                                                {% if building.ore_production != 0 or building.hydrocarbon_production != 0 or building.energy_production != 0 %}
-                                                    <div class="col-12">
-                                                        <div class="row gx-3">
-                                                            <div class="col-2">
-                                                                <span class="text-normal">Production</span>
-                                                            </div>
-                                                            {% if building.ore_production != 0 %}
-                                                                <div class="col-2">
-                                                                    <img src="{{ PATH_IMAGES }}interface/ore.gif"
-                                                                         title="Minerai"
-                                                                         width="16"
-                                                                         height="16">
-                                                                    {{ building.ore_production|intcomma }}
-                                                                </div>
-                                                            {% endif %}
-                                                            {% if building.hydrocarbon_production != 0 %}
-                                                                <div class="col-2">
-                                                                    <img src="{{ PATH_IMAGES }}interface/hydrocarbon.gif"
-                                                                         title="Hydrocarbure"
-                                                                         width="16"
-                                                                         height="16">
-                                                                    {{ building.hydrocarbon_production|intcomma }}
-                                                                </div>
-                                                            {% endif %}
-                                                            {% if building.energy_production != 0 %}
-                                                                <div class="col-2">
-                                                                    <img src="{{ PATH_IMAGES }}interface/energy.gif"
-                                                                         title="Energie"
-                                                                         width="16"
-                                                                         height="16">
-                                                                    {{ building.energy_production|intcomma }}
-                                                                </div>
-                                                            {% endif %}
-                                                        </div>
-                                                    </div>
-                                                {% endif %}
-                                                {% if building.ore_storage != 0 or building.hydrocarbon_storage != 0 or building.energy_storage != 0 %}
-                                                    <div class="col-12">
-                                                        <div class="row gx-3">
-                                                            <div class="col-2">
-                                                                <span class="text-normal">Stockage</span>
-                                                            </div>
-                                                            {% if building.ore_storage != 0 %}
-                                                                <div class="col-2">
-                                                                    <img src="{{ PATH_IMAGES }}interface/ore.gif"
-                                                                         title="Minerai"
-                                                                         width="16"
-                                                                         height="16">
-                                                                    {{ building.ore_storage|intcomma }}
-                                                                </div>
-                                                            {% endif %}
-                                                            {% if building.hydrocarbon_storage != 0 %}
-                                                                <div class="col-2">
-                                                                    <img src="{{ PATH_IMAGES }}interface/hydrocarbon.gif"
-                                                                         title="Hydrocarbure"
-                                                                         width="16"
-                                                                         height="16">
-                                                                    {{ building.hydrocarbon_storage|intcomma }}
-                                                                </div>
-                                                            {% endif %}
-                                                            {% if building.energy_storage != 0 %}
-                                                                <div class="col-2">
-                                                                    <img src="{{ PATH_IMAGES }}interface/energy.gif"
-                                                                         title="Energie"
-                                                                         width="16"
-                                                                         height="16">
-                                                                    {{ building.energy_storage|intcomma }}
-                                                                </div>
-                                                            {% endif %}
-                                                        </div>
-                                                    </div>
-                                                {% endif %}
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            {% endfor %}
-                        </div>
-                    </div>
-                </div>
-            {% endfor %}
-        {% endif %}
-        {% if research %}
-            {% for category in categories %}
-                <div class="col-12">
-                    <div class="card">
-                        <div class="card-header">
+                        </td>
+                    </tr>
+                    {% for building in category.buildings %}
+                        <tr class="item">
+                            <td>
+                                <img src="{{ PATH_IMAGES }}/buildings/{{ building.id }}.jpg"
+                                     class="building"
+                                     title="{{ building.name }}"
+                                     width="64"
+                                     height="64">
+                            </td>
+                            <td>
+                                <a name="{{ building.id }}"></a>
+                                <div class="label">{{ building.name }}</div>
+                                <div class="description">{{ building.description|safe }}</div>
+                            </td>
+                            <td align="right" valign=middle>
+                                <table class="clear" width="100%">
+                                    <tr>
+                                        <td>
+                                            <img src="{{ PATH_IMAGES }}/interface/ore.gif"
+                                                 title="Minerai"
+                                                 width="16"
+                                                 height="16">
+                                        </td>
+                                        <td align=right>{{ building.ore|intcomma }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <img src="{{ PATH_IMAGES }}/interface/hydrocarbon.gif"
+                                                 title="Hydrocarbure"
+                                                 width="16"
+                                                 height="16">
+                                        </td>
+                                        <td align=right>{{ building.hydrocarbon|intcomma }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <img src="{{ PATH_IMAGES }}/interface/workers_idle.gif"
+                                                 title="Travailleurs"
+                                                 width="12"
+                                                 height="12">
+                                        </td>
+                                        <td align=right>{{ building.workers|intcomma }}</td>
+                                    </tr>
+                                </table>
+                            </td>
+                            <td align="right" valign="middle">
+                                <table class="clear" width="100%">
+                                    <tr>
+                                        <td>
+                                            <img src="{{ PATH_IMAGES }}/interface/floor.gif"
+                                                 title="Terrain"
+                                                 width="16"
+                                                 height="16">
+                                        </td>
+                                        <td align=right>{{ building.floor|intcomma }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <img src="{{ PATH_IMAGES }}/interface/space.gif"
+                                                 title="Espace"
+                                                 width="16"
+                                                 height="16">
+                                        </td>
+                                        <td align=right>{{ building.space|intcomma }}</td>
+                                    </tr>
+                                </table>
+                            </td>
+                            <td align="right" valign="middle">
+                                <table class="clear" width="100%">
+                                    <tr>
+                                        <td>
+                                            <img src="{{ PATH_IMAGES }}/interface/credits.gif"
+                                                 title="Crédits"
+                                                 width="16"
+                                                 height="16">
+                                        </td>
+                                        <td align=right>{{ building.upkeep_credits|intcomma }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <img src="{{ PATH_IMAGES }}/interface/energy_available.gif"
+                                                 title="Energie"
+                                                 width="12"
+                                                 height="12">
+                                        </td>
+                                        <td align=right>{{ building.upkeep_energy|intcomma }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <img src="{{ PATH_IMAGES }}/interface/workers.gif"
+                                                 title="Travailleurs"
+                                                 width="16"
+                                                 height="16">
+                                        </td>
+                                        <td align=right>{{ building.upkeep_workers|intcomma }}</td>
+                                    </tr>
+                                </table>
+                            </td>
+                            <td align="right" valign="middle">
+                                <table class="clear" width="100%">
+                                    {% if building.produce_ore %}
+                                        <tr>
+                                            <td width="16">
+                                                <img src="{{ PATH_IMAGES }}/interface/ore.gif"
+                                                     title="Minerai"
+                                                     width="16"
+                                                     height="16">
+                                            </td>
+                                            <td align="right">{{ building.ore_production|intcomma }}</td>
+                                        </tr>
+                                    {% endif %}
+                                    {% if building.produce_hydrocarbon %}
+                                        <tr>
+                                            <td width="16">
+                                                <img src="{{ PATH_IMAGES }}/interface/hydrocarbon.gif"
+                                                     title="Hydrocarbure"
+                                                     width="16"
+                                                     height="16">
+                                            </td>
+                                            <td align="right">
+                                                {{ building.hydrocarbon_production|intcomma }}
+                                            </td>
+                                        </tr>
+                                    {% endif %}
+                                    {% if building.produce_energy %}
+                                        <tr>
+                                            <td width="16">
+                                                <img src="{{ PATH_IMAGES }}/interface/energy.gif"
+                                                     title="Energie"
+                                                     width="16"
+                                                     height="16">
+                                            </td>
+                                            <td align="right">
+                                                {{ building.energy_production|intcomma }}
+                                            </td>
+                                        </tr>
+                                    {% endif %}
+                                </table>
+                            </td>
+                            <td align="right" valign="middle">
+                                <table class="clear" width="100%">
+                                    {% if building.storage_ore %}
+                                        <tr>
+                                            <td width="16">
+                                                <img src="{{ PATH_IMAGES }}/interface/ore.gif"
+                                                     title="Minerai"
+                                                     width="16"
+                                                     height="16">
+                                            </td>
+                                            <td align="right">
+                                                {{ building.ore_storage|intcomma }}
+                                            </td>
+                                        </tr>
+                                    {% endif %}
+                                    {% if building.storage_hydrocarbon %}
+                                        <tr>
+                                            <td width="16">
+                                                <img src="{{ PATH_IMAGES }}/interface/hydrocarbon.gif"
+                                                     title="Hydrocarbure"
+                                                     width="16"
+                                                     height="16">
+                                            </td>
+                                            <td align="right">
+                                                {{ building.hydrocarbon_storage|intcomma }}
+                                            </td>
+                                        </tr>
+                                    {% endif %}
+                                    {% if building.storage_energy %}
+                                        <tr>
+                                            <td width="16">
+                                                <img src="{{ PATH_IMAGES }}/interface/energy.gif"
+                                                     title="Energie"
+                                                     width="16"
+                                                     height="16">
+                                            </td>
+                                            <td align="right">
+                                                {{ building.energy_storage|intcomma }}
+                                            </td>
+                                        </tr>
+                                    {% endif %}
+                                </table>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    <tr class="clear">
+                        <td colspan="4">
+                            &nbsp;
+                        </td>
+                    </tr>
+                {% endfor %}
+            {% endif %}
+            {% if research %}
+                <tr class="header">
+                    <td>
+                        Recherche
+                    </td>
+                    <td>
+                        Coût
+                    </td>
+                </tr>
+                {% for category in categories %}
+                    <tr class="category">
+                        <td colspan="2">
                             {% if category.id == 10 %}Technologies{% endif %}
                             {% if category.id == 20 %}Industrie{% endif %}
                             {% if category.id == 30 %}Empire{% endif %}
                             {% if category.id == 40 %}Recherche{% endif %}
                             {% if category.id == 50 %}Technologies militaires{% endif %}
                             {% if category.id == 90 %}Vaisseaux spatiaux{% endif %}
-                        </div>
-                        <div class="list-group list-group-flush">
-                            {% for research in category.researches %}
-                                <div id="{{ research.id }}" class="list-group-item">
-                                    <div class="row g-1 flex-column">
-                                        <div class="col-12">
-                                            <span>
-                                                {{ research.name }}
-                                            </span>
-                                        </div>
-                                        <div class="col-12">
-                                            <span class="text-normal">
-                                                {{ research.description|safe }}
-                                            </span>
-                                        </div>
-                                        <div class="col-12 mt-2">
-                                            <div class="row gx-3">
-                                                <div class="col-2">
-                                                    <span class="text-normal">Coût</span>
-                                                </div>
-                                                <div class="col-2">
-                                                    <img src="{{ PATH_IMAGES }}interface/credits.gif"
-                                                         class="res"
-                                                         title="Crédits"
-                                                         width="16"
-                                                         height="16">
-                                                    {{ research.cost_credits }}
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
+                            &nbsp;
+                        </td>
+                    </tr>
+                    {% for research in category.researches %}
+                        <tr class="item">
+                            <td>
+                                <a name="{{ research.id }}"></a>
+                                <div class="label">
+                                    {{ research.name }}
                                 </div>
-                            {% endfor %}
-                        </div>
-                    </div>
-                </div>
-            {% endfor %}
-        {% endif %}
-        {% if ships %}
-            {% for category in categories %}
-                <div class="col-12">
-                    <div class="card">
-                        <div class="card-header">
+                                <div class="description">
+                                    {{ research.description|safe }}
+                                </div>
+                            </td>
+                            <td nowrap align=right>
+                                <img src="{{ PATH_IMAGES }}/interface/credits.gif"
+                                     class="res"
+                                     title="Crédits"
+                                     width="16"
+                                     height="16">
+                                {{ research.cost_credits|intcomma }}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    <tr class="clear">
+                        <td colspan=2>
+                            &nbsp;
+                        </td>
+                    </tr>
+                {% endfor %}
+            {% endif %}
+            {% if ships %}
+                <tr class="header">
+                    <td>
+                        Vaisseau
+                    </td>
+                    <td>
+                        Caractéristiques
+                    </td>
+                    <td>
+                        Ressources
+                    </td>
+                </tr>
+                {% for category in categories %}
+                    <tr class="category">
+                        <td colspan="3">
                             {% if category.id == 10 %}Vaisseaux utilitaires{% endif %}
                             {% if category.id == 11 %}Vaisseaux de déploiement{% endif %}
                             {% if category.id == 15 %}Vaisseaux tactiques{% endif %}
@@ -502,219 +486,182 @@
                             {% if category.id == 30 %}Corvettes{% endif %}
                             {% if category.id == 40 %}Frégates{% endif %}
                             {% if category.id == 50 %}Croiseurs{% endif %}
-                        </div>
-                        <div class="list-group list-group-flush">
-                            {% for ship in category.ships %}
-                                <div id="{{ ship.id }}" class="list-group-item">
-                                    <div class="row g-1 flex-column">
-                                        <div class="col-12">
-                                            <span class="fs-6">
-                                                {{ ship.name }}
-                                            </span>
-                                        </div>
-                                        <div class="col-12">
-                                            <span class="text-normal">
-                                                {{ ship.description|safe }}
-                                            </span>
-                                        </div>
-                                        <div class="col-12">
-                                            <hr class="my-1">
-                                        </div>
-                                        <div class="col-12">
-                                            <div class="row gx-3">
-                                                <div class="col-2">
-                                                    <span class="text-normal">Bâtiments requis</span>
-                                                </div>
-                                                <div class="col-2">
-                                                    {{ ship.building }}
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-12">
-                                            <div class="row gx-3">
-                                                <div class="col-2">
-                                                    <span class="text-normal">Entretien</span>
-                                                </div>
-                                                <div class="col-2">
-                                                    <img src="{{ PATH_IMAGES }}interface/credits.gif"
-                                                         title="Crédits"
-                                                         width="16"
-                                                         height="16"
-                                                         class="res">
-                                                    {{ ship.ship_upkeep }}
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-12">
-                                            <div class="row gx-3">
-                                                <div class="col-2">
-                                                    <span class="text-normal">Coûts</span>
-                                                </div>
-                                                <div class="col-2">
-                                                    <img src="{{ PATH_IMAGES }}interface/ore.gif"
-                                                         title="Minerai"
-                                                         width="16"
-                                                         height="16">
-                                                    {{ ship.ore|intcomma }}
-                                                </div>
-                                                <div class="col-2">
-                                                    <img src="{{ PATH_IMAGES }}interface/hydrocarbon.gif"
-                                                         title="Hydrocarbure"
-                                                         width="16"
-                                                         height="16">
-                                                    {{ ship.hydrocarbon|intcomma }}
-                                                </div>
-                                                <div class="col-2">
-                                                    <img src="{{ PATH_IMAGES }}interface/workers.gif"
-                                                         title="Travailleurs"
-                                                         width="16"
-                                                         height="16">
-                                                    {{ ship.crew|intcomma }}
-                                                </div>
-                                                <div class="col-2">
-                                                    <img src="{{ PATH_IMAGES }}interface/energy.gif"
-                                                         title="Energie"
-                                                         width="16"
-                                                         height="16">
-                                                    {{ ship.energy|intcomma }}
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-12">
-                                            <hr class="my-1">
-                                        </div>
-                                        <div class="col-12">
-                                            <div class="row gx-3">
-                                                <div class="col-2">
-                                                    <span class="text-normal">Caractéristiques</span>
-                                                </div>
-                                                <div class="col">
-                                                    <div class="row gx-3">
-                                                        <div class="col-3">
-                                                            <small class="text-normal me-2">signature</small>{{ ship.ship_signature|intcomma }}
-                                                        </div>
-                                                        {% if ship.ship_cargo %}
-                                                            <div class="col-3">
-                                                                <small class="text-normal me-2">cargo</small>{{ ship.ship_cargo|intcomma }}
-                                                            </div>
-                                                        {% endif %}
-                                                        {% if ship.ship_speed %}
-                                                            <div class="col-3">
-                                                                <small class="text-normal me-2">vitesse</small>{{ ship.ship_speed|intcomma }}
-                                                            </div>
-                                                        {% endif %}
-                                                        {% if ship.ship_handling %}
-                                                            <div class="col-3">
-                                                                <small class="text-normal me-2">manœuvrabilité</small>{{ ship.ship_handling|intcomma }}
-                                                            </div>
-                                                        {% endif %}
-                                                        {% if ship.ship_required_vortex_strength %}
-                                                            <div class="col-3">
-                                                                <small class="text-normal me-2">stabilité</small>{{ ship.ship_required_vortex_strength|intcomma }}
-                                                            </div>
-                                                        {% endif %}
-                                                        {% if ship.ship_leadership %}
-                                                            <div class="col-3">
-                                                                <small class="text-normal me-2">commandement</small>{{ ship.ship_leadership|intcomma }}
-                                                            </div>
-                                                        {% endif %}
-                                                        {% if ship.ship_turrets %}
-                                                            <div class="col-3">
-                                                                <small class="text-normal me-2">dégâts</small>{{ ship.ship_turrets }}x{{ ship.ship_power }}
-                                                            </div>
-                                                        {% endif %}
-                                                        {% if ship.ship_tracking_speed %}
-                                                            <div class="col-3">
-                                                                <small class="text-normal me-2">ciblage</small>{{ ship.ship_tracking_speed }}
-                                                            </div>
-                                                        {% endif %}
-                                                        {% if ship.ship_hull %}
-                                                            <div class="col-3">
-                                                                <small class="text-normal me-2">armure</small>{{ ship.ship_hull }}
-                                                            </div>
-                                                        {% endif %}
-                                                        {% if ship.ship_shield %}
-                                                            <div class="col-3">
-                                                                <small class="text-normal me-2">bouclier</small>{{ ship.ship_shield }}
-                                                            </div>
-                                                        {% endif %}
-                                                        {% if ship.ship_recycler_output %}
-                                                            <div class="col-3">
-                                                                <small class="text-normal me-2">recyclage</small>{{ ship.ship_recycler_output }}
-                                                            </div>
-                                                        {% endif %}
-                                                        {% if ship.ship_long_distance_capacity %}
-                                                            <div class="col-3">
-                                                                <small class="text-normal me-2">saut</small>{{ ship.ship_long_distance_capacity }}
-                                                            </div>
-                                                        {% endif %}
-                                                        {% if ship.ship_droppods %}
-                                                            <div class="col-3">
-                                                                <small class="text-normal me-2">invasion</small>{{ ship.ship_droppods }}
-                                                            </div>
-                                                        {% endif %}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
+                            {% if category.id == 60 %}Dreadnought{% endif %}
+                            {% if category.id == 80 %}Titan{% endif %}
+                            {% if category.id == 90 %}Plateforme de défense{% endif %}
+                            &nbsp;
+                        </td>
+                    </tr>
+                    {% for ship in category.ships %}
+                        <tr valign="top" class="item">
+                            <td>
+                                <a name="{{ ship.id }}"></a>
+                                <div class="label">
+                                    {{ ship.name }}
                                 </div>
-                            {% endfor %}
+                                <div class="description">
+                                    {{ ship.description|safe }}
+                                </div>
+                                <div class="required">
+                                    Bâtiments requis
+                                </div>
+                                <ul class="requirements">
+                                    {% if ship.buildingsrequired %}
+                                        <li>
+                                            {{ ship.building }}
+                                        </li>
+                                    {% endif %}
+                                </ul>
+                            </div>
+                            <div class="required">
+                                Entretien
+                            </div>
+                            <br/>
+                            <img src="{{ PATH_IMAGES }}/interface/credits.gif"
+                                 title="Crédits"
+                                 width="16"
+                                 height="16"
+                                 class="icon">
+                            {{ ship.ship_upkeep|intcomma }}
+                            <br/>
                         </div>
-                    </div>
-                </div>
+                    </td>
+                    <td align="left" nowrap>
+                        <div id="stats">
+                            <span class=label>Signature: </span><span class=value>{{ ship.ship_signature|intcomma }}</span>
+                            <br/>
+                            <span class=label>Cargo: </span><span class=value>{{ ship.ship_cargo|intcomma }}</span>
+                            <br/>
+                            <span class=label>Vitesse: </span><span class=value>{{ ship.ship_speed|intcomma }}</span>
+                            <br/>
+                            <span class=label>Manœuvrabilité: </span><span class=value>{{ ship.ship_handling|intcomma }}</span>
+                            <br/>
+                            <span class=label>Stabilité: </span><span class=value>{{ ship.ship_required_vortex_strength|intcomma }}</span>
+                            <br/>
+                            <span class=label>Commandement: </span><span class=value>{{ ship.ship_leadership|intcomma }}</span>
+                            {% if ship.attack %}
+                                <br/>
+                                <span class=label>Puissance d'attaque: </span><span class=value>{{ ship.ship_turrets }}x{{ ship.ship_power }}</span>
+                                <br/>
+                                <span class=label>Ciblage: </span><span class=value>{{ ship.ship_tracking_speed|intcomma }}</span>
+                            {% endif %}
+                            <br/>
+                            <span class=label>Armure: </span><span class=value>{{ ship.ship_hull|intcomma }}</span>
+                            {% if ship.shield %}
+                                <br/>
+                                <span class=label>Bouclier: </span><span class=value>{{ ship.ship_shield|intcomma }}</span>
+                            {% endif %}
+                            {% if ship.recycler_output %}
+                                <br/>
+                                <span class=label>Capacité de recyclage: </span><span class=value>{{ ship.ship_recycler_output|intcomma }}</span>
+                            {% endif %}
+                            {% if ship.long_distance_capacity %}
+                                <br/>
+                                <span class=label>Capacité de saut intergalactique: </span><span class=value>{{ ship.ship_long_distance_capacity|intcomma }}</span>
+                            {% endif %}
+                            {% if ship.droppods %}
+                                <br/>
+                                <span class=label>Capacité d'invasion: </span><span class=value>{{ ship.ship_droppods|intcomma }}</span>
+                            {% endif %}
+                        </td>
+                        <td align="right">
+                            <table class="clear" width="100%">
+                                <tr>
+                                    <td>
+                                        <img src="{{ PATH_IMAGES }}/interface/ore.gif"
+                                             title="Minerai"
+                                             width="16"
+                                             height="16">
+                                    </td>
+                                    <td align="right">
+                                        {{ ship.ore|intcomma }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <img src="{{ PATH_IMAGES }}/interface/hydrocarbon.gif"
+                                             title="Hydrocarbure"
+                                             width="16"
+                                             height="16">
+                                    </td>
+                                    <td align="right">
+                                        {{ ship.hydrocarbon|intcomma }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <img src="{{ PATH_IMAGES }}/interface/energy.gif"
+                                             title="Énergie"
+                                             width="16"
+                                             height="16">
+                                    </td>
+                                    <td align="right">
+                                        {{ ship.energy|intcomma }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <img src="{{ PATH_IMAGES }}/interface/crew.gif"
+                                             title="Équipage"
+                                             width="16"
+                                             height="16">
+                                    </td>
+                                    <td align="right">
+                                        {{ ship.crew|intcomma }}
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                {% endfor %}
+                <tr class="clear">
+                    <td colspan=2>
+                        &nbsp;
+                    </td>
+                </tr>
             {% endfor %}
         {% endif %}
         {% if tags %}
-            <div class="col-12">
-                <div class="card">
-                    <div class="card-header">
-                        <span>Aide sur les balises</span>
-                    </div>
-                    <div class="card-body">
-                        <div class="row g-1 flex-column">
-                            <div class="col-12 text-normal">
-                                Les balises peuvent être utilisée pour mettre en couleur et en forme les descriptions de votre alliance, nation et l'annonce de l'alliance.
-                            </div>
-                            <div class="col-12 text-normal">
-                                Voici la liste des balises supportées et leur résultat:
-                            </div>
-                            <div class="col-12">
-                                [b]le texte[\b] pour écrire <b>le texte en gras</b>
-                            </div>
-                            <div class="col-12">
-                                [i]le texte[\i] pour écrire <i>le texte en italique</i>
-                            </div>
-                            <div class="col-12">
-                                [u]le texte[\u] pour souligner <u>le texte</u>
-                            </div>
-                            <div class="col-12">
-                                [color=#FF0000]rouge[\color] pour écrire <span style="color:#FF0000">en rouge en utilisant un code de couleur</span>
-                            </div>
-                            <div class="col-12">
-                                [color=blue]bleu[\color] pour écrire <span style="color: blue">en bleu en utilisant la couleur en anglais</span>
-                            </div>
-                            <div class="col-12">
-                                [url=https://www.ngexil.pw/]NG Exile[\url] pour créer un lien vers www.ngexil.pw en affichant <a href="https://www.ngexil.pw">NG Exile</a>
-                            </div>
-                            <div class="col-12">
-                                [url]https://www.ngexil.pw/[\url] pour créer un lien vers www.ngexil.pw en affichant <a href="https://www.ngexil.pw">www.ngexil.pw</a>
-                            </div>
-                            <div class="col-12">
-                                [img]https://img.ngexil.pw/interface/credits.gif[\img] pour afficher une image
-                                <img src="{{ PATH_IMAGES }}interface/credits.gif" class="res" width="16px" />
-                            </div>
-                            <div class="col-12 text-normal">
-                                Il est possible d'imbriquer les balises :
-                            </div>
-                            <div class="col-12">
-                            [u][b]mon texte{% endb]{% endu] écrira <u><b>"mon texte" en gras et souligné</b></u><br/></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <tr class="category">
+                <td>
+                    Aide sur les balises
+                </td>
+            </tr>
+            <tr class="item">
+                <td>
+                    Les balises peuvent être utilisée pour mettre en couleur et en forme les descriptions de votre alliance, nation et l'annonce de l'alliance.
+                    <br/>
+                    <br/>
+                    Voici la liste des balises supportées et leur résultat:
+                    <br/>
+                    <br/>
+                    [b]le texte[\b] pour écrire <b>le texte en gras</b>
+                    <br/>
+                    [i]le texte[\i] pour écrire <i>le texte en italique</i>
+                    <br/>
+                    [u]le texte[\u] pour souligner <u>le texte</u>
+                    <br/>
+                    <br/>
+                    [color=#FF0000]rouge[\color] pour écrire <span style="color:#FF0000">en rouge en utilisant un code de couleur</span>
+                    <br/>
+                    [color=blue]bleu[\color] pour écrire <span style="color: blue">en bleu en utilisant la couleur en anglais</span>
+                    <br/>
+                    <br/>
+                    [url=https://www.exil.pw/]Exile[\url] pour créer un lien vers www.exil.pw en affichant <a href="https://www.exil.pw">Exile</a>
+                    <br/>
+                    [url]https://www.exil.pw/[\url] pour créer un lien vers www.exil.pw en affichant <a href="https://www.exil.pw">www.exil.pw</a>
+                    <br/>
+                    <br/>
+                    [img]https://img.exil.pw/interface/credits.gif[\img] pour afficher une image
+                    <img src="{{ PATH_IMAGES }}/interface/credits.gif"/>
+                    <br/>
+                    <br/>
+                    Il est possible d'imbriquer les balises :
+                    <br/>
+                    [u][b]mon texte{% endb]{% endu] écrira <u><b>"mon texte" en gras et souligné</b></u><br/>
+                </td>
+            </td>
         {% endif %}
-    </div>
-    </div>
+    </table>
 </div>
-{% endblock content %}
+{% endblock %}

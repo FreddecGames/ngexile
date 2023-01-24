@@ -1,4 +1,6 @@
-from .base import *
+# -*- coding: utf-8 -*-
+
+from myapps.s03.views._global import *
 
 class View(GlobalView):
 
@@ -8,9 +10,9 @@ class View(GlobalView):
         if response: return response
 
         if self.AllianceId == None:
-            self.selectedMenu = "alliance"
+            self.selected_menu = "noalliance.invitations"
         else:
-            self.selectedMenu = "alliance"
+            self.selected_menu = "alliance.invitations"
 
         self.sLeaveCost = "leavealliancecost"
 
@@ -23,7 +25,7 @@ class View(GlobalView):
             oRs = oConnExecute("SELECT sp_alliance_accept_invitation(" + str(self.UserId) + "," + dosql(alliance_tag) + ")")
 
             if oRs[0] == 0:
-                return HttpResponseRedirect("/s03/alliance-view/")
+                return HttpResponseRedirect("/s03/alliance/")
 
             elif oRs[0] == 4:
                 self.invitation_status = "max_members_reached"
@@ -36,9 +38,12 @@ class View(GlobalView):
             if request.POST.get("leave", "") == "1":
                 oRs = oConnExecute("SELECT sp_alliance_leave(" + str(self.UserId) + ",0)")
                 if oRs[0] == 0:
-                    return HttpResponseRedirect("/s03/alliance-view/")
+                    return HttpResponseRedirect("/s03/alliance/")
 
-        content = GetTemplate(self.request, "alliance-invitations")
+        return self.DisplayInvitations()
+
+    def DisplayInvitations(self):
+        content = GetTemplate(self.request, "s03/alliance-invitations")
 
         oRs = oConnExecute("SELECT date_part('epoch', const_interval_before_join_new_alliance()) / 3600")
         content.AssignValue("hours_before_rejoin", int(oRs[0]))
@@ -89,8 +94,14 @@ class View(GlobalView):
         if self.AllianceId and self.oPlayerInfo["can_join_alliance"]:
 
             self.request.session[self.sLeaveCost] = 0
+            
+            '''
+            oRs = oConnExecute("SELECT sp_alliance_get_leave_cost(" + str(self.UserId) + ")")
+            
+            self.request.session[self.sLeaveCost] = oRs[0]
             if self.request.session.get(self.sLeaveCost) < 2000: self.request.session[self.sLeaveCost] = 0
-
+            '''
+            
             content.AssignValue("credits", self.request.session.get(self.sLeaveCost))
 
             if self.request.session.get(self.sLeaveCost) > 0: content.Parse("charges")
@@ -99,6 +110,6 @@ class View(GlobalView):
 
             content.Parse("leave")
 
-        content.AssignValue("allianceId", self.AllianceId)
+        self.FillHeaderCredits(content)
 
         return self.Display(content)

@@ -1,0 +1,322 @@
+{% extends "s03/layout.html" %}
+{% load humanize %}
+{% block content %}
+    <div id="planets">
+        <table class="default" width="100%">
+            <tr class="header">
+                <td>
+                    <a href="?col=0{% if r0 %}&r=0{% endif %}">#</a> <a href="?col=1{% if r1 %}&r=1{% endif %}">Planète</a>
+                </td>
+                <td width='1%'>
+                    <a href="?col=5{% if r5 %}&r=1{% endif %}"
+                       title="Contrôle de la planète">C.</a>
+                </td>
+                <td>Production</td>
+                <td>Effectifs</td>
+                <td>Entretien</td>
+                <td>Occupation</td>
+            </tr>
+            {% for planet in page_planets %}
+                <tr class="smallitem{% if planet.highlight %}highlight{% endif %}">
+                    <td align="left">
+                        <table cellpadding="0" cellspacing="0" class="clear">
+                            <tr>
+                                <td rowspan=5>
+                                    <img src="{{ PATH_IMAGES }}/planets/p{{ planet.planet_img }}.gif"
+                                         class="smallplanet"
+                                         width="64"
+                                         height="64">
+                                </td>
+                                <td nowrap>
+                                    <b><a href="/s03/planet/?planet={{ planet.planet_id }}">{{ planet.planet_name }}</a> <a href="/s03/map/?g={{ planet.g }}&s={{ planet.s }}&p={{ planet.p }}">({{ planet.g }}.{{ planet.s }}.{{ planet.p }})</a></b>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <img src="{{ PATH_IMAGES }}/interface/commander.gif"
+                                         class="smallicon"
+                                         title="Commandant"
+                                         width="10"
+                                         height="6">
+                                    {% if planet.commander %}<a href="/s03/commanders/#{{ planet.commander_name }}">{{ planet.commander_name }}</a>{% endif %}
+                                    {% if planet.nocommander %}-{% endif %}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <a href="/s03/buildings/?planet={{ planet.planet_id }}">Infrastructures</a> (
+                                    <img src="{{ PATH_IMAGES }}/interface/workers_idle.gif"
+                                         class="idleworkers"
+                                         width="12"
+                                         height="12"
+                                         title="oisifs">
+                                    <span class="green">{{ planet.workers_idle|intcomma }}</span>)
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <a href="/s03/shipyard/?planet={{ planet.planet_id }}">Chantier spatial</a>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td align="left" width='1%'>
+                        <img src="{{ PATH_IMAGES }}/interface/uv{{ planet.mood_level }}.gif"
+                             title="{{ planet.mood }}%"
+                             alt="{{ planet.mood }}%"
+                             width="16"
+                             height="35">
+                        <br/>
+                        <span class={% if planet.mood_plus %}"prod">+{% endif %}
+                            {% if planet.mood_minus %}"negprod">{% endif %}
+                        {{ planet.mood_delta }}</span>
+                    </td>
+                    <td align="left">
+                        <table class="clear">
+                            <tr>
+                                <td>
+                                    <img src="{{ PATH_IMAGES }}/interface/ore.gif"
+                                         title="Minerai"
+                                         width="16"
+                                         height="16">
+                                </td>
+                                <td nowrap align="right">
+                                    <span {% if planet.medium_ore %} class=med2{% endif %}
+                                          {% if planet.high_ore %} class=high2{% endif %}>{{ planet.ore|intcomma }}</span>
+                                </td>
+                                <td>/</td>
+                                <td nowrap align="right">
+                                    <span {% if planet.medium_ore %} class=med2{% endif %}
+                                          {% if planet.high_ore %} class=high2{% endif %}>{{ planet.ore_capacity|intcomma }}</span>
+                                </td>
+                                <td>
+                                    (<span class="{% if planet.normal_ore_production %}"
+      prod
+      {% endif %}
+      {% if planet.medium_ore_production %}medprod{% endif %}>+{{ planet.ore_production|intcomma }}</span>)
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <img src="{{ PATH_IMAGES }}/interface/hydrocarbon.gif"
+                                         title="Hydrocarbure"
+                                         width="16"
+                                         height="16">
+                                </td>
+                                <td nowrap align="right">
+                                    <span {% if planet.medium_hydrocarbon %} class=med2{% endif %}
+                                          {% if planet.high_hydrocarbon %} class=high2{% endif %}>{{ planet.hydrocarbon|intcomma }}</span>
+                                </td>
+                                <td>/</td>
+                                <td nowrap align="right">
+                                    <span {% if planet.medium_hydrocarbon %} class=med2{% endif %}
+                                          {% if planet.high_hydrocarbon %} class=high2{% endif %}>{{ planet.hydrocarbon_capacity|intcomma }}</span>
+                                </td>
+                                <td>
+                                    (<span class="{% if planet.normal_hydrocarbon_production %}"
+      prod
+      {% endif %}
+      {% if planet.medium_hydrocarbon_production %}medprod{% endif %}>+{{ planet.hydrocarbon_production|intcomma }}</span>)
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <img src="{{ PATH_IMAGES }}/interface/energy.gif"
+                                         title="Énergie"
+                                         width="16"
+                                         height="16">
+                                </td>
+                                <td nowrap align="right">
+                                    <span {% if planet.medium_energy %} class=med2{% endif %}
+                                          {% if planet.high_energy %} class=high2{% endif %}>{{ planet.energy|intcomma }}</span>
+                                </td>
+                                <td>/</td>
+                                <td nowrap align="right">
+                                    <span {% if planet.medium_energy %} class=med2{% endif %}
+                                          {% if planet.high_energy %} class=high2{% endif %}>{{ planet.energy_capacity|intcomma }}</span>
+                                </td>
+                                <td>
+                                    (<span class={% if planet.normal_energy_production %}prod>+{% endif %}
+                                    {% if planet.medium_energy_production %}medprod>+{% endif %}
+                                    {% if planet.negative_energy_production %}negprod>{% endif %}
+                                    {{ planet.energy_production|intcomma }}</span>)
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <img src="{{ PATH_IMAGES }}/interface/credits.gif"
+                                         title="Crédits"
+                                         width="16"
+                                         height="16">
+                                </td>
+                                <td nowrap align="right">
+                                    <span class={% if planet.credits_plus %}"prod">+{% endif %}
+                                        {% if planet.credits_minus %}"negprod">{% endif %}
+                                    {{ planet.credits|intcomma }}</span>
+                                </td>
+                                <td></td>
+                                <td nowrap align="right">
+                                    <img src="{{ PATH_IMAGES }}/interface/prestige.gif"
+                                         title="Prestige"
+                                         class="icon"
+                                         width="16"
+                                         height="16">
+                                    {{ planet.prestige|intcomma }}
+                                </td>
+                                <td></td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td align="left">
+                        <table class="clear">
+                            <tr>
+                                <td>
+                                    <a href="/s03/production/?planet={{ planet.planet_id }}">
+                                        <img src="{{ PATH_IMAGES }}/interface/workers.gif"
+                                             title="Travailleurs"
+                                             width="16"
+                                             height="16">
+                                    </a>
+                                </td>
+                                <td align="right">
+                                    {{ planet.workers|intcomma }}
+                                </td>
+                                <td>
+                                    /
+                                </td>
+                                <td align="right">
+                                    {{ planet.workers_capacity|intcomma }}
+                                </td>
+                                <td>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <a href="/s03/training/?planet={{ planet.planet_id }}">
+                                        <img src="{{ PATH_IMAGES }}/interface/scientists.gif"
+                                             title="Scientifiques"
+                                             width="16"
+                                             height="16">
+                                    </a>
+                                </td>
+                                <td align="right">
+                                    {{ planet.scientists|intcomma }}
+                                </td>
+                                <td>
+                                    /
+                                </td>
+                                <td align="right">
+                                    {{ planet.scientists_capacity|intcomma }}
+                                </td>
+                                <td>
+                                    {% if planet.scientists_training %}(<span class="prod">+{{ planet.scientists_training }}</span>){% endif %}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <a href="/s03/training/?planet={{ planet.planet_id }}">
+                                        <img src="{{ PATH_IMAGES }}/interface/soldiers.gif"
+                                             title="Soldats"
+                                             width="16"
+                                             height="16">
+                                    </a>
+                                </td>
+                                <td align="right">
+                                    {{ planet.soldiers|intcomma }}
+                                </td>
+                                <td>
+                                    /
+                                </td>
+                                <td align="right">
+                                    {{ planet.soldiers_capacity|intcomma }}
+                                </td>
+                                <td>
+                                    {% if planet.soldiers_training %}(<span class="prod">+{{ planet.soldiers_training }}</span>){% endif %}
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td align="left">
+                        <table class="clear">
+                            <tr{% if planet.workers_low %} class="low"{% endif %}>
+                                <td>
+                                    <a href="/s03/production/?planet={{ planet.planet_id }}">
+                                        <img src="{{ PATH_IMAGES }}/interface/workers.gif"
+                                             title="Travailleurs"
+                                             width="16"
+                                             height="16">
+                                    </a>
+                                </td>
+                                <td align="right">
+                                    {{ planet.upkeep_workers|intcomma }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <img src="{{ PATH_IMAGES }}/interface/credits.gif"
+                                         title="Crédits"
+                                         width="16"
+                                         height="16">
+                                </td>
+                                <td align="right">
+                                    {{ planet.upkeep_credits|intcomma }}
+                                </td>
+                            </tr>
+                            <tr{% if planet.soldiers_low %} class="low"{% endif %}>
+                                <td>
+                                    <a href="/s03/training/?planet={{ planet.planet_id }}">
+                                        <img src="{{ PATH_IMAGES }}/interface/soldiers.gif"
+                                             title="Soldats"
+                                             width="16"
+                                             height="16">
+                                    </a>
+                                </td>
+                                <td align="right">
+                                    {{ planet.upkeep_soldiers|intcomma }}
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td align="left">
+                        <table class="clear">
+                            <tr>
+                                <td>
+                                    <img src="{{ PATH_IMAGES }}/interface/floor.gif"
+                                         title="Terrain"
+                                         width="16"
+                                         height="16">
+                                </td>
+                                <td align="right">
+                                    {{ planet.floor_occupied|intcomma }}
+                                </td>
+                                <td>
+                                    /
+                                </td>
+                                <td align="right">
+                                    {{ planet.floor_capacity|intcomma }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <img src="{{ PATH_IMAGES }}/interface/space.gif"
+                                         title="Espace"
+                                         width="16"
+                                         height="16">
+                                </td>
+                                <td align="right">
+                                    {{ planet.space_occupied|intcomma }}
+                                </td>
+                                <td>
+                                    /
+                                </td>
+                                <td align="right">
+                                    {{ planet.space_capacity|intcomma }}
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+{% endblock %}
