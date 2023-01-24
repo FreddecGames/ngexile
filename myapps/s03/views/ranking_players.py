@@ -35,7 +35,7 @@ class View(GlobalView):
 
         reversed = False
         if col == 1:
-            orderby = "CASE WHEN score_visibility=2 OR v.id="+str(self.UserId)+"THEN upper(login) ELSE '' END, upper(login)"
+            orderby = "CASE WHEN score_visibility=2 OR v.id="+str(self.UserId)+"THEN upper(username) ELSE '' END, upper(username)"
         elif col == 2:
             orderby = "upper(alliances.name)"
         elif col == 3:
@@ -51,7 +51,7 @@ class View(GlobalView):
             content.Parse("r" + str(col))
 
         if reversed: orderby = orderby + " DESC"
-        orderby = orderby + ", upper(login)"
+        orderby = orderby + ", upper(username)"
 
         content.AssignValue("sort_column", col)
 
@@ -137,7 +137,7 @@ class View(GlobalView):
         if nb_pages > 1: content.Parse("nav")
 
         # Retrieve players to display
-        query = "SELECT login, v.score, v.score_prestige," + \
+        query = "SELECT username, v.score, v.score_prestige," + \
                 "COALESCE(date_part('day', now()-lastactivity), 15), alliances.name, alliances.tag, v.id, avatar_url, v.alliance_id, v.score-v.previous_score AS score_delta," + \
                 "v.score >= " + str(TenthUserScore) + " OR score_visibility = 2 OR (score_visibility = 1 AND alliance_id IS NOT NULL AND alliance_id="+str(sqlValue(self.AllianceId))+") OR v.id="+str(self.UserId) + \
                 " FROM vw_players v" + \
