@@ -22,7 +22,7 @@
         <script type="text/javascript" src='/static/scripts/time.js?v=1'></script>
         {% if scroll %}<script>function loaded(){scrollTo(0,{{scrolly }});}</script>{% endif %}
     </head>
-    <body{% if scroll %} onload="loaded()"{% endif %}>
+    <body {% if scroll %}onload="loaded()"{% endif %}>
         <div id="hint" onclick="donothide(event)">
             <div class="rtop">
                 <b class="r1"></b><b class="r2"></b><b class="r3"></b><b class="r4"></b>
@@ -33,8 +33,8 @@
             </div>
         </div>
         <script>
-var timers_enabled={{timers_enabled}};
-var startTime;
+            var timers_enabled={{timers_enabled}};
+            var startTime;
         </script>
         <div id="super">
             <div id="top" class="d-flex align-items-center">
@@ -57,11 +57,21 @@ var startTime;
                     <div class="px-3">
                         <div class="row gx-3 align-items-center">
                             <div class="col-auto">
-                                <img src="{{ PATH_IMAGES }}interface/credits.gif" class="res" title="Crédits" width="16" height="16">
+                                <img src="{{ PATH_IMAGES }}interface/credits.gif"
+                                     class="res"
+                                     data-bs-toggle="tooltip"
+                                     data-bs-title="Crédits"
+                                     width="16"
+                                     height="16">
                                 <span class="{% if credits <= 0 %}text-danger{% endif %}">{{ credits|intcomma }}</span>
                             </div>
                             <div class="col-auto">
-                                <img src="{{ PATH_IMAGES }}interface/prestige.gif" class="res" title="Prestige" width="16" height="16">
+                                <img src="{{ PATH_IMAGES }}interface/prestige.gif"
+                                     class="res"
+                                     data-bs-toggle="tooltip"
+                                     data-bs-title="Prestige"
+                                     width="16"
+                                     height="16">
                                 <span>{{ prestige_points|intcomma }}</span>
                             </div>
                         </div>
@@ -69,10 +79,8 @@ var startTime;
                 </div>
             </div>
             <div id="main">
-                <div id="leftnav">
-                    {% include 's03/menu.html' %}
-                </div>
-                <div id="content" align="center" class="scroll-content">
+                <div id="leftnav">{% include 's03/menu.html' %}</div>
+                <div id="content" class="scroll-content">
                     <div id="page" class="scroll-content">
                         {% if context %}
                             <div id="status">{% include 's03/header.html' %}</div>

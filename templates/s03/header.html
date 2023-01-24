@@ -16,199 +16,175 @@
         jump(obj)
     }
 </script>
-<div class="px-3 py-2 bg-dark rounded">
+<div class="px-3 py-2 bg-dark rounded mb-3">
     <div class="row gx-3 align-items-center justify-content-between">
         <div class="col-auto">
-            <a href="#" onclick="previousplanet(); return false;">
+            <a href="#"
+               class="fs-6"
+               onclick="previousplanet(); return false;"
+               data-bs-toggle="tooltip"
+               data-bs-title="Planète précédente">
                 <i class="fa-fw fas fa-chevron-circle-left"></i>
             </a>
         </div>
         <div class="col-auto">
-        </div>
-        <div class="col-auto">
-        </div>
-        <div class="col-auto">
-        </div>
-        <div class="col-auto">
-        </div>
-        <div class="col-auto">
-        </div>
-    </div>
-</div>
-
-<div align=center>
-    <table class="tableheader" cellspacing=2>
-        <tr>
-            <td rowspan="3">
-                <a href="#" onclick="previousplanet(); return false;">
-                    <img src="{{ PATH_IMAGES }}interface/left.gif"
-                         title="Planète précédente"
-                         width="10"
-                         height="34">
-                </a>&nbsp;
-            </td>
-            <td nowrap>
-                <select id="planetlist" tabindex="1" onchange="jump(this)">
-                    {% for planet in planets %}
-                        <option value="{{ planet.id }}"{% if planet.selected %} selected{% endif %}>
-                            {{ planet.name }} ({{ planet.g }}.{{ planet.s }}.{{ planet.p }})
-                        </option>
-                    {% endfor %}
-                </select>
-            </td>
-            <td nowrap>
-                <img src="{{ PATH_IMAGES }}interface/ore.gif"
-                     title="Minerai"
-                     width="16"
-                     height="16"
-                     class="res">
-                <span {% if medium_ore %} class=med2{% endif %}
-                      {% if high_ore %} class=high2{% endif %}>{{ ore|intcomma }}</span> / <span {% if medium_ore %} class=med2{% endif %}
-       {% if high_ore %} class=high2{% endif %}>{{ ore_capacity|intcomma }}</span> (<span class="{% if normal_ore_production %}"
-      prod
-      {% endif %}
-      {% if medium_ore_production %}medprod{% endif %}>+{{ ore_production|intcomma }}</span>)
-            </td>
-            <td nowrap>
-                <img src="{{ PATH_IMAGES }}interface/workers.gif"
-                     title="Travailleurs"
-                     width="16"
-                     height="16"
-                     class="res">
-                <span class={% if workers_low %}low{% endif %}>{{ workers|intcomma }}</span> / {{ workers_capacity|intcomma }} (
-                <img src="{{ PATH_IMAGES }}interface/workers_idle.gif"
-                     title="oisifs"
-                     width="12"
-                     height="12"
-                     class="idleworkers">
-                {{ workers_idle|intcomma }})
-            </td>
-            <td nowrap>
-                <img src="{{ PATH_IMAGES }}interface/floor.gif"
-                     title="Terrain"
-                     width="16"
-                     height="16"
-                     class="res">
-                {{ floor_occupied|intcomma }} / {{ floor|intcomma }}
-            </td>
-            {% if special %}
-                <td>
-                    {% if special1 %}
-                        <div class="left">
-                            <img src="{{ PATH_IMAGES }}interface/special.gif"
-                                 title="Spécial"
-                                 class="res"
-                                 width="16"
-                                 height="16">
-                            {{ special1 }}
-                        </div>
-                    {% endif %}
-                </td>
-            {% endif %}
-            <td rowspan=3>
-                &nbsp;<a href="#" onclick="nextplanet(); return false;">
-                <img src="{{ PATH_IMAGES }}interface/right.gif"
-                     title="Planète suivante"
-                     width="10"
-                     height="34">
-            </a>
-        </td>
-    </tr>
-    <tr>
-        <td nowrap>
-            <img src="{{ PATH_IMAGES }}interface/credits.gif"
-                 title="Crédits"
-                 width="16"
-                 height="16"
-                 class="res">
-            {{ money|intcomma }}
-        </td>
-        <td nowrap>
-            <img src="{{ PATH_IMAGES }}interface/hydrocarbon.gif"
-                 title="Hydrocarbure"
-                 width="16"
-                 height="16"
-                 class="res">
-            <span {% if medium_hydrocarbon %} class=med2{% endif %}
-                  {% if high_hydrocarbon %} class=high2{% endif %}>{{ hydrocarbon|intcomma }}</span> / <span {% if medium_hydrocarbon %} class=med2{% endif %}
-       {% if high_hydrocarbon %} class=high2{% endif %}>{{ hydrocarbon_capacity|intcomma }}</span> (<span class="{% if normal_hydrocarbon_production %}"
-      prod
-      {% endif %}
-      {% if medium_hydrocarbon_production %}medprod{% endif %}>+{{ hydrocarbon_production|intcomma }}</span>)
-        </td>
-        <td nowrap>
-            <img src="{{ PATH_IMAGES }}interface/scientists.gif"
-                 title="Scientifiques"
-                 width="16"
-                 height="16"
-                 class="res">
-            <span class={% if scientists_low %}low{% endif %}>{{ scientists|intcomma }}</span> / {{ scientists_capacity|intcomma }}
-        </td>
-        <td nowrap>
-            <img src="{{ PATH_IMAGES }}interface/space.gif"
-                 title="Espace"
-                 width="16"
-                 height="16"
-                 class="res">
-            {{ space_occupied|intcomma }} / {{ space|intcomma }}
-        </td>
-        {% if special %}
-            <td>
-                {% if special2 %}
-                    <div class="left">
+            <div class="row g-1 flex-column">
+                <div class="col-12">
+                    <select id="planetlist" class="form-control" tabindex="1" onchange="jump(this)">
+                        {% for planet in planets %}
+                            <option value="{{ planet.id }}" {% if planet.selected %}selected{% endif %}>
+                                {{ planet.name }} ({{ planet.g }}.{{ planet.s }}.{{ planet.p }})
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                {% if special1 %}
+                    <div class="col-12">
                         <img src="{{ PATH_IMAGES }}interface/special.gif"
-                             title="Spécial"
+                             data-bs-toggle="tooltip"
+                             data-bs-title="Spécial"
+                             class="res"
+                             width="16"
+                             height="16">
+                        {{ special1 }}
+                    </div>
+                {% endif %}
+                {% if special2 %}
+                    <div class="col-12">
+                        <img src="{{ PATH_IMAGES }}interface/special.gif"
+                             data-bs-toggle="tooltip"
+                             data-bs-title="Spécial"
                              class="res"
                              width="16"
                              height="16">
                         {{ special2 }}
                     </div>
                 {% endif %}
-            </td>
-        {% endif %}
-    </tr>
-    <tr>
-        <td nowrap>
-            <img src="{{ PATH_IMAGES }}interface/prestige.gif"
-                 title="Prestige"
-                 width="16"
-                 height="16"
-                 class="res">
-            {{ pp|intcomma }}
-        </td>
-        <td nowrap>
-            <img src="{{ PATH_IMAGES }}interface/energy.gif"
-                 title="Energie"
-                 width="16"
-                 height="16"
-                 class="res">
-            {{ energy|intcomma }} / {{ energy_capacity|intcomma }} (<span class="{% if energy_production_minus %}minus{% endif %}{% if energy_production_normal %}plus{% endif %}">
-            {% if energy_production_normal %}+{% endif %}
-            {{ energy_production|intcomma }}</span>)
-        </td>
-        <td nowrap>
-            <img src="{{ PATH_IMAGES }}interface/soldiers.gif"
-                 title="Soldats"
-                 width="16"
-                 height="16"
-                 class="res">
-            <span class={% if soldiers_low %}low{% endif %}>{{ soldiers|intcomma }}</span> / {{ soldiers_capacity|intcomma }}
-        </td>
-        <td nowrap></td>
-        {% if special %}
-            <td>
                 {% if special3 %}
-                    <div class="left">
+                    <div class="col-12">
                         <img src="{{ PATH_IMAGES }}interface/special.gif"
-                             title="Spécial"
+                             data-bs-toggle="tooltip"
+                             data-bs-title="Spécial"
                              class="res"
                              width="16"
                              height="16">
                         {{ special3 }}
                     </div>
                 {% endif %}
-            </td>
-        {% endif %}
-    </tr>
-</table>
+            </div>
+        </div>
+        <div class="col-auto">
+            <div class="row g-1 flex-column">
+                <div class="col-12">
+                    <img src="{{ PATH_IMAGES }}interface/ore.gif"
+                         data-bs-toggle="tooltip"
+                         data-bs-title="Minerai"
+                         width="16"
+                         height="16"
+                         class="res">
+                    <span class="{% if medium_ore %}med2{% elif high_ore %}high2{% endif %}">{{ ore|intcomma }}</span>
+                    <small class="text-normal">/{{ ore_capacity|intcomma }}</small>
+                    <small class="ms-2 {% if normal_ore_production %}prod{% elif medium_ore_production %}medprod{% endif %}">+{{ ore_production|intcomma }}</small>
+                </div>
+                <div class="col-12">
+                    <img src="{{ PATH_IMAGES }}interface/hydrocarbon.gif"
+                         data-bs-toggle="tooltip"
+                         data-bs-title="Hydrocarbure"
+                         width="16"
+                         height="16"
+                         class="res">
+                    <span class="{% if medium_hydrocarbon %}med2{% elif high_hydrocarbon %}high2{% endif %}">{{ hydrocarbon|intcomma }}</span>
+                    <small class="text-normal">/{{ hydrocarbon_capacity|intcomma }}</small>
+                    <small class="ms-2 {% if normal_hydrocarbon_production %}prod{% elif medium_hydrocarbon_production %}medprod{% endif %}">+{{ hydrocarbon_production|intcomma }}</small>
+                </div>
+                <div class="col-12">
+                    <img src="{{ PATH_IMAGES }}interface/energy.gif"
+                         data-bs-toggle="tooltip"
+                         data-bs-title="Energie"
+                         width="16"
+                         height="16"
+                         class="res">
+                    <span>{{ energy|intcomma }}</span>
+                    <small class="text-normal">/{{ energy_capacity|intcomma }}</small>
+                    <small class="ms-2 {% if energy_production_minus %}minus{% elif energy_production_normal %}plus{% endif %}">
+                        {% if energy_production_normal %}+{% endif %}
+                    {{ energy_production|intcomma }}</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-auto">
+            <div class="row g-1 flex-column">
+                <div class="col-12">
+                    <img src="{{ PATH_IMAGES }}interface/workers.gif"
+                         data-bs-toggle="tooltip"
+                         data-bs-title="Travailleurs"
+                         width="16"
+                         height="16"
+                         class="res">
+                    <span class={% if workers_low %}low{% endif %}>{{ workers|intcomma }}</span>
+                    <small class="text-normal me-2">/{{ workers_capacity|intcomma }}</small>
+                    <img src="{{ PATH_IMAGES }}interface/workers_idle.gif"
+                         data-bs-toggle="tooltip"
+                         data-bs-title="Oisifs"
+                         width="12"
+                         height="12"
+                         class="idleworkers">
+                    <small class="text-success">{{ workers_idle|intcomma }}</small>
+                </div>
+                <div class="col-12">
+                    <img src="{{ PATH_IMAGES }}interface/scientists.gif"
+                         data-bs-toggle="tooltip"
+                         data-bs-title="Scientifiques"
+                         width="16"
+                         height="16"
+                         class="res">
+                    <span class="{% if scientists_low %}low{% endif %}">{{ scientists|intcomma }}</span>
+                    <small class="text-normal">/{{ scientists_capacity|intcomma }}</small>
+                </div>
+                <div class="col-12">
+                    <img src="{{ PATH_IMAGES }}interface/soldiers.gif"
+                         data-bs-toggle="tooltip"
+                         data-bs-title="Soldats"
+                         width="16"
+                         height="16"
+                         class="res">
+                    <span class="{% if soldiers_low %}low{% endif %}">{{ soldiers|intcomma }}</span>
+                    <small class="text-normal">/{{ soldiers_capacity|intcomma }}</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-auto">
+            <div class="row g-1 flex-column">
+                <div class="col-12">
+                    <img src="{{ PATH_IMAGES }}interface/floor.gif"
+                         data-bs-toggle="tooltip"
+                         data-bs-title="Terrain"
+                         width="16"
+                         height="16"
+                         class="res">
+                    <span>{{ floor_occupied|intcomma }}</span>
+                    <small class="text-normal">/{{ floor|intcomma }}</small>
+                </div>
+                <div class="col-12">
+                    <img src="{{ PATH_IMAGES }}interface/space.gif"
+                         data-bs-toggle="tooltip"
+                         data-bs-title="Espace"
+                         width="16"
+                         height="16"
+                         class="res">
+                    <span>{{ space_occupied|intcomma }}</span>
+                    <small class="text-normal">/{{ space|intcomma }}</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-auto">
+            <a href="#"
+               class="fs-6"
+               onclick="nextplanet(); return false;"
+               data-bs-toggle="tooltip"
+               data-bs-title="Planète suivante">
+                <i class="fa-fw fas fa-chevron-circle-right"></i>
+            </a>
+        </div>
+    </div>
 </div>

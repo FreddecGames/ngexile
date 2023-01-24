@@ -116,18 +116,17 @@ function setReportsCount(nb)
 
 setSelectedMenu('{{selectedmenu}}');
 </script>
-
 <div id="leftnav-top" class="scroll-content">
-        {% if impersonating %}
-            <div class="px-3 py-2 text-bg-warning">
-                <b>Impersonisation</b> (<a href="/impersonate/stop/" style="color:#f00">Revenir au compte de départ</a>)
-                <br/>
-                Compte "{{ login }}" - impossible d'envoyer de messages
-                <br/>
-            </div>
-        {% endif %}
-        {% if onholidays %}
-            <style>
+    {% if impersonating %}
+        <div class="px-3 py-2 text-bg-warning">
+            <b>Impersonisation</b> (<a href="/impersonate/stop/" style="color:#f00">Revenir au compte de départ</a>)
+            <br/>
+            Compte "{{ login }}" - impossible d'envoyer de messages
+            <br/>
+        </div>
+    {% endif %}
+    {% if onholidays %}
+        <style>
 #onholidays{
 	height:30px;
 	vertical-align:top;
@@ -139,19 +138,19 @@ setSelectedMenu('{{selectedmenu}}');
 	background-color:#6e6;
 	color:#000;
 }
-            </style>
-            <div id="onholidays">
-                <b>En vacances</b>
-                <br/>
-                Activé le {{ start_datetime|date:"D d M Y" }} à {{ start_datetime|time }}
-                <br/>
-                Désactivable à partir du {{ min_end_datetime|date:"D d M Y" }} à {{ min_end_datetime|time }}
-                <br/>
-                Terminé le {{ end_datetime|date:"D d M Y" }} à {{ end_datetime|time }}
-            </div>
-        {% endif %}
-        {% if creditswarning %}
-            <style>
+        </style>
+        <div id="onholidays">
+            <b>En vacances</b>
+            <br/>
+            Activé le {{ start_datetime|date:"D d M Y" }} à {{ start_datetime|time }}
+            <br/>
+            Désactivable à partir du {{ min_end_datetime|date:"D d M Y" }} à {{ min_end_datetime|time }}
+            <br/>
+            Terminé le {{ end_datetime|date:"D d M Y" }} à {{ end_datetime|time }}
+        </div>
+    {% endif %}
+    {% if creditswarning %}
+        <style>
 #creditswarning{
 	min-height:30px;
 	height:auto !important;
@@ -165,21 +164,21 @@ setSelectedMenu('{{selectedmenu}}');
 	background-color:#ff8543;
 	color:#000;
 }
-            </style>
-            <div id="creditswarning">
-                <b>Fonds insuffisants</b>
-                <br/>
-                Nous sommes actuellement en déficit, cette situation est tolérable pendant un moment mais nous devons réagir. Nous pouvons soit alléger nos coûts d'entretien, soit augmenter nos revenus en vendant une plus grande partie de notre production.
-                <br/>
-                Vous avez
-                {% if hours %}{{ bankruptcy_hours|intcomma }} heure(s){% endif %}
-                pour faire revenir l'argent de la trésorerie dans le positif avant qu'un coup d'état n'éclate et que vous soyiez chassé de votre poste.
-                <br/>
-                Chaque heure passée en déficit, le nombre d'heures avant le coup d'état diminue d'une heure. Celui-ci remonte chaque heure passée dans le positif.
-            </div>
-        {% endif %}
-        {% if deleting %}
-            <style>
+        </style>
+        <div id="creditswarning">
+            <b>Fonds insuffisants</b>
+            <br/>
+            Nous sommes actuellement en déficit, cette situation est tolérable pendant un moment mais nous devons réagir. Nous pouvons soit alléger nos coûts d'entretien, soit augmenter nos revenus en vendant une plus grande partie de notre production.
+            <br/>
+            Vous avez
+            {% if hours %}{{ bankruptcy_hours|intcomma }} heure(s){% endif %}
+            pour faire revenir l'argent de la trésorerie dans le positif avant qu'un coup d'état n'éclate et que vous soyiez chassé de votre poste.
+            <br/>
+            Chaque heure passée en déficit, le nombre d'heures avant le coup d'état diminue d'une heure. Celui-ci remonte chaque heure passée dans le positif.
+        </div>
+    {% endif %}
+    {% if deleting %}
+        <style>
 #deleting{
 	height:30px;
 	vertical-align:top;
@@ -191,15 +190,15 @@ setSelectedMenu('{{selectedmenu}}');
 	background-color:#e66;
 	color:#000;
 }
-            </style>
-            <div id="deleting">
-                <b>Suppression du compte en cours</b>
-                <br/>
-                Ce compte sera effacé le {{ delete_datetime|date:"D d M Y" }} à {{ delete_datetime|time }}
-            </div>
-        {% endif %}
-        {% if banned %}
-            <style>
+        </style>
+        <div id="deleting">
+            <b>Suppression du compte en cours</b>
+            <br/>
+            Ce compte sera effacé le {{ delete_datetime|date:"D d M Y" }} à {{ delete_datetime|time }}
+        </div>
+    {% endif %}
+    {% if banned %}
+        <style>
 #banned{
 	height:30px;
 	vertical-align:top;
@@ -212,33 +211,33 @@ setSelectedMenu('{{selectedmenu}}');
 	color:#000;
 }
 #banned table { color:#000; };
-            </style>
-            <div id="banned">
-                <b>Suspendu</b>
-                <br/>
-                <table>
+        </style>
+        <div id="banned">
+            <b>Suspendu</b>
+            <br/>
+            <table>
+                <tr>
+                    <td>Depuis le:</td>
+                    <td>{{ ban_datetime|date:"D d M Y" }} à {{ ban_datetime|time }}</td>
+                </tr>
+                {% if expire %}
                     <tr>
-                        <td>Depuis le:</td>
-                        <td>{{ ban_datetime|date:"D d M Y" }} à {{ ban_datetime|time }}</td>
+                        <td>Expire le:</td>
+                        <td>{{ ban_expire_datetime|date:"D d M Y" }} à {{ ban_expire_datetime|time }}</td>
                     </tr>
-                    {% if expire %}
-                        <tr>
-                            <td>Expire le:</td>
-                            <td>{{ ban_expire_datetime|date:"D d M Y" }} à {{ ban_expire_datetime|time }}</td>
-                        </tr>
-                    {% endif %}
-                    <tr>
-                        <td>Raison:</td>
-                        <td>{{ ban_reason }}</td>
-                    </tr>
-                    <tr>
-                        <td>Raison publique:</td>
-                        <td>{{ ban_reason_public }}</td>
-                    </tr>
-                </table>
-            </div>
-        {% endif %}
-<script>
+                {% endif %}
+                <tr>
+                    <td>Raison:</td>
+                    <td>{{ ban_reason }}</td>
+                </tr>
+                <tr>
+                    <td>Raison publique:</td>
+                    <td>{{ ban_reason_public }}</td>
+                </tr>
+            </table>
+        </div>
+    {% endif %}
+    <script>
 
 putMenu("/s03/overview/","empire","Empire",1);
 putMenu("/s03/overview/","overview","Vue d'ensemble",2);
@@ -345,50 +344,51 @@ putMenu("https://exileng.com/signout/","logout","Déconnexion",2);
 
 {% if new_mail %}setMailsCount({{new_mail}});{% endif %}
 {% if new_report %}setReportsCount({{new_report}});{% endif %}
-</script>
+    </script>
 </div>
-<div id="leftnav-bottom" class="px-3 d-flex align-items-center justify-content-around">
-<div class="flex-grow-1 row gx-3 align-items-center justify-content-around">
-                            <form class="col-auto"
-                                  action="https://www.paypal.com/cgi-bin/webscr"
-                                  method="post"
-                                  target="_blank">
-                                <input type="hidden" name="cmd" value="_s-xclick">
-                                <input type="hidden" name="hosted_button_id" value="7XYD7SJFKQ8M4">
-                                <button type="submit"
-                                        class="p-0 border-0 bg-transparent"
-                                        data-bs-toggle="tooltip"
-                                        data-bs-placement="left"
-                                        data-bs-title="Make a donation">
-                                    <img src="/static/img/paypal.png" width="22px" />
-                                </button>
-                            </form>
-                            <div class="col-auto">
-                                <a href="https://ko-fi.com/freddecgames"
-                                   target="_blank"
-                                   data-bs-toggle="tooltip"
-                                   data-bs-placement="left"
-                                   data-bs-title="Buy me a Ko-fi">
-                                    <img src="/static/img/kofi.png" width="22px" />
-                                </a>
-                            </div>
-                            <div class="col-auto">
-                                <a href="https://www.patreon.com/bePatron?u=61283131"
-                                   target="_blank"
-                                   data-bs-toggle="tooltip"
-                                   data-bs-placement="left"
-                                   data-bs-title="Become a Patreon supporter">
-                                    <img src="/static/img/patreon.png" width="22px" />
-                                </a>
-                            </div>
-                            <div class="col-auto">
-                                <a href="https://discord.gg/3UkgeeT9CV"
-                                   target="_blank"
-                                   data-bs-toggle="tooltip"
-                                   data-bs-placement="left"
-                                   data-bs-title="Discord">
-                                    <img src="/static/img/discord.png" width="22px" />
-                                </a>
-                            </div>
-                        </div>
+<div id="leftnav-bottom"
+     class="px-3 d-flex align-items-center justify-content-around">
+    <div class="flex-grow-1 row gx-3 align-items-center justify-content-around">
+        <form class="col-auto"
+              action="https://www.paypal.com/cgi-bin/webscr"
+              method="post"
+              target="_blank">
+            <input type="hidden" name="cmd" value="_s-xclick">
+            <input type="hidden" name="hosted_button_id" value="7XYD7SJFKQ8M4">
+            <button type="submit"
+                    class="p-0 border-0 bg-transparent"
+                    data-bs-toggle="tooltip"
+                    data-bs-placement="left"
+                    data-bs-title="Make a donation">
+                <img src="/static/img/paypal.png" width="22px" />
+            </button>
+        </form>
+        <div class="col-auto">
+            <a href="https://ko-fi.com/freddecgames"
+               target="_blank"
+               data-bs-toggle="tooltip"
+               data-bs-placement="left"
+               data-bs-title="Buy me a Ko-fi">
+                <img src="/static/img/kofi.png" width="22px" />
+            </a>
+        </div>
+        <div class="col-auto">
+            <a href="https://www.patreon.com/bePatron?u=61283131"
+               target="_blank"
+               data-bs-toggle="tooltip"
+               data-bs-placement="left"
+               data-bs-title="Become a Patreon supporter">
+                <img src="/static/img/patreon.png" width="22px" />
+            </a>
+        </div>
+        <div class="col-auto">
+            <a href="https://discord.gg/3UkgeeT9CV"
+               target="_blank"
+               data-bs-toggle="tooltip"
+               data-bs-placement="left"
+               data-bs-title="Discord">
+                <img src="/static/img/discord.png" width="22px" />
+            </a>
+        </div>
+    </div>
 </div>
