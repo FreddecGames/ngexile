@@ -55,7 +55,7 @@ function putMenu(url,name,label,lvl,x,popup,extended)
 		url = "return display('" + url + (url.indexOf('?') > -1?"&":"?") + "xml=1');";
 
 		if(lvl==1)
-			document.write('<a href="#" onclick="'+url+'" class="menu lvl1"><img src="{{PATH_IMAGES}}/menu/expand.gif" class="menuExpand">'+label+'</a>');
+			document.write('<a href="#" onclick="'+url+'" class="menu lvl1"><img src="{{PATH_IMAGES}}menu/expand.gif" class="menuExpand">'+label+'</a>');
 		else
 		{
 			document.write('<a href="#" onclick="'+url+'" id="menu_'+name+'" class="menu lvl' + lvl + selected + hidden + '"><span class=dot>&middot;</span>'+label+'</a>');

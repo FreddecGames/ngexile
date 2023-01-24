@@ -111,7 +111,7 @@ document.onkeydown = keydown;
                             {% if mail.reply %}<a href="/s03/nation/?name={{ mail.from }}"
    title="Informations sur {{ mail.from }}">{% endif %}
                             {% if mail.avatar %}<img src="{{ mail.avatar_url }}" width=64 height=64 class="avatar">{% endif %}
-                            {% if mail.noavatar %}<img src="{{ PATH_IMAGES }}/interface/noavatar.gif"
+                            {% if mail.noavatar %}<img src="{{ PATH_IMAGES }}interface/noavatar.gif"
      width="64"
      height="64"
      class="avatar">{% endif %}
@@ -146,7 +146,7 @@ document.onkeydown = keydown;
                             {{ mail.date|timezone:"Europe/Paris" }} | {{ mail.subject }}
                             {% if mail.money %}
                                 | Somme reçue :
-                                <img src="{{ PATH_IMAGES }}/interface/credits.gif"
+                                <img src="{{ PATH_IMAGES }}interface/credits.gif"
                                      title="Crédits"
                                      class="icon"
                                      width="16"

@@ -31,7 +31,7 @@
                         {% if mail.reply %}<a href="?to={{ mail.sent_to }}"
    title="Nouveau message à {{ mail.sent_to }}">{% endif %}
                         {% if mail.avatar %}<img src="{{ mail.avatar_url }}" width=64 height=64 class="avatar">{% endif %}
-                        {% if mail.noavatar %}<img src="{{ PATH_IMAGES }}/interface/noavatar.gif"
+                        {% if mail.noavatar %}<img src="{{ PATH_IMAGES }}interface/noavatar.gif"
      width="64"
      height="64"
      class="avatar">{% endif %}
@@ -55,7 +55,7 @@
                         {{ mail.date|timezone:"Europe/Paris" }} | {{ mail.subject }}
                         {% if mail.money %}
                             | Somme envoyée :
-                            <img src="{{ PATH_IMAGES }}/interface/credits.gif"
+                            <img src="{{ PATH_IMAGES }}interface/credits.gif"
                                  title="Crédits"
                                  class="icon"
                                  width="16"

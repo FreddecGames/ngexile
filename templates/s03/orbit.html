@@ -18,11 +18,11 @@ var cargos = new Array();
 function cargoDesc(id){
 	var c=cargos[id];
 	var s='<table width="100%">';
-	s+='<tr><td width="1%"><img src="{{PATH_IMAGES}}/interface/ore.gif" width=16 height=16></td><td align="left">Minerai</td><td width="1%" align="right" class="grey">'+c[0]+'</td></tr>';
-	s+='<tr><td width="1%"><img src="{{PATH_IMAGES}}/interface/hydrocarbon.gif" width=16 height=16></td><td>Hydrocarbure</td><td width="1%" align="right" class="grey">'+c[1]+'</td></tr>';
-	s+='<tr><td width="1%"><img src="{{PATH_IMAGES}}/interface/scientists.gif" width=16 height=16></td><td>Scientifiques</td><td width="1%" align="right" class="grey">'+c[2]+'</td></tr>';
-	s+='<tr><td width="1%"><img src="{{PATH_IMAGES}}/interface/soldiers.gif" width=16 height=16></td><td>Soldats</td><td width="1%" align="right" class="grey">'+c[3]+'</td></tr>';
-	s+='<tr><td width="1%"><img src="{{PATH_IMAGES}}/interface/workers.gif" width=16 height=16></td><td>Travailleurs</td><td width="1%" align="right" class="grey">'+c[4]+'</td></tr>';
+	s+='<tr><td width="1%"><img src="{{PATH_IMAGES}}interface/ore.gif" width=16 height=16></td><td align="left">Minerai</td><td width="1%" align="right" class="grey">'+c[0]+'</td></tr>';
+	s+='<tr><td width="1%"><img src="{{PATH_IMAGES}}interface/hydrocarbon.gif" width=16 height=16></td><td>Hydrocarbure</td><td width="1%" align="right" class="grey">'+c[1]+'</td></tr>';
+	s+='<tr><td width="1%"><img src="{{PATH_IMAGES}}interface/scientists.gif" width=16 height=16></td><td>Scientifiques</td><td width="1%" align="right" class="grey">'+c[2]+'</td></tr>';
+	s+='<tr><td width="1%"><img src="{{PATH_IMAGES}}interface/soldiers.gif" width=16 height=16></td><td>Soldats</td><td width="1%" align="right" class="grey">'+c[3]+'</td></tr>';
+	s+='<tr><td width="1%"><img src="{{PATH_IMAGES}}interface/workers.gif" width=16 height=16></td><td>Travailleurs</td><td width="1%" align="right" class="grey">'+c[4]+'</td></tr>';
 	return s+'</table>';
 }
 {% endif %}
@@ -52,7 +52,7 @@ function cargoDesc(id){
 	{% if fleet.patrolling %}En patrouille{% endif %}
 	</td>
 
-	<td><img src="{{PATH_IMAGES}}/interface/commander.gif" class="smallicon" title="Commandant" width=10 height=6>{% if fleet.commander %}<a href="/s03/commanders/#{{fleet.commanderid}}">{{fleet.commandername}}</a>{% endif %}{% if fleet.nocommander %}-{% endif %}</td>
+	<td><img src="{{PATH_IMAGES}}interface/commander.gif" class="smallicon" title="Commandant" width=10 height=6>{% if fleet.commander %}<a href="/s03/commanders/#{{fleet.commanderid}}">{{fleet.commandername}}</a>{% endif %}{% if fleet.nocommander %}-{% endif %}</td>
 </tr>
 {% endfor %}
 {% if nofleets %}

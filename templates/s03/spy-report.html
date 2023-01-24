@@ -6,7 +6,7 @@ function putlevel(level,levels){
 	var s;
 
 	if(levels <= 5)
-		s = '<img src="{{PATH_IMAGES}}/research/level'+levels+'_'+level+'.gif" alt="Niveau '+level+'">';
+		s = '<img src="{{PATH_IMAGES}}research/level'+levels+'_'+level+'.gif" alt="Niveau '+level+'">';
 	else
 		s = level + '/' + levels;
 	document.write(s);
@@ -96,7 +96,7 @@ function putlevel(level,levels){
    title="Localiser la planète">({{ planet.g }}.{{ planet.s }}.{{ planet.p }})</a>
                     </td>
                     <td align="right" width="1%">
-                        <img src="{{ PATH_IMAGES }}/interface/floor.gif"
+                        <img src="{{ PATH_IMAGES }}interface/floor.gif"
                              class="icon"
                              title="Terrain"
                              width="16"
@@ -104,7 +104,7 @@ function putlevel(level,levels){
                         {{ planet.floor|intcomma }}
                     </td>
                     <td align="right" width="1%">
-                        <img src="{{ PATH_IMAGES }}/interface/space.gif"
+                        <img src="{{ PATH_IMAGES }}interface/space.gif"
                              class="icon"
                              title="Espace"
                              width="16"
@@ -112,7 +112,7 @@ function putlevel(level,levels){
                         {{ planet.space|intcomma }}
                     </td>
                     <td align="right" width="1%">
-                        <img src="{{ PATH_IMAGES }}/interface/ore.gif"
+                        <img src="{{ PATH_IMAGES }}interface/ore.gif"
                              class="icon"
                              title="Minerai"
                              width="16"
@@ -120,7 +120,7 @@ function putlevel(level,levels){
                         {{ planet.pct_ore|intcomma }}%
                     </td>
                     <td align="right" width="1%">
-                        <img src="{{ PATH_IMAGES }}/interface/hydrocarbon.gif"
+                        <img src="{{ PATH_IMAGES }}interface/hydrocarbon.gif"
                              class="icon"
                              title="Hydrocarbure"
                              width="16"
@@ -128,7 +128,7 @@ function putlevel(level,levels){
                         {{ planet.pct_hydrocarbon|intcomma }}%
                     </td>
                     <td align="center">
-                        <img src="{{ PATH_IMAGES }}/interface/fleets.gif"
+                        <img src="{{ PATH_IMAGES }}interface/fleets.gif"
                              class="icon"
                              title="Espace"
                              width="16"

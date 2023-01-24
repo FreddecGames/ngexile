@@ -32,11 +32,11 @@ function showCargo(cargoOre, cargoHydrocarbon, cargoScientists, cargoSoldiers, c
 	var s = "<table class=default width=600>"+
 			"<tr class=category><td colspan=3>Cargaison - Aucune action possible</td></tr>"+
 			"<tr class=header><td width='1%'>Ressource</td><td>En soute</td></tr>"+
-			"<tr><td nowrap><img src='{{PATH_IMAGES}}/interface/ore.gif' title='Minerai' class=res width=16 height=16> Minerai</td><td align=right>"+formatnumber(cargoOre)+"</td></tr>"+
-			"<tr><td nowrap><img src='{{PATH_IMAGES}}/interface/hydrocarbon.gif' title='Hydrocarbure' class=res width=16 height=16> Hydrocarbure</td><td align=right>"+formatnumber(cargoHydrocarbon)+"</td></tr>"+
-			"<tr><td nowrap><img src='{{PATH_IMAGES}}/interface/scientists.gif' title='Scientifiques' class=res width=16 height=16> Scientifiques</td><td align=right>"+formatnumber(cargoScientists)+"</td></tr>"+
-			"<tr><td nowrap><img src='{{PATH_IMAGES}}/interface/soldiers.gif' title='Soldats' class=res width=16 height=16> Soldats</td><td align=right>"+formatnumber(cargoSoldiers)+"</td></tr>"+
-			"<tr><td nowrap><img src='{{PATH_IMAGES}}/interface/workers.gif' title='Travailleurs' class=res width=16 height=16> Travailleurs</td><td align=right>"+formatnumber(cargoWorkers)+"</td></tr>"+
+			"<tr><td nowrap><img src='{{PATH_IMAGES}}interface/ore.gif' title='Minerai' class=res width=16 height=16> Minerai</td><td align=right>"+formatnumber(cargoOre)+"</td></tr>"+
+			"<tr><td nowrap><img src='{{PATH_IMAGES}}interface/hydrocarbon.gif' title='Hydrocarbure' class=res width=16 height=16> Hydrocarbure</td><td align=right>"+formatnumber(cargoHydrocarbon)+"</td></tr>"+
+			"<tr><td nowrap><img src='{{PATH_IMAGES}}interface/scientists.gif' title='Scientifiques' class=res width=16 height=16> Scientifiques</td><td align=right>"+formatnumber(cargoScientists)+"</td></tr>"+
+			"<tr><td nowrap><img src='{{PATH_IMAGES}}interface/soldiers.gif' title='Soldats' class=res width=16 height=16> Soldats</td><td align=right>"+formatnumber(cargoSoldiers)+"</td></tr>"+
+			"<tr><td nowrap><img src='{{PATH_IMAGES}}interface/workers.gif' title='Travailleurs' class=res width=16 height=16> Travailleurs</td><td align=right>"+formatnumber(cargoWorkers)+"</td></tr>"+
 			"</table>";
 			$('cargobox').innerHTML = s;
 }
@@ -47,11 +47,11 @@ function showLoad(planetOre, planetHydrocarbon, planetScientists, planetSoldiers
 			"<table class=default width=600>"+
 			"<tr class=category><td colspan=5>Cargaison - Chargement et déchargement possible</td></tr>"+
 			"<tr class=header><td width='1%'>Ressource</td><td>En soute</td><td width='1%'>Décharger</td><td>Disponible</td><td width='1%'>Charger</td></tr>"+
-			"<tr><td nowrap><img src='{{PATH_IMAGES}}/interface/ore.gif' title='Minerai' class=res width=16 height=16> Minerai</td><td align=right>"+formatnumber(cargoOre)+"</td><td nowrap><input type=number min=0 name=unload_ore id=unload_ore value=0 size=6> <a href='#' onclick='setval(\"unload_ore\","+cargoOre+")'>max</a></td><td align=right>"+formatnumber(planetOre)+"</td><td nowrap><input type=number min=0 name=load_ore id=load_ore value=0 size=6> <a href='#' onclick='setval(\"load_ore\","+planetOre+")'>max</a></td></tr>"+
-			"<tr><td nowrap><img src='{{PATH_IMAGES}}/interface/hydrocarbon.gif' title='Hydrocarbure' class=res width=16 height=16> Hydrocarbure</td><td align=right>"+formatnumber(cargoHydrocarbon)+"</td><td><input type=number min=0 name=unload_hydrocarbon id=unload_hydrocarbon value=0 size=6> <a href='#' onclick='setval(\"unload_hydrocarbon\","+cargoHydrocarbon+")'>max</a></td><td align=right>"+formatnumber(planetHydrocarbon)+"</td><td><input type=number min=0 name=load_hydrocarbon id=load_hydrocarbon value=0 size=6> <a href='#' onclick='setval(\"load_hydrocarbon\","+planetHydrocarbon+")'>max</a></td></tr>"+
-			"<tr><td nowrap><img src='{{PATH_IMAGES}}/interface/scientists.gif' title='Scientifiques' class=res width=16 height=16> Scientifiques</td><td align=right>"+formatnumber(cargoScientists)+"</td><td><input type=number min=0 name=unload_scientists id=unload_scientists value=0 size=6> <a href='#' onclick='setval(\"unload_scientists\","+cargoScientists+")'>max</a></td><td align=right>"+formatnumber(planetScientists)+"</td><td><input type=number min=0 name=load_scientists id=load_scientists value=0 size=6> <a href='#' onclick='setval(\"load_scientists\","+planetScientists+")'>max</a></td></tr>"+
-			"<tr><td nowrap><img src='{{PATH_IMAGES}}/interface/soldiers.gif' title='Soldats' class=res width=16 height=16> Soldats</td><td align=right>"+formatnumber(cargoSoldiers)+"</td><td><input type=number min=0 name=unload_soldiers id=unload_soldiers value=0 size=6> <a href='#' onclick='setval(\"unload_soldiers\","+cargoSoldiers+")'>max</a></td><td align=right>"+formatnumber(planetSoldiers)+"</td><td><input type=number min=0 name=load_soldiers id=load_soldiers value=0 size=6> <a href='#' onclick='setval(\"load_soldiers\","+planetSoldiers+")'>max</a></td></tr>"+
-			"<tr><td nowrap><img src='{{PATH_IMAGES}}/interface/workers.gif' title='Travailleurs' class=res width=16 height=16> Travailleurs</td><td align=right>"+formatnumber(cargoWorkers)+"</td><td><input type=number min=0 name=unload_workers id=unload_workers value=0 size=6> <a href='#' onclick='setval(\"unload_workers\","+cargoWorkers+")'>max</a></td><td align=right>"+formatnumber(planetWorkers)+"</td><td><input type=number min=0 name=load_workers id=load_workers value=0 size=6> <a href='#' onclick='setval(\"load_workers\","+planetWorkers+")'>max</a></td></tr>"+
+			"<tr><td nowrap><img src='{{PATH_IMAGES}}interface/ore.gif' title='Minerai' class=res width=16 height=16> Minerai</td><td align=right>"+formatnumber(cargoOre)+"</td><td nowrap><input type=number min=0 name=unload_ore id=unload_ore value=0 size=6> <a href='#' onclick='setval(\"unload_ore\","+cargoOre+")'>max</a></td><td align=right>"+formatnumber(planetOre)+"</td><td nowrap><input type=number min=0 name=load_ore id=load_ore value=0 size=6> <a href='#' onclick='setval(\"load_ore\","+planetOre+")'>max</a></td></tr>"+
+			"<tr><td nowrap><img src='{{PATH_IMAGES}}interface/hydrocarbon.gif' title='Hydrocarbure' class=res width=16 height=16> Hydrocarbure</td><td align=right>"+formatnumber(cargoHydrocarbon)+"</td><td><input type=number min=0 name=unload_hydrocarbon id=unload_hydrocarbon value=0 size=6> <a href='#' onclick='setval(\"unload_hydrocarbon\","+cargoHydrocarbon+")'>max</a></td><td align=right>"+formatnumber(planetHydrocarbon)+"</td><td><input type=number min=0 name=load_hydrocarbon id=load_hydrocarbon value=0 size=6> <a href='#' onclick='setval(\"load_hydrocarbon\","+planetHydrocarbon+")'>max</a></td></tr>"+
+			"<tr><td nowrap><img src='{{PATH_IMAGES}}interface/scientists.gif' title='Scientifiques' class=res width=16 height=16> Scientifiques</td><td align=right>"+formatnumber(cargoScientists)+"</td><td><input type=number min=0 name=unload_scientists id=unload_scientists value=0 size=6> <a href='#' onclick='setval(\"unload_scientists\","+cargoScientists+")'>max</a></td><td align=right>"+formatnumber(planetScientists)+"</td><td><input type=number min=0 name=load_scientists id=load_scientists value=0 size=6> <a href='#' onclick='setval(\"load_scientists\","+planetScientists+")'>max</a></td></tr>"+
+			"<tr><td nowrap><img src='{{PATH_IMAGES}}interface/soldiers.gif' title='Soldats' class=res width=16 height=16> Soldats</td><td align=right>"+formatnumber(cargoSoldiers)+"</td><td><input type=number min=0 name=unload_soldiers id=unload_soldiers value=0 size=6> <a href='#' onclick='setval(\"unload_soldiers\","+cargoSoldiers+")'>max</a></td><td align=right>"+formatnumber(planetSoldiers)+"</td><td><input type=number min=0 name=load_soldiers id=load_soldiers value=0 size=6> <a href='#' onclick='setval(\"load_soldiers\","+planetSoldiers+")'>max</a></td></tr>"+
+			"<tr><td nowrap><img src='{{PATH_IMAGES}}interface/workers.gif' title='Travailleurs' class=res width=16 height=16> Travailleurs</td><td align=right>"+formatnumber(cargoWorkers)+"</td><td><input type=number min=0 name=unload_workers id=unload_workers value=0 size=6> <a href='#' onclick='setval(\"unload_workers\","+cargoWorkers+")'>max</a></td><td align=right>"+formatnumber(planetWorkers)+"</td><td><input type=number min=0 name=load_workers id=load_workers value=0 size=6> <a href='#' onclick='setval(\"load_workers\","+planetWorkers+")'>max</a></td></tr>"+
 			"<tr><td>&nbsp;</td><td colspan=2 align=center><a href='#' onclick='return unload_all("+cargoOre+","+cargoHydrocarbon+","+cargoScientists+","+cargoSoldiers+","+cargoWorkers+")'>Tout décharger</a></td><td colspan=2 align=center><a href='#' onclick='return load_all("+planetOre+","+planetHydrocarbon+","+planetScientists+","+planetSoldiers+","+planetWorkers+")'>Tout charger</a></td></tr>"+
 			"<tr><td colspan=5 align=center><input type=submit value='Transférer'></td></tr>"+
 			"</table>"+
@@ -65,11 +65,11 @@ function showUnload(cargoOre, cargoHydrocarbon, cargoScientists, cargoSoldiers, 
 			"<table class=default width=600>"+
 			"<tr class=category><td colspan=3>Cargaison - Déchargement uniquement possible</td></tr>"+
 			"<tr class=header><td width='1%'>Ressource</td><td>En soute</td><td width='1%'>Décharger</td></tr>"+
-			"<tr><td nowrap><img src='{{PATH_IMAGES}}/interface/ore.gif' title='Minerai' class=res width=16 height=16> Minerai</td><td align=right>"+formatnumber(cargoOre)+"</td><td nowrap><input type=number min=0 name=unload_ore id=unload_ore value=0 size=6> <a href='#' onclick='setval(\"unload_ore\", "+cargoOre+")'>max</a></td></tr>"+
-			"<tr><td nowrap><img src='{{PATH_IMAGES}}/interface/hydrocarbon.gif' title='Hydrocarbure' class=res width=16 height=16> Hydrocarbure</td><td align=right>"+formatnumber(cargoHydrocarbon)+"</td><td><input type=number min=0 name=unload_hydrocarbon id=unload_hydrocarbon value=0 size=6> <a href='#' onclick='setval(\"unload_hydrocarbon\", "+cargoHydrocarbon+")'>max</a></td></tr>"+
-			"<tr><td nowrap><img src='{{PATH_IMAGES}}/interface/scientists.gif' title='Scientifiques' class=res width=16 height=16> Scientifiques</td><td align=right>"+formatnumber(cargoScientists)+"</td><td><input type=number min=0 name=unload_scientists id=unload_scientists value=0 size=6> <a href='#' onclick='setval(\"unload_scientists\", "+cargoScientists+")'>max</a></td></tr>"+
-			"<tr><td nowrap><img src='{{PATH_IMAGES}}/interface/soldiers.gif' title='Soldats' class=res width=16 height=16> Soldats</td><td align=right>"+formatnumber(cargoSoldiers)+"</td><td><input type=number min=0 name=unload_soldiers id=unload_soldiers value=0 size=6> <a href='#' onclick='setval(\"unload_soldiers\", "+cargoSoldiers+")'>max</a></td></tr>"+
-			"<tr><td nowrap><img src='{{PATH_IMAGES}}/interface/workers.gif' title='Travailleurs' class=res width=16 height=16> Travailleurs</td><td align=right>"+formatnumber(cargoWorkers)+"</td><td><input type=number min=0 name=unload_workers id=unload_workers value=0 size=6> <a href='#' onclick='setval(\"unload_workers\", "+cargoWorkers+")'>max</a></td></tr>"+
+			"<tr><td nowrap><img src='{{PATH_IMAGES}}interface/ore.gif' title='Minerai' class=res width=16 height=16> Minerai</td><td align=right>"+formatnumber(cargoOre)+"</td><td nowrap><input type=number min=0 name=unload_ore id=unload_ore value=0 size=6> <a href='#' onclick='setval(\"unload_ore\", "+cargoOre+")'>max</a></td></tr>"+
+			"<tr><td nowrap><img src='{{PATH_IMAGES}}interface/hydrocarbon.gif' title='Hydrocarbure' class=res width=16 height=16> Hydrocarbure</td><td align=right>"+formatnumber(cargoHydrocarbon)+"</td><td><input type=number min=0 name=unload_hydrocarbon id=unload_hydrocarbon value=0 size=6> <a href='#' onclick='setval(\"unload_hydrocarbon\", "+cargoHydrocarbon+")'>max</a></td></tr>"+
+			"<tr><td nowrap><img src='{{PATH_IMAGES}}interface/scientists.gif' title='Scientifiques' class=res width=16 height=16> Scientifiques</td><td align=right>"+formatnumber(cargoScientists)+"</td><td><input type=number min=0 name=unload_scientists id=unload_scientists value=0 size=6> <a href='#' onclick='setval(\"unload_scientists\", "+cargoScientists+")'>max</a></td></tr>"+
+			"<tr><td nowrap><img src='{{PATH_IMAGES}}interface/soldiers.gif' title='Soldats' class=res width=16 height=16> Soldats</td><td align=right>"+formatnumber(cargoSoldiers)+"</td><td><input type=number min=0 name=unload_soldiers id=unload_soldiers value=0 size=6> <a href='#' onclick='setval(\"unload_soldiers\", "+cargoSoldiers+")'>max</a></td></tr>"+
+			"<tr><td nowrap><img src='{{PATH_IMAGES}}interface/workers.gif' title='Travailleurs' class=res width=16 height=16> Travailleurs</td><td align=right>"+formatnumber(cargoWorkers)+"</td><td><input type=number min=0 name=unload_workers id=unload_workers value=0 size=6> <a href='#' onclick='setval(\"unload_workers\", "+cargoWorkers+")'>max</a></td></tr>"+
 			"<tr><td>&nbsp;</td><td colspan=2 align=center><a href='#' onclick='return unload_all("+cargoOre+","+cargoHydrocarbon+","+cargoScientists+","+cargoSoldiers+","+cargoWorkers+")'>Tout décharger</a></td></tr>"+
 			"<tr><td colspan=3 align=center><input type=submit value='Décharger'></td></tr>"+
 			"</table>"+
@@ -205,7 +205,7 @@ function confirmAbandon() { return confirm('Êtes-vous sûr de vouloir abandonne
                         &nbsp;
                         <input type=submit class=submit value='OK'>
                         &nbsp;
-                        <img src='{{ PATH_IMAGES }}/interface/close.gif'
+                        <img src='{{ PATH_IMAGES }}interface/close.gif'
                              width="12"
                              height="12"
                              title='Fermer'
@@ -244,7 +244,7 @@ function confirmAbandon() { return confirm('Êtes-vous sûr de vouloir abandonne
                     &nbsp;
                     <input type=submit class=submit value='OK'>
                     &nbsp;
-                    <img src='{{ PATH_IMAGES }}/interface/close.gif'
+                    <img src='{{ PATH_IMAGES }}interface/close.gif'
                          width="12"
                          height="12"
                          title='Fermer'
@@ -271,7 +271,7 @@ function confirmAbandon() { return confirm('Êtes-vous sûr de vouloir abandonne
                         &nbsp;
                         <input type=submit class=submit value='OK'>
                         &nbsp;
-                        <img src='{{ PATH_IMAGES }}/interface/close.gif'
+                        <img src='{{ PATH_IMAGES }}interface/close.gif'
                              width="12"
                              height="12"
                              title='Fermer'
@@ -298,7 +298,7 @@ function confirmAbandon() { return confirm('Êtes-vous sûr de vouloir abandonne
                             &nbsp;
                             <input type="checkbox" id="take" name="take">
                             Occuper planète (
-                            <img src='{{ PATH_IMAGES }}/interface/prestige.gif'
+                            <img src='{{ PATH_IMAGES }}interface/prestige.gif'
                                  title='Prestige'
                                  class="res"
                                  width="16"
@@ -308,7 +308,7 @@ function confirmAbandon() { return confirm('Êtes-vous sûr de vouloir abandonne
                         &nbsp;
                         <input type="submit" class="submit" value="OK">
                         &nbsp;
-                        <img src="{{ PATH_IMAGES }}/interface/close.gif"
+                        <img src="{{ PATH_IMAGES }}interface/close.gif"
                              width="12"
                              height="12"
                              title="Fermer"
@@ -328,14 +328,14 @@ function confirmAbandon() { return confirm('Êtes-vous sûr de vouloir abandonne
                             <tr class="title">
                                 <td colspan=2 id="renameref">
                                     {% if attack %}
-                                        <img src="{{ PATH_IMAGES }}/interface/stance_attack.gif"
+                                        <img src="{{ PATH_IMAGES }}interface/stance_attack.gif"
                                              class="stance"
                                              alt="Attaque"
                                              width="10"
                                              height="10">
                                     {% endif %}
                                     {% if defend %}
-                                        <img src="{{ PATH_IMAGES }}/interface/stance_defend.gif"
+                                        <img src="{{ PATH_IMAGES }}interface/stance_defend.gif"
                                              class="stance"
                                              alt="Riposte"
                                              width="10"
@@ -409,7 +409,7 @@ function confirmAbandon() { return confirm('Êtes-vous sûr de vouloir abandonne
                                 <td>
                                     <div class=left>
                                         {% if attack %}
-                                            <img src="{{ PATH_IMAGES }}/interface/stance_attack.gif"
+                                            <img src="{{ PATH_IMAGES }}interface/stance_attack.gif"
                                                  class="stance"
                                                  alt="Attaque"
                                                  width="10"
@@ -417,7 +417,7 @@ function confirmAbandon() { return confirm('Êtes-vous sûr de vouloir abandonne
                                             Attaquer à vue
                                         {% endif %}
                                         {% if defend %}
-                                            <img src="{{ PATH_IMAGES }}/interface/stance_defend.gif"
+                                            <img src="{{ PATH_IMAGES }}interface/stance_defend.gif"
                                                  class="stance"
                                                  alt="Riposte"
                                                  width="10"
@@ -448,7 +448,7 @@ function confirmAbandon() { return confirm('Êtes-vous sûr de vouloir abandonne
                                     </div>
                                     <div class=left>
                                         &nbsp;&nbsp;
-                                        <img src="{{ PATH_IMAGES }}/interface/commander.gif"
+                                        <img src="{{ PATH_IMAGES }}interface/commander.gif"
                                              class="smallres"
                                              width="10"
                                              height="6"
@@ -553,7 +553,7 @@ function confirmAbandon() { return confirm('Êtes-vous sûr de vouloir abandonne
                                 </td>
                                 <td>
                                     <div class=left>
-                                        <img src='{{ PATH_IMAGES }}/interface/credits.gif'
+                                        <img src='{{ PATH_IMAGES }}interface/credits.gif'
                                              title='Credits'
                                              class="res"
                                              width="16"
@@ -772,7 +772,7 @@ function d(idx,name,g,s,p){tab[idx]=new Array(g,s,p);}
                                     Coût
                                 </td>
                                 <td>
-                                    <img src="{{ PATH_IMAGES }}/interface/credits.gif"
+                                    <img src="{{ PATH_IMAGES }}interface/credits.gif"
                                          class="res"
                                          title="Crédits"
                                          width="16"

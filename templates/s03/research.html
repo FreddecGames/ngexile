@@ -17,9 +17,9 @@ function putlevel(level,levels,inprogress){
 	if(levels <= 5)
 	{
 		if(!inprogress)
-			s = '<img src="{{PATH_IMAGES}}/research/level'+levels+'_'+level+'.gif" alt="Niveau '+level+'">';
+			s = '<img src="{{PATH_IMAGES}}research/level'+levels+'_'+level+'.gif" alt="Niveau '+level+'">';
 		else
-			s = '<img src="{{PATH_IMAGES}}/research/leveling'+levels+'_'+level+'.gif" alt="Niveau '+(level+1)+' en cours">';
+			s = '<img src="{{PATH_IMAGES}}research/leveling'+levels+'_'+level+'.gif" alt="Niveau '+(level+1)+' en cours">';
 	}
 	else
 	{
@@ -62,7 +62,7 @@ function putlevel(level,levels,inprogress){
                         </td>
                         <td align=center>
                             {% if research.cost %}
-                                <img src="{{ PATH_IMAGES }}/interface/credits.gif"
+                                <img src="{{ PATH_IMAGES }}interface/credits.gif"
                                      class="icon"
                                      title="Crédits"
                                      width="16"

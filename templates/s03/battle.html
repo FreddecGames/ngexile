@@ -18,10 +18,10 @@
                 {% for opponent in opponents %}
                     <tr class="category {% if opponent.self %}self{% endif %}{% if opponent.friend %}friend{% endif %}{% if opponent.ally %}ally{% endif %}{% if opponent.enemy %}enemy{% endif %}">
                         <td>
-                            {% if opponent.attack %}<img src="{{ PATH_IMAGES }}/interface/stance_attack.gif"
+                            {% if opponent.attack %}<img src="{{ PATH_IMAGES }}interface/stance_attack.gif"
      alt="Attaque"
      class="stance">{% endif %}
-                            {% if opponent.defend %}<img src="{{ PATH_IMAGES }}/interface/stance_defend.gif"
+                            {% if opponent.defend %}<img src="{{ PATH_IMAGES }}interface/stance_defend.gif"
      alt="Rispote"
      class="stance">{% endif %}
                             <a href="?id={{ battleid }}&v={{ opponent.view }}{% if opponent.public %}&by={{ opponent.userid }}&key={{ key }}{% endif %}"

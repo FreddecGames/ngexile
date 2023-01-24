@@ -34,7 +34,7 @@ function confirmTrain(prestige) {
                         &nbsp;
                         <input type='submit' value='OK' class="submitok">
                         &nbsp;
-                        <img src='{{ PATH_IMAGES }}/interface/close.gif'
+                        <img src='{{ PATH_IMAGES }}interface/close.gif'
                              width="12"
                              height="12"
                              title='Fermer'
@@ -57,7 +57,7 @@ function confirmTrain(prestige) {
                     <tr class=smallitem>
                         <td valign="top">
                             <div class=left id="renameref{{ commander.id }}">
-                                <img src="{{ PATH_IMAGES }}/interface/commander.gif"
+                                <img src="{{ PATH_IMAGES }}interface/commander.gif"
                                      width="10"
                                      height="6"
                                      class="smallicon"
@@ -77,7 +77,7 @@ function confirmTrain(prestige) {
                                 <tr>
                                     <td>Salaire:</td>
                                     <td>
-                                        <img src="{{ PATH_IMAGES }}/interface/credits.gif"
+                                        <img src="{{ PATH_IMAGES }}interface/credits.gif"
                                              class="res"
                                              title="Crédits"
                                              width="16"
@@ -94,7 +94,7 @@ function confirmTrain(prestige) {
                                     <td nowrap>
                                         {% if commander.not_assigned %}Aucune{% endif %}
                                         {% if commander.planet_command %}
-                                            <img src="{{ PATH_IMAGES }}/interface/planet.gif"
+                                            <img src="{{ PATH_IMAGES }}interface/planet.gif"
                                                  width="16"
                                                  height="16"
                                                  class="res"
@@ -102,7 +102,7 @@ function confirmTrain(prestige) {
                                             <script>putplanet("{{commander.planetid}}","{{commander.commandment}}","{{commander.g}}","{{commander.s}}","{{commander.p}}",2);</script>
                                         {% endif %}
                                         {% if commander.fleet_command %}
-                                            <img src="{{ PATH_IMAGES }}/interface/fleets.gif"
+                                            <img src="{{ PATH_IMAGES }}interface/fleets.gif"
                                                  width="16"
                                                  height="16"
                                                  class="res"
@@ -146,7 +146,7 @@ function confirmTrain(prestige) {
                                         <td>
                                             <a href="?a=train&id={{ commander.id }}"
                                                onclick="return confirmTrain('{{ commander.prestige|intcomma }}')">Entrainement intensif pour
-                                                <img src="{{ PATH_IMAGES }}/interface/prestige.gif"
+                                                <img src="{{ PATH_IMAGES }}interface/prestige.gif"
                                                      width="16"
                                                      height="16"
                                                      class="res"
@@ -195,7 +195,7 @@ function confirmTrain(prestige) {
                     <tr class="smallitem">
                         <td valign="top">
                             <div class=left>
-                                <img src="{{ PATH_IMAGES }}/interface/commander.gif"
+                                <img src="{{ PATH_IMAGES }}interface/commander.gif"
                                      width="10"
                                      height="6"
                                      class="smallicon"
@@ -214,7 +214,7 @@ function confirmTrain(prestige) {
                                 <tr>
                                     <td>Salaire:</td>
                                     <td>
-                                        <img src="{{ PATH_IMAGES }}/interface/credits.gif"
+                                        <img src="{{ PATH_IMAGES }}interface/credits.gif"
                                              class="res"
                                              title="Crédits"
                                              width="16"
@@ -335,7 +335,7 @@ function addskill(name,label,increase,value,max) {
                 <table class="default" width=550>
                     <tr class="title">
                         <td colspan=3>
-                            <img src="{{ PATH_IMAGES }}/interface/commander.gif"
+                            <img src="{{ PATH_IMAGES }}interface/commander.gif"
                                  width="10"
                                  height="6"
                                  class="smallicon"

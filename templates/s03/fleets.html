@@ -104,7 +104,7 @@ function dCargo(id) {
 			var s = '<table width="100%">';
 			for(var i=1;i<fleet.resources.length;i++){
 				var res = fleet.resources[i];
-				s+='<tr><td width="1%" nowrap><img src="{{PATH_IMAGES}}/interface/' + resources[res.id].image + '.gif" width="16" height="16" class="res">' + resources[res.id].label + '</td><td width="1%" align="right" nowrap class="grey">' + res.quantity.n() + '</td></tr>';
+				s+='<tr><td width="1%" nowrap><img src="{{PATH_IMAGES}}interface/' + resources[res.id].image + '.gif" width="16" height="16" class="res">' + resources[res.id].label + '</td><td width="1%" align="right" nowrap class="grey">' + res.quantity.n() + '</td></tr>';
 			}
 			return s + '</table>';
 		}
@@ -233,7 +233,7 @@ function sortBy(column) {
 function column(id, name) {
 	var arrow='none';
 	if(sortColumn == id) arrow = (sortReversed?'down':'up');
-	return '<td nowrap><a href="#" onclick="return sortBy(' + id + ')">' + name +'</a>&nbsp;<img src="{{PATH_IMAGES}}/interface/arrow' + arrow + '.gif" /></td>';
+	return '<td nowrap><a href="#" onclick="return sortBy(' + id + ')">' + name +'</a>&nbsp;<img src="{{PATH_IMAGES}}interface/arrow' + arrow + '.gif" /></td>';
 }
 
 // when a countdown finishes, make the list be refreshed on next tab change
@@ -256,9 +256,9 @@ function displayFleetList(list) {
 		var z = '<tr class="' + (i%2==0?'even':'odd') + '"><td>';
 
 		if(fleet.stance == 1)
-			z+= '<img src="{{PATH_IMAGES}}/interface/stance_attack.gif" class="stance" alt="Attaque" width="10" height="10">';
+			z+= '<img src="{{PATH_IMAGES}}interface/stance_attack.gif" class="stance" alt="Attaque" width="10" height="10">';
 		else
-			z+= '<img src="{{PATH_IMAGES}}/interface/stance_defend.gif" class="stance" alt="Riposte" width="10" height="10">';
+			z+= '<img src="{{PATH_IMAGES}}interface/stance_defend.gif" class="stance" alt="Riposte" width="10" height="10">';
 
 		z+= '<a href="/s03/fleet/?planet=' + fleet.position.id + '&id=' + fleet.id + '" id="fleet' + fleet.id + '" onmouseover="ddrivetip(dShipList(' + fleet.id + '))" onmouseout="hideddrivetip()" nowrap><b>' + fleet.name + '</b></td>';
 
@@ -287,7 +287,7 @@ function displayFleetList(list) {
 		}
 		z+= '</td>';
 
-		z+= '<td><img src="{{PATH_IMAGES}}/interface/commander.gif" width="10" height="6" class="smallicon" title="Commandant">';
+		z+= '<td><img src="{{PATH_IMAGES}}interface/commander.gif" width="10" height="6" class="smallicon" title="Commandant">';
 		if(fleet.commandername != '' && fleet.commandername != 'None')
 			z+= '<a href="/s03/commanders/#'+escape(fleet.commandername)+'">' + fleet.commandername + '</a>';
 		else

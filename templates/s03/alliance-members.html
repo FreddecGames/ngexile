@@ -112,7 +112,7 @@ function displayStatus(id,rank,manage,kick){
                                         </td>
                                         <td align="right">{{ player.stat_colonies }}</td>
                                         <td align="right">
-                                            <img src="{{ PATH_IMAGES }}/interface/credits.gif"
+                                            <img src="{{ PATH_IMAGES }}interface/credits.gif"
                                                  title="Crédits"
                                                  class="res"
                                                  width="16"
@@ -136,7 +136,7 @@ function displayStatus(id,rank,manage,kick){
                                             <script>displayStatus({{player.id}},{{player.rank}},0{% if player.manage %}1{% endif %},0{% if player.kick %}1{% endif %});</script>
                                             {% if player.kick %}
                                                 - <span id="kick{{ player.id }}" onclick="return showKick({{ player.id }});"><a href="?#">Exclure</a></span><span id="kickConfirm{{ player.id }}" class="hidden">Coût:
-                                                <img src="{{ PATH_IMAGES }}/interface/credits.gif"
+                                                <img src="{{ PATH_IMAGES }}interface/credits.gif"
                                                      title="Crédits"
                                                      class="res"
                                                      width="16"
@@ -167,7 +167,7 @@ function displayStatus(id,rank,manage,kick){
                                     {{ total_colonies|intcomma }}
                                 </td>
                                 <td align="right">
-                                    <img src="{{ PATH_IMAGES }}/interface/credits.gif"
+                                    <img src="{{ PATH_IMAGES }}interface/credits.gif"
                                          title="Crédits"
                                          class="res"
                                          width="16"

@@ -37,18 +37,18 @@ function desc(id) {
 	var s='<table width="100%"><tr valign="top"><td style="padding:5px;"><span class="title">Description</span><br/><br/>'+
 	d[0]+'<br/><br/>'+
 	'<span class="title">Coût fonctionnement</span><br/><br/>'+
-	(d[8]!='0'?'Coût: <img src="{{PATH_IMAGES}}/interface/credits.gif" title="Crédits" width=16 height=16 class=res>'+d[8]:'')+
-	(d[7]!='0'?'<br/>Entretien: <img src="{{PATH_IMAGES}}/interface/workers.gif" title="Travailleurs" width=16 height=16 class=res>'+d[7]:'')+
-	(d[9]!='0'?'<br/>Énergie: <img src="{{PATH_IMAGES}}/interface/energy.gif" title="Énergie" width=16 height=16 class=res>'+d[9]:'')+
+	(d[8]!='0'?'Coût: <img src="{{PATH_IMAGES}}interface/credits.gif" title="Crédits" width=16 height=16 class=res>'+d[8]:'')+
+	(d[7]!='0'?'<br/>Entretien: <img src="{{PATH_IMAGES}}interface/workers.gif" title="Travailleurs" width=16 height=16 class=res>'+d[7]:'')+
+	(d[9]!='0'?'<br/>Énergie: <img src="{{PATH_IMAGES}}interface/energy.gif" title="Énergie" width=16 height=16 class=res>'+d[9]:'')+
 	'</td>';
 	if(d[1]!=0 || d[3]!=0 || d[5]!=0)
 	{
 		s=s+'<td width="1%" style="padding:5px;">'+
 		'<span class="title">Production</span><br/><br/>'+
 		'<table width="100%">'+
-		'<tr><td><img src="{{PATH_IMAGES}}/interface/ore.gif" title="Minerai" width=16 height=16></td><td align=right class="white">'+d[1]+"</td>"+bonus(d[2])+'</tr>'+
-		'<tr><td><img src="{{PATH_IMAGES}}/interface/hydrocarbon.gif" title="Hydrocarbure" width=16 height=16></td><td align=right class="white">'+d[3]+'</td>'+bonus(d[4])+'</tr>'+
-		'<tr><td><img src="{{PATH_IMAGES}}/interface/energy.gif" title="Energie" width=16 height=16></td><td align=right class="white">'+d[5]+'</td>'+bonus(d[6])+'</tr>'+
+		'<tr><td><img src="{{PATH_IMAGES}}interface/ore.gif" title="Minerai" width=16 height=16></td><td align=right class="white">'+d[1]+"</td>"+bonus(d[2])+'</tr>'+
+		'<tr><td><img src="{{PATH_IMAGES}}interface/hydrocarbon.gif" title="Hydrocarbure" width=16 height=16></td><td align=right class="white">'+d[3]+'</td>'+bonus(d[4])+'</tr>'+
+		'<tr><td><img src="{{PATH_IMAGES}}interface/energy.gif" title="Energie" width=16 height=16></td><td align=right class="white">'+d[5]+'</td>'+bonus(d[6])+'</tr>'+
 		'</table></td>';
 	}
 	return s + '</tr></table>';
@@ -59,20 +59,20 @@ function writeBuilding(id,name,quantity,status,o,o2,h,h2,w,w2,e,e2,f,f2,s,s2,rem
 	if(status==01) typ='highlight';
 	if(status==02) typ='del';
 	var a = '<tr valign=middle align=right class="item'+typ+'">'+
-			'<td align=center><img src="{{PATH_IMAGES}}/buildings/'+id+'.jpg" width=64 height=64 class="building" onmouseover="ddrivetip(desc('+idx+'))" onmouseout="hideddrivetip()"></td>'+
+			'<td align=center><img src="{{PATH_IMAGES}}buildings/'+id+'.jpg" width=64 height=64 class="building" onmouseover="ddrivetip(desc('+idx+'))" onmouseout="hideddrivetip()"></td>'+
 			'<td nowrap align=left valign=top>'+
 
 			'<div style="margin-bottom:5px"><table class=clear width="100%"><tr><td><a href="/s03/help/?cat=buildings#'+id+'" onmouseover="ddrivetip(desc('+idx+'))" onmouseout="hideddrivetip()"><b>'+name+'</b></a></td><td align=right>x'+quantity+'</td></tr></table></div>'+
 			'<table class="clear" width="200">'+
-			'<tr><td width="1%"><img src="{{PATH_IMAGES}}/interface/ore.gif" title="Minerai" width=16 height=16></td><td width=50 align=right'+(o2>0?' class="notenough"':'')+'>'+o+'</td><td width="1%"><img src="{{PATH_IMAGES}}/interface/spacer.gif" width=4></td>'+
-			'<td width="1%"><img src="{{PATH_IMAGES}}/interface/workers_idle.gif" title="Travailleurs" width=12 height=12></td><td width=40 align=right'+(w2>0?' class="notenough"':'')+'>'+w+'</td><td width="1%"><img src="{{PATH_IMAGES}}/interface/spacer.gif" width=4></td>'+
-			'<td width="1%"><img src="{{PATH_IMAGES}}/interface/floor.gif" title="Terrain" width=16 height=16></td><td width=16 align=right'+(f2>0?' class="notenough"':'')+'>'+f+'</td><td></td></tr>'+
+			'<tr><td width="1%"><img src="{{PATH_IMAGES}}interface/ore.gif" title="Minerai" width=16 height=16></td><td width=50 align=right'+(o2>0?' class="notenough"':'')+'>'+o+'</td><td width="1%"><img src="{{PATH_IMAGES}}interface/spacer.gif" width=4></td>'+
+			'<td width="1%"><img src="{{PATH_IMAGES}}interface/workers_idle.gif" title="Travailleurs" width=12 height=12></td><td width=40 align=right'+(w2>0?' class="notenough"':'')+'>'+w+'</td><td width="1%"><img src="{{PATH_IMAGES}}interface/spacer.gif" width=4></td>'+
+			'<td width="1%"><img src="{{PATH_IMAGES}}interface/floor.gif" title="Terrain" width=16 height=16></td><td width=16 align=right'+(f2>0?' class="notenough"':'')+'>'+f+'</td><td></td></tr>'+
 
-			'<tr><td width="1%"><img src="{{PATH_IMAGES}}/interface/hydrocarbon.gif" title="Hydrocarbure" width=16 height=16></td><td width=50 align=right'+(h2>0?' class="notenough"':'')+'>'+h+'</td><td width="1%"><img src="{{PATH_IMAGES}}/interface/spacer.gif" width=4></td>'+
-			'<td width="1%"></td><td width=40 align=right'+(e2>0?' class="notenough"':'')+'></td><td width="1%"><img src="{{PATH_IMAGES}}/interface/spacer.gif" width=4></td>'+
-			'<td width="1%"><img src="{{PATH_IMAGES}}/interface/space.gif" title="Espace" width=16 height=16></td><td width=16 align=right'+(s2>0?' class="notenough"':'')+'>'+s+'</td><td></td></tr>'+
+			'<tr><td width="1%"><img src="{{PATH_IMAGES}}interface/hydrocarbon.gif" title="Hydrocarbure" width=16 height=16></td><td width=50 align=right'+(h2>0?' class="notenough"':'')+'>'+h+'</td><td width="1%"><img src="{{PATH_IMAGES}}interface/spacer.gif" width=4></td>'+
+			'<td width="1%"></td><td width=40 align=right'+(e2>0?' class="notenough"':'')+'></td><td width="1%"><img src="{{PATH_IMAGES}}interface/spacer.gif" width=4></td>'+
+			'<td width="1%"><img src="{{PATH_IMAGES}}interface/space.gif" title="Espace" width=16 height=16></td><td width=16 align=right'+(s2>0?' class="notenough"':'')+'>'+s+'</td><td></td></tr>'+
 
-			'<tr><td width="1%">' + (pp!='0'?'<img src="{{PATH_IMAGES}}/interface/prestige.gif" title="Prestige" width=16 height=16></td><td width="50" align=right'+(pp2>0?' class="notenough"':'')+'>'+pp+'</td><td width="1%"><img src="{{PATH_IMAGES}}/interface/spacer.gif" width="4">':'') +'</td>'+
+			'<tr><td width="1%">' + (pp!='0'?'<img src="{{PATH_IMAGES}}interface/prestige.gif" title="Prestige" width=16 height=16></td><td width="50" align=right'+(pp2>0?' class="notenough"':'')+'>'+pp+'</td><td width="1%"><img src="{{PATH_IMAGES}}interface/spacer.gif" width="4">':'') +'</td>'+
 			'<td width="1%"></td>'+
 			'<td width="1%"></td></tr>'+
 			'</table>'+

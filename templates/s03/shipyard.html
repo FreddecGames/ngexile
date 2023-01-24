@@ -17,7 +17,7 @@ function descShip(id){
 	for(var i=21;i<ship.length;i++)
 		buildings = buildings + "<li>" + ship[i] + "</li>";
 
-	var a = '<table class="description"><tr valign=top><td><span class="title">Description</span><br/><br/>'+ship[0]+'<br/><br/><span class="title">Bâtiments requis</span><br/><ul class=requirements>'+buildings+'</ul>' + (ship[18]!='0'?'<br/><span class=title>Entretien</span><br/><br/>Crédits: <img src="{{PATH_IMAGES}}/interface/credits.gif" class="icon" title="Credits" width=16 height=16>'+ship[18]+'<br/>':'') + '</td><td width="1%" nowrap><span class=title>Caractéristiques</span><br/>'+
+	var a = '<table class="description"><tr valign=top><td><span class="title">Description</span><br/><br/>'+ship[0]+'<br/><br/><span class="title">Bâtiments requis</span><br/><ul class=requirements>'+buildings+'</ul>' + (ship[18]!='0'?'<br/><span class=title>Entretien</span><br/><br/>Crédits: <img src="{{PATH_IMAGES}}interface/credits.gif" class="icon" title="Credits" width=16 height=16>'+ship[18]+'<br/>':'') + '</td><td width="1%" nowrap><span class=title>Caractéristiques</span><br/>'+
 			'<br/>Signature: <span class=value>'+ship[1]+'</span><br/>Cargo: <span class=value>'+ship[2]+'</span>'+
 			'<br/>Vitesse: <span class=value>'+ship[3]+'</span><br/>Manœuvrabilité: <span class=value>'+ship[4]+'</span><br/>Stabilité: <span class=value>'+ship[19]+'</span>' + (ship[20]>0?'<br/>Commandement: <span class=value>+'+formatnumber(ship[20])+'</span>':'');
 	if(ship[6] > 0)
@@ -147,7 +147,7 @@ tiptext = $("hinttext");
                                 </table>
                             </td>
                             <td nowrap{% if ship.not_enough_ore %} class="notenough"{% endif %}>
-                                <img src="{{ PATH_IMAGES }}/interface/ore.gif"
+                                <img src="{{ PATH_IMAGES }}interface/ore.gif"
                                      class="icon"
                                      title="Minerai"
                                      width="16"
@@ -156,7 +156,7 @@ tiptext = $("hinttext");
                             </td>
                             <td nowrap
                                 {% if ship.not_enough_hydrocarbon %} class="notenough"{% endif %}>
-                                <img src="{{ PATH_IMAGES }}/interface/hydrocarbon.gif"
+                                <img src="{{ PATH_IMAGES }}interface/hydrocarbon.gif"
                                      class="icon"
                                      title="Hydrocarbure"
                                      width="16"
@@ -164,7 +164,7 @@ tiptext = $("hinttext");
                                 {{ ship.hydrocarbon|intcomma }}
                             </td>
                             <td nowrap{% if ship.not_enough_energy %} class="notenough"{% endif %}>
-                                <img src="{{ PATH_IMAGES }}/interface/energy.gif"
+                                <img src="{{ PATH_IMAGES }}interface/energy.gif"
                                      class="icon"
                                      title="Énergie"
                                      width="16"
@@ -172,7 +172,7 @@ tiptext = $("hinttext");
                                 {{ ship.energy|intcomma }}
                             </td>
                             <td nowrap{% if ship.not_enough_crew %} class="notenough"{% endif %}>
-                                <img src="{{ PATH_IMAGES }}/interface/workers.gif"
+                                <img src="{{ PATH_IMAGES }}interface/workers.gif"
                                      class="icon"
                                      title="Équipage"
                                      width="16"
@@ -214,7 +214,7 @@ tiptext = $("hinttext");
                             &nbsp;
                         </td>
                         <td align=right>
-                            <img src="{{ PATH_IMAGES }}/interface/ore.gif"
+                            <img src="{{ PATH_IMAGES }}interface/ore.gif"
                                  class="icon"
                                  title="Minerai"
                                  width="16"
@@ -222,7 +222,7 @@ tiptext = $("hinttext");
                             <span id="totalore">0</span>
                         </td>
                         <td align=right>
-                            <img src="{{ PATH_IMAGES }}/interface/hydrocarbon.gif"
+                            <img src="{{ PATH_IMAGES }}interface/hydrocarbon.gif"
                                  class="icon"
                                  title="Hydrocarbure"
                                  width="16"
@@ -230,7 +230,7 @@ tiptext = $("hinttext");
                             <span id="totalhydrocarbon">0</span>
                         </td>
                         <td align=right>
-                            <img src="{{ PATH_IMAGES }}/interface/energy.gif"
+                            <img src="{{ PATH_IMAGES }}interface/energy.gif"
                                  class="icon"
                                  title="Énergie"
                                  width="16"
@@ -238,7 +238,7 @@ tiptext = $("hinttext");
                             <span id="totalenergy">0</span>
                         </td>
                         <td align=right>
-                            <img src="{{ PATH_IMAGES }}/interface/workers.gif"
+                            <img src="{{ PATH_IMAGES }}interface/workers.gif"
                                  class="icon"
                                  title="Équipage"
                                  width="16"
@@ -305,7 +305,7 @@ tiptext = $("hinttext");
                                 </table>
                             </td>
                             <td nowrap>
-                                <img src="{{ PATH_IMAGES }}/interface/ore.gif"
+                                <img src="{{ PATH_IMAGES }}interface/ore.gif"
                                      class="icon"
                                      title="Minerai"
                                      width="16"
@@ -313,7 +313,7 @@ tiptext = $("hinttext");
                                 {{ ship.ore|intcomma }}
                             </td>
                             <td nowrap>
-                                <img src="{{ PATH_IMAGES }}/interface/hydrocarbon.gif"
+                                <img src="{{ PATH_IMAGES }}interface/hydrocarbon.gif"
                                      class="icon"
                                      title="Hydrocarbure"
                                      width="16"
@@ -321,7 +321,7 @@ tiptext = $("hinttext");
                                 {{ ship.hydrocarbon|intcomma }}
                             </td>
                             <td nowrap>
-                                <img src="{{ PATH_IMAGES }}/interface/energy.gif"
+                                <img src="{{ PATH_IMAGES }}interface/energy.gif"
                                      class="icon"
                                      title="Énergie"
                                      width="16"
@@ -329,7 +329,7 @@ tiptext = $("hinttext");
                                 {{ ship.energy|intcomma }}
                             </td>
                             <td nowrap>
-                                <img src="{{ PATH_IMAGES }}/interface/workers.gif"
+                                <img src="{{ PATH_IMAGES }}interface/workers.gif"
                                      class="icon"
                                      title="Équipage"
                                      width="16"
@@ -390,7 +390,7 @@ tiptext = $("hinttext");
                                 </table>
                             </td>
                             <td nowrap>
-                                <img src="{{ PATH_IMAGES }}/interface/ore.gif"
+                                <img src="{{ PATH_IMAGES }}interface/ore.gif"
                                      class="icon"
                                      title="Minerai"
                                      width="16"
@@ -398,7 +398,7 @@ tiptext = $("hinttext");
                                 {{ ship.ore|intcomma }}
                             </td>
                             <td nowrap>
-                                <img src="{{ PATH_IMAGES }}/interface/hydrocarbon.gif"
+                                <img src="{{ PATH_IMAGES }}interface/hydrocarbon.gif"
                                      class="icon"
                                      title="Hydrocarbure"
                                      width="16"
@@ -406,7 +406,7 @@ tiptext = $("hinttext");
                                 {{ ship.hydrocarbon|intcomma }}
                             </td>
                             <td nowrap>
-                                <img src="{{ PATH_IMAGES }}/interface/energy.gif"
+                                <img src="{{ PATH_IMAGES }}interface/energy.gif"
                                      class="icon"
                                      title="Énergie"
                                      width="16"
@@ -414,7 +414,7 @@ tiptext = $("hinttext");
                                 {{ ship.energy|intcomma }}
                             </td>
                             <td nowrap>
-                                <img src="{{ PATH_IMAGES }}/interface/workers.gif"
+                                <img src="{{ PATH_IMAGES }}interface/workers.gif"
                                      class="icon"
                                      title="Équipage"
                                      width="16"

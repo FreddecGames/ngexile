@@ -77,7 +77,7 @@
             {% for message in messages %}
                 <tr class="item{% if message.new %}highlight{% endif %}">
                     <td width="1%" valign="top">
-                        <img src="{{ PATH_IMAGES }}/reports/{{ message.type }}.jpg"
+                        <img src="{{ PATH_IMAGES }}reports/{{ message.type }}.jpg"
                              width="64"
                              height="64"
                              class="report">
@@ -252,7 +252,7 @@
                                 Vous devriez réfléchir à cette offre et répondre en accédant à <a href="/s03/alliance-invitations/">cette page</a>.
                             {% elif message.type == 110 %}
                                 La nation <a href="/s03/nation/?name={{ message.username }}">{{ message.username }}</a> a formulé une demande de financement s'élevant à
-                                <img src="{{ PATH_IMAGES }}/interface/credits.gif"
+                                <img src="{{ PATH_IMAGES }}interface/credits.gif"
                                      title="Crédits"
                                      class="icon"
                                      width="16"
@@ -262,7 +262,7 @@
                                 Vous pouvez accéder à toutes les demandes en cours sur <a href="/s03/alliance-wallet/?cat=2">cette page</a>.
                             {% elif message.type == 111 %}
                                 La nation <a href="/s03/nation/?name={{ message.username }}">{{ message.username }}</a> a modifié sa demande de financement et demande désormais
-                                <img src="{{ PATH_IMAGES }}/interface/credits.gif"
+                                <img src="{{ PATH_IMAGES }}interface/credits.gif"
                                      title="Crédits"
                                      class="icon"
                                      width="16"
@@ -286,7 +286,7 @@
                                 La nation <a href="/s03/nation/?name={{ message.nation }}">{{ message.nation }}</a> va être exclue de l'alliance<script>if('{{message.username}}'!='') document.write(' (action décidée par <a href="/s03/nation/?name={{message.username}}">{{message.username}}</a>)');</script>.
                             {% elif message.type == 150 %}
                                 Notre alliance n'a pas pu honorer son contrat et payer les
-                                <img src="{{ PATH_IMAGES }}/interface/credits.gif"
+                                <img src="{{ PATH_IMAGES }}interface/credits.gif"
                                      title="Crédits"
                                      class="icon"
                                      width="16"
@@ -294,7 +294,7 @@
                                 {{ message.credits|intcomma }} crédits à l'alliance <a href="/s03/alliance/?tag={{ message.alliancetag }}">[{{ message.alliancetag }}] {{ message.alliancename }}</a>.
                             {% elif message.type == 151 %}
                                 Il semblerait que l'alliance <a href="/s03/alliance/?tag={{ message.alliancetag }}">[{{ message.alliancetag }}] {{ message.alliancename }}</a> ait oublié de nous verser les
-                                <img src="{{ PATH_IMAGES }}/interface/credits.gif"
+                                <img src="{{ PATH_IMAGES }}interface/credits.gif"
                                      title="Crédits"
                                      class="icon"
                                      width="16"
@@ -343,7 +343,7 @@
                                 Vous pouvez accéder au <a href="/s03/invasion/?id={{ message.invasionid }}">rapport d'invasion</a>.
                             {% elif message.type == 220 %}
                                 La destruction récente de flottes de fossoyeur nous a rapporté la somme de
-                                <img src="{{ PATH_IMAGES }}/interface/credits.gif"
+                                <img src="{{ PATH_IMAGES }}interface/credits.gif"
                                      class="res"
                                      width="16"
                                      height="16">
@@ -354,7 +354,7 @@
                                 Ils sont prêts pour de <a href="/s03/research/">nouvelles recherches</a>.
                             {% elif message.type == 310 %}
                                 Les coûts d'entretien et de fonctionnement concernant la dernière période s'élèvent à
-                                <img src="{{ PATH_IMAGES }}/interface/credits.gif"
+                                <img src="{{ PATH_IMAGES }}interface/credits.gif"
                                      class="res"
                                      width="16"
                                      height="16">
@@ -364,7 +364,7 @@
                                 <table class=clear>
                                     <tr>
                                         <td>
-                                            <img src="{{ PATH_IMAGES }}/interface/upkeep_commander.gif"
+                                            <img src="{{ PATH_IMAGES }}interface/upkeep_commander.gif"
                                                  class="res"
                                                  width="16"
                                                  height="16">
@@ -373,7 +373,7 @@
                                     </tr>
                                     <tr>
                                         <td>
-                                            <img src="{{ PATH_IMAGES }}/interface/planet.gif"
+                                            <img src="{{ PATH_IMAGES }}interface/planet.gif"
                                                  class="res"
                                                  width="16"
                                                  height="16">
@@ -382,7 +382,7 @@
                                     </tr>
                                     <tr>
                                         <td>
-                                            <img src="{{ PATH_IMAGES }}/interface/scientists.gif"
+                                            <img src="{{ PATH_IMAGES }}interface/scientists.gif"
                                                  class="res"
                                                  width="16"
                                                  height="16">
@@ -391,7 +391,7 @@
                                     </tr>
                                     <tr>
                                         <td>
-                                            <img src="{{ PATH_IMAGES }}/interface/soldiers.gif"
+                                            <img src="{{ PATH_IMAGES }}interface/soldiers.gif"
                                                  class="res"
                                                  width="16"
                                                  height="16">
@@ -400,7 +400,7 @@
                                     </tr>
                                     <tr>
                                         <td>
-                                            <img src="{{ PATH_IMAGES }}/interface/fleets.gif"
+                                            <img src="{{ PATH_IMAGES }}interface/fleets.gif"
                                                  class="res"
                                                  width="16"
                                                  height="16">
@@ -409,7 +409,7 @@
                                     </tr>
                                     <tr>
                                         <td>
-                                            <img src="{{ PATH_IMAGES }}/interface/fleets.gif"
+                                            <img src="{{ PATH_IMAGES }}interface/fleets.gif"
                                                  class="res"
                                                  width="16"
                                                  height="16">
@@ -418,7 +418,7 @@
                                     </tr>
                                     <tr>
                                         <td>
-                                            <img src="{{ PATH_IMAGES }}/interface/fleets.gif"
+                                            <img src="{{ PATH_IMAGES }}interface/fleets.gif"
                                                  class="res"
                                                  width="16"
                                                  height="16">
@@ -429,19 +429,19 @@
                                 <br/>
                                 <br/>
                                 Nos infrastructures ont généré
-                                <img src="{{ PATH_IMAGES }}/interface/prestige.gif"
+                                <img src="{{ PATH_IMAGES }}interface/prestige.gif"
                                      class="res"
                                      width="16"
                                      height="16">
                                 {{ message.scientists|intcomma }} et
-                                <img src="{{ PATH_IMAGES }}/interface/credits.gif"
+                                <img src="{{ PATH_IMAGES }}interface/credits.gif"
                                      class="res"
                                      width="16"
                                      height="16">
                                 {{ message.soldiers|intcomma }}
                             {% elif message.type == 311 %}
                                 Le commerce entre nos planètes et celles de nos alliés nous a rapporté
-                                <img src="{{ PATH_IMAGES }}/interface/credits.gif"
+                                <img src="{{ PATH_IMAGES }}interface/credits.gif"
                                      class="res"
                                      width="16"
                                      height="16">
@@ -460,7 +460,7 @@
                                 Le commerçant venu acheter nos ressources mises en vente sur <a href="/s03/map/?g={{ message.g }}&s={{ message.s }}">{{ message.planetname }} ({{ message.g }}.{{ message.s }}.{{ message.p }})</a> est arrivé à sa destination sans rencontrer de problème.
                                 <br/>
                                 Pour rappel, <script>if({{message.ore}} > 0){ document.write('{{message.ore|intcomma}} unités de minerai'); if({{message.hydrocarbon}} > 0) document.write(" et {{message.hydrocarbon|intcomma}} unités d'hydrocarbure");} else document.write("{{message.hydrocarbon|intcomma}} unités d'hydrocarbure")</script> ont été vendues pour un total de
-                                <img src="{{ PATH_IMAGES }}/interface/credits.gif"
+                                <img src="{{ PATH_IMAGES }}interface/credits.gif"
                                      title="Crédits"
                                      class="icon"
                                      width="16"
@@ -484,7 +484,7 @@
                                 </script>
                             {% elif message.type == 502 %}
                                 Vous avez reçu la somme de
-                                <img src="{{ PATH_IMAGES }}/interface/credits.gif"
+                                <img src="{{ PATH_IMAGES }}interface/credits.gif"
                                      title="Crédits"
                                      class="icon"
                                      width="16"
@@ -505,7 +505,7 @@
 	
                                 </script>
                                 sur une de leurs planètes, les marchands nous ont payé la somme de
-                                <img src="{{ PATH_IMAGES }}/interface/credits.gif"
+                                <img src="{{ PATH_IMAGES }}interface/credits.gif"
                                      title="Crédits"
                                      class="icon"
                                      width="16"
@@ -526,7 +526,7 @@
 	
                                 </script>
                                 sur la planète <a href="/s03/map/?g={{ message.g }}&s={{ message.s }}">{{ message.planetname }} ({{ message.g }}.{{ message.s }}.{{ message.p }})</a>, nous avons été payé la somme de
-                                <img src="{{ PATH_IMAGES }}/interface/credits.gif"
+                                <img src="{{ PATH_IMAGES }}interface/credits.gif"
                                      title="Crédits"
                                      class="icon"
                                      width="16"
@@ -547,7 +547,7 @@
 	
                                 </script>
                                 sur la planète <a href="/s03/map/?g={{ message.g }}&s={{ message.s }}">{{ message.planetname }} ({{ message.g }}.{{ message.s }}.{{ message.p }})</a>, nous avons été payé la somme de
-                                <img src="{{ PATH_IMAGES }}/interface/credits.gif"
+                                <img src="{{ PATH_IMAGES }}interface/credits.gif"
                                      title="Crédits"
                                      class="icon"
                                      width="16"
@@ -568,7 +568,7 @@
 	
                                 </script>
                                 Nous avons payé la somme de
-                                <img src="{{ PATH_IMAGES }}/interface/credits.gif"
+                                <img src="{{ PATH_IMAGES }}interface/credits.gif"
                                      title="Crédits"
                                      class="icon"
                                      width="16"
@@ -576,7 +576,7 @@
                                 {{ message.credits|intcomma }} crédits.
                             {% elif message.type == 510 %}
                                 La production de la planète <a href="/s03/map/?g={{ message.g }}&s={{ message.s }}">{{ message.planetname }} ({{ message.g }}.{{ message.s }}.{{ message.p }})</a> a rapporté la somme de
-                                <img src="{{ PATH_IMAGES }}/interface/credits.gif"
+                                <img src="{{ PATH_IMAGES }}interface/credits.gif"
                                      title="Crédits"
                                      class="icon"
                                      width="16"
@@ -596,7 +596,7 @@
                                 Nous perdons 20 points de contrôle sur toutes nos planètes.
                             {% elif message.type == 700 %}
                                 La flotte de vaisseaux marchands venue prendre nos ressources a disparu de nos radars. La guilde des marchands parle d'une avarie dans un des moteurs des vaisseaux qui aurait fait exploser toute la flotte. Celle-ci se refuse par la même occasion à payer les
-                                <img src="{{ PATH_IMAGES }}/interface/credits.gif"
+                                <img src="{{ PATH_IMAGES }}interface/credits.gif"
                                      title="Crédits"
                                      class="icon"
                                      width="16"
@@ -604,7 +604,7 @@
                                 <script>document.write({{message.credits}}/2);</script> crédits restant de la vente.
                             {% elif message.type == 701 %}
                                 La flotte de vaisseaux marchands venue prendre nos ressources a disparu de nos radars. La guilde des marchands parle d'une attaque de pirates. Celle-ci se refuse par la même occasion à payer les
-                                <img src="{{ PATH_IMAGES }}/interface/credits.gif"
+                                <img src="{{ PATH_IMAGES }}interface/credits.gif"
                                      title="Crédits"
                                      class="icon"
                                      width="16"

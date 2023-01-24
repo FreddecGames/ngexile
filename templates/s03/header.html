@@ -12,7 +12,7 @@ function previousplanet(){
 </script>
 <style>
 table.tableheader {
-	background:url('{{PATH_IMAGES}}/interface/header-bg.png');
+	background:url('{{PATH_IMAGES}}interface/header-bg.png');
 }
 table.tableheader td { padding-right:8px; }
 </style>
@@ -21,7 +21,7 @@ table.tableheader td { padding-right:8px; }
         <tr>
             <td rowspan="3">
                 <a href="#" onclick="previousplanet(); return false;">
-                    <img src="{{ PATH_IMAGES }}/interface/left.gif"
+                    <img src="{{ PATH_IMAGES }}interface/left.gif"
                          title="Planète précédente"
                          width="10"
                          height="34">
@@ -37,7 +37,7 @@ table.tableheader td { padding-right:8px; }
                 </select>
             </td>
             <td nowrap>
-                <img src="{{ PATH_IMAGES }}/interface/ore.gif"
+                <img src="{{ PATH_IMAGES }}interface/ore.gif"
                      title="Minerai"
                      width="16"
                      height="16"
@@ -50,13 +50,13 @@ table.tableheader td { padding-right:8px; }
       {% if medium_ore_production %}medprod{% endif %}>+{{ ore_production|intcomma }}</span>)
             </td>
             <td nowrap>
-                <img src="{{ PATH_IMAGES }}/interface/workers.gif"
+                <img src="{{ PATH_IMAGES }}interface/workers.gif"
                      title="Travailleurs"
                      width="16"
                      height="16"
                      class="res">
                 <span class={% if workers_low %}low{% endif %}>{{ workers|intcomma }}</span> / {{ workers_capacity|intcomma }} (
-                <img src="{{ PATH_IMAGES }}/interface/workers_idle.gif"
+                <img src="{{ PATH_IMAGES }}interface/workers_idle.gif"
                      title="oisifs"
                      width="12"
                      height="12"
@@ -64,7 +64,7 @@ table.tableheader td { padding-right:8px; }
                 {{ workers_idle|intcomma }})
             </td>
             <td nowrap>
-                <img src="{{ PATH_IMAGES }}/interface/floor.gif"
+                <img src="{{ PATH_IMAGES }}interface/floor.gif"
                      title="Terrain"
                      width="16"
                      height="16"
@@ -75,7 +75,7 @@ table.tableheader td { padding-right:8px; }
                 <td>
                     {% if special1 %}
                         <div class="left">
-                            <img src="{{ PATH_IMAGES }}/interface/special.gif"
+                            <img src="{{ PATH_IMAGES }}interface/special.gif"
                                  title="Spécial"
                                  class="res"
                                  width="16"
@@ -87,7 +87,7 @@ table.tableheader td { padding-right:8px; }
             {% endif %}
             <td rowspan=3>
                 &nbsp;<a href="#" onclick="nextplanet(); return false;">
-                <img src="{{ PATH_IMAGES }}/interface/right.gif"
+                <img src="{{ PATH_IMAGES }}interface/right.gif"
                      title="Planète suivante"
                      width="10"
                      height="34">
@@ -96,7 +96,7 @@ table.tableheader td { padding-right:8px; }
     </tr>
     <tr>
         <td nowrap>
-            <img src="{{ PATH_IMAGES }}/interface/credits.gif"
+            <img src="{{ PATH_IMAGES }}interface/credits.gif"
                  title="Crédits"
                  width="16"
                  height="16"
@@ -104,7 +104,7 @@ table.tableheader td { padding-right:8px; }
             {{ money|intcomma }}
         </td>
         <td nowrap>
-            <img src="{{ PATH_IMAGES }}/interface/hydrocarbon.gif"
+            <img src="{{ PATH_IMAGES }}interface/hydrocarbon.gif"
                  title="Hydrocarbure"
                  width="16"
                  height="16"
@@ -117,7 +117,7 @@ table.tableheader td { padding-right:8px; }
       {% if medium_hydrocarbon_production %}medprod{% endif %}>+{{ hydrocarbon_production|intcomma }}</span>)
         </td>
         <td nowrap>
-            <img src="{{ PATH_IMAGES }}/interface/scientists.gif"
+            <img src="{{ PATH_IMAGES }}interface/scientists.gif"
                  title="Scientifiques"
                  width="16"
                  height="16"
@@ -125,7 +125,7 @@ table.tableheader td { padding-right:8px; }
             <span class={% if scientists_low %}low{% endif %}>{{ scientists|intcomma }}</span> / {{ scientists_capacity|intcomma }}
         </td>
         <td nowrap>
-            <img src="{{ PATH_IMAGES }}/interface/space.gif"
+            <img src="{{ PATH_IMAGES }}interface/space.gif"
                  title="Espace"
                  width="16"
                  height="16"
@@ -136,7 +136,7 @@ table.tableheader td { padding-right:8px; }
             <td>
                 {% if special2 %}
                     <div class="left">
-                        <img src="{{ PATH_IMAGES }}/interface/special.gif"
+                        <img src="{{ PATH_IMAGES }}interface/special.gif"
                              title="Spécial"
                              class="res"
                              width="16"
@@ -149,7 +149,7 @@ table.tableheader td { padding-right:8px; }
     </tr>
     <tr>
         <td nowrap>
-            <img src="{{ PATH_IMAGES }}/interface/prestige.gif"
+            <img src="{{ PATH_IMAGES }}interface/prestige.gif"
                  title="Prestige"
                  width="16"
                  height="16"
@@ -157,7 +157,7 @@ table.tableheader td { padding-right:8px; }
             {{ pp|intcomma }}
         </td>
         <td nowrap>
-            <img src="{{ PATH_IMAGES }}/interface/energy.gif"
+            <img src="{{ PATH_IMAGES }}interface/energy.gif"
                  title="Energie"
                  width="16"
                  height="16"
@@ -167,7 +167,7 @@ table.tableheader td { padding-right:8px; }
             {{ energy_production|intcomma }}</span>)
         </td>
         <td nowrap>
-            <img src="{{ PATH_IMAGES }}/interface/soldiers.gif"
+            <img src="{{ PATH_IMAGES }}interface/soldiers.gif"
                  title="Soldats"
                  width="16"
                  height="16"
@@ -179,7 +179,7 @@ table.tableheader td { padding-right:8px; }
             <td>
                 {% if special3 %}
                     <div class="left">
-                        <img src="{{ PATH_IMAGES }}/interface/special.gif"
+                        <img src="{{ PATH_IMAGES }}interface/special.gif"
                              title="Spécial"
                              class="res"
                              width="16"
