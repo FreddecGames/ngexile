@@ -8,7 +8,7 @@ from django.utils import timezone
 
 from myapps.s03.battle import *
 
-from myapps.s03.views.utils import *
+from myapps.s03.lib.sql import *
 
 class Command(BaseCommand):
 

@@ -6,7 +6,7 @@ from datetime import timedelta
 from django.core.management.base import BaseCommand
 from django.utils import timezone
 
-from myapps.s03.views.utils import *
+from myapps.s03.lib.sql import *
 
 class Command(BaseCommand):
 
