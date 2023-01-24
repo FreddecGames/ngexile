@@ -54,24 +54,29 @@ var startTime;
                     </div>
                 </div>
                 <div class="col">
+                    <div class="px-3">
+                        <div class="row gx-3 align-items-center">
+                            <div class="col-auto">
+                                <img src="{{ PATH_IMAGES }}interface/credits.gif" class="res" title="Crédits" width="16" height="16">
+                                <span class="{% if credits <= 0 %}text-danger{% endif %}">{{ credits|intcomma }}</span>
+                            </div>
+                            <div class="col-auto">
+                                <img src="{{ PATH_IMAGES }}interface/prestige.gif" class="res" title="Prestige" width="16" height="16">
+                                <span>{{ prestige_points|intcomma }}</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div id="main">
-                {% if menu %}
-                    <div id="leftnav">
-
-                        {% include 's03/menu.html' %}
-                        {% if dev %}
-                            <div>{{ render_time|floatformat:4 }}</div>
-                            <div>Joueurs: {{ players|intcomma }}</div>
-                        {% endif %}
-                    </div>
-                {% endif %}
-                <div{% if menu %} id="content"{% endif %} align="center" class="scroll-content">
-                    {% if context %}
-                        <div id="status">{% include 's03/header.html' %}</div>
-                    {% endif %}
+                <div id="leftnav">
+                    {% include 's03/menu.html' %}
+                </div>
+                <div id="content" align="center" class="scroll-content">
                     <div id="page" class="scroll-content">
+                        {% if context %}
+                            <div id="status">{% include 's03/header.html' %}</div>
+                        {% endif %}
                         {% block content %}{% endblock %}
                     </div>
                 </div>

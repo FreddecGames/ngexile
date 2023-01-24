@@ -54,7 +54,7 @@ class View(GlobalView):
     def addLine(self, chatid, msg):
         msg = msg.strip()[:260]
         if msg != "":
-            connExecuteRetryNoRecords("INSERT INTO chat_lines(chatid, allianceid, userid, username, message) VALUES(" + str(chatid) + "," + str(sqlValue(self.AllianceId)) + "," + str(self.UserId) + "," + dosql(self.oPlayerInfo["login"]) + "," + dosql(msg) + ")")
+            connExecuteRetryNoRecords("INSERT INTO chat_lines(chatid, allianceid, userid, username, message) VALUES(" + str(chatid) + "," + str(sqlValue(self.AllianceId)) + "," + str(self.UserId) + "," + dosql(self.oPlayerInfo["username"]) + "," + dosql(msg) + ")")
         return HttpResponse(" ")
 
     def refreshContent(self, chatid):

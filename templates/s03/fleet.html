@@ -1,9 +1,6 @@
 {% extends "s03/layout.html" %}
 {% load humanize %}
 {% block content %}
-    {% if header_credits %}
-        {% include 's03/header-credits.html' %}
-    {% endif %}
     <script>
 function setCargoLoad(value) { $('load').innerHTML = formatnumber(value); }
 

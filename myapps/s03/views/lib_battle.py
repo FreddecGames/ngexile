@@ -15,7 +15,7 @@ def FormatBattle(view, battleid, creator, pointofview, ispubliclink):
 
     if oRs == None: return
 
-    content = GetTemplate(view.request, "battle")
+    content = GetTemplate(view.request, "s03/battle")
 
     content.AssignValue("battleid", battleid)
     content.AssignValue("userid", creator)

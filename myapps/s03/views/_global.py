@@ -433,6 +433,9 @@ class GlobalView(ExileMixin, View):
             else:
                 tpl_layout.AssignValue("skin", "s_transparent")
 
+            tpl_layout.AssignValue("credits", self.oPlayerInfo["credits"])
+            tpl_layout.AssignValue("prestige_points", self.oPlayerInfo["prestige_points"])
+
             #
             # Fill and parse the header template
             #
@@ -476,6 +479,7 @@ class GlobalView(ExileMixin, View):
             #
             # Fill admin info
             #
+            '''
             if self.request.session.get(sPrivilege) > 100:
     
                 # Assign the time taken to generate the page
@@ -505,7 +509,8 @@ class GlobalView(ExileMixin, View):
                         tpl_layout.Parse("banned.expire")
     
                     tpl_layout.Parse("banned")
-
+            '''
+            
             tpl_layout.AssignValue("userid", self.UserId)
             tpl_layout.AssignValue("server", universe)
     
@@ -566,7 +571,8 @@ class GlobalView(ExileMixin, View):
         self.displayAlliancePlanetName = self.oPlayerInfo["display_alliance_planet_name"]
     
         self.request.session["LCID"] = self.oPlayerInfo["lcid"]
-    
+        
+        '''
         if self.request.session.get(sPrivilege) < 100:
             if self.request.COOKIES.get("username") == "":
                 self.request.COOKIES["username"] = self.oPlayerInfo["username"]
@@ -574,7 +580,8 @@ class GlobalView(ExileMixin, View):
                 self.log_notice("username cookie", "Last browser username cookie : \"" + self.request.COOKIES.get("username", "") + "\"", 1)
                 
                 self.request.COOKIES["username"] = self.oPlayerInfo["username"]
-
+        '''
+        
         if self.IsPlayerAccount():
             # Redirect to locked page
             if self.oPlayerInfo["privilege"] == -1: return HttpResponseRedirect("/s03/locked/")

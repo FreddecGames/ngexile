@@ -2,9 +2,6 @@
 {% load tz %}
 {% load humanize %}
 {% block content %}
-    {% if commander_list %}
-        {% include 's03/header-credits.html' %}
-    {% endif %}
     <script type="text/javascript">
 function confirmFireCommander(name){
 	if(confirm('Êtes-vous sûr de vouloir vous séparer du commandant "' + name + '" ?')) {

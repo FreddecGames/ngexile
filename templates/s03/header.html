@@ -1,21 +1,41 @@
 {% load humanize %}
 <script>
-function jump(obj){eval("location='{{url}}" + obj.options[obj.selectedIndex].value + "'");}
-function nextplanet(){
-	var obj = document.getElementById("planetlist");
-	if(obj.selectedIndex<obj.options.length-1) obj.selectedIndex=obj.selectedIndex+1; jump(obj);
-}
-function previousplanet(){
-	var obj = document.getElementById("planetlist");
-	if(obj.selectedIndex>0) obj.selectedIndex=obj.selectedIndex-1; jump(obj);
-}
+    function jump(obj) { eval("location='{{ url }}" + obj.options[obj.selectedIndex].value + "'") }
+
+    function nextplanet() {
+    
+        var obj = document.getElementById("planetlist")
+        if (obj.selectedIndex < obj.options.length - 1) { obj.selectedIndex = obj.selectedIndex + 1 }
+        jump(obj)
+    }
+
+    function previousplanet() {
+    
+        var obj = document.getElementById("planetlist");
+        if (obj.selectedIndex > 0) { obj.selectedIndex = obj.selectedIndex - 1 }
+        jump(obj)
+    }
 </script>
-<style>
-table.tableheader {
-	background:url('{{PATH_IMAGES}}interface/header-bg.png');
-}
-table.tableheader td { padding-right:8px; }
-</style>
+<div class="px-3 py-2 bg-dark rounded">
+    <div class="row gx-3 align-items-center justify-content-between">
+        <div class="col-auto">
+            <a href="#" onclick="previousplanet(); return false;">
+                <i class="fa-fw fas fa-chevron-circle-left"></i>
+            </a>
+        </div>
+        <div class="col-auto">
+        </div>
+        <div class="col-auto">
+        </div>
+        <div class="col-auto">
+        </div>
+        <div class="col-auto">
+        </div>
+        <div class="col-auto">
+        </div>
+    </div>
+</div>
+
 <div align=center>
     <table class="tableheader" cellspacing=2>
         <tr>
