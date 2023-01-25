@@ -159,47 +159,51 @@
                                     {% endif %}
                                 </div>
                                 <div class="col-2 text-center">
-                                    {% if building.isbuilding %}
-                                        <div class="row g-1 flex-column">
-                                            <div class="col-12"><span class="text-yellow"><script>putcountdown1({{ building.remainingtime }}, '')</script></span></div>
-                                            <div class="col-12"><script>putcountdown2({{ building.remainingtime }}, '<a href="#" class="btn btn-danger" onclick="refreshPage(\'/s03/buildings/?planet={{ planetid }}&a=cancel&b={{ building.id }}\'); return false;">Annuler</a>', '<a href="#" onclick="refreshPage(); return false;">Terminé</a>')</script></div>
-                                        </div>
-                                    {% elif building.buildings_required %}
-                                        <div><span class="text-danger">Bâtiment(s) requis</span></div>
-                                    {% elif building.limitreached %}
-                                        <div><span class="text-success">Limite atteinte</span></div>
-                                    {% elif building.built %}
-                                        <div><span class="text-success">Bâtiment construit</span></div>
-                                    {% elif building.build %}
-                                        <div class="row g-1 flex-column">
-                                            <div class="col-12"><script>document.write(formattime({{ building.time }}));</script></div>
-                                            <div class="col-12"><a href="#" class="btn btn-primary" onclick="refreshPage('?planet={{ planetid }}&a=build&c=0&b={{ building.id }}'); return false;" data-bs-toggle="tooltip" data-bs-title="Lancer la construction">Construire</a></div>
-                                        </div>
-                                    {% else %}
-                                        <div class="row g-1 flex-column">
-                                            <div class="col-12"><script>document.write(formattime({{ building.time }}));</script></div>
-                                            {% if building.not_enough_ore or building.not_enough_hydrocarbon or building.not_enough_workers or building.not_enough_prestige %}<div class="col-12"><span class="text-danger">Ressources insuffisantes</span></div>{% endif %}
-                                            {% if building.not_enough_floor or building.not_enough_space %}<div class="col-12"><span class="text-danger">Pas assez de place</span></div>{% endif %}
-                                        </div>
+                                    {% if not building.isdestroying %}
+                                        {% if building.isbuilding %}
+                                            <div class="row g-1 flex-column">
+                                                <div class="col-12"><span class="text-yellow"><script>putcountdown1({{ building.remainingtime }}, '')</script></span></div>
+                                                <div class="col-12"><script>putcountdown2({{ building.remainingtime }}, '<a href="#" class="btn btn-danger" onclick="refreshPage(\'/s03/buildings/?planet={{ planetid }}&a=cancel&b={{ building.id }}\'); return false;">Annuler</a>', '<a href="#" onclick="refreshPage(); return false;">Terminé</a>')</script></div>
+                                            </div>
+                                        {% elif building.buildings_required %}
+                                            <div><span class="text-danger">Bâtiment(s) requis</span></div>
+                                        {% elif building.limitreached %}
+                                            <div><span class="text-success">Limite atteinte</span></div>
+                                        {% elif building.built %}
+                                            <div><span class="text-success">Bâtiment construit</span></div>
+                                        {% elif building.build %}
+                                            <div class="row g-1 flex-column">
+                                                <div class="col-12"><script>document.write(formattime({{ building.time }}));</script></div>
+                                                <div class="col-12"><a href="#" class="btn btn-primary" onclick="refreshPage('?planet={{ planetid }}&a=build&c=0&b={{ building.id }}'); return false;" data-bs-toggle="tooltip" data-bs-title="Lancer la construction">Construire</a></div>
+                                            </div>
+                                        {% else %}
+                                            <div class="row g-1 flex-column">
+                                                <div class="col-12"><script>document.write(formattime({{ building.time }}));</script></div>
+                                                {% if building.not_enough_ore or building.not_enough_hydrocarbon or building.not_enough_workers or building.not_enough_prestige %}<div class="col-12"><span class="text-danger">Ressources insuffisantes</span></div>{% endif %}
+                                                {% if building.not_enough_floor or building.not_enough_space %}<div class="col-12"><span class="text-danger">Pas assez de place</span></div>{% endif %}
+                                            </div>
+                                        {% endif %}
                                     {% endif %}
                                 </div>
                                 <div class="col-2 text-center">
-                                    {% if building.isdestroying %}
-                                        <div class="row g-1 flex-column">
-                                            <div class="col-12"><script>putcountdown1({{ building.remainingtime }}, '')</script></div>
-                                            <div class="col-12"><script>putcountdown2({{ building.remainingtime }}, '<a href="#" class="btn btn-danger" onclick="refreshPage(\'/s03/buildings/?planet={{ planetid }}&a=cancel&b={{ building.id }}\'); return false;">Annuler</a>', '<a href="#" onclick="refreshPage(); return false;">Terminé</a>')</script></div>
-                                        </div>
-                                    {% elif building.workers_required %}
-                                        <div><span class="text-danger">Pas assez de travailleurs</span></div>
-                                    {% elif building.required %}
-                                        <div><span class="text-danger">Bâtiment requis</span></div>
-                                    {% elif building.capacity %}
-                                        <div><span class="text-danger">Stockage requis</span></div>
-                                    {% elif building.destroy %}
-                                        <div>
-                                            <span id="destroy{{ building.id }}"><a href="?" data-bs-toggle="tooltip" data-bs-title="Détruire le bâtiment" onclick="javascript:return showDestroy({{ building.id }});">Démolir</a></span>
-                                            <span id="destroyConfirm{{ building.id }}" style="display:none;"><a href="#" class="btn btn-primary" onclick="refreshPage('?planet={{ planetid }}&a=destroy&b={{ building.id }}'); return false;" data-bs-toggle="tooltip" data-bs-title="Confirmer la destruction">Confirmer</a></span>
-                                        </div>
+                                    {% if not building.isbuilding %}
+                                        {% if building.isdestroying %}
+                                            <div class="row g-1 flex-column">
+                                                <div class="col-12"><script>putcountdown1({{ building.nextdestroytime }}, '')</script></div>
+                                                <div class="col-12"><script>putcountdown2({{ building.nextdestroytime }}, '<span class="text-danger">Démolition en cours</span>', '<a href="#" onclick="refreshPage(); return false;">Terminé</a>')</script></div>
+                                            </div>
+                                        {% elif building.workers_required %}
+                                            <div><span class="text-danger">Pas assez de travailleurs</span></div>
+                                        {% elif building.required %}
+                                            <div><span class="text-danger">Bâtiment requis</span></div>
+                                        {% elif building.capacity %}
+                                            <div><span class="text-danger">Stockage requis</span></div>
+                                        {% elif building.destroy %}
+                                            <div>
+                                                <span id="destroy{{ building.id }}"><a href="?" data-bs-toggle="tooltip" data-bs-title="Détruire le bâtiment" onclick="javascript:return showDestroy({{ building.id }});">Démolir</a></span>
+                                                <span id="destroyConfirm{{ building.id }}" style="display:none;"><a href="#" class="btn btn-primary" onclick="refreshPage('?planet={{ planetid }}&a=destroy&b={{ building.id }}'); return false;" data-bs-toggle="tooltip" data-bs-title="Confirmer la destruction">Confirmer</a></span>
+                                            </div>
+                                        {% endif %}
                                     {% endif %}
                                 </div>
                             </div>

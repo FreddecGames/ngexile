@@ -540,6 +540,28 @@ function displayRadar() {
 }
 {% endif %}
 </script>
+
+<div class="mb-3">
+    <div class="card card-body py-2">
+        <div class="row gx-3 align-items-center justify-content-center">
+            <div class="col-auto">
+                <a href="#" onclick="openGalaxy(''); return false;">Univers</a>
+            </div>
+            <div class="col-auto">
+                <div class="row gx-1 align-items-center">
+                    <div class="col-auto">
+                        {% if galaxy_link %}<a href="#" onclick="openGalaxy(currGalaxy); return false;">Galaxie</a>
+                        {% else %}<span class="text-normal">Galaxie</span>{% endif %}
+                    </div>
+                    <div class="col-auto">
+                        <input type="number" class="form-control" name="g" id="locgalaxy" size="2" maxlength="2" autocomplete="off" value="{{ galaxy }}">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div id="map">
 <p align="center">
 <table>
@@ -548,6 +570,7 @@ function displayRadar() {
 <table class="default" width="100%">
 <tr>
 <td>
+
 <form method="get" action="?">
 <table class="clear">
 <tr>
@@ -583,6 +606,7 @@ Galaxie
 </tr>
 </table>
 </form>
+
 </td>
 </tr>
 </table>

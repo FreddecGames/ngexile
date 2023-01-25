@@ -702,6 +702,7 @@ a:hover, a:focus { text-decoration: none; }
 
 .text-bg-success { color: #000!important;  background-color:  #00ff00!important; }
 
+.bg-danger { background-color: #6c0000!important; }
 .bg-success { background-color: #004c00!important; }
 
 .fs-6 { font-size: .85rem!important; }
@@ -752,6 +753,12 @@ a:hover, a:focus { text-decoration: none; }
     background-color: #555;
     border: 1px solid #888;
     border-radius: .25rem;
+}
+.form-control:focus {
+    color: #fff;
+    background-color: #555;
+    border-color: #ffa500;
+    box-shadow: none;
 }
 
 .card {

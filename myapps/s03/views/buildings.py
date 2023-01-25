@@ -378,7 +378,8 @@ class View(GlobalView):
                 self.log_notice("buildings.asp", "already building this type of building", 0)
 
     def CancelBuilding(self, BuildingId):
-        connExecuteRetryNoRecords("SELECT sp_cancel_building(" + str(self.UserId) + "," + str(self.CurrentPlanet) + ", " + str(BuildingId) + ")")
+        result = oConnRow("SELECT sp_cancel_building(" + str(self.UserId) + "," + str(self.CurrentPlanet) + ", " + str(BuildingId) + ") AS result")
+        print(result)
     
     def DestroyBuilding(self, BuildingId):
         connExecuteRetryNoRecords("SELECT sp_destroy_building(" + str(self.UserId) + "," + str(self.CurrentPlanet) + "," + str(BuildingId) + ")")
