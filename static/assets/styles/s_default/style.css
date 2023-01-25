@@ -718,6 +718,7 @@ a:hover, a:focus { text-decoration: none; }
 .fs-5 { font-size: 1rem!important; }
 
 .tooltip {
+    --bs-tooltip-opacity: 1;
     --bs-tooltip-max-width: 25rem;
     
     font-family: Roboto, Arial; font-size: 12px;
@@ -725,6 +726,11 @@ a:hover, a:focus { text-decoration: none; }
 
 .tooltip-inner {
     text-align: left;
+    border: 1px solid #000;
+}
+
+.tooltip-light {
+    --bs-tooltip-bg: #3c3c3c;
 }
 
 .badge {

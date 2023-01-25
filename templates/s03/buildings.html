@@ -85,7 +85,7 @@
                                         {% if building.workers_for_maintenance or building.upkeep or building.upkeep_energy %}
                                         <div class='mb-1'><span class='fs-6'>Coût fonctionnement</span></div>
                                         <div class='row gx-3'>
-                                            {% if building.energy_prod %}
+                                            {% if building.workers_for_maintenance %}
                                             <div class='col-auto'>
                                                 <img src='/static/assets/interface/workers.gif' class='res' width='16' height='16'>
                                                 <span class='text-normal'>{{ building.workers_for_maintenance|intcomma }}</span>
