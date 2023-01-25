@@ -116,6 +116,9 @@ div.clear { clear:both; }
 
 .scroll-content { overflow-y: auto; overflow-x: hidden; scrollbar-color: rgba(255, 255, 255, .075); scrollbar-width: thin; }
 
+input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+input[type=number] { -moz-appearance: textfield; }
+
 #super {
 	position:relative;
 	left:0;
@@ -687,7 +690,8 @@ span.title {
 :root {
     --bs-link-color: #ffa500;
     --bs-link-hover-color: #cc8400;    
-
+    
+    --bs-border-color: #888;
     --bs-border-color-translucent: rgba(0, 0, 0, .25);
 }
 
@@ -699,11 +703,16 @@ a:hover, a:focus { text-decoration: none; }
 .text-success { color: #00ff00!important; }
 .text-warning { color: #ffa500!important; }
 .text-yellow { color: #ffff00!important; }
+.text-purple { color: #ff00ff!important; }
+.text-dark-success { color: #00ff00!important; opacity:.5;}
 
 .text-bg-success { color: #000!important;  background-color:  #00ff00!important; }
 
 .bg-danger { background-color: #6c0000!important; }
 .bg-success { background-color: #004c00!important; }
+
+.border-danger { border-color: #ff4444!important; }
+.border-success { border-color: #00ff00!important; }
 
 .fs-6 { font-size: .85rem!important; }
 .fs-5 { font-size: 1rem!important; }
