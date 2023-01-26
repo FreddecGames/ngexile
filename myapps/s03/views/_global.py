@@ -433,8 +433,8 @@ class GlobalView(ExileMixin, View):
             else:
                 tpl_layout.AssignValue("skin", "s_transparent")
 
-            tpl_layout.AssignValue("credits", self.oPlayerInfo["credits"])
-            tpl_layout.AssignValue("prestige_points", self.oPlayerInfo["prestige_points"])
+            tpl_layout.AssignValue("profile_credits", self.oPlayerInfo["credits"])
+            tpl_layout.AssignValue("profile_prestige_points", self.oPlayerInfo["prestige_points"])
 
             #
             # Fill and parse the header template

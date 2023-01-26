@@ -56,7 +56,7 @@
                                  data-bs-title="Crédits"
                                  width="16"
                                  height="16">
-                            <span class="{% if credits <= 0 %}text-danger{% endif %}">{{ credits|intcomma }}</span>
+                            <span class="{% if credits <= 0 %}text-danger{% endif %}">{{ profile_credits|intcomma }}</span>
                         </div>
                         <div class="col-auto">
                             <img src="{{ PATH_IMAGES }}interface/prestige.gif"
@@ -65,7 +65,7 @@
                                  data-bs-title="Prestige"
                                  width="16"
                                  height="16">
-                            <span>{{ prestige_points|intcomma }}</span>
+                            <span>{{ profile_prestige_points|intcomma }}</span>
                         </div>
                     </div>
                 </div>
