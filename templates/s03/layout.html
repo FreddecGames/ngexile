@@ -15,12 +15,12 @@
               rel="stylesheet"
               media="all"/>
         <script type="text/javascript" src="/static/js/vendor-fontawesome.js"></script>
-        <script type="text/javascript" src='/static/scripts/lang.js?v=1'></script>
-        <script type="text/javascript" src='/static/scripts/common.js?v=1'></script>
-        <script type="text/javascript" src='/static/scripts/third-party/ajax1.js?v=1'></script>
-        <script type="text/javascript" src='/static/scripts/planet.js?v=1'></script>
-        <script type="text/javascript" src='/static/scripts/time.js?v=1'></script>
-        {% if scroll %}<script>function loaded(){scrollTo(0,{{scrolly }});}</script>{% endif %}
+        <script type="text/javascript" src="/static/scripts/lang.js?v=1"></script>
+        <script type="text/javascript" src="/static/scripts/common.js?v=1"></script>
+        <script type="text/javascript" src="/static/scripts/third-party/ajax1.js?v=1"></script>
+        <script type="text/javascript" src="/static/scripts/planet.js?v=1"></script>
+        <script type="text/javascript" src="/static/scripts/time.js?v=1"></script>
+        {% if scroll %}<script>function loaded() { scrollTo(0, {{ scrolly }});}</script>{% endif %}
     </head>
     <body {% if scroll %}onload="loaded()"{% endif %}>
         <div id="hint" onclick="donothide(event)">
@@ -33,7 +33,7 @@
             </div>
         </div>
         <script>
-            var timers_enabled={{timers_enabled}};
+            var timers_enabled = {{ timers_enabled }};
             var startTime;
         </script>
         <div id="super">

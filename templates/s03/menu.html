@@ -4,9 +4,6 @@
     var activeSection = '';
     var selectedmenu = '';
     var sectionmenu = '';
-    var lastmenulvl = 1;
-    var lastmenuname = '';
-    var lastmenuhidden = '';
 
     var defaultTitle = document.title;
 
@@ -16,25 +13,12 @@
         else { document.title = defaultTitle + ' - ' + title }
     }
 
-    function putMenu(url, name, label, lvl, x, popup, extended) {
+    function putMenu(url, name, label, lvl) {
     
         if (name == activeSection) { setTitle(label) }
 
-        while (lastmenulvl > lvl) {
-        
-            document.write('<div id="menu_' + lastmenuname + '_' + lastmenulvl + '" class="lvl' + lastmenulvl + 'last' + lastmenuhidden + '"></div>');
-            menulinks.push(new Array(lastmenuname + '_' + lastmenulvl, lastmenulvl, true));
-            lastmenulvl--;
-        }
-
-        lastmenulvl = lvl;
-        lastmenuname = name;
-
-        if (lvl == 0) return;
-
         var selected = (name == selectedmenu) ? " selected" : "";
-        var hidden = (extended || (lvl < 3) || (sectionmenu != "" && name.indexOf(sectionmenu) == 0)) ? "" : " hidden";
-        lastmenuhidden = hidden;
+        var hidden = ((lvl < 3) || (sectionmenu != "" && name.indexOf(sectionmenu) == 0)) ? "" : " hidden";
 
         if (lvl == 1) document.write('<a href="' + url + '" class="menu lvl1 d-flex align-items-baseline"><div class="col">' + label + '</div><div class="col-auto small"><i class="fa-fw fas fa-angle-double-down"></i></div></a>');
         else {
@@ -147,24 +131,24 @@
                 putMenu("/s03/alliance-create/", "noalliance_create", "Création", 3);
                 putMenu("/s03/alliance-invitations/", "noalliance_invitations", "Invitations", 3);
         putMenu("/s03/map/", "map", "Galaxie", 1);
-            putMenu("/s03/map/?g={{cur_g}}&s={{cur_s}}", "map", "Carte spatiale", 2);
+            putMenu("/s03/map/?g={{ cur_g }}&s={{ cur_s }}", "map", "Carte spatiale", 2);
             putMenu("/s03/ranking-alliances/", "ranking", "Alliances", 2);
             putMenu("/s03/mercenary-intelligence/", "intelligence", "Espionnage", 2);
-        putMenu("/s03/planet/?planet={{planetid}}", "planet", "Planète <span class='ms-2'>{{cur_g}}.{{cur_s}}.{{cur_p}}</span>", 1);
-            putMenu("/s03/planet/?planet={{planetid}}", "planet", "Vue d'ensemble", 2);
-            putMenu("/s03/production/?planet={{planetid}}", "production", "Production", 2);
-            putMenu("/s03/buildings/?planet={{planetid}}", "buildings", "Bâtiments", 2);
-            putMenu("/s03/shipyard/?planet={{planetid}}", "shipyard", "Vaisseaux", 2);
-                putMenu("/s03/shipyard/?planet={{planetid}}&f=0", "shipyard_all", "Tous", 3);
-                putMenu("/s03/shipyard/?planet={{planetid}}&f=1", "shipyard_military", "Militaire", 3);
-                putMenu("/s03/shipyard/?planet={{planetid}}&f=2", "shipyard_unarmed", "Utilitaire", 3);
-                putMenu("/s03/shipyard/?planet={{planetid}}&f=3", "shipyard_upgrade", "Upgrade", 3);
-                putMenu("/s03/shipyard/?planet={{planetid}}&recycle=1", "shipyard_recycle", "Recyclage", 3);
-            putMenu("/s03/training/?planet={{planetid}}", "training", "Entraînements", 2);
-            putMenu("/s03/orbit/?planet={{planetid}}", "orbit", "Orbite", 2);
-            putMenu("/s03/market-sell/?planet={{planetid}}", "market", "Marché", 2);
-                putMenu("/s03/market-buy/?planet={{planetid}}", "market_buy", "Achat", 3);
-                putMenu("/s03/market-sell/?planet={{planetid}}", "market_sell", "Vente", 3);
+        putMenu("/s03/planet/?planet={{ planetid }}", "planet", "Planète <span class='ms-2'>{{ cur_g }}.{{ cur_s }}.{{ cur_p }}</span>", 1);
+            putMenu("/s03/planet/?planet={{ planetid }}", "planet", "Vue d'ensemble", 2);
+            putMenu("/s03/production/?planet={{ planetid }}", "production", "Production", 2);
+            putMenu("/s03/buildings/?planet={{ planetid }}", "buildings", "Bâtiments", 2);
+            putMenu("/s03/shipyard/?planet={{ planetid }}", "shipyard", "Vaisseaux", 2);
+                putMenu("/s03/shipyard/?planet={{ planetid }}&f=0", "shipyard_all", "Tous", 3);
+                putMenu("/s03/shipyard/?planet={{ planetid }}&f=1", "shipyard_military", "Militaire", 3);
+                putMenu("/s03/shipyard/?planet={{ planetid }}&f=2", "shipyard_unarmed", "Utilitaire", 3);
+                putMenu("/s03/shipyard/?planet={{ planetid }}&f=3", "shipyard_upgrade", "Upgrade", 3);
+                putMenu("/s03/shipyard/?planet={{ planetid }}&recycle=1", "shipyard_recycle", "Recyclage", 3);
+            putMenu("/s03/training/?planet={{ planetid }}", "training", "Entraînements", 2);
+            putMenu("/s03/orbit/?planet={{ planetid }}", "orbit", "Orbite", 2);
+            putMenu("/s03/market-sell/?planet={{ planetid }}", "market", "Marché", 2);
+                putMenu("/s03/market-buy/?planet={{ planetid }}", "market_buy", "Achat", 3);
+                putMenu("/s03/market-sell/?planet={{ planetid }}", "market_sell", "Vente", 3);
         putMenu("/s03/options/", "options", "Compte", 1);
             putMenu("/s03/nation/", "nation", "Infos nations", 2);
             putMenu("/s03/options/", "options", "Options", 2);

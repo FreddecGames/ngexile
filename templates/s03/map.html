@@ -77,14 +77,14 @@ function Fl(id,name,tag,owner,rel,signature,fleeing) {
         
     s = ""
     
-    if(tag != '') s+='<a href="/s03/alliance/?tag='+tag+'" class="me-1 '+c+'">['+tag+']</a>';
+    if(tag != '') s+='<a href="/s03/alliance/?tag='+tag+'" title="Voir l\'alliance" class="me-1 '+c+'">['+tag+']</a>';
 
 	if(rel==2 || id != 0)
 		s += '<a href="/s03/fleet/?id=' + id + '" class="self">'+name+'</a>';
 	else
 	{
 
-		s += '<a href="/s03/mails/?subject=À propos de la flotte '+name+'&to='+owner+'" class="' + c+ '">' +name+'</a>';
+		s += '<a href="/s03/mails/?subject=À propos de la flotte '+name+'&to='+owner+'" title="Contacter ' + owner + '" class="' + c+ '">' +name+'</a>';
 	}
 
 	if(signature > 0)
