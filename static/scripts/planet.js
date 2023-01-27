@@ -12,7 +12,7 @@ function planet_str(id,name,g,s,p,rel)
 			case -3: var col = 'neutral'; break;
 		}
 
-		var s = '<a href="/s03/map/?g='+g+'&s='+s+'" class="'+col+'" data-bs-toggle="tooltip" data-bs-title="Carte spatiale">'+name+' <span class="ms-2">'+g+'.'+s+'.'+p+'</span></a>';
+		var s = '<a href="/s03/map/?g='+g+'&s='+s+'" class="'+col+'" data-bs-toggle="tooltip" data-bs-title="Carte spatiale">'+(name ? '<span class="me-2">' + name + '</span>': '')+'<span>'+g+'.'+s+'.'+p+'</span></a>';
 	}
 
 	return s;

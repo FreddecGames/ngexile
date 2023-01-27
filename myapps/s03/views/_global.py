@@ -635,7 +635,7 @@ class GlobalView(ExileMixin, View):
         #
         self.CurrentPlanet = self.request.session.get(sPlanet, "")
     
-        if self.CurrentPlanet != None:
+        if self.CurrentPlanet != None and self.CurrentPlanet != "":
             # check if the planet still belongs to the player
             oRs = oConnExecute("SELECT galaxy, sector FROM nav_planet WHERE planet_floor > 0 AND planet_space > 0 AND id=" + str(self.CurrentPlanet) + " AND ownerid=" + str(self.UserId))
             if oRs:

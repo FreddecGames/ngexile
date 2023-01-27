@@ -78,7 +78,7 @@ document.onkeydown = keydown;
                     <td colspan=3>Messages reçus</td>
                 </tr>
                 {% if nav %}
-                    <tr class="nav">
+                    <tr class="navrow">
                         <td colspan=3 align=left>
                             Page {{ page_display }}, Messages {{ min }}-{{ max }}. Aller à
                             {% for p in ps %}
@@ -187,7 +187,7 @@ document.onkeydown = keydown;
                 </td>
             </tr>
             {% if nav %}
-                <tr class="nav">
+                <tr class="navrow">
                     <td colspan=3 align=left>
                         Page {{ page_display }}, Messages {{ min }}-{{ max }}. Aller à
                         {% for p in ps %}

@@ -414,8 +414,8 @@ table.clear, tr.clear, .clear tr, .clear td, td.clear { padding:0px; padding-rig
 tr.clear { height:4px; }
 
 /* navigation when multiple pages are available */
-.default tr.nav td { background: #333333; color:#B5B5B9; }
-.default tr.nav td span.selected { color: #fff; font-weight: bold; }
+.default tr.navrow td { background: #333333; color:#B5B5B9; }
+.default tr.navrow td span.selected { color: #fff; font-weight: bold; }
 
 
 /* tabs */

@@ -5,97 +5,102 @@
         <script type="text/javascript"
                 src='/static/scripts/third-party/tooltip.js?v=1'></script>
         <script>
-tipname = "hint";
-tipwidth = 250;
-tiptext = $("hinttext");
+            tipname = "hint";
+            tipwidth = 250;
+            tiptext = $("hinttext");
         </script>
         <script type="text/javascript">
-/* <![CDATA[ */
+            var resources = [];
+            resources[1] = { image:'ore', label:'Minerai' };
+            resources[2] = { image:'hydrocarbon', label:'Hydrocarbure' };
+            resources[3] = { image:'scientists', label:'Scientifiques' };
+            resources[4] = { image:'soldiers', label:'Soldats' };
+            resources[5] = { image:'workers', label:'Travailleurs' };
 
-var resources = [];
-resources[1] = { image:'ore', label:'Minerai' };
-resources[2] = { image:'hydrocarbon', label:'Hydrocarbure' };
-resources[3] = { image:'scientists', label:'Scientifiques' };
-resources[4] = { image:'soldiers', label:'Soldats' };
-resources[5] = { image:'workers', label:'Travailleurs' };
+            var categories = [];
+            var activeCategory = 0;
+            var fleetList = [];
+            var currentList = [];
+            var sortColumn = 0;
+            var sortReversed = false;
+            var lastUpdate = null;
 
-var categories = [];
-var activeCategory = 0;
-var fleetList = [];
-var currentList = [];
-var sortColumn = 0;
-var sortReversed = false;
-var lastUpdate = null;
+            function Category(id, name) {
+            
+                this.id = id;
+                this.name = name;
+            }
 
-function Category(id, name) {
-	this.id = id;
-	this.name = name;
-}
+            function Planet(id, name, relation, g, s, p) {
+            
+                this.id = id;
+                this.name = name;
+                this.relation = relation;
+                this.g = g;
+                this.s = s;
+                this.p = p;
 
-function Planet(id, name, relation, g, s, p) {
-	this.id = id;
-	this.name = name;
-	this.relation = relation;
-	this.g = g;
-	this.s = s;
-	this.p = p;
+                this.toString = function() {
+                    if (this.id != 0)
+                        return planet_str(this.id,this.name,this.g,this.s,this.p,this.relation);
+                    else
+                        return 'Indéterminé';
+                }
+            }
 
-	this.toString = function(){
-		if(this.id != 0)
-			return planet_str(this.id,this.name,this.g,this.s,this.p,this.relation);
-		else
-			return 'Indéterminé';
-	}
-}
+            function Resource(id, quantity) {
+            
+                this.id = id;
+                this.quantity = quantity;
+            }
 
-function Resource(id, quantity) {
-	this.id = id;
-	this.quantity = quantity;
-}
+            function Ship(id, quantity) {
+            
+                this.id = id;
+                this.quantity = quantity;
+            }
 
-function Ship(id, quantity) {
-	this.id = id;
-	this.quantity = quantity;
-}
+            function Fleet(id, name, category, stance, size, signature, cargoload, cargocapacity, action, timeremaining, commandername, position, destination, ships, resources) {
+            
+                this.id = id;
+                this.name = name;
+                this.category = category;
+                this.stance = stance;
+                this.size = size;
+                this.signature = signature;
+                this.cargoload = cargoload;
+                this.cargocapacity = cargocapacity;
+                this.position = position;
+                this.destination = destination;
+                this.action = action;
+                this.endtime = new Date().getTime() + timeremaining*1000;
+                this.commandername = commandername;
+                this.ships = ships;
+                this.resources = resources;
 
-function Fleet(id, name, category, stance, size, signature, cargoload, cargocapacity, action, timeremaining, commandername, position, destination, ships, resources) {
-	this.id = id;
-	this.name = name;
-	this.category = category;
-	this.stance = stance;
-	this.size = size;
-	this.signature = signature;
-	this.cargoload = cargoload;
-	this.cargocapacity = cargocapacity;
-	this.position = position;
-	this.destination = destination;
-	this.action = action;
-	this.endtime = new Date().getTime() + timeremaining*1000;
-	this.commandername = commandername;
-	this.ships = ships;
-	this.resources = resources;
+                this.remainingTime = function(){
+                    return Math.max(0, Math.ceil((this.endtime - new Date().getTime())/1000));
+                }
+            }
 
-	this.remainingTime = function(){
-		return Math.max(0, Math.ceil((this.endtime - new Date().getTime())/1000));
-	}
-}
+            function dShipList(id) {
+            
+                for (var x in currentList) {
+                
+                    var fleet = currentList[x];
+                    if (fleet.id == id) {
+                    
+                        var s = '<table width="100%" style="margin:0px 5px">';
 
-// description when hovering
-function dShipList(id) {
-	for(var x in currentList){
-		var fleet = currentList[x];
-		if(fleet.id == id){
-			var s = '<table width="100%" style="margin:0px 5px">';
+                        for (var i=1;i<fleet.ships.length;i++)
+                            s+= '<tr><td width="1%" nowrap align="right">' + fleet.ships[i].id + '</td><td align="left">&nbsp;x&nbsp;' + fleet.ships[i].quantity + '</td></tr>';
 
-			for(var i=1;i<fleet.ships.length;i++)
-				s+= '<tr><td width="1%" nowrap align="right">' + fleet.ships[i].id + '</td><td align="left">&nbsp;x&nbsp;' + fleet.ships[i].quantity + '</td></tr>';
+                        return s + '</table>';
+                    }
+                }
 
-			return s + '</table>';
-		}
-	}
-
-	return '';
-}
+                return '';
+            }
 
 function dCargo(id) {
 	for(var x in currentList){
@@ -534,7 +539,6 @@ function renameCategory(id){
 
 	return false;
 }
-/*  %}> */
         </script>
         <div id="fleets">
             <div>
@@ -573,13 +577,11 @@ function renameCategory(id){
             </div>
         </div>
         <script type="text/javascript">
-/* <![CDATA[ */
 addCategory(-1, 'Sans catégorie');
 addCategory(0, 'Tout');
 {% for category in categories %}addCategory({{category.id}}, '{{category.label}}');{% endfor %}
 {{list}}
 displayCategory(activeCategory);
-/*  %}> */
         </script>
     {% endif %}
 {% endblock %}

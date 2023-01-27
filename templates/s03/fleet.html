@@ -26,8 +26,8 @@ function unload_all(o,h,s,so,w)
 
 function showCargo(cargoOre, cargoHydrocarbon, cargoScientists, cargoSoldiers, cargoWorkers, canload, canunload)
 {
-	var s = "<table class=default width=600>"+
-			"<tr class=category><td colspan=3>Cargaison - Aucune action possible</td></tr>"+
+	var s = "<table class=default width='100%'>"+
+			"<tr class=category><td colspan=3 align='center'>Cargaison - Aucune action possible</td></tr>"+
 			"<tr class=header><td width='1%'>Ressource</td><td>En soute</td></tr>"+
 			"<tr><td nowrap><img src='{{PATH_IMAGES}}interface/ore.gif' title='Minerai' class=res width=16 height=16> Minerai</td><td align=right>"+formatnumber(cargoOre)+"</td></tr>"+
 			"<tr><td nowrap><img src='{{PATH_IMAGES}}interface/hydrocarbon.gif' title='Hydrocarbure' class=res width=16 height=16> Hydrocarbure</td><td align=right>"+formatnumber(cargoHydrocarbon)+"</td></tr>"+
@@ -41,8 +41,8 @@ function showCargo(cargoOre, cargoHydrocarbon, cargoScientists, cargoSoldiers, c
 function showLoad(planetOre, planetHydrocarbon, planetScientists, planetSoldiers, planetWorkers, cargoOre, cargoHydrocarbon, cargoScientists, cargoSoldiers, cargoWorkers)
 {
 	var s = "<form method=post action='/s03/fleet-trade/?id={{fleetid}}' {% if t %}onsubmit='return transferResources()'{% endif %}>" + '{% csrf_token %}'+
-			"<table class=default width=600>"+
-			"<tr class=category><td colspan=5>Cargaison - Chargement et déchargement possible</td></tr>"+
+			"<table class=default width='100%'>"+
+			"<tr class=category><td colspan=5 align='center'>Cargaison - Chargement et déchargement possible</td></tr>"+
 			"<tr class=header><td width='1%'>Ressource</td><td>En soute</td><td width='1%'>Décharger</td><td>Disponible</td><td width='1%'>Charger</td></tr>"+
 			"<tr><td nowrap><img src='{{PATH_IMAGES}}interface/ore.gif' title='Minerai' class=res width=16 height=16> Minerai</td><td align=right>"+formatnumber(cargoOre)+"</td><td nowrap><input type=number min=0 name=unload_ore id=unload_ore value=0 size=6> <a href='#' onclick='setval(\"unload_ore\","+cargoOre+")'>max</a></td><td align=right>"+formatnumber(planetOre)+"</td><td nowrap><input type=number min=0 name=load_ore id=load_ore value=0 size=6> <a href='#' onclick='setval(\"load_ore\","+planetOre+")'>max</a></td></tr>"+
 			"<tr><td nowrap><img src='{{PATH_IMAGES}}interface/hydrocarbon.gif' title='Hydrocarbure' class=res width=16 height=16> Hydrocarbure</td><td align=right>"+formatnumber(cargoHydrocarbon)+"</td><td><input type=number min=0 name=unload_hydrocarbon id=unload_hydrocarbon value=0 size=6> <a href='#' onclick='setval(\"unload_hydrocarbon\","+cargoHydrocarbon+")'>max</a></td><td align=right>"+formatnumber(planetHydrocarbon)+"</td><td><input type=number min=0 name=load_hydrocarbon id=load_hydrocarbon value=0 size=6> <a href='#' onclick='setval(\"load_hydrocarbon\","+planetHydrocarbon+")'>max</a></td></tr>"+
@@ -59,8 +59,8 @@ function showLoad(planetOre, planetHydrocarbon, planetScientists, planetSoldiers
 function showUnload(cargoOre, cargoHydrocarbon, cargoScientists, cargoSoldiers, cargoWorkers, canload)
 {
 	var s = "<form method=post action='/s03/fleet-trade/?id={{fleetid}}' {% if t %}onsubmit='return transferResources()'{% endif %}>" + '{% csrf_token %}'+
-			"<table class=default width=600>"+
-			"<tr class=category><td colspan=3>Cargaison - Déchargement uniquement possible</td></tr>"+
+			"<table class=default width='100%'>"+
+			"<tr class=category><td colspan=3 align='center'>Cargaison - Déchargement uniquement possible</td></tr>"+
 			"<tr class=header><td width='1%'>Ressource</td><td>En soute</td><td width='1%'>Décharger</td></tr>"+
 			"<tr><td nowrap><img src='{{PATH_IMAGES}}interface/ore.gif' title='Minerai' class=res width=16 height=16> Minerai</td><td align=right>"+formatnumber(cargoOre)+"</td><td nowrap><input type=number min=0 name=unload_ore id=unload_ore value=0 size=6> <a href='#' onclick='setval(\"unload_ore\", "+cargoOre+")'>max</a></td></tr>"+
 			"<tr><td nowrap><img src='{{PATH_IMAGES}}interface/hydrocarbon.gif' title='Hydrocarbure' class=res width=16 height=16> Hydrocarbure</td><td align=right>"+formatnumber(cargoHydrocarbon)+"</td><td><input type=number min=0 name=unload_hydrocarbon id=unload_hydrocarbon value=0 size=6> <a href='#' onclick='setval(\"unload_hydrocarbon\", "+cargoHydrocarbon+")'>max</a></td></tr>"+
@@ -316,9 +316,9 @@ function confirmAbandon() { return confirm('Êtes-vous sûr de vouloir abandonne
             {% endif %}
         {% endif %}
     {% endif %}
-    <table cellpadding=0 cellspacing=0 width=850>
+    <table cellpadding=0 cellspacing=0 width="100%">
         <tr valign=top>
-            <td width=600>
+            <td width="75%" class="pe-3">
                 {% if display %}
                     <table class="default" width="100%">
                         {% if overview %}
@@ -810,11 +810,11 @@ function d(idx,name,g,s,p){tab[idx]=new Array(g,s,p);}
                     {% endif %}
                 </table>
                 <br/>
-                <div class="left{% if hide_cargo %} hidden{% endif %}" id="cargobox">
+                <div class="{% if hide_cargo %} hidden{% endif %}" id="cargobox">
                 </div>
             {% endif %}
         </td>
-        <td>
+        <td width="25%">
             <table class=default width="100%">
                 <tr class="category">
                     <td>

@@ -8,7 +8,7 @@ tipname = "hint";
 tipwidth = 450;
 tiptext = $("hinttext");
     </script>
-    <table width="600">
+    <table width="100%">
         <tr>
             <td align="center">
                 {% if nav %}
@@ -178,22 +178,18 @@ tiptext = $("hinttext");
                                             {% endif %}
                                         </td>
                                         <td>
-                                            <span class="{% if item.ore_positive %}"
-                                                  plus
-                                                  {% endif %}
-                                                  {% if item.ore_negative %}minus{% endif %}>{{ item.mod_production_ore }}%</span>
+                                            <span class="{% if item.ore_positive %}plus{% endif %}{% if item.ore_negative %}minus{% endif %}">{{ item.mod_production_ore }}%</span>
                                         </td>
                                         <td>
-                                            <span class="{% if item.hydrocarbon_positive %}"
-                                                  plus
-                                                  {% endif %}
-                                                  {% if item.hydrocarbon_negative %}minus{% endif %}>{{ item.mod_production_hydrocarbon }}%</span>
+                                            <span class="{% if item.hydrocarbon_positive %}
+                                                  plus{% endif %}
+                                                  {% if item.hydrocarbon_negative %}minus{% endif %}">{{ item.mod_production_hydrocarbon }}%</span>
                                         </td>
                                         <td>
-                                            <span class="{% if item.energy_positive %}"
+                                            <span class="{% if item.energy_positive %}
                                                   plus
                                                   {% endif %}
-                                                  {% if item.energy_negative %}minus{% endif %}>{{ item.mod_production_energy }}%</span>
+                                                  {% if item.energy_negative %}minus{% endif %}">{{ item.mod_production_energy }}%</span>
                                         </td>
                                     </tr>
                                 {% endfor %}

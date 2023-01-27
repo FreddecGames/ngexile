@@ -25,10 +25,10 @@ class View(GlobalView):
         
         self.changes_status = ""
         
-        print(self.request.POST)
         if request.POST.get("submit", "") != "":
-            self.SaveGeneral()
-            self.SaveMotD()
+            if cat == 1: self.SaveGeneral()
+            elif cat == 2: self.SaveMotD()
+            elif cat == 3: self.SaveRanks()
 
         if not self.pageTerminated: return self.displayOptions(cat)
 
@@ -173,3 +173,36 @@ class View(GlobalView):
         # save updated information
         oConnDoQuery("UPDATE alliances SET defcon=" + str(defcon) + ", announce=" + dosql(MotD) + " WHERE id = " + str(self.AllianceId))
         self.changes_status = "done"
+
+    def SaveRanks(self):
+    
+        query = "SELECT rankid, leader" + \
+            " FROM alliances_ranks" + \
+            " WHERE allianceid=" + str(self.AllianceId) + \
+            " ORDER BY rankid"
+        oRss = oConnRows(query)
+        for oRs in oRss:
+            name = self.request.POST.get("n" + str(oRs['rankid'])).strip()
+            if len(name) > 2:
+                query = "UPDATE alliances_ranks SET" + \
+                        " label=" + dosql(name) + \
+                        ", is_default=NOT leader AND " + str(ToBool(self.request.POST.get("c" + str(oRs['rankid']) + "_0"), False)) + \
+                        ", can_invite_player=leader OR " + str(ToBool(self.request.POST.get("c" + str(oRs['rankid']) + "_1"), False)) + \
+                        ", can_kick_player=leader OR " + str(ToBool(self.request.POST.get("c" + str(oRs['rankid']) + "_2"), False)) + \
+                        ", can_create_nap=leader OR " + str(ToBool(self.request.POST.get("c" + str(oRs['rankid']) + "_3"), False)) + \
+                        ", can_break_nap=leader OR " + str(ToBool(self.request.POST.get("c" + str(oRs['rankid']) + "_4"), False)) + \
+                        ", can_ask_money=leader OR " + str(ToBool(self.request.POST.get("c" + str(oRs['rankid']) + "_5"), False)) + \
+                        ", can_see_reports=leader OR " + str(ToBool(self.request.POST.get("c" + str(oRs['rankid']) + "_6"), False)) + \
+                        ", can_accept_money_requests=leader OR " + str(ToBool(self.request.POST.get("c" + str(oRs['rankid']) + "_7"), False)) + \
+                        ", can_change_tax_rate=leader OR " + str(ToBool(self.request.POST.get("c" + str(oRs['rankid']) + "_8"), False)) + \
+                        ", can_mail_alliance=leader OR " + str(ToBool(self.request.POST.get("c" + str(oRs['rankid']) + "_9"), False)) + \
+                        ", can_manage_description=leader OR " + str(ToBool(self.request.POST.get("c" + str(oRs['rankid']) + "_10"), False)) + \
+                        ", can_manage_announce=leader OR " + str(ToBool(self.request.POST.get("c" + str(oRs['rankid']) + "_11"), False)) + \
+                        ", can_see_members_info=leader OR " + str(ToBool(self.request.POST.get("c" + str(oRs['rankid']) + "_12"), False)) + \
+                        ", members_displayed=leader OR " + str(ToBool(self.request.POST.get("c" + str(oRs['rankid']) + "_13"), False)) + \
+                        ", can_order_other_fleets=leader OR " + str(ToBool(self.request.POST.get("c" + str(oRs['rankid']) + "_14"), False)) + \
+                        ", can_use_alliance_radars=leader OR " + str(ToBool(self.request.POST.get("c" + str(oRs['rankid']) + "_15"), False)) + \
+                        ", enabled=leader OR EXISTS(SELECT 1 FROM users WHERE alliance_id=" + str(self.AllianceId) + " AND alliance_rank=" + str(oRs['rankid']) + " LIMIT 1) OR " + str(ToBool(self.request.POST.get("c" + str(oRs['rankid']) + "_enabled"), False)) + " OR " + str(ToBool(self.request.POST.get("c" + str(oRs['rankid']) + "_0"), False)) + \
+                        " WHERE allianceid=" + str(self.AllianceId) + " AND rankid=" + str(oRs['rankid'])
+
+                connExecuteRetryNoRecords(query)

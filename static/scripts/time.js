@@ -34,7 +34,7 @@ function Counter(name, seconds, display, endContent, onFinished){
 
 				return false;
 			} else
-			if(s > 0 && (this.display == null) && timers_enabled)
+			if(s > 0 && (this.display == null))
 				this.obj.innerHTML = formatRemainingTime(s);
 
 			return true;

@@ -4,11 +4,11 @@
 {% block content %}
     <form method="post" action="?cat={{ cat }}">
         {% csrf_token %}
-        <table cellpadding=0 cellspacing=0>
+        <table cellpadding=0 cellspacing=0 width="100%">
             <tr>
                 <td valign="top">
                     {% if nav %}
-                        <ul class="vtabs">
+                        <ul class="htabs">
                             {% if cat1 %}
                                 <li{% if cat1_selected %} class="active"{% endif %}>
                                     <a href="?cat=1">Général</a>
@@ -22,6 +22,8 @@
                         </ul>
                     {% endif %}
                 </td>
+            </tr>
+            <tr>
                 <td>
                     <table class="default" width="650">
                         <tr class="title">

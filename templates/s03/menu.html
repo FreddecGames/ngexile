@@ -71,7 +71,7 @@
         else o.innerHTML = '';
     }
 
-    setSelectedMenu('{{selectedmenu}}');
+    setSelectedMenu('{{ selectedmenu }}');
 </script>
 <div id="leftnav-top" class="scroll-content">
     {% if impersonating %}
@@ -156,8 +156,8 @@
             putMenu("/s03/help/", "help", "Aide", 2);
             putMenu("/accounts/logout/", "logout", "Déconnexion", 2);
 
-        {% if new_mail %}setMailsCount({{new_mail}});{% endif %}
-        {% if new_report %}setReportsCount({{new_report}});{% endif %}
+        {% if new_mail %}setMailsCount({{ new_mail }});{% endif %}
+        {% if new_report %}setReportsCount({{ new_report }});{% endif %}
     </script>
 </div>
 <div id="leftnav-bottom"

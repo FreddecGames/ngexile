@@ -1,0 +1,43 @@
+{% extends "ng0/layout.html" %}
+{% load i18n %}
+{% load humanize %}
+{% block content %}
+    <div class="card card-home">
+        <div class="card-header">
+            <div class="row gx-2 align-items-center">
+                <div class="col-auto">
+                    <img src="/static/img/logo.png" width="32px" class="rounded" />
+                </div>
+                <div class="col-auto">
+                    <span class="fs-5">NG Exile</span>
+                </div>
+                <div class="col-auto">
+                    <span class="badge text-bg-secondary">ng0</span>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="row g-2 flex-column">
+                <div class="col-12">
+                    <span class="text-normal">Rounds</span>
+                    <span class="ms-2 text-white">{{ rounds }}</span>
+                </div>
+                {% for group in shipGroups %}
+                <div class="col-12">
+                    <div class="row gx-3">
+                        <div class="col-auto">
+                            <span>{{ group.shipId }}</span>
+                        </div>
+                        <div class="col-auto">
+                            <span>{{ group.count }}</span>
+                        </div>
+                        <div class="col-auto">
+                            <span>{{ group.remainingCount }}</span>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endblock content %}
