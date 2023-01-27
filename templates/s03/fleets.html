@@ -432,125 +432,123 @@
 
     /* category functions */
 
-function $tab(id){
-if(id == null)
-return $('newtab');
-else
-return $('tab'+id);
-}
+    function $tab(id) {
+    
+        if (id == null) return $('newtab');
+        else return $('tab' + id);
+    }
 
-function setCategory(id){
-var tab = $tab(activeCategory);
-if(tab != null) tab.className = "nav-item";
+    function setCategory(id) {
+    
+        var tab = $tab(activeCategory);
+        if(tab != null) tab.className = "nav-item";
 
-tab = $tab(id);
-if(tab != null) tab.className = "nav-item active";
+        tab = $tab(id);
+        if(tab != null) tab.className = "nav-item active";
 
-activeCategory = id;
-}
+        activeCategory = id;
+    }
 
-function showNewCategoryForm(){
-setCategory(null);
+    function showNewCategoryForm() {
+    
+        setCategory(null);
 
-var obj = $('fleet_list');
-obj.style.visibility = "hidden";
-obj.style.display = "none";
+        var obj = $('fleet_list');
+        obj.style.visibility = "hidden";
+        obj.style.display = "none";
 
-var obj = $('createcategoryform');
-obj.style.visibility = "visible";
-obj.style.display = "block";
+        var obj = $('createcategoryform');
+        obj.style.visibility = "visible";
+        obj.style.display = "block";
 
-$('categoryname').focus();
-}
+        $('categoryname').focus();
+    }
 
-// add, category
-function addCategory(id, name){
-var newtab = $tab(null);
-var tab = $tab(id);
+    function addCategory(id, name) {
+    
+        var newtab = $tab(null);
+        var tab = $tab(id);
 
-// remove category
-if(tab != null && name == ''){
-$('fleets_categories').removeChild(tab);
-categories[id] == null;
-return;
-}
+        if (tab != null && name == '') {
+        
+            $('fleets_categories').removeChild(tab);
+            categories[id] == null;
+            
+            return;
+        }
 
-// add category if not found
-if(tab == null){
-tab = document.createElement('li');
-tab.id = 'tab'+id;
-$('fleets_categories').insertBefore(tab, newtab);
-}
+        if (tab == null) {
+        
+            tab = document.createElement('li');
+            tab.id = 'tab' + id;
+            $('fleets_categories').insertBefore(tab, newtab);
+        }
 
-tab.className = "nav-item"
-tab.innerHTML = '<a href="" class="nav-link" onclick="displayCategory('+id+'); return false;" ondblclick="editCategory(' + id + ')" onmouseover="dropTest('+id+',true)" onmouseout="dropTest('+id+',false)" onmousedown="mouseDown()" onmouseup="mouseUp()">' + name + '</a>';
-categories[id] = new Category(id, name);
-}
+        tab.className = "nav-item"
+        tab.innerHTML = '<a href="" class="nav-link" onclick="displayCategory(' + id + '); return false;" ondblclick="editCategory(' + id + ')" onmouseover="dropTest(' + id + ', true)" onmouseout="dropTest(' + id + ', false)" onmousedown="mouseDown()" onmouseup="mouseUp()">' + name + '</a>';
+        categories[id] = new Category(id, name);
+    }
 
-// replace tab content with an input box to edit category name
-function editCategory(id){
-if(id <= 0) return false;
+    function editCategory(id) {
+    
+        if (id <= 0) return false;
 
-var tab = $tab(id);
+        var tab = $tab(id);
 
-if(categories[id].editing){
-categories[id].editing = false;
-tab.innerHTML = categories[id].old;
-return false;
-}
+        if (categories[id].editing) {
+        
+            categories[id].editing = false;
+            tab.innerHTML = categories[id].old;
+            return false;
+        }
 
-categories[id].editing = true;
-categories[id].old = tab.innerHTML;
-tab.innerHTML = '<form action="#" method="get" onsubmit="return renameCategory('+id+')">'+
-            '<input type="text" size="20" id="editcat' + id + '" value="' + categories[id].name + '" onblur="editCategory(' + id + ')">'+
-            '</form>';
-$('editcat' + id).focus();
-}
+        categories[id].editing = true;
+        categories[id].old = tab.innerHTML;
+        
+        tab.innerHTML = '<form action="#" method="get" onsubmit="return renameCategory(' + id + ')">' +
+                    '<input type="text" size="20" id="editcat' + id + '" value="' + categories[id].name + '" onblur="editCategory(' + id + ')">' +
+                '</form>';
+                    
+        $('editcat' + id).focus();
+    }
 
-var creatingCategory = false;
+    function createCategoryResponse(req) {
+    
+        try { if (req.status=="200") eval(req.responseText); }
+        catch (e) { window.location.reload(true); }
+    }
 
-function createCategoryResponse(req){
-creatingCategory = false;
+    function createCategory() {
+    
+        var name = $('categoryname').value;
+        var url = "/s03/fleets_handler/?a=newcat&name=" + encodeURIComponent(name);
 
-try {
-if(req.status=="200")
-    eval(req.responseText);
-} catch (e)	{
-window.location.reload(true);
-}
-}
+        for (var x in categories)
+            if (categories[x] && categories[x].id != null && (categories[x].name.toLowerCase() == name.toLowerCase())) {
+                alert('Une catégorie avec ce nom existe déjà.');
+                return;
+            }
 
-function createCategory(){
-var name = $('categoryname').value;
-var url = "/s03/fleets_handler/?a=newcat&name=" + encodeURIComponent(name);
+        openURL(url, createCategoryResponse);
 
-for(var x in categories)
-if(categories[x] && categories[x].id != null && (categories[x].name.toLowerCase() == name.toLowerCase())) {
-    alert('Une catégorie avec ce nom existe déjà.');
-    return;
-}
+        return false;
+    }
 
-creatingCategory = true;
-openURL(url, createCategoryResponse);
+    function renameCategory(id) {
+    
+        var name = $('editcat' + id).value;
+        var url = '/s03/fleets_handler/?a=rencat&id=' + id + '&name=' + encodeURIComponent(name);
 
-return false;
-}
+        for (var x in categories)
+            if (categories[x] && x != id && categories[x].id != null && (categories[x].name.toLowerCase() == name.toLowerCase())) {
+                alert('Une catégorie avec ce nom existe déjà.');
+                return;
+            }
 
-function renameCategory(id){
-var name = $('editcat'+id).value;
-var url = '/s03/fleets_handler/?a=rencat&id=' + id + '&name=' + encodeURIComponent(name);
+        openURL(url, createCategoryResponse);
 
-for(var x in categories)
-if(categories[x] && x!=id && categories[x].id != null && (categories[x].name.toLowerCase() == name.toLowerCase())) {
-    alert('Une catégorie avec ce nom existe déjà.');
-    return;
-}
-
-creatingCategory = true;
-openURL(url, createCategoryResponse);
-
-return false;
-}
+        return false;
+    }
 </script>
 <div id="fleets">
     <ul id="fleets_categories" class="nav nav-tabs mt-0 mb-3">
@@ -579,24 +577,20 @@ return false;
         </form>
     </div>
 </div>
-<script type="text/javascript">
-addCategory(0, 'Tout');
-addCategory(-1, 'Sans catégorie');
-{% for category in categories %}addCategory({{category.id}}, '{{category.label}}');{% endfor %}
-fleetList = [];
-{% for fleet in fleets %}
-fleetList.push(new Fleet({{ fleet.id }},'{{ fleet.name }}',{{ fleet.category }},{{ fleet.stance }},{{ fleet.size }},{{ fleet.signature }},{{ fleet.cargo_load }},{{ fleet.cargo_capacity }},"{{ fleet.action }}",{{ fleet.time }},'{{ fleet.commandername }}',
-new Planet({{ fleet.planetid }},'{{ fleet.planetname }}',{{ fleet.relation }},"{{ fleet.g }}","{{ fleet.s }}","{{ fleet.p }}"),
-new Planet({{ fleet.t_planetid }},'{{ fleet.t_planetname }}',{{ fleet.t_relation }},"{{ fleet.t_g }}","{{ fleet.t_s }}","{{ fleet.t_p }}"),
-new Array(0
-{% for ship in fleet.ships %},new Ship('{{ ship.ship_label }}',{{ ship.ship_quantity }}){% endfor %}
-),
-new Array(0
-{% for resource in fleet.resources %},new Resource({{ resource.res_id }},{{ resource.res_quantity }}){% endfor %}
-) ));
-{% endfor %}
+<script>
+    addCategory(0, 'Tout');
+    addCategory(-1, 'Sans catégorie');
+    {% for category in categories %}addCategory({{category.id}}, '{{category.label}}');{% endfor %}
 
-displayCategory(activeCategory);
+    fleetList = [];
+    {% for fleet in fleets %}
+        fleetList.push(new Fleet({{ fleet.id }},'{{ fleet.name }}',{{ fleet.category }},{{ fleet.stance }},{{ fleet.size }},{{ fleet.signature }},{{ fleet.cargo_load }},{{ fleet.cargo_capacity }},"{{ fleet.action }}",{{ fleet.time }},'{{ fleet.commandername }}',
+        new Planet({{ fleet.planetid }},'{{ fleet.planetname }}',{{ fleet.relation }},"{{ fleet.g }}","{{ fleet.s }}","{{ fleet.p }}"),
+        new Planet({{ fleet.t_planetid }},'{{ fleet.t_planetname }}',{{ fleet.t_relation }},"{{ fleet.t_g }}","{{ fleet.t_s }}","{{ fleet.t_p }}"),
+        new Array(0{% for ship in fleet.ships %},new Ship('{{ ship.ship_label }}',{{ ship.ship_quantity }}){% endfor %}),
+        new Array(0{% for resource in fleet.resources %},new Resource({{ resource.res_id }},{{ resource.res_quantity }}){% endfor %})));
+    {% endfor %}
+
+    displayCategory(activeCategory);
 </script>
-
 {% endblock %}

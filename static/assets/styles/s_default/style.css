@@ -803,6 +803,8 @@ a:hover, a:focus { text-decoration: none; }
     --bs-card-bg: #3c3c3c;
     --bs-card-cap-bg: #2d2d2d;
     --bs-card-border-color: #2d2d2d;
+    --bs-card-spacer-y: .5rem;
+    --bs-card-spacer-x: 1rem;
 }
 
 .list-group {
