@@ -707,6 +707,7 @@ a:hover, a:focus { text-decoration: none; }
 .text-dark-success { color: #00ff00!important; opacity:.5;}
 
 .text-bg-success { color: #000!important;  background-color:  #00ff00!important; }
+.text-bg-primary { color: #000!important;  background-color:  #ffa500!important; }
 
 .bg-danger { background-color: #6c0000!important; }
 .bg-success { background-color: #004c00!important; }

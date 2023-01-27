@@ -1,7 +1,7 @@
 {% extends "s03/layout.html" %}
 {% load humanize %}
 {% block content %}
-    {% if master %}
+
         <script type="text/javascript"
                 src='/static/scripts/third-party/tooltip.js?v=1'></script>
         <script>
@@ -235,79 +235,157 @@ function sortBy(column) {
 	return false;
 }
 
-function column(id, name) {
-	var arrow='none';
-	if(sortColumn == id) arrow = (sortReversed?'down':'up');
-	return '<td nowrap><a href="#" onclick="return sortBy(' + id + ')">' + name +'</a>&nbsp;<img src="{{PATH_IMAGES}}interface/arrow' + arrow + '.gif" /></td>';
+function displaySort(id, name) {
+
+	var arrow = ''
+	if (sortColumn == id) arrow = (sortReversed?'down':'up')
+    return '<div class="col-auto"><a href="#" onclick="return sortBy(' + id + ')" ' + (sortColumn == id ? 'class="badge text-bg-primary"' : '') + '>' + name + (arrow == 'down' ? '<i class="ms-1 fa-fw fas fa-caret-down"></i>' : '') + (arrow == 'up' ? '<i class="ms-1 fa-fw fas fa-caret-up"></i>' : '') + '</a></div>'
 }
 
 // when a countdown finishes, make the list be refreshed on next tab change
 function counterFinished(c){ lastUpdate = null; }
 
 function displayFleetList(list) {
-	var ships = 0;
-	var signature = 0;
-	var cargoload = 0;
-	var s = '<table class="default" width="100%">'+
-			'<tr class="header">' + column(0,'Nom') + column(1,'Vaisseaux') + column(2,'Signature') + column(3,'Cargaison') + column(4,'Position') + column(5,'Action') + column(6,'Commandant') + '</tr>';
 
-	for(var i=0;i<list.length;i++){
-		var fleet = list[i];
+	var ships = 0
+	var signature = 0
+	var cargoload = 0
+    
+    var s = ''
+    
+    s += '<div class="mb-3">'
+        s += '<div class="row gx-3 align-items-center">'
+            s += '<div class="col-auto"><span class="text-normal">Trié par</span></div>'
+            s += displaySort(0, 'Nom')
+            s += displaySort(2, 'Signature')
+            s += displaySort(6, 'Commandant')
+            s += displaySort(1, 'Vaisseaux')
+            s += displaySort(3, 'Cargaison')
+            s += displaySort(4, 'Position')
+            s += displaySort(5, 'Action')
+        s += '</div>'
+    s += '</div>'
+    
+    s += '<div class="mb-3">'
+        s += '<div class="card">'
+            s += '<div class="list-group list-group-flush">'
+                for (var i = 0; i < list.length; i++) {
+                    var fleet = list[i]
+                    ships += fleet.size
+                    signature += fleet.signature
+                    cargoload += fleet.cargoload
+                    s += '<div class="list-group-item">'
+                        s += '<div class="row gx-3 align-items-center">'
+                            s += '<div class="col">'
+                                if (fleet.stance == 1) s += '<img src="{{ PATH_IMAGES }}interface/stance_attack.gif" class="me-1 stance" data-bs-toggle="tooltip" data-bs-title="Mode attaque" width="10px" height="10px">'
+                                else s += '<img src="{{ PATH_IMAGES }}interface/stance_defend.gif" class="me-1 stance" data-bs-toggle="tooltip" data-bs-title="Mode riposte" width="10px" height="10px">'
+                                s += '<a href="/s03/fleet/id=' + fleet.id + '" id="fleet' + fleet.id + '" class="self" data-bs-toggle="tooltip" data-bs-title="Voir flotte">' + fleet.name + '</a>'
+                                s += '<small class="ms-2">' + fleet.signature.n() + '</small>'
+                            s += '</div>'
+                            if (fleet.commandername != '' && fleet.commandername != 'None') {
+                                s += '<div class="col-auto">'
+                                    s += '<a href="/s03/commanders/#' + escape(fleet.commandername) + '" data-bs-toggle="tooltip" data-bs-title="Voir commandant"><i class="fa-fw fas fa-user-astronaut me-1"></i>' + fleet.commandername + '</a>'
+                                s += '</div>'
+                            }                            
+                            s += '<div class="col-auto">'
+                                s += '<i class="fa-fw fas fa-rocket me-1 text-normal" data-bs-toggle="tooltip" data-bs-html="true" data-bs-title="'
+                                    s += '<div class=\'mb-1\'><span class=\'fs-6\'>Vaisseaux</span></div>'
+                                    s += '<div class=\'row g-1 flex-column\'>'
+                                        for (var j = 1; j < fleet.ships.length; j++) {
+                                            var ship = fleet.ships[j]
+                                            s += '<div class=\col-12\'>'
+                                                s += '<div class=\'row gx-3\'>'
+                                                    s += '<div class=\'col\'><span class=\'text-normal\'>' + ship.id + '</span></div>'
+                                                    s += '<div class=\'col-auto\'><span>' + ship.quantity.n() + '</span></div>'
+                                                s += '</div>'
+                                            s += '</div>'
+                                        }
+                                    s += '</div>'
+                                s += '"></i>'
+                                s += '<span>' + fleet.size.n() + '</span>'
+                            s += '</div>'
+                            s += '<div class="col-auto text-end" style="width:150px;">'
+                                if (fleet.cargocapacity > 0) {
+                                    if (fleet.cargoload > 0) {
+                                        s += '<i class="fa-fw fas fa-boxes me-1 text-normal" data-bs-toggle="tooltip" data-bs-html="true" data-bs-title="'
+                                            s += '<div class=\'mb-1\'><span class=\'fs-6\'>Cargaison</span></div>'
+                                            s += '<div class=\'row g-1 flex-column\'>'
+                                                for (var j = 1; j < fleet.resources.length; j++) {
+                                                    var res = fleet.resources[j]
+                                                    if (res.quantity > 0) {
+                                                        s += '<div class=\col-12\'>'
+                                                            s += '<div class=\'row gx-3\'>'
+                                                                s += '<div class=\'col\'><span class=\'text-normal\'><img src=\'{{ PATH_IMAGES }}interface/' + resources[res.id].image + '.gif\' width=\'16px\' height=\'16px\' class=\'res\'>' + resources[res.id].label + '</span></div>'
+                                                                s += '<div class=\'col-auto\'><span>' + res.quantity.n() + '</span></div>'
+                                                            s += '</div>'
+                                                        s += '</div>'
+                                                    }
+                                                }
+                                            s += '</div>'
+                                        s += '"></i>'
+                                        s += '<span>' + fleet.cargoload.n() + '</span>'
+                                        s += '<small class=\'ms-1 text-normal\'>/' + fleet.cargocapacity.n() + '</small>'
+                                    }
+                                    else s += '<small class=\'text-normal\'>' + fleet.cargocapacity.n() + '</small>'
+                                }
+                            s += '</div>'
+                            s += '<div class="col-auto text-end" style="width:165px;">' + fleet.position + '</div>'
+                            s += '<div class="col-auto text-end" style="width:305px;">'
+                                switch (fleet.action) {
+                                    case '0':
+                                        s += '<span class="text-normal">En patrouille</span>'
+                                    break
+                                    case '1':
+                                        var c = startCountdown('fleetcountdown' + fleet.id, fleet.remainingTime(), null, '<a href="/s03/fleets/?id=' + fleet.id + '">Arrivé</a>', counterFinished)
+                                        s += '<span class="text-success">En transit</span><i class="fa-fw fas fa-long-arrow-alt-right mx-2 text-normal"></i>' + fleet.destination + '<span class="ms-3 text-yellow">' + c + '</span>'
+                                    break
+                                    case '2':
+                                        var c = startCountdown('fleetcountdown' + fleet.id, fleet.remainingTime(), null, '<a href="/s03/fleets/?id=' + fleet.id + '">Cycle terminé</a>', counterFinished)
+                                        s += '<span class="text-success">En recyclage</span>' + '<span class="ms-3 text-yellow">' + c + '</span>'
+                                    break;
+                                    case '4':
+                                        var c = startCountdown('fleetcountdown' + fleet.id, fleet.remainingTime(), null, '<a href="/s03/fleets/?id=' + fleet.id + '">Terminé</a>', counterFinished)
+                                        s += '<span class="text-normal">En attente</span>' + '<span class="ms-3 text-yellow">' + c + '</span>'
+                                    break;
+                                    case 'x':
+                                        s += '<span class="text-danger">En combat</span>'
+                                    break;
+                                }
+                            s += '</div>'
+                        s += '</div>'
+                    s += '</div>'
+                }
+            s += '</div>'
+        s += '</div>'
+    s += '</div>'
+    
+    s += '<div class="card card-body py-2">'
+        s += '<div class="row gx-3 justify-content-around">'
+            s += '<div class="col-auto">'
+                s += '<span class="text-normal me-2">Flottes</span>'
+                s += '<span>' + list.length.n() + '</span>'
+            s += '</div>'
+            s += '<div class="col-auto">'
+                s += '<span class="text-normal me-2">Total vaisseaux</span>'
+                s += '<span>' + ships.n() + '</span>'
+            s += '</div>'
+            s += '<div class="col-auto">'
+                s += '<span class="text-normal me-2">Total signature</span>'
+                s += '<span>' + signature.n() + '</span>'
+            s += '</div>'
+            s += '<div class="col-auto">'
+                s += '<span class="text-normal me-2">Total cargaison</span>'
+                s += '<span>' + cargoload.n() + '</span>'
+            s += '</div>'
+        s += '</div>'
+    s += '</div>'
 
-		ships += fleet.size;
-		signature += fleet.signature;
-		cargoload += fleet.cargoload;
+	$('fleet_list').innerHTML = s
+    
+    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+    const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
 
-		var z = '<tr class="' + (i%2==0?'even':'odd') + '"><td>';
-
-		if(fleet.stance == 1)
-			z+= '<img src="{{PATH_IMAGES}}interface/stance_attack.gif" class="stance" alt="Attaque" width="10" height="10">';
-		else
-			z+= '<img src="{{PATH_IMAGES}}interface/stance_defend.gif" class="stance" alt="Riposte" width="10" height="10">';
-
-		z+= '<a href="/s03/fleet/?planet=' + fleet.position.id + '&id=' + fleet.id + '" id="fleet' + fleet.id + '" onmouseover="ddrivetip(dShipList(' + fleet.id + '))" onmouseout="hideddrivetip()" nowrap><b>' + fleet.name + '</b></td>';
-
-		z+= '<td align="right" nowrap>' + fleet.size.n() + '</td><td align="right" nowrap>' + fleet.signature.n() + '</td><td align="right"' + (fleet.cargoload > 0?'onmouseover="ddrivetip(dCargo(' + fleet.id + '))"':'')+ 'onmouseout="hideddrivetip()" nowrap>' + fleet.cargoload.n() + ' / ' + fleet.cargocapacity.n() + '</td><td>' + fleet.position + '</td>';
-
-		z+= '<td nowrap>';
-		switch(fleet.action){
-			case '0':
-				z+= '<span class="state_patrolling">En patrouille</span>';
-			break;
-			case '1':
-				var c = startCountdown('fleetcountdown' + fleet.id, fleet.remainingTime(), null, '<a href="/s03/fleets/?id=' + fleet.id + '">Arrivé</a>', counterFinished);
-				z+= '<span class="state_moving">En transit vers ' + fleet.destination + ' - (' + c + ')';
-			break;
-			case '2':
-				var c = startCountdown('fleetcountdown' + fleet.id, fleet.remainingTime(), null, '<a href="/s03/fleets/?id=' + fleet.id + '">Cycle terminé</a>', counterFinished);
-				z+= '<span class="state_recycling">Recyclage de ressources</span> - (' + c + ')';
-			break;
-			case '4':
-				var c = startCountdown('fleetcountdown' + fleet.id, fleet.remainingTime(), null, '<a href="/s03/fleets/?id=' + fleet.id + '">Terminé</a>', counterFinished);
-				z+= '<span class="state_waiting">En attente</span> - (' + c + ')';
-			break;
-			case 'x':
-				z+= '<span class="state_fighting">En combat</span>';
-			break;
-		}
-		z+= '</td>';
-
-		z+= '<td><img src="{{PATH_IMAGES}}interface/commander.gif" width="10" height="6" class="smallicon" title="Commandant">';
-		if(fleet.commandername != '' && fleet.commandername != 'None')
-			z+= '<a href="/s03/commanders/#'+escape(fleet.commandername)+'">' + fleet.commandername + '</a>';
-		else
-			z+= '-';
-		z+= '</td></tr>';
-
-		s+= z;
-	}
-
-	s+= '<tr class="smallitem"><td nowrap>Total: <b>' + list.length.n() + '</b></td><td nowrap align="right"><b>' + ships.n() + '</b></td><td nowrap align="right"><b>' + signature.n() + '</b></td><td nowrap align="right"><b>' + cargoload.n() + '</b></td><td colspan="3" class="justhidden">&nbsp;</td></tr>'+
-		'</table>';
-
-	$('fleet_list').innerHTML = s;
-
-	for(var i=0;i<list.length;i++) makeDraggable($('fleet'+list[i].id), list[i].id);
+	for (var i = 0; i < list.length; i++) makeDraggable($('fleet' + list[i].id), list[i].id)
 }
 
 function retrieveFleetListResponse(req) {
@@ -332,7 +410,8 @@ function displayCategory(category) {
 	var obj = $('createcategoryform');
 	obj.style.visibility = 'hidden';
 	obj.style.display = 'none';
-
+    
+    /*
 	if(lastUpdate == null || new Date().getTime() - lastUpdate > 20000){
 		var url = "/s03/fleets_handler/?a=list";
 
@@ -340,6 +419,7 @@ function displayCategory(category) {
 
 		return false;
 	}
+    */
 
 	if(category == -1){
 		currentList = [];
@@ -360,7 +440,7 @@ function displayCategory(category) {
 	sortList(currentList);
 
 	displayFleetList(currentList);
-
+    
 	return false;
 }
 
@@ -549,38 +629,43 @@ function renameCategory(id){
             </ul>
             <div id="fleet_list"></div>
             <div id="createcategoryform">
-                <form action="#" method="get" onsubmit="return createCategory();">
-                    <table class="default" width="100%">
-                        <tr class="title">
-                            <td>Créer une nouvelle catégorie</td>
-                        </tr>
-                        <tr>
-                            <td align="center">
-                                Nom de catégorie :
-                                <input type="text" id="categoryname" maxlength="32">
-                                <br/>
-                                <br/>
-                                Une fois la catégorie créée, vous pouvez glisser/déposer les flottes vers les onglets de la page pour changer leurs catégories.
-                                <br/>
-                                Pour renommer une catégorie, double cliquez sur l'onglet
-                                <br/>
-                                Pour supprimer une catégorie, double cliquez sur l'onglet et spécifiez un nouveau nom vide
-                                <br/>
-                                <br/>
-                                <input type="submit" value="Créer">
-                                <br/>
-                            </td>
-                        </tr>
-                    </table>
+                <form action="#" method="get" onsubmit="return createCategory();" class="card">
+                    <div class="card-header text-center">
+                        <span class="fs-6">Créer une nouvelle catégorie</span>
+                    </div>
+                    <div class="card-body text-center">
+                        <div class="mb-3">
+                            <div class="text-normal">Une fois la catégorie créée, vous pouvez glisser/déposer une flotte vers l'onglet de la page pour changer sa catégorie.</div>
+                            <div class="text-normal">Pour renommer une catégorie, double cliquez sur l'onglet.</div>
+                            <div class="text-normal">Pour supprimer une catégorie, double cliquez sur l'onglet et spécifiez un nouveau nom vide.</div>
+                        </div>
+                        <div class="row gx-2 align-items-center justify-content-center">
+                            <div class="col-auto">Nom de catégorie</div>
+                            <div class="col-auto"><input type="text" class="form-control" id="categoryname" maxlength="32"></div>
+                            <div class="col-auto"><input type="submit" class="btn btn-primary" value="Créer"></div>
+                        </td>
+                    </div>
                 </form>
             </div>
         </div>
         <script type="text/javascript">
-addCategory(-1, 'Sans catégorie');
 addCategory(0, 'Tout');
+addCategory(-1, 'Sans catégorie');
 {% for category in categories %}addCategory({{category.id}}, '{{category.label}}');{% endfor %}
-{{list}}
+    fleetList = [];
+    {% for fleet in fleets %}
+        fleetList.push(new Fleet({{ fleet.id }},'{{ fleet.name }}',{{ fleet.category }},{{ fleet.stance }},{{ fleet.size }},{{ fleet.signature }},{{ fleet.cargo_load }},{{ fleet.cargo_capacity }},"{{ fleet.action }}",{{ fleet.time }},'{{ fleet.commandername }}',
+        new Planet({{ fleet.planetid }},'{{ fleet.planetname }}',{{ fleet.relation }},"{{ fleet.g }}","{{ fleet.s }}","{{ fleet.p }}"),
+        new Planet({{ fleet.t_planetid }},'{{ fleet.t_planetname }}',{{ fleet.t_relation }},"{{ fleet.t_g }}","{{ fleet.t_s }}","{{ fleet.t_p }}"),
+        new Array(0
+        {% for ship in fleet.ships %},new Ship('{{ ship.ship_label }}',{{ ship.ship_quantity }}){% endfor %}
+        ),
+        new Array(0
+        {% for resource in fleet.resources %},new Resource({{ resource.res_id }},{{ resource.res_quantity }}){% endfor %}
+        ) ));
+    {% endfor %}
+        
 displayCategory(activeCategory);
         </script>
-    {% endif %}
+
 {% endblock %}
