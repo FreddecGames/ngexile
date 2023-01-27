@@ -13,20 +13,20 @@ tiptext = $("hinttext");
             <td align="center">
                 {% if nav %}
                     <div>
-                        <ul class="htabs">
+                        <ul class="nav nav-tabs mt-0 mb-3">
                             {% if cat1 %}
-                                <li{% if cat1_selected %} class="active"{% endif %}>
-                                    <a href="?cat=1">Vue d'ensemble</a>
+                                <li class="nav-item {% if cat1_selected %}active{% endif %}">
+                                    <a href="?cat=1" class="nav-link">Vue d'ensemble</a>
                                 </li>
                             {% endif %}
                             {% if cat2 %}
-                                <li{% if cat2_selected %} class="active"{% endif %}>
-                                    <a href="?cat=2">Fonctionnement</a>
+                                <li class="nav-item {% if cat2_selected %}active{% endif %}">
+                                    <a href="?cat=2" class="nav-link">Fonctionnement</a>
                                 </li>
                             {% endif %}
                             {% if cat3 %}
-                                <li{% if cat3_selected %} class="active"{% endif %}>
-                                    <a href="?cat=3">Transfert d'énergie</a>
+                                <li class="nav-item {% if cat3_selected %}active{% endif %}">
+                                    <a href="?cat=3" class="nav-link">Transfert d'énergie</a>
                                 </li>
                             {% endif %}
                         </ul>

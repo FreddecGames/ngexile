@@ -8,15 +8,20 @@
             <tr>
                 <td valign="top">
                     {% if nav %}
-                        <ul class="htabs">
+                        <ul class="nav nav-tabs mt-0 mb-3">
                             {% if cat1 %}
-                                <li{% if cat1_selected %} class="active"{% endif %}>
-                                    <a href="?cat=1">Général</a>
+                                <li class="nav-item {% if cat1_selected %}active{% endif %}">
+                                    <a href="?cat=1" class="nav-link">Général</a>
                                 </li>
                             {% endif %}
                             {% if cat2 %}
-                                <li{% if cat2_selected %} class="active"{% endif %}>
-                                    <a href="?cat=2">Options</a>
+                                <li class="nav-item {% if cat2_selected %}active{% endif %}">
+                                    <a href="?cat=2" class="nav-link">Options</a>
+                                </li>
+                            {% endif %}
+                            {% if cat3 %}
+                                <li class="nav-item {% if cat3_selected %}active{% endif %}">
+                                    <a href="?cat=3" class="nav-link">Vacances</a>
                                 </li>
                             {% endif %}
                         </ul>

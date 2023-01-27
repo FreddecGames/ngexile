@@ -11,15 +11,15 @@ function confirmStopWar(tag) {
             <td align="center">
                 {% if nav %}
                     <div>
-                        <ul class="htabs">
+                        <ul class="nav nav-tabs mt-0 mb-3">
                             {% if cat1 %}
-                                <li{% if cat1_selected %} class="active"{% endif %}>
-                                    <a href="?cat=1">Guerres en cours</a>
+                                <li class="nav-item {% if cat1_selected %}active{% endif %}">
+                                    <a href="?cat=1" class="nav-link">Guerres en cours</a>
                                 </li>
                             {% endif %}
                             {% if cat2 %}
-                                <li{% if cat2_selected %} class="active"{% endif %}>
-                                    <a href="?cat=2">Déclaration de guerre</a>
+                                <li class="nav-item {% if cat2_selected %}active{% endif %}">
+                                    <a href="?cat=2" class="nav-link">Déclaration de guerre</a>
                                 </li>
                             {% endif %}
                         </ul>

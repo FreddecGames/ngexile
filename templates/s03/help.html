@@ -4,21 +4,21 @@
     <div id="help">
         {% if tabnav %}
             <div>
-                <ul class="htabs">
-                    <li{% if general %} class="active"{% endif %}>
-                        <a href="/s03/help/?">Aide générale</a>
+                <ul class="nav nav-tabs mt-0 mb-3">
+                    <li class="nav-item {% if general %}active{% endif %}">
+                        <a href="/s03/help/?" class="nav-link">Aide générale</a>
                     </li>
-                    <li{% if buildings %} class="active"{% endif %}>
-                        <a href="/s03/help/?cat=buildings">Construction</a>
+                    <li class="nav-item {% if buildings %}active{% endif %}">
+                        <a href="/s03/help/?cat=buildings" class="nav-link">Construction</a>
                     </li>
-                    <li{% if research %} class="active"{% endif %} >
-                        <a href="/s03/help/?cat=research">Recherche</a>
+                    <li class="nav-item {% if research %}active{% endif %}">
+                        <a href="/s03/help/?cat=research" class="nav-link">Recherche</a>
                     </li>
-                    <li{% if ships %} class="active"{% endif %}>
-                        <a href="/s03/help/?cat=ships">Vaisseaux</a>
+                    <li class="nav-item {% if ships %}active{% endif %}">
+                        <a href="/s03/help/?cat=ships" class="nav-link">Vaisseaux</a>
                     </li>
-                    <li{% if tags %} class="active"{% endif %}>
-                        <a href="/s03/help/?cat=tags">Balises</a>
+                    <li class="nav-item {% if tags %}active{% endif %}">
+                        <a href="/s03/help/?cat=tags" class="nav-link">Balises</a>
                     </li>
                 </ul>
             </div>

@@ -156,9 +156,10 @@ Chat.prototype = {
 
 		this.tab = document.createElement('li');
 		this.tab.chat = this;
+        this.tab.className = 'nav-item'
 
-		this.tab.innerHTML = '<a href="#" onclick="chatlist['+id+'].setActive(); return false;">' + name +
-							 (canClose?'&nbsp;<img src="{{PATH_IMAGES}}interface/closechat.gif" width="12" height="12" title="Fermer" class="close" onclick="chatlist['+id+'].close();">':'') + '</a>';
+		this.tab.innerHTML = '<a href="#" class="nav-link" onclick="chatlist['+id+'].setActive(); return false;">' + name +
+							 (canClose?'&nbsp;<i class="ms-1 fa-fw fas fa-times text-danger" data-bs-toggle="tooltip" data-bs-title="Fermer le salon" onclick="chatlist['+id+'].close();"></i>':'') + '</a>';
 
 		tabs.insertBefore(this.tab, newtab);
 
@@ -242,10 +243,10 @@ Chat.prototype = {
 		if(activeChat) activeChat.setInactive();
 
 		var newtab = $('newtab');
-		newtab.className = '';
+		newtab.className = 'nav-item';
 
 		this.active = true;
-		this.tab.className = 'active';
+		this.tab.className = 'nav-item active';
 
 		this.refreshTime = 200;
 
@@ -274,7 +275,7 @@ Chat.prototype = {
 		this.line = oChatLine.value;
 
 		this.lastLine = 0;
-		this.tab.className = '';
+		this.tab.className = 'nav-item';
 		this.active = false;
 		this.refreshTime = disabled_refreshtime;
 	},
@@ -527,7 +528,7 @@ function showJoinChatForm()
 	if(activeChat) activeChat.setInactive();
 
 	var newtab = $('newtab');
-	newtab.className = "active";
+	newtab.className = "nav-item active";
 
 	var obj = $('chatform');
 	obj.style.visibility = "hidden";
@@ -561,9 +562,9 @@ function displayPublicChats(list)
 }
 
         </script>
-        <ul id="chattabs" class="htabs">
-            <li id="newtab">
-                <a href="#" onclick="showJoinChatForm(); return false;">&nbsp;&nbsp;</a>
+        <ul id="chattabs" class="nav nav-tabs mt-0 mb-3">
+            <li id="newtab" class="nav-item">
+                <a href="#" class="nav-link" onclick="showJoinChatForm(); return false;"><i class="fa-fw fas fa-plus-circle"></i></a>
             </li>
         </ul>
         <form id="chatform" action="#" method=get onsubmit="return sendText();">

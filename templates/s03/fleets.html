@@ -430,10 +430,10 @@ function $tab(id){
 
 function setCategory(id){
 	var tab = $tab(activeCategory);
-	if(tab != null) tab.className = "";
+	if(tab != null) tab.className = "nav-item";
 	
 	tab = $tab(id);
-	if(tab != null) tab.className = "active";
+	if(tab != null) tab.className = "nav-item active";
 
 	activeCategory = id;
 }
@@ -470,8 +470,9 @@ function addCategory(id, name){
 		tab.id = 'tab'+id;
 		$('fleets_categories').insertBefore(tab, newtab);
 	}
-
-	tab.innerHTML = '<a href="" onclick="displayCategory('+id+'); return false;" ondblclick="editCategory(' + id + ')" onmouseover="dropTest('+id+',true)" onmouseout="dropTest('+id+',false)" onmousedown="mouseDown()" onmouseup="mouseUp()">' + name + '</a>';
+    
+    tab.className = "nav-item"
+	tab.innerHTML = '<a href="" class="nav-link" onclick="displayCategory('+id+'); return false;" ondblclick="editCategory(' + id + ')" onmouseover="dropTest('+id+',true)" onmouseout="dropTest('+id+',false)" onmousedown="mouseDown()" onmouseup="mouseUp()">' + name + '</a>';
 	categories[id] = new Category(id, name);
 }
 
@@ -541,13 +542,11 @@ function renameCategory(id){
 }
         </script>
         <div id="fleets">
-            <div>
-                <ul class="htabs" id="fleets_categories">
-                    <li id="newtab">
-                        <a href="#" onClick="showNewCategoryForm(); return false;">&nbsp;</a>
-                    </li>
-                </ul>
-            </div>
+            <ul id="fleets_categories" class="nav nav-tabs mt-0 mb-3">
+                <li id="newtab" class="nav-item">
+                    <a href="#" class="nav-link" onClick="showNewCategoryForm(); return false;"><i class="fa-fw fas fa-plus-circle"></i></a>
+                </li>
+            </ul>
             <div id="fleet_list"></div>
             <div id="createcategoryform">
                 <form action="#" method="get" onsubmit="return createCategory();">
