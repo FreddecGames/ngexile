@@ -1,259 +1,209 @@
 {% extends "s03/layout.html" %}
 {% load humanize %}
 {% block content %}
+<script>
+    var resources = [];
+    resources[1] = { image:'ore', label:'Minerai' };
+    resources[2] = { image:'hydrocarbon', label:'Hydrocarbure' };
+    resources[3] = { image:'scientists', label:'Scientifiques' };
+    resources[4] = { image:'soldiers', label:'Soldats' };
+    resources[5] = { image:'workers', label:'Travailleurs' };
 
-        <script type="text/javascript"
-                src='/static/scripts/third-party/tooltip.js?v=1'></script>
-        <script>
-            tipname = "hint";
-            tipwidth = 250;
-            tiptext = $("hinttext");
-        </script>
-        <script type="text/javascript">
-            var resources = [];
-            resources[1] = { image:'ore', label:'Minerai' };
-            resources[2] = { image:'hydrocarbon', label:'Hydrocarbure' };
-            resources[3] = { image:'scientists', label:'Scientifiques' };
-            resources[4] = { image:'soldiers', label:'Soldats' };
-            resources[5] = { image:'workers', label:'Travailleurs' };
+    var categories = [];
+    var activeCategory = 0;
+    var fleetList = [];
+    var currentList = [];
+    var sortColumn = 0;
+    var sortReversed = false;
+    var lastUpdate = null;
 
-            var categories = [];
-            var activeCategory = 0;
-            var fleetList = [];
-            var currentList = [];
-            var sortColumn = 0;
-            var sortReversed = false;
-            var lastUpdate = null;
-
-            function Category(id, name) {
-            
-                this.id = id;
-                this.name = name;
-            }
-
-            function Planet(id, name, relation, g, s, p) {
-            
-                this.id = id;
-                this.name = name;
-                this.relation = relation;
-                this.g = g;
-                this.s = s;
-                this.p = p;
-
-                this.toString = function() {
-                    if (this.id != 0)
-                        return planet_str(this.id,this.name,this.g,this.s,this.p,this.relation);
-                    else
-                        return 'Indéterminé';
-                }
-            }
-
-            function Resource(id, quantity) {
-            
-                this.id = id;
-                this.quantity = quantity;
-            }
-
-            function Ship(id, quantity) {
-            
-                this.id = id;
-                this.quantity = quantity;
-            }
-
-            function Fleet(id, name, category, stance, size, signature, cargoload, cargocapacity, action, timeremaining, commandername, position, destination, ships, resources) {
-            
-                this.id = id;
-                this.name = name;
-                this.category = category;
-                this.stance = stance;
-                this.size = size;
-                this.signature = signature;
-                this.cargoload = cargoload;
-                this.cargocapacity = cargocapacity;
-                this.position = position;
-                this.destination = destination;
-                this.action = action;
-                this.endtime = new Date().getTime() + timeremaining*1000;
-                this.commandername = commandername;
-                this.ships = ships;
-                this.resources = resources;
-
-                this.remainingTime = function(){
-                    return Math.max(0, Math.ceil((this.endtime - new Date().getTime())/1000));
-                }
-            }
-
-            function dShipList(id) {
-            
-                for (var x in currentList) {
-                
-                    var fleet = currentList[x];
-                    if (fleet.id == id) {
-                    
-                        var s = '<table width="100%" style="margin:0px 5px">';
-
-                        for (var i=1;i<fleet.ships.length;i++)
-                            s+= '<tr><td width="1%" nowrap align="right">' + fleet.ships[i].id + '</td><td align="left">&nbsp;x&nbsp;' + fleet.ships[i].quantity + '</td></tr>';
-
-                        return s + '</table>';
-                    }
-                }
-
-                return '';
-            }
-
-function dCargo(id) {
-	for(var x in currentList){
-		var fleet = currentList[x];
-		if(fleet.id == id){
-			var s = '<table width="100%">';
-			for(var i=1;i<fleet.resources.length;i++){
-				var res = fleet.resources[i];
-				s+='<tr><td width="1%" nowrap><img src="{{PATH_IMAGES}}interface/' + resources[res.id].image + '.gif" width="16" height="16" class="res">' + resources[res.id].label + '</td><td width="1%" align="right" nowrap class="grey">' + res.quantity.n() + '</td></tr>';
-			}
-			return s + '</table>';
-		}
-	}
-
-	return '';
-}
-
-
-function $fleet(id) {
-	for(var x in fleetList)
-		if(fleetList[x].id == id)
-			return fleetList[x];
-}
-
-function setFleetCategory(id,oldCategory,newCategory) {
-	for(var x in fleetList){
-		var fleet = fleetList[x];
-		if(fleet.id == id){
-			if(fleet.category == oldCategory) fleet.category = newCategory;
-
-			// update fleet list
-			if(activeCategory != 0)	displayCategory(activeCategory);
-
-			return;
-		}
-	}
-}
-
-// sort functions
-function sortName(a,b) {
-	var x = a.name.toUpperCase();
-	var y = b.name.toUpperCase();
-
-	if(x < y) return -1;
-	if(x > y) return 1;
-
-	return a.id - b.id;
-}
-
-function sortSize(a,b) {
-	if(a.size < b.size) return -1;
-	if(a.size > b.size) return 1;
-	return sortName(a,b);
-}
-
-function sortSignature(a,b) {
-	if(a.signature < b.signature) return -1;
-	if(a.signature > b.signature) return 1;
-	return sortName(a,b);
-}
-
-function sortCargo(a,b) {
-	if(a.cargoload < b.cargoload) return -1;
-	if(a.cargoload > b.cargoload) return 1;
-	return sortName(a,b);
-}
-
-function sortPosition(a,b) {
-	if(a.position.id < b.position.id) return -1;
-	if(a.position.id > b.position.id) return 1;
-	return sortName(a,b);
-}
-
-function sortAction(a,b) {
-	if(a.action < b.action) return -1;
-	if(a.action > b.action) return 1;
-
-	if(a.endtime < b.endtime) return -1;
-	if(a.endtime > b.endtime) return 1;
-
-	return sortName(a,b);
-}
-
-function sortCommander(a,b) {
-	var x = a.commandername.toUpperCase();
-	var y = b.commandername.toUpperCase();
-	if(x < y) return -1;
-	if(x > y) return 1;
-	return sortName(a,b);
-}
-
-function sortList(list) {
-	switch(sortColumn){
-		case 0:	// name
-			list.sort(sortName);
-		break;
-		case 1: // size
-			list.sort(sortSize);
-		break;
-		case 2: // signature
-			list.sort(sortSignature);
-		break;
-		case 3: // cargo load
-			list.sort(sortCargo);
-		break;
-		case 4: // position
-			list.sort(sortPosition);
-		break;
-		case 5: // action
-			list.sort(sortAction);
-		break;
-		case 6: // action
-			list.sort(sortCommander);
-		break;
-	}
-
-	if(sortReversed) list.reverse();
-}
-
-function sortBy(column) {
-	if(sortColumn != column){
-		sortColumn = column;
-		sortReversed = false;
-	}
-	else
-		sortReversed = !sortReversed;
-
-	sortList(currentList);
-
-	displayFleetList(currentList);
-
-	return false;
-}
-
-function displaySort(id, name) {
-
-	var arrow = ''
-	if (sortColumn == id) arrow = (sortReversed?'down':'up')
-    return '<div class="col-auto"><a href="#" onclick="return sortBy(' + id + ')" ' + (sortColumn == id ? 'class="badge text-bg-primary"' : '') + '>' + name + (arrow == 'down' ? '<i class="ms-1 fa-fw fas fa-caret-down"></i>' : '') + (arrow == 'up' ? '<i class="ms-1 fa-fw fas fa-caret-up"></i>' : '') + '</a></div>'
-}
-
-// when a countdown finishes, make the list be refreshed on next tab change
-function counterFinished(c){ lastUpdate = null; }
-
-function displayFleetList(list) {
-
-	var ships = 0
-	var signature = 0
-	var cargoload = 0
+    function Category(id, name) {
     
-    var s = ''
+        this.id = id;
+        this.name = name;
+    }
+
+    function Planet(id, name, relation, g, s, p) {
     
-    s += '<div class="mb-3">'
+        this.id = id;
+        this.name = name;
+        this.relation = relation;
+        this.g = g;
+        this.s = s;
+        this.p = p;
+
+        this.toString = function() {
+        
+            if (this.id != 0) return planet_str(this.id,this.name,this.g,this.s,this.p,this.relation);
+            else return '???';
+        }
+    }
+
+    function Resource(id, quantity) {
+    
+        this.id = id;
+        this.quantity = quantity;
+    }
+
+    function Ship(id, quantity) {
+    
+        this.id = id;
+        this.quantity = quantity;
+    }
+
+    function Fleet(id, name, category, stance, size, signature, cargoload, cargocapacity, action, timeremaining, commandername, position, destination, ships, resources) {
+    
+        this.id = id;
+        this.name = name;
+        this.category = category;
+        this.stance = stance;
+        this.size = size;
+        this.signature = signature;
+        this.cargoload = cargoload;
+        this.cargocapacity = cargocapacity;
+        this.position = position;
+        this.destination = destination;
+        this.action = action;
+        this.endtime = new Date().getTime() + timeremaining * 1000;
+        this.commandername = commandername;
+        this.ships = ships;
+        this.resources = resources;
+
+        this.remainingTime = function() {
+        
+            return Math.max(0, Math.ceil((this.endtime - new Date().getTime()) / 1000));
+        }
+    }
+
+    function setFleetCategory(id, oldCategory, newCategory) {
+
+        for (var x in fleetList) {
+        
+            var fleet = fleetList[x]
+            if (fleet.id == id) {
+            
+                if (fleet.category == oldCategory) fleet.category = newCategory
+                if (activeCategory != 0) displayCategory(activeCategory)
+
+                return
+            }
+        }
+    }
+
+    function sortName(a, b) {
+    
+        var x = a.name.toUpperCase();
+        var y = b.name.toUpperCase();
+
+        if (x < y) return -1;
+        if (x > y) return 1;
+
+        return a.id - b.id;
+    }
+
+    function sortSize(a, b) {
+    
+        if (a.size < b.size) return -1;
+        if (a.size > b.size) return 1;
+        
+        return sortName(a, b);
+    }
+
+    function sortSignature(a, b) {
+    
+        if (a.signature < b.signature) return -1;
+        if (a.signature > b.signature) return 1;
+        
+        return sortName(a, b);
+    }
+
+    function sortCargo(a, b) {
+    
+        if (a.cargoload < b.cargoload) return -1;
+        if (a.cargoload > b.cargoload) return 1;
+        
+        return sortName(a, b);
+    }
+
+    function sortPosition(a, b) {
+    
+        if (a.position.id < b.position.id) return -1;
+        if (a.position.id > b.position.id) return 1;
+        
+        return sortName(a, b);
+    }
+
+    function sortAction(a, b) {
+    
+        if (a.action < b.action) return -1;
+        if (a.action > b.action) return 1;
+
+        if (a.endtime < b.endtime) return -1;
+        if (a.endtime > b.endtime) return 1;
+
+        return sortName(a, b);
+    }
+
+    function sortCommander(a, b) {
+    
+        var x = a.commandername.toUpperCase();
+        var y = b.commandername.toUpperCase();
+        
+        if (x < y) return -1;
+        if (x > y) return 1;
+        
+        return sortName(a, b);
+    }
+
+    function sortList(list) {
+    
+        switch (sortColumn) {
+        
+            case 0: list.sort(sortName); break;
+            case 1: list.sort(sortSize); break;
+            case 2: list.sort(sortSignature); break;
+            case 3: list.sort(sortCargo); break;
+            case 4: list.sort(sortPosition); break;
+            case 5: list.sort(sortAction); break;
+            case 6: list.sort(sortCommander); break;
+        }
+
+        if (sortReversed) list.reverse();
+    }
+
+    function sortBy(column) {
+    
+        if (sortColumn != column) {
+        
+            sortColumn = column;
+            sortReversed = false;
+        }
+        else sortReversed = !sortReversed;
+
+        sortList(currentList);
+
+        displayFleetList(currentList);
+
+        return false;
+    }
+
+    function displaySort(id, name) {
+
+        var arrow = ''
+        if (sortColumn == id) arrow = (sortReversed ? 'down' : 'up')
+        
+        return '<div class="col-auto"><a href="#" onclick="return sortBy(' + id + ')" ' + (sortColumn == id ? 'class="badge text-bg-primary"' : '') + '>' + name + (arrow == 'down' ? '<i class="ms-1 fa-fw fas fa-caret-down"></i>' : '') + (arrow == 'up' ? '<i class="ms-1 fa-fw fas fa-caret-up"></i>' : '') + '</a></div>'
+    }
+
+    function displayFleetList(list) {
+
+        var ships = 0
+        var signature = 0
+        var cargoload = 0
+
+        var s = ''
+
+        s += '<div class="mb-3">'
         s += '<div class="row gx-3 align-items-center">'
             s += '<div class="col-auto"><span class="text-normal">Trié par</span></div>'
             s += displaySort(0, 'Nom')
@@ -264,9 +214,9 @@ function displayFleetList(list) {
             s += displaySort(4, 'Position')
             s += displaySort(5, 'Action')
         s += '</div>'
-    s += '</div>'
-    
-    s += '<div class="mb-3">'
+        s += '</div>'
+
+        s += '<div class="mb-3">'
         s += '<div class="card">'
             s += '<div class="list-group list-group-flush">'
                 for (var i = 0; i < list.length; i++) {
@@ -279,7 +229,7 @@ function displayFleetList(list) {
                             s += '<div class="col">'
                                 if (fleet.stance == 1) s += '<img src="{{ PATH_IMAGES }}interface/stance_attack.gif" class="me-1 stance" data-bs-toggle="tooltip" data-bs-title="Mode attaque" width="10px" height="10px">'
                                 else s += '<img src="{{ PATH_IMAGES }}interface/stance_defend.gif" class="me-1 stance" data-bs-toggle="tooltip" data-bs-title="Mode riposte" width="10px" height="10px">'
-                                s += '<a href="/s03/fleet/id=' + fleet.id + '" id="fleet' + fleet.id + '" class="self" data-bs-toggle="tooltip" data-bs-title="Voir flotte">' + fleet.name + '</a>'
+                                s += '<a href="/s03/fleet/?id=' + fleet.id + '" id="fleet' + fleet.id + '" class="self" data-bs-toggle="tooltip" data-bs-title="Voir flotte">' + fleet.name + '</a>'
                                 s += '<small class="ms-2">' + fleet.signature.n() + '</small>'
                             s += '</div>'
                             if (fleet.commandername != '' && fleet.commandername != 'None') {
@@ -336,15 +286,15 @@ function displayFleetList(list) {
                                         s += '<span class="text-normal">En patrouille</span>'
                                     break
                                     case '1':
-                                        var c = startCountdown('fleetcountdown' + fleet.id, fleet.remainingTime(), null, '<a href="/s03/fleets/?id=' + fleet.id + '">Arrivé</a>', counterFinished)
+                                        var c = startCountdown('fleetcountdown' + fleet.id, fleet.remainingTime(), null, '<a href="/s03/fleets/?id=' + fleet.id + '">Arrivé</a>')
                                         s += '<span class="text-success">En transit</span><i class="fa-fw fas fa-long-arrow-alt-right mx-2 text-normal"></i>' + fleet.destination + '<span class="ms-3 text-yellow">' + c + '</span>'
                                     break
                                     case '2':
-                                        var c = startCountdown('fleetcountdown' + fleet.id, fleet.remainingTime(), null, '<a href="/s03/fleets/?id=' + fleet.id + '">Cycle terminé</a>', counterFinished)
+                                        var c = startCountdown('fleetcountdown' + fleet.id, fleet.remainingTime(), null, '<a href="/s03/fleets/?id=' + fleet.id + '">Cycle terminé</a>')
                                         s += '<span class="text-success">En recyclage</span>' + '<span class="ms-3 text-yellow">' + c + '</span>'
                                     break;
                                     case '4':
-                                        var c = startCountdown('fleetcountdown' + fleet.id, fleet.remainingTime(), null, '<a href="/s03/fleets/?id=' + fleet.id + '">Terminé</a>', counterFinished)
+                                        var c = startCountdown('fleetcountdown' + fleet.id, fleet.remainingTime(), null, '<a href="/s03/fleets/?id=' + fleet.id + '">Terminé</a>')
                                         s += '<span class="text-normal">En attente</span>' + '<span class="ms-3 text-yellow">' + c + '</span>'
                                     break;
                                     case 'x':
@@ -357,9 +307,9 @@ function displayFleetList(list) {
                 }
             s += '</div>'
         s += '</div>'
-    s += '</div>'
-    
-    s += '<div class="card card-body py-2">'
+        s += '</div>'
+
+        s += '<div class="card card-body py-2">'
         s += '<div class="row gx-3 justify-content-around">'
             s += '<div class="col-auto">'
                 s += '<span class="text-normal me-2">Flottes</span>'
@@ -378,294 +328,275 @@ function displayFleetList(list) {
                 s += '<span>' + cargoload.n() + '</span>'
             s += '</div>'
         s += '</div>'
-    s += '</div>'
+        s += '</div>'
 
-	$('fleet_list').innerHTML = s
+        $('fleet_list').innerHTML = s
+
+        const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+        const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+
+        for (var i = 0; i < list.length; i++) makeDraggable($('fleet' + list[i].id), list[i].id)
+    }
+
+    function displayCategory(category) {
     
-    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
-    const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+        setCategory(category);
 
-	for (var i = 0; i < list.length; i++) makeDraggable($('fleet' + list[i].id), list[i].id)
-}
+        var obj = $('fleet_list');
+        obj.innerHTML = '';
+        obj.style.visibility = 'visible';
+        obj.style.display = 'block';
 
-function retrieveFleetListResponse(req) {
-	try {
-		lastUpdate = new Date();
+        var obj = $('createcategoryform');
+        obj.style.visibility = 'hidden';
+        obj.style.display = 'none';
 
-		if(req.status=="200")
-			eval(req.responseText);
-	} catch (e)	{
-		window.location.reload(true);
-	}
-}
+        if (category == -1) {
+        
+            currentList = []
+            for (var x in fleetList)
+                if (fleetList[x].category <= 0 || categories[fleetList[x].category] == null)
+                    currentList.push(fleetList[x])
+        }
+        else if (category == 0) currentList = fleetList;
+        else {
+        
+            currentList = [];
+            for (var x in fleetList)
+                if (fleetList[x].category == category)
+                    currentList.push(fleetList[x]);
+        }
 
-function displayCategory(category) {
-	setCategory(category);
+        sortList(currentList);
 
-	var obj = $('fleet_list');
-	obj.innerHTML = '';
-	obj.style.visibility = 'visible';
-	obj.style.display = 'block';
+        displayFleetList(currentList);
 
-	var obj = $('createcategoryform');
-	obj.style.visibility = 'hidden';
-	obj.style.display = 'none';
+        return false;
+    }
     
-    /*
-	if(lastUpdate == null || new Date().getTime() - lastUpdate > 20000){
-		var url = "/s03/fleets_handler/?a=list";
-
-		openURL(url, retrieveFleetListResponse);
-
-		return false;
-	}
-    */
-
-	if(category == -1){
-		currentList = [];
-		for(var x in fleetList)
-			if(fleetList[x].category <= 0 || categories[fleetList[x].category] == null)
-				currentList.push(fleetList[x]);
-	}
-	else
-	if(category == 0)
-		currentList = fleetList;
-	else{
-		currentList = [];
-		for(var x in fleetList)
-			if(fleetList[x].category == category)
-				currentList.push(fleetList[x]);
-	}
-
-	sortList(currentList);
-
-	displayFleetList(currentList);
+    /* drag and drop functions */
     
-	return false;
-}
+    var dragObject = null;
+    var dropCategory = null;
 
-// drag/drop functions
+    function $fleet(id) {
+    
+        for (var x in fleetList) {
+            if (fleetList[x].id == id)
+                return fleetList[x]
+        }
+    }
 
-var dragObject = null;
-var dropCategory = null;
+    function makeDraggable(item, fleetid) {
+    
+        if (!item) return;
+        
+        item.onmousedown = function(ev) {
+        
+            dropCategory = null;
+            dragObject = $fleet(fleetid);
 
-function makeDraggable(item, fleetid) {
-	if(!item) return;
-	item.onmousedown = function(ev){
-		dropCategory = null;
-		dragObject = $fleet(fleetid);
-		{% if t %}//quand la sourie bouge faire apparaitre le tooltip (la function du	tooltip fait deja tout le travail pour nous :-){% endif %}
-		document.onmousemove = function(e){
-			positiontip(e);
-		}
-		{% if t %}// enlever le onmouseout function comme sa on est sur que le tooltip reste coller au pointer{% endif %}
-		item.onmouseout = function(){
-		}
-		{% if t %}//quand la sourie et depresser hide le tooltip et remetre la function sur le onmouseout event{% endif %}
-		document.onmouseup = function(){
-			hideddrivetip();
-			item.onmouseout = function(){hideddrivetip()};
-		}
-		ev.cancelBubble = true;
-		return false;
-	}
-}
+            ev.cancelBubble = true;
+            
+            return false;
+        }
+    }
 
+    function startDrag(item, ev) {
+    
+        dragObject = item;
+        ev.cancelBubble = true;
+        
+        return false;
+    }
 
-function startDrag(item, ev){
-	dragObject = item;
-	ev.cancelBubble = true;
-	return false;
-}
+    function dropTest(id, b) {
+    
+        if (dragObject != null && b) dropCategory = id;
+        else dropCategory = null;
+    }
 
-function dropTest(id, b){
-	if(dragObject != null && b)
-		dropCategory = id;
-	else
-		dropCategory = null;
-}
+    function mouseDown() { dropCategory = null; }
 
-function mouseDown(){
-	dropCategory = null;
-}
+    function mouseUp() {
+    
+        if (dragObject != null && dropCategory != null) {
+        
+            var url = "/s03/fleets_handler/?a=setcat&id=" + dragObject.id + "&old=" + dragObject.category + "&new=" + dropCategory;
+            openURL(url, evalResponse);
+        }
+        
+        dragObject = null;
+        dropCategory = null;
+    }
 
-function mouseUp(){
-	if(dragObject != null && dropCategory != null){
-		var url = "/s03/fleets_handler/?a=setcat&id=" + dragObject.id + "&old=" + dragObject.category + "&new=" + dropCategory;
-
-		openURL(url, evalResponse);
-	}
-	dragObject = null;
-	dropCategory = null;
-}
-
-// category functions
+    /* category functions */
 
 function $tab(id){
-	if(id == null)
-		return $('newtab');
-	else
-		return $('tab'+id);
+if(id == null)
+return $('newtab');
+else
+return $('tab'+id);
 }
 
 function setCategory(id){
-	var tab = $tab(activeCategory);
-	if(tab != null) tab.className = "nav-item";
-	
-	tab = $tab(id);
-	if(tab != null) tab.className = "nav-item active";
+var tab = $tab(activeCategory);
+if(tab != null) tab.className = "nav-item";
 
-	activeCategory = id;
+tab = $tab(id);
+if(tab != null) tab.className = "nav-item active";
+
+activeCategory = id;
 }
 
 function showNewCategoryForm(){
-	setCategory(null);
+setCategory(null);
 
-	var obj = $('fleet_list');
-	obj.style.visibility = "hidden";
-	obj.style.display = "none";
+var obj = $('fleet_list');
+obj.style.visibility = "hidden";
+obj.style.display = "none";
 
-	var obj = $('createcategoryform');
-	obj.style.visibility = "visible";
-	obj.style.display = "block";
+var obj = $('createcategoryform');
+obj.style.visibility = "visible";
+obj.style.display = "block";
 
-	$('categoryname').focus();
+$('categoryname').focus();
 }
 
 // add, category
 function addCategory(id, name){
-	var newtab = $tab(null);
-	var tab = $tab(id);
+var newtab = $tab(null);
+var tab = $tab(id);
 
-	// remove category
-	if(tab != null && name == ''){
-		$('fleets_categories').removeChild(tab);
-		categories[id] == null;
-		return;
-	}
+// remove category
+if(tab != null && name == ''){
+$('fleets_categories').removeChild(tab);
+categories[id] == null;
+return;
+}
 
-	// add category if not found
-	if(tab == null){
-		tab = document.createElement('li');
-		tab.id = 'tab'+id;
-		$('fleets_categories').insertBefore(tab, newtab);
-	}
-    
-    tab.className = "nav-item"
-	tab.innerHTML = '<a href="" class="nav-link" onclick="displayCategory('+id+'); return false;" ondblclick="editCategory(' + id + ')" onmouseover="dropTest('+id+',true)" onmouseout="dropTest('+id+',false)" onmousedown="mouseDown()" onmouseup="mouseUp()">' + name + '</a>';
-	categories[id] = new Category(id, name);
+// add category if not found
+if(tab == null){
+tab = document.createElement('li');
+tab.id = 'tab'+id;
+$('fleets_categories').insertBefore(tab, newtab);
+}
+
+tab.className = "nav-item"
+tab.innerHTML = '<a href="" class="nav-link" onclick="displayCategory('+id+'); return false;" ondblclick="editCategory(' + id + ')" onmouseover="dropTest('+id+',true)" onmouseout="dropTest('+id+',false)" onmousedown="mouseDown()" onmouseup="mouseUp()">' + name + '</a>';
+categories[id] = new Category(id, name);
 }
 
 // replace tab content with an input box to edit category name
 function editCategory(id){
-	if(id <= 0) return false;
+if(id <= 0) return false;
 
-	var tab = $tab(id);
+var tab = $tab(id);
 
-	if(categories[id].editing){
-		categories[id].editing = false;
-		tab.innerHTML = categories[id].old;
-		return false;
-	}
+if(categories[id].editing){
+categories[id].editing = false;
+tab.innerHTML = categories[id].old;
+return false;
+}
 
-	categories[id].editing = true;
-	categories[id].old = tab.innerHTML;
-	tab.innerHTML = '<form action="#" method="get" onsubmit="return renameCategory('+id+')">'+
-					'<input type="text" size="20" id="editcat' + id + '" value="' + categories[id].name + '" onblur="editCategory(' + id + ')">'+
-					'</form>';
-	$('editcat' + id).focus();
+categories[id].editing = true;
+categories[id].old = tab.innerHTML;
+tab.innerHTML = '<form action="#" method="get" onsubmit="return renameCategory('+id+')">'+
+            '<input type="text" size="20" id="editcat' + id + '" value="' + categories[id].name + '" onblur="editCategory(' + id + ')">'+
+            '</form>';
+$('editcat' + id).focus();
 }
 
 var creatingCategory = false;
 
 function createCategoryResponse(req){
-	creatingCategory = false;
+creatingCategory = false;
 
-	try {
-		if(req.status=="200")
-			eval(req.responseText);
-	} catch (e)	{
-		window.location.reload(true);
-	}
+try {
+if(req.status=="200")
+    eval(req.responseText);
+} catch (e)	{
+window.location.reload(true);
+}
 }
 
 function createCategory(){
-	var name = $('categoryname').value;
-	var url = "/s03/fleets_handler/?a=newcat&name=" + encodeURIComponent(name);
+var name = $('categoryname').value;
+var url = "/s03/fleets_handler/?a=newcat&name=" + encodeURIComponent(name);
 
-	for(var x in categories)
-		if(categories[x] && categories[x].id != null && (categories[x].name.toLowerCase() == name.toLowerCase())) {
-			alert('Une catégorie avec ce nom existe déjà.');
-			return;
-		}
+for(var x in categories)
+if(categories[x] && categories[x].id != null && (categories[x].name.toLowerCase() == name.toLowerCase())) {
+    alert('Une catégorie avec ce nom existe déjà.');
+    return;
+}
 
-	creatingCategory = true;
-	openURL(url, createCategoryResponse);
+creatingCategory = true;
+openURL(url, createCategoryResponse);
 
-	return false;
+return false;
 }
 
 function renameCategory(id){
-	var name = $('editcat'+id).value;
-	var url = '/s03/fleets_handler/?a=rencat&id=' + id + '&name=' + encodeURIComponent(name);
+var name = $('editcat'+id).value;
+var url = '/s03/fleets_handler/?a=rencat&id=' + id + '&name=' + encodeURIComponent(name);
 
-	for(var x in categories)
-		if(categories[x] && x!=id && categories[x].id != null && (categories[x].name.toLowerCase() == name.toLowerCase())) {
-			alert('Une catégorie avec ce nom existe déjà.');
-			return;
-		}
-
-	creatingCategory = true;
-	openURL(url, createCategoryResponse);
-
-	return false;
+for(var x in categories)
+if(categories[x] && x!=id && categories[x].id != null && (categories[x].name.toLowerCase() == name.toLowerCase())) {
+    alert('Une catégorie avec ce nom existe déjà.');
+    return;
 }
-        </script>
-        <div id="fleets">
-            <ul id="fleets_categories" class="nav nav-tabs mt-0 mb-3">
-                <li id="newtab" class="nav-item">
-                    <a href="#" class="nav-link" onClick="showNewCategoryForm(); return false;"><i class="fa-fw fas fa-plus-circle"></i></a>
-                </li>
-            </ul>
-            <div id="fleet_list"></div>
-            <div id="createcategoryform">
-                <form action="#" method="get" onsubmit="return createCategory();" class="card">
-                    <div class="card-header text-center">
-                        <span class="fs-6">Créer une nouvelle catégorie</span>
-                    </div>
-                    <div class="card-body text-center">
-                        <div class="mb-3">
-                            <div class="text-normal">Une fois la catégorie créée, vous pouvez glisser/déposer une flotte vers l'onglet de la page pour changer sa catégorie.</div>
-                            <div class="text-normal">Pour renommer une catégorie, double cliquez sur l'onglet.</div>
-                            <div class="text-normal">Pour supprimer une catégorie, double cliquez sur l'onglet et spécifiez un nouveau nom vide.</div>
-                        </div>
-                        <div class="row gx-2 align-items-center justify-content-center">
-                            <div class="col-auto">Nom de catégorie</div>
-                            <div class="col-auto"><input type="text" class="form-control" id="categoryname" maxlength="32"></div>
-                            <div class="col-auto"><input type="submit" class="btn btn-primary" value="Créer"></div>
-                        </td>
-                    </div>
-                </form>
+
+creatingCategory = true;
+openURL(url, createCategoryResponse);
+
+return false;
+}
+</script>
+<div id="fleets">
+    <ul id="fleets_categories" class="nav nav-tabs mt-0 mb-3">
+        <li id="newtab" class="nav-item">
+            <a href="#" class="nav-link" onClick="showNewCategoryForm(); return false;"><i class="fa-fw fas fa-plus-circle"></i></a>
+        </li>
+    </ul>
+    <div id="fleet_list"></div>
+    <div id="createcategoryform">
+        <form action="#" method="get" onsubmit="return createCategory();" class="card">
+            <div class="card-header text-center">
+                <span class="fs-6">Créer une nouvelle catégorie</span>
             </div>
-        </div>
-        <script type="text/javascript">
+            <div class="card-body text-center">
+                <div class="mb-3">
+                    <div class="text-normal">Une fois la catégorie créée, vous pouvez glisser/déposer une flotte vers l'onglet de la page pour changer sa catégorie.</div>
+                    <div class="text-normal">Pour renommer une catégorie, double cliquez sur l'onglet.</div>
+                    <div class="text-normal">Pour supprimer une catégorie, double cliquez sur l'onglet et spécifiez un nouveau nom vide.</div>
+                </div>
+                <div class="row gx-2 align-items-center justify-content-center">
+                    <div class="col-auto">Nom de catégorie</div>
+                    <div class="col-auto"><input type="text" class="form-control" id="categoryname" maxlength="32"></div>
+                    <div class="col-auto"><input type="submit" class="btn btn-primary" value="Créer"></div>
+                </td>
+            </div>
+        </form>
+    </div>
+</div>
+<script type="text/javascript">
 addCategory(0, 'Tout');
 addCategory(-1, 'Sans catégorie');
 {% for category in categories %}addCategory({{category.id}}, '{{category.label}}');{% endfor %}
-    fleetList = [];
-    {% for fleet in fleets %}
-        fleetList.push(new Fleet({{ fleet.id }},'{{ fleet.name }}',{{ fleet.category }},{{ fleet.stance }},{{ fleet.size }},{{ fleet.signature }},{{ fleet.cargo_load }},{{ fleet.cargo_capacity }},"{{ fleet.action }}",{{ fleet.time }},'{{ fleet.commandername }}',
-        new Planet({{ fleet.planetid }},'{{ fleet.planetname }}',{{ fleet.relation }},"{{ fleet.g }}","{{ fleet.s }}","{{ fleet.p }}"),
-        new Planet({{ fleet.t_planetid }},'{{ fleet.t_planetname }}',{{ fleet.t_relation }},"{{ fleet.t_g }}","{{ fleet.t_s }}","{{ fleet.t_p }}"),
-        new Array(0
-        {% for ship in fleet.ships %},new Ship('{{ ship.ship_label }}',{{ ship.ship_quantity }}){% endfor %}
-        ),
-        new Array(0
-        {% for resource in fleet.resources %},new Resource({{ resource.res_id }},{{ resource.res_quantity }}){% endfor %}
-        ) ));
-    {% endfor %}
-        
+fleetList = [];
+{% for fleet in fleets %}
+fleetList.push(new Fleet({{ fleet.id }},'{{ fleet.name }}',{{ fleet.category }},{{ fleet.stance }},{{ fleet.size }},{{ fleet.signature }},{{ fleet.cargo_load }},{{ fleet.cargo_capacity }},"{{ fleet.action }}",{{ fleet.time }},'{{ fleet.commandername }}',
+new Planet({{ fleet.planetid }},'{{ fleet.planetname }}',{{ fleet.relation }},"{{ fleet.g }}","{{ fleet.s }}","{{ fleet.p }}"),
+new Planet({{ fleet.t_planetid }},'{{ fleet.t_planetname }}',{{ fleet.t_relation }},"{{ fleet.t_g }}","{{ fleet.t_s }}","{{ fleet.t_p }}"),
+new Array(0
+{% for ship in fleet.ships %},new Ship('{{ ship.ship_label }}',{{ ship.ship_quantity }}){% endfor %}
+),
+new Array(0
+{% for resource in fleet.resources %},new Resource({{ resource.res_id }},{{ resource.res_quantity }}){% endfor %}
+) ));
+{% endfor %}
+
 displayCategory(activeCategory);
-        </script>
+</script>
 
 {% endblock %}
