@@ -30,7 +30,7 @@ class View(ExileMixin, View):
             return HttpResponseRedirect("/")
 
         # check if it is the first login of the player
-        rs = oConnExecute("SELECT login FROM users WHERE resets=0 AND id=" + str(self.UserId))
+        rs = oConnExecute("SELECT username FROM users WHERE resets=0 AND id=" + str(self.UserId))
         if not rs:
             return HttpResponseRedirect("/")
 
@@ -38,16 +38,17 @@ class View(ExileMixin, View):
         if not userName: userName = request.user.username
 
         newName = request.POST.get('name', '')
-        if newName != "":
+        if newName != '':
             # try to rename user and catch any error
             try:
                 if isValidName(newName):
-                    oConnDoQuery("UPDATE users SET login=" + dosql(newName) + " WHERE id=" + str(self.UserId))
+                    oConnDoQuery("UPDATE users SET username=" + dosql(newName) + " WHERE id=" + str(self.UserId))
                     userName = newName
                 else:
                     result = 11
             except:
                 result = 10
+        else: result = 11
 
         if result == 0:
             orientation = int(request.POST.get("orientation", 0))

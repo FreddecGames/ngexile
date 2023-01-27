@@ -22,7 +22,7 @@ class View(ExileMixin, View):
         content = GetTemplate(self.request, "s03/wait")
 
         # retrieve remaining time
-        query = "SELECT login, COALESCE(date_part('epoch', ban_expire-now()), 0) AS remaining_time FROM users WHERE /*privilege=-3 AND*/ id=" + str(self.UserId)
+        query = "SELECT username, COALESCE(date_part('epoch', ban_expire-now()), 0) AS remaining_time FROM users WHERE /*privilege=-3 AND*/ id=" + str(self.UserId)
 
         oRs = oConnExecute(query)
 

@@ -1,24 +1,18 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<!doctype html>
 <html>
     <head>
-        <script async
-                src="https://www.googletagmanager.com/gtag/js?id=UA-134044291-1"></script>
-        <script>
-		window.dataLayer = window.dataLayer || [];
-		function gtag(){dataLayer.push(arguments);}
-		gtag('js', new Date());
-		gtag('config', 'UA-134044291-1');
-	
-        </script>
-        <meta http-equiv="Content-type" content="text/html; charset=utf-8">
-        <meta http-equiv="cache-control" content="no-cache">
-        <meta http-equiv="expires" content="0">
-        <meta http-equiv="pragma" content="no-cache">
-        <title>Exile</title>
-        <link rel="stylesheet"
-              href="{{ PATH_IMAGES }}styles/s_transparent/style.css"
+        <title>[s03] NG Exile</title>
+        <link rel="shortcut icon" href="/static/favicon.ico">
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css"
+              rel="stylesheet"
+              integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65"
+              crossorigin="anonymous">
+        <link href="{{ PATH_IMAGES }}styles/s_default/style.css?v=0"
               type="text/css"
-              media="all">
+              rel="stylesheet"
+              media="all"/>
         <script type="text/javascript" src='/static/scripts/common.js'></script>
     </head>
     <body>
@@ -142,18 +136,21 @@ function showRecommendation(obj) {
         <div align="center">
             <div id="container">
                 <div id="start">
-                    EXILE
+                    NG Exile
                 </div>
+                {% if login %}
                 <div id="playername">
                     {{ login }}
                 </div>
-                <form method="post" action="?">
+                {% endif %}
+                <form method="post" action="?" class="text-center">
                     {% csrf_token %}
-                    Bienvenue dans Exile, avant de commencer, veuillez entrer un nom pour votre nation. Ce sera le nom sous lequel vous jouerez dans le jeu, choisissez un nom différent de votre compte.
+                    Bienvenue dans NG Exile, avant de commencer, veuillez entrer un nom pour votre nation. Ce sera le nom sous lequel vous jouerez dans le jeu, choisissez un nom différent de votre compte.
+                    <br/>
                     <br/>
                     <div align="center">
                         Nom de nation:
-                        <input type="text" name="name" value="{{ login }}"/>
+                        <input type="text" name="name" value="{% if login %}{{ login }}{% endif %}"/>
                     </div>
                     {% if error_10 %}
                         <div class="error">
@@ -235,5 +232,15 @@ function showRecommendation(obj) {
 showRecommendation($("galaxies"));
             </script>
         {% endif %}
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-212X2QX8W5"></script>
+        <script>
+            window.dataLayer = window.dataLayer || []
+            function gtag(){ dataLayer.push(arguments) }
+            gtag('js', new Date())
+            gtag('config', 'G-212X2QX8W5')
+        </script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
+                integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4"
+                crossorigin="anonymous"></script>
     </body>
 </html>

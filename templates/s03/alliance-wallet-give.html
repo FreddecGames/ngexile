@@ -24,7 +24,7 @@
                                     <input type="number"
                                            min="0"
                                            name="credits"
-                                           value="{{ credits }}"
+                                           value=""
                                            size="8"
                                            maxlength="8">
                                     crédits
@@ -74,10 +74,10 @@
             </tr>
             {% for entry in entries %}
                 <tr class="smallitem">
-                    <td nowrap>{{ date }}</td>
-                    <td nowrap>{{ nation }}</td>
-                    <td align="right" nowrap>{{ credits|intcomma }}</td>
-                    <td>{{ description }}</td>
+                    <td nowrap>{{ entry.date }}</td>
+                    <td nowrap>{{ entry.nation }}</td>
+                    <td align="right" nowrap>{{ entry.credits|intcomma }}</td>
+                    <td>{{ entry.description }}</td>
                 </tr>
             {% empty %}
                 <td class="smallitem" colspan="5" align="center">Aucun don</td>

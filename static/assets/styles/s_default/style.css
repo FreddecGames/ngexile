@@ -193,7 +193,7 @@ input[type=number] { -moz-appearance: textfield; }
 #stats .category { cursor:pointer; }
 #tcg .category { cursor:pointer; }
 
-div#container { margin:6px; padding:6px; text-align:left; width:800px; background: url('/static/assets/interface/grad100.gif') repeat-x #3c3c3c; border: #222 1px solid; }
+div#container { padding:6px; text-align:left; width:800px; background: url('/static/assets/interface/grad100.gif') repeat-x #3c3c3c; border: #222 1px solid; }
 
 #gameover { font-size:36px; padding:10px; color:#f44; font-weight: bold; text-align: center; }
 #start { font-size:36px; padding:10px; color:#4f4; font-weight: bold; text-align: center; }
