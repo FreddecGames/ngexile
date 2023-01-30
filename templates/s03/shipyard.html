@@ -1,436 +1,320 @@
 {% extends "s03/layout.html" %}
 {% load humanize %}
 {% block content %}
-    <script>
-var ships=new Array();
-var shiplist=new Array();
+<script>
+    var ships = new Array();
+    {% for category in categories %}
+        {% for ship in category.ships %}
+            {% if ship.build %}ships.push({ id:{{ ship.id }}, ore:{{ ship.ore }}, hydro:{{ ship.hydrocarbon }}, energy:{{ ship.energy }}, worker:{{ ship.crew }}, time:{{ ship.time }} });{% endif %}
+        {% endfor %}
+    {% endfor %}
 
-{% for category in categories %}{% for ship in category.ships %}
-{% if ship.build %}shiplist.push({{ship.id}});{% endif %}
-ships[{{ship.id}}]=new Array('{{ship.description|escapejs}}','{{ship.ship_signature|intcomma}}','{{ship.ship_cargo|intcomma}}','{{ship.ship_speed|intcomma}}','{{ship.ship_handling|intcomma}}',{{ship.ship_turrets}},{{ship.ship_power}},'{{ship.ship_tracking_speed|intcomma}}','{{ship.ship_hull|intcomma}}','{{ship.ship_shield|intcomma}}','{{ship.ship_recycler_output|intcomma}}','{{ship.ship_long_distance_capacity|intcomma}}','{{ship.ship_droppods|intcomma}}',{{ship.ore}},{{ship.hydrocarbon}},{{ship.energy}},{{ship.crew}},{{ship.time}},'{{ship.upkeep|intcomma}}',{{ship.ship_required_vortex_strength}},{{ship.ship_leadership}}{% if ship.buildingsrequired %},'{{ship.building}}'{% endif %});{% endfor %}{% endfor %}
+    function updateNeeds() {
+    
+        var ore = 0;
+        var hydrocarbon = 0;
+        var energy = 0;
+        var crew = 0;
+        var totaltime = 0;
 
-function descShip(id){
-	var ship = ships[id];
+        for (var i = 0; i < ships.length; i++) {
+            var ship = ships[i];
+            var count = getval('s' + ship.id);
 
-	var buildings = "";
+            ore += count * ship.ore
+            hydrocarbon += count * ship.hydro
+            energy += count * ship.energy
+            crew += count * ship.worker
+            totaltime += count * ship.time
+        }
 
-	for(var i=21;i<ship.length;i++)
-		buildings = buildings + "<li>" + ship[i] + "</li>";
+        $("totalore").innerHTML = formatnumber(ore);
+        $("totalhydrocarbon").innerHTML = formatnumber(hydrocarbon);
+        $("totalenergy").innerHTML = formatnumber(energy);
+        $("totalcrew").innerHTML = formatnumber(crew);
+        $("totaltime").innerHTML = formattime(totaltime);
+    }
+</script>
 
-	var a = '<table class="description"><tr valign=top><td><span class="title">Description</span><br/><br/>'+ship[0]+'<br/><br/><span class="title">Bâtiments requis</span><br/><ul class=requirements>'+buildings+'</ul>' + (ship[18]!='0'?'<br/><span class=title>Entretien</span><br/><br/>Crédits: <img src="{{PATH_IMAGES}}interface/credits.gif" class="icon" title="Credits" width=16 height=16>'+ship[18]+'<br/>':'') + '</td><td width="1%" nowrap><span class=title>Caractéristiques</span><br/>'+
-			'<br/>Signature: <span class=value>'+ship[1]+'</span><br/>Cargo: <span class=value>'+ship[2]+'</span>'+
-			'<br/>Vitesse: <span class=value>'+ship[3]+'</span><br/>Manœuvrabilité: <span class=value>'+ship[4]+'</span><br/>Stabilité: <span class=value>'+ship[19]+'</span>' + (ship[20]>0?'<br/>Commandement: <span class=value>+'+formatnumber(ship[20])+'</span>':'');
-	if(ship[6] > 0)
-		a+= '<br/>Puissance d\'attaque: <span class=value>'+ship[5]+'x'+ship[6]+'</span><br/>Ciblage: <span class=value>'+ship[7]+'</span>';
-	a+= '<br/>Armure: <span class=value>'+ship[8]+'</span>';
-	if(ship[9] != '0')	a+= '<br/>Bouclier: <span class=value>'+ship[9]+'</span>';
-	if(ship[10] != '0') a+= '<br/>Capacité de recyclage: <span class=value>'+ship[10]+'</span>';
-	if(ship[11] != '0') a+= '<br/>Capacité de saut intergalactique: <span class=value>'+ship[11]+'</span>';
-	if(ship[12] != '0') a+= '<br/>Capacité d\'invasion: <span class=value>'+ship[12]+'</span>';
-	a+= '</td></tr></table>';
-	return a;
-}
-
-
-function updateNeeds(){
-	var ore=0;
-	var hydrocarbon=0;
-	var energy=0;
-	var crew=0;
-	var totaltime=0;
-
-	var i,id,c;
-
-	for(i=0;i<shiplist.length;i++){
-		id = shiplist[i];
-		c = getval('s'+id);
-
-		ore += c * ships[id][13];
-		hydrocarbon += c * ships[id][14];
-		energy += c * ships[id][15];
-		crew += c * ships[id][16];
-		totaltime += c * ships[id][17];
-	}
-
-	$("totalore").innerHTML = formatnumber(ore);
-	$("totalhydrocarbon").innerHTML = formatnumber(hydrocarbon);
-	$("totalenergy").innerHTML = formatnumber(energy);
-	$("totalcrew").innerHTML = formatnumber(crew);
-	$("totaltime").innerHTML = formattime(totaltime);
-}
-    </script>
-    <script type="text/javascript"
-            src='/static/scripts/third-party/tooltip.js?v=1'></script>
-    <script>
-tipname = "hint";
-tipwidth = 600;
-tiptext = $("hinttext");
-    </script>
-    <div id="shipyard">
-        <form method="post" action="?f={{ filter }}&planet={{ planetid }}&a=bui1d">
-            {% csrf_token %}
-            <table class="default" width="800">
-                <tr class="header">
-                    <td>Vaisseau</td>
-                    <td width=100>Minerai</td>
-                    <td width=100>Hydrocarbure</td>
-                    <td width=80>Énergie</td>
-                    <td width=80>Équipage</td>
-                    <td width=90>Temps</td>
-                    <td width='1%'>Construction</td>
-                </tr>
-                {% if no_shipyard %}
-                    <tr>
-                        <td colspan=7>
-                            <p class="error">
-                                Aucun vaisseau n'est constructible.
-                            </p>
-                        </td>
-                    </tr>
-                {% endif %}
-                {% for category in categories %}
-                    <tr class="category">
-                        <td colspan=7>
-                            {% if category.id == 10 %}Vaisseaux utilitaires{% endif %}
-                            {% if category.id == 11 %}Vaisseaux de déploiement{% endif %}
-                            {% if category.id == 15 %}Vaisseaux tactiques{% endif %}
-                            {% if category.id == 20 %}Vaisseaux légers{% endif %}
-                            {% if category.id == 30 %}Corvettes{% endif %}
-                            {% if category.id == 40 %}Frégates{% endif %}
-                            {% if category.id == 50 %}Croiseurs{% endif %}
-                            {% if category.id == 60 %}Dreadnought{% endif %}
-                            {% if category.id == 80 %}Titan{% endif %}
-                            {% if category.id == 90 %}Plateforme de défense{% endif %}
-                            &nbsp;
-                        </td>
-                    </tr>
-                    {% for ship in category.ships %}
-                        <tr valign="middle" align="right" class="item">
-                            <td nowrap align="left">
-                                <table class="clear" width="100%">
-                                    <tr>
-                                        <td>
-                                            <a href="/s03/help/?cat=ships#{{ ship.id }}"
-                                               onmouseover="ddrivetip(descShip({{ ship.id }}))"
-                                               onmouseout="hideddrivetip()"><b>{{ ship.name }}</b></a>
-                                        </td>
-                                        <td align="right">
-                                            x{{ ship.quantity }}
-                                        </td>
-                                    </tr>
-                                    {% if ship.required_ship %}
-                                        <tr>
-                                            <td colspan=2 nowrap>
-                                                <p class="shiprequirement">
-                                                    Requiert {{ ship.required_ship_name }} (
-                                                    {% if none_available %}<span class=low>{% endif %}
-                                                    {{ ship.required_ship_available }}
-                                                    {% if ship.none_available %}</span>{% endif %}
-                                                    )
-                                                </p>
-                                            </td>
-                                        </tr>
-                                    {% endif %}
-                                    {% if ship.required_pp %}
-                                        <tr>
-                                            <td colspan=2 nowrap>
-                                                <p class="shiprequirement">
-                                                    Requiert {{ ship.required_pp }} points de prestige (
-                                                    {% if ship.required_pp_not_enough %}<span class=low>{% endif %}
-                                                    {{ ship.pp }}
-                                                    {% if ship.ship.required_pp_not_enough %}</span>{% endif %}
-                                                    )
-                                                </p>
-                                            </td>
-                                        </tr>
-                                    {% endif %}
-                                </table>
-                            </td>
-                            <td nowrap{% if ship.not_enough_ore %} class="notenough"{% endif %}>
-                                <img src="{{ PATH_IMAGES }}interface/ore.gif"
-                                     class="icon"
-                                     title="Minerai"
-                                     width="16"
-                                     height="16">
-                                {{ ship.ore|intcomma }}
-                            </td>
-                            <td nowrap
-                                {% if ship.not_enough_hydrocarbon %} class="notenough"{% endif %}>
-                                <img src="{{ PATH_IMAGES }}interface/hydrocarbon.gif"
-                                     class="icon"
-                                     title="Hydrocarbure"
-                                     width="16"
-                                     height="16">
-                                {{ ship.hydrocarbon|intcomma }}
-                            </td>
-                            <td nowrap{% if ship.not_enough_energy %} class="notenough"{% endif %}>
-                                <img src="{{ PATH_IMAGES }}interface/energy.gif"
-                                     class="icon"
-                                     title="Énergie"
-                                     width="16"
-                                     height="16">
-                                {{ ship.energy|intcomma }}
-                            </td>
-                            <td nowrap{% if ship.not_enough_crew %} class="notenough"{% endif %}>
-                                <img src="{{ PATH_IMAGES }}interface/workers.gif"
-                                     class="icon"
-                                     title="Équipage"
-                                     width="16"
-                                     height="16">
-                                {{ ship.crew|intcomma }}
-                            </td>
-                            <td align=center>
-                                {% if ship.construction_time %}<script>document.write(formattime({{ship.time }}));</script>{% endif %}
-                                {% if ship.no_construction_time %}-{% endif %}
-                            </td>
-                            <td align="center" style="padding:0;margin:0">
-                                {% if ship.build %}
-                                    <input type="number"
-                                           min="0"
-                                           name="s{{ ship.id }}"
-                                           onkeyup="updateNeeds()"
-                                           size="3"
-                                           maxlength="5"
-                                           style="height:18px">
-                                {% endif %}
-                                {% if ship.buildings_required %}
-                                    <div class="error2">
-                                        bâtiments requis
-                                    </div>
-                                {% endif %}
-                                {% if ship.notenoughresources %}
-                                    <div class="error">
-                                        ressources insuffisantes
-                                    </div>
-                                {% endif %}
-                                {% if ship.cant_build %}&nbsp;{% endif %}
-                            </td>
-                        </tr>
-                    {% endfor %}
-                {% endfor %}
-                {% if build %}
-                    <tr>
-                        <td>
-                            &nbsp;
-                        </td>
-                        <td align=right>
-                            <img src="{{ PATH_IMAGES }}interface/ore.gif"
-                                 class="icon"
-                                 title="Minerai"
-                                 width="16"
-                                 height="16">
-                            <span id="totalore">0</span>
-                        </td>
-                        <td align=right>
-                            <img src="{{ PATH_IMAGES }}interface/hydrocarbon.gif"
-                                 class="icon"
-                                 title="Hydrocarbure"
-                                 width="16"
-                                 height="16">
-                            <span id="totalhydrocarbon">0</span>
-                        </td>
-                        <td align=right>
-                            <img src="{{ PATH_IMAGES }}interface/energy.gif"
-                                 class="icon"
-                                 title="Énergie"
-                                 width="16"
-                                 height="16">
-                            <span id="totalenergy">0</span>
-                        </td>
-                        <td align=right>
-                            <img src="{{ PATH_IMAGES }}interface/workers.gif"
-                                 class="icon"
-                                 title="Équipage"
-                                 width="16"
-                                 height="16">
-                            <span id="totalcrew">0</span>
-                        </td>
-                        <td align=center>
-                            <span id="totaltime"><script>document.write(formattime(0));</script></span>
-                        </td>
-                        <td align=center>
-                            <input type="submit" value="Construire">
-                        </td>
-                    </tr>
-                {% endif %}
-                {% if nobuild %}
-                    <tr>
-                        <td colspan=8 class=clear>
-                            &nbsp;
-                        </td>
-                    </tr>
-                {% endif %}
-                {% if underconstructions|length > 0 %}
-                    <tr class="clear">
-                        <td colspan="7">
-                            &nbsp;
-                        </td>
-                    </tr>
-                    <tr class="category">
-                        <td colspan="7">
-                            En cours
-                        </td>
-                    </tr>
-                    {% for ship in underconstructions %}
-                        <tr align="right">
-                            <td align="left" nowrap colspan="1">
-                                <table class="clear" width="100%">
-                                    <tr>
-                                        <td>
-                                            {% if ship.recycle %}Recyclage de{% endif %}
-                                            <a href="/s03/help/?cat=ships#{{ ship.id }}"><b>{{ ship.name }}</b></a>
-                                        </td>
-                                        <td align="right">
-                                            x{{ ship.quantity }}
-                                        </td>
-                                    </tr>
-                                    {% if ship.required_ship %}
-                                        <tr>
-                                            <td colspan=2 nowrap>
-                                                <p class="shiprequirement">
-                                                    Requiert {{ ship.required_ship_name }}
-                                                </p>
-                                            </td>
-                                        </tr>
-                                    {% endif %}
-                                    {% if ship.required_pp %}
-                                        <tr>
-                                            <td colspan="2" nowrap>
-                                                <p class="shiprequirement">
-                                                    Requiert {{ship.required_pp} points de prestige
-                                                </p>
-                                            </td>
-                                        </tr>
-                                    {% endif %}
-                                </table>
-                            </td>
-                            <td nowrap>
-                                <img src="{{ PATH_IMAGES }}interface/ore.gif"
-                                     class="icon"
-                                     title="Minerai"
-                                     width="16"
-                                     height="16">
-                                {{ ship.ore|intcomma }}
-                            </td>
-                            <td nowrap>
-                                <img src="{{ PATH_IMAGES }}interface/hydrocarbon.gif"
-                                     class="icon"
-                                     title="Hydrocarbure"
-                                     width="16"
-                                     height="16">
-                                {{ ship.hydrocarbon|intcomma }}
-                            </td>
-                            <td nowrap>
-                                <img src="{{ PATH_IMAGES }}interface/energy.gif"
-                                     class="icon"
-                                     title="Énergie"
-                                     width="16"
-                                     height="16">
-                                {{ ship.energy|intcomma }}
-                            </td>
-                            <td nowrap>
-                                <img src="{{ PATH_IMAGES }}interface/workers.gif"
-                                     class="icon"
-                                     title="Équipage"
-                                     width="16"
-                                     height="16">
-                                {{ ship.crew|intcomma }}
-                            </td>
-                            <td align="center">
-                                <script>putcountdown1({{ship.remainingtime}},"&nbsp;");</script>
-                            </td>
-                            <td align="center">
-                                <script>putcountdown2({{ship.remainingtime}}, "{% if ship.recycle %}&nbsp;{% endif %}{% if ship.cancel %}<a href='?f={{filter}}&planet={{planetid}}&a=cancel&q={{ship.queueid}}'>annuler</a>{% endif %}", "<a href='/s03/shipyard/?planet={{planetid}}&f={{filter}}'>terminé</a>");</script>
-                            </td>
-                        </tr>
-                    {% endfor %}
-                {% endif %}
-                {% if queues|length > 0 %}
-                    <tr class="clear">
-                        <td colspan="7">
-                            &nbsp;
-                        </td>
-                    </tr>
-                    <tr class="category">
-                        <td colspan="7">
-                            En queue
-                        </td>
-                    </tr>
-                    {% for ship in queues %}
-                        <tr align="right">
-                            <td align="left" colspan="1">
-                                <table class="clear" width="100%">
-                                    <tr>
-                                        <td>
-                                            {% if ship.recycle %}Recyclage de{% endif %}
-                                            <a href="/s03/help/?cat=ships#{{ ship.id }}"><b>{{ ship.name }}</b></a>
-                                        </td>
-                                        <td align="right">
-                                            x{{ ship.quantity }}
-                                        </td>
-                                    </tr>
-                                    {% if ship.required_ship %}
-                                        <tr>
-                                            <td colspan=2 nowrap>
-                                                <p class="shiprequirement">
-                                                    Requiert {{ ship.required_ship_name }}
-                                                </p>
-                                            </td>
-                                        </tr>
-                                    {% endif %}
-                                    {% if ship.required_pp %}
-                                        <tr>
-                                            <td colspan="2" nowrap>
-                                                <p class="shiprequirement">
-                                                    Requiert {{ ship.required_pp }} points de prestige
-                                                </p>
-                                            </td>
-                                        </tr>
-                                    {% endif %}
-                                </table>
-                            </td>
-                            <td nowrap>
-                                <img src="{{ PATH_IMAGES }}interface/ore.gif"
-                                     class="icon"
-                                     title="Minerai"
-                                     width="16"
-                                     height="16">
-                                {{ ship.ore|intcomma }}
-                            </td>
-                            <td nowrap>
-                                <img src="{{ PATH_IMAGES }}interface/hydrocarbon.gif"
-                                     class="icon"
-                                     title="Hydrocarbure"
-                                     width="16"
-                                     height="16">
-                                {{ ship.hydrocarbon|intcomma }}
-                            </td>
-                            <td nowrap>
-                                <img src="{{ PATH_IMAGES }}interface/energy.gif"
-                                     class="icon"
-                                     title="Énergie"
-                                     width="16"
-                                     height="16">
-                                {{ ship.energy|intcomma }}
-                            </td>
-                            <td nowrap>
-                                <img src="{{ PATH_IMAGES }}interface/workers.gif"
-                                     class="icon"
-                                     title="Équipage"
-                                     width="16"
-                                     height="16">
-                                {{ ship.crew|intcomma }}
-                            </td>
-                            <td align="center">
-                                <script language="javascript">document.write(formattime({{ship.remainingtime}}));</script>
-                            </td>
-                            <td align="center">
-                                <a href="?f={{ filter }}&planet={{ planetid }}&a=cancel&q={{ ship.queueid }}">annuler</a>
-                            </td>
-                        </tr>
-                    {% endfor %}
-                {% endif %}
-            </table>
-        </form>
+{% if no_shipyard %}
+    <div class="text-center">
+        <span class="text-danger">Aucun vaisseau n'est constructible</span>
     </div>
+{% else %}
+    {% if underconstructions|length > 0 %}
+        <div class="card mb-3">
+            <div class="card-header">
+                <span class="fs-6">En cours</span>
+            </div>
+            <div class="list-group list-group-flush">
+                {% for ship in underconstructions %}
+                    <div class="list-group-item bg-success">
+                        <div class="row gx-3 align-items-center">
+                            <div class="col">
+                                <a href="/s03/help/?cat=ships#{{ ship.id }}" class="{% if ship.recycle %}text-danger{% endif %}" data-bs-toggle="tooltip" data-bs-title="Voir aide">{{ ship.name }}</a>
+                            </div>
+                            <div class="col-auto">
+                                <span class="text-yellow"><script>putcountdown1({{ ship.remainingtime }}, "");</script></span>
+                            </div>
+                            {% if not ship.recycle %}
+                            <div class="col-auto">
+                                <script>putcountdown2({{ ship.remainingtime }}, "<a href='?f={{filter}}&planet={{planetid}}&a=cancel&q={{ship.queueid}}' class='text-danger' data-bs-toggle='tooltip' data-bs-title='Annuler'><i class='fa-fw fas fa-times'></i></a>", "<a href='/s03/shipyard/?planet={{planetid}}&f={{filter}}'>Terminé</a>");</script>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
+                {% for ship in queues %}
+                    <div class="list-group-item">
+                        <div class="row gx-3 align-items-center">
+                            <div class="col">
+                                <div class="row gx-1 align-items-center">
+                                    <div class="col-auto">
+                                        <a href="/s03/help/?cat=ships#{{ ship.id }}" class="{% if ship.recycle %}text-danger{% endif %}" data-bs-toggle="tooltip" data-bs-title="Voir aide">{{ ship.name }}</a>
+                                    </div>
+                                    {% if ship.required_ship_name %}
+                                        <div class="col-auto ps-3">
+                                            <small class="text-normal">Upgrade {{ ship.required_ship_name }}</small>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                           </div>
+                            {% if ship.pp > 0 %}
+                            <div class="col-auto">
+                                <img src="{{ PATH_IMAGES }}interface/prestige.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Prestige" />
+                                <span class="{% if ship.required_pp_not_enough %}text-danger{% endif %}">{{ ship.pp|intcomma }}</span>
+                            </div>
+                            {% endif %}
+                            <div class="col-auto">
+                                {% if ship.quantity > 0 %}
+                                    <small class="text-normal">x</small>
+                                    {{ ship.quantity|intcomma }}
+                                {% endif %}
+                            </div>
+                            <div class="col-auto" style="width:100px;">
+                                <img src="{{ PATH_IMAGES }}interface/ore.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Minerai" />
+                                <span class="{% if ship.not_enough_ore %}text-danger{% endif %}">{{ ship.ore|intcomma }}</span>
+                            </div>
+                            <div class="col-auto" style="width:100px;">
+                                <img src="{{ PATH_IMAGES }}interface/hydrocarbon.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Hydrocarbure" />
+                                <span class="{% if ship.not_enough_hydrocarbon %}text-danger{% endif %}">{{ ship.hydrocarbon|intcomma }}</span>
+                            </div>
+                            <div class="col-auto" style="width:100px;">
+                                <img src="{{ PATH_IMAGES }}interface/energy.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Energie" />
+                                <span class="{% if ship.not_enough_energy %}text-danger{% endif %}">{{ ship.energy|intcomma }}</span>
+                            </div>
+                            <div class="col-auto" style="width:85px;">
+                                {% if ship.crew > 0 %}
+                                    <img src="{{ PATH_IMAGES }}interface/workers.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Travailleur" />
+                                    <span class="{% if ship.not_enough_crew %}text-danger{% endif %}">{{ ship.crew|intcomma }}</span>
+                                {% endif %}
+                            </div>
+                            <div class="col-auto text-end" style="width:140px;">
+                                <script>document.write(formattime({{ship.remainingtime }}))</script>
+                            </div>
+                            <div class="col-auto text-end">
+                                <a href="?f={{ filter }}&planet={{ planetid }}&a=cancel&q={{ ship.queueid }}" class="text-danger" data-bs-toggle="tooltip" data-bs-title="Annuler"><i class="fa-fw fas fa-times"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+    <form method="post" action="?f={{ filter }}&planet={{ planetid }}&a=bui1d">
+        {% csrf_token %}
+        {% for category in categories %}
+            <div class="card mb-3">
+                <div class="card-header">
+                    <span class="fs-6">
+                        {% if category.id == 10 %}Vaisseaux utilitaires{% endif %}
+                        {% if category.id == 11 %}Vaisseaux de déploiement{% endif %}
+                        {% if category.id == 15 %}Vaisseaux tactiques{% endif %}
+                        {% if category.id == 20 %}Vaisseaux légers{% endif %}
+                        {% if category.id == 30 %}Corvettes{% endif %}
+                        {% if category.id == 40 %}Frégates{% endif %}
+                        {% if category.id == 50 %}Croiseurs{% endif %}
+                        {% if category.id == 60 %}Dreadnought{% endif %}                    
+                    </span>
+                </div>
+                <div class="list-group list-group-flush">
+                    {% for ship in category.ships %}
+                        <div class="list-group-item">
+                            <div class="row gx-3 align-items-center">
+                                <div class="col">
+                                    <div class="row gx-1 align-items-center">
+                                        {% if not ship.required_ship_name %}
+                                            <div class="col-auto">
+                                                <span class="text-normal"><i class="fa-fw fas fa-question-circle" data-bs-toggle="tooltip" data-bs-html="true" data-bs-title="
+                                                    <div class='mb-1'><span class='fs-6'>Description</span></div>
+                                                    <div class='mb-3'><span class='text-normal'>{{ ship.description|escape }}</span></div>
+                                                    <div class='mb-1'><span class='fs-6'>Caractéristiques</span></div>
+                                                    <div class='row gx-3 gy-1'>
+                                                        {% if ship.building %}
+                                                            <div class='col-auto'>
+                                                                <small class='text-normal'>Bâtiment</small>
+                                                                <span class='text-white'>{{ ship.building }}</span>
+                                                            </div>
+                                                        {% endif %}
+                                                        <div class='col-auto'>
+                                                            <small class='text-normal'>Entretien</small>
+                                                            <img src='{{ PATH_IMAGES }}interface/credits.gif' width='16px' height='16px' />
+                                                            <span class='text-white'>{{ ship.upkeep|intcomma }}</span>
+                                                        </div>
+                                                        <div class='col-auto'>
+                                                            <small class='text-normal'>Signature</small>
+                                                            <span class='text-white'>{{ ship.ship_signature|intcomma }}</span>
+                                                        </div>
+                                                        {% if ship.ship_cargo > 0 %}
+                                                            <div class='col-auto'>
+                                                                <small class='text-normal'>Cargo</small>
+                                                                <span class='text-white'>{{ ship.ship_cargo|intcomma }}</span>
+                                                            </div>
+                                                        {% endif %}
+                                                        <div class='col-auto'>
+                                                            <small class='text-normal'>Vitesse</small>
+                                                            <span class='text-white'>{{ ship.ship_speed|intcomma }}</span>
+                                                        </div>
+                                                        <div class='col-auto'>
+                                                            <small class='text-normal'>Manœuvrabilité</small>
+                                                            <span class='text-white'>{{ ship.ship_handling|intcomma }}</span>
+                                                        </div>
+                                                        <div class='col-auto'>
+                                                            <small class='text-normal'>Stabilité</small>
+                                                            <span class='text-white'>{{ ship.ship_required_vortex_strength|intcomma }}</span>
+                                                        </div>
+                                                        {% if ship.ship_leadership > 0 %}
+                                                            <div class='col-auto'>
+                                                                <small class='text-normal'>Commandement</small>
+                                                                <span class='text-white'>{{ ship.ship_leadership|intcomma }}</span>
+                                                            </div>
+                                                        {% endif %}
+                                                        <div class='col-auto'>
+                                                            <small class='text-normal'>Armure</small>
+                                                            <span class='text-white'>{{ ship.ship_hull|intcomma }}</span>
+                                                        </div>
+                                                        {% if ship.ship_turrets > 0 %}
+                                                            <div class='col-auto'>
+                                                                <small class='text-normal'>Dommage</small>
+                                                                <span class='text-white'>{{ ship.ship_turrets|intcomma }} <small class='text-normal'>x</small> {{ ship.ship_power|intcomma }}</span>
+                                                            </div>
+                                                            <div class='col-auto'>
+                                                                <small class='text-normal'>Ciblage</small>
+                                                                <span class='text-white'>{{ ship.ship_tracking_speed|intcomma }}</span>
+                                                            </div>
+                                                        {% endif %}
+                                                        {% if ship.ship_shield > 0 %}
+                                                            <div class='col-auto'>
+                                                                <small class='text-normal'>Bouclier</small>
+                                                                <span class='text-white'>{{ ship.ship_shield|intcomma }}</span>
+                                                            </div>
+                                                        {% endif %}
+                                                        {% if ship.ship_recycler_output > 0 %}
+                                                            <div class='col-auto'>
+                                                                <small class='text-normal'>Recyclage</small>
+                                                                <span class='text-white'>{{ ship.ship_recycler_output|intcomma }}</span>
+                                                            </div>
+                                                        {% endif %}
+                                                        {% if ship.ship_long_distance_capacity > 0 %}
+                                                            <div class='col-auto'>
+                                                                <small class='text-normal'>Saut</small>
+                                                                <span class='text-white'>{{ ship.ship_long_distance_capacity|intcomma }}</span>
+                                                            </div>
+                                                        {% endif %}
+                                                        {% if ship.ship_droppods > 0 %}
+                                                            <div class='col-auto'>
+                                                                <small class='text-normal'>Invasion</small>
+                                                                <span class='text-white'>{{ ship.ship_droppods|intcomma }}</span>
+                                                            </div>
+                                                        {% endif %}
+                                                    </div>
+                                                "></i></span>
+                                            </div>
+                                        {% endif %}
+                                        <div class="col-auto">
+                                            <a href="/s03/help/?cat=ships#{{ ship.id }}" data-bs-toggle="tooltip" data-bs-title="Voir aide">{{ ship.name }}</a>
+                                        </div>
+                                        {% if ship.required_ship_name %}
+                                            <div class="col-auto ps-3">
+                                                <small class="text-normal">Upgrade {{ ship.required_ship_name }}</small>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                {% if ship.pp > 0 %}
+                                <div class="col-auto">
+                                    <img src="{{ PATH_IMAGES }}interface/prestige.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Prestige" />
+                                    <span class="{% if ship.required_pp_not_enough %}text-danger{% endif %}">{{ ship.pp|intcomma }}</span>
+                                </div>
+                                {% endif %}
+                                <div class="col-auto">
+                                    {% if ship.quantity > 0 %}
+                                        <small class="text-normal">x</small>
+                                        {{ ship.quantity|intcomma }}
+                                    {% endif %}
+                                </div>
+                                <div class="col-auto" style="width:100px;">
+                                    <img src="{{ PATH_IMAGES }}interface/ore.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Minerai" />
+                                    <span class="{% if ship.not_enough_ore %}text-danger{% endif %}">{{ ship.ore|intcomma }}</span>
+                                </div>
+                                <div class="col-auto" style="width:100px;">
+                                    <img src="{{ PATH_IMAGES }}interface/hydrocarbon.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Hydrocarbure" />
+                                    <span class="{% if ship.not_enough_hydrocarbon %}text-danger{% endif %}">{{ ship.hydrocarbon|intcomma }}</span>
+                                </div>
+                                <div class="col-auto" style="width:100px;">
+                                    <img src="{{ PATH_IMAGES }}interface/energy.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Energie" />
+                                    <span class="{% if ship.not_enough_energy %}text-danger{% endif %}">{{ ship.energy|intcomma }}</span>
+                                </div>
+                                <div class="col-auto" style="width:85px;">
+                                    {% if ship.crew > 0 %}
+                                        <img src="{{ PATH_IMAGES }}interface/workers.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Travailleur" />
+                                        <span class="{% if ship.not_enough_crew %}text-danger{% endif %}">{{ ship.crew|intcomma }}</span>
+                                    {% endif %}
+                                </div>
+                                <div class="col-auto text-end">
+                                    <script>document.write(formattime({{ship.time }}))</script>
+                                </div>
+                                <div class="col-auto text-end" style="width:110px;">
+                                    {% if ship.build %}
+                                        <input type="number" class="form-control" style="max-width:100%;" min="0" name="s{{ ship.id }}" onkeyup="updateNeeds()" size="3" maxlength="5" />
+                                    {% elif ship.buildings_required %}
+                                        <span class="text-danger">Bâtiments requis</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endfor %}
+        {% if build %}
+            <div class="card card-body">
+                <div class="row gx-3 align-items-center justify-content-end">
+                    <div class="col-auto" style="width:100px;">
+                        <img src="{{ PATH_IMAGES }}interface/ore.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Minerai" />
+                        <span id="totalore">0</span>
+                    </div>
+                    <div class="col-auto" style="width:100px;">
+                        <img src="{{ PATH_IMAGES }}interface/hydrocarbon.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Hydrocarbure" />
+                        <span id="totalhydrocarbon">0</span>
+                    </div>
+                    <div class="col-auto" style="width:100px;">
+                        <img src="{{ PATH_IMAGES }}interface/energy.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Energie" />
+                        <span id="totalenergy">0</span>
+                    </div>
+                    <div class="col-auto" style="width:85px;">
+                        <img src="{{ PATH_IMAGES }}interface/workers.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Travailleur" />
+                        <span id="totalcrew">0</span>
+                    </div>
+                    <div class="col-auto">
+                        <span id="totaltime"><script>document.write(formattime(0));</script></span>
+                    </div>
+                    <div class="col-auto" style="width:110px;">
+                        <input type="submit" class="w-100 btn btn-primary" value="Construire" />
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    </form>
+{% endif %}
 {% endblock %}
