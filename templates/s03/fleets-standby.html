@@ -1,26 +1,35 @@
 {% extends "s03/layout.html" %}
 {% load humanize %}
 {% block content %}
-    <div id="fleets">
-        <table class="default" width="450">
-            <tr class="header">
-                <td>Planète</td>
-                <td>Vaisseaux</td>
-            </tr>
-            {% for planet in planets %}
-                <tr class="smallitem">
-                    <td>
-                        <b><a href="/s03/orbit/?planet={{ planet.planetid }}">{{ planet.planetname }}</a>&nbsp;<a href="/s03/map/?g={{ planet.g }}&s={{ planet.s }}&p={{ planetp }}">({{ planet.g }}.{{ planet.s }}.{{ planet.p }})</a></b>
-                    </td>
-                    <td align=left>
-                        {% for ship in planet.ships %}<div>{{ ship.ship }} x{{ ship.quantity|intcomma }}</div>{% endfor %}
-                    </td>
-                </tr>
-            {% empty %}
-                <tr class="smallitem">
-                    <td colspan="3" align="center">Aucun vaisseau en attente</td>
-                </tr>
-            {% endfor %}
-        </table>
-    </div>
+<div class="row g-3" data-masonry='{"percentPosition": true }'>
+    {% for planet in planets %}
+        <div class="col-4">
+            <div class="card">
+                <div class="card-header">
+                    <div class="row gx-3">
+                        <div class="col"><a href="/s03/orbit/?planet={{ planet.planetid }}" data-bs-toggle="tooltip" data-bs-title="Voir orbite">{{ planet.planetname }}</a></div>
+                        <div class="col-auto"><a href="/s03/map/?g={{ planet.g }}&s={{ planet.s }}&p={{ planetp }}" data-bs-toggle="tooltip" data-bs-title="Carte spatiale">{{ planet.g }}.{{ planet.s }}.{{ planet.p }}</a></div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row g-1 flex-column">
+                        {% for ship in planet.ships %}
+                            <div class="col-12">
+                                <div class="row gx-3">
+                                    <div class="col"><span class="text-normal">{{ ship.ship }}</span></div>
+                                    <div class="col-auto">{{ ship.quantity|intcomma }}</div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% empty %}
+        <div class="col-12 text-center">
+            <span class="text-normal">Aucun vaisseau en attente</span>
+        </div>
+    {% endfor %}
+</div>
+<script src="https://cdn.jsdelivr.net/npm/masonry-layout@4.2.2/dist/masonry.pkgd.min.js" integrity="sha384-GNFwBvfVxBkLMJpYMOABq3c+d3KnQxudP/mGPkzpZSTYykLBNsZEnG2D9G/X/+7D" crossorigin="anonymous" async></script>
 {% endblock %}
