@@ -35,13 +35,12 @@
         $("totaltime").innerHTML = formattime(totaltime);
     }
 </script>
-
 {% if no_shipyard %}
     <div class="text-center">
         <span class="text-danger">Aucun vaisseau n'est constructible</span>
     </div>
 {% else %}
-    {% if underconstructions|length > 0 %}
+    {% if underconstructions|length > 0 or queues|length > 0 %}
         <div class="card mb-3">
             <div class="card-header">
                 <span class="fs-6">En cours</span>
@@ -78,7 +77,7 @@
                                         </div>
                                     {% endif %}
                                 </div>
-                           </div>
+                            </div>
                             {% if ship.pp > 0 %}
                             <div class="col-auto">
                                 <img src="{{ PATH_IMAGES }}interface/prestige.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Prestige" />
@@ -100,8 +99,10 @@
                                 <span class="{% if ship.not_enough_hydrocarbon %}text-danger{% endif %}">{{ ship.hydrocarbon|intcomma }}</span>
                             </div>
                             <div class="col-auto" style="width:100px;">
-                                <img src="{{ PATH_IMAGES }}interface/energy.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Energie" />
-                                <span class="{% if ship.not_enough_energy %}text-danger{% endif %}">{{ ship.energy|intcomma }}</span>
+                                {% if ship.energy > 0 %}
+                                    <img src="{{ PATH_IMAGES }}interface/energy.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Energie" />
+                                    <span class="{% if ship.not_enough_energy %}text-danger{% endif %}">{{ ship.energy|intcomma }}</span>
+                                {% endif %}
                             </div>
                             <div class="col-auto" style="width:85px;">
                                 {% if ship.crew > 0 %}
