@@ -164,7 +164,6 @@ class View(GlobalView):
         if offset < 0: offset=0
 
         search_cond = ""
-        if self.request.session.get(sPrivilege) < 100: search_cond = "not deleted AND "
 
         # get total number of mails that could be displayed
         query = "SELECT count(1) FROM messages WHERE "+search_cond+" ownerid = " + str(self.UserId)
@@ -269,8 +268,6 @@ class View(GlobalView):
                 item["to_admins"] = True
             elif oRs[11] == ":alliance":
                 item["to_alliance"] = True
-
-            if self.request.session.get(sPrivilege) > 100: item["admin"] = True
 
             i = i + 1
 

@@ -358,9 +358,6 @@ class View(GlobalView):
                 category['buildings'].append(building)
     
         content.AssignValue("categories", categories)
-    
-        if self.request.session.get(sPrivilege) > 100: content.Parse("dev")
-        if self.UserId==1009: content.Parse("dev")
         
         return self.Display(content)
     

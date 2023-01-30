@@ -104,10 +104,6 @@ class View(GlobalView):
 
         # update user lastactivity in the DB and retrieve users online only every 3 minutes
         if refresh_userlist:
-            if self.request.session.get(sPrivilege) < 100:    # prevent admin from showing their presence in chat
-                connExecuteRetryNoRecords("INSERT INTO chat_onlineusers(chatid, userid) VALUES(" + str(chatid) + "," + str(self.UserId) + ")")
-
-            # self.request.session["lastchatactivity_" + str(chatid)] = timezone.now()
 
             # retrieve online users in chat
             query = "SELECT users.alliance_id, users.username, date_part('epoch', now()-chat_onlineusers.lastactivity)" + \
