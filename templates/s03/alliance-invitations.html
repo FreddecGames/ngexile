@@ -1,99 +1,63 @@
 {% extends "s03/layout.html" %}
 {% load humanize %}
 {% block content %}
-    <table class="default" width="700">
-        <tr class="title">
-            <td colspan="4">Alliances nous invitant à les rejoindre</td>
-        </tr>
-        <tr class="header">
-            <td>Alliance</td>
-            <td>Réception de l'offre</td>
-            <td>Recruteur</td>
-            <td>Réponse</td>
-        </tr>
+<div class="card">
+    <div class="card-header">
+        <span class="fs-6">Alliances nous invitant à les rejoindre</span>
+    </div>
+    <div class="list-group list-group-flush">
         {% for invitation in invitations %}
-            <tr>
-                <td>
-                    <a href="/s03/alliance/?tag={{ invitation.tag }}">[{{ invitation.tag }}] {{ invitation.name }}</a>
-                </td>
-                <td>{{ invitation.date }}</td>
-                <td>{{ invitation.recruiter }}</td>
-                <td align=center>
-                    {% if invitation.accept %}<a href="?a=accept&tag={{ invitation.tag }}">Accepter</a>{% endif %}
-                    {% if invitation.cant_accept %}<span class="error">Déjà dans une alliance</span>{% endif %}
-                    {% if invitation.cant_join %}<span class="error">Impossible de rejoindre</span>{% endif %}
-                    - <a href="?a=decline&tag={{ invitation.tag }}">Refuser</a>
-                </td>
-            </tr>
+            <div class="list-group-item">
+                <div class="row gx-3 align-items-center">
+                    <div class="col"><a href="/s03/alliance/?tag={{ invitation.tag }}" data-bs-toggle="tooltip" data-bs-title="Voir alliance">[{{ invitation.tag }}] {{ invitation.name }}</a></div>
+                    <div class="col-auto">{{ invitation.recruiter }}</div>
+                    <div class="col-auto">{{ invitation.date }}</div>
+                    <div class="col-2 text-end">
+                        {% if invitation.accept %}<a href="?a=accept&tag={{ invitation.tag }}" class="btn btn-primary">Accepter</a>{% endif %}
+                        {% if invitation.cant_accept %}<span class="text-danger">Déjà dans une alliance</span>{% endif %}
+                        {% if invitation.cant_join %}<span class="text-danger">Impossible de rejoindre</span>{% endif %}
+                    </div>
+                    <div class="col-auto">
+                        <a href="?a=decline&tag={{ invitation.tag }}" class="btn btn-danger">Refuser</a>
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <div class="list-group-item text-center">
+                <span class="text-normal">Aucune invitation</span>
+            </div>
         {% endfor %}
-        {% if noinvitations %}
-            <tr>
-                <td colspan="4" align="center">Aucune invitation</td>
-            </tr>
+        {% if cant_join %}
+            <div class="list-group-item text-center">
+                <span class="text-danger">Vous êtes actuellement en train de quitter votre ancienne alliance, il vous est actuellement impossible de rejoindre une autre alliance.</span>
+            </div>
         {% endif %}
-        {% if max_members_reached %}
-            <tr class="item">
-                <td colspan="4" align="center" class="warning">
-                    Impossible de rejoindre l'alliance, elle a atteint son nombre maximal de membres.
-                </td>
-            </tr>
-        {% endif %}
-        {% if cant_rejoin_previous_alliance %}
-            <tr class="item">
-                <td colspan="4" align="center" class="warning">
-                    Impossible de rejoindre cette alliance pour le moment, vous devez attendre plusieurs jours avant de pouvoir la rejoindre à nouveau.
-                </td>
-            </tr>
-        {% endif %}
-    </table>
-    {% if cant_join %}
-        <table class="default" width="700">
-            <tr class="item">
-                <td>
-                    <span class="warning">Vous êtes actuellement en train de quitter votre ancienne alliance, il vous est actuellement impossible de rejoindre une autre alliance.</span>
-                </td>
-            </tr>
-        </table>
-    {% endif %}
-    {% if leave %}
-        <br/>
-        <form action="?a=leave" method="post">
-            {% csrf_token %}
-            <table class="default" width=700>
-                <tr class="title">
-                    <td>Quitter l'alliance</td>
-                </tr>
-                <tr class="smallitem">
-                    <td align=center>
-                        <input type="checkbox" class="checkbox" name="leave" id="leave" value="1">
-                        <label for="leave">
-                            Je quitte mon alliance actuelle
-                            {% if charges %}, les frais s'élevant à {{ credits|intcomma }}&nbsp;crédits{% endif %}
-                            .
-                        </label>
-                        <br/>
-                        <br/>
-                        <span class="warning">Attention, vous ne pourrez pas créer ou rejoindre d'alliance pendant {{ hours_before_rejoin }} heures.</span>
-                    </td>
-                </tr>
-                <tr class="smallitem">
-                    <td align=center>
-                        <input type="submit" name="submit" value="Valider">
-                    </td>
-                </tr>
-                {% if too_many_leaving %}
-                    <tr>
-                        <td class="error">
-                            Trop de membres sont déjà en train de quitter l'alliance, vous devez attendre avant de pouvoir quitter à votre tour
-                        </td>
-                    </tr>
-                {% endif %}
-                {% if not_enough_credits %}
-                    <tr>
-                        <td class="error">Fonds insuffisants</td>
-                    </tr>
-                {% endif %}
-            </table>
-        </form>
-    {% endif %}
+    </div>
+</div>
+{% if leave %}
+    <form action="?a=leave" method="post">
+        {% csrf_token %}
+        <div class="mt-3 card">
+            <div class="card-header">
+                <span class="fs-6">Quitter l'alliance</span>
+            </div>
+            <div class="card-body">
+                <div class="row g-1 flex-column">
+                    <div class="col-12 d-flex justify-content-center">
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input" name="leave" id="leave" value="1">
+                            <label class="form-check-label" for="leave">Je quitte mon alliance actuelle</label>
+                        </div>
+                    </div>
+                    <div class="col-12 text-center">
+                        <span class="text-danger">Attention, vous ne pourrez pas créer ou rejoindre d'alliance pendant 24 heures.</span>
+                    </div>
+                    <div class="col-12 text-center">
+                        <input type="submit" class="btn btn-primary" name="submit" value="Valider">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+{% endif %}
 {% endblock %}

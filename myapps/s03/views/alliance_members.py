@@ -80,7 +80,7 @@ class View(GlobalView):
             reversed = False
 
         ParseR = False
-        if self.request.GET.get("r") != "":
+        if self.request.GET.get("r", "") != "":
             reversed = not reversed
         else:
             ParseR = True
@@ -121,6 +121,7 @@ class View(GlobalView):
             content.Parse("viewonly")
 
         if ParseR: content.Parse("r" + str(col))
+        content.AssignValue("col", col)
 
         totalColonies = 0
         totalCredits = 0

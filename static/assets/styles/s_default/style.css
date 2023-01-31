@@ -783,6 +783,18 @@ a:hover, a:focus { text-decoration: none; }
     color: #ffffff;
 }
 
+.form-check {
+    min-height: auto!important;
+}
+.form-check-input:focus {
+    border-color: #ffa500;
+    box-shadow: none;
+}
+.form-check-input:checked {
+    background-color: #ffa500;
+    border-color: #ffa500;
+}
+
 .form-control {
     display: block;
     width: 100%;

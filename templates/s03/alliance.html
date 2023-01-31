@@ -2,109 +2,69 @@
 {% load humanize %}
 {% load bbcode_tags %}
 {% block content %}
-    <div id="alliance">
-        {% if noalliance %}
-            <a href="/s03/alliance-create/">Créer une alliance</a>
-            <br/>
-            <a href="/s03/alliance-invitations/">Invitations reçues</a>
-            <br/>
-        {% endif %}
-        {% if display %}
-            <table class="default">
-                <tr class="bigtitle">
-                    <td>[{{ tag }}] {{ name }}</td>
-                </tr>
-                {% if logo %}
-                    <tr class="item">
-                        <td align=center>
-                            <img src="{{ logo_url }}" class="logo">
-                        </td>
-                    </tr>
-                {% endif %}
-                {% if description %}
-                    <tr class="item">
-                        <td>
-                            <p>{{ description|safe|bbcode }}</p>
-                        </td>
-                    </tr>
-                {% endif %}
-                {% for rank in ranks %}
-                    <tr class="item">
-                        <td>
-                            <div id="stats">
-                                <span class="label">{{ rank.rank_label }}:</span> <span class="value">
-                                    {% for member in rank.members %}
-                                        {% if member.first %}<a href="/s03/mails/?to={{ member.member }}">{{ member.member }}</a>{% endif %}
-                                        {% if member.other %}, <a href="/s03/mails/?to={{ member.member }}">{{ member.member }}</a>{% endif %}
-                                    {% endfor %}
-                                </span>
-                            </div>
-                        </td>
-                    </tr>
-                {% endfor %}
-                <tr class="item">
-                    <td>
-                        <div id="stats">
-                            <span class="label">Nombre de membres:</span> <span class="value">{{ members }} / {{ max_members }}</span>
-                        </div>
-                    </td>
-                </tr>
-                {% if website %}
-                    <tr class="item">
-                        <td>
-                            <div id="stats">
-                                <span class="label">Site web:</span> <span class="value"><a href="{{ website_url }}">{{ website_url }}</a></span>
-                            </div>
-                        </td>
-                    </tr>
-                {% endif %}
-                <tr>
-                    <td>
-                        <table class="clear">
-                            <tr valign="top">
-                                <td>
-                                    <table width="300">
-                                        <tr class="title">
-                                            <td>Pacte(s) de non-aggression</td>
-                                        </tr>
-                                        {% for nap in naps %}
-                                            <tr class="smallitem">
-                                                <td>
-                                                    <a href="/s03/alliance/?tag={{ nap.naptag }}">[{{ nap.naptag }}] {{ nap.napname }}</a>
-                                                </td>
-                                            </tr>
-                                        {% endfor %}
-                                        {% if nonaps %}
-                                            <tr>
-                                                <td align=center>Aucun</td>
-                                            </tr>
-                                        {% endif %}
-                                    </table>
-                                </td>
-                                <td>
-                                    <table>
-                                        <tr class="title">
-                                            <td>Guerres en cours</td>
-                                        </tr>
-                                        {% for war in wars %}
-                                            <tr class="smallitem">
-                                                <td>
-                                                    <a href="/s03/alliance/?tag={{ war.wartag }}">[{{ war.wartag }}] {{ war.warname }}</a>
-                                                </td>
-                                            </tr>
-                                        {% endfor %}
-                                        {% if nowars %}
-                                            <tr>
-                                                <td align=center>Aucune</td>
-                                            </tr>
-                                        {% endif %}
-                                    </table>
-                                </td>
-                            </tr>
-                        </table>
-                    </td>
-                </tr>
-            </table>
-        {% endif %}
+<div class="card">
+    <div class="card-header text-center">
+        <span class="fs-6">[{{ tag }}] {{ name }}</span>
     </div>
+    <div class="list-group list-group-flush">
+        {% if logo %}
+            <div class="list-group-item text-center">
+                <img src="{{ logo_url }}" />
+            </div>
+        {% endif %}
+        {% if description %}
+            <div class="list-group-item text-center">
+                {{ description|safe|bbcode }}
+            </div>
+        {% endif %}
+        <div class="list-group-item text-center">
+            <div class="row g-1 flex-column">
+                {% for rank in ranks %}
+                    <div class="col-12">
+                        <div class="row gx-3 justify-content-center">
+                            <div class="col-auto"><span class="text-normal">{{ rank.rank_label }}</span></div>
+                            {% for member in rank.members %}
+                                <div class="col-auto"><a href="/s03/mails/?to={{ member.member }}" data-bs-toggle="tooltip" data-bs-title="Envoyer message">{{ member.member }}</a></div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="list-group-item">
+            <div class="row gx-3 justify-content-center">
+                <div class="col-auto"><span class="text-normal">Nombre de membres</span></div>
+                <div class="col-auto">{{ members }} <small class="text-normal">/{{ max_members }}</small></div>
+            </div>
+        </div>
+        <div class="list-group-item">
+            <div class="row gx-3">
+                <div class="col-6">
+                    <div class="mb-1 text-center">
+                        <span class="text-normal">Pacte(s) de non-aggression</span>
+                    </div>
+                    <div class="row g-1 justify-content-center">
+                        {% for nap in naps %}
+                            <div class="col-auto"><a href="/s03/alliance/?tag={{ nap.naptag }}" data-bs-toggle="tooltip" data-bs-title="Voir alliance">[{{ nap.naptag }}] {{ nap.napname }}</a></div>
+                        {% empty %}
+                            <div class="col-auto"><span class="text-normal">Aucun</span></div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="mb-1 text-center">
+                        <span class="text-normal">Guerres en cours</span>
+                    </div>
+                    <div class="row g-1 justify-content-center">
+                        {% for war in wars %}
+                            <div class="col-auto"><a href="/s03/alliance/?tag={{ war.wartag }}" data-bs-toggle="tooltip" data-bs-title="Voir alliance">[{{ war.wartag }}] {{ war.warname }}</a></div>
+                        {% empty %}
+                            <div class="col-auto"><span class="text-normal">Aucune</span></div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
