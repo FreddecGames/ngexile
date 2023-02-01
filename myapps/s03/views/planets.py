@@ -22,7 +22,7 @@ class View(GlobalView):
         #
         col = ToInt(self.request.GET.get("col"), 0)
 
-        if col < 0 or col > 4: col = 0
+        if col < 0 or col > 5: col = 0
 
         reversed = False
         if col == 0:
@@ -42,6 +42,7 @@ class View(GlobalView):
             reversed = not reversed
         else:
             content.Parse("r" + str(col))
+        content.AssignValue('col', col)
 
         if reversed: orderby = orderby + " DESC"
         orderby = orderby + ", upper(name)"

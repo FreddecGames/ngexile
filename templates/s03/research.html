@@ -32,7 +32,7 @@
                     {% for research in category.researches %}
                         <div class="list-group-item {% if research.researching %}bg-success{% endif %}">
                             <div class="row gx-3 align-items-center">
-                                <div class="col-5">
+                                <div class="col">
                                     <div class="row gx-2">
                                         <div class="col-auto">
                                             <span class="text-normal"><i class="fa-fw fas fa-question-circle" data-bs-toggle="tooltip" data-bs-html="true" data-bs-title="
@@ -45,16 +45,16 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-3">
+                                <div class="col-2 text-center">
                                     <script>putlevel({{research.level}},{{research.levels}},0{% if research.leveling %}1{% endif %});</script>
                                 </div>
-                                <div class="col-1">
+                                <div class="col-2">
                                     {% if research.cost and not research.researching %}
                                         <img src="{{ PATH_IMAGES }}interface/credits.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Crédit" />
                                         <span>{{ research.credits|intcomma }}</span>
                                     {% endif %}
                                 </div>
-                                <div class="col-1 text-end">
+                                <div class="col-2 text-end">
                                     {% if research.researching %}<span class="text-yellow"><script>putcountdown1({{research.remainingtime }},"");</script></span>
                                     {% elif research.researchtime %}<script>document.write(formattime({{research.time }}));</script>
                                     {% endif %}

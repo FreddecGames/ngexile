@@ -156,7 +156,7 @@
                         <i class="fa-fw fas fa-long-arrow-alt-right mx-2 text-normal"></i>
                         <script>putplanet("{{fleet.t_planetid }}","{{fleet.t_planetname}}","{{fleet.t_g}}","{{fleet.t_s}}","{{fleet.t_p}}",{{fleet.t_relation}});</script>
                     </div>
-                    <div class="col-auto">
+                    <div class="col-auto text-end" style="width:75px;">
                         <span class="text-yellow"><script>putcountdown1({{fleet.time}}, "Terminé", "/s03/overview/");</script></span>
                     </div>
                 </div>
@@ -193,17 +193,19 @@
                 {% for item in constructionyards %}
                     <div class="list-group-item">
                         <div class="row gx-3">
-                            <div class="col-auto">
-                                <a href="/s03/buildings/?planet={{ item.planetid }}" data-bs-toggle="tooltip" data-bs-title="Voir bâtiments">{{ item.planetname }}</a>
-                                <small class="ms-2">{{ item.galaxy }}.{{ item.sector }}.{{ item.planet }}</small>
+                            <div class="col-auto" style="width:55px;">
+                                <small class="text-normal">{{ item.galaxy }}.{{ item.sector }}.{{ item.planet }}</small>
                             </div>
                             <div class="col">
+                                <a href="/s03/buildings/?planet={{ item.planetid }}" data-bs-toggle="tooltip" data-bs-title="Voir bâtiments">{{ item.planetname }}</a>
+                            </div>
+                            <div class="col-auto">
                                 <div class="row g-1 flex-column">
                                     {% for building in item.buildings %}
                                         <div class="col-12">
                                             <div class="row gx-3 justify-content-end">
-                                                <div class="col"><span class="{% if building.destroy %}text-danger{% endif %}">{{ building.building }}</span></div>
-                                                <div class="col-auto"><span class="text-yellow"><script>putcountdown1({{building.time}}, "Terminé", "/s03/buildings/?planet={{item.planetid}}#{{building.buildingid}}");</script></span></div>
+                                                <div class="col text-end"><span class="{% if building.destroy %}text-danger{% endif %}">{{ building.building }}</span></div>
+                                                <div class="col-auto text-end" style="width:75px;"><span class="text-yellow"><script>putcountdown1({{building.time}}, "Terminé", "/s03/buildings/?planet={{item.planetid}}#{{building.buildingid}}");</script></span></div>
                                             </div>
                                         </div>
                                     {% empty %}
@@ -229,22 +231,25 @@
                     {% for item in shipyards %}
                     <div class="list-group-item">
                         <div class="row gx-3">
-                            <div class="col-auto">
-                                <a href="/s03/shipyard/?planet={{ item.planetid }}" data-bs-toggle="tooltip" data-bs-title="Voir vaisseaux">{{ item.planetname }}</a>
-                                <small class="ms-2">{{ item.galaxy }}.{{ item.sector }}.{{ item.planet }}</small>
+                            <div class="col-auto" style="width:55px;">
+                                <small class="text-normal">{{ item.galaxy }}.{{ item.sector }}.{{ item.planet }}</small>
                             </div>
-                            <div class="col text-end">
+                            <div class="col">
+                                <a href="/s03/shipyard/?planet={{ item.planetid }}" data-bs-toggle="tooltip" data-bs-title="Voir vaisseaux">{{ item.planetname }}</a>
+                            </div>
+                            <div class="col-auto">
                                 {% if item.ship %}
                                     <div class="row gx-3 justify-content-end">                                        
                                         <div class="col"><span class="{% if item.recycle %}text-danger{% endif %}">{{ item.shiplabel }}</span></div>
-                                        <div class="col-auto"><span class="text-yellow"><script>putcountdown1({{item.time}}, "Terminé", "/s03/shipyard/?planet={{item.planetid}}#{{item.shipid}}");</script></span></div>
+                                        <div class="col-auto text-end" style="width:65px;"><span class="text-yellow"><script>putcountdown1({{item.time}}, "Terminé", "/s03/shipyard/?planet={{item.planetid}}#{{item.shipid}}");</script></span></div>
                                     </div>
                                 {% elif item.waiting_resources %}
                                     <div class="row gx-3 justify-content-end">
                                         <div class="col">{{ item.waiting_ship }}</div>
                                         <div class="col-auto"><span class="text-danger">En attente de ressources</span></div>
                                     </div>
-                                {% else %}<span class="text-normal">Aucun vaisseau en cours</span>
+                                {% else %}
+                                    <span class="text-normal">Aucun vaisseau en cours</span>
                                 {% endif %}
                             </div>
                         </div>
