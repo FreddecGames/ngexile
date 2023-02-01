@@ -29,7 +29,7 @@ class View(GlobalView):
                 " planet_relation, planet_ownername," + \
                 " ore, hydrocarbon, credits, scientists, soldiers, workers, username," + \
                 " alliance_tag, alliance_name," + \
-                " invasionid, spyid, spy_key, description, ownerid, invited_username, username, buildingid" + \
+                " invasionid, spyid, spy_key, description, ownerid, invited_username, login, buildingid" + \
                 " FROM vw_alliances_reports" + \
                 " WHERE ownerallianceid = " + str(self.AllianceId)
 

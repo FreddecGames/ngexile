@@ -746,6 +746,10 @@ a:hover, a:focus { text-decoration: none; }
     --bs-btn-padding-y: .25rem;
     --bs-btn-font-size: 12px;
 }
+.btn-icon {
+    --bs-btn-padding-x: .5rem;
+    --bs-btn-padding-y: .25rem;
+}
 
 .btn-primary {
     --bs-btn-color: #000;

@@ -271,8 +271,9 @@ class View(GlobalView):
         elif cat == 2:
             self.displayInvitations(content)
 
+        content.Parse("cat" + str(cat) + "_selected")
+        
         if self.oAllianceRights["can_invite_player"]:
-            content.Parse("cat" + str(cat) + "_selected")
             content.Parse("cat1")
             content.Parse("cat2")
             content.Parse("nav")

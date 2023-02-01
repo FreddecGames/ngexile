@@ -262,6 +262,7 @@ class View(GlobalView):
         elif cat == 3:
             self.displayRequests(content)
 
+        content.Parse("cat" + str(cat) + "_selected")
         if self.oAllianceRights["can_create_nap"] or self.oAllianceRights["can_break_nap"]:
 
             query = "SELECT int4(count(*)) FROM alliances_naps_offers" + \
@@ -274,7 +275,6 @@ class View(GlobalView):
             oRs = oConnExecute(query)
             content.AssignValue("request_count", oRs[0])
 
-            content.Parse("cat" + str(cat) + "_selected")
             content.Parse("cat1")
             content.Parse("cat2")
             if self.oAllianceRights["can_create_nap"]: content.Parse("cat3")

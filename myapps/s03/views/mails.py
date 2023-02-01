@@ -111,16 +111,17 @@ class View(GlobalView):
                         self.moneyamount = 0
 
         # delete selected emails
-        elif request.POST.get("delete", "") != "":
+        action = request.POST.get("action", "")
+        if action == "delete":
 
             # build the query of which mails to delete
             query = "False"
 
-            for mailid in request.POST.getlist("checked_mails"):
-                query = query + " OR id=" + mailid
+            mailId = request.POST.get("mailId", "")
+            query = "id=" + mailId
 
             if query != "False":
-                oConnDoQuery("UPDATE messages SET deleted=True WHERE (" + query + ") AND ownerid = " + str(self.UserId))
+                oConnDoQuery("UPDATE messages SET deleted=True WHERE " + query + " AND ownerid = " + str(self.UserId))
 
         if request.GET.get("a", "") == "ignore":
             oConnExecute("SELECT sp_ignore_sender(" + str(self.UserId) + "," + dosql(request.GET.get("user")) + ")")
@@ -128,7 +129,7 @@ class View(GlobalView):
             return self.return_ignored_users
 
         if request.GET.get("a", "") == "unignore":
-            oConnDoQuery("DELETE FROM messages_ignore_list WHERE userid=" + str(self.UserId) + " AND ignored_userid=(SELECT id FROM users WHERE lower(login)=lower(" + dosql(request.GET.get("user")) + "))")
+            oConnDoQuery("DELETE FROM messages_ignore_list WHERE userid=" + str(self.UserId) + " AND ignored_userid=(SELECT id FROM users WHERE lower(username)=lower(" + dosql(request.GET.get("user")) + "))")
 
             return self.return_ignored_users()
 
@@ -166,7 +167,7 @@ class View(GlobalView):
         search_cond = ""
 
         # get total number of mails that could be displayed
-        query = "SELECT count(1) FROM messages WHERE "+search_cond+" ownerid = " + str(self.UserId)
+        query = "SELECT count(1) FROM messages WHERE "+search_cond+" deleted=False AND ownerid = " + str(self.UserId)
         oRs = oConnExecute(query)
         size = int(oRs[0])
         nb_pages = int(size/displayed)
@@ -212,7 +213,7 @@ class View(GlobalView):
                 "    LEFT JOIN users ON (upper(users.username) = upper(messages.sender) AND messages.datetime >= users.game_started)" + \
                 "    LEFT JOIN alliances ON (users.alliance_id = alliances.id)" + \
                 "    LEFT JOIN messages_ignore_list ON (userid=" + str(self.UserId) + " AND ignored_userid = users.id)" + \
-                " WHERE " + search_cond + " ownerid = " + str(self.UserId) + \
+                " WHERE " + search_cond + " deleted=False AND ownerid = " + str(self.UserId) + \
                 " ORDER BY datetime DESC, messages.id DESC" + \
                 " OFFSET " + str(offset*displayed) + " LIMIT "+str(displayed)
         oRss = oConnExecuteAll(query)
