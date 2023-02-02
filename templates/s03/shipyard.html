@@ -240,6 +240,12 @@
                                                 <small class="text-normal">Upgrade {{ ship.required_ship_name }}</small>
                                             </div>
                                         {% endif %}
+                                        <div class="col-auto">
+                                            {% if ship.quantity > 0 %}
+                                                <small class="text-normal">x</small>
+                                                {{ ship.quantity|intcomma }}
+                                            {% endif %}
+                                        </div>
                                     </div>
                                 </div>
                                 {% if ship.pp > 0 %}
@@ -248,12 +254,6 @@
                                     <span class="{% if ship.required_pp_not_enough %}text-danger{% endif %}">{{ ship.pp|intcomma }}</span>
                                 </div>
                                 {% endif %}
-                                <div class="col-auto">
-                                    {% if ship.quantity > 0 %}
-                                        <small class="text-normal">x</small>
-                                        {{ ship.quantity|intcomma }}
-                                    {% endif %}
-                                </div>
                                 <div class="col-auto" style="width:100px;">
                                     <img src="{{ PATH_IMAGES }}interface/ore.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Minerai" />
                                     <span class="{% if ship.not_enough_ore %}text-danger{% endif %}">{{ ship.ore|intcomma }}</span>
@@ -266,13 +266,13 @@
                                     <img src="{{ PATH_IMAGES }}interface/energy.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Energie" />
                                     <span class="{% if ship.not_enough_energy %}text-danger{% endif %}">{{ ship.energy|intcomma }}</span>
                                 </div>
-                                <div class="col-auto" style="width:85px;">
+                                <div class="col-auto" style="width:75px;">
                                     {% if ship.crew > 0 %}
                                         <img src="{{ PATH_IMAGES }}interface/workers.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Travailleur" />
                                         <span class="{% if ship.not_enough_crew %}text-danger{% endif %}">{{ ship.crew|intcomma }}</span>
                                     {% endif %}
                                 </div>
-                                <div class="col-auto text-end">
+                                <div class="col-auto text-end" style="width:80px;">
                                     <script>document.write(formattime({{ship.time }}))</script>
                                 </div>
                                 <div class="col-auto text-end" style="width:110px;">
@@ -291,19 +291,19 @@
         {% if build %}
             <div class="card card-body">
                 <div class="row gx-3 align-items-center justify-content-end">
-                    <div class="col-auto" style="width:100px;">
+                    <div class="col-auto">
                         <img src="{{ PATH_IMAGES }}interface/ore.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Minerai" />
                         <span id="totalore">0</span>
                     </div>
-                    <div class="col-auto" style="width:100px;">
+                    <div class="col-auto">
                         <img src="{{ PATH_IMAGES }}interface/hydrocarbon.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Hydrocarbure" />
                         <span id="totalhydrocarbon">0</span>
                     </div>
-                    <div class="col-auto" style="width:100px;">
+                    <div class="col-auto">
                         <img src="{{ PATH_IMAGES }}interface/energy.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Energie" />
                         <span id="totalenergy">0</span>
                     </div>
-                    <div class="col-auto" style="width:85px;">
+                    <div class="col-auto">
                         <img src="{{ PATH_IMAGES }}interface/workers.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Travailleur" />
                         <span id="totalcrew">0</span>
                     </div>

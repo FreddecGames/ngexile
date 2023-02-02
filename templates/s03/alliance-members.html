@@ -75,7 +75,7 @@
                                         </small>
                                     </div>
                                 </div>
-                                <div class="col-1">
+                                <div class="col-2">
                                     {% if player.scoreshown %}
                                         <div>{{ player.score|intcomma }}</div>
                                         <div><small class="{% if player.score_delta > 0 %}text-success{% else %}text-danger{% endif %}">{% if player.score_delta > 0 %}+{% endif %}{{ player.score_delta|intcomma }}</small></div>
@@ -116,10 +116,10 @@
                                             <a href="?cat={{ cat }}&a=kick&name={{ player.name }}" class="ms-2 btn btn-primary">Confirmer</a>
                                         </span>
                                     {% elif player.leaving %}
-                                        <span class="text-danger">
-                                            <small class="me-2">Quitte</small>
+                                        <div class="ms-2 text-end text-danger">
+                                            <div><small>Quitte</small></div>
                                             <span class="text-yellow"><script>putcountdown1({{ player.leaving_time }}, "Terminé", "?cat={{cat}}");</script></span>
-                                        </span>
+                                        </div>
                                     {% endif %}
                                 </div>
                             </div>
