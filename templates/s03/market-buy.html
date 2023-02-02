@@ -74,7 +74,7 @@
                                 </div>
                                 <div class="col-12">
                                     <img src="{{ PATH_IMAGES }}interface/hydrocarbon.gif" width="16" height="16" class="res" data-bs-toggle="tooltip" data-bs-title="Hydrocarbure">
-                                    <span class="{% if planet.planet_high_hydrocarbon %}text-danger{% endif %}">{{ planet.planet_hydrocarbon|intcomma }}</span>
+                                    <span class="{% if planet.high_hydrocarbon_capacity %}text-danger{% endif %}">{{ planet.planet_hydrocarbon|intcomma }}</span>
                                     <small class="text-normal">/{{ planet.planet_hydrocarbon_capacity|intcomma }}</small>
                                     <small class="ms-2 text-success">+{{ planet.planet_hydrocarbon_production|intcomma }}</small>
                                 </div>
