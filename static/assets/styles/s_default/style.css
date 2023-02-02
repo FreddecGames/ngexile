@@ -101,9 +101,8 @@ div.clear { clear:both; }
 #chat { overflow:auto; height:490px; color:#ccc; }
 #chat .highlight { color:#1DD1D3; }
 #chat .player { color:#FFFFFF; }
-#chat .newday { text-align:center; font-weight:bold; color:#FFFFFF; margin-top:5px; }
+#chat .newday { text-align:center; color:#FFFFFF; margin-top:5px; }
 #chat .smiley { vertical-align:-3px; }
-#chatline { width:100%; height: 18px; }
 
 #chatform { text-align:left; }
 #joinchatform { display:none; visibility:hidden; }
@@ -112,7 +111,7 @@ div.clear { clear:both; }
 
 ::-webkit-scrollbar { width: .35rem; height: .25rem; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { border-radius: .25rem; background: rgba(255, 255, 255, .25); border: 1px solid #444; }
+::-webkit-scrollbar-thumb { border-radius: .25rem; background: rgba(255, 255, 255, .25); }
 
 .scroll-content { overflow-y: auto; overflow-x: hidden; scrollbar-color: rgba(255, 255, 255, .075); scrollbar-width: thin; }
 
