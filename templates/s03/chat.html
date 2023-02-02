@@ -24,7 +24,7 @@ function sameDay(d1, d2)
 function formatTime(dt)
 {
 	if(dt==null) return '';
-	return dt.getHours().lz() + ':' + dt.getMinutes().lz();
+	return '<span class="me-2">' + dt.getHours().lz() + ':' + dt.getMinutes().lz() + '</span>';
 }
 
 var Smileys={
@@ -62,7 +62,7 @@ function formatLine(author,line)
 {
 	var smileys = 0;
 
-	highlight = line.indexOf('{{login}}', 0) > -1;
+	highlight = line.indexOf('{{username}}', 0) > -1;
 	words = line.split(" ");
 
 	for(i=0;i<words.length;i++)
@@ -90,7 +90,7 @@ function formatLine(author,line)
 			words[i] = addWbr(words[i]);
 	}
 
-	if(author == '{{login}}')
+	if(author == '{{username}}')
 		return '<span class="player">' + words.join(' ') + '</span>';
 	else
 	if(highlight)
@@ -306,7 +306,7 @@ Chat.prototype = {
 
 		if(!this.showTag) tag = '';
 
-		this.lines.push((datetime==null?'<b>':'')+'<img src="{{PATH_IMAGES}}interface/spacer.gif" width="0" height="15" border="0">' + formatTime(datetime) + (tag!=''?' <a href="/s03/alliance/?tag='+tag+'" target="_blank">['+tag+']</a>':'') + ' <a href="#" onclick="chatlist['+this.id+'].tell(\''+author+'\'); return false;" class="author">' + author + '</a> : ' + line + (datetime==null?'</b>':''));
+		this.lines.push((datetime==null?'<b>':'')+'<img src="{{PATH_IMAGES}}interface/spacer.gif" width="0" height="15" border="0">' + formatTime(datetime) + (tag!=''?' <a href="/s03/alliance/?tag='+tag+'" target="_blank">['+tag+']</a>':'') + '<a href="#" onclick="chatlist['+this.id+'].tell(\''+author+'\'); return false;" class="author me-2">' + author + '</a>' + line + (datetime==null?'</b>':''));
 
 		// limit chatbox to 250 messages
 		while(this.lines.length > 250) this.lines.shift();
@@ -574,7 +574,7 @@ function showJoinChatForm()
         {% csrf_token %}
         <div class="card">
             <div class="list-group list-group-flush">
-                <div class="list-group-item">
+                <div class="list-group-item pe-2">
                     <div id="chat"></div>
                 </div>
                 <div class="list-group-item">

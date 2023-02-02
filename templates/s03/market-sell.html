@@ -1,39 +1,34 @@
 {% extends "s03/layout.html" %}
 {% load humanize %}
 {% block content %}
-    <div id="market">
-        <script type="text/javascript">
-	var planets=[];
+<script>
+	var planets = [];
 	{% for planet in m_planets %}
-	planets.push({
-		id:{{planet.planet_id}},
-		oreMax:{{planet.ore_max}},
-		hydroMax:{{planet.hydrocarbon_max}},
-		orePrice:{{planet.ore_price2}},
-		hydroPrice:{{planet.hydrocarbon_price2}},
-		total:0
-	});
+	planets.push({ id:{{planet.planet_id}}, oreMax:{{planet.ore_max}}, hydroMax:{{planet.hydrocarbon_max}}, orePrice:{{planet.ore_price2}}, hydroPrice:{{planet.hydrocarbon_price2}}, total:0 });
 	{% endfor %}
 
 	function getPlanet(id) {
-		for(var i=0; i<planets.length; i++)
-			if(planets[i].id == id)
+    
+		for (var i = 0; i < planets.length; i++)
+			if (planets[i].id == id)
 				return planets[i];
+                
 		return null;
 	}
 
 	function updateprice(id) {
+    
 		var p = getPlanet(id);
-		if(p == null) return;
+		if( p == null) return;
 
 		var ore = getval("o" + p.id);
-		if(ore > p.oreMax) {
+		if (ore > p.oreMax) {
 			ore = p.oreMax;
 			setval("o" + p.id, p.oreMax);
 		}
 
 		var hydro = getval("h" + p.id);
-		if(hydro > p.hydroMax) {
+		if (hydro > p.hydroMax) {
 			hydro = p.hydroMax;
 			setval("h" + p.id, p.hydroMax);
 		}
@@ -42,186 +37,113 @@
 
 		var obj = $("totalprice" + p.id);
 
-		if((obj != null) && (obj.innerHTML != formatnumber(p.total))) {
+		if ((obj != null) && (obj.innerHTML != formatnumber(p.total))) {
+        
 			obj.innerHTML = formatnumber(Math.round(p.total*100)/100.0);
-{% if totalprice %}			computetotal();{% endif %}
+            {% if totalprice %}computetotal();{% endif %}
 		}
 	}
-{% if totalprice %}
-	function computetotal() {
-		var total={{total}};
+    
+    {% if totalprice %}
+        function computetotal() {
+        
+            var total = {{total}};
 
-		for(var i=0; i<planets.length; i++) {
-			var p = planets[i];
-			var obj = $("totalprice" + p.id);
-			total += parseInt(obj.innerHTML.replace(" ",""));
-		}
+            for (var i=0; i<planets.length; i++) {
+            
+                var p = planets[i];
+                var obj = $("totalprice" + p.id);
+                total += parseInt(obj.innerHTML.replace(" ",""));
+            }
 
-		var obj = $("total");
-		obj.innerHTML = formatnumber(total);
-	}
-{% endif %}
-        </script>
-        <form method="post"
-              action="?a=sell{% if get_planet %}&planet={{ get_planet }}{% endif %}">
-            {% csrf_token %}
-            <input type="hidden" name="rel" value="1">
-            <table class="default" width="750">
-                <tr class="title">
-                    <td colspan="3">Vente de ressources</td>
-                </tr>
-                <tr class="header">
-                    <td>Planète</td>
-                    <td>Ressources</td>
-                    <td width=100>Total</td>
-                </tr>
-                {% for planet in m_planets %}
-                    <tr valign="middle"
-                        class="item{% if planet.highlight %}highlight{% endif %}">
-                        <td nowrap>
-                            <table cellpadding="0" cellspacing="0" class="clear">
-                                <tr>
-                                    <td rowspan="3">
-                                        <img src="{{ PATH_IMAGES }}planets/p{{ planet.planet_img }}.gif"
-                                             class="smallplanet"
-                                             width="64"
-                                             height="64">
-                                    </td>
-                                    <td nowrap colspan="2">
-                                        <b><a href="/s03/planet/?planet={{ planet.planet_id }}">{{ planet.planet_name }}</a> <a href="/s03/map/?g={{ planet.g }}&s={{ planet.s }}&p={{ planet.p }}">({{ planet.g }}.{{ planet.s }}.{{ planet.p }})</a></b>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <img src="{{ PATH_IMAGES }}interface/ore.gif"
-                                             title="Minerai"
-                                             width="16"
-                                             height="16">
-                                    </td>
-                                    <td align="left" nowrap>
-                                        {% if planet.high_ore_capacity %}<span class="high2">{% endif %}
-                                        {{ planet.planet_ore|intcomma }} / {{ planet.planet_ore_capacity|intcomma }}
-                                        {% if planet.high_ore_capacity %}</span>{% endif %}
-                                        (<span class=prod>+{{ planet.planet_ore_production|intcomma }}</span>)
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <img src="{{ PATH_IMAGES }}interface/hydrocarbon.gif"
-                                             title="Hydrocarbure"
-                                             width="16"
-                                             height="16">
-                                    </td>
-                                    <td align="left" nowrap>
-                                        {% if planet.high_hydrocarbon_capacity %}<span class="high2">{% endif %}
-                                        {{ planet.planet_hydrocarbon|intcomma }} / {{ planet.planet_hydrocarbon_capacity|intcomma }}
-                                        {% if planet.high_hydrocarbon_capacity %}</span>{% endif %}
-                                        (<span class=prod>+{{ planet.planet_hydrocarbon_production|intcomma }}</span>)
-                                    </td>
-                                </tr>
-                            </table>
-                        </td>
-                        <td>
-                            <table cellpadding=0 cellspacing=2 class="clear" width="100%">
-                                <tr>
-                                    <td width="16">
-                                        <img src="{{ PATH_IMAGES }}interface/ore.gif"
-                                             title="Minerai"
-                                             width="16"
-                                             height="16">
-                                    </td>
-                                    <td width="1%" nowrap>
-                                        <input type="number"
-                                               min="0"
-                                               id="o{{ planet.planet_id }}"
-                                               name="o{{ planet.planet_id }}"
-                                               value="{{ planet.ore }}"
-                                               onkeyup="updateprice({{ planet.planet_id }})"
-                                               size="3"
-                                               maxlength="4">
-                                        x1000 (
-                                        <img src="{{ PATH_IMAGES }}interface/credits.gif"
-                                             class="icon"
-                                             title="Credits"
-                                             width="16"
-                                             height="16">
-                                        {{ planet.ore_price|floatformat:2|intcomma }})
-                                    </td>
-                                    <td align="left">
-                                        <a href="javascript:setval('o{{ planet.planet_id }}', {{ planet.ore_max }}); updateprice({{ planet.planet_id }})">Max</a>
-                                    </td>
-                                    <td>
-                                        <a href="javascript:setval('o{{ planet.planet_id }}', 0); setval('h{{ planet.planet_id }}', 0); updateprice({{ planet.planet_id }})">Rien</a>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td width="16">
-                                        <img src="{{ PATH_IMAGES }}interface/hydrocarbon.gif"
-                                             title="Hydrocarbure"
-                                             width="16"
-                                             height="16">
-                                    </td>
-                                    <td width="1%" nowrap>
-                                        <input type="number"
-                                               min="0"
-                                               id="h{{ planet.planet_id }}"
-                                               name="h{{ planet.planet_id }}"
-                                               value="{{ planet.hydrocarbon }}"
-                                               onkeyup="updateprice({{ planet.planet_id }})"
-                                               size="3"
-                                               maxlength="4">
-                                        x1000 (
-                                        <img src="{{ PATH_IMAGES }}interface/credits.gif"
-                                             class="icon"
-                                             title="Credits"
-                                             width="16"
-                                             height="16">
-                                        {{ planet.hydrocarbon_price|floatformat:2|intcomma }})
-                                    </td>
-                                    <td align="left">
-                                        <a href="javascript:setval('h{{ planet.planet_id }}', {{ planet.hydrocarbon_max }}); updateprice({{ planet.planet_id }})">Max</a>
-                                    </td>
-                                    <td>
-                                        <a href="javascript:setval('o{{ planet.planet_id }}', {{ planet.ore_max }}); setval('h{{ planet.planet_id }}', {{ planet.hydrocarbon_max }}); updateprice({{ planet.planet_id }})">Tout</a>
-                                    </td>
-                                </tr>
-                            </table>
-                        </td>
-                        <td align="right">
-                            <img src="{{ PATH_IMAGES }}interface/credits.gif"
-                                 class="res"
-                                 title="Credits"
-                                 width="16"
-                                 height="16">
-                            <span id="totalprice{{ planet.planet_id }}">{{ planet.selling_price|intcomma }}</span>
-                        </td>
-                    </tr>
-                {% endfor %}
-                {% if totalprice %}
-                    <tr>
-                        <td colspan="2" align="right">Total</td>
-                        <td align=right>
-                            <img src="{{ PATH_IMAGES }}interface/credits.gif"
-                                 class="res"
-                                 title="Credits"
-                                 width="16"
-                                 height="16">
-                            <span id="total">0</span>
-                        </td>
-                    </tr>
-                {% endif %}
-                {% if sell %}
-                    <tr>
-                        <td colspan="3" align="center">
-                            <input type="submit" value="Vendre">
-                        </td>
-                    </tr>
-                {% endif %}
-            </table>
-        </form>
-        {% if totalprice %}
-            <script type="text/javascript">computetotal();</script>
-        </div>
+            var obj = $("total");
+            obj.innerHTML = formatnumber(total);
+        }
     {% endif %}
-</div>
+</script>
+<form method="post" action="?a=sell{% if get_planet %}&planet={{ get_planet }}{% endif %}">
+    {% csrf_token %}
+    <input type="hidden" name="rel" value="1">
+    <div class="card">
+        <div class="card-header">
+            <span class="fs-6">Vente de ressources</span>
+        </div>
+        <div class="list-group list-group-flush">
+            {% for planet in m_planets %}
+                <div class="list-group-item {% if planet.highlight %}bg-success{% endif %}">
+                    <div class="row gx-3 align-items-center">
+                        <div class="col-auto">
+                            <img src="{{ PATH_IMAGES }}planets/p{{ planet.planet_img }}.gif" class="rounded" width="48px" height="48px">                        
+                        </div>
+                        <div class="col-4">
+                            <div class="row g-1 flex-column">
+                                <div class="col-12">
+                                    <a href="/s03/map/?g={{ planet.g }}&s={{ planet.s }}&p={{ planet.p }}" class="me-2" data-bs-toggle="tooltip" data-bs-title="Carte spatiale">{{ planet.g }}.{{ planet.s }}.{{ planet.p }}</a>
+                                    <a href="/s03/planet/?planet={{ planet.planet_id }}" data-bs-toggle="tooltip" data-bs-title="Voir planète">{{ planet.planet_name }}</a>
+                                </div>
+                                <div class="col-12">
+                                    <img src="{{ PATH_IMAGES }}interface/ore.gif" width="16" height="16" class="res" data-bs-toggle="tooltip" data-bs-title="Minerai">
+                                    <span class="{% if planet.high_ore_capacity %}text-danger{% endif %}">{{ planet.planet_ore|intcomma }}</span>
+                                    <small class="text-normal">/{{ planet.planet_ore_capacity|intcomma }}</small>
+                                    <small class="ms-2 text-success">+{{ planet.planet_ore_production|intcomma }}</small>
+                                </div>
+                                <div class="col-12">
+                                    <img src="{{ PATH_IMAGES }}interface/hydrocarbon.gif" width="16" height="16" class="res" data-bs-toggle="tooltip" data-bs-title="Hydrocarbure">
+                                    <span class="{% if planet.planet_high_hydrocarbon %}text-danger{% endif %}">{{ planet.planet_hydrocarbon|intcomma }}</span>
+                                    <small class="text-normal">/{{ planet.planet_hydrocarbon_capacity|intcomma }}</small>
+                                    <small class="ms-2 text-success">+{{ planet.planet_hydrocarbon_production|intcomma }}</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="row g-1 flex-column">
+                                <div class="col-12 d-flex align-items-center">
+                                    <img src="{{ PATH_IMAGES }}interface/ore.gif" width="16" height="16" class="res me-2" data-bs-toggle="tooltip" data-bs-title="Minerai">
+                                    <input type="number" class="form-control" min="0" id="o{{ planet.planet_id }}" name="o{{ planet.planet_id }}" value="{{ planet.ore }}" onkeyup="updateprice({{ planet.planet_id }})" size="3" maxlength="4" />
+                                    <span class="mx-2 text-normal">x{{ 1000|intcomma }}</span>
+                                    <img src="{{ PATH_IMAGES }}interface/credits.gif" width="16" height="16" class="res" data-bs-toggle="tooltip" data-bs-title="Crédits">
+                                    <span class="me-2">{{ planet.ore_price|floatformat:2|intcomma }}</span>
+                                    <a href="javascript:setval('o{{ planet.planet_id }}', {{ planet.ore_max }}); updateprice({{ planet.planet_id }})">Max</a>
+                                </div>
+                                <div class="col-12 d-flex align-items-center">
+                                    <img src="{{ PATH_IMAGES }}interface/hydrocarbon.gif" width="16" height="16" class="res me-2" data-bs-toggle="tooltip" data-bs-title="Hydrocarbure">
+                                    <input type="number" class="form-control" min="0" id="h{{ planet.planet_id }}" name="h{{ planet.planet_id }}" value="{{ planet.hydrocarbon }}" onkeyup="updateprice({{ planet.planet_id }})" size="3" maxlength="4" />
+                                    <span class="mx-2 text-normal">x{{ 1000|intcomma }}</span>
+                                    <img src="{{ PATH_IMAGES }}interface/credits.gif" width="16" height="16" class="res" data-bs-toggle="tooltip" data-bs-title="Crédits">
+                                    <span class="me-2">{{ planet.hydrocarbon_price|floatformat:2|intcomma }}</span>
+                                    <a href="javascript:setval('o{{ planet.planet_id }}', {{ planet.hydrocarbon_max }}); updateprice({{ planet.planet_id }})">Max</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <a href="javascript:setval('o{{ planet.planet_id }}', 0); setval('h{{ planet.planet_id }}', 0); updateprice({{ planet.planet_id }})">Rien</a>
+                        </div>
+                        <div class="col-auto">
+                            <a href="javascript:setval('o{{ planet.planet_id }}', {{ planet.ore_max }}); setval('h{{ planet.planet_id }}', {{ planet.hydrocarbon_max }}); updateprice({{ planet.planet_id }})">Tout</a>
+                        </div>
+                        <div class="col text-end">
+                            <img src="{{ PATH_IMAGES }}interface/credits.gif" width="16" height="16" class="res" data-bs-toggle="tooltip" data-bs-title="Crédits">
+                            <span id="totalprice{{ planet.planet_id }}">{{ planet.selling_price|intcomma }}</span>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+            {% if sell %}
+                <div class="list-group-item">
+                    <div class="row gx-3 align-items-center justify-content-end">
+                        <div class="col-auto">
+                            <span class="text-normal me-2">Total</span>
+                            <img src="{{ PATH_IMAGES }}interface/credits.gif" width="16" height="16" class="res" data-bs-toggle="tooltip" data-bs-title="Crédits">
+                            <span id="total">0</span>
+                        </div>
+                        <div class="col-auto">
+                            <input type="submit" class="btn btn-primary" value="Vendre">
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</form>
+<script>computetotal();</script>
 {% endblock %}
