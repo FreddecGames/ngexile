@@ -81,7 +81,24 @@
                             </div>
                         </div>
                         <div class="col-4">
-                            {% if planet.can_buy %}
+                            {% if planet.buying %}
+                                <div class="row g-1 flex-column">
+                                    <div class="col-12">
+                                        <img src="{{ PATH_IMAGES }}interface/ore.gif" width="16" height="16" class="res" data-bs-toggle="tooltip" data-bs-title="Minerai">
+                                        {{ planet.buying_ore|intcomma }}
+                                    </div>
+                                    <div class="col-12">
+                                        <img src="{{ PATH_IMAGES }}interface/hydrocarbon.gif" width="16" height="16" class="res" data-bs-toggle="tooltip" data-bs-title="Hydrocarbure">
+                                        {{ planet.buying_hydrocarbon|intcomma }}
+                                    </div>
+                                </div>
+                            {% elif planet.cant_buy_enemy %}
+                                <span class="text-danger">Impossible d'acheter tant que des vaisseaux ennemis orbitent autour de la planète</span>
+                            {% elif planet.cant_buy_workers %}
+                                <span class="text-danger">Impossible d'acheter, nous n'avons pas assez de personnel pour s'occuper des marchandises et des transactions avec les marchands</span>
+                            {% elif planet.cant_buy_merchants %}
+                                <span class="text-danger">Impossible d'acheter, cette galaxie n'est pas desservie par les marchands</span>
+                            {% elif planet.can_buy %}
                                 <div class="row g-1 flex-column">
                                     <div class="col-12">
                                         <img src="{{ PATH_IMAGES }}interface/ore.gif" width="16" height="16" class="res me-2" data-bs-toggle="tooltip" data-bs-title="Minerai">
@@ -100,23 +117,6 @@
                                         <a href="javascript:setval('h{{ planet.planet_id }}', {{ planet.hydrocarbon_max }}); updateprice({{ planet.index }})">max</a>
                                     </div>
                                 </div>
-                            {% elif planet.buying %}
-                                <div class="row g-1 flex-column">
-                                    <div class="col-12">
-                                        <img src="{{ PATH_IMAGES }}interface/ore.gif" width="16" height="16" class="res" data-bs-toggle="tooltip" data-bs-title="Minerai">
-                                        {{ planet.buying_ore|intcomma }}
-                                    </div>
-                                    <div class="col-12">
-                                        <img src="{{ PATH_IMAGES }}interface/hydrocarbon.gif" width="16" height="16" class="res" data-bs-toggle="tooltip" data-bs-title="Hydrocarbure">
-                                        {{ planet.buying_hydrocarbon|intcomma }}
-                                    </div>
-                                </div>
-                            {% elif planet.cant_buy_enemy %}
-                                <span class="text-danger">Impossible d'acheter tant que des vaisseaux ennemis orbitent autour de la planète</span>
-                            {% elif planet.cant_buy_workers %}
-                                <span class="text-danger">Impossible d'acheter, nous n'avons pas assez de personnel pour s'occuper des marchandises et des transactions avec les marchands</span>
-                            {% elif planet.cant_buy_merchants %}
-                                <span class="text-danger">Impossible d'acheter, cette galaxie n'est pas desservie par les marchands</span>
                             {% endif %}
                         </div>
                         <div class="col-auto">
