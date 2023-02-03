@@ -67,7 +67,7 @@
                                                 <div class='col-auto'>
                                                     <img src='/static/assets/interface/hydrocarbon.gif' class='res' width='16' height='16'>
                                                     <span class='text-normal'>{{ building.hydro_prod|intcomma }}</span>
-                                                    {% if building.hydro_prod %}<small class='ms-1 text-success'>+{{ building.hydro_prod|intcomma }}%</small>{% endif %}
+                                                    {% if building.hydro_modifier %}<small class='ms-1 text-success'>+{{ building.hydro_modifier|intcomma }}%</small>{% endif %}
                                                 </div>
                                                 {% endif %}
                                                 {% if building.energy_prod %}
