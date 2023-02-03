@@ -33,4 +33,8 @@ class View(ExileMixin, View):
         
         content = FormatBattle(self, id, creator, fromview, True)
         
+        content.AssignValue("skin", "s_default")
+        content.AssignValue("timers_enabled", "false")
+        content.AssignValue("server", universe)
+        
         return render(self.request, content.template, content.data)
