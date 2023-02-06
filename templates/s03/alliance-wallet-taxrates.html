@@ -3,47 +3,32 @@
 {% block page %}
     <form action="?cat={{ walletpage }}" method="post">
         {% csrf_token %}
-        <table class="default" width="100%">
-            <tr class="title">
-                <td>Taxes</td>
-            </tr>
-            <tr class="item">
-                <td align="center">
-                    <table class="clear">
-                        <tr>
-                            <td>
-                                Veuillez choisir un taux de taxe pour tous les membres de l'alliance. Chaque vente effectuée auprès de la guilde marchande se verra taxé par le taux établi par le responsable de l'alliance ou le trésorier.
-                                <br/>
-                                Les membres de l'alliance ayant moins de 2 planètes sont exonérés de cette taxe.
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>&nbsp;</td>
-                        </tr>
-                        <tr>
-                            <td align="center">
-                                Taux:
-                                <select name="taxrates">
-                                    {% for tax in taxes %}
-                                        <option value="{{ tax.taxrates }}" {% if tax.selected %}selected{% endif %}>
-                                            {{ tax.tax }}
-                                        </option>
-                                    {% endfor %}
-                                </select>
-                                %
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>&nbsp;</td>
-                        </tr>
-                        <tr>
-                            <td align="center">
-                                <input type="submit" name="tax" value="Modifier">
-                            </td>
-                        </tr>
-                    </table>
-                </td>
-            </tr>
-        </table>
+        <div class="card">
+            <div class="card-header">
+                <span class="fs-6">Taxes</span>
+            </div>
+            <div class="card-body">
+                <div class="mb-2 text-center">
+                    <span class="text-normal">Veuillez choisir un taux de taxe pour tous les membres de l'alliance. Chaque vente effectuée auprès de la guilde marchande se verra taxé par le taux établi par le responsable de l'alliance ou le trésorier. Les membres de l'alliance ayant moins de 2 planètes sont exonérés de cette taxe.</span>
+                </div>
+                <div class="row gx-2 align-items-center justify-content-center">
+                    <div class="col-auto">
+                        <span class="text-normal">Taux</span>
+                    </div>
+                    <div class="col-auto">
+                        <select class="form-control" name="taxrates">
+                            {% for tax in taxes %}
+                                <option value="{{ tax.taxrates }}" {% if tax.selected %}selected{% endif %}>
+                                    {{ tax.tax }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-auto">
+                        <input type="submit" class="btn btn-primary" name="tax" value="Modifier">
+                    </div>
+                </div>
+            </div>
+        </div>
     </form>
 {% endblock %}

@@ -100,11 +100,11 @@ class TBattle:
 
         if Target.FUnitShield > 0: Damage = Damage * 0.75
 
-        Damage = Damage * Ship.Fmult_damage
-
         if Damage > Target.FUnitShield:
             Ship.FDamages = Ship.FDamages + Target.FUnitShield
             Damage = Damage - Target.FUnitShield
+
+            Damage = Damage * Ship.Fmult_damage
 
             Target.FUnitShield = 0
 
@@ -393,9 +393,11 @@ class TShipsGroup:
         # compute the effective multiplicator for each bonus
         self.Fmult_hull = self.Fmod_hull / 100
         self.Fmult_shield = self.Fmod_shield / 100
-        self.Fmult_handling = self.Fmod_handling / 100
-        self.Fmult_tracking_speed = self.Fmod_tracking_speed / 100
-        self.Fmult_damage = self.Fmod_damage / 100
+        self.Fmult_handling = (100 + (self.Fmod_handling - 100) / 10) / 100
+        self.Fmult_tracking_speed = (100 + (self.Fmod_tracking_speed - 100) / 10) / 100
+        
+        if self.Fmod_damage > 100: self.Fmult_damage = (100 + (self.Fmod_damage - 100) / 10) / 100
+        else: self.Fmult_damage = self.Fmod_damage / 100
 
         # Compute ship protection : shield < 100% can decrease it
         self.FHull = Hull*self.Fmult_hull

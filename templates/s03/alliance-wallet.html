@@ -1,64 +1,51 @@
 {% extends "s03/layout.html" %}
 {% load humanize %}
 {% block content %}
-    <table width="100%">
-        <tr>
-            <td align=center>
-                <div>
-                    <table class="default">
-                        <tr class="item">
-                            <td>
-                                <table class="clear">
-                                    <tr>
-                                        <td align=left rowspan=4>
-                                            <img src="{{ PATH_IMAGES }}interface/wallet.jpg"
-                                                 class="wallet"
-                                                 width="64"
-                                                 height="64">
-                                        </td>
-                                        <td>Solde: {{ credits|intcomma }}</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Dernière 24 heures: {{ last24h|intcomma }}</td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            Taxes: {{ tax|floatformat:1 }}%
-                                            {% if notax %}(exonéré){% endif %}
-                                        </td>
-                                    </tr>
-                                </table>
-                            </td>
-                        </tr>
-                    </table>
+<div class="card card-body  mb-3">
+    <div class="row gx-3 align-items-center">
+        <div class="col-auto">
+            <img src="{{ PATH_IMAGES }}interface/wallet.jpg" class="rounded" width="64" height="64">
+        </div>
+        <div class="col">
+            <div class="row g-1 flex-column">
+                <div class="col-12">
+                    <span class="text-normal me-2">Solde</span>
+                    {{ credits|intcomma }}
                 </div>
-                <ul class="nav nav-tabs mt-0 mb-3">
-                    {% if cat1 %}
-                        <li class="nav-item {% if cat1_selected %}active{% endif %}">
-                            <a href="?cat=1" class="nav-link">Journal</a>
-                        </li>
-                    {% endif %}
-                    {% if cat2 %}
-                        <li class="nav-item {% if cat2_selected %}active{% endif %}">
-                            <a href="?cat=2" class="nav-link">Financement</a>
-                        </li>
-                    {% endif %}
-                    {% if cat3 %}
-                        <li class="nav-item {% if cat3_selected %}active{% endif %}">
-                            <a href="?cat=3" class="nav-link">Don</a>
-                        </li>
-                    {% endif %}
-                    {% if cat4 %}
-                        <li class="nav-item {% if cat4_selected %}active{% endif %}">
-                            <a href="?cat=4" class="nav-link">Taxes</a>
-                        </li>
-                    {% endif %}
-                </ul>
+                <div class="col-12">
+                    <span class="text-normal me-2">Dernière 24 heures</span>
+                    {{ last24h|intcomma }}
+                </div>
+                <div class="col-12">
+                    <span class="text-normal me-2">Taxe</span>
+                    {{ tax|floatformat:1 }}%
+                    {% if notax %}<span class="text-success ms-2">Exonéré</span>{% endif %}
+                </div>
             </div>
-            <div>
-                {% block page %}{% endblock %}
-            </div>
-        </td>
-    </tr>
-</table>
+        </div>
+    </div>
+</div>
+<ul class="nav nav-tabs mt-0 mb-3">
+    {% if cat1 %}
+        <li class="nav-item {% if cat1_selected %}active{% endif %}">
+            <a href="?cat=1" class="nav-link">Journal</a>
+        </li>
+    {% endif %}
+    {% if cat2 %}
+        <li class="nav-item {% if cat2_selected %}active{% endif %}">
+            <a href="?cat=2" class="nav-link">Financement</a>
+        </li>
+    {% endif %}
+    {% if cat3 %}
+        <li class="nav-item {% if cat3_selected %}active{% endif %}">
+            <a href="?cat=3" class="nav-link">Don</a>
+        </li>
+    {% endif %}
+    {% if cat4 %}
+        <li class="nav-item {% if cat4_selected %}active{% endif %}">
+            <a href="?cat=4" class="nav-link">Taxes</a>
+        </li>
+    {% endif %}
+</ul>
+{% block page %}{% endblock %}
 {% endblock %}

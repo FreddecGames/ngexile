@@ -1,92 +1,90 @@
-{% extends 's03/alliance-wallet.html' %}
+{% extends "s03/alliance-wallet.html" %}
 {% load humanize %}
 {% block page %}
     {% if request %}
         <form action="?cat={{ walletpage }}" method="post">
             {% csrf_token %}
-            <table class="default" width="100%">
-                <tr class="title">
-                    <td>Demande de financement</td>
-                </tr>
-                <tr class="item">
-                    <td align=center>
-                        <table class="clear">
-                            <tr>
-                                <td colspan="2">&nbsp;</td>
-                            </tr>
-                            <tr>
-                                <td>Trésorerie:</td>
-                                <td align="left">{{ player_credits|intcomma }} crédits</td>
-                            </tr>
-                            <tr>
-                                <td>Financement:</td>
-                                <td align="left">
-                                    <input type="number"
-                                           min="0"
-                                           name="credits"
-                                           value="{{ req_credits }}"
-                                           size="8"
-                                           maxlength="8">
-                                    crédits
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>Description:</td>
-                                <td align="left">
-                                    <input type="text"
-                                           name="description"
-                                           value="{{ req_description }}"
-                                           size="64"
-                                           maxlength="64">
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>Etat:</td>
-                                <td align="left">
-                                    {% if submitted %}<span class="pending">en cours ...</span>{% endif %}
-                                    {% if none %}aucune demande de financement{% endif %}
-                                    {% if denied %}<span class="denied">demande refusée</span>{% endif %}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td colspan=2>&nbsp;</td>
-                            </tr>
-                            <tr>
-                                <td colspan=2 align=center>
-                                    <input type="submit" name="request" value="Demander">
-                                    <input type="submit" name="cancel" value="Annuler">
-                                </td>
-                            </tr>
-                        </table>
-                    </td>
-                </tr>
-            </table>
+            <div class="card">
+                <div class="card-header">
+                    <span class="fs-6">Demande de financement</span>
+                </div>
+                <div class="card-body">
+                    <div class="row gy-1 gx-3 align-items-center">
+                        <div class="col-4 text-end">
+                            <span class="text-normal">Trésorerie</span>
+                        </div>
+                        <div class="col-8">
+                            {{ player_credits|intcomma }} <span class="text-normal">crédits</span>
+                        </div>
+                        <div class="col-4 text-end">
+                            <span class="text-normal">Financement</span>
+                        </div>
+                        <div class="col-8 d-flex align-items-center">
+                            <input type="number" class="form-control" min="0" name="credits" value="{{ req_credits }}" size="8" maxlength="8">
+                            <span class="ms-2 text-normal">crédits</span>
+                        </div>
+                        <div class="col-4 text-end">
+                            <span class="text-normal">Description</span>
+                        </div>
+                        <div class="col-8">
+                            <input type="text" class="form-control" name="description" value="{{ req_description }}" size="64" maxlength="64">
+                        </div>
+                        {% if submitted or denied %}
+                            <div class="col-4 text-end">
+                                <span class="text-normal">Etat</span>
+                            </div>
+                            <div class="col-8">
+                                {% if submitted %}<span class="text-success">En cours ...</span>{% endif %}
+                                {% if denied %}<span class="text-danger">Demande refusée</span>{% endif %}
+                            </div>
+                        {% endif %}
+                        <div class="col-4 text-end">
+                        </div>
+                        <div class="col-8">
+                            {% if submitted or denied %}<input type="submit" class="btn btn-danger" name="cancel" value="Annuler">
+                            {% else %}<input type="submit" class="btn btn-primary" name="request" value="Demander">
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
         </form>
     {% endif %}
     {% if list %}
-        <table class="default" width="100%">
-            <tr class="title">
-                <td colspan=5>En tant que trésorier, vous pouvez accepter ou refuser les demandes d'argent</td>
-            </tr>
-            <tr class="header">
-                <td>Date</td>
-                <td>Nation</td>
-                <td>Crédits</td>
-                <td>Description</td>
-                <td>Action</td>
-            </tr>
-            {% for entry in entries %}
-                <tr class="smallitem">
-                    <td nowrap>{{ entry.date }}</td>
-                    <td nowrap>{{ entry.nation }}</td>
-                    <td align=right nowrap>{{ entry.credits|intcomma }}</td>
-                    <td>{{ entry.description }}</td>
-                    <td align="center" nowrap>
-                        <a href="?cat={{ walletpage }}&a=accept&id={{ entry.id }}">Accepter</a> - <a href="?cat={{ walletpage }}&a=deny&id={{ entry.id }}">Refuser</a>
-                    </td>
-                </tr>
-            {% endfor %}
-            {% if norequests %}<td class="smallitem" colspan=5 align=center>Aucune demande</td>{% endif %}
-        </table>
+        <div class="mt-3 card">
+            <div class="card-header">
+                <span class="fs-6">En tant que trésorier, vous pouvez accepter ou refuser les demandes d'argent</span>
+            </div>
+            <div class="list-group list-group-flush">
+                {% for entry in entries %}
+                    <div class="list-group-item">
+                        <div class="row gx-3 align-items-center">
+                            <div class="col-2">
+                                <span class="text-normal">{{ entry.date }}</span>
+                            </div>
+                            <div class="col">
+                                {{ entry.nation }}
+                            </div>
+                            <div class="col-auto">
+                                {{ entry.credits|intcomma }} <span class="text-normal">crédits</span>
+                            </div>
+                            <div class="col-auto">
+                                <span class="text-normal">{{ entry.description }}</span>
+                            </div>
+                            <div class="col-auto">
+                                <a href="?cat={{ walletpage }}&a=deny&id={{ entry.id }}" class="btn btn-danger">Refuser</a>
+                            </div>
+                            <div class="col-auto">
+                                <a href="?cat={{ walletpage }}&a=accept&id={{ entry.id }}" class="btn btn-primary">Accepter</a>
+                            </div>
+                        </div>
+                    </div>
+                {% empty %}
+                    <div class="list-group-item text-center">
+                        <span class="text-normal">Aucune demande</span>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
     {% endif %}
 {% endblock %}
