@@ -62,7 +62,7 @@
                                 <img src="{{ PATH_IMAGES }}interface/energy.gif" width="16" height="16" class="res" data-bs-toggle="tooltip" data-bs-title="Énergie">
                                 <span class="{% if planet.medium_energy %}text-warning{% elif planet.high_energy %}text-danger{% endif %}">{{ planet.energy|intcomma }}</span>
                                 <small class="text-normal">/{{ planet.energy_capacity|intcomma }}</small>
-                                <small class="ms-2 {% if planet.medium_hydrocarbon_production %}text-warning{% elif planet.energy_production <= 0 %}text-danger{% else %}text-success{% endif %}">+{{ planet.energy_production|intcomma }}</small>
+                                <small class="ms-2 {% if planet.medium_hydrocarbon_production %}text-warning{% elif planet.energy_production <= 0 %}text-danger{% else %}text-success{% endif %}">{% if planet.energy_production > 0 %}+{% endif %}{{ planet.energy_production|intcomma }}</small>
                             </div>
                             <div class="col-12">
                                 <div class="row gx-3 align-items-center">

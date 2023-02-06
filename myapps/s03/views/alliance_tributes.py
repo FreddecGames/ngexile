@@ -72,7 +72,8 @@ class View(GlobalView):
         elif col == 2:
             orderby = "created"
             reversed = True
-
+        content.AssignValue("col", col)
+        
         if self.request.GET.get("r", "") != "":
             reversed = not reversed
         else:
@@ -117,6 +118,7 @@ class View(GlobalView):
         elif col == 2:
             orderby = "created"
             reversed = True
+        content.AssignValue("col", col)
 
         if self.request.GET.get("r", "") != "":
             reversed = not reversed
@@ -164,9 +166,6 @@ class View(GlobalView):
         if self.invitation_success != "":
             content.Parse(self.invitation_success)
             content.Parse("new_message")
-
-        content.AssignValue("tag", self.tag)
-        content.AssignValue("credits", self.credits)
 
         content.Parse("new")
 

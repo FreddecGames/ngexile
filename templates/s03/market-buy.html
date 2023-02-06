@@ -100,17 +100,17 @@
                                 <span class="text-danger">Impossible d'acheter, cette galaxie n'est pas desservie par les marchands</span>
                             {% elif planet.can_buy %}
                                 <div class="row g-1 flex-column">
-                                    <div class="col-12">
+                                    <div class="col-12 d-flex align-items-center">
                                         <img src="{{ PATH_IMAGES }}interface/ore.gif" width="16" height="16" class="res me-2" data-bs-toggle="tooltip" data-bs-title="Minerai">
-                                        <input type="number" min="0" id="o{{ planet.planet_id }}" name="o{{ planet.planet_id }}" value="{% if planet.ore %}{{ planet.ore }}{% else %}0{% endif %}" onkeyup="updateprice({{ planet.index }})" size="3" maxlength="4">
+                                        <input type="number" class="form-control" min="0" id="o{{ planet.planet_id }}" name="o{{ planet.planet_id }}" value="{% if planet.ore %}{{ planet.ore }}{% else %}0{% endif %}" onkeyup="updateprice({{ planet.index }})" size="3" maxlength="4">
                                         <span class="mx-2 text-normal">x{{ 1000|intcomma }}</span>
                                         <img src="{{ PATH_IMAGES }}interface/credits.gif" width="16" height="16" class="res" data-bs-toggle="tooltip" data-bs-title="Crédits">
                                         <span class="me-2">{{ planet.price_ore|floatformat:2 }}</span>
                                         <a href="javascript:setval('o{{ planet.planet_id }}', {{ planet.ore_max }}); updateprice({{ planet.index }})">max</a>
                                     </div>
-                                    <div class="col-12">
+                                    <div class="col-12 d-flex align-items-center">
                                         <img src="{{ PATH_IMAGES }}interface/hydrocarbon.gif" width="16" height="16" class="res me-2" data-bs-toggle="tooltip" data-bs-title="Hydrocarbure">
-                                        <input type="number" min="0" id="h{{ planet.planet_id }}" name="h{{ planet.planet_id }}" value="{% if planet.hydrocarbon %}{{ planet.hydrocarbon }}{% else %}0{% endif %}" onkeyup="updateprice({{ planet.index }})" size="3" maxlength="4">
+                                        <input type="number" class="form-control" min="0" id="h{{ planet.planet_id }}" name="h{{ planet.planet_id }}" value="{% if planet.hydrocarbon %}{{ planet.hydrocarbon }}{% else %}0{% endif %}" onkeyup="updateprice({{ planet.index }})" size="3" maxlength="4">
                                         <span class="mx-2 text-normal">x{{ 1000|intcomma }}</span>
                                         <img src="{{ PATH_IMAGES }}interface/credits.gif" width="16" height="16" class="res" data-bs-toggle="tooltip" data-bs-title="Crédits">
                                         <span class="me-2">{{ planet.price_hydrocarbon|floatformat:2 }}</span>

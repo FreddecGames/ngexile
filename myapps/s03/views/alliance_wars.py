@@ -84,6 +84,7 @@ class View(GlobalView):
         elif col == 2:
             orderby = "created"
             reversed = True
+        content.AssignValue("col", col)
 
         if self.request.GET.get("r", "") != "":
             reversed = not reversed

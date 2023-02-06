@@ -89,7 +89,7 @@ class View(GlobalView):
 
     def displayNAPs(self, content):
         col = ToInt(self.request.GET.get("col"), 0)
-        if col < 1 or col > 4: col = 1
+        if col < 1 or col > 6: col = 1
         if col == 2: col = 1
 
         reversed = False
@@ -109,7 +109,8 @@ class View(GlobalView):
             reversed = not reversed
         else:
             content.Parse("r" + str(col))
-
+        content.AssignValue("col", col)
+        
         if reversed: orderby = orderby + " DESC"
         orderby = orderby + ", tag"
 
