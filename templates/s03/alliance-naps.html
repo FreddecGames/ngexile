@@ -56,21 +56,21 @@
                             <span class="text-normal">{{ nap.created }}</span>
                         </div>
                         <div class="col-auto">
-                            <script>
-                                {% if nap.countdown %}putcountdown1({{nap.break_interval}}, "Rompu", "?"){% endif %}
-                                {% if nap.time %}document.write(formattime({{nap.break_interval}})){% endif %}
-                            </script>
+                            {% if nap.countdown %}<span class="text-yellow"><script>putcountdown1({{nap.break_interval}}, "Rompu", "?")</script></span>{% endif %}
+                            {% if nap.time %}<script>document.write(formattime({{nap.break_interval}}))</script>{% endif %}
                         </div>
-                        <div class="col-auto">
-                            {% if nap.toggle_share_locs %}<a href="?cat={{ cat }}&a=sharelocs&tag={{ nap.tag }}">{% if nap.locs_shared %}Oui{% else %}}Non{% endif %}</a>
-                            {% else %}{% if nap.locs_shared %}Oui{% else %}}Non{% endif %}
-                            {% endif %}
-                        </div>
-                        <div class="col-auto">
-                            {% if nap.toggle_share_radars %}<a href="?cat={{ cat }}&a=shareradars&tag={{ nap.tag }}">{% if nap.radars_shared %}Oui{% else %}Non{% endif %}</a>
-                            {% else %}{% if nap.toggle_share_radars %}Oui{% else %}}Non{% endif %}
-                            {% endif %}
-                        </div>
+                        {% if not nap.countdown %}
+                            <div class="col-auto">
+                                {% if nap.toggle_share_locs %}<a href="?cat={{ cat }}&a=sharelocs&tag={{ nap.tag }}">{% if nap.locs_shared %}Oui{% else %}}Non{% endif %}</a>
+                                {% else %}{% if nap.locs_shared %}Oui{% else %}}Non{% endif %}
+                                {% endif %}
+                            </div>
+                            <div class="col-auto">
+                                {% if nap.toggle_share_radars %}<a href="?cat={{ cat }}&a=shareradars&tag={{ nap.tag }}">{% if nap.radars_shared %}Oui{% else %}Non{% endif %}</a>
+                                {% else %}{% if nap.toggle_share_radars %}Oui{% else %}}Non{% endif %}
+                                {% endif %}
+                            </div>
+                        {% endif %}
                         <div class="col-auto">
                             {% if nap.break %}<a href="?cat={{ cat }}&a=break&tag={{ nap.tag }}" onclick="return confirmBreakPact('{{ nap.tag }}','{{ nap.name }}')">Rompre</a>
                             {% else %}Rompu

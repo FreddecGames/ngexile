@@ -589,6 +589,51 @@ class View(GlobalView):
 
         if self.UserId==1009: content.Parse("dev")
 
+        query = "SELECT id, name, attackonsight, engaged, size, signature, speed, remaining_time, commanderid, commandername," +\
+                " planetid, planet_name, planet_galaxy, planet_sector, planet_planet, planet_ownerid, planet_owner_name, planet_owner_relation," +\
+                " cargo_capacity, cargo_ore, cargo_hydrocarbon, cargo_scientists, cargo_soldiers, cargo_workers" + \
+                " FROM vw_fleets" +\
+                " WHERE ownerid=" + str(self.fleet_owner_id) + " AND id="+str(fleetid)
+        oRs = oConnExecute(query)
+    
+        content.AssignValue("fleet_capacity", oRs[18])
+        content.AssignValue("fleet_ore", oRs[19])
+        content.AssignValue("fleet_hydrocarbon", oRs[20])
+        content.AssignValue("fleet_scientists", oRs[21])
+        content.AssignValue("fleet_soldiers", oRs[22])
+        content.AssignValue("fleet_workers", oRs[23])
+    
+        content.AssignValue("fleet_load", oRs[19] + oRs[20] + oRs[21] + oRs[22] + oRs[23])        
+        
+        relation = oRs[17]
+        if oRs[7] or oRs[3]: relation = rWar
+                
+        if relation == rSelf:
+            # retrieve planet ore, hydrocarbon, workers, relation
+            query = "SELECT ore, hydrocarbon, scientists, soldiers," +\
+                    " GREATEST(0, workers-GREATEST(workers_busy,workers_for_maintenance-workers_for_maintenance/2+1,500))," +\
+                    " workers > workers_for_maintenance/2" +\
+                    " FROM vw_planets WHERE id="+str(oRs[10])
+            oRs = oConnExecute(query)
+
+            content.AssignValue("planet_ore", oRs[0])
+            content.AssignValue("planet_hydrocarbon", oRs[1])
+            content.AssignValue("planet_scientists", oRs[2])
+            content.AssignValue("planet_soldiers", oRs[3])
+            content.AssignValue("planet_workers", oRs[4])
+
+            if not oRs[5]:
+                content.AssignValue("planet_ore", 0)
+                content.AssignValue("planet_hydrocarbon", 0)
+                content.Parse("not_enough_workers_to_load")
+
+            content.Parse("load")
+        elif relation in [rFriend, rAlliance, rHostile]:
+
+            content.Parse("unload")
+        else:
+            content.Parse("cargo")
+        
         return self.Display(content)
 
     def InstallBuilding(self, fleetid, shipid):

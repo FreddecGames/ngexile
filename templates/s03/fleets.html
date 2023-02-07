@@ -234,7 +234,7 @@
                             s += '</div>'
                             if (fleet.commandername != '' && fleet.commandername != 'None') {
                                 s += '<div class="col-auto">'
-                                    s += '<a href="/s03/commanders/#' + escape(fleet.commandername) + '" data-bs-toggle="tooltip" data-bs-title="Voir commandant"><i class="fa-fw fas fa-user-astronaut me-1"></i>' + fleet.commandername + '</a>'
+                                    s += '<a href="/s03/commanders/#' + escape(fleet.commandername) + '" data-bs-toggle="tooltip" data-bs-title="' + fleet.commandername + ' - Voir commandant"><i class="fa-fw fas fa-user-astronaut me-1"></i></a>'
                                 s += '</div>'
                             }                            
                             s += '<div class="col-auto">'

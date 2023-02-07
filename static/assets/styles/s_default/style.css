@@ -40,14 +40,6 @@ fieldset {
 fieldset div { padding:5px; }
 fieldset legend { color:#FFA500; }
 
-/* ul li */
-
-ul { list-style-type:disc; margin-top:10px; margin-bottom:10px; }
-ul li { margin-left:20px; margin-top:4px; }
-
-ul.requirements { list-style-type:disc; margin-top:0px; padding-top:5px; padding-left: 20px; margin-bottom:0px; margin-left:0; }
-ul.requirements li { line-height:13px; margin-left:0px; margin-top:0px; }
-
 /* dl dd */
 dl.spy {
 	margin:10px 0.5em;
