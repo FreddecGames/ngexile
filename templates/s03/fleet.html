@@ -1354,6 +1354,88 @@
                     {% for ship in shiplist %}
                         <div class="col-12">
                             <div class="row gx-3">
+                                <div class="col-auto pe-0">
+                                    <span class="text-normal"><i class="fa-fw fas fa-question-circle" data-bs-toggle="tooltip" data-bs-html="true" data-bs-title="
+                                        <div class='mb-1'><span class='fs-6'>Description</span></div>
+                                        <div class='mb-3'><span class='text-normal'>{{ ship.description|escape }}</span></div>
+                                        <div class='mb-1'><span class='fs-6'>Caractéristiques</span></div>
+                                        <div class='row gx-3 gy-1'>
+                                            {% if ship.building %}
+                                                <div class='col-auto'>
+                                                    <small class='text-normal'>Bâtiment</small>
+                                                    <span class='text-white'>{{ ship.building }}</span>
+                                                </div>
+                                            {% endif %}
+                                            <div class='col-auto'>
+                                                <small class='text-normal'>Entretien</small>
+                                                <img src='{{ PATH_IMAGES }}interface/credits.gif' width='16px' height='16px' />
+                                                <span class='text-white'>{{ ship.upkeep|intcomma }}</span>
+                                            </div>
+                                            <div class='col-auto'>
+                                                <small class='text-normal'>Signature</small>
+                                                <span class='text-white'>{{ ship.ship_signature|intcomma }}</span>
+                                            </div>
+                                            {% if ship.ship_cargo > 0 %}
+                                                <div class='col-auto'>
+                                                    <small class='text-normal'>Cargo</small>
+                                                    <span class='text-white'>{{ ship.ship_cargo|intcomma }}</span>
+                                                </div>
+                                            {% endif %}
+                                            <div class='col-auto'>
+                                                <small class='text-normal'>Vitesse</small>
+                                                <span class='text-white'>{{ ship.ship_speed|intcomma }}</span>
+                                            </div>
+                                            <div class='col-auto'>
+                                                <small class='text-normal'>Manœuvrabilité</small>
+                                                <span class='text-white'>{{ ship.ship_handling|intcomma }}</span>
+                                            </div>
+                                            {% if ship.ship_leadership > 0 %}
+                                                <div class='col-auto'>
+                                                    <small class='text-normal'>Commandement</small>
+                                                    <span class='text-white'>{{ ship.ship_leadership|intcomma }}</span>
+                                                </div>
+                                            {% endif %}
+                                            <div class='col-auto'>
+                                                <small class='text-normal'>Armure</small>
+                                                <span class='text-white'>{{ ship.ship_hull|intcomma }}</span>
+                                            </div>
+                                            {% if ship.ship_turrets > 0 %}
+                                                <div class='col-auto'>
+                                                    <small class='text-normal'>Dommage</small>
+                                                    <span class='text-white'>{{ ship.ship_turrets|intcomma }} <small class='text-normal'>x</small> {{ ship.ship_power|intcomma }}</span>
+                                                </div>
+                                                <div class='col-auto'>
+                                                    <small class='text-normal'>Ciblage</small>
+                                                    <span class='text-white'>{{ ship.ship_tracking_speed|intcomma }}</span>
+                                                </div>
+                                            {% endif %}
+                                            {% if ship.ship_shield > 0 %}
+                                                <div class='col-auto'>
+                                                    <small class='text-normal'>Bouclier</small>
+                                                    <span class='text-white'>{{ ship.ship_shield|intcomma }}</span>
+                                                </div>
+                                            {% endif %}
+                                            {% if ship.ship_recycler_output > 0 %}
+                                                <div class='col-auto'>
+                                                    <small class='text-normal'>Recyclage</small>
+                                                    <span class='text-white'>{{ ship.ship_recycler_output|intcomma }}</span>
+                                                </div>
+                                            {% endif %}
+                                            {% if ship.ship_long_distance_capacity > 0 %}
+                                                <div class='col-auto'>
+                                                    <small class='text-normal'>Saut</small>
+                                                    <span class='text-white'>{{ ship.ship_long_distance_capacity|intcomma }}</span>
+                                                </div>
+                                            {% endif %}
+                                            {% if ship.ship_droppods > 0 %}
+                                                <div class='col-auto'>
+                                                    <small class='text-normal'>Invasion</small>
+                                                    <span class='text-white'>{{ ship.ship_droppods|intcomma }}</span>
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                    "></i></span>
+                                </div>
                                 <div class="col">
                                     <a href="/s03/help/?cat=ships#{{ ship.id }}"
                                        data-bs-toggle="tooltip"
@@ -1383,8 +1465,8 @@
                             <div class="col-12">
                                 <div class="row gx-3">
                                     {% if fleet.playerfleet %}
-                                        <div class="col">
-                                            <a href="?id={{ fleet.id }}" class="self" data-bs-toggle="tooltip" data-bs-html="true" data-bs-title="
+                                        <div class="col-auto pe-0">
+                                            <span class="text-normal"><i class="fa-fw fas fa-question-circle" data-bs-toggle="tooltip" data-bs-html="true" data-bs-title="
                                                 <div class='row g-1 flex-column'>
                                                     <div class='col-12'>
                                                         <div class='row gx-3'>
@@ -1417,7 +1499,10 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                            ">{{ fleet.name }}</a>
+                                            "></i></span>
+                                        </div>
+                                        <div class="col">
+                                            <a href="?id={{ fleet.id }}" class="self" data-bs-toggle="tooltip" data-bs-html="true" data-bs-title="Voir flotte">{{ fleet.name }}</a>
                                             <small class="ms-2">{{ fleet.signature|intcomma }}</small>
                                         </div>
                                         {% if fleet.merge %}
