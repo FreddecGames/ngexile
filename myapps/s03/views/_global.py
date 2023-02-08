@@ -356,7 +356,7 @@ class GlobalView(ExileMixin, View):
     
             tpl.Parse("dev")
     
-        tpl.AssignValue("planetid", self.CurrentPlanet)
+        tpl.AssignValue("cur_planetid", self.CurrentPlanet)
     
         tpl.AssignValue("cur_g", self.CurrentGalaxyId)
         tpl.AssignValue("cur_s", self.CurrentSectorId)

@@ -48,7 +48,6 @@ class View(ExileMixin, View):
                     result = 11
             except:
                 result = 10
-        else: result = 11
 
         if result == 0:
             orientation = int(request.POST.get("orientation", 0))

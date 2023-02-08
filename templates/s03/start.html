@@ -91,134 +91,70 @@ function showRecommendation(obj) {
                 </ul>
             </div>
         {% endif %}
-        {% if orientation_4 %}
-            <div id="orientation4" class="hidden">
-                <ul>
-                    <li>
-                        La production de minerai est augmentée de 400%
-                    </li>
-                    <li>
-                        La production d'hydrocarbure est augmentée de 400%
-                    </li>
-                    <li>
-                        Vitesse de construction des bâtiments augmentée de 400%
-                    </li>
-                    <li>
-                        Vitesse de construction des vaisseaux augmentée de 400%
-                    </li>
-                    <li>
-                        Vos vaisseaux se déplacent 400% plus vite
-                    </li>
-                    <li>
-                        Le temps des recherches est diminué de 75%
-                    </li>
-                    <li>
-                        Les points de prestige gagnés par les bâtiments sont augmentés de 400%
-                    </li>
-                    <li>
-                        Les points de prestige gagnés lors des combats sont augmentés de 100%
-                    </li>
-                    <li>
-                        La demande en minerai sur les planètes est augmentée de 400%
-                    </li>
-                    <li>
-                        La demande en hydrocarbure sur les planètes est augmentée de 400%
-                    </li>
-                    <li>
-                        Vous aurez accès à un vaisseau de transport supérieur aux vaisseaux de transport classiques
-                    </li>
-                    <li>
-                        Vous aurez accès à une technologie permettant la construction de vaisseaux de déploiement qui pourront installer instantanément des bâtiments sur vos planètes ou les planètes de vos alliés
-                    </li>
-                </ul>
-            </div>
-        {% endif %}
-        <div align="center">
-            <div id="container">
-                <div id="start">
-                    NG Exile
+        <div align="center" class="pt-3">
+            <div class="card card-body" style="width:800px;">
+                <div class="mb-3">
+                    <span class="fs-4">NG Exile</span>
                 </div>
-                {% if login %}
-                <div id="playername">
-                    {{ login }}
-                </div>
-                {% endif %}
                 <form method="post" action="?" class="text-center">
                     {% csrf_token %}
-                    Bienvenue dans NG Exile, avant de commencer, veuillez entrer un nom pour votre nation. Ce sera le nom sous lequel vous jouerez dans le jeu, choisissez un nom différent de votre compte.
-                    <br/>
-                    <br/>
-                    <div align="center">
-                        Nom de nation:
-                        <input type="text" name="name" value="{% if login %}{{ login }}{% endif %}"/>
+                    <div class="mb-3">
+                        <span class="text-normal">Bienvenue dans <span class="text-white">NG Exile</span>, avant de commencer, veuillez entrer un nom pour votre nation. Ce sera le nom sous lequel vous jouerez dans le jeu, choisissez un nom différent de votre compte.</span>
                     </div>
-                    {% if error_10 %}
-                        <div class="error">
-                            Ce nom de nation est déjà utilisé.
+                    <div class="mb-3">
+                        <div class="row gx-3 align-items-center justify-content-center">
+                            <div class="col-auto"><span>Nom de nation</span></div>
+                            <div class="col-auto"><input type="text" class="form-control" name="name" value=""/></div>
+                            {% if error_10 %}
+                                <div class="col-auto">
+                                    <span class="text-danger">Ce nom de nation est déjà utilisé</span>
+                                </div>
+                            {% endif %}
+                            {% if error_11 %}
+                                <div class="col-auto">
+                                    <span class="text-danger">Ce nom de nation est invalide</span>
+                                </div>
+                            {% endif %}
                         </div>
-                    {% endif %}
-                    {% if error_11 %}
-                        <div class="error">
-                            Ce nom de nation est invalide.
-                        </div>
-                    {% endif %}
+                    </div>
                     {% if galaxies %}
-                        <br/>
-                        <div align="center">
-                            Galaxie de départ:
-                            <select name="galaxy" id="galaxies" onchange="showRecommendation(this)">
-                                {% for galaxy in galaxies %}
-                                    <option value="{{ galaxy.id }}"{% if galaxy.selected %} selected{% endif %}>
-                                        {{ galaxy.id }}
-                                    </option>
-                                {% endfor %}
-                            </select>
-                            <br/>
-                            <span id="recommendation"></span>
-                            <br/>
+                    <div class="mb-3">
+                        <div class="row gx-3 align-items-center justify-content-center">
+                            <div class="col-auto"><span>Galaxie de départ</span></div>
+                            <div class="col-auto">
+                                <select name="galaxy" class="form-control" id="galaxies" onchange="showRecommendation(this)">
+                                    {% for galaxy in galaxies %}
+                                        <option value="{{ galaxy.id }}"{% if galaxy.selected %} selected{% endif %}>
+                                            {{ galaxy.id }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-auto">
+                                <span id="recommendation"></span>
+                            </div>
                         </div>
-                    {% endif %}
-                    <br/>
-                    Désormais, vous devez choisir l'orientation de votre nation, ce choix aura pour conséquence de vous attribuer des bonus de départ que vous garderez tout le long du jeu.
-                    <br/>
-                    Il n'est pas possible d'en changer en cours de route alors choisissez bien suivant le style de jeu que vous préférez.
-                    <br/>
-                    Quelque soit l'orientation choisie, vous jouerez au même jeu mais avec des avantages différents.
-                    <br/>
-                    <br/>
-                    <div align="center">
-                        Orientation:
-                        <select name="orientation" onchange='displayOrientation(this)'>
-                            <option value="0">
-                                Choisissez
-                            </option>
-                            {% if orientation_1 %}
-                                <option value="1">
-                                    Marchand
-                                </option>
-                            {% endif %}
-                            {% if orientation_2 %}
-                                <option value="2">
-                                    Militaire
-                                </option>
-                            {% endif %}
-                            {% if orientation_3 %}
-                                <option value="3">
-                                    Scientifique
-                                </option>
-                            {% endif %}
-                            {% if orientation_4 %}
-                                <option value="4">
-                                    Seigneur de guerre
-                                </option>
-                            {% endif %}
-                        </select>
-                        <br/>
-                        <div id="description" align="left">
-                        </div>
-                        <br/>
-                        <input type="submit" value="Valider">
                     </div>
+                    {% endif %}
+                    <div class="mb-3">
+                        <span class="text-normal">Désormais, vous devez choisir l'orientation de votre nation, ce choix aura pour conséquence de vous attribuer des bonus de départ que vous garderez tout le long du jeu. Il n'est pas possible d'en changer en cours de route alors choisissez bien suivant le style de jeu que vous préférez. Quelque soit l'orientation choisie, vous jouerez au même jeu mais avec des avantages différents.</span>
+                    </div>
+                    <div class="mb-3">
+                        <div class="row gx-3 align-items-center justify-content-center">
+                            <div class="col-auto"><span>Orientation</span></div>
+                            <div class="col-auto">
+                                <select class="form-control" name="orientation" onchange='displayOrientation(this)'>
+                                    <option value="0">Choisissez</option>
+                                    <option value="1">Marchand</option>
+                                    <option value="2">Militaire</option>
+                                    <option value="3">Scientifique</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="description" class="mb-3">
+                    </div>
+                    <input type="submit" class="btn btn-primary" value="Valider">
                 </form>
                 {% if error_2 %}
                     <div class="error">
