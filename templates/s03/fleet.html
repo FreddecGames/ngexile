@@ -1360,17 +1360,6 @@
                                         <div class='mb-3'><span class='text-normal'>{{ ship.description|escape }}</span></div>
                                         <div class='mb-1'><span class='fs-6'>Caractéristiques</span></div>
                                         <div class='row gx-3 gy-1'>
-                                            {% if ship.building %}
-                                                <div class='col-auto'>
-                                                    <small class='text-normal'>Bâtiment</small>
-                                                    <span class='text-white'>{{ ship.building }}</span>
-                                                </div>
-                                            {% endif %}
-                                            <div class='col-auto'>
-                                                <small class='text-normal'>Entretien</small>
-                                                <img src='{{ PATH_IMAGES }}interface/credits.gif' width='16px' height='16px' />
-                                                <span class='text-white'>{{ ship.upkeep|intcomma }}</span>
-                                            </div>
                                             <div class='col-auto'>
                                                 <small class='text-normal'>Signature</small>
                                                 <span class='text-white'>{{ ship.ship_signature|intcomma }}</span>
