@@ -28,11 +28,14 @@ class View(GlobalView):
         if col < 1 or col > 7: col = 1
 
         # hide scores
-        if col == 2 or col == 5: col = 1
+        if col == 5: col = 1
         
         reversed = False
         if col == 1:
             orderby = "upper(alliances.name)"
+        elif col == 2:
+            orderby = "score"
+            reversed = True
         elif col == 3:
             orderby = "members"
             reversed = True
