@@ -80,7 +80,7 @@ class View(GlobalView):
                 if oRs[15] > 0: item["storage_energy"] = True
 
                 item["upkeep_workers"] = int(oRs[10])
-                item["upkeep_credits"] = 0
+                item["upkeep_credits"] = oRs[11]
                 item["upkeep_energy"] = oRs[12]
 
         elif cat == "research":# display help on researches
