@@ -251,7 +251,7 @@
                                 {% if ship.pp > 0 %}
                                 <div class="col-auto">
                                     <img src="{{ PATH_IMAGES }}interface/prestige.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Prestige" />
-                                    <span class="{% if ship.required_pp_not_enough %}text-danger{% endif %}">{{ ship.pp|intcomma }}</span>
+                                    <span class="{% if ship.required_pp_not_enough %}text-danger{% endif %}">{{ ship.required_pp|intcomma }}</span>
                                 </div>
                                 {% endif %}
                                 <div class="col-auto" style="width:100px;">

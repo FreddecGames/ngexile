@@ -34,7 +34,7 @@ class View(GlobalView):
         if col == 1:
             orderby = "upper(alliances.name)"
         elif col == 2:
-            orderby = "score"
+            orderby = "alliance_score"
             reversed = True
         elif col == 3:
             orderby = "members"
@@ -78,8 +78,8 @@ class View(GlobalView):
         if offset >= nb_pages: offset = nb_pages-1
         if offset < 0: offset = 0
 
-        query = "SELECT alliances.id, alliances.tag, alliances.name, alliances.score, count(*) AS members, sum(planets) AS planets," + \
-                " int4(alliances.score / count(*)) AS score_average, alliances.score-alliances.previous_score as score_delta," + \
+        query = "SELECT alliances.id, alliances.tag, alliances.name, sum(users.score) AS alliance_score, count(*) AS members, sum(planets) AS planets," + \
+                " int4(alliances.score / count(*)) AS score_average, sum(users.score)-sum(users.previous_score) as score_delta," + \
                 " created, EXISTS(SELECT 1 FROM alliances_naps WHERE allianceid1=alliances.id AND allianceid2=" + str(sqlValue(self.AllianceId)) + ")," + \
                 " max_members, EXISTS(SELECT 1 FROM alliances_wars WHERE (allianceid1=alliances.id AND allianceid2=" + str(sqlValue(self.AllianceId)) + ") OR (allianceid1=" + str(sqlValue(self.AllianceId)) + " AND allianceid2=alliances.id))" + \
                 " FROM users INNER JOIN alliances ON alliances.id=alliance_id" + \

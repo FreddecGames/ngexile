@@ -49,7 +49,7 @@
                         {{ alliance.stat_colonies }} <small class="text-normal">planètes</small>
                     </div>
                     <div class="col-2 text-end">
-                        {{ alliance.score|intcomma }} <small class="text-normal">Score</small>
+                        {{ alliance.score|intcomma }}
                         <small class="ms-2 {% if alliance.score_delta > 0 %}text-success{% else %}text-danger{% endif %}">{% if alliance.score_delta > 0 %}+{% endif %}{{ alliance.score_delta|intcomma }}</small>
                     </div>
                     <div class="col-3 text-end">

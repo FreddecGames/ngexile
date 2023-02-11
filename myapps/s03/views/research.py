@@ -30,7 +30,7 @@ class View(GlobalView):
         return self.ListResearches()
 
     def HasEnoughFunds(self, credits):
-        return credits <= 0 or self.oPlayerInfo["credits"] >= credits
+        return self.oPlayerInfo["credits"] >= credits
 
     # List all the available researches
     def ListResearches(self):
@@ -107,10 +107,11 @@ class View(GlobalView):
                         research["notresearchable"] = True
                     elif underResearchCount > 0:
                         research["busy"] = True
-                    elif not self.HasEnoughFunds(oRs[2]):
-                        research["notenoughmoney"] = True
                     else:
                         research["research"] = True
+
+                    if not self.HasEnoughFunds(oRs[2]):
+                        research["notenoughmoney"] = True
 
                     research["cost"] = True
                 else:
