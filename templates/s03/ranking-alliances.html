@@ -8,6 +8,7 @@
         <div class="col-auto"><a href="?col=1{% if r1 %}&r=1{% endif %}{% if search_params %}&a={{ param_a }}{% endif %}" class="{% if sort_column == 1 %}badge text-bg-primary{% endif %}">Alliance{% if sort_column == 1 %}<i class="ms-1 fa-fw fas {% if r1 %}fa-caret-down{% else %}fa-caret-up{% endif %}"></i>{% endif %}</a></div>
         <div class="col-auto"><a href="?col=3{% if r3 %}&r=1{% endif %}{% if search_params %}&a={{ param_a }}{% endif %}" class="{% if sort_column == 3 %}badge text-bg-primary{% endif %}">Membres{% if sort_column == 3 %}<i class="ms-1 fa-fw fas {% if r3 %}fa-caret-down{% else %}fa-caret-up{% endif %}"></i>{% endif %}</a></div>
         <div class="col-auto"><a href="?col=4{% if r4 %}&r=1{% endif %}{% if search_params %}&a={{ param_a }}{% endif %}" class="{% if sort_column == 4 %}badge text-bg-primary{% endif %}">Planètes{% if sort_column == 4 %}<i class="ms-1 fa-fw fas {% if r4 %}fa-caret-down{% else %}fa-caret-up{% endif %}"></i>{% endif %}</a></div>
+        <div class="col-auto"><a href="?col=2{% if r2 %}&r=1{% endif %}{% if search_params %}&a={{ param_a }}{% endif %}" class="{% if sort_column == 2 %}badge text-bg-primary{% endif %}">Score{% if sort_column == 2 %}<i class="ms-1 fa-fw fas {% if r2 %}fa-caret-down{% else %}fa-caret-up{% endif %}"></i>{% endif %}</a></div>
         <div class="col-auto"><a href="?col=6{% if r6 %}&r=1{% endif %}{% if search_params %}&a={{ param_a }}{% endif %}" class="{% if sort_column == 6 %}badge text-bg-primary{% endif %}">Date{% if sort_column == 6 %}<i class="ms-1 fa-fw fas {% if r6 %}fa-caret-down{% else %}fa-caret-up{% endif %}"></i>{% endif %}</a></div>
     </div>
 </div>
@@ -46,6 +47,10 @@
                     </div>
                     <div class="col-2 text-end">
                         {{ alliance.stat_colonies }} <small class="text-normal">planètes</small>
+                    </div>
+                    <div class="col-2 text-end">
+                        {{ alliance.score|intcomma }} <small class="text-normal">Score</small>
+                        <small class="ms-2 {% if alliance.score_delta > 0 %}text-success{% else %}text-danger{% endif %}">{% if alliance.score_delta > 0 %}+{% endif %}{{ alliance.score_delta|intcomma }}</small>
                     </div>
                     <div class="col-3 text-end">
                         <span class="text-normal">{{ alliance.created }}</span>
