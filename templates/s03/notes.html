@@ -1,51 +1,52 @@
 {% extends "s03/layout.html" %}
 {% load humanize %}
 {% block content %}
-    <script>function update(obj) {document.getElementById("count").innerHTML=obj.value.length}</script>
+    <script>
+        function update(obj) {
+        
+            document.getElementById("count").innerHTML = obj.value.length
+        }
+    </script>
     <form method="post" action="/s03/notes/" name="note">
         {% csrf_token %}
-        <table class="default">
-            <tr class="title">
-                <td>
-                    Notes personnelles (<span id="count">0</span> / {{ maxlength }} caractères)
-                </td>
-            </tr>
-            <tr class="item">
-                <td>
+        <div class="card">
+            <div class="card-header d-flex">
+                <span class="fs-6 me-auto">Notes personnelles</span>
+                <span class="text-normal"><span id="count">0</span> /{{ maxlength }} caractères</span>
+            </div>
+            <div class="card-body">
+                <div class="mb-2">
                     <textarea id="notes"
-                              name="notes"
+                              name="notes" class="form-control"
                               cols="75"
                               rows="15"
                               onKeyUp="update(this)"
                               onFocus="update(this)">{% if data_notes %}{{data_notes}}{% endif %}</textarea>
-                </td>
-            </tr>
-            <tr class="item">
-                <td class=buttons align=center>
-                    <input type="button"
-                           name="effacer"
-                           value="Effacer"
-                           class="button"
-                           onclick="javascript:document.getElementById('notes').value=''">
-                    &nbsp;
-                    <input type="submit"
-                           name="submit"
-                           id="submit"
-                           value="Enregistrer"
-                           class="button">
-                </td>
-            </tr>
-            {% if error %}
-                <tr class="item">
-                    <td>
-                        <p class=error>
-                            {% if toolong %}Vos notes dépassent la limite de {{ maxlength }} caractères{% endif %}
-                            {% if done %}Notes enregistrées{% endif %}
-                        </p>
-                    </td>
-                </tr>
-            {% endif %}
-        </table>
+                </div>
+                <div class="d-flex">
+                    <div class="col">
+                        <input type="button" class="btn btn-danger"
+                               name="effacer"
+                               value="Effacer"
+                               class="button"
+                               onclick="javascript:document.getElementById('notes').value=''">
+                    </div>
+                    <div class="col-auto">
+                        <input type="submit" class="btn btn-primary"
+                               name="submit"
+                               id="submit"
+                               value="Enregistrer"
+                               class="button">
+                    </div>
+                </div>
+                {% if error %}
+                    <div class="mt-2 text-end">
+                        {% if toolong %}<span class="text-danger">Vos notes dépassent la limite de {{ maxlength }} caractères</span>{% endif %}
+                        {% if done %}<span class="text-success">Notes enregistrées</span>{% endif %}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
     </form>
-    <script>onload=function() { var o=document.getElementById("notes"); o.focus(); o.value = o.value; }</script>
+    <script>onload = function() { var o = document.getElementById("notes"); o.focus(); o.value = o.value; }</script>
 {% endblock %}

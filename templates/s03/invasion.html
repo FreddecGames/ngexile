@@ -1,99 +1,112 @@
 {% extends "s03/layout.html" %}
 {% load humanize %}
 {% block content %}
-    {% if invasion_report %}
-        <table class="default" width="60%">
-            <tr class="title">
-                <td colspan=4 align=center>
-                    Rapport d'invasion de <script>putplanet("{{planetid}}","{{planetname}}","{{g}}","{{s}}","{{p}}",{{relation}});</script> par {{ fleet_owner }}
-                </td>
-            </tr>
-            {% if report %}
-                <tr class="category">
-                    <td>Troupes</td>
-                    <td>
-                        Effectif
-                        <td>Pertes</td>
-                        <td>Après Combat</td>
-                    </tr>
-                    {% if attacker %}
-                        <tr class="category {% if ally %}ally{% endif %}{% if enemy %}enemy{% endif %}">
-                            <td>{{ fleet_owner }}</td>
-                            <td>{{ soldiers_total }}</td>
-                            <td>{{ soldiers_lost }}</td>
-                            <td>{{ soldiers_alive }}</td>
-                        </tr>
-                    {% endif %}
-                    <tr class="item">
-                        <td>
-                            <span class="dot">&middot;</span>Soldats
-                        </td>
-                        <td>{{ soldiers_total }}</td>
-                        <td>{{ soldiers_lost }}</td>
-                        <td>{{ soldiers_alive }}</td>
-                    </tr>
-                    {% if defender %}
-                        <tr class="category {% if ally %}ally{% endif %}{% if enemy %}enemy{% endif %}">
-                            <td>{{ planet_owner }}</td>
-                            <td>{{ def_total }}</td>
-                            <td>{{ def_losts }}</td>
-                            <td>{{ def_alive }}</td>
-                        </tr>
-                    {% endif %}
-                    <tr class="item">
-                        <td>
-                            <span class="dot">&middot;</span>Soldats
-                        </td>
-                        <td>{{ def_soldiers_total }}</td>
-                        <td>{{ def_soldiers_lost }}</td>
-                        <td>{{ def_soldiers_alive }}</td>
-                    </tr>
-                    {% if workers %}
-                        <tr class="smallitem">
-                            <td>
-                                <span class="dot">&middot;</span>Travailleurs
-                            </td>
-                            <td>{{ def_workers_total }}</td>
-                            <td>{{ def_workers_lost }}</td>
-                            <td>{{ def_workers_alive }}</td>
-                        </tr>
-                    {% endif %}
-                    {% if scientists %}
-                        <tr class="smallitem">
-                            <td>
-                                <span class="dot">&middot;</span>Scientifiques
-                            </td>
-                            <td>{{ def_scientists_total }}</td>
-                            <td>
-                                {{ def_scientists_lost }}
-                            </td>
-                            <td>
-                                {{ def_scientists_alive }}
-                            </td>
-                        </tr>
-                    {% endif %}
-                {% endif %}
-                {% if not_succeeded %}
-                    <tr>
-                        <td colspan=4 align=center>
-                            <script>putplanet("{{planetid}}","{{planetname}}","{{g}}","{{s}}","{{p}}",{{relation}});</script> a été défendue avec succès.
-                        </td>
-                    </tr>
-                {% endif %}
-                {% if succeeded %}
-                    <tr>
-                        <td colspan=4 align=center>
-                            La nation <a href="/s03/nation/?name={{ fleet_owner }}">{{ fleet_owner }}</a> s'est emparée de <script>putplanet("{{planetid}}","{{planetname}}","{{g}}","{{s}}","{{p}}",{{relation}});</script>.
-                        </td>
-                    </tr>
-                {% endif %}
-                {% if justdone %}
-                    <tr>
-                        <td colspan=4 align=center>
-                            <a href="/s03/fleet/?id={{ fleetid }}">Continuer</a>
-                        </td>
-                    </tr>
-                {% endif %}
-            </table>
-        {% endif %}
-    {% endblock %}
+<div class="card mb-3">
+    <div class="card-header">
+        <span class="fs-6">Rapport d'invasion</span>
+    </div>
+    <div class="card-body">
+        <div class="row gy-1 gx-3">
+            <div class="col-3 text-end"><span class="text-normal">Localisation</span></div>
+            <div class="col-9"><script>putplanet("{{planetid}}","{{planetname}}","{{g}}","{{s}}","{{p}}",{{relation}});</script></div>
+            <div class="col-3 text-end"><span class="text-normal">Envahisseur</span></div>
+            <div class="col-9">{{ fleet_owner }}</div>
+            <div class="col-3 text-end"><span class="text-normal">Résultat</span></div>
+            <div class="col-9">
+                {% if not_succeeded %}<script>putplanet("{{planetid}}","{{planetname}}","{{g}}","{{s}}","{{p}}",{{relation}});</script> a été défendue avec succès{% endif %}
+                {% if succeeded %}La nation <a href="/s03/nation/?name={{ fleet_owner }}">{{ fleet_owner }}</a> s'est emparée de <script>putplanet("{{planetid}}","{{planetname}}","{{g}}","{{s}}","{{p}}",{{relation}});</script>{% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% if attacker %}
+<div class="card mb-3">
+    <div class="card-header">
+        <span class="fs-6">Force d'invasion</span>
+    </div>
+    <div class="card-body">
+        <div class="row gx-3 align-items-center">
+            <div class="col-3 text-end">
+                <img src="{{ PATH_IMAGES }}interface/soldiers.gif" data-bs-toggle="tooltip" data-bs-title="Soldats" class="res" width="16" height="16">
+                <span class="text-normal">Soldats</span>
+            </div>
+            <div class="col-3">
+                {{ soldiers_total|intcomma }}
+                <span class="mx-2 text-normal"><i class="fas fa-long-arrow-alt-right"></i></span>
+                {{ soldiers_alive|intcomma }}
+            </div>
+            <div class="col-auto">
+                <span class="me-1 text-normal"><i class="fas fa-skull"></i></span>
+                {{ soldiers_lost|intcomma }}
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% if defender %}
+<div class="card">
+    <div class="card-header">
+        <span class="fs-6">Force de résistance</span>
+    </div>
+    <div class="card-body">
+        <div class="row g-1">
+            <div class="col-12">
+                <div class="row gx-3 align-items-center">
+                    <div class="col-3 text-end">
+                        <img src="{{ PATH_IMAGES }}interface/soldiers.gif" data-bs-toggle="tooltip" data-bs-title="Soldats" class="res" width="16" height="16">
+                        <span class="text-normal">Soldats</span>
+                    </div>
+                    <div class="col-3">
+                        {{ def_soldiers_total|intcomma }}
+                        <span class="mx-2 text-normal"><i class="fas fa-long-arrow-alt-right"></i></span>
+                        {{ def_soldiers_alive|intcomma }}
+                    </div>
+                    <div class="col-auto">
+                        <span class="me-1 text-normal"><i class="fas fa-skull"></i></span>
+                        {{ def_soldiers_lost|intcomma }}
+                    </div>
+                </div>
+            </div>
+            {% if workers %}
+            <div class="col-12">
+                <div class="row gx-3 align-items-center">
+                    <div class="col-3 text-end">
+                        <img src="{{ PATH_IMAGES }}interface/workers.gif" data-bs-toggle="tooltip" data-bs-title="Travailleurs" class="res" width="16" height="16">
+                        <span class="text-normal">Travailleurs</span>
+                    </div>
+                    <div class="col-3">
+                        {{ def_workers_total|intcomma }}
+                        <span class="mx-2 text-normal"><i class="fas fa-long-arrow-alt-right"></i></span>
+                        {{ def_workers_alive|intcomma }}
+                    </div>
+                    <div class="col-auto">
+                        <span class="me-1 text-normal"><i class="fas fa-skull"></i></span>
+                        {{ def_workers_lost|intcomma }}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+            {% if scientists %}
+            <div class="col-12">
+                <div class="row gx-3 align-items-center">
+                    <div class="col-3 text-end">
+                        <img src="{{ PATH_IMAGES }}interface/scientists.gif" data-bs-toggle="tooltip" data-bs-title="Scientifiques" class="res" width="16" height="16">
+                        <span class="fs-6">Scientifiques</span>
+                    </div>
+                    <div class="col-3">
+                        {{ def_scientists_total|intcomma }}
+                        <span class="mx-2 text-normal"><i class="fas fa-long-arrow-alt-right"></i></span>
+                        {{ def_scientists_alive|intcomma }}
+                    </div>
+                    <div class="col-auto">
+                        <span class="me-1 text-normal"><i class="fas fa-skull"></i></span>
+                        {{ def_scientists_lost|intcomma }}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
