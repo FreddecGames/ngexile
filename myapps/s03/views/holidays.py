@@ -22,13 +22,13 @@ class View(ExileMixin, View):
         content = GetTemplate(self.request, "s03/holidays")
 
         # retrieve remaining time
-        query = "SELECT login," + \
+        query = "SELECT username," + \
                 " (SELECT int4(date_part('epoch', min_end_time-now())) FROM users_holidays WHERE userid=id)," + \
                 " (SELECT int4(date_part('epoch', end_time-now())) FROM users_holidays WHERE userid=id)" + \
                 " FROM users WHERE privilege=-2 AND id=" + str(self.UserId)
 
         oRs = oConnExecute(query)
-
+        
         if oRs == None:
             return HttpResponseRedirect("/")
 

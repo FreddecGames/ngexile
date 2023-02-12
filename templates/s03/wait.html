@@ -18,31 +18,32 @@
         <script type="text/javascript" src='/static/scripts/time.js'></script>
     </head>
     <body>
-        <div align="center">
-            <div id="container" class="text-center">
-                <div id="holidays">Vaisseau de colonisation</div>
-                <div id="playername">{{ login }}</div>
-                <br/>
-                Votre vaisseau de colonisation est en route vers sa planète de destination.
-                <br/>
-                Lorsqu'il sera arrivé, vous pourrez coloniser la planète et commencer à fonder votre empire.
-                <br/>
-                <br/>
-                <br/>
-                <div align="center">
-                    <br/>
-                    {% if unlock %}
-                        <form method="post" action="?">
-                            {% csrf_token %}
-                            <input type="submit" name="unlock" value="Coloniser">
-                        </form>
-                    {% endif %}
-                    {% if cant_unlock %}
-                        Temps restant avant arrivée: <script type="text/javascript">putcountdown1({{remaining_time_before_unlock}},"", "");</script>
-                        <br/>
-                        <script type="text/javascript">putcountdown2({{remaining_time_before_unlock}},"", "<br/><form method='post' action='?'>{% csrf_token %}<input type='submit' name='unlock' value='Coloniser'></form>");</script>
-                    {% endif %}
+        <div align="center" class="pt-3">
+            <div class="card card-body" style="width:800px;">
+                <div class="mb-3">
+                    <span class="fs-4">NG Exile</span>
                 </div>
+                <div class="mb-0">
+                    <span class="text-normal">Commandant</span>
+                </div>
+                <div class="mb-3">
+                    <span class="fs-5 self">{{ login }}</span>
+                </div>
+                <div class="mb-0">
+                    <span>Votre vaisseau de colonisation est en route vers sa planète de destination.</span>
+                </div>
+                <div class="mb-3">
+                    <span>Lorsqu'il sera arrivé, vous pourrez coloniser la planète et commencer à fonder votre empire.</span>
+                </div>
+                {% if unlock %}
+                    <form method="post" action="?">
+                        {% csrf_token %}
+                        <input type="submit" class="btn btn-primary" name="unlock" value="Coloniser">
+                    </form>
+                {% else %}
+                    Temps restant avant arrivée: <script type="text/javascript">putcountdown1({{remaining_time_before_unlock}},"", "");</script>
+                    <script type="text/javascript">putcountdown2({{remaining_time_before_unlock}},"", "<form method='post' action='?'>{% csrf_token %}<input type='submit' class='btn btn-primary' name='unlock' value='Coloniser'></form>");</script>
+                {% endif %}
             </div>
         </div>
     </body>

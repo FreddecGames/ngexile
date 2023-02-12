@@ -14,7 +14,7 @@
               rel="stylesheet"
               media="all"/>
        <script type="text/javascript" src='/static/scripts/common.js'></script>
-        <script type="text/javascript">
+       <script type="text/javascript">
 	function alertAbandon(){window.alert("Attention ! En validant vous supprimerez définitivement votre compte.");}
 	{% if changename %}
 	{% if galaxies %}
@@ -138,11 +138,6 @@
                 {% endif %}
                 {% if no_free_planet %}
                     <div align="center" class="error">Aucune planète n'est disponible dans la galaxie choisie.</div>
-                {% endif %}
-                {% if reset_error %}
-                    <div align="center" class="error">
-                        Une erreur est survenue, veuillez envoyer un email à info@exil.pw en spécifiant votre nom de compte et ce code : R-{{ userid }}-{{ reset_error }}.
-                    </div>
                 {% endif %}
             </div>
         </div>

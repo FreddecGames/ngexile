@@ -16,40 +16,44 @@
         <script type="text/javascript" src='/static/scripts/common.js'></script>
     </head>
     <body>
-        <script type="text/javascript">
-function displayOrientation(obj){
-	var opt = obj.options[obj.selectedIndex].value;
+        <script>
+            function displayOrientation(obj) {
+            
+                var opt = obj.options[obj.selectedIndex].value;
 
-	if(opt == 0)
-		hide();
-	else
-		$('description').innerHTML = $('orientation' + opt).innerHTML;
-}
+                if (opt == 0) hide();
+                else $('description').innerHTML = $('orientation' + opt).innerHTML;
+            }
 
-{% if galaxies %}
-var rec=[];
-{% for galaxy in galaxies %}rec[{{galaxy.id}}]={{galaxy.recommendation}};{% endfor %}
-function showRecommendation(obj) {
-	var r=rec[obj.options[obj.selectedIndex].value];
-	if(r == 2) {
-		$("recommendation").innerHTML = 'Galaxie recommandée';
-		$("recommendation").className = 'recommanded';
-	}
-	else
-	if(r == 1) {
-		$("recommendation").innerHTML = '';
-		$("recommendation").className = '';
-	}
-	else {
-		$("recommendation").innerHTML = 'Galaxie non recommandée';
-		$("recommendation").className = 'notrecommanded';
-	}
-}
-{% endif %}
+            {% if galaxies %}
+            
+                var rec = [];
+                {% for galaxy in galaxies %}rec[{{galaxy.id}}] = {{galaxy.recommendation}};{% endfor %}
+                
+                function showRecommendation(obj) {
+                
+                    var r = rec[obj.options[obj.selectedIndex].value];
+                    if (r == 2) {
+                    
+                        $("recommendation").innerHTML = 'Galaxie recommandée';
+                        $("recommendation").className = 'recommanded';
+                    }
+                    else if (r == 1) {
+                    
+                        $("recommendation").innerHTML = '';
+                        $("recommendation").className = '';
+                    }
+                    else {
+                    
+                        $("recommendation").innerHTML = 'Galaxie non recommandée';
+                        $("recommendation").className = 'notrecommanded';
+                    }
+                }
+            {% endif %}
         </script>
         {% if orientation_1 %}
             <div id="orientation1" class="hidden">
-                <ul>
+                <ul style="list-style: inside;">
                     <li>Prix de vente des ressources augmenté de 10%</li>
                     <li>La guilde marchande viendra plus vite sur vos planètes lors de vos achats</li>
                     <li>La production de minerai et d'hydrocarbure est augmentée de 5%</li>
@@ -62,7 +66,7 @@ function showRecommendation(obj) {
         {% endif %}
         {% if orientation_2 %}
             <div id="orientation2" class="hidden">
-                <ul>
+                <ul style="list-style: inside;">
                     <li>Prime sur les fossoyeurs détruits augmentée de 15%</li>
                     <li>Vitesse de construction des vaisseaux augmentée de 20%</li>
                     <li>Les boucliers de vos vaisseaux sont augmentés de 10%</li>
@@ -76,7 +80,7 @@ function showRecommendation(obj) {
         {% endif %}
         {% if orientation_3 %}
             <div id="orientation3" class="hidden">
-                <ul>
+                <ul style="list-style: inside;">
                     <li>Vitesse de construction des bâtiments augmentée de 10%</li>
                     <li>Le coût des recherches est diminué de 20%</li>
                     <li>Le temps des recherches est diminué de 5%</li>
@@ -85,9 +89,7 @@ function showRecommendation(obj) {
                     <li>Vos centrales produisent 20% d'énergie en plus</li>
                     <li>Les points de prestige gagnés par les bâtiments sont augmentés de 3%</li>
                     <li>Les points de prestige gagnés lors des combats sont augmentés de 3%</li>
-                    <li>
-                        Vous aurez accès à une technologie permettant la construction de vaisseaux de déploiement qui pourront installer instantanément des bâtiments sur vos planètes ou les planètes de vos alliés
-                    </li>
+                    <li>Vous aurez accès à une technologie permettant la construction de vaisseaux de déploiement qui pourront installer instantanément des bâtiments sur vos planètes ou les planètes de vos alliés</li>
                 </ul>
             </div>
         {% endif %}
@@ -102,16 +104,16 @@ function showRecommendation(obj) {
                         <span class="text-normal">Bienvenue dans <span class="text-white">NG Exile</span>, avant de commencer, veuillez entrer un nom pour votre nation. Ce sera le nom sous lequel vous jouerez dans le jeu, choisissez un nom différent de votre compte.</span>
                     </div>
                     <div class="mb-3">
-                        <div class="row gx-3 align-items-center justify-content-center">
-                            <div class="col-auto"><span>Nom de nation</span></div>
+                        <div class="row gx-3 align-items-center">
+                            <div class="col-6 text-end"><span>Nom de nation</span></div>
                             <div class="col-auto"><input type="text" class="form-control" name="name" value=""/></div>
                             {% if error_10 %}
-                                <div class="col-auto">
+                                <div class="col-12 text-center">
                                     <span class="text-danger">Ce nom de nation est déjà utilisé</span>
                                 </div>
                             {% endif %}
                             {% if error_11 %}
-                                <div class="col-auto">
+                                <div class="col-12 text-center">
                                     <span class="text-danger">Ce nom de nation est invalide</span>
                                 </div>
                             {% endif %}
@@ -119,8 +121,8 @@ function showRecommendation(obj) {
                     </div>
                     {% if galaxies %}
                     <div class="mb-3">
-                        <div class="row gx-3 align-items-center justify-content-center">
-                            <div class="col-auto"><span>Galaxie de départ</span></div>
+                        <div class="row gx-3 align-items-center">
+                            <div class="col-6 text-end"><span>Galaxie de départ</span></div>
                             <div class="col-auto">
                                 <select name="galaxy" class="form-control" id="galaxies" onchange="showRecommendation(this)">
                                     {% for galaxy in galaxies %}
@@ -140,8 +142,8 @@ function showRecommendation(obj) {
                         <span class="text-normal">Désormais, vous devez choisir l'orientation de votre nation, ce choix aura pour conséquence de vous attribuer des bonus de départ que vous garderez tout le long du jeu. Il n'est pas possible d'en changer en cours de route alors choisissez bien suivant le style de jeu que vous préférez. Quelque soit l'orientation choisie, vous jouerez au même jeu mais avec des avantages différents.</span>
                     </div>
                     <div class="mb-3">
-                        <div class="row gx-3 align-items-center justify-content-center">
-                            <div class="col-auto"><span>Orientation</span></div>
+                        <div class="row gx-3 align-items-center">
+                            <div class="col-6 text-end"><span>Orientation</span></div>
                             <div class="col-auto">
                                 <select class="form-control" name="orientation" onchange='displayOrientation(this)'>
                                     <option value="0">Choisissez</option>
@@ -157,16 +159,14 @@ function showRecommendation(obj) {
                     <input type="submit" class="btn btn-primary" value="Valider">
                 </form>
                 {% if error_2 %}
-                    <div class="error">
+                    <div class="text-danger">
                         Désolé, aucune planète ne peut actuellement accueillir notre nation.
                     </div>
                 {% endif %}
             </div>
         </div>
         {% if galaxies %}
-            <script type="text/javascript">
-showRecommendation($("galaxies"));
-            </script>
+            <script>showRecommendation($("galaxies"));</script>
         {% endif %}
         <script async src="https://www.googletagmanager.com/gtag/js?id=G-212X2QX8W5"></script>
         <script>

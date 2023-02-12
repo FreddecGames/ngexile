@@ -19,10 +19,11 @@ class View(ExileMixin, View):
         if not registration["enabled"] or (registration["until"] != None and timezone.now() > registration["until"]):
             content = GetTemplate(self.request, "s03/start-closed")
             return render(self.request, content.template, content.data)
-
+        
         result = 0
 
         self.UserId = int(request.session.get("user", 0))
+
         galaxy = int(request.POST.get("galaxy", 0))
         if galaxy == None: galaxy = 0
 
@@ -81,19 +82,12 @@ class View(ExileMixin, View):
                         oConnDoQuery("INSERT INTO researches(userid, researchid, level) VALUES(" + str(self.UserId) + ",31,1)")
                         oConnDoQuery("INSERT INTO researches(userid, researchid, level) VALUES(" + str(self.UserId) + ",32,1)")
     
-                    elif orientation == 4:    # war lord
-                        oConnDoQuery("INSERT INTO researches(userid, researchid, level) VALUES(" + str(self.UserId) + ",40,1)")
-                        oConnDoQuery("INSERT INTO researches(userid, researchid, level) VALUES(" + str(self.UserId) + ",12,1)")
-                        oConnDoQuery("INSERT INTO researches(userid, researchid, level) VALUES(" + str(self.UserId) + ",32,1)")
-    
                     oConnExecute("SELECT sp_update_researches(" + str(self.UserId) + ")")
     
                     return HttpResponseRedirect("/s03/overview/")
 
         # display start page
         content = GetTemplate(self.request, "s03/start")
-        content.AssignValue("login", userName)
-
         for i in allowedOrientations:
             content.Parse("orientation_" + str(i))
 
@@ -109,5 +103,5 @@ class View(ExileMixin, View):
 
         if result != 0:
             content.Parse("error_" + str(result))
-
+        
         return render(self.request, content.template, content.data)
