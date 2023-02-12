@@ -1,18 +1,20 @@
 {% extends "s03/layout.html" %}
 {% load humanize %}
 {% block content %}
-    <table class="default">
-        <tr class="title">
-            <td>
-                <b>Nations</b>
-            </td>
-        </tr>
-        {% for nation in nations %}
-            <tr>
-                <td>
-                    <a href="?name={{ nation.nation }}">{{ nation.nation }}</a>
-                </td>
-            </tr>
-        {% endfor %}
-    </table>
+<div class="card">
+    <div class="card-header">
+        <span class="fs-6">Résultats</span>
+    </div>
+    <div class="card-body">
+        <div class="row gx-3 gy-2 justify-content-center">
+            {% for nation in nations %}
+                <div class="col-auto">
+                    <a href="?name={{ nation.nation }}" data-bs-toggle="tooltip" data-bs-title="Voir profile">{{ nation.nation }}</a>
+                </div>
+            {% empty %}
+                <div class="col-auto"><span class="text-normal">Aucun résultat</span></div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
 {% endblock %}
