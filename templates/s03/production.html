@@ -1,6 +1,7 @@
 {% extends "s03/layout.html" %}
 {% load humanize %}
 {% block content %}
+<div class="page-content">
 <ul class="nav nav-tabs mt-0 mb-3">
     <li class="nav-item {% if cat1_selected %}active{% endif %}">
         <a href="?cat=1" class="nav-link">Vue d'ensemble</a>
@@ -435,4 +436,5 @@
     </div>
 </form>
 {% endif %}
+</div>
 {% endblock %}

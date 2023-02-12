@@ -2,6 +2,7 @@
 {% load tz %}
 {% load humanize %}
 {% block content %}
+<div class="page-content">
     {% if chat %}
         <script>
 var chatInstance = {{chatinstance}};
@@ -636,4 +637,5 @@ var chat = addChat({{join.id}},'{{join.name}}','{{join.topic}}',true,true);
 if(chatlist.length == 0) showJoinChatForm();
         </script>
     {% endif %}
+</div>
 {% endblock %}

@@ -550,12 +550,15 @@
         return false;
     }
 </script>
-<div id="fleets">
-    <ul id="fleets_categories" class="nav nav-tabs mt-0 mb-3">
-        <li id="newtab" class="nav-item">
-            <a href="#" class="nav-link" onClick="showNewCategoryForm(); return false;"><i class="fa-fw fas fa-plus-circle"></i></a>
-        </li>
-    </ul>
+<div class="page-content">
+<ul id="fleets_categories" class="nav nav-tabs mt-0 mb-3">
+    <li id="newtab" class="nav-item">
+        <a href="#" class="nav-link" onClick="showNewCategoryForm(); return false;"><i class="fa-fw fas fa-plus-circle"></i></a>
+    </li>
+</ul>
+</div>
+<div class="scroll-content" style="height:calc(100% - 52px);">
+<div class="page-content">
     <div id="fleet_list"></div>
     <div id="createcategoryform">
         <form action="#" method="get" onsubmit="return createCategory();" class="card">
@@ -577,6 +580,7 @@
         </form>
     </div>
 </div>
+</div>
 <script>
     addCategory(0, 'Tout');
     addCategory(-1, 'Sans catégorie');
@@ -593,4 +597,5 @@
 
     displayCategory(activeCategory);
 </script>
+</div>
 {% endblock %}

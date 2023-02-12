@@ -168,10 +168,14 @@ input[type=number] { -moz-appearance: textfield; }
 
 #page {
     margin:0 auto;
-	width:100%; height:100%; max-width:960px;
-	vertical-align:top;
+	width:100%; height:100%;
     padding-right:.5rem;
     padding-left:1rem;
+}
+
+.page-content {
+    margin:0 auto;
+	width:100%; max-width:960px;    
 }
 
 #footer {

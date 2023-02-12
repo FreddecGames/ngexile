@@ -1,6 +1,7 @@
 {% extends "s03/layout.html" %}
 {% load humanize %}
 {% block content %}
+<div class="page-content">
     {% if idle %}
         <script>
         function confirmAbandon() { return confirm('Êtes-vous sûr de vouloir abandonner la flotte "{{ fleetname }}" ?\r\nLes vaisseaux seront endommagés de telle sorte qu\'ils ne pourront être réutilisés !'); }
@@ -1520,4 +1521,5 @@
             {% endif %}
         </div>
     </div>
+</div>
 {% endblock %}

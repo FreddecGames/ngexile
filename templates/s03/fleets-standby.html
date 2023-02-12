@@ -1,6 +1,7 @@
 {% extends "s03/layout.html" %}
 {% load humanize %}
 {% block content %}
+<div class="page-content">
 <div class="row g-3" data-masonry='{"percentPosition": true }'>
     {% for planet in planets %}
         <div class="col-4">
@@ -32,4 +33,5 @@
     {% endfor %}
 </div>
 <script src="https://cdn.jsdelivr.net/npm/masonry-layout@4.2.2/dist/masonry.pkgd.min.js" integrity="sha384-GNFwBvfVxBkLMJpYMOABq3c+d3KnQxudP/mGPkzpZSTYykLBNsZEnG2D9G/X/+7D" crossorigin="anonymous" async></script>
+</div>
 {% endblock %}

@@ -1,6 +1,7 @@
 {% extends "s03/layout.html" %}
 {% load humanize %}
 {% block content %}
+<div class="page-content">
 <script>
     var ships = new Array();
     {% for category in categories %}
@@ -318,4 +319,5 @@
         {% endif %}
     </form>
 {% endif %}
+</div>
 {% endblock %}

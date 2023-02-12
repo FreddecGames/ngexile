@@ -1,6 +1,7 @@
 {% extends "s03/layout.html" %}
 {% load humanize %}
 {% block content %}
+<div class="page-content">
     <script>
         function update(obj) {
         
@@ -49,4 +50,5 @@
         </div>
     </form>
     <script>onload = function() { var o = document.getElementById("notes"); o.focus(); o.value = o.value; }</script>
+</div>
 {% endblock %}

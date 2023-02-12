@@ -1,6 +1,7 @@
 {% extends "s03/layout.html" %}
 {% load humanize %}
 {% block content %}
+<div class="page-content">
 {% if nav %}
     <ul class="nav nav-tabs mt-0 mb-3">
         <li class="nav-item {% if cat1_selected %}active{% endif %}">
@@ -215,4 +216,5 @@
         </div>
     </div>
 {% endif %}
+</div>
 {% endblock %}

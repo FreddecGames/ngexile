@@ -1,6 +1,7 @@
 {% extends "s03/layout.html" %}
 {% load humanize %}
 {% block content %}
+<div class="page-content">
     <ul class="nav nav-tabs mt-0 mb-3">
         <li class="nav-item {% if general %}active{% endif %}">
             <a href="/s03/help/?" class="nav-link">Aide générale</a>
@@ -509,4 +510,5 @@
         </div>
     </div>
     {% endif %}
+</div>
 {% endblock %}

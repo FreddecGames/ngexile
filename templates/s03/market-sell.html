@@ -1,6 +1,7 @@
 {% extends "s03/layout.html" %}
 {% load humanize %}
 {% block content %}
+<div class="page-content">
 <script>
 	var planets = [];
 	{% for planet in m_planets %}
@@ -146,4 +147,5 @@
     </div>
 </form>
 <script>computetotal();</script>
+</div>
 {% endblock %}

@@ -1,6 +1,7 @@
 {% extends "s03/layout.html" %}
 {% load humanize %}
 {% block content %}
+<div class="page-content">
 {% if create %}
     <form method="post" action="?a=new">
         {% csrf_token %}
@@ -45,4 +46,5 @@
         <span class="text-danger">Vous avez récemment quitté une alliance, il vous est actuellement impossible de créer une alliance.</span>
     </div>
 {% endif %}
+</div>
 {% endblock %}

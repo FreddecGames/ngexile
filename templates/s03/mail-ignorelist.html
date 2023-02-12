@@ -1,6 +1,7 @@
 {% extends "s03/layout.html" %}
 {% load humanize %}
 {% block content %}
+<div class="page-content">
 <form method="post" action="?a=unignorelist">
     {% csrf_token %}
     <div class="card">
@@ -35,4 +36,5 @@
         </div>
     </div>
 </form>
+</div>
 {% endblock %}

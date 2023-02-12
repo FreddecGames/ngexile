@@ -3,6 +3,7 @@
 {% load humanize %}
 {% load bbcode_tags %}
 {% block content %}
+<div class="page-content">
 <form method="get" action="/s03/nation/">
     {% csrf_token %}
     <div class="card mb-3">
@@ -129,4 +130,5 @@
     </div>
 </div>
 {% endif %}
+</div>
 {% endblock %}

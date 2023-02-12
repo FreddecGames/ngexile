@@ -1,6 +1,7 @@
 {% extends "s03/layout.html" %}
 {% load humanize %}
 {% block content %}
+<div class="page-content">
 <div class="row g-3">
     {% if no_ship %}
         <div class="col-12 text-center">
@@ -52,5 +53,6 @@
             </div>
         </div>
     {% endif %}
+</div>
 </div>
 {% endblock %}

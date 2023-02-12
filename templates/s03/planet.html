@@ -1,6 +1,7 @@
 {% extends "s03/layout.html" %}
 {% load humanize %}
 {% block content %}
+<div class="page-content">
 <script>
     function confirmAbandon() { return window.confirm('Êtes-vous sûr de vouloir abandonner la planète "{{planet_name}}" ?'); }
     function confirmScientists(id) { return window.confirm('Êtes-vous sûr de vouloir renvoyer ' + getval('scientists' + id) + ' scientifiques ?'); }
@@ -178,4 +179,5 @@
         </div>
     </div>
 </form>
+</div>
 {% endblock %}

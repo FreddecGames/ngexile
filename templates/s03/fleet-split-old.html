@@ -1,6 +1,7 @@
 {% extends "s03/layout.html" %}
 {% load humanize %}
 {% block content %}
+<div class="page-content">
     <script>
         function getval(objname) {
             var obj = document.getElementsByName(objname);
@@ -338,4 +339,5 @@
     <script>
         window.setTimeout("updateresources()", 200);
     </script>
+</div>
 {% endblock %}

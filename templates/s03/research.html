@@ -1,6 +1,7 @@
 {% extends "s03/layout.html" %}
 {% load humanize %}
 {% block content %}
+<div class="page-content">
 <script>
     function cancelresearch() { return confirm('Êtes-vous sûr de vouloir abandonner cette recherche ?\r\nNote: toute recherche future recommencera à zéro'); }
     
@@ -75,5 +76,6 @@
             </div>
         </div>
     {% endfor %}
+</div>
 </div>
 {% endblock %}

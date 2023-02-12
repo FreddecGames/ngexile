@@ -2,6 +2,7 @@
 {% load tz %}
 {% load humanize %}
 {% block content %}
+<div class="page-content">
     <script>function LinkFleet(id, name){ if (id != "None") document.write('<a href="/s03/fleet/?id=' + id + '" data-bs-toggle="tooltip" data-bs-title="Voir flotte">' + name + '</a>'); else document.write('<span class="text-white">' + name + '</span>'); }</script>
     <ul class="nav nav-tabs mt-0 mb-3">
         {% if tabnav_000 %}
@@ -456,4 +457,5 @@
             {% endfor %}
         </div>
     </div>
+</div>
 {% endblock %}

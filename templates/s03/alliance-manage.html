@@ -2,6 +2,7 @@
 {% load humanize %}
 {% load bbcode_tags %}
 {% block content %}
+<div class="page-content">
 <ul class="nav nav-tabs mt-0 mb-3">
     {% if cat1 %}
         <li class="nav-item {% if cat1_selected %}active{% endif %}">
@@ -259,4 +260,5 @@
         </div>
     </form>
 {% endif %}
+</div>
 {% endblock %}

@@ -2,6 +2,7 @@
 {% load l10n %}
 {% load humanize %}
 {% block content %}
+<div class="page-content">
 <script>
     var currGalaxy = "";
     var currSector = "";
@@ -905,4 +906,5 @@
     {% endif %}
 {% endif %}
 <script>setLoc('{{ galaxy }}', '{{ sector }}');</script>
+</div>
 {% endblock %}

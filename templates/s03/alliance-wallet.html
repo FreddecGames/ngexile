@@ -1,6 +1,7 @@
 {% extends "s03/layout.html" %}
 {% load humanize %}
 {% block content %}
+<div class="page-content">
 <div class="card card-body  mb-3">
     <div class="row gx-3 align-items-center">
         <div class="col-auto">
@@ -47,5 +48,7 @@
         </li>
     {% endif %}
 </ul>
-{% block page %}{% endblock %}
+{% block page %}</div>
+{% endblock %}
+</div>
 {% endblock %}
