@@ -1,553 +1,438 @@
 {% extends "s03/layout.html" %}
 {% load humanize %}
 {% block content %}
-    <script type="text/javascript"
-            src='/static/scripts/third-party/tooltip.js?v=1'></script>
-    <script>
-tipname = "hint";
-tipwidth = 450;
-tiptext = $("hinttext");
-    </script>
-    <table width="100%">
-        <tr>
-            <td align="center">
-                {% if nav %}
-                    <div>
-                        <ul class="nav nav-tabs mt-0 mb-3">
-                            {% if cat1 %}
-                                <li class="nav-item {% if cat1_selected %}active{% endif %}">
-                                    <a href="?cat=1" class="nav-link">Vue d'ensemble</a>
-                                </li>
-                            {% endif %}
-                            {% if cat2 %}
-                                <li class="nav-item {% if cat2_selected %}active{% endif %}">
-                                    <a href="?cat=2" class="nav-link">Fonctionnement</a>
-                                </li>
-                            {% endif %}
-                            {% if cat3 %}
-                                <li class="nav-item {% if cat3_selected %}active{% endif %}">
-                                    <a href="?cat=3" class="nav-link">Transfert d'énergie</a>
-                                </li>
-                            {% endif %}
-                        </ul>
+<ul class="nav nav-tabs mt-0 mb-3">
+    <li class="nav-item {% if cat1_selected %}active{% endif %}">
+        <a href="?cat=1" class="nav-link">Vue d'ensemble</a>
+    </li>
+    <li class="nav-item {% if cat2_selected %}active{% endif %}">
+        <a href="?cat=2" class="nav-link">Fonctionnement</a>
+    </li>
+    <li class="nav-item {% if cat3_selected %}active{% endif %}">
+        <a href="?cat=3" class="nav-link">Transfert d'énergie</a>
+    </li>
+</ul>
+{% if cat1_selected %}
+<div class="card mb-3">
+    <div class="card-header">
+        <span class="fs-6">Production</span>
+    </div>
+    <div class="card-body">
+        <div class="mb-1">
+            <div class="row gx-3">
+                <div class="col-6"><span class="text-normal">Abondance</span></div>
+                <div class="col-6">
+                    <span class="me-3">
+                        <img src="{{ PATH_IMAGES }}interface/ore.gif" data-bs-toggle="tooltip" data-bs-title="Minerai" class="res" width="16" height="16">
+                        <span>{{ a_ore }}%</span>
+                    </span>
+                    <span class="me-3">
+                        <img src="{{ PATH_IMAGES }}interface/hydrocarbon.gif" data-bs-toggle="tooltip" data-bs-title="Hydrocarbure" class="res" width="16" height="16">
+                        <span>{{ a_hydrocarbon }}%</span>
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="mb-1">
+            <div class="row gx-3">
+                <div class="col-6"><span class="text-normal">Effectifs</span></div>
+                <div class="col-6">
+                    <span class="me-3">{{ workers|intcomma }}</span>
+                    <small class="me-3 text-normal">{{ workers_required|intcomma }} requis</small>
+                    <span class="me-3">{{ production_percent }}%</span>
+                </div>
+            </div>
+        </div>
+        <div class="mb-1">
+            <div class="row gx-3">
+                <div class="col-6"><span class="text-normal">Condition des installations</span></div>
+                <div class="col-6">
+                    {% if condition_excellent %}<span class="me-3">Excellente</span>{% endif %}
+                    {% if condition_good %}<span class="me-3">Bonne</span>{% endif %}
+                    {% if condition_fair %}<span class="me-3">Passable</span>{% endif %}
+                    {% if condition_bad %}<span class="me-3">Mauvaise</span>{% endif %}
+                    {% if condition_catastrophic %}<span class="me-3">Catastrophique</span>{% endif %}
+                    {% if repairing %}<small class="me-3 text-normal">réparation en cours</small>{% endif %}
+                    {% if decaying %}<small class="me-3 text-normal">en détérioration</small>{% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="mb-0">
+            <div class="row gx-3">
+                <div class="col-6"><span class="text-normal">Estimation de la production</span></div>
+                <div class="col-6">
+                    <span class="me-3">{{ final_production }}%</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="card mb-3">
+    <div class="card-header">
+        <span class="fs-6">Bâtiments</span>
+    </div>
+    <div class="list-group list-group-flush">
+        {% for building in buildings %}
+        <div class="list-group-item">
+            <div class="row gx-3">
+                <div class="col-auto pe-0">
+                    <i class="fa-fw fas fa-question-circle text-normal" data-bs-toggle="tooltip" data-bs-html="true" data-bs-title="
+                        <div class='mb-1'><span class='fs-6'>Description</span></div>
+                        <div class='mb-0'><span class='text-normal'>{{building.description|escape}}</span></div>
+                    "></i>                    
+                </div>
+                <div class="col-auto pe-0">
+                    <a href="/s03/help/?cat=buildings#{{ building.id }}" data-bs-toggle="tooltip" data-bs-title="Voir aide">{{ building.name }}</a>
+                </div>
+                <div class="col">
+                    <small class="text-normal">x</small>
+                    <span>{{ building.quantity }}</span>
+                </div>
+                <div class="col-2">
+                    {% if building.production_ore %}
+                        <img src="{{ PATH_IMAGES }}interface/ore.gif" data-bs-toggle="tooltip" data-bs-title="Minerai" class="res" width="16" height="16">
+                        <span class="text-success">+{{ building.production_ore|intcomma }}</span>
+                    {% else %}
+                        <small class="text-normal">-</small>
+                    {% endif %}
+                </div>
+                <div class="col-2">
+                    {% if building.production_hydrocarbon %}
+                        <img src="{{ PATH_IMAGES }}interface/hydrocarbon.gif" data-bs-toggle="tooltip" data-bs-title="Hydrocarbure" class="res" width="16" height="16">
+                        <span class="text-success">+{{ building.production_hydrocarbon|intcomma }}</span>
+                    {% else %}
+                        <small class="text-normal">-</small>
+                    {% endif %}
+                </div>
+                <div class="col-2">
+                    {% if building.production_energy %}
+                        <img src="{{ PATH_IMAGES }}interface/energy.gif" data-bs-toggle="tooltip" data-bs-title="Energie" class="res" width="16" height="16">
+                        <span class="text-success">+{{ building.production_energy|intcomma }}</span>
+                    {% else %}
+                        <small class="text-normal">-</small>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+        <div class="list-group-item">
+            <div class="row gx-3">
+                <div class="col">
+                    <span class="text-normal">Sous total</span>
+                </div>
+                <div class="col-2">
+                    <img src="{{ PATH_IMAGES }}interface/ore.gif" data-bs-toggle="tooltip" data-bs-title="Minerai" class="res" width="16" height="16">
+                    <span class="text-success">+{{ production_ore|intcomma }}</span>
+                </div>
+                <div class="col-2">
+                    <img src="{{ PATH_IMAGES }}interface/hydrocarbon.gif" data-bs-toggle="tooltip" data-bs-title="Hydrocarbure" class="res" width="16" height="16">
+                    <span class="text-success">+{{ production_hydrocarbon|intcomma }}</span>
+                </div>
+                <div class="col-2">
+                    <img src="{{ PATH_IMAGES }}interface/energy.gif" data-bs-toggle="tooltip" data-bs-title="Energie" class="res" width="16" height="16">
+                    <span class="text-success">+{{ production_energy|intcomma }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="card mb-3">
+    <div class="card-header">
+        <span class="fs-6">Bonus</span>
+    </div>
+    <div class="list-group list-group-flush">
+        {% for item in bonuses %}
+        <div class="list-group-item">
+            <div class="row gx-3">
+                <div class="col-auto pe-0">
+                    {% if item.building %}
+                        <i class="fa-fw fas fa-question-circle text-normal" data-bs-toggle="tooltip" data-bs-html="true" data-bs-title="
+                            <div class='mb-1'><span class='fs-6'>Description</span></div>
+                            <div class='mb-0'><span class='text-normal'>{{item.description|escape}}</span></div>
+                        "></i>
+                    {% elif item.research %}
+                        <i class="fa-fw fas fa-question-circle text-normal" data-bs-toggle="tooltip" data-bs-html="true" data-bs-title="
+                            <div class='mb-1'><span class='fs-6'>Description</span></div>
+                            <div class='mb-0'><span class='text-normal'>{{item.description|escape}}</span></div>
+                        "></i>
+                    {% elif item.commander %}
+                        <i class="fa-fw fas fa-user-astronaut text-normal"></i>
+                    {% endif %}
+                </div>
+                <div class="col-auto pe-0">
+                    {% if item.building %}
+                        <a href="/s03/help/?cat=buildings#{{ item.id }}" data-bs-toggle="tooltip" data-bs-title="Voir aide">{{ item.name }}</a>
+                    {% elif item.research %}
+                        <a href="/s03/help/?cat=research#{{ item.id }}" data-bs-toggle="tooltip" data-bs-title="Voir aide">{{ item.name }}</a>
+                    {% elif item.commander %}
+                        <a href="/s03/commanders/#{{ item.id }}" data-bs-toggle="tooltip" data-bs-title="Voir commandant">{{ item.name }}</a>
+                    {% endif %}
+                </div>
+                <div class="col">
+                    {% if item.research %}
+                        <small class="text-normal">niv</small>
+                        <span>{{ item.level }}</span>
+                    {% endif %}
+                </div>
+                <div class="col-2">
+                    {% if item.mod_production_ore %}
+                        <img src="{{ PATH_IMAGES }}interface/ore.gif" data-bs-toggle="tooltip" data-bs-title="Minerai" class="res" width="16" height="16">
+                        <span class="text-success">+{{ item.mod_production_ore|intcomma }}%</span>
+                    {% else %}
+                        <small class="text-normal">-</small>
+                    {% endif %}
+                </div>
+                <div class="col-2">
+                    {% if item.mod_production_hydrocarbon %}
+                        <img src="{{ PATH_IMAGES }}interface/hydrocarbon.gif" data-bs-toggle="tooltip" data-bs-title="Hydrocarbure" class="res" width="16" height="16">
+                        <span class="text-success">+{{ item.mod_production_hydrocarbon|intcomma }}%</span>
+                    {% else %}
+                        <small class="text-normal">-</small>
+                    {% endif %}
+                </div>
+                <div class="col-2">
+                    {% if item.mod_production_energy %}
+                        <img src="{{ PATH_IMAGES }}interface/energy.gif" data-bs-toggle="tooltip" data-bs-title="Energie" class="res" width="16" height="16">
+                        <span class="text-success">+{{ item.mod_production_energy|intcomma }}%</span>
+                    {% else %}
+                        <small class="text-normal">-</small>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+        <div class="list-group-item">
+            <div class="row gx-3">
+                <div class="col">
+                    <span class="text-normal">Sous total</span>
+                </div>
+                <div class="col-2">
+                    <img src="{{ PATH_IMAGES }}interface/ore.gif" data-bs-toggle="tooltip" data-bs-title="Minerai" class="res" width="16" height="16">
+                    <span class="text-success">+{{ bonus_production_ore|intcomma }}</span>
+                </div>
+                <div class="col-2">
+                    <img src="{{ PATH_IMAGES }}interface/hydrocarbon.gif" data-bs-toggle="tooltip" data-bs-title="Hydrocarbure" class="res" width="16" height="16">
+                    <span class="text-success">+{{ bonus_production_hydrocarbon|intcomma }}</span>
+                </div>
+                <div class="col-2">
+                    <img src="{{ PATH_IMAGES }}interface/energy.gif" data-bs-toggle="tooltip" data-bs-title="Energie" class="res" width="16" height="16">
+                    <span class="text-success">+{{ bonus_production_energy|intcomma }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="card">
+    <div class="card-body">
+        <div class="row gx-3">
+            <div class="col">
+                <span class="text-normal">Production totale</span>
+            </div>
+            <div class="col-2">
+                <img src="{{ PATH_IMAGES }}interface/ore.gif" data-bs-toggle="tooltip" data-bs-title="Minerai" class="res" width="16" height="16">
+                <span class="text-success">+{{ total_production_ore|intcomma }}</span>
+            </div>
+            <div class="col-2">
+                <img src="{{ PATH_IMAGES }}interface/hydrocarbon.gif" data-bs-toggle="tooltip" data-bs-title="Hydrocarbure" class="res" width="16" height="16">
+                <span class="text-success">+{{ total_production_hydrocarbon|intcomma }}</span>
+            </div>
+            <div class="col-2">
+                <img src="{{ PATH_IMAGES }}interface/energy.gif" data-bs-toggle="tooltip" data-bs-title="Energie" class="res" width="16" height="16">
+                <span class="text-success">+{{ total_production_energy|intcomma }}</span>
+            </div>
+        </div>
+    </div>
+</div>
+{% elif cat2_selected %}
+<form method="post" action="?cat={{ cat }}&a=submit">
+    {% csrf_token %}
+    <div class="card">
+        <div class="card-header">
+            <span class="fs-6">Coût de fonctionnement</span>
+        </div>
+        <div class="list-group list-group-flush">
+            {% for building in buildings %}
+            <div class="list-group-item {% if building.not_all_enabled %}bg-danger{% endif %}">
+                <div class="row gx-3 align-items-center">
+                    <div class="col-auto">
+                        <img src="{{ PATH_IMAGES }}buildings/{{ building.id }}.jpg" class="rounded" width="24" height="24">
                     </div>
-                {% endif %}
-                {% if overview %}
-                    <div id="productionoverview">
-                        <table width="100%" class=default>
-                            <tr class=title>
-                                <td colspan=3>Abondance</td>
-                            </tr>
-                            <tr class=header>
-                                <td>Elément</td>
-                                <td>Minerai</td>
-                                <td>Hydrocarbure</td>
-                            </tr>
-                            <tr>
-                                <td width='50%'>Planète</td>
-                                <td width='25%' align=right>{{ a_ore }}%</td>
-                                <td width='25%' align=right>{{ a_hydrocarbon }}%</td>
-                            </tr>
-                            <tr class="clear">
-                                <td colspan=3>&nbsp;</td>
-                            </tr>
-                        </table>
-                        <table width="100%" class=default>
-                            <tr class=title>
-                                <td colspan=4>Production</td>
-                            </tr>
-                            <tr>
-                                <td width='50%'>Effectifs</td>
-                                <td width='50%' colspan=3 nowrap>
-                                    {{ workers|intcomma }} / {{ workers_required|intcomma }} requis, {{ production_percent }}%
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>Condition des installations</td>
-                                <td colspan=3 nowrap>
-                                    {% if condition_excellent %}Excellente{% endif %}
-                                    {% if condition_good %}Bonne{% endif %}
-                                    {% if condition_fair %}Passable{% endif %}
-                                    {% if condition_bad %}Mauvaise{% endif %}
-                                    {% if condition_catastrophic %}Catastrophique{% endif %}
-                                    ,
-                                    {% if repairing %}réparation en cours{% endif %}
-                                    {% if decaying %}en détérioration{% endif %}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>Estimation de la production</td>
-                                <td colspan=3 nowrap>{{ final_production }}%</td>
-                            </tr>
-                            <tr class="clear">
-                                <td colspan=4>&nbsp;</td>
-                            </tr>
-                            <tr class="header">
-                                <td>Elément</td>
-                                <td>Minerai</td>
-                                <td>Hydrocarbure</td>
-                                <td>Energie</td>
-                            </tr>
-                            <tr class="category">
-                                <td colspan=4>Bâtiments</td>
-                            </tr>
-                            {% for building in buildings %}
-                                <script>var description{{building.id}}='{{building.description|escapejs}}';</script>
-                                <tr class="item" align=right>
-                                    <td align="left">
-                                        <a href="/s03/help/?cat=buildings#{{ building.id }}"
-                                           onMouseover="ddrivetip(description{{ building.id }})"
-                                           onMouseout="hideddrivetip()"><b>{{ building.name }}</b></a> x{{ building.quantity }}
-                                    </td>
-                                    <td>{{ building.production_ore|intcomma }}</td>
-                                    <td>
-                                        {{ building.production_hydrocarbon|intcomma }}
-                                    </td>
-                                    <td>
-                                        {{ building.production_energy|intcomma }}
-                                    </td>
-                                </tr>
+                    <div class="col">
+                        <span class="text-normal">{{ building.building }}</span>
+                    </div>
+                    <div class="col-3">
+                        <div class="row gx-3">
+                            <div class="col-auto">
+                                <img src="{{ PATH_IMAGES }}interface/credits.gif" data-bs-toggle="tooltip" data-bs-title="Crédit" class="res" width="16" height="16">
+                                <span>{{ building.upkeep|intcomma }}</span>
+                            </div>
+                            <div class="col-auto">
+                                <img src="{{ PATH_IMAGES }}interface/energy.gif" data-bs-toggle="tooltip" data-bs-title="Energie" class="res" width="16" height="16">
+                                <span>{{ building.energy|intcomma }}</span>
+                            </div>
+                            <div class="col-auto">
+                                <img src="{{ PATH_IMAGES }}interface/workers.gif" data-bs-toggle="tooltip" data-bs-title="Travailleurs" class="res" width="16" height="16">
+                                <span>{{ building.maintenance|intcomma }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-1 pe-0">
+                        <select name="enabled{{ building.id }}" class="form-control">
+                            {% for count in building.counts %}
+                                <option value="{{ count.count }}"{% if count.selected %} selected{% endif %}>
+                                    {{ count.count }}
+                                </option>
                             {% endfor %}
-                            {% if subtotal %}
-                                <tr class="item" align="right">
-                                    <td align="left">
-                                        Sous total
-                                    </td>
-                                    <td>
-                                        <img src="{{ PATH_IMAGES }}interface/ore.gif"
-                                             class="icon"
-                                             title="Minerai"
-                                             width="16"
-                                             height="16">
-                                        {{ production_ore|intcomma }}
-                                    </td>
-                                    <td>
-                                        <img src="{{ PATH_IMAGES }}interface/hydrocarbon.gif"
-                                             class="icon"
-                                             title="Hydrocarbure"
-                                             width="16"
-                                             height="16">
-                                        {{ production_hydrocarbon|intcomma }}
-                                    </td>
-                                    <td>
-                                        <img src="{{ PATH_IMAGES }}interface/energy.gif"
-                                             class="icon"
-                                             title="Energie"
-                                             width="16"
-                                             height="16">
-                                        {{ production_energy|intcomma }}
-                                    </td>
-                                </tr>
-                            {% endif %}
-                            <tr class="clear">
-                                <td colspan="4">
-                                    &nbsp;
-                                </td>
-                            </tr>
-                            {% if bonus %}
-                                <tr class="category">
-                                    <td colspan="4">
-                                        Bonus
-                                    </td>
-                                </tr>
-                                {% for item in bonuses %}
-                                    <script>
-	var description2{{item.id}}='{{item.description|escapejs}}';
-	
-                                    </script>
-                                    <tr class="item" align=right>
-                                        <td align="left">
-                                            {% if item.building %}
-                                                <a href="/s03/help/?cat=buildings#{{ item.id }}"
-                                                   onMouseover="ddrivetip(description2{{ item.id }})"
-                                                   onMouseout="hideddrivetip()"><b>{{ item.name }}</b></a>
-                                            {% endif %}
-                                            {% if item.commander %}
-                                                <img src="{{ PATH_IMAGES }}interface/commander.gif"
-                                                     width="10"
-                                                     height="6"
-                                                     class="smallicon"
-                                                     title="Commandant">
-                                                <a href="/s03/commanders/#{{ item.id }}"
-                                                   title="Informations sur {{ item.name }}"><b>{{ item.name }}</b></a>
-                                            {% endif %}
-                                            {% if item.research %}
-                                                <a href="/s03/help/?cat=research#{{ item.id }}"
-                                                   onMouseover="ddrivetip(description2{{ item.id }})"
-                                                   onMouseout="hideddrivetip()"><b>{{ item.name }}</b></a> nv{{ item.level }}
-                                            {% endif %}
-                                        </td>
-                                        <td>
-                                            <span class="{% if item.ore_positive %}plus{% endif %}{% if item.ore_negative %}minus{% endif %}">{{ item.mod_production_ore }}%</span>
-                                        </td>
-                                        <td>
-                                            <span class="{% if item.hydrocarbon_positive %}
-                                                  plus{% endif %}
-                                                  {% if item.hydrocarbon_negative %}minus{% endif %}">{{ item.mod_production_hydrocarbon }}%</span>
-                                        </td>
-                                        <td>
-                                            <span class="{% if item.energy_positive %}
-                                                  plus
-                                                  {% endif %}
-                                                  {% if item.energy_negative %}minus{% endif %}">{{ item.mod_production_energy }}%</span>
-                                        </td>
-                                    </tr>
-                                {% endfor %}
-                                <tr class="item" align="right">
-                                    <td align="left">
-                                        Sous total
-                                    </td>
-                                    <td>
-                                        <img src="{{ PATH_IMAGES }}interface/ore.gif"
-                                             class="icon"
-                                             title="Minerai"
-                                             width="16"
-                                             height="16">
-                                        {{ bonus_production_ore|intcomma }}
-                                    </td>
-                                    <td>
-                                        <img src="{{ PATH_IMAGES }}interface/hydrocarbon.gif"
-                                             class="icon"
-                                             title="Hydrocarbure"
-                                             width="16"
-                                             height="16">
-                                        {{ bonus_production_hydrocarbon|intcomma }}
-                                    </td>
-                                    <td>
-                                        <img src="{{ PATH_IMAGES }}interface/energy.gif"
-                                             class="icon"
-                                             title="Energie"
-                                             width="16"
-                                             height="16">
-                                        {{ bonus_production_energy|intcomma }}
-                                    </td>
-                                </tr>
-                                <tr class="clear">
-                                    <td colspan=4>
-                                        &nbsp;
-                                    </td>
-                                </tr>
-                            {% endif %}
-                            <tr class="item" align="right">
-                                <td align="left">
-                                    Production totale
-                                </td>
-                                <td>
-                                    <img src="{{ PATH_IMAGES }}interface/ore.gif"
-                                         class="icon"
-                                         title="Minerai"
-                                         width="16"
-                                         height="16">
-                                    {{ total_production_ore|intcomma }}
-                                </td>
-                                <td>
-                                    <img src="{{ PATH_IMAGES }}interface/hydrocarbon.gif"
-                                         class="icon"
-                                         title="Hydrocarbure"
-                                         width="16"
-                                         height="16">
-                                    {{ total_production_hydrocarbon|intcomma }}
-                                </td>
-                                <td>
-                                    <img src="{{ PATH_IMAGES }}interface/energy.gif"
-                                         class="icon"
-                                         title="Energie"
-                                         width="16"
-                                         height="16">
-                                    {{ total_production_energy|intcomma }}
-                                </td>
-                            </tr>
-                        </table>
+                        </select>
                     </div>
-                {% endif %}
-                {% if manage %}
-                    <div id="productionmanage">
-                        <form method="post" action="?cat={{ cat }}&a=submit">
-                            {% csrf_token %}
-                            <table width="100%" class="default">
-                                <tr class="title">
-                                    <td colspan="5">
-                                        Consommation énergétique
-                                    </td>
-                                </tr>
-                                <tr class="header">
-                                    <td colspan="2">
-                                        Bâtiment
-                                    </td>
-                                    <td>
-                                        Utilisation
-                                    </td>
-                                    <td>
-                                        Actif
-                                    </td>
-                                    <td>
-                                        Utilisation totale
-                                    </td>
-                                </tr>
-                                {% for building in buildings %}
-                                    <tr class="item{% if building.not_all_enabled %}del{% endif %}">
-                                        <td width="1%">
-                                            <img src="{{ PATH_IMAGES }}buildings/{{ building.id }}.jpg"
-                                                 title="{{ building.building }}"
-                                                 class="building"
-                                                 width="64"
-                                                 height="64">
-                                        </td>
-                                        <td>
-                                            {{ building.building }}
-                                        </td>
-                                        <td>
-                                            <table class="clear" width="70">
-                                                <tr>
-                                                    <td width="1%">
-                                                        <img src="{{ PATH_IMAGES }}interface/credits.gif"
-                                                             title="Coût de fonctionnement"
-                                                             width="16"
-                                                             height="16">
-                                                    </td>
-                                                    <td align="right">
-                                                        {{ building.upkeep|intcomma }}
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td width="1%">
-                                                        <img src="{{ PATH_IMAGES }}interface/energy_available.gif"
-                                                             title="Energie"
-                                                             width="12"
-                                                             height="12">
-                                                    </td>
-                                                    <td align="right">
-                                                        {{ building.energy|intcomma }}
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td width="1%">
-                                                        <img src="{{ PATH_IMAGES }}interface/workers.gif"
-                                                             title="Maintenance"
-                                                             width="16"
-                                                             height="16">
-                                                    </td>
-                                                    <td align="right">
-                                                        {{ building.maintenance|intcomma }}
-                                                    </td>
-                                                </tr>
-                                            </table>
-                                        </td>
-                                        <td align="center">
-                                            <select name="enabled{{ building.id }}">
-                                                {% for count in building.counts %}
-                                                    <option value="{{ count.count }}"{% if count.selected %} selected{% endif %}>
-                                                        {{ count.count }}
-                                                    </option>
-                                                {% endfor %}
-                                            </select>
-                                            / {{ building.quantity|intcomma }}
-                                        </td>
-                                        <td>
-                                            <table class="clear" width="70">
-                                                <tr>
-                                                    <td width="1%">
-                                                        <img src="{{ PATH_IMAGES }}interface/credits.gif"
-                                                             title="Coût de fonctionnement total"
-                                                             width="16"
-                                                             height="16">
-                                                    </td>
-                                                    <td align="right">
-                                                        {{ building.upkeep_total|intcomma }}
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td width="1%">
-                                                        <img src="{{ PATH_IMAGES }}interface/energy_available.gif"
-                                                             title="Energie totale"
-                                                             width="12"
-                                                             height="12">
-                                                    </td>
-                                                    <td align="right">
-                                                        {{ building.energy_total|intcomma }}
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td width="1%">
-                                                        <img src="{{ PATH_IMAGES }}interface/workers.gif"
-                                                             title="Maintenance totale"
-                                                             width="16"
-                                                             height="16">
-                                                    </td>
-                                                    <td align="right">
-                                                        {{ building.maintenance_total|intcomma }}
-                                                    </td>
-                                                </tr>
-                                            </table>
-                                        </td>
-                                    </tr>
-                                {% endfor %}
-                                <tr>
-                                    <td colspan="5" align="center">
-                                        <input type="submit" value="Valider changements">
-                                    </td>
-                                </tr>
-                            </table>
-                        </form>
+                    <div class="col-1">
+                        <small class="text-normal">/{{ building.quantity|intcomma }}</small>
                     </div>
-                {% endif %}
-                {% if sendreceive %}
-                    <div id="energytransfer">
-                        <form method="post" action="?cat={{ cat }}&a=submit">
-                            {% csrf_token %}
-                            <table class="default" width="100%">
-                                <tr class="title">
-                                    <td colspan="3">
-                                        Energie reçue ({{ antennas_receive_used }}/{{ antennas_receive_total }})
-                                    </td>
-                                </tr>
-                                <tr class="header">
-                                    <td width="1%">
-                                        Source
-                                    </td>
-                                    <td>
-                                        Energie
-                                    </td>
-                                    <td>
-                                        Reçue (perte)
-                                    </td>
-                                </tr>
-                                {% if receiving_none %}
-                                    <tr class="smallitem">
-                                        <td align="center" colspan="3">
-                                            Aucun lien énergétique établi.
-                                        </td>
-                                    </tr>
-                                {% endif %}
-                                {% if receive_no_antenna %}
-                                    <tr class="smallitem">
-                                        <td align="center" colspan="3">
-                                            Aucun récepteur d'énergie construit sur la planète.
-                                        </td>
-                                    </tr>
-                                {% endif %}
-                                {% if cant_receive_when_sending %}
-                                    <tr class="smallitem">
-                                        <td class="error" colspan="3">
-                                            Impossible de recevoir quand de l'énergie est envoyée.
-                                        </td>
-                                    </tr>
-                                {% endif %}
-                                {% for received in receiveds %}
-                                    <tr class="smallitem">
-                                        <td align="center" nowrap>
-                                            <script>putplanet({{received.planetid}},'{{received.name}}',{{received.g}},{{received.s}},{{received.p}},{{received.rel}});</script>
-                                        </td>
-                                        <td align="center">
-                                            {{ received.energy|intcomma }}
-                                        </td>
-                                        <td align="center">
-                                            {{ received.effective_energy|intcomma }} (perte: {{ received.loss }}%) <a href="?cat={{ cat }}&a=cancel&from={{ received.planetid }}">rompre</a>
-                                        </td>
-                                    </tr>
-                                {% endfor %}
-                                <tr class="clear">
-                                    <td colspan="3">
-                                        &nbsp;
-                                    </td>
-                                </tr>
-                                <tr class="title">
-                                    <td colspan="3">
-                                        Energie envoyée ({{ antennas_send_used }}/{{ antennas_send_total }})
-                                    </td>
-                                </tr>
-                                <tr class="header">
-                                    <td>
-                                        Cible
-                                    </td>
-                                    <td>
-                                        Energie
-                                    </td>
-                                    <td>
-                                        Reçue (perte)
-                                    </td>
-                                </tr>
-                                {% if send_no_antenna %}
-                                    <tr class="smallitem">
-                                        <td align="center" colspan="3">
-                                            Aucun émetteur d'énergie construit sur la planète.
-                                        </td>
-                                    </tr>
-                                {% endif %}
-                                {% if cant_send_when_receiving %}
-                                    <tr class="smallitem">
-                                        <td class="error" colspan="3">
-                                            Impossible d'envoyer quand de l'énergie est reçue.
-                                        </td>
-                                    </tr>
-                                {% endif %}
-                                {% for sent in sents %}
-                                    <tr class="smallitem">
-                                        <td align="center" nowrap>
-                                            <input type="checkbox"
-                                                   class="checkbox"
-                                                   name="enabled_{{ sent.planetid }}"
-                                                   value="1"
-                                                   {% if sent.enabled %} checked{% endif %}>
-                                            <script>putplanet({{sent.planetid}},'{{sent.name}}',{{sent.g}},{{sent.s}},{{sent.p}},{{sent.rel}});</script>
-                                        </td>
-                                        <td align="center">
-                                            <input type="number"
-                                                   min="0"
-                                                   name="energy_{{ sent.planetid }}"
-                                                   value="{{ sent.energy }}"
-                                                   maxlength="6"
-                                                   size="6">
-                                        </td>
-                                        <td align="center">
-                                            {{ sent.effective_energy|intcomma }} (perte: {{ sent.loss }}%) <a href="?cat={{ cat }}&a=cancel&to={{ sent.planetid }}">retirer</a>
-                                        </td>
-                                    </tr>
-                                {% endfor %}
-                                {% if send %}
-                                    <tr class="smallitem">
-                                        <td align="center" nowrap>
-                                            <input type="number"
-                                                   min="0"
-                                                   name="to_g"
-                                                   maxlength="2"
-                                                   size="2"
-                                                   value="{{ send_g }}">
-                                            .
-                                            <input type="number"
-                                                   min="0"
-                                                   maxlength="2"
-                                                   size="2"
-                                                   name="to_s"
-                                                   value="{{ send_s }}">
-                                            .
-                                            <input type="number"
-                                                   min="0"
-                                                   maxlength="2"
-                                                   size="2"
-                                                   name="to_p"
-                                                   value="{{ send_p }}">
-                                        </td>
-                                        <td align="center">
-                                            <input type="number" min="0" name="energy" maxlength="6" size="6" value="0">
-                                        </td>
-                                        <td align="center">
-                                            {{ send_effective_energy|intcomma }} (perte: {{ send_loss }}%)
-                                        </td>
-                                    </tr>
-                                {% endif %}
-                                {% if submit %}
-                                    <tr>
-                                        <td colspan="3" align="center">
-                                            <input type="submit" name="submit" value="Valider">
-                                        </td>
-                                    </tr>
-                                {% endif %}
-                            </table>
-                        </form>
+                    <div class="col-3">
+                        <div class="row gx-3">
+                            <div class="col-auto">
+                                <img src="{{ PATH_IMAGES }}interface/credits.gif" data-bs-toggle="tooltip" data-bs-title="Crédit" class="res" width="16" height="16">
+                                <span>{{ building.upkeep_total|intcomma }}</span>
+                            </div>
+                            <div class="col-auto">
+                                <img src="{{ PATH_IMAGES }}interface/energy.gif" data-bs-toggle="tooltip" data-bs-title="Energie" class="res" width="16" height="16">
+                                <span>{{ building.energy_total|intcomma }}</span>
+                            </div>
+                            <div class="col-auto">
+                                <img src="{{ PATH_IMAGES }}interface/workers.gif" data-bs-toggle="tooltip" data-bs-title="Travailleurs" class="res" width="16" height="16">
+                                <span>{{ building.maintenance_total|intcomma }}</span>
+                            </div>
+                        </div>
                     </div>
-                {% endif %}
-            </td>
-        </tr>
-    </table>
+                </div>
+            </div>
+            {% endfor %}
+            <div class="list-group-item text-center">
+                <input type="submit" class="btn btn-primary" value="Valider changements">
+            </div>
+        </div>
+    </div>
+</form>
+{% elif cat3_selected %}
+<div class="card mb-3">
+    <div class="card-header d-flex">
+        <span class="fs-6 me-auto">Energie reçue</span>
+        <span>{{ antennas_receive_used }} <small class="text-normal">/{{ antennas_receive_total }}</small></span>
+    </div>
+    <div class="list-group list-group-flush">
+        {% if receiving_none %}
+            <div class="list-group-item text-center">
+                <span class="text-normal">Aucun lien énergétique établi</span>
+            </div>
+        {% elif receive_no_antenna %}
+            <div class="list-group-item text-center">
+                <span class="text-normal">Aucun récepteur d'énergie construit sur la planète</span>
+            </div>
+        {% elif cant_receive_when_sending %}
+            <div class="list-group-item text-center">
+                <span class="text-danger">Impossible de recevoir quand de l'énergie est envoyée</span>
+            </div>
+        {% else %}
+            {% for received in receiveds %}
+                <div class="list-group-item">
+                    <div class="row gx-3 align-items-center">
+                        <div class="col">
+                            <script>putplanet({{received.planetid}},'{{received.name}}',{{received.g}},{{received.s}},{{received.p}},{{received.rel}});</script>
+                        </div>
+                        <div class="col-2">
+                            <span>{{ received.energy|intcomma }}</span>
+                        </div>
+                        <div class="col-2">
+                            <span>{{ received.effective_energy|intcomma }}</span>
+                        </div>
+                        <div class="col-1">
+                            <small class="text-normal">perte</small>
+                            <span>{{ received.loss }}%</span>
+                        </div>
+                        <div class="col-1 text-end">
+                            <a href="?cat={{ cat }}&a=cancel&from={{ received.planetid }}" class="btn btn-danger">Rompre</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% endif %}
+    </div>
+</div>
+<form method="post" action="?cat={{ cat }}&a=submit">
+    {% csrf_token %}
+    <div class="card">
+        <div class="card-header d-flex">
+            <span class="fs-6 me-auto">Energie envoyée</span>
+            <span>{{ antennas_send_used }} <small class="text-normal">/{{ antennas_send_total }}</small></span>
+        </div>
+        <div class="list-group list-group-flush">
+            {% if send_no_antenna %}
+                <div class="list-group-item text-center">
+                    <span class="text-normal">Aucun émetteur d'énergie construit sur la planète</span>
+                </div>
+            {% elif cant_send_when_receiving %}
+                <div class="list-group-item text-center">
+                    <span class="text-danger">Impossible d'envoyer quand de l'énergie est reçue</span>
+                </div>
+            {% else %}
+                {% for sent in sents %}
+                    <div class="list-group-item">
+                        <div class="row gx-3 align-items-center">
+                            <div class="col-auto">
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" name="enabled_{{ sent.planetid }}" value="1" {% if sent.enabled %}checked{% endif %}>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <script>putplanet({{sent.planetid}},'{{sent.name}}',{{sent.g}},{{sent.s}},{{sent.p}},{{sent.rel}});</script>
+                            </div>
+                            <div class="col-auto">
+                                <input type="number" class="form-control" min="0" name="energy_{{ sent.planetid }}" value="{{ sent.energy }}" maxlength="6" size="6">
+                            </div>
+                            <div class="col-2">
+                                <span>{{ sent.effective_energy|intcomma }}</span>
+                            </div>
+                            <div class="col-1">
+                                <small class="text-normal">perte</small>
+                                <span>{{ sent.loss }}%</span>
+                            </div>
+                            <div class="col-1 text-end">
+                                <a href="?cat={{ cat }}&a=cancel&to={{ sent.planetid }}" class="btn btn-danger">Retirer</a>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% endif %}
+            {% if send %}
+            <div class="list-group-item">
+                <div class="row gx-3 align-items-center">
+                    <div class="col-auto">
+                        <input type="number" class="form-control" min="0" name="to_g" maxlength="2" size="2" value="{{ send_g }}">
+                    </div>
+                    <div class="col-auto">
+                        <input type="number" class="form-control" min="0" name="to_s" maxlength="2" size="2" value="{{ send_s }}">
+                    </div>
+                    <div class="col-auto">
+                        <input type="number" class="form-control" min="0" name="to_p" maxlength="2" size="2" value="{{ send_p }}">
+                    </div>
+                    <div class="col-auto">
+                        <input type="number" class="form-control" min="0" name="energy" maxlength="6" size="6" value="0">
+                    </div>
+                    <div class="col-auto">
+                        {{ send_effective_energy|intcomma }}
+                    </div>
+                    <div class="col-auto">
+                        <small class="text-normal">perte</small>
+                        {{ send_loss }}%
+                    </div>
+                    <div class="col-auto">
+                        <input type="submit" class="btn btn-primary" name="submit" value="Valider">
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</form>
+{% endif %}
 {% endblock %}
