@@ -226,7 +226,7 @@
         
             pointsInSkill += j;
 
-            var obj = $('span'+skill.name);
+            var obj = $('span' + skill.name);
 
             if ((skill.value + pointsInSkill * skill.inc).toFixed(2) > skill.max) {
             
@@ -236,7 +236,10 @@
 
             obj.innerHTML = Math.round((skill.value + pointsInSkill * skill.inc - 1) * 100);
             inp.value = pointsInSkill;
-
+            
+            var obj = $('div' + skill.name);
+            obj.className = 'col-auto ' + ((skill.value + pointsInSkill * skill.inc) > 1 ? 'text-success' : 'text-normal')
+            
             points -= j;
         }
 
@@ -245,16 +248,19 @@
         return false;
     }
 
-    function addskill(name, label, increase, value, max) {
+    function addskill(name, label, increase, value, max, salary) {
     
         skills[count] = { name:name, inc:increase, value:value, max:max };
         document.write('<input type="hidden" id="' + name + '" name="' + name + '" value="0">');
         document.write(
             '<div class="col-12">' +
                 '<div class="row gx-3 align-items-center">' +
-                    '<div class="col-auto">' + label + '</div>' +
-                    '<div class="col"><small class="text-normal">max</small> ' + Math.round((max - 1) * 100) + '%</div>' +
-                    '<div class="col-auto">+<span id="span' + name + '">' + Math.round((value - 1) * 100) + '</span>%</div>' +
+                    '<div class="col-auto"><span class="text-normal"><i class="fas fa-info-circle" data-bs-toggle="tooltip" data-bs-html="true" data-bs-title="' +
+                        '<div><small class=\'text-normal me-3\'>max</small> ' + Math.round((max - 1) * 100) + '%</div>' +
+                        '<div><small class=\'text-normal me-3\'>salaire</small> <span class=\'text-success\'>+' + Math.round(increase * 100) + '%</span> <i class=\'fas fa-long-arrow-alt-right text-normal mx-2\'></i> <img src=\'{{ PATH_IMAGES }}interface/credits.gif\' class=\'res\' width=\'16px\' height=\'16px\'> +' + formatnumber(salary) + '</div>' +
+                    '"></i></span></div>' +
+                    '<div class="col"><span class="text-normal">' + label + '</span></div>' +
+                    '<div id="div' + name + '" class="col-auto ' + (value > 1 ? 'text-success' : 'text-normal') + '">+<span id="span' + name + '">' + Math.round((value - 1) * 100) + '</span>%</div>' +
                     '<div class="col-auto"><a href="" onclick="return sk(' + count + ',1)" ondblclick="return sk(' + count + ',1)"><i class="fa-fw fas fa-plus-circle"></i></a></div>' +
                     '<div class="col-auto"><a href="" onclick="return sk(' + count + ',-1)" ondblclick="return sk(' + count + ',-1)"><i class="fa-fw fas fa-minus-circle"></i></a></div>' +
                 '</div>' +
@@ -275,24 +281,24 @@
                 <div class="col-6">
                     <div class="row g-1 flex-column">
                         <script>
-                            addskill('fleet_speed', 'Flotte - Vitesse', 0.02, {{speed}}, {{max_speed}});
-                            addskill('fleet_shield', 'Flotte - Bouclier', 0.02, {{shield}}, {{max_shield}});
-                            addskill('fleet_handling', 'Flotte - Manœuvrabilité', 0.05, {{handling}}, {{max_handling}});
-                            addskill('fleet_targeting', 'Flotte - Ciblage', 0.05, {{targeting}}, {{max_targeting}});
-                            addskill('fleet_damages', 'Flotte - Dégats', 0.02, {{damages}}, {{max_damages}});
-                            addskill('fleet_signature', 'Flotte - Réduction signature', 0.02, {{signature}}, {{max_signature}});
+                            addskill('fleet_speed', 'Flotte - Vitesse', 0.02, {{speed}}, {{max_speed}}, 1000);
+                            addskill('fleet_shield', 'Flotte - Bouclier', 0.02, {{shield}}, {{max_shield}}, 1000);
+                            addskill('fleet_handling', 'Flotte - Manœuvrabilité', 0.05, {{handling}}, {{max_handling}}, 1000);
+                            addskill('fleet_targeting', 'Flotte - Ciblage', 0.05, {{targeting}}, {{max_targeting}}, 1000);
+                            addskill('fleet_damages', 'Flotte - Dégats', 0.02, {{damages}}, {{max_damages}}, 1000);
+                            addskill('fleet_signature', 'Flotte - Réduction signature', 0.02, {{signature}}, {{max_signature}}, 400);
                         </script>
                     </div>
                 </div>
                 <div class="col-6">
                     <div class="row g-1 flex-column">
                         <script>
-                            addskill('ore', 'Planète - Production de minerai', 0.01, {{ore}}, {{max_ore}});
-                            addskill('hydrocarbon', 'Planète - Production d\'hydrocarbure', 0.01, {{hydrocarbon}}, {{max_hydrocarbon}});
-                            addskill('energy', 'Planète - Production d\'énergie', 0.1, {{energy}}, {{max_energy}});
-                            addskill('workers', 'Planète - Formation des travailleurs', 0.1, {{workers}}, {{max_workers}});
-                            addskill('buildindspeed', 'Planète - Vitesse de construction des bâtiments', 0.05, {{build}}, {{max_build}});
-                            addskill('shipconstructionspeed', 'Planète - Vitesse de construction des vaisseaux', 0.05, {{ship}}, {{max_ship}});
+                            addskill('ore', 'Planète - Production de minerai', 0.01, {{ore}}, {{max_ore}}, 100);
+                            addskill('hydrocarbon', 'Planète - Production d\'hydrocarbure', 0.01, {{hydrocarbon}}, {{max_hydrocarbon}}, 100);
+                            addskill('energy', 'Planète - Production d\'énergie', 0.1, {{energy}}, {{max_energy}}, 1000);
+                            addskill('workers', 'Planète - Formation des travailleurs', 0.1, {{workers}}, {{max_workers}}, 1000);
+                            addskill('buildindspeed', 'Planète - Vitesse de construction des bâtiments', 0.05, {{build}}, {{max_build}}, 1000);
+                            addskill('shipconstructionspeed', 'Planète - Vitesse de construction des vaisseaux', 0.05, {{ship}}, {{max_ship}}, 2500);
                         </script>
                     </div>
                 </div>

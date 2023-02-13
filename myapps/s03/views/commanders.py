@@ -272,6 +272,9 @@ class View(GlobalView):
 
         oConnDoQuery(query)
 
+        query = "SELECT sp_commanders_update_salary(" + str(self.UserId) + ", " + str(CommanderId) + ")"
+        oConnDoQuery(query)
+
         query = "SELECT mod_production_ore, mod_production_hydrocarbon, mod_production_energy," + \
                     " mod_production_workers, mod_fleet_speed, mod_fleet_shield, mod_fleet_handling," + \
                     " mod_fleet_tracking_speed, mod_fleet_damage, mod_fleet_signature," + \
