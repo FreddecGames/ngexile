@@ -24,11 +24,11 @@
                 <div class="col-6"><span class="text-normal">Abondance</span></div>
                 <div class="col-6">
                     <span class="me-3">
-                        <img src="{{ PATH_IMAGES }}interface/ore.gif" data-bs-toggle="tooltip" data-bs-title="Minerai" class="res" width="16" height="16">
+                        <img src="{{ PATH_IMAGES }}interface/ore.gif" data-bs-toggle="tooltip" data-bs-title="Minerai" class="res" width="16px" height="16px">
                         <span>{{ a_ore }}%</span>
                     </span>
                     <span class="me-3">
-                        <img src="{{ PATH_IMAGES }}interface/hydrocarbon.gif" data-bs-toggle="tooltip" data-bs-title="Hydrocarbure" class="res" width="16" height="16">
+                        <img src="{{ PATH_IMAGES }}interface/hydrocarbon.gif" data-bs-toggle="tooltip" data-bs-title="Hydrocarbure" class="res" width="16px" height="16px">
                         <span>{{ a_hydrocarbon }}%</span>
                     </span>
                 </div>
@@ -91,7 +91,7 @@
                 </div>
                 <div class="col-2">
                     {% if building.production_ore %}
-                        <img src="{{ PATH_IMAGES }}interface/ore.gif" data-bs-toggle="tooltip" data-bs-title="Minerai" class="res" width="16" height="16">
+                        <img src="{{ PATH_IMAGES }}interface/ore.gif" data-bs-toggle="tooltip" data-bs-title="Minerai" class="res" width="16px" height="16px">
                         <span class="text-success">+{{ building.production_ore|intcomma }}</span>
                     {% else %}
                         <small class="text-normal">-</small>
@@ -99,7 +99,7 @@
                 </div>
                 <div class="col-2">
                     {% if building.production_hydrocarbon %}
-                        <img src="{{ PATH_IMAGES }}interface/hydrocarbon.gif" data-bs-toggle="tooltip" data-bs-title="Hydrocarbure" class="res" width="16" height="16">
+                        <img src="{{ PATH_IMAGES }}interface/hydrocarbon.gif" data-bs-toggle="tooltip" data-bs-title="Hydrocarbure" class="res" width="16px" height="16px">
                         <span class="text-success">+{{ building.production_hydrocarbon|intcomma }}</span>
                     {% else %}
                         <small class="text-normal">-</small>
@@ -107,7 +107,7 @@
                 </div>
                 <div class="col-2">
                     {% if building.production_energy %}
-                        <img src="{{ PATH_IMAGES }}interface/energy.gif" data-bs-toggle="tooltip" data-bs-title="Energie" class="res" width="16" height="16">
+                        <img src="{{ PATH_IMAGES }}interface/energy.gif" data-bs-toggle="tooltip" data-bs-title="Energie" class="res" width="16px" height="16px">
                         <span class="text-success">+{{ building.production_energy|intcomma }}</span>
                     {% else %}
                         <small class="text-normal">-</small>
@@ -122,15 +122,15 @@
                     <span class="text-normal">Sous total</span>
                 </div>
                 <div class="col-2">
-                    <img src="{{ PATH_IMAGES }}interface/ore.gif" data-bs-toggle="tooltip" data-bs-title="Minerai" class="res" width="16" height="16">
+                    <img src="{{ PATH_IMAGES }}interface/ore.gif" data-bs-toggle="tooltip" data-bs-title="Minerai" class="res" width="16px" height="16px">
                     <span class="text-success">+{{ production_ore|intcomma }}</span>
                 </div>
                 <div class="col-2">
-                    <img src="{{ PATH_IMAGES }}interface/hydrocarbon.gif" data-bs-toggle="tooltip" data-bs-title="Hydrocarbure" class="res" width="16" height="16">
+                    <img src="{{ PATH_IMAGES }}interface/hydrocarbon.gif" data-bs-toggle="tooltip" data-bs-title="Hydrocarbure" class="res" width="16px" height="16px">
                     <span class="text-success">+{{ production_hydrocarbon|intcomma }}</span>
                 </div>
                 <div class="col-2">
-                    <img src="{{ PATH_IMAGES }}interface/energy.gif" data-bs-toggle="tooltip" data-bs-title="Energie" class="res" width="16" height="16">
+                    <img src="{{ PATH_IMAGES }}interface/energy.gif" data-bs-toggle="tooltip" data-bs-title="Energie" class="res" width="16px" height="16px">
                     <span class="text-success">+{{ production_energy|intcomma }}</span>
                 </div>
             </div>
@@ -177,7 +177,7 @@
                 </div>
                 <div class="col-2">
                     {% if item.mod_production_ore %}
-                        <img src="{{ PATH_IMAGES }}interface/ore.gif" data-bs-toggle="tooltip" data-bs-title="Minerai" class="res" width="16" height="16">
+                        <img src="{{ PATH_IMAGES }}interface/ore.gif" data-bs-toggle="tooltip" data-bs-title="Minerai" class="res" width="16px" height="16px">
                         <span class="text-success">+{{ item.mod_production_ore|intcomma }}%</span>
                     {% else %}
                         <small class="text-normal">-</small>
@@ -185,7 +185,7 @@
                 </div>
                 <div class="col-2">
                     {% if item.mod_production_hydrocarbon %}
-                        <img src="{{ PATH_IMAGES }}interface/hydrocarbon.gif" data-bs-toggle="tooltip" data-bs-title="Hydrocarbure" class="res" width="16" height="16">
+                        <img src="{{ PATH_IMAGES }}interface/hydrocarbon.gif" data-bs-toggle="tooltip" data-bs-title="Hydrocarbure" class="res" width="16px" height="16px">
                         <span class="text-success">+{{ item.mod_production_hydrocarbon|intcomma }}%</span>
                     {% else %}
                         <small class="text-normal">-</small>
@@ -193,7 +193,7 @@
                 </div>
                 <div class="col-2">
                     {% if item.mod_production_energy %}
-                        <img src="{{ PATH_IMAGES }}interface/energy.gif" data-bs-toggle="tooltip" data-bs-title="Energie" class="res" width="16" height="16">
+                        <img src="{{ PATH_IMAGES }}interface/energy.gif" data-bs-toggle="tooltip" data-bs-title="Energie" class="res" width="16px" height="16px">
                         <span class="text-success">+{{ item.mod_production_energy|intcomma }}%</span>
                     {% else %}
                         <small class="text-normal">-</small>
@@ -208,15 +208,15 @@
                     <span class="text-normal">Sous total</span>
                 </div>
                 <div class="col-2">
-                    <img src="{{ PATH_IMAGES }}interface/ore.gif" data-bs-toggle="tooltip" data-bs-title="Minerai" class="res" width="16" height="16">
+                    <img src="{{ PATH_IMAGES }}interface/ore.gif" data-bs-toggle="tooltip" data-bs-title="Minerai" class="res" width="16px" height="16px">
                     <span class="text-success">+{{ bonus_production_ore|intcomma }}</span>
                 </div>
                 <div class="col-2">
-                    <img src="{{ PATH_IMAGES }}interface/hydrocarbon.gif" data-bs-toggle="tooltip" data-bs-title="Hydrocarbure" class="res" width="16" height="16">
+                    <img src="{{ PATH_IMAGES }}interface/hydrocarbon.gif" data-bs-toggle="tooltip" data-bs-title="Hydrocarbure" class="res" width="16px" height="16px">
                     <span class="text-success">+{{ bonus_production_hydrocarbon|intcomma }}</span>
                 </div>
                 <div class="col-2">
-                    <img src="{{ PATH_IMAGES }}interface/energy.gif" data-bs-toggle="tooltip" data-bs-title="Energie" class="res" width="16" height="16">
+                    <img src="{{ PATH_IMAGES }}interface/energy.gif" data-bs-toggle="tooltip" data-bs-title="Energie" class="res" width="16px" height="16px">
                     <span class="text-success">+{{ bonus_production_energy|intcomma }}</span>
                 </div>
             </div>
@@ -230,15 +230,15 @@
                 <span class="text-normal">Production totale</span>
             </div>
             <div class="col-2">
-                <img src="{{ PATH_IMAGES }}interface/ore.gif" data-bs-toggle="tooltip" data-bs-title="Minerai" class="res" width="16" height="16">
+                <img src="{{ PATH_IMAGES }}interface/ore.gif" data-bs-toggle="tooltip" data-bs-title="Minerai" class="res" width="16px" height="16px">
                 <span class="text-success">+{{ total_production_ore|intcomma }}</span>
             </div>
             <div class="col-2">
-                <img src="{{ PATH_IMAGES }}interface/hydrocarbon.gif" data-bs-toggle="tooltip" data-bs-title="Hydrocarbure" class="res" width="16" height="16">
+                <img src="{{ PATH_IMAGES }}interface/hydrocarbon.gif" data-bs-toggle="tooltip" data-bs-title="Hydrocarbure" class="res" width="16px" height="16px">
                 <span class="text-success">+{{ total_production_hydrocarbon|intcomma }}</span>
             </div>
             <div class="col-2">
-                <img src="{{ PATH_IMAGES }}interface/energy.gif" data-bs-toggle="tooltip" data-bs-title="Energie" class="res" width="16" height="16">
+                <img src="{{ PATH_IMAGES }}interface/energy.gif" data-bs-toggle="tooltip" data-bs-title="Energie" class="res" width="16px" height="16px">
                 <span class="text-success">+{{ total_production_energy|intcomma }}</span>
             </div>
         </div>
@@ -264,15 +264,15 @@
                     <div class="col-3">
                         <div class="row gx-3">
                             <div class="col-auto">
-                                <img src="{{ PATH_IMAGES }}interface/credits.gif" data-bs-toggle="tooltip" data-bs-title="Crédit" class="res" width="16" height="16">
+                                <img src="{{ PATH_IMAGES }}interface/credits.gif" data-bs-toggle="tooltip" data-bs-title="Crédit" class="res" width="16px" height="16px">
                                 <span>{{ building.upkeep|intcomma }}</span>
                             </div>
                             <div class="col-auto">
-                                <img src="{{ PATH_IMAGES }}interface/energy.gif" data-bs-toggle="tooltip" data-bs-title="Energie" class="res" width="16" height="16">
+                                <img src="{{ PATH_IMAGES }}interface/energy.gif" data-bs-toggle="tooltip" data-bs-title="Energie" class="res" width="16px" height="16px">
                                 <span>{{ building.energy|intcomma }}</span>
                             </div>
                             <div class="col-auto">
-                                <img src="{{ PATH_IMAGES }}interface/workers.gif" data-bs-toggle="tooltip" data-bs-title="Travailleurs" class="res" width="16" height="16">
+                                <img src="{{ PATH_IMAGES }}interface/workers.gif" data-bs-toggle="tooltip" data-bs-title="Travailleurs" class="res" width="16px" height="16px">
                                 <span>{{ building.maintenance|intcomma }}</span>
                             </div>
                         </div>
@@ -292,15 +292,15 @@
                     <div class="col-3">
                         <div class="row gx-3">
                             <div class="col-auto">
-                                <img src="{{ PATH_IMAGES }}interface/credits.gif" data-bs-toggle="tooltip" data-bs-title="Crédit" class="res" width="16" height="16">
+                                <img src="{{ PATH_IMAGES }}interface/credits.gif" data-bs-toggle="tooltip" data-bs-title="Crédit" class="res" width="16px" height="16px">
                                 <span>{{ building.upkeep_total|intcomma }}</span>
                             </div>
                             <div class="col-auto">
-                                <img src="{{ PATH_IMAGES }}interface/energy.gif" data-bs-toggle="tooltip" data-bs-title="Energie" class="res" width="16" height="16">
+                                <img src="{{ PATH_IMAGES }}interface/energy.gif" data-bs-toggle="tooltip" data-bs-title="Energie" class="res" width="16px" height="16px">
                                 <span>{{ building.energy_total|intcomma }}</span>
                             </div>
                             <div class="col-auto">
-                                <img src="{{ PATH_IMAGES }}interface/workers.gif" data-bs-toggle="tooltip" data-bs-title="Travailleurs" class="res" width="16" height="16">
+                                <img src="{{ PATH_IMAGES }}interface/workers.gif" data-bs-toggle="tooltip" data-bs-title="Travailleurs" class="res" width="16px" height="16px">
                                 <span>{{ building.maintenance_total|intcomma }}</span>
                             </div>
                         </div>

@@ -113,25 +113,25 @@
                                             <div class="row gx-3">
                                                 <div class="col-auto" style="width:75px;">
                                                     {% if building.floor %}
-                                                    <img src="/static/assets/interface/floor.gif" class="res" data-bs-toggle="tooltip" data-bs-title="Terrain" width="16" height="16">
+                                                    <img src="/static/assets/interface/floor.gif" class="res" data-bs-toggle="tooltip" data-bs-title="Terrain" width="16px" height="16px">
                                                     <span class="{% if building.not_enough_floor %}text-danger{% endif %}">{{ building.floor|intcomma }}</span>
                                                     {% endif %}
                                                 </div>
                                                 <div class="col-auto" style="width:75px;">
                                                     {% if building.space %}
-                                                    <img src="/static/assets/interface/space.gif" class="res" data-bs-toggle="tooltip" data-bs-title="Espace" width="16" height="16">
+                                                    <img src="/static/assets/interface/space.gif" class="res" data-bs-toggle="tooltip" data-bs-title="Espace" width="16px" height="16px">
                                                     <span class="{% if building.not_enough_space %}text-danger{% endif %}">{{ building.space|intcomma }}</span>
                                                     {% endif %}
                                                 </div>
                                                 <div class="col-auto" style="width:100px;">
                                                     {% if building.ore %}
-                                                    <img src="/static/assets/interface/ore.gif" class="res" data-bs-toggle="tooltip" data-bs-title="Minerai" width="16" height="16">
+                                                    <img src="/static/assets/interface/ore.gif" class="res" data-bs-toggle="tooltip" data-bs-title="Minerai" width="16px" height="16px">
                                                     <span class="{% if building.not_enough_ore %}text-danger{% endif %}">{{ building.ore|intcomma }}</span>
                                                     {% endif %}
                                                 </div>
                                                 <div class="col-auto" style="width:100px;">
                                                     {% if building.hydrocarbon %}
-                                                    <img src="/static/assets/interface/hydrocarbon.gif" class="res" data-bs-toggle="tooltip" data-bs-title="Hydrocarbure" width="16" height="16">
+                                                    <img src="/static/assets/interface/hydrocarbon.gif" class="res" data-bs-toggle="tooltip" data-bs-title="Hydrocarbure" width="16px" height="16px">
                                                     <span class="{% if building.not_enough_hydrocarbon %}text-danger{% endif %}">{{ building.hydrocarbon|intcomma }}</span>
                                                     {% endif %}
                                                 </div>
@@ -143,7 +143,7 @@
                                                 </div>
                                                 {% if building.prestige %}
                                                 <div class="col-auto" style="width:75px;">
-                                                    <img src="/static/assets/interface/prestige.gif" class="res" data-bs-toggle="tooltip" data-bs-title="Prestige" width="16" height="16">
+                                                    <img src="/static/assets/interface/prestige.gif" class="res" data-bs-toggle="tooltip" data-bs-title="Prestige" width="16px" height="16px">
                                                     <span class="{% if building.not_enough_prestige %}text-danger{% endif %}">{{ building.prestige|intcomma }}</span>
                                                 </div>
                                                 {% endif %}

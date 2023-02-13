@@ -2,141 +2,140 @@
 {% load humanize %}
 {% block content %}
 <div class="page-content">
-<div class="card">
-    <div class="list-group list-group-flush">
-        <div class="list-group-item">
-            <div class="row gx-3">
-                <div class="col-5">
-                    <img src="/static/assets/interface/upkeep_commander.gif" class="res" width="16" height="16" data-bs-toggle="tooltip" data-bs-title="Commandants">
-                    <span class="text-normal me-1">Commandants</span>                    
-                </div>
-                <div class="col-5">
-                    <img src="{{ PATH_IMAGES }}interface/credits.gif" width="16" height="16" class="res" data-bs-toggle="tooltip" data-bs-title="Crédits">
-                    {{ commanders_salary|intcomma }}
-                    <small class="text-normal mx-2">x</small>
-                    {{ commanders_cost|intcomma }}
-                </div>
-                <div class="col-2 text-end">
-                    <img src="{{ PATH_IMAGES }}interface/credits.gif" width="16" height="16" class="res" data-bs-toggle="tooltip" data-bs-title="Crédits">
-                    {{ commanders_estimated_cost|intcomma }}
-                </div>
-            </div>
-        </div>
-        <div class="list-group-item">
-            <div class="row gx-3">
-                <div class="col-5">
-                    <img src="/static/assets/interface/planet.gif" class="res" width="16" height="16" data-bs-toggle="tooltip" data-bs-title="Planètes">
-                    <span class="text-normal me-1">Planètes</span>                    
-                </div>
-                <div class="col-5">
-                    <img src="{{ PATH_IMAGES }}interface/credits.gif" width="16" height="16" class="res" data-bs-toggle="tooltip" data-bs-title="Crédits">
-                    {{ planets_cost|intcomma }}
-                    <small class="text-normal mx-2">x</small>
-                    1,0
-                </div>
-                <div class="col-2 text-end">
-                    <img src="{{ PATH_IMAGES }}interface/credits.gif" width="16" height="16" class="res" data-bs-toggle="tooltip" data-bs-title="Crédits">
-                    {{ planets_estimated_cost|intcomma }}
+    <div class="card">
+        <div class="list-group list-group-flush">
+            <div class="list-group-item">
+                <div class="row gx-3">
+                    <div class="col-5">
+                        <img src="/static/assets/interface/upkeep_commander.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Commandants">
+                        <span class="text-normal me-1">Commandants</span>                    
+                    </div>
+                    <div class="col-5">
+                        <img src="{{ PATH_IMAGES }}interface/credits.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Crédits">
+                        {{ commanders_salary|intcomma }}
+                        <small class="text-normal mx-2">x</small>
+                        {{ commanders_cost|intcomma }}
+                    </div>
+                    <div class="col-2 text-end">
+                        <img src="{{ PATH_IMAGES }}interface/credits.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Crédits">
+                        {{ commanders_estimated_cost|intcomma }}
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="list-group-item">
-            <div class="row gx-3">
-                <div class="col-5">
-                    <img src="/static/assets/interface/scientists.gif" class="res" width="16" height="16" data-bs-toggle="tooltip" data-bs-title="Scientifiques">
-                    <span class="text-normal me-1">Scientifiques</span>                    
-                </div>
-                <div class="col-5">
-                    <img src="{{ PATH_IMAGES }}interface/credits.gif" width="16" height="16" class="res" data-bs-toggle="tooltip" data-bs-title="Crédits">
-                    {{ scientists_quantity|intcomma }}
-                    <small class="text-normal mx-2">x</small>
-                    {{ scientists_cost|intcomma }}
-                </div>
-                <div class="col-2 text-end">
-                    <img src="{{ PATH_IMAGES }}interface/credits.gif" width="16" height="16" class="res" data-bs-toggle="tooltip" data-bs-title="Crédits">
-                    {{ scientists_estimated_cost|intcomma }}
-                </div>
-            </div>
-        </div>
-        <div class="list-group-item">
-            <div class="row gx-3">
-                <div class="col-5">
-                    <img src="/static/assets/interface/soldiers.gif" class="res" width="16" height="16" data-bs-toggle="tooltip" data-bs-title="Soldats">
-                    <span class="text-normal me-1">Soldats</span>                    
-                </div>
-                <div class="col-5">
-                    <img src="{{ PATH_IMAGES }}interface/credits.gif" width="16" height="16" class="res" data-bs-toggle="tooltip" data-bs-title="Crédits">
-                    {{ soldiers_quantity|intcomma }}
-                    <small class="text-normal mx-2">x</small>
-                    {{ soldiers_cost|intcomma }}
-                </div>
-                <div class="col-2 text-end">
-                    <img src="{{ PATH_IMAGES }}interface/credits.gif" width="16" height="16" class="res" data-bs-toggle="tooltip" data-bs-title="Crédits">
-                    {{ soldiers_estimated_cost|intcomma }}
+            <div class="list-group-item">
+                <div class="row gx-3">
+                    <div class="col-5">
+                        <img src="/static/assets/interface/planet.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Planètes">
+                        <span class="text-normal me-1">Planètes</span>                    
+                    </div>
+                    <div class="col-5">
+                        <img src="{{ PATH_IMAGES }}interface/credits.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Crédits">
+                        {{ planets_cost|intcomma }}
+                        <small class="text-normal mx-2">x</small>
+                        1,0
+                    </div>
+                    <div class="col-2 text-end">
+                        <img src="{{ PATH_IMAGES }}interface/credits.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Crédits">
+                        {{ planets_estimated_cost|intcomma }}
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="list-group-item">
-            <div class="row gx-3">
-                <div class="col-5">
-                    <img src="/static/assets/map/sector/orbit-fleets.gif" class="res" width="16" height="16" data-bs-toggle="tooltip" data-bs-title="Vaisseaux">
-                    <span class="text-normal me-1">Vaisseaux</span>                    
-                </div>
-                <div class="col-5">
-                    <img src="{{ PATH_IMAGES }}interface/credits.gif" width="16" height="16" class="res" data-bs-toggle="tooltip" data-bs-title="Crédits">
-                    {{ ships_signature|intcomma }}
-                    <small class="text-normal mx-2">x</small>
-                    {{ ships_cost|intcomma }}
-                </div>
-                <div class="col-2 text-end">
-                    <img src="{{ PATH_IMAGES }}interface/credits.gif" width="16" height="16" class="res" data-bs-toggle="tooltip" data-bs-title="Crédits">
-                    {{ ships_estimated_cost|intcomma }}
-                </div>
-            </div>
-        </div>
-        <div class="list-group-item">
-            <div class="row gx-3">
-                <div class="col-5">
-                    <img src="/static/assets/map/sector/orbit-fleets.gif" class="res" width="16" height="16" data-bs-toggle="tooltip" data-bs-title="Vaisseaux en position">
-                    <span class="text-normal me-1">Vaisseaux en position</span>                    
-                </div>
-                <div class="col-5">
-                    <img src="{{ PATH_IMAGES }}interface/credits.gif" width="16" height="16" class="res" data-bs-toggle="tooltip" data-bs-title="Crédits">
-                    {{ ships_in_position_signature|intcomma }}
-                    <small class="text-normal mx-2">x</small>
-                    {{ ships_in_position_cost|intcomma }}
-                </div>
-                <div class="col-2 text-end">
-                    <img src="{{ PATH_IMAGES }}interface/credits.gif" width="16" height="16" class="res" data-bs-toggle="tooltip" data-bs-title="Crédits">
-                    {{ ships_in_position_estimated_cost|intcomma }}
+            <div class="list-group-item">
+                <div class="row gx-3">
+                    <div class="col-5">
+                        <img src="/static/assets/interface/scientists.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Scientifiques">
+                        <span class="text-normal me-1">Scientifiques</span>                    
+                    </div>
+                    <div class="col-5">
+                        <img src="{{ PATH_IMAGES }}interface/credits.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Crédits">
+                        {{ scientists_quantity|intcomma }}
+                        <small class="text-normal mx-2">x</small>
+                        {{ scientists_cost|intcomma }}
+                    </div>
+                    <div class="col-2 text-end">
+                        <img src="{{ PATH_IMAGES }}interface/credits.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Crédits">
+                        {{ scientists_estimated_cost|intcomma }}
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="list-group-item">
-            <div class="row gx-3">
-                <div class="col-5">
-                    <img src="/static/assets/map/sector/orbit-fleets.gif" class="res" width="16" height="16" data-bs-toggle="tooltip" data-bs-title="Vaisseaux posés">
-                    <span class="text-normal me-1">Vaisseaux posés</span>                    
-                </div>
-                <div class="col-5">
-                    <img src="{{ PATH_IMAGES }}interface/credits.gif" width="16" height="16" class="res" data-bs-toggle="tooltip" data-bs-title="Crédits">
-                    {{ ships_parked_signature|intcomma }}
-                    <small class="text-normal mx-2">x</small>
-                    {{ ships_parked_cost|intcomma }}
-                </div>
-                <div class="col-2 text-end">
-                    <img src="{{ PATH_IMAGES }}interface/credits.gif" width="16" height="16" class="res" data-bs-toggle="tooltip" data-bs-title="Crédits">
-                    {{ ships_parked_estimated_cost|intcomma }}
+            <div class="list-group-item">
+                <div class="row gx-3">
+                    <div class="col-5">
+                        <img src="/static/assets/interface/soldiers.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Soldats">
+                        <span class="text-normal me-1">Soldats</span>                    
+                    </div>
+                    <div class="col-5">
+                        <img src="{{ PATH_IMAGES }}interface/credits.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Crédits">
+                        {{ soldiers_quantity|intcomma }}
+                        <small class="text-normal mx-2">x</small>
+                        {{ soldiers_cost|intcomma }}
+                    </div>
+                    <div class="col-2 text-end">
+                        <img src="{{ PATH_IMAGES }}interface/credits.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Crédits">
+                        {{ soldiers_estimated_cost|intcomma }}
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="list-group-item text-end">
-            <span class="text-normal me-2">Total</span>
-            <img src="{{ PATH_IMAGES }}interface/credits.gif" width="16" height="16" class="res" data-bs-toggle="tooltip" data-bs-title="Crédits">
-            {{ total_estimation|intcomma }}
+            <div class="list-group-item">
+                <div class="row gx-3">
+                    <div class="col-5">
+                        <img src="/static/assets/map/sector/orbit-fleets.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Vaisseaux">
+                        <span class="text-normal me-1">Vaisseaux</span>                    
+                    </div>
+                    <div class="col-5">
+                        <img src="{{ PATH_IMAGES }}interface/credits.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Crédits">
+                        {{ ships_signature|intcomma }}
+                        <small class="text-normal mx-2">x</small>
+                        {{ ships_cost|intcomma }}
+                    </div>
+                    <div class="col-2 text-end">
+                        <img src="{{ PATH_IMAGES }}interface/credits.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Crédits">
+                        {{ ships_estimated_cost|intcomma }}
+                    </div>
+                </div>
+            </div>
+            <div class="list-group-item">
+                <div class="row gx-3">
+                    <div class="col-5">
+                        <img src="/static/assets/map/sector/orbit-fleets.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Vaisseaux en position">
+                        <span class="text-normal me-1">Vaisseaux en position</span>                    
+                    </div>
+                    <div class="col-5">
+                        <img src="{{ PATH_IMAGES }}interface/credits.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Crédits">
+                        {{ ships_in_position_signature|intcomma }}
+                        <small class="text-normal mx-2">x</small>
+                        {{ ships_in_position_cost|intcomma }}
+                    </div>
+                    <div class="col-2 text-end">
+                        <img src="{{ PATH_IMAGES }}interface/credits.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Crédits">
+                        {{ ships_in_position_estimated_cost|intcomma }}
+                    </div>
+                </div>
+            </div>
+            <div class="list-group-item">
+                <div class="row gx-3">
+                    <div class="col-5">
+                        <img src="/static/assets/map/sector/orbit-fleets.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Vaisseaux posés">
+                        <span class="text-normal me-1">Vaisseaux posés</span>                    
+                    </div>
+                    <div class="col-5">
+                        <img src="{{ PATH_IMAGES }}interface/credits.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Crédits">
+                        {{ ships_parked_signature|intcomma }}
+                        <small class="text-normal mx-2">x</small>
+                        {{ ships_parked_cost|intcomma }}
+                    </div>
+                    <div class="col-2 text-end">
+                        <img src="{{ PATH_IMAGES }}interface/credits.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Crédits">
+                        {{ ships_parked_estimated_cost|intcomma }}
+                    </div>
+                </div>
+            </div>
+            <div class="list-group-item text-end">
+                <span class="text-normal me-2">Total</span>
+                <img src="{{ PATH_IMAGES }}interface/credits.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Crédits">
+                {{ total_estimation|intcomma }}
+            </div>
         </div>
     </div>
-</div>
-</div>
 </div>
 {% endblock %}

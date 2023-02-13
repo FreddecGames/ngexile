@@ -185,10 +185,10 @@
                                 <div><span class="text-normal">L'alliance <a href="/s03/alliance/?tag={{ message.alliancetag }}" data-bs-toggle="tooltip" data-bs-title="Voir alliance">[{{ message.alliancetag }}] {{ message.alliancename }}</a> nous propose de les rejoindre.</span></div>
                                 <div><span class="text-normal">Vous devriez réfléchir à cette offre et répondre en accédant à <a href="/s03/alliance-invitations/" data-bs-toggle="tooltip" data-bs-title="Voir portefeuille">cette page</a>.</span></div>
                             {% elif message.type == 110 %}
-                                <div><span class="text-normal">La nation <a href="/s03/nation/?name={{ message.username }}" data-bs-toggle="tooltip" data-bs-title="Voir profil">{{ message.username }}</a> a formulé une demande de financement s'élevant à <img src="{{ PATH_IMAGES }}interface/credits.gif" title="Crédits" class="res" width="16" height="16"><span class="text-white">{{ message.credits|intcomma }}</span>{% if message.description %} pour la raison suivante: {{message.description}}{% endif %}.</span></div>
+                                <div><span class="text-normal">La nation <a href="/s03/nation/?name={{ message.username }}" data-bs-toggle="tooltip" data-bs-title="Voir profil">{{ message.username }}</a> a formulé une demande de financement s'élevant à <img src="{{ PATH_IMAGES }}interface/credits.gif" title="Crédits" class="res" width="16px" height="16px"><span class="text-white">{{ message.credits|intcomma }}</span>{% if message.description %} pour la raison suivante: {{message.description}}{% endif %}.</span></div>
                                 <div><span class="text-normal">Vous pouvez accéder à toutes les demandes en cours sur <a href="/s03/alliance-wallet/?cat=2" data-bs-toggle="tooltip" data-bs-title="Voir portefeuille">cette page</a>.</span></div>
                             {% elif message.type == 111 %}
-                                <div><span class="text-normal">La nation <a href="/s03/nation/?name={{ message.username }}" data-bs-toggle="tooltip" data-bs-title="Voir profil">{{ message.username }}</a> a modifié sa demande de financement et demande désormais <img src="{{ PATH_IMAGES }}interface/credits.gif" title="Crédits" class="res" width="16" height="16"><span class="text-white">{{ message.credits|intcomma }}</span>{% if message.description %} pour la raison suivante: {{message.description}}{% endif %}.</span></div>
+                                <div><span class="text-normal">La nation <a href="/s03/nation/?name={{ message.username }}" data-bs-toggle="tooltip" data-bs-title="Voir profil">{{ message.username }}</a> a modifié sa demande de financement et demande désormais <img src="{{ PATH_IMAGES }}interface/credits.gif" title="Crédits" class="res" width="16px" height="16px"><span class="text-white">{{ message.credits|intcomma }}</span>{% if message.description %} pour la raison suivante: {{message.description}}{% endif %}.</span></div>
                                 <div><span class="text-normal">Vous pouvez accéder à toutes les demandes en cours sur <a href="/s03/alliance-wallet/?cat=2" data-bs-toggle="tooltip" data-bs-title="Voir portefeuille">cette page</a>.</span></div>
                             {% elif message.type == 112 %}
                                 <div><span class="text-normal">La nation <a href="/s03/nation/?name={{ message.username }}" data-bs-toggle="tooltip" data-bs-title="Voir profil">{{ message.username }}</a> a annulé sa demande de financement.</span></div>
@@ -203,9 +203,9 @@
                             {% elif message.type == 132 %}
                                 <div><span class="text-normal">La nation <a href="/s03/nation/?name={{ message.nation }}" data-bs-toggle="tooltip" data-bs-title="Voir profil">{{ message.nation }}</a> va être exclue de l'alliance{% if message.username %} (action décidée par <a href="/s03/nation/?name={{message.username}}" data-bs-toggle="tooltip" data-bs-title="Voir profil">{{message.username}}</a>){% endif %}.</div>
                             {% elif message.type == 150 %}
-                                <div><span class="text-normal">Notre alliance n'a pas pu honorer son contrat et payer les <img src="{{ PATH_IMAGES }}interface/credits.gif" title="Crédits" class="res" width="16" height="16">{{ message.credits|intcomma }} à l'alliance <a href="/s03/alliance/?tag={{ message.alliancetag }}" data-bs-toggle="tooltip" data-bs-title="Voir alliance">[{{ message.alliancetag }}] {{ message.alliancename }}</a>.</div>
+                                <div><span class="text-normal">Notre alliance n'a pas pu honorer son contrat et payer les <img src="{{ PATH_IMAGES }}interface/credits.gif" title="Crédits" class="res" width="16px" height="16px">{{ message.credits|intcomma }} à l'alliance <a href="/s03/alliance/?tag={{ message.alliancetag }}" data-bs-toggle="tooltip" data-bs-title="Voir alliance">[{{ message.alliancetag }}] {{ message.alliancename }}</a>.</div>
                             {% elif message.type == 151 %}
-                                <div><span class="text-normal">Il semblerait que l'alliance <a href="/s03/alliance/?tag={{ message.alliancetag }}" data-bs-toggle="tooltip" data-bs-title="Voir alliance">[{{ message.alliancetag }}] {{ message.alliancename }}</a> ait oublié de nous verser les <img src="{{ PATH_IMAGES }}interface/credits.gif" title="Crédits" class="res" width="16" height="16">{{ message.credits|intcomma }} prévus.</div>
+                                <div><span class="text-normal">Il semblerait que l'alliance <a href="/s03/alliance/?tag={{ message.alliancetag }}" data-bs-toggle="tooltip" data-bs-title="Voir alliance">[{{ message.alliancetag }}] {{ message.alliancename }}</a> ait oublié de nous verser les <img src="{{ PATH_IMAGES }}interface/credits.gif" title="Crédits" class="res" width="16px" height="16px">{{ message.credits|intcomma }} prévus.</div>
                             {% elif message.type == 160 %}
                                 <div><span class="text-normal">L'alliance <a href="/s03/alliance/?tag={{ message.alliancetag }}" data-bs-toggle="tooltip" data-bs-title="Voir alliance">[{{ message.alliancetag }}] {{ message.alliancename }}</a> vient de nous déclarer la guerre.</div>
                             {% elif message.type == 162 %}
@@ -236,57 +236,57 @@
                                 <div><span class="text-normal">Nous avons pris la planète <a href="/s03/map/?g={{ message.g }}&s={{ message.s }}" data-bs-toggle="tooltip" data-bs-title="Carte spatiale">{{ message.planetname }}<small class="ms-1">{{ message.g }}.{{ message.s }}.{{ message.p }}</small></a> !</div>
                                 <div><span class="text-normal">Vous pouvez accéder au <a href="/s03/invasion/?id={{ message.invasionid }}" data-bs-toggle="tooltip" data-bs-title="Voir rapport">rapport d'invasion</a>.</div>
                             {% elif message.type == 220 %}
-                                <div><span class="text-normal">La destruction récente de flottes de fossoyeur nous a rapporté la somme de <img src="{{ PATH_IMAGES }}interface/credits.gif" title="Crédits" class="res" width="16" height="16">{{ message.credits|intcomma }}.</div>
+                                <div><span class="text-normal">La destruction récente de flottes de fossoyeur nous a rapporté la somme de <img src="{{ PATH_IMAGES }}interface/credits.gif" title="Crédits" class="res" width="16px" height="16px">{{ message.credits|intcomma }}.</div>
                             {% elif message.type == 300 %}
                                 <div><span class="text-normal">Nos scientifiques ont terminé la recherche sur "<span class="text-white">{{ message.researchname }}</span>".</span></div>
                                 <div><span class="text-normal">Ils sont prêts pour de <a href="/s03/research/" data-bs-toggle="tooltip" data-bs-title="Voir laboratoire">nouvelles recherches</a>.</span></div>
                             {% elif message.type == 310 %}
-                                <div class="mb-1"><span class="text-normal">Les coûts d'entretien et de fonctionnement concernant la dernière période s'élèvent à</span> <img src="{{ PATH_IMAGES }}interface/credits.gif" class="res" width="16" height="16" data-bs-toggle="tooltip" data-bs-title="Crédit">{{ message.credits|intcomma }}.</div>
+                                <div class="mb-1"><span class="text-normal">Les coûts d'entretien et de fonctionnement concernant la dernière période s'élèvent à</span> <img src="{{ PATH_IMAGES }}interface/credits.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Crédit">{{ message.credits|intcomma }}.</div>
                                 <div class="mb-1 row gx-3 gy-1">
                                     {% if message.upkeep_commanders > 0 %}
                                     <div class="col-auto">
-                                        <img src="{{ PATH_IMAGES }}interface/upkeep_commander.gif" class="res" width="16" height="16" data-bs-toggle="tooltip" data-bs-title="Commandants">
+                                        <img src="{{ PATH_IMAGES }}interface/upkeep_commander.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Commandants">
                                         <span class="text-normal me-1">Commandants</span> {{ message.upkeep_commanders|intcomma }}
                                     </div>
                                     {% endif %}
                                     {% if message.upkeep_planets > 0 %}
                                     <div class="col-auto">
-                                        <img src="{{ PATH_IMAGES }}interface/planet.gif" class="res" width="16" height="16" data-bs-toggle="tooltip" data-bs-title="Planètes">
+                                        <img src="{{ PATH_IMAGES }}interface/planet.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Planètes">
                                         <span class="text-normal me-1">Planètes</span> {{ message.upkeep_planets|intcomma }}
                                     </div>
                                     {% endif %}
                                     {% if message.upkeep_scientists > 0 %}
                                     <div class="col-auto">
-                                        <img src="{{ PATH_IMAGES }}interface/scientists.gif" class="res" width="16" height="16" data-bs-toggle="tooltip" data-bs-title="Scientifiques">
+                                        <img src="{{ PATH_IMAGES }}interface/scientists.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Scientifiques">
                                         <span class="text-normal me-1">Scientifiques</span> {{ message.upkeep_scientists|intcomma }}
                                     </div>
                                     {% endif %}
                                     {% if message.upkeep_soldiers > 0 %}
                                     <div class="col-auto">
-                                        <img src="{{ PATH_IMAGES }}interface/soldiers.gif" class="res" width="16" height="16" data-bs-toggle="tooltip" data-bs-title="Soldats">
+                                        <img src="{{ PATH_IMAGES }}interface/soldiers.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Soldats">
                                         <span class="text-normal me-1">Soldats</span> {{ message.upkeep_soldiers|intcomma }}
                                     </div>
                                     {% endif %}
                                     {% if message.upkeep_ships > 0 %}
                                     <div class="col-auto">
-                                        <img src="{{ PATH_IMAGES }}map/sector/orbit-fleets.gif" class="res" width="16" height="16" data-bs-toggle="tooltip" data-bs-title="Vaisseaux">
+                                        <img src="{{ PATH_IMAGES }}map/sector/orbit-fleets.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Vaisseaux">
                                         <span class="text-normal me-1">Vaisseaux</span> {{ message.upkeep_ships|intcomma }}
                                     </div>
                                     {% endif %}
                                     {% if message.upkeep_ships_in_position > 0 %}
                                     <div class="col-auto">
-                                        <img src="{{ PATH_IMAGES }}map/sector/orbit-fleets.gif" class="res" width="16" height="16" data-bs-toggle="tooltip" data-bs-title="Vaisseaux en position">
+                                        <img src="{{ PATH_IMAGES }}map/sector/orbit-fleets.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Vaisseaux en position">
                                         <span class="text-normal me-1">Vaisseaux en position</span> {{ message.upkeep_ships_in_position|intcomma }}
                                     </div>
                                     {% endif %}
                                     {% if message.upkeep_ships_parked > 0 %}
                                     <div class="col-auto">
-                                        <img src="{{ PATH_IMAGES }}map/sector/orbit-fleets.gif" class="res" width="16" height="16" data-bs-toggle="tooltip" data-bs-title="Vaisseaux posés">
+                                        <img src="{{ PATH_IMAGES }}map/sector/orbit-fleets.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Vaisseaux posés">
                                         <span class="text-normal me-1">Vaisseaux posés</span> {{ message.upkeep_ships_parked|intcomma }}
                                     </div>
                                     {% endif %}
                                 </div>
-                                <div><span class="text-normal me-1">Nos infrastructures ont généré</span><img src="{{ PATH_IMAGES }}interface/prestige.gif" class="res" width="16" height="16" data-bs-toggle="tooltip" data-bs-title="Prestige">{{ message.scientists|intcomma }} <span class="text-normal me-1">et</span> <img src="{{ PATH_IMAGES }}interface/credits.gif" class="res" width="16" height="16" data-bs-toggle="tooltip" data-bs-title="Crédit">{{ message.soldiers|intcomma }}.</div>
+                                <div><span class="text-normal me-1">Nos infrastructures ont généré</span><img src="{{ PATH_IMAGES }}interface/prestige.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Prestige">{{ message.scientists|intcomma }} <span class="text-normal me-1">et</span> <img src="{{ PATH_IMAGES }}interface/credits.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Crédit">{{ message.soldiers|intcomma }}.</div>
                             {% elif message.type == 311 %}
                                 <div><span class="text-normal">Le commerce entre nos planètes et celles de nos alliés nous a rapporté</span><img src="{{ PATH_IMAGES }}interface/credits.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Crédit">{{ message.credits|intcomma }}.</div>
                             {% elif message.type == 320 %}
