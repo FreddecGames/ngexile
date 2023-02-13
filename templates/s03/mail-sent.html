@@ -41,7 +41,7 @@
                     <div class="col">
                         <div class="mb-1">
                             {% if mail.alliancetag %}<a href="/s03/alliance/?tag={{ mail.alliancetag }}" class="me-2" data-bs-toggle="tooltip" data-bs-title="Voir alliance">[{{ mail.alliancetag }}]</a>{% endif %}
-                            {% if mail.sent_to %}<a href="/s03/nation/?name={{ mail.sent_to }}" class="me-2" data-bs-toggle="tooltip" data-bs-title="Voir profile">{{ mail.sent_to }}</a>{% endif %}
+                            {% if mail.sent_to %}<a href="/s03/nation/?name={{ mail.sent_to }}" class="me-2" data-bs-toggle="tooltip" data-bs-title="Voir profil">{{ mail.sent_to }}</a>{% endif %}
                             <span class="text-normal me-2">{{ mail.date|timezone:"Europe/Paris" }}</span>
                             {% if mail.to_alliance %}<span class="ms-2">À l'alliance</span>{% endif %}
                         </div>

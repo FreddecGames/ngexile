@@ -52,7 +52,7 @@
                                  data-bs-title="Crédits"
                                  width="16"
                                  height="16">
-                            <span class="{% if credits <= 0 %}text-danger{% endif %}">{{ profile_credits|intcomma }}</span>
+                            <span class="{% if profile_credits <= 0 %}text-danger{% endif %}">{{ profile_credits|intcomma }}</span>
                         </div>
                         <div class="col-auto">
                             <img src="{{ PATH_IMAGES }}interface/prestige.gif"
@@ -91,6 +91,17 @@
         <script>
             const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
             const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+        </script>
+        <script>
+            function refreshPageResponse(req) {            
+                try { if (req.status=="200") {
+                    console.log(req.responseText)
+                } }
+                catch (e) { console.log(e) }
+            }
+            function refreshPage(url) {            
+                openURL(url, refreshPageResponse);
+            }
         </script>
     </body>
 </html>

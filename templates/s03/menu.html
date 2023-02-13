@@ -20,7 +20,7 @@
         var selected = (name == selectedmenu) ? " selected" : "";
         var hidden = ((lvl < 3) || (sectionmenu != "" && name.indexOf(sectionmenu) == 0)) ? "" : " hidden";
 
-        if (lvl == 1) document.write('<a href="' + url + '" class="menu lvl1 d-flex align-items-baseline"><div class="col">' + label + '</div><div class="col-auto small"><i class="fa-fw fas fa-angle-double-down"></i></div></a>');
+        if (lvl == 1) document.write('<div class="menu lvl1 d-flex align-items-baseline"><div class="col">' + label + '</div><div class="col-auto small"><i class="fa-fw fas fa-angle-double-down"></i></div></div>');
         else {
         
             document.write('<a href="' + url + '" id="menu_' + name + '" class="menu lvl' + lvl + selected + hidden + '"><span class="px-2"><i class="fa-fw fas fa-caret-right"></i></span>' + label + '</a>');

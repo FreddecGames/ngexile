@@ -6,6 +6,8 @@ from django.views.generic.base import RedirectView
 
 from .views import connect
 
+from .views import layout
+
 from .views import alliance
 from .views import alliance_create
 from .views import alliance_invitations
@@ -68,6 +70,8 @@ urlpatterns = [
 	#---------------------------------------------------------------------------
 	path('', RedirectView.as_view(url='/s03/connect/')),
     path('connect/', connect.View.as_view()),
+	#---------------------------------------------------------------------------
+    path('layout/', layout.View.as_view()),
 	#---------------------------------------------------------------------------
     path('alliance-create/', alliance_create.View.as_view()),
     path('alliance-invitations/', alliance_invitations.View.as_view()),

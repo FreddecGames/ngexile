@@ -57,7 +57,7 @@
                         <div class="col-12">
                             <span class="text-normal me-2">Trésorerie</span>
                             <img src="/static/assets/interface/credits.gif" class="res" data-bs-toggle="tooltip" data-bs-title="Crédits" width="16" height="16">
-                            {{ stat_credits|intcomma }}
+                            <span class="{% if stat_credits <= 0 %}text-danger{% endif %}">{{ stat_credits|intcomma }}</span>
                         </div>
                         <div class="col-12">
                             <span class="text-normal me-2">Score de développement</span>
@@ -147,7 +147,7 @@
                         {% elif fleet.friend %}
                             <a href="/s03/mails/?to={{ fleet.name }}" class="friend" data-bs-toggle="tooltip" data-bs-title="Contacter propriétaire">{{ fleet.name }}</a>
                         {% elif fleet.hostile %}
-                            <a href="/s03/nation/?name={{ fleet.name }}" class="enemy" data-bs-toggle="tooltip" data-bs-title="Voir profile">{{ fleet.name }}</a>
+                            <a href="/s03/nation/?name={{ fleet.name }}" class="enemy" data-bs-toggle="tooltip" data-bs-title="Voir profil">{{ fleet.name }}</a>
                         {% endif %}
                         <span class="ms-2"><script>sig({{ fleet.signature }})</script></span>
                     </div>
