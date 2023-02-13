@@ -89,7 +89,7 @@ function formattime(s){
 
 function formatRemainingTime(s){
 	if(s < 0) s = 0;
-	if(s < 600) return "<span id=countdown>" + formattime(s) + "</span>";
+	if(s < 600) return "<span class='text-success'>" + formattime(s) + "</span>";
 	return formattime(s);
 }
 
