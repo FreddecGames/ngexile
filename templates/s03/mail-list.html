@@ -62,7 +62,7 @@
                         <div class="row gx-3 align-items-center">
                             <div class="col-auto">
                                 {% if mail.avatar %}<img src="{{ mail.avatar_url }}" width="48" height="48" class="rounded">
-                                {% else %}<img src="{{ PATH_IMAGES }}interface/noavatar.gif" width="48" height="48" class="rounded">
+                                {% else %}<img src="{{ PATH_IMAGES }}img/interface/noavatar.gif" width="48" height="48" class="rounded">
                                 {% endif %}
                             </div>
                             <div class="col">
@@ -78,7 +78,7 @@
                                     <span class="fs-6">{{ mail.subject }}</span>
                                     {% if mail.money %}
                                         <span class="ms-3 text-normal">Crédits reçus</span>
-                                        <img src="{{ PATH_IMAGES }}interface/credits.gif" title="Crédits" class="res" width="16px" height="16px">
+                                        <img src="{{ PATH_IMAGES }}img/interface/credits.gif" title="Crédits" class="res" width="16px" height="16px">
                                         {{ mail.moneyamount|intcomma }}
                                     {% endif %}
                                 </div>

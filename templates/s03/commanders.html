@@ -55,7 +55,7 @@
                                 <div class="col-12"></div>
                                 <div class="col-3 text-end"><span class="text-normal">Salaire</span></div>
                                 <div class="col-9">
-                                    <img src="{{ PATH_IMAGES }}interface/credits.gif" class="res" data-bs-toggle="tooltip" data-bs-title="Crédits" width="16px" height="16px">
+                                    <img src="{{ PATH_IMAGES }}img/interface/credits.gif" class="res" data-bs-toggle="tooltip" data-bs-title="Crédits" width="16px" height="16px">
                                     <span>{{ commander.salary|intcomma }}</span>
                                 </div>
                                 <div class="col-3 text-end"><span class="text-normal">Engagé</span></div>
@@ -64,10 +64,10 @@
                                 <div class="col-9">
                                     {% if commander.not_assigned %}<span class="text-normal">Aucune</span>
                                     {% elif commander.planet_command %}
-                                        <img src="{{ PATH_IMAGES }}interface/planet.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Planète">
+                                        <img src="{{ PATH_IMAGES }}img/interface/planet.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Planète">
                                         <script>putplanet("{{commander.planetid}}","{{commander.commandment}}","{{commander.g}}","{{commander.s}}","{{commander.p}}", 2);</script>
                                     {% elif commander.fleet_command %}
-                                        <img src="{{ PATH_IMAGES }}interface/fleets.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Flotte">
+                                        <img src="{{ PATH_IMAGES }}img/interface/fleets.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Flotte">
                                         <a href="/s03/fleet/?id={{ commander.fleetid }}" data-bs-toggle="tooltip" data-bs-title="Voir flotte">{{ commander.commandment }}</a>
                                     {% endif %}
                                 </div>
@@ -103,7 +103,7 @@
                                     <div class="col-12">
                                         <a href="?a=train&id={{ commander.id }}" onclick="return confirmTrain('{{ commander.prestige|intcomma }}')">
                                             Entrainement intensif pour
-                                            <img src="{{ PATH_IMAGES }}interface/prestige.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Prestige">
+                                            <img src="{{ PATH_IMAGES }}img/interface/prestige.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Prestige">
                                             {{ commander.prestige|intcomma }}
                                         </a>
                                     </div>
@@ -153,7 +153,7 @@
                                 <div class="col-12"></div>
                                 <div class="col-3 text-end"><span class="text-normal">Salaire</span></div>
                                 <div class="col-9">
-                                    <img src="{{ PATH_IMAGES }}interface/credits.gif" class="res" data-bs-toggle="tooltip" data-bs-title="Crédits" width="16px" height="16px">
+                                    <img src="{{ PATH_IMAGES }}img/interface/credits.gif" class="res" data-bs-toggle="tooltip" data-bs-title="Crédits" width="16px" height="16px">
                                     <span>{{ commander.salary|intcomma }}</span>
                                 </div>
                                 <div class="col-3 text-end"><span class="text-normal">Repéré le</span></div>
@@ -257,7 +257,7 @@
                 '<div class="row gx-3 align-items-center">' +
                     '<div class="col-auto"><span class="text-normal"><i class="fas fa-info-circle" data-bs-toggle="tooltip" data-bs-html="true" data-bs-title="' +
                         '<div><small class=\'text-normal me-3\'>max</small> ' + Math.round((max - 1) * 100) + '%</div>' +
-                        '<div><small class=\'text-normal me-3\'>salaire</small> <span class=\'text-success\'>+' + Math.round(increase * 100) + '%</span> <i class=\'fas fa-long-arrow-alt-right text-normal mx-2\'></i> <img src=\'{{ PATH_IMAGES }}interface/credits.gif\' class=\'res\' width=\'16px\' height=\'16px\'> +' + formatnumber(salary) + '</div>' +
+                        '<div><small class=\'text-normal me-3\'>salaire</small> <span class=\'text-success\'>+' + Math.round(increase * 100) + '%</span> <i class=\'fas fa-long-arrow-alt-right text-normal mx-2\'></i> <img src=\'{{ PATH_IMAGES }}img/interface/credits.gif\' class=\'res\' width=\'16px\' height=\'16px\'> +' + formatnumber(salary) + '</div>' +
                     '"></i></span></div>' +
                     '<div class="col"><span class="text-normal">' + label + '</span></div>' +
                     '<div id="div' + name + '" class="col-auto ' + (value > 1 ? 'text-success' : 'text-normal') + '">+<span id="span' + name + '">' + Math.round((value - 1) * 100) + '</span>%</div>' +

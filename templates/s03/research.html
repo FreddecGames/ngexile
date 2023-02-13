@@ -9,8 +9,8 @@
 
         var s;
 
-        if (!inprogress) s = '<img src="{{PATH_IMAGES}}research/level' + levels + '_' + level + '.gif" data-bs-toggle="tooltip" data-bs-title="Niveau ' + level + '">';
-        else s = '<img src="{{PATH_IMAGES}}research/leveling' + levels + '_' + level + '.gif" data-bs-toggle="tooltip" data-bs-title="Niveau ' + (level + 1) + ' en cours">';
+        if (!inprogress) s = '<img src="{{PATH_IMAGES}}img/research/level' + levels + '_' + level + '.gif" data-bs-toggle="tooltip" data-bs-title="Niveau ' + level + '">';
+        else s = '<img src="{{PATH_IMAGES}}img/research/leveling' + levels + '_' + level + '.gif" data-bs-toggle="tooltip" data-bs-title="Niveau ' + (level + 1) + ' en cours">';
 
         document.write(s);
     }
@@ -51,7 +51,7 @@
                                 </div>
                                 <div class="col-2">
                                     {% if research.cost and not research.researching %}
-                                        <img src="{{ PATH_IMAGES }}interface/credits.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Crédit" />
+                                        <img src="{{ PATH_IMAGES }}img/interface/credits.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Crédit" />
                                         <span class="{% if research.notenoughmoney %}text-danger{% endif %}">{{ research.credits|intcomma }}</span>
                                     {% endif %}
                                 </div>

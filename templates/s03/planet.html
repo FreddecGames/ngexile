@@ -97,7 +97,7 @@
     <div class="card-body">
         <div class="row gx-3">
             <div class="col-auto text-center">
-                <img src="{{ PATH_IMAGES }}planets/p{{ planet_img }}.gif" class="rounded" width="64" height="64">
+                <img src="{{ PATH_IMAGES }}img/planets/p{{ planet_img }}.gif" class="rounded" width="64" height="64">
                 <form method="post" action="/s03/planet/?planet={{ planet_id }}">
                     {% csrf_token %}
                     <input type="hidden" name="action" value="abandon">

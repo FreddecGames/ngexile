@@ -28,11 +28,11 @@
                 <div class="row gx-3 align-items-center">
                     <div class="col">
                         {% if item.scientists %}
-                            <img src="{{ PATH_IMAGES }}interface/scientists.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Scientifique" />
+                            <img src="{{ PATH_IMAGES }}img/interface/scientists.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Scientifique" />
                             <a href="/s03/help/#scientists" data-bs-toggle="tooltip" data-bs-title="Voir aide">Scientifiques</a>
                         {% endif %}
                         {% if item.soldiers %}
-                            <img src="{{ PATH_IMAGES }}interface/soldiers.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Soldat" />
+                            <img src="{{ PATH_IMAGES }}img/interface/soldiers.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Soldat" />
                             <a href="/s03/help/#soldiers" data-bs-toggle="tooltip" data-bs-title="Voir aide">Soldats</a>
                         {% endif %}
                     </div>
@@ -54,11 +54,11 @@
                 <div class="row gx-3 align-items-center">
                     <div class="col">
                         {% if item.scientists %}
-                            <img src="{{ PATH_IMAGES }}interface/scientists.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Scientifique" />
+                            <img src="{{ PATH_IMAGES }}img/interface/scientists.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Scientifique" />
                             <a href="/s03/help/#scientists" data-bs-toggle="tooltip" data-bs-title="Voir aide">Scientifiques</a>
                         {% endif %}
                         {% if item.soldiers %}
-                            <img src="{{ PATH_IMAGES }}interface/soldiers.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Soldat" />
+                            <img src="{{ PATH_IMAGES }}img/interface/soldiers.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Soldat" />
                             <a href="/s03/help/#soldiers" data-bs-toggle="tooltip" data-bs-title="Voir aide">Soldats</a>
                         {% endif %}
                     </div>
@@ -88,7 +88,7 @@
             <div class="list-group-item">
                 <div class="row gx-3 align-items-center">
                     <div class="col">
-                        <img src="{{ PATH_IMAGES }}interface/scientists.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Scientifique" />
+                        <img src="{{ PATH_IMAGES }}img/interface/scientists.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Scientifique" />
                         <a href="/s03/help/#scientists" data-bs-toggle="tooltip" data-bs-title="Voir aide">Scientifiques</a>
                     </div>
                     <div class="col-auto" style="width:200px;">
@@ -96,15 +96,15 @@
                         <small class="text-normal">/{{ scientists_capacity|intcomma }}</small>
                     </div>
                     <div class="col-auto" style="width:100px;">
-                        <img src="{{ PATH_IMAGES }}interface/ore.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Minerai" />
+                        <img src="{{ PATH_IMAGES }}img/interface/ore.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Minerai" />
                         <span>{{ scientist_ore|intcomma }}</span>
                     </div>
                     <div class="col-auto" style="width:100px;">
-                        <img src="{{ PATH_IMAGES }}interface/hydrocarbon.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Hydrocarbure" />
+                        <img src="{{ PATH_IMAGES }}img/interface/hydrocarbon.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Hydrocarbure" />
                         <span>{{ scientist_hydrocarbon|intcomma }}</span>
                     </div>
                     <div class="col-auto" style="width:100px;">
-                        <img src="{{ PATH_IMAGES }}interface/credits.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Crédit" />
+                        <img src="{{ PATH_IMAGES }}img/interface/credits.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Crédit" />
                         <span>{{ scientist_credits|intcomma }}</span>
                     </div>
                     <div class="col-auto text-end" style="width:110px;">
@@ -119,7 +119,7 @@
             <div class="list-group-item">
                 <div class="row gx-3 align-items-center">
                     <div class="col">
-                        <img src="{{ PATH_IMAGES }}interface/soldiers.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Soldat" />
+                        <img src="{{ PATH_IMAGES }}img/interface/soldiers.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Soldat" />
                         <a href="/s03/help/#soldiers" data-bs-toggle="tooltip" data-bs-title="Voir aide">Soldats</a>
                     </div>
                     <div class="col-auto" style="width:200px;">
@@ -127,15 +127,15 @@
                         <small class="text-normal">/{{ soldiers_capacity|intcomma }}</small>
                     </div>
                     <div class="col-auto" style="width:100px;">
-                        <img src="{{ PATH_IMAGES }}interface/ore.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Minerai" />
+                        <img src="{{ PATH_IMAGES }}img/interface/ore.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Minerai" />
                         <span>{{ soldier_ore|intcomma }}</span>
                     </div>
                     <div class="col-auto" style="width:100px;">
-                        <img src="{{ PATH_IMAGES }}interface/hydrocarbon.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Hydrocarbure" />
+                        <img src="{{ PATH_IMAGES }}img/interface/hydrocarbon.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Hydrocarbure" />
                         <span>{{ soldier_hydrocarbon|intcomma }}</span>
                     </div>
                     <div class="col-auto" style="width:100px;">
-                        <img src="{{ PATH_IMAGES }}interface/credits.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Credit" />
+                        <img src="{{ PATH_IMAGES }}img/interface/credits.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Credit" />
                         <span>{{ soldier_credits|intcomma }}</span>
                     </div>
                     <div class="col-auto text-end" style="width:110px;">
@@ -152,15 +152,15 @@
     <div class="card card-body">
         <div class="row gx-3 align-items-center justify-content-end">
             <div class="col-auto" style="width:100px;">
-                <img src="{{ PATH_IMAGES }}interface/ore.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Minerai" />
+                <img src="{{ PATH_IMAGES }}img/interface/ore.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Minerai" />
                 <span id="totalore">0</span>
             </div>
             <div class="col-auto" style="width:100px;">
-                <img src="{{ PATH_IMAGES }}interface/hydrocarbon.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Hydrocarbure" />
+                <img src="{{ PATH_IMAGES }}img/interface/hydrocarbon.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Hydrocarbure" />
                 <span id="totalhydrocarbon">0</span>
             </div>
             <div class="col-auto" style="width:100px;">
-                <img src="{{ PATH_IMAGES }}interface/credits.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Credit" />
+                <img src="{{ PATH_IMAGES }}img/interface/credits.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Credit" />
                 <span id="totalcredits">0</span>
             </div>
             <div class="col-auto" style="width:110px;">

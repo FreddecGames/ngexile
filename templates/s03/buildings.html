@@ -50,7 +50,7 @@
                         <div class="list-group-item {% if building.isbuilding %}bg-success{% elif building.isdestroying %}bg-danger{% endif %}">
                             <div class="row gx-3 align-items-center">
                                 <div class="col-auto">
-                                    <img src="{{PATH_IMAGES}}buildings/{{ building.id }}.jpg" width="42px" height="42px" class="rounded" data-bs-toggle="tooltip" data-bs-html="true" data-bs-title="
+                                    <img src="{{PATH_IMAGES}}img/buildings/{{ building.id }}.jpg" width="42px" height="42px" class="rounded" data-bs-toggle="tooltip" data-bs-html="true" data-bs-title="
                                         <div class='mb-1'><span class='fs-6'>Description</span></div>
                                         <div class='mb-3'><span class='text-normal'>{{ building.description|escape }}</span></div>
                                         {% if building.ore_prod or building.hydro_prod or building.energy_prod %}
@@ -59,21 +59,21 @@
                                             <div class='row gx-3'>
                                                 {% if building.ore_prod %}
                                                 <div class='col-auto'>
-                                                    <img src='/static/assets/interface/ore.gif' class='res' width='16' height='16'>
+                                                    <img src='/static/s03/img/interface/ore.gif' class='res' width='16' height='16'>
                                                     <span class='text-normal'>{{ building.ore_prod|intcomma }}</span>
                                                     {% if building.ore_modifier %}<small class='ms-1 text-success'>+{{ building.ore_modifier|intcomma }}</small>{% endif %}
                                                 </div>
                                                 {% endif %}
                                                 {% if building.hydro_prod %}
                                                 <div class='col-auto'>
-                                                    <img src='/static/assets/interface/hydrocarbon.gif' class='res' width='16' height='16'>
+                                                    <img src='/static/s03/img/interface/hydrocarbon.gif' class='res' width='16' height='16'>
                                                     <span class='text-normal'>{{ building.hydro_prod|intcomma }}</span>
                                                     {% if building.hydro_modifier %}<small class='ms-1 text-success'>+{{ building.hydro_modifier|intcomma }}</small>{% endif %}
                                                 </div>
                                                 {% endif %}
                                                 {% if building.energy_prod %}
                                                 <div class='col-auto'>
-                                                    <img src='/static/assets/interface/energy.gif' class='res' width='16' height='16'>
+                                                    <img src='/static/s03/img/interface/energy.gif' class='res' width='16' height='16'>
                                                     <span class='text-normal'>{{ building.energy_prod|intcomma }}</span>
                                                     {% if building.energy_modifier %}<small class='ms-1 text-success'>+{{ building.energy_modifier|intcomma }}</small>{% endif %}
                                                 </div>
@@ -86,19 +86,19 @@
                                         <div class='row gx-3'>
                                             {% if building.workers_for_maintenance %}
                                             <div class='col-auto'>
-                                                <img src='/static/assets/interface/workers.gif' class='res' width='16' height='16'>
+                                                <img src='/static/s03/img/interface/workers.gif' class='res' width='16' height='16'>
                                                 <span class='text-normal'>{{ building.workers_for_maintenance|intcomma }}</span>
                                             </div>
                                             {% endif %}
                                             {% if building.upkeep %}
                                             <div class='col-auto'>
-                                                <img src='/static/assets/interface/credits.gif' class='res' width='16' height='16'>
+                                                <img src='/static/s03/img/interface/credits.gif' class='res' width='16' height='16'>
                                                 <span class='text-normal'>{{ building.upkeep|intcomma }}</span>
                                             </div>
                                             {% endif %}
                                             {% if building.upkeep_energy %}
                                             <div class='col-auto'>
-                                                <img src='/static/assets/interface/energy.gif' class='res' width='16' height='16'>
+                                                <img src='/static/s03/img/interface/energy.gif' class='res' width='16' height='16'>
                                                 <span class='text-normal'>{{ building.upkeep_energy|intcomma }}</span>
                                             </div>
                                             {% endif %}
@@ -113,37 +113,37 @@
                                             <div class="row gx-3">
                                                 <div class="col-auto" style="width:75px;">
                                                     {% if building.floor %}
-                                                    <img src="/static/assets/interface/floor.gif" class="res" data-bs-toggle="tooltip" data-bs-title="Terrain" width="16px" height="16px">
+                                                    <img src="/static/s03/img/interface/floor.gif" class="res" data-bs-toggle="tooltip" data-bs-title="Terrain" width="16px" height="16px">
                                                     <span class="{% if building.not_enough_floor %}text-danger{% endif %}">{{ building.floor|intcomma }}</span>
                                                     {% endif %}
                                                 </div>
                                                 <div class="col-auto" style="width:75px;">
                                                     {% if building.space %}
-                                                    <img src="/static/assets/interface/space.gif" class="res" data-bs-toggle="tooltip" data-bs-title="Espace" width="16px" height="16px">
+                                                    <img src="/static/s03/img/interface/space.gif" class="res" data-bs-toggle="tooltip" data-bs-title="Espace" width="16px" height="16px">
                                                     <span class="{% if building.not_enough_space %}text-danger{% endif %}">{{ building.space|intcomma }}</span>
                                                     {% endif %}
                                                 </div>
                                                 <div class="col-auto" style="width:100px;">
                                                     {% if building.ore %}
-                                                    <img src="/static/assets/interface/ore.gif" class="res" data-bs-toggle="tooltip" data-bs-title="Minerai" width="16px" height="16px">
+                                                    <img src="/static/s03/img/interface/ore.gif" class="res" data-bs-toggle="tooltip" data-bs-title="Minerai" width="16px" height="16px">
                                                     <span class="{% if building.not_enough_ore %}text-danger{% endif %}">{{ building.ore|intcomma }}</span>
                                                     {% endif %}
                                                 </div>
                                                 <div class="col-auto" style="width:100px;">
                                                     {% if building.hydrocarbon %}
-                                                    <img src="/static/assets/interface/hydrocarbon.gif" class="res" data-bs-toggle="tooltip" data-bs-title="Hydrocarbure" width="16px" height="16px">
+                                                    <img src="/static/s03/img/interface/hydrocarbon.gif" class="res" data-bs-toggle="tooltip" data-bs-title="Hydrocarbure" width="16px" height="16px">
                                                     <span class="{% if building.not_enough_hydrocarbon %}text-danger{% endif %}">{{ building.hydrocarbon|intcomma }}</span>
                                                     {% endif %}
                                                 </div>
                                                 <div class="col-auto" style="width:75px;">
                                                     {% if building.workers %}
-                                                    <img src="/static/assets/interface/workers_idle.gif" class="idleworkers" data-bs-toggle="tooltip" data-bs-title="Oisifs" width="12" height="12">
+                                                    <img src="/static/s03/img/interface/workers_idle.gif" class="idleworkers" data-bs-toggle="tooltip" data-bs-title="Oisifs" width="12" height="12">
                                                     <span class="{% if building.not_enough_workers %}text-danger{% endif %}">{{ building.workers|intcomma }}</span>
                                                     {% endif %}
                                                 </div>
                                                 {% if building.prestige %}
                                                 <div class="col-auto" style="width:75px;">
-                                                    <img src="/static/assets/interface/prestige.gif" class="res" data-bs-toggle="tooltip" data-bs-title="Prestige" width="16px" height="16px">
+                                                    <img src="/static/s03/img/interface/prestige.gif" class="res" data-bs-toggle="tooltip" data-bs-title="Prestige" width="16px" height="16px">
                                                     <span class="{% if building.not_enough_prestige %}text-danger{% endif %}">{{ building.prestige|intcomma }}</span>
                                                 </div>
                                                 {% endif %}

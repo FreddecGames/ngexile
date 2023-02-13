@@ -47,8 +47,8 @@
                         <div class="row gx-3 align-items-baseline">
                             <div class="col-auto">
                                 <span class="fs-6 {% if opponent.self %}self{% elif opponent.friend %}friend{% elif opponent.ally %}text-success{% elif opponent.enemy %}text-danger{% endif %}">
-                                    {% if opponent.attack %}<img src="{{ PATH_IMAGES }}interface/stance_attack.gif" class="me-1 stance" data-bs-toggle="tooltip" data-bs-title="Mode attaque" width="10px" height="10px">
-                                    {% else %}<img src="{{ PATH_IMAGES }}interface/stance_defend.gif" class="me-1 stance" data-bs-toggle="tooltip" data-bs-title="Mode riposte" width="10px" height="10px">
+                                    {% if opponent.attack %}<img src="{{ PATH_IMAGES }}img/interface/stance_attack.gif" class="me-1 stance" data-bs-toggle="tooltip" data-bs-title="Mode attaque" width="10px" height="10px">
+                                    {% else %}<img src="{{ PATH_IMAGES }}img/interface/stance_defend.gif" class="me-1 stance" data-bs-toggle="tooltip" data-bs-title="Mode riposte" width="10px" height="10px">
                                     {% endif %}
                                     {{ fleet.name }}
                                 </span>

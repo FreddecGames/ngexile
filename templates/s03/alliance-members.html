@@ -85,11 +85,11 @@
                                     {% endif %}
                                 </div>
                                 <div class="col-1">
-                                    <img src="/static/assets/interface/planet.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Planètes">
+                                    <img src="/static/s03/img/interface/planet.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Planètes">
                                     {{ player.stat_colonies|intcomma }}
                                 </div>
                                 <div class="col-2">
-                                    <img src="/static/assets/interface/credits.gif" data-bs-toggle="tooltip" data-bs-title="Crédits" class="res" width="16px" height="16px">
+                                    <img src="/static/s03/img/interface/credits.gif" data-bs-toggle="tooltip" data-bs-title="Crédits" class="res" width="16px" height="16px">
                                     <span class="{% if player.credits < 0 %}text-danger{% endif %}">{{ player.credits|intcomma }}</span>
                                 </div>
                                 <div class="col-1">
@@ -111,7 +111,7 @@
                                         <span id="kickConfirm{{ player.id }}" class="hidden w-100 text-end">
                                             {% if player.kick_price > 0 %}
                                                 <small class="text-normal me-2">Coût</small>
-                                                <img src="/static/assets/interface/credits.gif" data-bs-toggle="tooltip" data-bs-title="Crédits" class="res" width="16px" height="16px">
+                                                <img src="/static/s03/img/interface/credits.gif" data-bs-toggle="tooltip" data-bs-title="Crédits" class="res" width="16px" height="16px">
                                                 {{ player.kick_price|intcomma }}
                                             {% endif %}
                                             <a href="?cat={{ cat }}&a=kick&name={{ player.name }}" class="ms-2 btn btn-primary">Confirmer</a>
@@ -150,7 +150,7 @@
             </div>
             <div class="col-auto">
                 <span class="text-normal me-2">Total crédits</span>
-                <img src="/static/assets/interface/credits.gif" data-bs-toggle="tooltip" data-bs-title="Crédits" class="res" width="16px" height="16px">
+                <img src="/static/s03/img/interface/credits.gif" data-bs-toggle="tooltip" data-bs-title="Crédits" class="res" width="16px" height="16px">
                 <span>{{ total_credits|intcomma }}</span>
             </div>
         </div>

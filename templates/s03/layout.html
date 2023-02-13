@@ -10,16 +10,16 @@
               rel="stylesheet"
               integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65"
               crossorigin="anonymous">
-        <link href="{{ PATH_IMAGES }}styles/{{ skin }}/style.css?v=0"
+        <link href="{{ PATH_IMAGES }}styles.css?v=0"
               type="text/css"
               rel="stylesheet"
               media="all"/>
         <script type="text/javascript" src="/static/js/vendor-fontawesome.js"></script>
-        <script type="text/javascript" src="/static/scripts/lang.js?v=1"></script>
-        <script type="text/javascript" src="/static/scripts/common.js?v=1"></script>
-        <script type="text/javascript" src="/static/scripts/third-party/ajax1.js?v=1"></script>
-        <script type="text/javascript" src="/static/scripts/planet.js?v=1"></script>
-        <script type="text/javascript" src="/static/scripts/time.js?v=1"></script>
+        <script type="text/javascript" src="/static/s03/scripts/lang.js?v=1"></script>
+        <script type="text/javascript" src="/static/s03/scripts/common.js?v=1"></script>
+        <script type="text/javascript" src="/static/s03/scripts/third-party/ajax1.js?v=1"></script>
+        <script type="text/javascript" src="/static/s03/scripts/planet.js?v=1"></script>
+        <script type="text/javascript" src="/static/s03/scripts/time.js?v=1"></script>
         {% if scroll %}<script>function loaded() { scrollTo(0, {{ scrolly }});}</script>{% endif %}
     </head>
     <body {% if scroll %}onload="loaded()"{% endif %}>
@@ -46,7 +46,7 @@
                             <span class="badge text-bg-secondary">s03</span>
                         </div>
                         <div class="col-auto">
-                            <img src="{{ PATH_IMAGES }}interface/credits.gif"
+                            <img src="{{ PATH_IMAGES }}img/interface/credits.gif"
                                  class="res"
                                  data-bs-toggle="tooltip"
                                  data-bs-title="Crédits"
@@ -55,7 +55,7 @@
                             <span class="{% if profile_credits <= 0 %}text-danger{% endif %}">{{ profile_credits|intcomma }}</span>
                         </div>
                         <div class="col-auto">
-                            <img src="{{ PATH_IMAGES }}interface/prestige.gif"
+                            <img src="{{ PATH_IMAGES }}img/interface/prestige.gif"
                                  class="res"
                                  data-bs-toggle="tooltip"
                                  data-bs-title="Prestige"
@@ -70,9 +70,7 @@
                 <div id="leftnav">{% include "s03/menu.html" %}</div>
                 <div id="content" class="scroll-content">
                     <div id="page" class="scroll-content">
-                        {% if context %}
-                            <div id="status">{% include 's03/header.html' %}</div>
-                        {% endif %}
+                        {% if context %}{% include "s03/header.html" %}{% endif %}
                         {% block content %}{% endblock %}
                     </div>
                 </div>

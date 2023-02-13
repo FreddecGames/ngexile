@@ -80,7 +80,7 @@
                    data-bs-title="Voir la galaxie"
                    class="d-block bg-black rounded border {% if galaxy.hasplanet %}border-info{% elif galaxy.hasally %}border-success{% elif galaxy.hasfriend %}border-success{% elif galaxy.hasenemy %}border-danger{% endif %}">
                     <div>
-                        <img src="{{ PATH_IMAGES }}galaxies/01.jpg"
+                        <img src="{{ PATH_IMAGES }}img/galaxies/01.jpg"
                              width="64px"
                              height="64px"
                              class="rounded">
@@ -105,7 +105,7 @@
                             <div class="row gx-3 align-items-center justify-content-center">
                                 <div class="col-auto">
                                     <small class="text-normal me-2">Minerai</small>
-                                    <img src="{{ PATH_IMAGES }}interface/credits.gif"
+                                    <img src="{{ PATH_IMAGES }}img/interface/credits.gif"
                                          data-bs-toggle="tooltip"
                                          data-bs-title="Crédits"
                                          class="res"
@@ -115,7 +115,7 @@
                                 </div>
                                 <div class="col-auto">
                                     <small class="text-normal me-2">Hydrocarbure</small>
-                                    <img src="{{ PATH_IMAGES }}interface/credits.gif"
+                                    <img src="{{ PATH_IMAGES }}img/interface/credits.gif"
                                          data-bs-toggle="tooltip"
                                          data-bs-title="Crédits"
                                          class="res"
@@ -394,11 +394,11 @@
             switch (rel){
             
                 case 2: return "self"; break;
-                case 1: return "ally"; break;
+                case 1: return "text-success"; break;
                 case 0:	return "friend"; break;
                 case -1: return "enemy"; break;
                 case -2: return "enemy"; break;
-                case -3: return "neutral"; break;
+                case -3: return "text-normal"; break;
             }
             
             return "";
@@ -470,7 +470,7 @@
                                             s += '<div class=\'col-12\'>'
                                                 s += '<div class=\'row gx-3\'>'
                                                     s += '<div class=\'col\'>'
-                                                        s += '<img src=\'{{ PATH_IMAGES}}interface/ore.gif\' class=\'res\' width=\'16px\' height=\'16px\'>'
+                                                        s += '<img src=\'{{ PATH_IMAGES}}img/interface/ore.gif\' class=\'res\' width=\'16px\' height=\'16px\'>'
                                                         s += '<span class=\'text-normal\'>Minerai</span>'
                                                     s += '</div>'
                                                     s += '<div class=\'col-auto\'>' + ore + '</div>'
@@ -481,7 +481,7 @@
                                             s += '<div class=\'col-12\'>'
                                                 s += '<div class=\'row gx-3\'>'
                                                     s += '<div class=\'col\'>'
-                                                        s += '<img src=\'{{ PATH_IMAGES}}interface/hydrocarbon.gif\' class=\'res\' width=\'16px\' height=\'16px\'>'
+                                                        s += '<img src=\'{{ PATH_IMAGES}}img/interface/hydrocarbon.gif\' class=\'res\' width=\'16px\' height=\'16px\'>'
                                                         s += '<span class=\'text-normal\'>Hydrocarbure</span>'
                                                     s += '</div>'
                                                     s += '<div class=\'col-auto\'>' + hydrocarbon + '</div>'
@@ -490,13 +490,13 @@
                                         }
                                     s += '</div>'
                                 s += '">'
-                                    s += '<img src="{{PATH_IMAGES}}map/sector/resource.gif" width="16px" height="16px">'
+                                    s += '<img src="{{PATH_IMAGES}}img/map/sector/resource.gif" width="16px" height="16px">'
                                 s += '</a>'
                             }
                         s += '</td>'
 
                         s += '<td align="center" rowspan="4" width="50%">'
-                            s += '<div><img class="planet" src="{{PATH_IMAGES}}planets/p' + img + '.gif" width="52px" height="52px"></div>'
+                            s += '<div><img class="planet" src="{{PATH_IMAGES}}img/planets/p' + img + '.gif" width="52px" height="52px"></div>'
                             s += '<div class="small">' + idx + '</div>'
                         s += '</td>'
 
@@ -508,7 +508,7 @@
                                         s += '<div class=\'col-12\'>'
                                             s += '<div class=\'row gx-3\'>'
                                                 s += '<div class=\'col\'>'
-                                                    s += '<img src=\'{{ PATH_IMAGES}}interface/floor.gif\' class=\'res\' width=\'16px\' height=\'16px\'>'
+                                                    s += '<img src=\'{{ PATH_IMAGES}}img/interface/floor.gif\' class=\'res\' width=\'16px\' height=\'16px\'>'
                                                     s += '<span class=\'text-normal\'>Terrain</span>'
                                                 s += '</div>'
                                                 s += '<div class=\'col-auto\'>' + floor + '</div>'
@@ -517,7 +517,7 @@
                                         s += '<div class=\'col-12\'>'
                                             s += '<div class=\'row gx-3\'>'
                                                 s += '<div class=\'col\'>'
-                                                    s += '<img src=\'{{ PATH_IMAGES}}interface/space.gif\' class=\'res\' width=\'16px\' height=\'16px\'>'
+                                                    s += '<img src=\'{{ PATH_IMAGES}}img/interface/space.gif\' class=\'res\' width=\'16px\' height=\'16px\'>'
                                                     s += '<span class=\'text-normal\'>Espace</span>'
                                                 s += '</div>'
                                                 s += '<div class=\'col-auto\'>' + space + '</div>'
@@ -526,7 +526,7 @@
                                         s += '<div class=\'col-12\'>'
                                             s += '<div class=\'row gx-3\'>'
                                                 s += '<div class=\'col\'>'
-                                                    s += '<img src=\'{{ PATH_IMAGES}}interface/ore.gif\' class=\'res\' width=\'16px\' height=\'16px\'>'
+                                                    s += '<img src=\'{{ PATH_IMAGES}}img/interface/ore.gif\' class=\'res\' width=\'16px\' height=\'16px\'>'
                                                     s += '<span class=\'text-normal\'>Abondance minerai</span>'
                                                 s += '</div>'
                                                 s += '<div class=\'col-auto\'>' + a_ore + '%</div>'
@@ -535,7 +535,7 @@
                                         s += '<div class=\'col-12\'>'
                                             s += '<div class=\'row gx-3\'>'
                                                 s += '<div class=\'col\'>'
-                                                    s += '<img src=\'{{ PATH_IMAGES}}interface/hydrocarbon.gif\' class=\'res\' width=\'16px\' height=\'16px\'>'
+                                                    s += '<img src=\'{{ PATH_IMAGES}}img/interface/hydrocarbon.gif\' class=\'res\' width=\'16px\' height=\'16px\'>'
                                                     s += '<span class=\'text-normal\'>Abondance hydrocarbure</span>'
                                                 s += '</div>'
                                                 s += '<div class=\'col-auto\'>' + a_hydrocarbon + '%</div>'
@@ -566,7 +566,7 @@
                                         s += '</div>'
                                     s += '</div>'
                                 s += '">'
-                                    s += '<img width=16 height=16 src="{{PATH_IMAGES}}map/sector/info.gif">'
+                                    s += '<img width=16 height=16 src="{{PATH_IMAGES}}img/map/sector/info.gif">'
                                 s += '</a>'
                             }
                         s += '</td>'
@@ -580,7 +580,7 @@
                             if (radar > 0 || jammer != 0) {                    
                                 if (jammer == -1) {
                                     s += '<a href="#" data-bs-toggle="tooltip" data-bs-custom-class="tooltip-light" data-bs-title="Radar brouillé">'
-                                        s += '<img width=16 height=16 src="{{PATH_IMAGES}}map/sector/radarjammed.gif">'
+                                        s += '<img width=16 height=16 src="{{PATH_IMAGES}}img/map/sector/radarjammed.gif">'
                                     s += '</a>'
                                 }
                                 else if (radar > 0 && jammer == 0) {                            
@@ -595,7 +595,7 @@
                                             s += '</div>'
                                         s += '</div>'
                                     s += '">'
-                                        s += '<img width=16 height=16 src="{{PATH_IMAGES}}map/sector/radar.gif">'
+                                        s += '<img width=16 height=16 src="{{PATH_IMAGES}}img/map/sector/radar.gif">'
                                     s += '</a>'
                                 }
                                 else if (jammer > 0) {                            
@@ -616,7 +616,7 @@
                                             s += '</div>'
                                         s += '</div>'
                                     s += '">'
-                                        s += '<img width=16 height=16 src="{{PATH_IMAGES}}map/sector/radarjammed-known.gif">'
+                                        s += '<img width=16 height=16 src="{{PATH_IMAGES}}img/map/sector/radarjammed-known.gif">'
                                     s += '</a>'
                                 }
                             }
@@ -627,7 +627,7 @@
 
                         s += '<td align=right>'
                             if (frozen) {
-                                s += '<a href="#" data-bs-toggle="tooltip" data-bs-custom-class="tooltip-light" data-bs-title="En vacances"><img width=16 height=16 src="{{PATH_IMAGES}}map/sector/sleeping.gif"></a>'
+                                s += '<a href="#" data-bs-toggle="tooltip" data-bs-custom-class="tooltip-light" data-bs-title="En vacances"><img width=16 height=16 src="{{PATH_IMAGES}}img/map/sector/sleeping.gif"></a>'
                             }
                             else if (b_ore != '0' || b_hydrocarbon != '0') {
                                 s += '<a href="#" data-bs-toggle="tooltip" data-bs-html="true" data-bs-custom-class="tooltip-light" data-bs-title="'
@@ -637,7 +637,7 @@
                                             s += '<div class=\'col-12\'>'
                                                 s += '<div class=\'row gx-3\'>'
                                                     s += '<div class=\'col\'>'
-                                                        s += '<img src=\'{{ PATH_IMAGES}}interface/ore.gif\' class=\'res\' width=\'16px\' height=\'16px\'>'
+                                                        s += '<img src=\'{{ PATH_IMAGES}}img/interface/ore.gif\' class=\'res\' width=\'16px\' height=\'16px\'>'
                                                         s += '<span class=\'text-normal\'>Minerai</span>'
                                                     s += '</div>'
                                                     s += '<div class=\'col-auto\'>' + b_ore + '</div>'
@@ -648,7 +648,7 @@
                                             s += '<div class=\'col-12\'>'
                                                 s += '<div class=\'row gx-3\'>'
                                                     s += '<div class=\'col\'>'
-                                                        s += '<img src=\'{{ PATH_IMAGES}}interface/hydrocarbon.gif\' class=\'res\' width=\'16px\' height=\'16px\'>'
+                                                        s += '<img src=\'{{ PATH_IMAGES}}img/interface/hydrocarbon.gif\' class=\'res\' width=\'16px\' height=\'16px\'>'
                                                         s += '<span class=\'text-normal\'>Hydrocarbure</span>'
                                                     s += '</div>'
                                                     s += '<div class=\'col-auto\'>' + b_hydrocarbon + '</div>'
@@ -657,7 +657,7 @@
                                         }
                                     s += '</div>'
                                 s += '">'
-                                    s += '<img width=16 height=16 src="{{PATH_IMAGES}}interface/credits.gif">'
+                                    s += '<img width=16 height=16 src="{{PATH_IMAGES}}img/interface/credits.gif">'
                                 s += '</a>'
                             }
                         s += '</td>'
@@ -674,7 +674,7 @@
                                 else if(orbit.length > 0) f = "-fleets";
                                 else f = "";
                                 s += '<a href="#" class="none" onclick="return donothide(event)" onfocus="this.onmouseover()" onmouseover="showmenu(\'fleets.' + idx + '\', \'Flottes\', descOrbit(' + idx + ',' + id + ',' + rel + ',' + parked + '))">'
-                                    s += '<img id="fleets.' + idx + '" width=16 height=16 src="{{PATH_IMAGES}}map/sector/orbit' + f + '.gif">'
+                                    s += '<img id="fleets.' + idx + '" width=16 height=16 src="{{PATH_IMAGES}}img/map/sector/orbit' + f + '.gif">'
                                 s += '</a>'
                             }
                         s += '</td>'
@@ -692,7 +692,7 @@
                                         }
                                     s += '</div>'
                                 s += '">'
-                                    s += '<img width=16 height=16 src="{{PATH_IMAGES}}map/sector/special.gif">'
+                                    s += '<img width=16 height=16 src="{{PATH_IMAGES}}img/map/sector/special.gif">'
                                 s += '</a>'
                             }
                         s += '</td>'
@@ -844,7 +844,7 @@
                             else html += '<span class="text-normal">???</span>'
                             html += '<i class="fa-fw fas fa-long-arrow-alt-right mx-2 text-normal"></i>'
                             if (t_id != '') html += planet_str(t_id,t_name,t_g,t_s,t_p,t_rel)
-                            else html += '<span class="grey">???</</span>'
+                            else html += '<span class="text-normal">???</</span>'
                     html += '</div>'
                         html += '<div class="col-1 text-end">'
                             html += '<span class="text-yellow"><script>putcountdown1(' + time + ', "Arrivée", "/s03/overview/")</'+'script></span>'

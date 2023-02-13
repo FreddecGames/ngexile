@@ -14,7 +14,7 @@
                         <div class="col">
                             {% if fleet.owner %}<a href="/s03/fleet/?id={{fleet.id}}" data-bs-toggle="tooltip" data-bs-title="Voir flotte" class="self">{{fleet.name}}</a>{% endif %}
                             {% if fleet.friend %}<span class="friend">{{fleet.name}}</span>{% endif %}
-                            {% if fleet.ally %}<span class="ally">{{fleet.name}}</span>{% endif %}
+                            {% if fleet.ally %}<span class="text-success">{{fleet.name}}</span>{% endif %}
                             {% if fleet.enemy %}<span class="enemy">{{fleet.name}}</span>{% endif %}
                             <small class="ms-2">{{ fleet.signature|intcomma }}</small>
                         </div>

@@ -24,12 +24,12 @@
             <div class="row gx-3">
                 <div class="col-auto">
                     {% if avatar %}<img src="{{ avatar_url }}" width="64" height="64" class="rounded">{% endif %}
-                    {% if noavatar %}<img src="{{ PATH_IMAGES }}interface/noavatar.gif" width="64" height="64" class="rounded">{% endif %}
+                    {% if noavatar %}<img src="{{ PATH_IMAGES }}img/interface/noavatar.gif" width="64" height="64" class="rounded">{% endif %}
                 </div>
                 <div class="col-auto">
                     <div class="mb-1">
-                        {% if alliance %}<a href="/s03/alliance/?tag={{ alliancetag }}" class="{% if self %}self{% elif ally %}ally{% elif friend %}friend{% elif enemy %}enemy{% endif %}" data-bs-toggle="tooltip" data-bs-title="Voir alliance">[{{ alliancetag }}]</a>{% endif %}
-                        <span class="{% if self %}self{% elif ally %}ally{% elif friend %}friend{% elif enemy %}enemy{% endif %}">{{ name }}</span>
+                        {% if alliance %}<a href="/s03/alliance/?tag={{ alliancetag }}" class="{% if self %}self{% elif ally %}text-success{% elif friend %}friend{% elif enemy %}enemy{% endif %}" data-bs-toggle="tooltip" data-bs-title="Voir alliance">[{{ alliancetag }}]</a>{% endif %}
+                        <span class="{% if self %}self{% elif ally %}text-success{% elif friend %}friend{% elif enemy %}enemy{% endif %}">{{ name }}</span>
                     </div>
                     <div class="mb-1">
                         <span class="text-normal me-2">Grade</span>
@@ -107,7 +107,7 @@
                         <div class="row gx-3">
                             <div class="col-3">
                                 {% if fleet.owned %}<a href="/s03/fleet/?id={{ fleet.fleetid }}" data-bs-toggle="tooltip" data-bs-title="Voir flotte">{{ fleet.fleetname }}</a>{% endif %}
-                                {% if fleet.ally %}<span class="ally">{{ fleet.fleetname }}</span>{% endif %}
+                                {% if fleet.ally %}<span class="text-success">{{ fleet.fleetname }}</span>{% endif %}
                                 <small class="ms-2">{{ fleet.signature|intcomma }}</small>
                             </div>
                             <div class="col-4">

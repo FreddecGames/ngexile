@@ -146,7 +146,7 @@
                                 <div class="row gx-3 align-items-center">
                                     <div class="col">
                                         {% if attack %}
-                                            <img src="{{ PATH_IMAGES }}interface/stance_attack.gif"
+                                            <img src="{{ PATH_IMAGES }}img/interface/stance_attack.gif"
                                                  class="me-1 stance"
                                                  data-bs-toggle="tooltip"
                                                  data-bs-title="Mode attaque"
@@ -154,7 +154,7 @@
                                                  height="10px">
                                             <span>Mode attaque</span>
                                         {% else %}
-                                            <img src="{{ PATH_IMAGES }}interface/stance_defend.gif"
+                                            <img src="{{ PATH_IMAGES }}img/interface/stance_defend.gif"
                                                  class="me-1 stance"
                                                  data-bs-toggle="tooltip"
                                                  data-bs-title="Mode riposte"
@@ -288,7 +288,7 @@
                                         </div>
                                     </div>
                                     <div class="col-auto">
-                                        <img src="{{ PATH_IMAGES }}interface/prestige.gif"
+                                        <img src="{{ PATH_IMAGES }}img/interface/prestige.gif"
                                              title="Prestige"
                                              class="res"
                                              width="16px"
@@ -354,7 +354,7 @@
                                 <span class="text-normal">Entretien</span>
                             </div>
                             <div class="col-9">
-                                <img src="{{ PATH_IMAGES }}interface/credits.gif"
+                                <img src="{{ PATH_IMAGES }}img/interface/credits.gif"
                                      title="Credits"
                                      class="res"
                                      width="16px"
@@ -420,60 +420,44 @@
                         </div>
                     {% endif %}
                     {% if error_recycling %}
-                        <tr class="error">
-                            <td colspan=2>
-                                Une de nos flottes est déjà en train de recycler dans les parages !
-                            </td>
-                        </tr>
+                        <div class="text-danger text-center">
+                            Une de nos flottes est déjà en train de recycler dans les parages !
+                        </div>
                     {% endif %}
                     {% if error_soldiers %}
-                        <tr class="error">
-                            <td colspan=2>
-                                Nombre de soldat incorrect !
-                            </td>
-                        </tr>
+                        <div class="text-danger text-center">
+                            Nombre de soldat incorrect !
+                        </div>
                     {% endif %}
                     {% if error_fleet %}
-                        <tr class="error">
-                            <td colspan=2>
-                                La flotte n'est pas prête pour une invasion !
-                            </td>
-                        </tr>
+                        <div class="text-danger text-center">
+                            La flotte n'est pas prête pour une invasion !
+                        </div>
                     {% endif %}
                     {% if error_planet %}
-                        <tr class="error">
-                            <td colspan=2>
-                                Impossible d'envahir une planète inoccupée, alliée ou dans une alliance qui n'est pas en guerre contre nous !
-                            </td>
-                        </tr>
+                        <div class="text-danger text-center">
+                            Impossible d'envahir une planète inoccupée, alliée ou dans une alliance qui n'est pas en guerre contre nous !
+                        </div>
                     {% endif %}
                     {% if error_max_planets_reached %}
-                        <tr class="error">
-                            <td colspan=2>
-                                Nombre maximal de colonisations atteint !
-                            </td>
-                        </tr>
+                        <div class="text-danger text-center">
+                            Nombre maximal de colonisations atteint !
+                        </div>
                     {% endif %}
                     {% if error_invade_enemy_ships %}
-                        <tr class="error">
-                            <td colspan=2>
-                                Impossible d'envahir tant que des vaisseaux militaires ennemis sont proches de la planète !
-                            </td>
-                        </tr>
+                        <div class="text-danger text-center">
+                            Impossible d'envahir tant que des vaisseaux militaires ennemis sont proches de la planète !
+                        </div>
                     {% endif %}
                     {% if error_deploy_enemy_ships %}
-                        <tr class="error">
-                            <td colspan=2>
-                                Impossible de coloniser tant que des vaisseaux militaires ennemis sont proches de la planète !
-                            </td>
-                        </tr>
+                        <div class="text-danger text-center">
+                            Impossible de coloniser tant que des vaisseaux militaires ennemis sont proches de la planète !
+                        </div>
                     {% endif %}
                     {% if error_deploy_safe_planets %}
-                        <tr class="error">
-                            <td colspan=2>
-                                Impossible de coloniser plus de planètes dans des galaxies protégées !
-                            </td>
-                        </tr>
+                        <div class="text-danger text-center">
+                            Impossible de coloniser plus de planètes dans des galaxies protégées !
+                        </div>
                     {% endif %}
                 </div>
             </div>
@@ -511,7 +495,7 @@
 
                     if(seconds < 0)
                     {
-                        var s = "<span class=impossible>Saut impossible</span>";
+                        var s = "<span class='text-danger'>Saut impossible</span>";
                         if(traveltime_obj.innerHTML != s) traveltime_obj.innerHTML = s;
 
                         traveleta_obj.innerHTML = "";
@@ -687,7 +671,7 @@
                                         </div>
                                         <div class="col-auto">
                                             <span class="text-normal me-2">Coût</span>
-                                            <img src="{{ PATH_IMAGES }}interface/credits.gif"
+                                            <img src="{{ PATH_IMAGES }}img/interface/credits.gif"
                                                  class="res"
                                                  data-bs-toggle="tooltip"
                                                  data-bs-title="Crédits"
@@ -770,7 +754,7 @@
                                     {% else %}
                                         {% if fleet_ore > 0 %}
                                             <div class="col-auto">
-                                                <img src="{{ PATH_IMAGES }}interface/ore.gif"
+                                                <img src="{{ PATH_IMAGES }}img/interface/ore.gif"
                                                      data-bs-toggle="tooltip"
                                                      data-bs-title="Minerai"
                                                      class="res"
@@ -781,7 +765,7 @@
                                         {% endif %}
                                         {% if fleet_hydrocarbon > 0 %}
                                             <div class="col-auto">
-                                                <img src="{{ PATH_IMAGES }}interface/hydrocarbon.gif"
+                                                <img src="{{ PATH_IMAGES }}img/interface/hydrocarbon.gif"
                                                      data-bs-toggle="tooltip"
                                                      data-bs-title="Hydrocarbure"
                                                      class="res"
@@ -792,7 +776,7 @@
                                         {% endif %}
                                         {% if fleet_scientists > 0 %}
                                             <div class="col-auto">
-                                                <img src="{{ PATH_IMAGES }}interface/scientists.gif"
+                                                <img src="{{ PATH_IMAGES }}img/interface/scientists.gif"
                                                      data-bs-toggle="tooltip"
                                                      data-bs-title="Scientifiques"
                                                      class="res"
@@ -803,7 +787,7 @@
                                         {% endif %}
                                         {% if fleet_soldiers > 0 %}
                                             <div class="col-auto">
-                                                <img src="{{ PATH_IMAGES }}interface/soldiers.gif"
+                                                <img src="{{ PATH_IMAGES }}img/interface/soldiers.gif"
                                                      data-bs-toggle="tooltip"
                                                      data-bs-title="Soldats"
                                                      class="res"
@@ -814,7 +798,7 @@
                                         {% endif %}
                                         {% if fleet_workers > 0 %}
                                             <div class="col-auto">
-                                                <img src="{{ PATH_IMAGES }}interface/workers.gif"
+                                                <img src="{{ PATH_IMAGES }}img/interface/workers.gif"
                                                      data-bs-toggle="tooltip"
                                                      data-bs-title="Travailleurs"
                                                      class="res"
@@ -850,7 +834,7 @@
                                         <div class="col-12">
                                             <div class="row gx-3 align-items-center">
                                                 <div class="col">
-                                                    <img src="{{ PATH_IMAGES }}interface/ore.gif"
+                                                    <img src="{{ PATH_IMAGES }}img/interface/ore.gif"
                                                          data-bs-toggle="tooltip"
                                                          data-bs-title="Minerai"
                                                          class="res"
@@ -889,7 +873,7 @@
                                         <div class="col-12">
                                             <div class="row gx-3 align-items-center">
                                                 <div class="col">
-                                                    <img src="{{ PATH_IMAGES }}interface/hydrocarbon.gif"
+                                                    <img src="{{ PATH_IMAGES }}img/interface/hydrocarbon.gif"
                                                          data-bs-toggle="tooltip"
                                                          data-bs-title="Hydrocarbure"
                                                          class="res"
@@ -932,7 +916,7 @@
                                         <div class="col-12">
                                             <div class="row gx-3 align-items-center">
                                                 <div class="col">
-                                                    <img src="{{ PATH_IMAGES }}interface/scientists.gif"
+                                                    <img src="{{ PATH_IMAGES }}img/interface/scientists.gif"
                                                          data-bs-toggle="tooltip"
                                                          data-bs-title="Scientifiques"
                                                          class="res"
@@ -975,7 +959,7 @@
                                         <div class="col-12">
                                             <div class="row gx-3 align-items-center">
                                                 <div class="col">
-                                                    <img src="{{ PATH_IMAGES }}interface/soldiers.gif"
+                                                    <img src="{{ PATH_IMAGES }}img/interface/soldiers.gif"
                                                          data-bs-toggle="tooltip"
                                                          data-bs-title="Soldats"
                                                          class="res"
@@ -1018,7 +1002,7 @@
                                         <div class="col-12">
                                             <div class="row gx-3 align-items-center">
                                                 <div class="col">
-                                                    <img src="{{ PATH_IMAGES }}interface/workers.gif"
+                                                    <img src="{{ PATH_IMAGES }}img/interface/workers.gif"
                                                          data-bs-toggle="tooltip"
                                                          data-bs-title="Travailleurs"
                                                          class="res"
@@ -1100,7 +1084,7 @@
                                         <div class="col-12">
                                             <div class="row gx-3 align-items-center">
                                                 <div class="col">
-                                                    <img src="{{ PATH_IMAGES }}interface/ore.gif"
+                                                    <img src="{{ PATH_IMAGES }}img/interface/ore.gif"
                                                          data-bs-toggle="tooltip"
                                                          data-bs-title="Minerai"
                                                          class="res"
@@ -1139,7 +1123,7 @@
                                         <div class="col-12">
                                             <div class="row gx-3 align-items-center">
                                                 <div class="col">
-                                                    <img src="{{ PATH_IMAGES }}interface/hydrocarbon.gif"
+                                                    <img src="{{ PATH_IMAGES }}img/interface/hydrocarbon.gif"
                                                          data-bs-toggle="tooltip"
                                                          data-bs-title="Hydrocarbure"
                                                          class="res"
@@ -1182,7 +1166,7 @@
                                         <div class="col-12">
                                             <div class="row gx-3 align-items-center">
                                                 <div class="col">
-                                                    <img src="{{ PATH_IMAGES }}interface/scientists.gif"
+                                                    <img src="{{ PATH_IMAGES }}img/interface/scientists.gif"
                                                          data-bs-toggle="tooltip"
                                                          data-bs-title="Scientifiques"
                                                          class="res"
@@ -1225,7 +1209,7 @@
                                         <div class="col-12">
                                             <div class="row gx-3 align-items-center">
                                                 <div class="col">
-                                                    <img src="{{ PATH_IMAGES }}interface/soldiers.gif"
+                                                    <img src="{{ PATH_IMAGES }}img/interface/soldiers.gif"
                                                          data-bs-toggle="tooltip"
                                                          data-bs-title="Soldats"
                                                          class="res"
@@ -1268,7 +1252,7 @@
                                         <div class="col-12">
                                             <div class="row gx-3 align-items-center">
                                                 <div class="col">
-                                                    <img src="{{ PATH_IMAGES }}interface/workers.gif"
+                                                    <img src="{{ PATH_IMAGES }}img/interface/workers.gif"
                                                          data-bs-toggle="tooltip"
                                                          data-bs-title="Travailleurs"
                                                          class="res"
@@ -1505,7 +1489,7 @@
                                             <a href="/s03/mails/?subject=À propos de la flotte {{ fleet.name }}&to={{ fleet.owner }}"
                                                data-bs-toggle="tooltip"
                                                data-bs-title="Contacter {{ fleet.owner }}"
-                                               class="{% if fleet.ally %}ally{% endif %}{% if fleet.friend %}friend{% endif %}{% if fleet.enemy %}enemy{% endif %}">
+                                               class="{% if fleet.ally %}text-success{% endif %}{% if fleet.friend %}friend{% endif %}{% if fleet.enemy %}enemy{% endif %}">
                                                 {% if fleet.alliance %}[{{ fleet.tag }}]{% endif %}
                                                 {{ fleet.name }}
                                             </a>

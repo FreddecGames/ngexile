@@ -311,22 +311,22 @@
             </div>
             {% if error3 %}
                 <div class="row gx-3 align-items-center">
-                    <div class="col-auto" colspan=4 align=center>
-                        <span class="error">La flotte est occupée. Vous ne pouvez diviser une flotte qui combat, ni récolte ou voyage.</span>
+                    <div class="col-auto text-center">
+                        <span class="text-danger">La flotte est occupée. Vous ne pouvez diviser une flotte qui combat, ni récolte ou voyage.</span>
                     </div>
                 </div>
             {% endif %}
             {% if error2 %}
                 <div class="row gx-3 align-items-center">
-                    <div class="col-auto" colspan=4 align=center>
-                        <span class="error">Le nom de la flotte est déjà utilisé, veuillez en choisir un autre.</span>
+                    <div class="col-auto text-center">
+                        <span class="text-danger">Le nom de la flotte est déjà utilisé, veuillez en choisir un autre.</span>
                     </div>
                 </div>
             {% endif %}
             {% if error1 %}
                 <div class="row gx-3 align-items-center">
-                    <div class="col-auto" colspan=4 align=center>
-                        <span class="error">Le nom de la flotte est invalide, il ne peut contenir que des lettres (a-z) et des chiffres (0-9).</span>
+                    <div class="col-auto text-center">
+                        <span class="text-danger">Le nom de la flotte est invalide, il ne peut contenir que des lettres (a-z) et des chiffres (0-9).</span>
                     </div>
                 </div>
             {% endif %}

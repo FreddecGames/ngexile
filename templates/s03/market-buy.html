@@ -59,7 +59,7 @@
                 <div class="list-group-item {% if planet.highlight %}bg-success{% endif %}">
                     <div class="row gx-3 align-items-center">
                         <div class="col-auto">
-                            <img src="{{ PATH_IMAGES }}planets/p{{ planet.planet_img }}.gif" class="rounded" width="48px" height="48px">                        
+                            <img src="{{ PATH_IMAGES }}img/planets/p{{ planet.planet_img }}.gif" class="rounded" width="48px" height="48px">                        
                         </div>
                         <div class="col-4">
                             <div class="row g-1 flex-column">
@@ -68,13 +68,13 @@
                                     <a href="/s03/planet/?planet={{ planet.planet_id }}" data-bs-toggle="tooltip" data-bs-title="Voir planète">{{ planet.planet_name }}</a>
                                 </div>
                                 <div class="col-12">
-                                    <img src="{{ PATH_IMAGES }}interface/ore.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Minerai">
+                                    <img src="{{ PATH_IMAGES }}img/interface/ore.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Minerai">
                                     <span class="{% if planet.high_ore_capacity %}text-danger{% endif %}">{{ planet.planet_ore|intcomma }}</span>
                                     <small class="text-normal">/{{ planet.planet_ore_capacity|intcomma }}</small>
                                     <small class="ms-2 text-success">+{{ planet.planet_ore_production|intcomma }}</small>
                                 </div>
                                 <div class="col-12">
-                                    <img src="{{ PATH_IMAGES }}interface/hydrocarbon.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Hydrocarbure">
+                                    <img src="{{ PATH_IMAGES }}img/interface/hydrocarbon.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Hydrocarbure">
                                     <span class="{% if planet.high_hydrocarbon_capacity %}text-danger{% endif %}">{{ planet.planet_hydrocarbon|intcomma }}</span>
                                     <small class="text-normal">/{{ planet.planet_hydrocarbon_capacity|intcomma }}</small>
                                     <small class="ms-2 text-success">+{{ planet.planet_hydrocarbon_production|intcomma }}</small>
@@ -85,11 +85,11 @@
                             {% if planet.buying %}
                                 <div class="row g-1 flex-column">
                                     <div class="col-12">
-                                        <img src="{{ PATH_IMAGES }}interface/ore.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Minerai">
+                                        <img src="{{ PATH_IMAGES }}img/interface/ore.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Minerai">
                                         {{ planet.buying_ore|intcomma }}
                                     </div>
                                     <div class="col-12">
-                                        <img src="{{ PATH_IMAGES }}interface/hydrocarbon.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Hydrocarbure">
+                                        <img src="{{ PATH_IMAGES }}img/interface/hydrocarbon.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Hydrocarbure">
                                         {{ planet.buying_hydrocarbon|intcomma }}
                                     </div>
                                 </div>
@@ -102,18 +102,18 @@
                             {% elif planet.can_buy %}
                                 <div class="row g-1 flex-column">
                                     <div class="col-12 d-flex align-items-center">
-                                        <img src="{{ PATH_IMAGES }}interface/ore.gif" width="16px" height="16px" class="res me-2" data-bs-toggle="tooltip" data-bs-title="Minerai">
+                                        <img src="{{ PATH_IMAGES }}img/interface/ore.gif" width="16px" height="16px" class="res me-2" data-bs-toggle="tooltip" data-bs-title="Minerai">
                                         <input type="number" class="form-control" min="0" id="o{{ planet.planet_id }}" name="o{{ planet.planet_id }}" value="{% if planet.ore %}{{ planet.ore }}{% else %}0{% endif %}" onkeyup="updateprice({{ planet.index }})" size="3" maxlength="4">
                                         <span class="mx-2 text-normal">x{{ 1000|intcomma }}</span>
-                                        <img src="{{ PATH_IMAGES }}interface/credits.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Crédits">
+                                        <img src="{{ PATH_IMAGES }}img/interface/credits.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Crédits">
                                         <span class="me-2">{{ planet.price_ore|floatformat:2 }}</span>
                                         <a href="javascript:setval('o{{ planet.planet_id }}', {{ planet.ore_max }}); updateprice({{ planet.index }})">max</a>
                                     </div>
                                     <div class="col-12 d-flex align-items-center">
-                                        <img src="{{ PATH_IMAGES }}interface/hydrocarbon.gif" width="16px" height="16px" class="res me-2" data-bs-toggle="tooltip" data-bs-title="Hydrocarbure">
+                                        <img src="{{ PATH_IMAGES }}img/interface/hydrocarbon.gif" width="16px" height="16px" class="res me-2" data-bs-toggle="tooltip" data-bs-title="Hydrocarbure">
                                         <input type="number" class="form-control" min="0" id="h{{ planet.planet_id }}" name="h{{ planet.planet_id }}" value="{% if planet.hydrocarbon %}{{ planet.hydrocarbon }}{% else %}0{% endif %}" onkeyup="updateprice({{ planet.index }})" size="3" maxlength="4">
                                         <span class="mx-2 text-normal">x{{ 1000|intcomma }}</span>
-                                        <img src="{{ PATH_IMAGES }}interface/credits.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Crédits">
+                                        <img src="{{ PATH_IMAGES }}img/interface/credits.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Crédits">
                                         <span class="me-2">{{ planet.price_hydrocarbon|floatformat:2 }}</span>
                                         <a href="javascript:setval('h{{ planet.planet_id }}', {{ planet.hydrocarbon_max }}); updateprice({{ planet.index }})">max</a>
                                     </div>
@@ -127,7 +127,7 @@
                             {% if planet.buy %}<a href="javascript:setval('o{{ planet.planet_id }}', {{ planet.ore_max }}); setval('h{{ planet.planet_id }}', {{ planet.hydrocarbon_max }}); updateprice({{ planet.index }})">Tout</a>{% endif %}
                         </div>
                         <div class="col text-end">
-                            <img src="{{ PATH_IMAGES }}interface/credits.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Crédits">
+                            <img src="{{ PATH_IMAGES }}img/interface/credits.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Crédits">
                             <span id="totalprice{{ planet.planet_id }}">{{ planet.buying_price|intcomma }}</span>
                         </div>
                     </div>
@@ -138,7 +138,7 @@
                     <div class="row gx-3 align-items-center justify-content-end">
                         <div class="col-auto">
                             <span class="text-normal me-2">Total</span>
-                            <img src="{{ PATH_IMAGES }}interface/credits.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Crédits">
+                            <img src="{{ PATH_IMAGES }}img/interface/credits.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Crédits">
                             <span id="total">0</span>
                         </div>
                         <div class="col-auto">
