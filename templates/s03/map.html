@@ -490,9 +490,10 @@
                                         }
                                     s += '</div>'
                                 s += '">'
-                                    s += '<img src="{{PATH_IMAGES}}img/map/sector/resource.gif" width="16px" height="16px">'
+                                    s += '<img src="{{PATH_IMAGES}}img/map/resource.gif" width="16px" height="16px">'
                                 s += '</a>'
                             }
+                            else s += '&nbsp;'
                         s += '</td>'
 
                         s += '<td align="center" rowspan="4" width="50%">'
@@ -566,21 +567,22 @@
                                         s += '</div>'
                                     s += '</div>'
                                 s += '">'
-                                    s += '<img width=16 height=16 src="{{PATH_IMAGES}}img/map/sector/info.gif">'
+                                    s += '<img width=16 height=16 src="{{PATH_IMAGES}}img/map/info.gif">'
                                 s += '</a>'
                             }
+                            else s += '&nbsp;'
                         s += '</td>'
                             
                     s += '</tr>'
                     s += '<tr>'
                     
-                        s += '<td align="right"></td>'
+                        s += '<td align="right">&nbsp;</td>'
                         
                         s += '<td align="left">'
                             if (radar > 0 || jammer != 0) {                    
                                 if (jammer == -1) {
                                     s += '<a href="#" data-bs-toggle="tooltip" data-bs-custom-class="tooltip-light" data-bs-title="Radar brouillé">'
-                                        s += '<img width=16 height=16 src="{{PATH_IMAGES}}img/map/sector/radarjammed.gif">'
+                                        s += '<img width=16 height=16 src="{{PATH_IMAGES}}img/map/radarjammed.gif">'
                                     s += '</a>'
                                 }
                                 else if (radar > 0 && jammer == 0) {                            
@@ -595,7 +597,7 @@
                                             s += '</div>'
                                         s += '</div>'
                                     s += '">'
-                                        s += '<img width=16 height=16 src="{{PATH_IMAGES}}img/map/sector/radar.gif">'
+                                        s += '<img width=16 height=16 src="{{PATH_IMAGES}}img/map/radar.gif">'
                                     s += '</a>'
                                 }
                                 else if (jammer > 0) {                            
@@ -616,10 +618,11 @@
                                             s += '</div>'
                                         s += '</div>'
                                     s += '">'
-                                        s += '<img width=16 height=16 src="{{PATH_IMAGES}}img/map/sector/radarjammed-known.gif">'
+                                        s += '<img width=16 height=16 src="{{PATH_IMAGES}}img/map/radarjammed-known.gif">'
                                     s += '</a>'
                                 }
                             }
+                            else s += '&nbsp;'
                         s += '</td>'
                 
                     s += '</tr>'
@@ -627,7 +630,7 @@
 
                         s += '<td align=right>'
                             if (frozen) {
-                                s += '<a href="#" data-bs-toggle="tooltip" data-bs-custom-class="tooltip-light" data-bs-title="En vacances"><img width=16 height=16 src="{{PATH_IMAGES}}img/map/sector/sleeping.gif"></a>'
+                                s += '<a href="#" data-bs-toggle="tooltip" data-bs-custom-class="tooltip-light" data-bs-title="En vacances"><img width=16 height=16 src="{{PATH_IMAGES}}img/map/sleeping.gif"></a>'
                             }
                             else if (b_ore != '0' || b_hydrocarbon != '0') {
                                 s += '<a href="#" data-bs-toggle="tooltip" data-bs-html="true" data-bs-custom-class="tooltip-light" data-bs-title="'
@@ -660,6 +663,7 @@
                                     s += '<img width=16 height=16 src="{{PATH_IMAGES}}img/interface/credits.gif">'
                                 s += '</a>'
                             }
+                            else s += '&nbsp;'
                         s += '</td>'
 
                         orb[idx] = orbit
@@ -674,9 +678,10 @@
                                 else if(orbit.length > 0) f = "-fleets";
                                 else f = "";
                                 s += '<a href="#" class="none" onclick="return donothide(event)" onfocus="this.onmouseover()" onmouseover="showmenu(\'fleets.' + idx + '\', \'Flottes\', descOrbit(' + idx + ',' + id + ',' + rel + ',' + parked + '))">'
-                                    s += '<img id="fleets.' + idx + '" width=16 height=16 src="{{PATH_IMAGES}}img/map/sector/orbit' + f + '.gif">'
+                                    s += '<img id="fleets.' + idx + '" width=16 height=16 src="{{PATH_IMAGES}}img/map/orbit' + f + '.gif">'
                                 s += '</a>'
                             }
+                            else s += '&nbsp;'
                         s += '</td>'
                 
                     s += '</tr>'
@@ -692,12 +697,13 @@
                                         }
                                     s += '</div>'
                                 s += '">'
-                                    s += '<img width=16 height=16 src="{{PATH_IMAGES}}img/map/sector/special.gif">'
+                                    s += '<img width=16 height=16 src="{{PATH_IMAGES}}img/map/special.gif">'
                                 s += '</a>'
                             }
+                            else s += '&nbsp;'
                         s += '</td>'
 
-                        s += '<td align="left"></td>'
+                        s += '<td align="left">&nbsp;</td>'
                         
                     s += '</tr>'
                     s += '<tr>'
@@ -713,7 +719,7 @@
                             else {
                                 if (owner == '') s += '<span class="' + c + '" title="Planète occupée">Occupée</span>';
                                 else s += '<a href="/s03/nation/?name=' + owner + '" class="' + c + '" data-bs-toggle="tooltip" data-bs-custom-class="tooltip-light" data-bs-title="Voir profil">' + owner + '</a>'
-                            }
+                            }                            
                         s += '</td>'
                 
                     s += '</tr>'

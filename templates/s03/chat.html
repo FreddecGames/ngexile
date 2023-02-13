@@ -92,7 +92,7 @@ function formatLine(author,line)
 	}
 
 	if(author == '{{username}}')
-		return '<span class="text-self">' + words.join(' ') + '</span>';
+		return '<span class="text-white">' + words.join(' ') + '</span>';
 	else
 	if(highlight)
 		return '<span class="highlight">' + words.join(' ') + '</span>';
@@ -307,7 +307,7 @@ Chat.prototype = {
 
 		if(!this.showTag) tag = '';
 
-		this.lines.push((datetime==null?'<b>':'')+'<img src="{{PATH_IMAGES}}img/interface/spacer.gif" width="0" height="15" border="0">' + formatTime(datetime) + (tag!=''?' <a href="/s03/alliance/?tag='+tag+'" target="_blank">['+tag+']</a>':'') + '<a href="#" onclick="chatlist['+this.id+'].tell(\''+author+'\'); return false;" class="author me-2">' + author + '</a>' + line + (datetime==null?'</b>':''));
+		this.lines.push((datetime==null?'<b>':'')+formatTime(datetime) + (tag!=''?' <a href="/s03/alliance/?tag='+tag+'" target="_blank">['+tag+']</a>':'') + '<a href="#" onclick="chatlist['+this.id+'].tell(\''+author+'\'); return false;" class="author me-2">' + author + '</a>' + line + (datetime==null?'</b>':''));
 
 		// limit chatbox to 250 messages
 		while(this.lines.length > 250) this.lines.shift();

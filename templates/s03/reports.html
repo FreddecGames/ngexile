@@ -269,19 +269,19 @@
                                     {% endif %}
                                     {% if message.upkeep_ships > 0 %}
                                     <div class="col-auto">
-                                        <img src="{{ PATH_IMAGES }}img/map/sector/orbit-fleets.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Vaisseaux">
+                                        <img src="{{ PATH_IMAGES }}img/map/orbit-fleets.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Vaisseaux">
                                         <span class="text-normal me-1">Vaisseaux</span> {{ message.upkeep_ships|intcomma }}
                                     </div>
                                     {% endif %}
                                     {% if message.upkeep_ships_in_position > 0 %}
                                     <div class="col-auto">
-                                        <img src="{{ PATH_IMAGES }}img/map/sector/orbit-fleets.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Vaisseaux en position">
+                                        <img src="{{ PATH_IMAGES }}img/map/orbit-fleets.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Vaisseaux en position">
                                         <span class="text-normal me-1">Vaisseaux en position</span> {{ message.upkeep_ships_in_position|intcomma }}
                                     </div>
                                     {% endif %}
                                     {% if message.upkeep_ships_parked > 0 %}
                                     <div class="col-auto">
-                                        <img src="{{ PATH_IMAGES }}img/map/sector/orbit-fleets.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Vaisseaux posés">
+                                        <img src="{{ PATH_IMAGES }}img/map/orbit-fleets.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Vaisseaux posés">
                                         <span class="text-normal me-1">Vaisseaux posés</span> {{ message.upkeep_ships_parked|intcomma }}
                                     </div>
                                     {% endif %}
