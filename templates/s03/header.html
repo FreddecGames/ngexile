@@ -85,7 +85,7 @@
                          class="res">
                     <span class="{% if medium_ore %}text-warning{% elif high_ore %}text-danger{% endif %}">{{ ore|intcomma }}</span>
                     <small class="text-normal">/{{ ore_capacity|intcomma }}</small>
-                    <small class="ms-2 {% if medium_ore_production %}text-warning{% endif %}">+{{ ore_production|intcomma }}</small>
+                    <small class="ms-2 {% if medium_ore_production %}text-warning{% else %}text-success{% endif %}">+{{ ore_production|intcomma }}</small>
                 </div>
                 <div class="col-12">
                     <img src="{{ PATH_IMAGES }}img/interface/hydrocarbon.gif"
@@ -96,7 +96,7 @@
                          class="res">
                     <span class="{% if medium_hydrocarbon %}text-warning{% elif high_hydrocarbon %}text-danger{% endif %}">{{ hydrocarbon|intcomma }}</span>
                     <small class="text-normal">/{{ hydrocarbon_capacity|intcomma }}</small>
-                    <small class="ms-2 {% if medium_hydrocarbon_production %}text-warning{% endif %}">+{{ hydrocarbon_production|intcomma }}</small>
+                    <small class="ms-2 {% if medium_hydrocarbon_production %}text-warning{% else %}text-success{% endif %}">+{{ hydrocarbon_production|intcomma }}</small>
                 </div>
                 <div class="col-12">
                     <img src="{{ PATH_IMAGES }}img/interface/energy.gif"

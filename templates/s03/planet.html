@@ -21,7 +21,7 @@
     <form action='?planet={{ planet_id }}' method='post' class="row gx-2">
         {% csrf_token %}
         <input type='hidden' name='action' value='assigncommander'>
-        <div class="col-auto"><select class="form-control" name='commander' class="editbox">
+        <div class="col-auto"><select class="form-control" name='commander'>
             {% if unassign %}
                 <option value='0'>
                     Renvoyer

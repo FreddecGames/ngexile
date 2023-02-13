@@ -17,7 +17,7 @@
                         {% for fleet in planet.fleets %}
                             <div class="col-12">
                                 <div class="col-auto">
-                                    <a href="/s03/mails/?subject=À propos de la flotte {{ fleet.fleetname }}&to={{ fleet.fleetowner }}" class="{% if fleet.ally %}text-success{% elif fleet.friend %}friend{% elif fleet.enemy %}enemy{% endif %}" data-bs-toggle="tooltip" data-bs-title="Contacter {{ fleet.fleetowner }}">
+                                    <a href="/s03/mails/?subject=À propos de la flotte {{ fleet.fleetname }}&to={{ fleet.fleetowner }}" class="{% if fleet.ally %}text-success{% elif fleet.friend %}text-friend{% elif fleet.enemy %}text-danger{% endif %}" data-bs-toggle="tooltip" data-bs-title="Contacter {{ fleet.fleetowner }}">
                                         {% if fleet.tag %}[{{ fleet.tag }}]{% endif %}
                                         {{ fleet.fleetname }}
                                     </a>

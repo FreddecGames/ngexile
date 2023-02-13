@@ -92,7 +92,7 @@ function formatLine(author,line)
 	}
 
 	if(author == '{{username}}')
-		return '<span class="player">' + words.join(' ') + '</span>';
+		return '<span class="text-self">' + words.join(' ') + '</span>';
 	else
 	if(highlight)
 		return '<span class="highlight">' + words.join(' ') + '</span>';

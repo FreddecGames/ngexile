@@ -131,68 +131,19 @@ img.idleworkers {
 #chatform { text-align: left; }
 #joinchatform { display: none; visibility: hidden; }
 
+/* map page */
 
 
 
 
-
-/* relation colors */
-.self {color: #77f;}
-.player {color: #77f;}
-.enemy {color: #f44;}
-.friend {color: #008000;}
-
-
-
-
-
-
-
-
-
-
-
-
-#map p { margin:0; }
-#map .hasnothing { border:1px solid #BCBCC0;padding:0px;margin:0px;}
-#map .hasplanets { border:1px solid #77f;padding:0px;margin:0px;}
-#map .hasallies { border:1px solid #0F0; padding:0px;margin:0px;}
-#map .hasfriends { border:1px solid #080; padding:0px;margin:0px;}
-#map .hasenemies { border:1px solid red; padding:0px;margin:0px;}
-
-
-#mapuniverse { visibility: hidden; display:none; }
-#mapuniverseview { width:690px; }
-#mapuniverseview .gal { float:left; text-align:center; margin:1px; cursor:pointer; }
-#mapuniverseview .galtext { position:relative; margin-top:-15px; }
-
-#mapgalaxy { visibility: hidden; display:none; }
-#mapgalaxyview { width:410px; }
-
-
-#mapsector { background:transparent; visibility: hidden; display:none; }
-#mapsector table { border-collapse:collapse; border-spacing:0; }
-#mapsector table tr.border { font-size:1px; line-height:1px; }
-#mapsector img.arrow { cursor:pointer; }
-#mapsector .borderup { background:url("/static/assets/styles/s_default/map/border-n.gif") repeat-x; }
-#mapsector .borderleft { background:url("/static/assets/styles/s_default/map/border-w.gif") repeat-y; }
-#mapsector .borderright { background:url("/static/assets/styles/s_default/map/border-e.gif") repeat-y; }
-#mapsector .borderdown { background:url("/static/assets/styles/s_default/map/border-s.gif") repeat-x; }
-#mapsectorview { background: #000; width:710px; padding:5px; }
-#mapsectorview div.planet { float:left; width:140px; height:100px; }
-#mapsectorview .planettext { position:relative; margin-top:-5px; }
-#mapsectorview .planetname { font-size:9px; }
-
-
-#mapradar { visibility: hidden; display:none; }
 
 
 .hidden { display: none; visibility: hidden; }
-.justhidden { visibility: hidden; }
 
-.editbox { height:17px; vertical-align:middle; }
-.submitok { font-size:10px; height:19px; vertical-align:middle; }
-.close { vertical-align:middle; cursor:pointer; }
+
+
+
+
 .left { float:left; }
 .right { float:right; }
 
@@ -231,16 +182,17 @@ b.r4{ margin: 0 1px; background:#3c3c3c; border-left:#222 1px solid; border-righ
 a { text-decoration: none; }
 a:hover, a:focus { text-decoration: none; }
 
+.text-self { color: #7777ff!important; }
 .text-danger { color: #ff4444!important; }
 .text-normal { color: #bcbcc0!important; }
-.text-success { color: #00ff00!important; }
-.text-warning { color: #ffa500!important; }
 .text-yellow { color: #ffff00!important; }
 .text-purple { color: #ff00ff!important; }
-.text-dark-success { color: #00ff00!important; opacity:.5;}
+.text-friend { color: #00ff00!important; opacity:.75; }
+.text-success { color: #00ff00!important; }
+.text-warning { color: #ffa500!important; }
 
-.text-bg-success { color: #000!important;  background-color:  #00ff00!important; }
-.text-bg-primary { color: #000!important;  background-color:  #ffa500!important; }
+.text-bg-success { color: #000!important; background-color: #00ff00!important; }
+.text-bg-primary { color: #000!important; background-color: #ffa500!important; }
 
 .bg-info { background-color: #306069!important; }
 .bg-danger { background-color: #6c0000!important; }

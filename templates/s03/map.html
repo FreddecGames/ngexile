@@ -221,9 +221,9 @@
                                 else if (c == 'hostile') classname = 'text-danger'
                                 else if (c == 'resource') classname = 'text-yellow'
                                 else if (c == 'vortex') classname = 'text-purple'
-                                else if (c == 'friend') classname = 'text-dark-success'
+                                else if (c == 'friend') classname = 'text-friend'
                                 else if (c == 'ally') classname = 'text-success'
-                                else if (c == 'player') classname = 'text-info'
+                                else if (c == 'player') classname = 'text-self'
                                 
                                 s += '<div class="col-auto lh-1 d-flex align-items-center justify-content-center" style="width:20%; padding:3px;">'
                                     s += '<i class="fa-fw fas fa-circle ' + classname + '" style="font-size:3px;"></i>'
@@ -300,10 +300,10 @@
                     <div class="row gx-2 align-items-center">
                         <div class="col-auto lh-1 d-flex align-items-center justify-content-center"
                              style="padding:3px">
-                            <i class="fa-fw fas fa-circle text-dark-success" style="font-size:3px;"></i>
+                            <i class="fa-fw fas fa-circle text-friend" style="font-size:3px;"></i>
                         </div>
                         <div class="col-auto">
-                            <span class="text-dark-success">Planète en PNA</span>
+                            <span class="text-friend">Planète en PNA</span>
                         </div>
                     </div>
                 </div>
@@ -393,11 +393,11 @@
         
             switch (rel){
             
-                case 2: return "self"; break;
+                case 2: return "text-self"; break;
                 case 1: return "text-success"; break;
-                case 0:	return "friend"; break;
-                case -1: return "enemy"; break;
-                case -2: return "enemy"; break;
+                case 0:	return "text-friend"; break;
+                case -1: return "text-danger"; break;
+                case -2: return "text-danger"; break;
                 case -3: return "text-normal"; break;
             }
             
@@ -412,7 +412,7 @@
             
             if (tag != '') s += '<a href="/s03/alliance/?tag=' + tag + '" title="Voir l\'alliance" class="me-1 ' + c + '">[' + tag + ']</a>';
 
-            if (rel == 2 || id != 0) s += '<a href="/s03/fleet/?id=' + id + '" class="self">' + name + '</a>';
+            if (rel == 2 || id != 0) s += '<a href="/s03/fleet/?id=' + id + '" class="text-self">' + name + '</a>';
             else s += '<a href="/s03/mails/?subject=À propos de la flotte ' + name + '&to=' + owner + '" title="Contacter ' + owner + '" class="' + c + '">' + name + '</a>';
 
             if (signature > 0) s += '<small class="ms-2">' + formatnumber(signature) + '</small>';
@@ -827,7 +827,7 @@
                                 html += '<a href="/s03/alliance/?tag=' + tag + '" class="me-1 ' + classname + '" data-bs-toggle="tooltip" data-bs-title="Voir alliance">[' + tag + ']</a>'
                             }
                             if (rel == 2) {
-                                html += '<a href="/s03/fleet/?id=' + fleetid + '" class="self" data-bs-toggle="tooltip" data-bs-title="Voir flotte">' + fleet + '</a>'
+                                html += '<a href="/s03/fleet/?id=' + fleetid + '" class="text-self" data-bs-toggle="tooltip" data-bs-title="Voir flotte">' + fleet + '</a>'
                             }
                             else {
                                 html += '<a href="/s03/mails/?to=' + owner + '" class="' + classname + '" data-bs-toggle="tooltip" data-bs-title="Contacter propriétaire">' + owner + '</a>'

@@ -1476,7 +1476,7 @@
                                             "></i></span>
                                         </div>
                                         <div class="col">
-                                            <a href="?id={{ fleet.id }}" class="self" data-bs-toggle="tooltip" data-bs-html="true" data-bs-title="Voir flotte">{{ fleet.name }}</a>
+                                            <a href="?id={{ fleet.id }}" class="text-self" data-bs-toggle="tooltip" data-bs-html="true" data-bs-title="Voir flotte">{{ fleet.name }}</a>
                                             <small class="ms-2">{{ fleet.signature|intcomma }}</small>
                                         </div>
                                         {% if fleet.merge %}
@@ -1489,7 +1489,7 @@
                                             <a href="/s03/mails/?subject=À propos de la flotte {{ fleet.name }}&to={{ fleet.owner }}"
                                                data-bs-toggle="tooltip"
                                                data-bs-title="Contacter {{ fleet.owner }}"
-                                               class="{% if fleet.ally %}text-success{% endif %}{% if fleet.friend %}friend{% endif %}{% if fleet.enemy %}enemy{% endif %}">
+                                               class="{% if fleet.ally %}text-success{% endif %}{% if fleet.friend %}text-friend{% endif %}{% if fleet.enemy %}text-danger{% endif %}">
                                                 {% if fleet.alliance %}[{{ fleet.tag }}]{% endif %}
                                                 {{ fleet.name }}
                                             </a>
