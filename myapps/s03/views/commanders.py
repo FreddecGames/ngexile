@@ -183,7 +183,7 @@ class View(GlobalView):
                     " mod_fleet_tracking_speed, mod_fleet_damage, mod_fleet_signature," + \
                     " mod_construction_speed_buildings, mod_construction_speed_ships," + \
                     " points, name" + \
-                    " FROM commanders WHERE id=" + str(CommanderId) + " AND ownerid=" + str(self.UserId)
+                    " FROM commanders WHERE points > 0 AND id=" + str(CommanderId) + " AND ownerid=" + str(self.UserId)
             oRs = oConnExecute(query)
 
             if oRs == None:
