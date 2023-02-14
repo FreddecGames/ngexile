@@ -86,7 +86,7 @@ function formattime(s) {
 	s = s % 60;
 	if (s < 10) s = "0" + s
 
-	if (d > 0) return d + dayletter + " " + h + ":" + m + ":" + s;
+	if (d > 0) return d + "j" + " " + h + ":" + m + ":" + s;
 	else return h + ":" + m + ":" + s;
 }
 
