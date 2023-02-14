@@ -1,6 +1,7 @@
 {% extends "s03/layout.html" %}
 {% load humanize %}
 {% block content %}
+{% if context %}<div class="scroll-content" style="height:calc(100% - 94px);">{% endif %}
 <div class="page-content">
     {% if idle %}
         <script>
@@ -111,13 +112,14 @@
                                                 {% for action in actions %}
                                                     <li>
                                                         {% if action.move %}
-                                                            <span class="text-normal pe-3">Aller vers</span> <script>putplanet("{{planetid}}","{{planetname}}","{{g}}","{{s}}","{{p}}",{{relation}});</script>
+                                                            <span class="text-normal pe-3">Aller vers</span>
+                                                            <script>putplanet("{{planetid}}","{{planetname}}","{{g}}","{{s}}","{{p}}",{{relation}});</script>
                                                         {% endif %}
-                                                        {% if action.loadall %}<span class="text-normal">Tout charger<span>{% endif %}
-                                                        {% if action.unloadall %}<span class="text-normal">Tout décharger<span>{% endif %}
-                                                        {% if action.recycle %}<span class="text-normal">Récolter les ressources<span>{% endif %}
-                                                        {% if action.invade %}<span class="text-normal">Envahir<span>{% endif %}
-                                                        {% if action.waiting %}<span class="text-normal">Attendre<span>{% endif %}
+                                                        {% if action.loadall %}<span class="text-normal">Tout charger</span>{% endif %}
+                                                        {% if action.unloadall %}<span class="text-normal">Tout décharger</span>{% endif %}
+                                                        {% if action.recycle %}<span class="text-normal">Récolter les ressources</span>{% endif %}
+                                                        {% if action.invade %}<span class="text-normal">Envahir</span>{% endif %}
+                                                        {% if action.waiting %}<span class="text-normal">Attendre</span>{% endif %}
                                                     </li>
                                                 {% endfor %}
                                             </ul>
@@ -1506,4 +1508,5 @@
         </div>
     </div>
 </div>
+{% if context %}</div>{% endif %}
 {% endblock %}

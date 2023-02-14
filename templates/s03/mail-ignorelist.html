@@ -17,7 +17,8 @@
         </li>
     </ul>
 </div>
-<div class="page-content scroll-content" style="height:calc(100% - 52px);">
+<div class="scroll-content" style="height:calc(100% - 52px);">
+<div class="page-content">
 <form method="post" action="?a=unignorelist">
     {% csrf_token %}
     <div class="card">
@@ -49,5 +50,6 @@
         </div>
     </div>
 </form>
+</div>
 </div>
 {% endblock %}

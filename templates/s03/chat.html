@@ -307,7 +307,7 @@ Chat.prototype = {
 
 		if(!this.showTag) tag = '';
 
-		this.lines.push((datetime==null?'<b>':'')+formatTime(datetime) + (tag!=''?' <a href="/s03/alliance/?tag='+tag+'" target="_blank">['+tag+']</a>':'') + '<a href="#" onclick="chatlist['+this.id+'].tell(\''+author+'\'); return false;" class="author me-2">' + author + '</a>' + line + (datetime==null?'</b>':''));
+		this.lines.push((datetime==null?'<b>':'')+formatTime(datetime) + (tag!=''?'<a href="/s03/alliance/?tag='+tag+'" target="_blank">['+tag+']</a> ':'') + '<a href="#" onclick="chatlist['+this.id+'].tell(\''+author+'\'); return false;" class="author me-2">' + author + '</a>' + line + (datetime==null?'</b>':''));
 
 		// limit chatbox to 250 messages
 		while(this.lines.length > 250) this.lines.shift();

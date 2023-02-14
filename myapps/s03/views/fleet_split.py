@@ -34,7 +34,7 @@ class View(GlobalView):
     # display fleet info
     def DisplayExchangeForm(self, fleetid):
 
-        content = GetTemplate(self.request, "s03/fleet-split-old")
+        content = GetTemplate(self.request, "s03/fleet-split")
 
         # retrieve fleet name, size, position, destination
         query = "SELECT id, name, attackonsight, engaged, size, signature, speed, remaining_time, commanderid, commandername," + \
@@ -167,6 +167,20 @@ class View(GlobalView):
             return
 
         #
+        # 1a/ Remove resource from the 'source# fleet
+        #
+
+        if ore != 0 or hydrocarbon != 0 or scientists != 0 or soldiers != 0 or workers != 0:
+
+            # a/ remove the resources from the 'source# fleet
+            oConnDoQuery("UPDATE fleets SET" + \
+                        " cargo_ore=cargo_ore-"+str(ore)+", cargo_hydrocarbon=cargo_hydrocarbon-"+str(hydrocarbon)+", " + \
+                        " cargo_scientists=cargo_scientists-"+str(scientists)+", " + \
+                        " cargo_soldiers=cargo_soldiers-"+str(soldiers)+", " + \
+                        " cargo_workers=cargo_workers-"+str(workers) + \
+                        " WHERE id =" + str(fleetid) + " AND ownerid =" + str(self.UserId))
+
+        #
         # 2/ add the ships to the new fleet
         #
 
@@ -196,9 +210,8 @@ class View(GlobalView):
         #
         # 3/ Move the resources to the new fleet
         #   a/ Add resources to the new fleet
-        #   b/ Remove resource from the 'source# fleet
         #
-
+        
         # retrieve new fleet's cargo capacity
         oRs = oConnExecute("SELECT cargo_capacity FROM vw_fleets WHERE ownerid="+str(self.UserId)+" AND id="+str(newfleetid))
         if oRs == None:
@@ -228,14 +241,6 @@ class View(GlobalView):
                         " cargo_scientists="+str(scientists)+", cargo_soldiers="+str(soldiers)+", " + \
                         " cargo_workers="+str(workers) + \
                         " WHERE id =" + str(newfleetid) + " AND ownerid =" + str(self.UserId))
-
-            # b/ remove the resources from the 'source# fleet
-            oConnDoQuery("UPDATE fleets SET" + \
-                        " cargo_ore=cargo_ore-"+str(ore)+", cargo_hydrocarbon=cargo_hydrocarbon-"+str(hydrocarbon)+", " + \
-                        " cargo_scientists=cargo_scientists-"+str(scientists)+", " + \
-                        " cargo_soldiers=cargo_soldiers-"+str(soldiers)+", " + \
-                        " cargo_workers=cargo_workers-"+str(workers) + \
-                        " WHERE id =" + str(fleetid) + " AND ownerid =" + str(self.UserId))
 
         #
         # 4/ Remove the ships from the 'source# fleet

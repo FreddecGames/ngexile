@@ -25,11 +25,14 @@
                 rNew += getval("load_" + resources[i]);
                 rOrig -= getval("load_" + resources[i]);
             }
-
-            if (rOrig > parseInt(document.getElementById("capacityOrig2").innerHTML) || rOrig < 0)
-                rOrig = '<span class="text-danger">' + rOrig + '</span>';
-            if (rNew > parseInt(document.getElementById("capacityNew2").innerHTML) || rNew < 0)
-                rNew = '<span class="text-danger">' + rNew + '</span>';
+            
+            if (rOrig > parseInt(document.getElementById("capacityOrig2").innerHTML.replace(' ', '')) || rOrig < 0)
+                rOrig = '<span class="text-danger">' + formatnumber(rOrig) + '</span>';
+            else rOrig = formatnumber(rOrig)
+            
+            if (rNew > parseInt(document.getElementById("capacityNew2").innerHTML.replace(' ', '')) || rNew < 0)
+                rNew = '<span class="text-danger">' + formatnumber(rNew) + '</span>';
+            else rNew = formatnumber(rNew)
 
             document.getElementById("loadOrig").innerHTML = rOrig;
             document.getElementById("loadNew").innerHTML = rNew;
@@ -149,21 +152,6 @@
                     </div>
                 </div>
                 <div class="card-body">
-                {% if error3 %}
-                    <div class="mb-3 text-center">
-                        <span class="text-danger">La flotte est occupée. Vous ne pouvez diviser une flotte qui combat, ni récolte ou voyage.</span>
-                    </div>
-                {% endif %}
-                {% if error2 %}
-                    <div class="mb-3 text-center">
-                            <span class="text-danger">Le nom de la flotte est déjà utilisé, veuillez en choisir un autre.</span>
-                    </div>
-                {% endif %}
-                {% if error1 %}
-                    <div class="mb-3 text-center">
-                            <span class="text-danger">Le nom de la flotte est invalide, il ne peut contenir que des lettres (a-z) et des chiffres (0-9).</span>
-                    </div>
-                {% endif %}
                 <div class="row gx-3 align-items-start">
             <div class="col-7">
                 <div class="row gx-3 align-items-center">
@@ -310,24 +298,18 @@
                 </div>
             </div>
             {% if error3 %}
-                <div class="row gx-3 align-items-center">
-                    <div class="col-auto text-center">
-                        <span class="text-danger">La flotte est occupée. Vous ne pouvez diviser une flotte qui combat, ni récolte ou voyage.</span>
-                    </div>
+                <div class="mt-1 text-center">
+                    <span class="text-danger">La flotte est occupée. Vous ne pouvez diviser une flotte qui combat, ni récolte ou voyage.</span>
                 </div>
             {% endif %}
             {% if error2 %}
-                <div class="row gx-3 align-items-center">
-                    <div class="col-auto text-center">
-                        <span class="text-danger">Le nom de la flotte est déjà utilisé, veuillez en choisir un autre.</span>
-                    </div>
+                <div class="mt-1 text-center">
+                    <span class="text-danger">Le nom de la flotte est déjà utilisé, veuillez en choisir un autre.</span>
                 </div>
             {% endif %}
             {% if error1 %}
-                <div class="row gx-3 align-items-center">
-                    <div class="col-auto text-center">
-                        <span class="text-danger">Le nom de la flotte est invalide, il ne peut contenir que des lettres (a-z) et des chiffres (0-9).</span>
-                    </div>
+                <div class="mt-1 text-center">
+                    <span class="text-danger">Le nom de la flotte est invalide, il ne peut contenir que des lettres (a-z) et des chiffres (0-9).</span>
                 </div>
             {% endif %}
         </div>
