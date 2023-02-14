@@ -13,7 +13,7 @@ body {
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { border-radius: .25rem; background: rgba(255, 255, 255, .25); }
 
-.scroll-content { overflow-y: auto; overflow-x: hidden; padding-right: .5rem; scrollbar-color: rgba(255, 255, 255, .075); scrollbar-width: thin; }
+.scroll-content { overflow-y: auto; overflow-x: hidden; scroll-margin-left: .5rem; scrollbar-color: rgba(255, 255, 255, .075); scrollbar-width: thin; }
 
 input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
 input[type=number] { max-width: 55px; -moz-appearance: textfield; }
@@ -123,7 +123,7 @@ img.idleworkers {
 
 /* chat page */
 
-#chat { overflow: auto; height: 490px; color: #ccc; }
+#chat { overflow: auto; height: 485px; color: #ccc; }
 #chat .highlight { color: #1dd1d3; }
 #chat .player { color: #fff; }
 #chat .newday { text-align: center; color: #fff; margin-top: 5px; }

@@ -9,7 +9,7 @@ class View(GlobalView):
         response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
         
-        self.selected_menu = "shipyard_all"
+        self.selected_menu = "planet"
 
         self.showHeader = True
 
@@ -280,7 +280,7 @@ class View(GlobalView):
     # List all the available ships for recycling
     def ListRecycleShips(self):
 
-        self.selected_menu = "shipyard_recycle"
+        self.selected_menu = "planet"
 
         # list ships that are on the planet
         query = "SELECT id, category, name, int4(cost_ore * const_recycle_ore(planet_ownerid)) AS cost_ore, int4(cost_hydrocarbon * const_recycle_hydrocarbon(planet_ownerid)) AS cost_hydrocarbon, cost_credits, workers, crew, capacity," + \

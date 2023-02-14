@@ -11,7 +11,7 @@ class View(GlobalView):
         response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
         
-        self.selected_menu = "orbit"
+        self.selected_menu = "planet"
 
         self.showHeader = True
 

@@ -2,6 +2,43 @@
 {% load humanize %}
 {% block content %}
 <div class="page-content">
+    <ul class="nav nav-tabs mt-0 mb-3">
+        <li class="nav-item">
+            <a href="/s03/planet/?planet={{ cur_planetid }}" class="nav-link">Aperçu</a>
+        </li>
+        <li class="nav-item">
+            <a href="/s03/production/?planet={{ cur_planetid }}" class="nav-link">Production</a>
+        </li>
+        <li class="nav-item">
+            <a href="/s03/production/?planet={{ cur_planetid }}&cat=2" class="nav-link">Fonctionnement</a>
+        </li>
+        <li class="nav-item">
+            <a href="/s03/buildings/?planet={{ cur_planetid }}" class="nav-link">Bâtiments</a>
+        </li>
+        <li class="nav-item active">
+            <a href="/s03/shipyard/?planet={{ cur_planetid }}" class="nav-link">Vaisseaux</a>
+        </li>
+        <li class="nav-item">
+            <a href="/s03/shipyard/?planet={{ cur_planetid }}&recycle=1" class="nav-link">Recyclage</a>
+        </li>
+        <li class="nav-item">
+            <a href="/s03/training/?planet={{ cur_planetid }}" class="nav-link">Entraînements</a>
+        </li>
+        <li class="nav-item">
+            <a href="/s03/orbit/?planet={{ cur_planetid }}" class="nav-link">Orbite</a>
+        </li>
+        <li class="nav-item">
+            <a href="/s03/market-buy/?planet={{ cur_planetid }}" class="nav-link">Achat</a>
+        </li>
+        <li class="nav-item">
+            <a href="/s03/market-sell/?planet={{ cur_planetid }}" class="nav-link">Vente</a>
+        </li>
+        <li class="nav-item">
+            <a href="/s03/production/?planet={{ cur_planetid }}&cat=3" class="nav-link">Transferts</a>
+        </li>
+    </ul>
+</div>
+<div class="page-content scroll-content" style="height:calc(100% - 146px);">
 <script>
     var ships = new Array();
     {% for category in categories %}

@@ -97,7 +97,7 @@ class View(GlobalView):
 
         if planet_query != "":
             self.showHeader = True
-            self.selected_menu = "market.sell"
+            self.selected_menu = "planet"
 
             content.Parse("planetid")
         else:

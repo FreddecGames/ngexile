@@ -119,7 +119,7 @@ class View(GlobalView):
 
         if get_planet != "":
             self.showHeader = True
-            self.selected_menu = "market.buy"
+            self.selected_menu = "planet"
 
             content.AssignValue("get_planet", self.request.GET.get("planet", ""))
         else:
