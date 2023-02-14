@@ -38,9 +38,10 @@ class View(GlobalView):
     def display_nation(self):
 
         nation = self.request.GET.get("name", "").strip()
-
-        # if no nation is given: display info on the current player
         if nation == "": nation = self.oPlayerInfo["username"]
+
+        if not isValidName(nation):        
+            return HttpResponseRedirect("/s03/nation/")
 
         content = GetTemplate(self.request, "s03/nation")
 

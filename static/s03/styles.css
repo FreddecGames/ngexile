@@ -76,7 +76,7 @@ table {
 
 /* menu */
 
-.menu { color: #b5b5b9; display:block; }
+.menu { color: #b5b5b9; display:flex; align-items: center; }
 .menu:link {color: #b5b5b9;}
 .menu:visited {color: #b5b5b9;}
 .menu:active {color: #b5b5b9;}
