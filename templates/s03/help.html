@@ -7,10 +7,10 @@
             <a href="/s03/help/?" class="nav-link">Aide générale</a>
         </li>
         <li class="nav-item {% if buildings %}active{% endif %}">
-            <a href="/s03/help/?cat=buildings" class="nav-link">Construction</a>
+            <a href="/s03/help/?cat=buildings" class="nav-link">Bâtiments</a>
         </li>
         <li class="nav-item {% if research %}active{% endif %}">
-            <a href="/s03/help/?cat=research" class="nav-link">Recherche</a>
+            <a href="/s03/help/?cat=research" class="nav-link">Recherches</a>
         </li>
         <li class="nav-item {% if ships %}active{% endif %}">
             <a href="/s03/help/?cat=ships" class="nav-link">Vaisseaux</a>
@@ -19,6 +19,9 @@
             <a href="/s03/help/?cat=tags" class="nav-link">Balises</a>
         </li>
     </ul>
+</div>
+<div class="scroll-content" style="height:calc(100% - 52px);">
+<div class="page-content">
     {% if general %}
     <div class="row g-3">
         <div class="col-6">
@@ -189,7 +192,7 @@
                 </div>
                 <div class="card-body">
                     <div class="clearfix">
-                        <img src="{{ PATH_IMAGES }}buildings/{{ building.id }}.jpg"
+                        <img src="{{ PATH_IMAGES }}img/buildings/{{ building.id }}.jpg"
                              class="rounded me-2" style="float:left;"
                              title="{{ building.name }}"
                              width="52"
@@ -510,5 +513,6 @@
         </div>
     </div>
     {% endif %}
+</div>
 </div>
 {% endblock %}

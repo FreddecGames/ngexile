@@ -4,6 +4,22 @@
 {% load bbcode_tags %}
 {% block content %}
 <div class="page-content">
+    <ul class="nav nav-tabs mt-0 mb-3">
+        <li class="nav-item active">
+            <a href="/s03/mails/" class="nav-link">Reçus</a>
+        </li>
+        <li class="nav-item">
+            <a href="/s03/mails/?a=sent" class="nav-link">Envoyés</a>
+        </li>
+        <li class="nav-item">
+            <a href="/s03/mails/?a=new" class="nav-link">Composer</a>
+        </li>
+        <li class="nav-item">
+            <a href="/s03/mails/?a=ignorelist" class="nav-link">Nations ignorées</a>
+        </li>
+    </ul>
+</div>
+<div class="page-content scroll-content" style="height:calc(100% - 52px);">
 <script>
     function ignore(name) {
     
@@ -43,60 +59,64 @@
         <span class="text-normal">Aucun message</span>
     </div>
 {% else %}
-    {% for mail in mails %}
-    <div class="mb-3 card card-body {% if mail.new_mail %}bg-success{% endif %}">
-        <div class="row gx-3">
-            <div class="col-auto">
-                <form method="post" action="?start={{ offset }}">
-                    {% csrf_token %}
-                    <input type="hidden" name="action" value="delete" />
-                    <input type="hidden" name="mailId" value="{{ mail.mailid }}" />
-                    <button type="submit" class="btn btn-icon btn-link" data-bs-toggle="tooltip" data-bs-title="Supprimer">
-                        <i class="fa-fw fas fa-trash"></i>
-                    </button>
-                </form>
-            </div>
-            <div class="col">
-                <div class="row g-2 flex-column">
-                    <div class="col-12">
-                        <div class="row gx-3 align-items-center">
-                            <div class="col-auto">
-                                {% if mail.avatar %}<img src="{{ mail.avatar_url }}" width="48" height="48" class="rounded">
-                                {% else %}<img src="{{ PATH_IMAGES }}img/interface/noavatar.gif" width="48" height="48" class="rounded">
-                                {% endif %}
-                            </div>
-                            <div class="col">
-                                <div class="mb-1">
-                                    {% if mail.alliancetag %}<a href="/s03/alliance/?tag={{ mail.alliancetag }}" class="me-2" data-bs-toggle="tooltip" data-bs-title="Voir alliance">[{{ mail.alliancetag }}]</a>{% endif %}
-                                    {% if mail.from %}<a href="/s03/nation/?name={{ mail.from }}" class="me-2" data-bs-toggle="tooltip" data-bs-title="Voir profil">{{ mail.from }}</a>{% endif %}
-                                    <span class="text-normal me-2">{{ mail.date|timezone:"Europe/Paris" }}</span>
-                                    {% if mail.to_alliance %}<span class="ms-2">À l'alliance</span>{% endif %}
-                                    {% if mail.ignored %}<a href="#" class="me-2" onclick="return unignore('{{ mail.from }}')"><span class="text-danger">Bloqué</span></a>{% endif %}
-                                    {% if mail.ignore %}<a href="#" class="me-2" onclick="return ignore('{{ mail.from }}')">Bloquer</a>{% endif %}
+    <div class="row gy-3">
+        {% for mail in list %}
+            <div class="col-12">
+                <div class="card card-body {% if mail.new_mail %}bg-success{% endif %}">
+                    <div class="row gx-3">
+                        <div class="col-auto">
+                            <form method="post" action="?start={{ offset }}">
+                                {% csrf_token %}
+                                <input type="hidden" name="action" value="delete" />
+                                <input type="hidden" name="mailId" value="{{ mail.mailid }}" />
+                                <button type="submit" class="btn btn-icon btn-link" data-bs-toggle="tooltip" data-bs-title="Supprimer">
+                                    <i class="fa-fw fas fa-trash"></i>
+                                </button>
+                            </form>
+                        </div>
+                        <div class="col">
+                            <div class="row g-2 flex-column">
+                                <div class="col-12">
+                                    <div class="row gx-3 align-items-center">
+                                        <div class="col-auto">
+                                            {% if mail.avatar %}<img src="{{ mail.avatar_url }}" width="48" height="48" class="rounded">
+                                            {% else %}<img src="{{ PATH_IMAGES }}img/interface/noavatar.gif" width="48" height="48" class="rounded">
+                                            {% endif %}
+                                        </div>
+                                        <div class="col">
+                                            <div class="mb-1">
+                                                {% if mail.alliancetag %}<a href="/s03/alliance/?tag={{ mail.alliancetag }}" class="me-2" data-bs-toggle="tooltip" data-bs-title="Voir alliance">[{{ mail.alliancetag }}]</a>{% endif %}
+                                                {% if mail.from %}<a href="/s03/nation/?name={{ mail.from }}" class="me-2" data-bs-toggle="tooltip" data-bs-title="Voir profil">{{ mail.from }}</a>{% endif %}
+                                                <span class="text-normal me-2">{{ mail.date|timezone:"Europe/Paris" }}</span>
+                                                {% if mail.to_alliance %}<span class="ms-2">À l'alliance</span>{% endif %}
+                                                {% if mail.ignored %}<a href="#" class="me-2" onclick="return unignore('{{ mail.from }}')"><span class="text-danger">Bloqué</span></a>{% endif %}
+                                                {% if mail.ignore %}<a href="#" class="me-2" onclick="return ignore('{{ mail.from }}')">Bloquer</a>{% endif %}
+                                            </div>
+                                            <div>
+                                                <span class="fs-6">{{ mail.subject }}</span>
+                                                {% if mail.money %}
+                                                    <span class="ms-3 text-normal">Crédits reçus</span>
+                                                    <img src="{{ PATH_IMAGES }}img/interface/credits.gif" title="Crédits" class="res" width="16px" height="16px">
+                                                    {{ mail.moneyamount|intcomma }}
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                        <div class="col-auto">
+                                            <a href="?a=reply&mailid={{ mail.mailid }}" class="ms-2">Répondre</a>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div>
-                                    <span class="fs-6">{{ mail.subject }}</span>
-                                    {% if mail.money %}
-                                        <span class="ms-3 text-normal">Crédits reçus</span>
-                                        <img src="{{ PATH_IMAGES }}img/interface/credits.gif" title="Crédits" class="res" width="16px" height="16px">
-                                        {{ mail.moneyamount|intcomma }}
-                                    {% endif %}
+                                <div class="col-12">
+                                    {% if mail.html %}{{ mail.body|safe }}{% endif %}
+                                    {% if mail.bbcode %}{{ mail.bodybb|bbcode }}{% endif %}
                                 </div>
-                            </div>
-                            <div class="col-auto">
-                                <a href="?a=reply&mailid={{ mail.mailid }}" class="ms-2">Répondre</a>
                             </div>
                         </div>
                     </div>
-                    <div class="col-12">
-                        {% if mail.html %}{{ mail.body|safe }}{% endif %}
-                        {% if mail.bbcode %}{{ mail.bodybb|bbcode }}{% endif %}
-                    </div>
                 </div>
             </div>
-        </div>
+        {% endfor %}
     </div>
-    {% endfor %}
 {% endif %}
 </div>
 {% endblock %}

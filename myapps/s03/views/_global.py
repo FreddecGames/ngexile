@@ -604,7 +604,9 @@ class GlobalView(ExileMixin, View):
                 self.AllianceId = None
 
         # log activity
-        if not self.IsImpersonating(): oConnExecute("SELECT sp_log_activity(" + str(self.UserId) + "," + dosql(self.request.META.get("REMOTE_ADDR")) + ", 0)")
+        if not self.IsImpersonating():
+            oConnExecute("SELECT sp_log_activity(" + str(self.UserId) + "," + dosql(self.request.META.get("REMOTE_ADDR")) + ", 0)")
+            oConnDoQuery("UPDATE users SET lastlogin=now() WHERE id=" + str(self.UserId))
 
     # set the new current planet, if the planet doesn't belong to the player then go back to the session planet
     def SetCurrentPlanet(self, planetid):

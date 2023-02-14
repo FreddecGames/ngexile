@@ -3,6 +3,22 @@
 {% load bbcode_tags %}
 {% block content %}
 <div class="page-content">
+    <ul class="nav nav-tabs mt-0 mb-3">
+        <li class="nav-item">
+            <a href="/s03/mails/" class="nav-link">Reçus</a>
+        </li>
+        <li class="nav-item">
+            <a href="/s03/mails/?a=sent" class="nav-link">Envoyés</a>
+        </li>
+        <li class="nav-item active">
+            <a href="/s03/mails/?a=new" class="nav-link">Composer</a>
+        </li>
+        <li class="nav-item">
+            <a href="/s03/mails/?a=ignorelist" class="nav-link">Nations ignorées</a>
+        </li>
+    </ul>
+</div>
+<div class="page-content scroll-content" style="height:calc(100% - 52px);">
     <script>
         function setaddressee(obj, input) {
         
@@ -59,9 +75,6 @@
     <form method="post" name="newmail" action="?" onsubmit="return validateAmount();">
         {% csrf_token %}
         <div class="card">
-            <div class="card-header">
-                <span class="fs-6">Nouveau message</span>
-            </div>
             <div class="card-body">
                 <div class="row g-2 flex-column">
                     <div class="col-12">

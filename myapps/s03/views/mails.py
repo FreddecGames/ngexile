@@ -151,8 +151,6 @@ class View(GlobalView):
     #
     def display_mails(self):
 
-        self.selected_menu = "mails.inbox"
-
         content = GetTemplate(self.request, "s03/mail-list")
 
         displayed = 30 # number of messages displayed per page
@@ -220,7 +218,7 @@ class View(GlobalView):
 
         i = 0
         list = []
-        content.AssignValue("mails", list)
+        content.AssignValue("list", list)
         for oRs in oRss:
             item = {}
             list.append(item)
@@ -284,8 +282,6 @@ class View(GlobalView):
     #
     def display_mails_sent(self):
 
-        self.selected_menu = "mails.sent"
-
         content = GetTemplate(self.request, "s03/mail-sent")
 
         displayed = 30 # number of nations displayed per page
@@ -348,7 +344,7 @@ class View(GlobalView):
 
         i = 0
         list = []
-        content.AssignValue("mails", list)
+        content.AssignValue("list", list)
         for oRs in oRss:
             item = {}
             list.append(item)
@@ -399,7 +395,6 @@ class View(GlobalView):
         return self.Display(content)
 
     def display_ignore_list(self):
-        self.selected_menu = "mails.ignorelist"
 
         content = GetTemplate(self.request, "s03/mail-ignorelist")
 
@@ -447,8 +442,6 @@ class View(GlobalView):
 
     # fill combobox with previously sent to
     def display_compose_form(self, mailto, subject, body, credits):
-
-        self.selected_menu = "mails.compose"
 
         content = GetTemplate(self.request, "s03/mail-compose")
 

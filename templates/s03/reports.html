@@ -78,6 +78,8 @@
             </li>
         {% endif %}
     </ul>
+</div>
+<div class="page-content scroll-content" style="height:calc(100% - 52px);">
     <div class="card">
         <div class="list-group list-group-flush">
             {% for message in messages %}
@@ -389,8 +391,8 @@
                                     que rien n'ait été volé.
                                 {% endif %}
                                 </div>
-                                <div><span class="text-normal">Nous devrions augmenter nos effectifs de <a href="/s03/training/?planet={{ message.planetid }}" data-bs-toggle="tooltip" data-bs-title="Voir entraînements">soldats</a> afin de prévenir ce genre d'agissement dans le futur.
-                                <div><span class="text-normal">Nous perdons 3 points de contrôle sur cette planète.
+                                <div><span class="text-normal">Nous devrions augmenter nos effectifs de <a href="/s03/training/?planet={{ message.planetid }}" data-bs-toggle="tooltip" data-bs-title="Voir entraînements">soldats</a> afin de prévenir ce genre d'agissement dans le futur.</div>
+                                <div><span class="text-normal">Nous perdons 3 points de contrôle sur cette planète.</div>
                             {% elif message.type == 721 %}
                                 <div><span class="text-normal">Des rassemblements se sont formés sur <a href="/s03/training/?planet={{ message.planetid }}" data-bs-toggle="tooltip" data-bs-title="Voir entraînements">{{ message.planetname }}<small class="ms-1">{{ message.g }}.{{ message.s }}.{{ message.p }}</small></a> pour manifester contre le manque de sécurité et ont dégénéré en émeutes générales. Les gens sont devenus incontrôlables et s'en sont pris aux bâtiments administratifs.
                                 {% if message.scientists > 0 or message.soldiers > 0 or message.workers > 0 %}

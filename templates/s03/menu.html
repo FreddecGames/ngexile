@@ -95,14 +95,28 @@
             <div>Ce compte sera effacé le {{ delete_datetime|date:"D d M Y" }} à {{ delete_datetime|time }}</div>
         </div>
     {% endif %}
+    <div class="pt-3 pb-2">
+        <div class="row gx-3 align-items-center justify-content-around">
+            <div class="col-auto">
+                <a href="/s03/mails/" class="link-normal p-1 position-relative {% if selectedmenu == 'mails' %}text-warning{% endif %}" data-bs-toggle="tooltip" data-bs-title="Messagerie">
+                    <i class="fs-5 fas fa-envelope" aria-hidden="true"></i>
+                    <span id="mailscount" class="position-absolute top-0 start-100 translate-middle badge text-bg-success"></span>
+                </a>
+            </div>
+            <div class="col-auto">
+                <a href="/s03/reports/" class="link-normal p-1 position-relative {% if selectedmenu == 'reports' %}text-warning{% endif %}" data-bs-toggle="tooltip" data-bs-title="Rapports">
+                    <i class="fs-5 fas fa-bell" aria-hidden="true"></i>
+                    <span id="reportscount" class="position-absolute top-0 start-100 translate-middle badge text-bg-success"></span>
+                </a>
+            </div>
+            <div class="col-auto position-relative">
+                <a href="/s03/chat/" class="link-normal p-1 position-relative {% if selectedmenu == 'chat' %}text-warning{% endif %}" data-bs-toggle="tooltip" data-bs-title="Salons">
+                    <i class="fs-5 fas fa-comments" aria-hidden="true"></i>
+                </a>
+            </div>
+        </div>
+    </div>
     <script>
-            putMenu("/s03/mails/", "mails", "Messagerie <span id='mailscount' class='ms-2 badge text-bg-success'></span>", 2);
-                putMenu("/s03/mails/", "mails_inbox", "Reçu", 3);
-                putMenu("/s03/mails/?a=sent", "mails_sent", "Envoyé", 3);
-                putMenu("/s03/mails/?a=new", "mails_compose", "Composer", 3);
-                putMenu("/s03/mails/?a=ignorelist", "mails_ignorelist", "Nations ignorées", 3);
-            putMenu("/s03/reports/", "reports", "Rapports <span id='reportscount' class='ms-2 badge text-bg-success'></span>", 2);
-            putMenu("/s03/chat/", "chat", "Salon", 2);
         putMenu("/s03/overview/", "empire", "Empire", 1);
             putMenu("/s03/overview/", "overview", "Vue d'ensemble", 2);
             putMenu("/s03/upkeep/", "upkeep", "Coût d'entretien", 2);
@@ -138,7 +152,6 @@
             putMenu("/s03/nation/", "nation", "Infos nations", 2);
             putMenu("/s03/options/", "options", "Options", 2);
             putMenu("/s03/notes/", "notes", "Notes", 2);
-            putMenu("/s03/help/", "help", "Aide", 2);
             putMenu("/accounts/logout/", "logout", "Déconnexion", 2);
 
         {% if new_mail %}setMailsCount({{ new_mail }});{% endif %}

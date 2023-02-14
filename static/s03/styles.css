@@ -166,6 +166,9 @@ b.r4 { margin: 0 1px; background: #3c3c3c; border-left: #222 1px solid; border-r
 a { text-decoration: none; }
 a:hover, a:focus { text-decoration: none; }
 
+.link-normal { color: #bcbcc0; }
+.link-normal:hover, .link-normal:focus { color: #ffa500; }
+
 .text-self { color: #7777ff!important; }
 .text-danger { color: #ff4444!important; }
 .text-normal { color: #bcbcc0!important; }
