@@ -26,16 +26,27 @@
                 rOrig -= getval("load_" + resources[i]);
             }
             
-            if (rOrig > parseInt(document.getElementById("capacityOrig2").innerHTML.replace(' ', '')) || rOrig < 0)
+            let disabled = false
+            if (rOrig > parseInt(document.getElementById("capacityOrig2").innerHTML.replace(' ', '')) || rOrig < 0) {
+            
                 rOrig = '<span class="text-danger">' + formatnumber(rOrig) + '</span>';
+                disabled = true
+            }
             else rOrig = formatnumber(rOrig)
             
-            if (rNew > parseInt(document.getElementById("capacityNew2").innerHTML.replace(' ', '')) || rNew < 0)
+            if (rNew > parseInt(document.getElementById("capacityNew2").innerHTML.replace(' ', '')) || rNew < 0) {
+            
                 rNew = '<span class="text-danger">' + formatnumber(rNew) + '</span>';
+                disabled = true
+            }
             else rNew = formatnumber(rNew)
 
             document.getElementById("loadOrig").innerHTML = rOrig;
             document.getElementById("loadNew").innerHTML = rNew;
+            
+            if (disabled) document.getElementById("btnSubmit").disabled = true;
+            else document.getElementById("btnSubmit").disabled = false;
+            
             window.setTimeout("updateresources()", 200);
         }
 
@@ -294,7 +305,7 @@
                     <input type="text" class="form-control "name="newname" value="" maxlength="16">
                 </div>
                 <div class="col-auto">
-                    <input type="submit" class="btn btn-primary" value="Diviser">
+                    <input id="btnSubmit" type="submit" class="btn btn-primary" value="Diviser">
                 </div>
             </div>
             {% if error3 %}

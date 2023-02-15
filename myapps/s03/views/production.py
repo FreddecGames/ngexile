@@ -435,6 +435,6 @@ class View(GlobalView):
         self.content.Parse("cat3")
         self.content.Parse("nav")
 
-        url_extra_params = "cat=" + str(self.cat)
+        self.url_extra_params = "cat=" + str(self.cat)
 
         return self.Display(self.content)

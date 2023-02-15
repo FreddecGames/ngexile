@@ -40,22 +40,6 @@ class GlobalView(ExileMixin, View):
         response = self.CheckCurrentPlanetValidity()
         if response: return response
         
-        '''
-        referer = self.request.META.get("HTTP_REFERER", "")
-        
-        if referer != "":
-        
-            # extract the website part from the referer url
-            posslash = referer[8:].find("/")
-            if posslash > 0:
-                websitename = referer[8:posslash-8]
-            else:
-                websitename = referer[8:]
-        
-            if not "exileng.com" in referer.lower() and not referer.lower() in request.META.get("LOCAL_ADDR", "") and not "viewtopic" in referer.lower() and not "forum" in referer.lower():
-                oConnExecute("SELECT sp_log_referer("+str(self.UserId)+","+dosql(referer) + ")")
-        '''
-        
     def hasRight(self, right):
         if self.oAllianceRights == None:
             return True
@@ -83,44 +67,9 @@ class GlobalView(ExileMixin, View):
 
     def IsImpersonating(self):
         return self.request.user.is_impersonate
-
-    '''
-    sub Impersonate(new_userid)
-        if Session(sPrivilege) >= 100 then
-            UserId = new_userid
-            Session.Contents(sUser) = new_userid
-            Session("ImpersonatingUser") = Session(sLogonUserID) <> new_userid
-    
-            InvalidatePlanetList()
-    
-            CurrentPlanet = 0
-            CurrentGalaxyId = 0
-            CurrentSectorId = 0
-    
-            Response.Redirect "/s03/overview.asp"
-            Response.End
-        end if
-    end sub
-    '''
     
     def log_notice(self, title, details, level):
-        '''
-        query = "INSERT INTO log_notices (username, title, details, url, level) VALUES(" +\
-                dosql(self.oPlayerInfo["username"]) + ", " +\
-                dosql(title[:127]) + "," +\
-                dosql(details[:127]) + "," +\
-                dosql(self.scripturl[:127]) + "," +\
-                str(level) +\
-                ")"
-        oConnDoQuery(query)
-        '''
         return
-
-    '''
-    function Min(a, b)
-        if a < b then Min = a else Min = b
-    end function
-    '''
     
     # Call this function when the name of a planet has changed or has been colonized or abandonned
     def InvalidatePlanetList(self):
@@ -240,7 +189,7 @@ class GlobalView(ExileMixin, View):
         # Fill the planet list
         #
         if self.url_extra_params != "":
-            tpl_header.AssignValue("url", "?" + url_extra_params + "&planet=")
+            tpl_header.AssignValue("url", "?" + self.url_extra_params + "&planet=")
         else:
             tpl_header.AssignValue("url", "?planet=")
 

@@ -159,8 +159,8 @@
                         <a href="/s03/map/?g={{ pla_g }}&s={{ pla_s }}" data-bs-toggle="tooltip" data-bs-title="Carte spatiale">{{ pla_g }}.{{ pla_s }}.{{ pla_p }}</a>
                     </div>
                     <div class="col-3 text-end"><span class="text-normal">Commandant</span></div>
-                    <div id="cmdref" class="col-9 d-flex">
-                        {% if commander %}<i class="fas fa-user-astronaut"></i> {{ commandername }}
+                    <div id="cmdref" class="col-9 d-flex align-items-center">
+                        {% if commander %}<i class="fas fa-user-astronaut text-normal me-1"></i> {{ commandername }}
                         {% else %}<span class="text-normal">aucun</span>
                         {% endif %}
                         <a href="#" class="ms-auto" onclick="return show('cmdref','commandersbox')">Changer</a>
