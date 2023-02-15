@@ -110,6 +110,4 @@ class View(GlobalView):
 
             content.Parse("leave")
 
-        self.FillHeaderCredits(content)
-
         return self.Display(content)

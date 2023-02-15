@@ -16,9 +16,7 @@ class GlobalView(ExileMixin, View):
     scrollY = 0 # how much will be scrolled in vertical after the page is loaded
     showHeader = False
     url_extra_params = ""
-    pageTerminated = False
     displayAlliancePlanetName = True
-    pagelogged = False
     selected_menu = ""
     
     def pre_dispatch(self, request, *args, **kwargs):
@@ -26,10 +24,8 @@ class GlobalView(ExileMixin, View):
         response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
 
-        request.session["details"] = ""
         self.UserId = request.user.id
         
-        # Check that this session is still valid
         response = self.CheckSessionValidity()
         if response: return response
         
@@ -59,14 +55,8 @@ class GlobalView(ExileMixin, View):
             else:
                 return ""
 
-    def IsPlayerAccount(self):
-        return True
-
     def IsImpersonating(self):
         return self.request.user.is_impersonate
-    
-    def log_notice(self, title, details, level):
-        return
     
     # Call this function when the name of a planet has changed or has been colonized or abandonned
     def InvalidatePlanetList(self):
@@ -246,10 +236,6 @@ class GlobalView(ExileMixin, View):
                 i = i + 1
     
         if i % 3 != 0: tpl_header.Parse("special")
-
-    def FillHeaderCredits(self, tpl_header):
-        oRs = oConnExecute("SELECT credits FROM users WHERE id="+str(self.UserId))
-        tpl_header.AssignValue("credits", oRs[0])
     
     #
     # Parse the menu
@@ -299,9 +285,6 @@ class GlobalView(ExileMixin, View):
 
         # Assign the menu
         tpl_layout.AssignValue("menu", True)
-
-    def logpage(self):
-        self.pagelogged = True
 
     #
     # Display the tpl content with the default layout template
@@ -364,34 +347,8 @@ class GlobalView(ExileMixin, View):
             
             tpl_layout.AssignValue("userid", self.UserId)
             tpl_layout.AssignValue("server", universe)
-    
-            '''
-            if not oPlayerInfo("paid") and Session(sPrivilege) < 100:
-    
-                connectNexusDB
-                set oRs = oNexusConn.Execute("SELECT sp_ad_get_code(" & UserId & ")")
-                if not oRs.EOF:
-                    if not isnull(oRs[0]):
-                        tpl_layout.AssignValue("ad_code", oRs[0]
-                        tpl_layout.Parse("ads.code"
-                    end if
-                end if
-    
-                tpl_layout.Parse("ads"
-                oConn.Execute "UPDATE users SET displays_pages=displays_pages+1 WHERE id=" & UserId
-            '''
             
             tpl_layout.Parse("menu")
-    
-            if not self.oPlayerInfo["inframe"]:
-                tpl_layout.Parse("test_frame")
-            
-            #
-            # Write the template to the client
-            #
-            self.request.session["details"] = "sending page"
-    
-        self.logpage()
 
         return render(self.request, tpl_layout.template, tpl_layout.data)
 

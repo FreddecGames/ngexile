@@ -120,8 +120,6 @@ class View(GlobalView):
                     research["complete"] = True
 
         content.AssignValue("categories", categories)
-        
-        self.FillHeaderCredits(content)
 
         return self.Display(content)
 

@@ -30,7 +30,7 @@ class View(GlobalView):
             elif cat == 2: self.SaveMotD()
             elif cat == 3: self.SaveRanks()
 
-        if not self.pageTerminated: return self.displayOptions(cat)
+        return self.displayOptions(cat)
 
     #
     # Display alliance description page

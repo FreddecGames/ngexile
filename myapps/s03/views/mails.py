@@ -41,7 +41,6 @@ class View(GlobalView):
             Id = ToInt(request.GET.get("mailid"), 0)
 
             query = "SELECT sender, subject, body FROM messages WHERE ownerid=" + str(self.UserId) + " AND id=" + str(Id) + " LIMIT 1"
-            self.request.session["details"] = query
             oRs = oConnExecute(query)
 
             if oRs:
@@ -497,7 +496,5 @@ class View(GlobalView):
             content.Parse("error")
 
         if self.bbcode: content.Parse("bbcode")
-
-        self.FillHeaderCredits(content)
 
         return self.Display(content)

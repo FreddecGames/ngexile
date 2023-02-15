@@ -60,5 +60,4 @@ class View(GlobalView):
 
         content.AssignValue("total_estimation", int(oRs[12] + oRs[13] + oRs[14] + oRs[15] + oRs[16] + oRs[17] + oRs[21]))
 
-        self.FillHeaderCredits(content)
         return self.Display(content)

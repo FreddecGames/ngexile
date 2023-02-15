@@ -41,10 +41,10 @@ def retrieveResearchCache():
     query = "SELECT id, label, description FROM db_Research"
     return oConnExecute(query)
 
-def checkPlanetListCache(Session):
+def checkPlanetListCache(request):
     
     # retrieve Research info
-    query = "SELECT id, name, galaxy, sector, planet FROM nav_planet WHERE planet_floor > 0 AND planet_space > 0 AND ownerid=" + str(Session.get("user")) + " ORDER BY id"
+    query = "SELECT id, name, galaxy, sector, planet FROM nav_planet WHERE planet_floor > 0 AND planet_space > 0 AND ownerid=" + str(request.user.id) + " ORDER BY id"
     return oConnExecuteAll(query)
 
 def getAllianceTag(allianceid):

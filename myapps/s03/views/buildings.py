@@ -364,16 +364,6 @@ class View(GlobalView):
     def StartBuilding(self, BuildingId):
         oRs = connExecuteRetry("SELECT sp_start_building(" + str(self.UserId) + "," + str(self.CurrentPlanet) + ", " + str(BuildingId) + ", false)")
         
-        if oRs and oRs[0] > 0:
-            if oRs[0] == 1:
-                self.log_notice("buildings.asp", "can't build buildingid" + str(BuildingId), 1)
-            elif oRs[0] == 2:
-                self.log_notice("buildings.asp", "not enough energy, resources, money or space/floor", 0)
-            elif oRs[0] == 3:
-                self.log_notice("buildings.asp", "building or research requirements not met", 1)
-            elif oRs[0] == 4:
-                self.log_notice("buildings.asp", "already building this type of building", 0)
-
     def CancelBuilding(self, BuildingId):
         result = oConnRow("SELECT sp_cancel_building(" + str(self.UserId) + "," + str(self.CurrentPlanet) + ", " + str(BuildingId) + ") AS result")
         print(result)

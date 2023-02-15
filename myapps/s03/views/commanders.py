@@ -166,8 +166,6 @@ class View(GlobalView):
         if available_commanders_count == 0: content.Parse("available_commanders_nocommander")
         if commanders_count == 0: content.Parse("commanders_nocommander")
 
-        self.FillHeaderCredits(content)
-
         return self.Display(content)
 
     def DisplayCommanderEdition(self, CommanderId):

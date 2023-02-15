@@ -432,7 +432,7 @@ class View(GlobalView):
                 index = 0
                 hasAPlanetSelected = False
 
-                planetListArray = checkPlanetListCache(self.request.session)
+                planetListArray = checkPlanetListCache(self.request)
                 if planetListArray:
                     planetgroup = []
                     for i in planetListArray:
@@ -530,7 +530,6 @@ class View(GlobalView):
             self.CurrentPlanet = oRs[10]
             self.showHeader = True
         else:
-            self.FillHeaderCredits(content)
             content.Parse("header_credits")
         
         #
@@ -680,8 +679,6 @@ class View(GlobalView):
         
         if res == 0:
             self.move_fleet_result = "ok"
-        elif res == -1: # fleet not found or busy
-            self.log_notice("fleet.asp", "Move: cant move fleet", 0)
         elif res == -4: # new player or holidays protection
             self.move_fleet_result = "new_player_protection"
         elif res == -5: # long travel not possible
@@ -736,8 +733,6 @@ class View(GlobalView):
 
             oConnExecute("SELECT sp_update_fleet_bonus(" + str(fleetid) + ")")
         elif self.request.POST.get("action") == "move":
-            if self.request.POST.get("loop") != "0":
-                log_notice("fleet.asp", "Move: parameter missing", 1)
 
             self.MoveFleet(fleetid)
 

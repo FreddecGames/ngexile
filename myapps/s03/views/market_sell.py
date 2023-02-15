@@ -18,8 +18,6 @@ class View(GlobalView):
     # display market for current player's planets
     def DisplayMarket(self):
 
-        self.request.session["details"] = "Display market : retrieve prices"
-
         # get market template
 
         content = GetTemplate(self.request, "s03/market-sell")
@@ -29,8 +27,6 @@ class View(GlobalView):
             planet_query = " AND v.id=" + str(planet)
             content.AssignValue("get_planet", planet)
         else: planet_query = ""
-
-        self.request.session["details"] = "list planets"
 
         # retrieve ore, hydrocarbon, sales quantities on the planet
 
@@ -101,7 +97,6 @@ class View(GlobalView):
 
             content.Parse("planetid")
         else:
-            self.FillHeaderCredits(content)
             content.AssignValue("total", total)
             content.Parse("totalprice")
 
@@ -113,11 +108,6 @@ class View(GlobalView):
     def ExecuteOrder(self):
 
         if self.request.GET.get("a") != "sell": return
-
-        self.request.session["details"] = "Execute orders"
-
-        # retrieve the prices given when we last asked for the market prices
-        #RetrievePrices()
 
         # for each planet owned, check what the player sells
         query = "SELECT id FROM nav_planet WHERE ownerid="+str(self.UserId)
@@ -132,8 +122,4 @@ class View(GlobalView):
 
             if ore > 0 or hydrocarbon > 0:
                 query = "SELECT sp_market_sell(" + str(self.UserId) + "," + str(planetid) + "," + str(ore*1000) + "," + str(hydrocarbon*1000) + ")"
-                self.request.session["details"] = query
                 oRs = oConnExecute(query)
-                self.request.session["details"] = "done:"+query
-
-        if self.request.POST.get("rel") != 1: self.log_notice("market-sell.asp", "hidden value is missing from form data", 1)
