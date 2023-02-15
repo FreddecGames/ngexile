@@ -9,7 +9,7 @@ class View(GlobalView):
         response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
 
-        self.selected_menu = "alliance.reports"
+        self.selectedMenu = "alliance.reports"
 
         cat = ToInt(request.GET.get("cat"), 0)
 
@@ -21,7 +21,7 @@ class View(GlobalView):
     # display list of messages
     def display_reports(self, cat):
 
-        content = GetTemplate(self.request, "s03/reports")
+        content = getTemplate(self.request, "s03/reports")
 
         query = "SELECT type, subtype, datetime, battleid, fleetid, fleet_name," + \
                 " planetid, planet_name, galaxy, sector, planet," + \
@@ -49,7 +49,7 @@ class View(GlobalView):
             # List the reports returned by the query
             #
             list = []
-            content.AssignValue('messages', list)
+            content.setValue('messages', list)
             for oRs in oRss:
                 reportType = oRs[0]*100+oRs[1]
                 if reportType != 133:
@@ -110,4 +110,4 @@ class View(GlobalView):
         content.Parse("tabnav_800")
         content.Parse("tabnav")
 
-        return self.Display(content)
+        return self.display(content)

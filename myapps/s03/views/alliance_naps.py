@@ -9,7 +9,7 @@ class View(GlobalView):
         response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
 
-        self.selected_menu = "alliance.naps"
+        self.selectedMenu = "alliance.naps"
 
         self.invitation_success = ""
         self.break_success = ""
@@ -109,7 +109,7 @@ class View(GlobalView):
             reversed = not reversed
         else:
             content.Parse("r" + str(col))
-        content.AssignValue("col", col)
+        content.setValue("col", col)
         
         if reversed: orderby = orderby + " DESC"
         orderby = orderby + ", tag"
@@ -126,7 +126,7 @@ class View(GlobalView):
 
         i = 0
         list = []
-        content.AssignValue("naps", list)
+        content.setValue("naps", list)
         for oRs in oRss:
             item = {}
             list.append(item)
@@ -189,7 +189,7 @@ class View(GlobalView):
 
         i = 0
         list = []
-        content.AssignValue("propositions", list)
+        content.setValue("propositions", list)
         for oRs in oRss:
             item = {}
             list.append(item)
@@ -226,7 +226,7 @@ class View(GlobalView):
 
         i = 0
         list = []
-        content.AssignValue("newnaps", list)
+        content.setValue("newnaps", list)
         for oRs in oRss:
             item = {}
             list.append(item)
@@ -249,12 +249,12 @@ class View(GlobalView):
             content.Parse(self.invitation_success)
             content.Parse("message")
 
-        content.AssignValue("tag", self.tag)
-        content.AssignValue("hours", self.hours)
+        content.setValue("tag", self.tag)
+        content.setValue("hours", self.hours)
 
     def displayPage(self, cat):
-        content = GetTemplate(self.request, "s03/alliance-naps")
-        content.AssignValue("cat", cat)
+        content = getTemplate(self.request, "s03/alliance-naps")
+        content.setValue("cat", cat)
 
         if cat == 1:
             self.displayNAPs(content)
@@ -269,16 +269,16 @@ class View(GlobalView):
             query = "SELECT int4(count(*)) FROM alliances_naps_offers" + \
                     " WHERE targetallianceid=" + str(self.AllianceId) + " AND NOT declined"
             oRs = oConnExecute(query)
-            content.AssignValue("proposition_count", oRs[0])
+            content.setValue("proposition_count", oRs[0])
 
             query = "SELECT int4(count(*)) FROM alliances_naps_offers" + \
                     " WHERE allianceid=" + str(self.AllianceId) + " AND NOT declined"
             oRs = oConnExecute(query)
-            content.AssignValue("request_count", oRs[0])
+            content.setValue("request_count", oRs[0])
 
             content.Parse("cat1")
             content.Parse("cat2")
             if self.oAllianceRights["can_create_nap"]: content.Parse("cat3")
             content.Parse("nav")
 
-        return self.Display(content)
+        return self.display(content)

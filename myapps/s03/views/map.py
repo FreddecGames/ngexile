@@ -11,7 +11,7 @@ class View(GlobalView):
         response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
         
-        self.selected_menu = "map"
+        self.selectedMenu = "map"
 
         self.showHeader = True
 
@@ -189,9 +189,9 @@ class View(GlobalView):
                 fleet["relation"] = relation
                 fleet["alliancetag"] = oRs[30] if oRs[30] else ""
 
-        content.AssignValue("movings", movings)
-        content.AssignValue("enterings", enterings)
-        content.AssignValue("leavings", leavings)
+        content.setValue("movings", movings)
+        content.setValue("enterings", enterings)
+        content.setValue("leavings", leavings)
 
         if movingfleetcount == 0: content.Parse("moving_nofleets")
         if enteringfleetcount == 0: content.Parse("entering_nofleets")
@@ -204,25 +204,25 @@ class View(GlobalView):
         content.Parse("radar")
 
     #
-    # Display the map : Galaxies, sectors or a sector
+    # display the map : Galaxies, sectors or a sector
     #
     def DisplayMap(self, galaxy, sector):
         #
         # Load the template
         #
         
-        content = GetTemplate(self.request, "s03/map")
+        content = getTemplate(self.request, "s03/map")
 
         # Assign the displayed galaxy/sector
-        content.AssignValue("galaxy", galaxy)
-        content.AssignValue("sector", sector)
+        content.setValue("galaxy", galaxy)
+        content.setValue("sector", sector)
 
         #
         # Verify which map will be displayed
         #
         if galaxy == "":
             #
-            # Display map of galaxies with 8 galaxies per row
+            # display map of galaxies with 8 galaxies per row
             #
             query = "SELECT n.id, "+ \
                     " n.colonies > 0,"+ \
@@ -250,20 +250,20 @@ class View(GlobalView):
 
                 galaxies.append(galaxy)
                 
-            content.AssignValue("galaxies", galaxies)
+            content.setValue("galaxies", galaxies)
             content.Parse("nav_universe")
             
-            return self.Display(content)
+            return self.display(content)
 
         if sector == "":
             #
-            # Display map of sectors for the given galaxy
+            # display map of sectors for the given galaxy
             #
             query = "SELECT sp_get_galaxy_planets(" + str(galaxy) + "," + str(self.UserId) + ")"
             oRs = oConnExecute(query)
 
-            content.AssignValue("map", oRs[0])
-            content.AssignValue("mapgalaxy", oRs[0])
+            content.setValue("map", oRs[0])
+            content.setValue("mapgalaxy", oRs[0])
 
             query = "SELECT alliances.tag, round(100.0 * sum(n.score) / (SELECT sum(score) FROM nav_planet WHERE galaxy=n.galaxy))" + \
                     " FROM nav_planet AS n" + \
@@ -276,41 +276,41 @@ class View(GlobalView):
 
             nb = 1
             for oRs in oRss:
-                content.AssignValue("sov_tag_" + str(nb), oRs[0])
-                content.AssignValue("sov_perc_" + str(nb), oRs[1])
+                content.setValue("sov_tag_" + str(nb), oRs[0])
+                content.setValue("sov_perc_" + str(nb), oRs[1])
 
                 nb = nb + 1
 
             query = "SELECT date_part('epoch', protected_until-now()) FROM nav_galaxies WHERE id=" + str(galaxy)
             oRs = oConnExecute(query)
-            content.AssignValue("protected_until", int(oRs[0]))
+            content.setValue("protected_until", int(oRs[0]))
 
             query = "SELECT sell_ore, sell_hydrocarbon FROM sp_get_resource_price(" + str(self.UserId) + "," + str(galaxy) + ", false)"
             oRs = oConnExecute(query)
 
-            content.AssignValue("price_ore", oRs[0])
-            content.AssignValue("price_hydrocarbon", oRs[1])
+            content.setValue("price_ore", oRs[0])
+            content.setValue("price_hydrocarbon", oRs[1])
 
             content.Parse("nav_galaxy")
             content.Parse("galaxy_link")
 
-            return self.Display(content)
+            return self.display(content)
 
         #
-        # Display the planets in the given sector
+        # display the planets in the given sector
         #
 
         #
         # Assign the arrows values
         #
-        content.AssignValue("sector0", self.GetSector(sector,-1,-1))
-        content.AssignValue("sector1", self.GetSector(sector, 0,-1))
-        content.AssignValue("sector2", self.GetSector(sector, 1,-1))
-        content.AssignValue("sector3", self.GetSector(sector, 1, 0))
-        content.AssignValue("sector4", self.GetSector(sector, 1, 1))
-        content.AssignValue("sector5", self.GetSector(sector, 0, 1))
-        content.AssignValue("sector6", self.GetSector(sector,-1, 1))
-        content.AssignValue("sector7", self.GetSector(sector,-1, 0))
+        content.setValue("sector0", self.GetSector(sector,-1,-1))
+        content.setValue("sector1", self.GetSector(sector, 0,-1))
+        content.setValue("sector2", self.GetSector(sector, 1,-1))
+        content.setValue("sector3", self.GetSector(sector, 1, 0))
+        content.setValue("sector4", self.GetSector(sector, 1, 1))
+        content.setValue("sector5", self.GetSector(sector, 0, 1))
+        content.setValue("sector6", self.GetSector(sector,-1, 1))
+        content.setValue("sector7", self.GetSector(sector,-1, 0))
 
         #
         # Retrieve/Save fleets in the sector
@@ -643,15 +643,15 @@ class View(GlobalView):
             #
             planets.append(planet)
         
-        content.AssignValue("locations", planets)
+        content.setValue("locations", planets)
         
         content.Parse("nav_sector")
         content.Parse("galaxy_link")
         
         #
-        # Display fleets movements according to player radar strength
+        # display fleets movements according to player radar strength
         #
 
         if radarstrength > 0: self.displayRadar(content, galaxy, sector, radarstrength)
 
-        return self.Display(content)
+        return self.display(content)

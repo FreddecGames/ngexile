@@ -11,7 +11,7 @@ class View(GlobalView):
         response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
         
-        self.selected_menu = "fleets.fleets"
+        self.selectedMenu = "fleets.fleets"
 
         self.action_result = ""
         self.move_fleet_result = ""
@@ -52,7 +52,7 @@ class View(GlobalView):
     # display fleet info
     def DisplayFleet(self, fleetid):
 
-        content = GetTemplate(self.request, "s03/fleet")
+        content = getTemplate(self.request, "s03/fleet")
 
         # retrieve fleet name, size, position, destination
         query = "SELECT id, name, attackonsight, engaged, size, signature, speed, remaining_time, commanderid, commandername," + \
@@ -82,7 +82,7 @@ class View(GlobalView):
             else:
                 content.Parse("not_shared")
             
-        content.AssignValue("now", oRs[46])
+        content.setValue("now", oRs[46])
 
         if oRs[45]:
 
@@ -132,7 +132,7 @@ class View(GlobalView):
 
                 waypointscount = waypointscount + 1
 
-            if waypointscount > 0: content.AssignValue("actions", actions)
+            if waypointscount > 0: content.setValue("actions", actions)
 
         #
         # list commmanders
@@ -194,7 +194,7 @@ class View(GlobalView):
         if len(optgroup_none['cmd_options']) > 0: optgroups.append(optgroup_none)
         if len(optgroup_fleet['cmd_options']) > 0: optgroups.append(optgroup_fleet)
         if len(optgroup_planet['cmd_options']) > 0: optgroups.append(optgroup_planet)
-        content.AssignValue("optgroups", optgroups)
+        content.setValue("optgroups", optgroups)
         
         if oRs[8] == None: # display "no commander" or "fire commander" in the combobox of commanders
             content.Parse("none")
@@ -202,50 +202,50 @@ class View(GlobalView):
         else:
             content.Parse("unassigncommander")
 
-            content.AssignValue("commanderid", oRs[8])
-            content.AssignValue("commandername", oRs[9])
+            content.setValue("commanderid", oRs[8])
+            content.setValue("commandername", oRs[9])
             content.Parse("commander")
 
-        content.AssignValue("fleet_leadership", oRs[55])
-        content.AssignValue("fleet_commander_efficiency", oRs[54])
-        content.AssignValue("fleet_signature", oRs[5])
-        content.AssignValue("fleet_real_signature", oRs[50])
-        content.AssignValue("fleet_upkeep", oRs[52])
-        content.AssignValue("fleet_upkeep_multiplicator", oRs[53])
-        content.AssignValue("fleet_long_distance_capacity", oRs[38])
-        content.AssignValue("fleet_required_vortex_strength", oRs[51])
-        content.AssignValue("fleet_droppods", oRs[39])
+        content.setValue("fleet_leadership", oRs[55])
+        content.setValue("fleet_commander_efficiency", oRs[54])
+        content.setValue("fleet_signature", oRs[5])
+        content.setValue("fleet_real_signature", oRs[50])
+        content.setValue("fleet_upkeep", oRs[52])
+        content.setValue("fleet_upkeep_multiplicator", oRs[53])
+        content.setValue("fleet_long_distance_capacity", oRs[38])
+        content.setValue("fleet_required_vortex_strength", oRs[51])
+        content.setValue("fleet_droppods", oRs[39])
 
         if oRs[39] <= 0: content.Parse("hide_droppods")
 
         if oRs[38] < oRs[50]: content.Parse("insufficient_long_distance_capacity")
 
         # display resources in cargo and its capacity
-        content.AssignValue("fleet_ore", oRs[27])
-        content.AssignValue("fleet_hydrocarbon", oRs[28])
-        content.AssignValue("fleet_scientists", oRs[29])
-        content.AssignValue("fleet_soldiers", oRs[30])
-        content.AssignValue("fleet_workers", oRs[31])
+        content.setValue("fleet_ore", oRs[27])
+        content.setValue("fleet_hydrocarbon", oRs[28])
+        content.setValue("fleet_scientists", oRs[29])
+        content.setValue("fleet_soldiers", oRs[30])
+        content.setValue("fleet_workers", oRs[31])
 
-        content.AssignValue("fleet_load", oRs[27] + oRs[28] + oRs[29] + oRs[30] + oRs[31])
-        content.AssignValue("fleet_capacity", oRs[26])
+        content.setValue("fleet_load", oRs[27] + oRs[28] + oRs[29] + oRs[30] + oRs[31])
+        content.setValue("fleet_capacity", oRs[26])
 
         if oRs[26] <= 0:
             content.Parse("hide_cargo")
 
-        content.AssignValue("fleetid", fleetid)
-        content.AssignValue("fleetname", oRs[1])
-        content.AssignValue("fleet_size", oRs[4])
-        content.AssignValue("fleet_speed", oRs[6])
-        content.AssignValue("recycler_output", oRs[32])
+        content.setValue("fleetid", fleetid)
+        content.setValue("fleetname", oRs[1])
+        content.setValue("fleet_size", oRs[4])
+        content.setValue("fleet_speed", oRs[6])
+        content.setValue("recycler_output", oRs[32])
 
         if oRs[32] <= 0: content.Parse("hide_recycling")
 
         # Assign remaining time
         if oRs[7]:
-            content.AssignValue("time", oRs[7])
+            content.setValue("time", oRs[7])
         else:
-            content.AssignValue("time", 0)
+            content.setValue("time", 0)
 
         #
         # display the fleet stance
@@ -328,27 +328,27 @@ class View(GlobalView):
                         fleetCount = fleetCount + 1
 
         if fleetCount == 0: content.Parse("nofleets")
-        else: content.AssignValue("fleets", fleets)
+        else: content.setValue("fleets", fleets)
 
         #
         # assign fleet current planet
         #
-        content.AssignValue("planetid", oRs[10])
-        content.AssignValue("g", oRs[12])
-        content.AssignValue("s", oRs[13])
-        content.AssignValue("p", oRs[14])
-        content.AssignValue("relation", oRs[17])
-        content.AssignValue("planetname", self.getPlanetName(oRs[17], oRs[41], oRs[16], oRs[11]))
+        content.setValue("planetid", oRs[10])
+        content.setValue("g", oRs[12])
+        content.setValue("s", oRs[13])
+        content.setValue("p", oRs[14])
+        content.setValue("relation", oRs[17])
+        content.setValue("planetname", self.getPlanetName(oRs[17], oRs[41], oRs[16], oRs[11]))
         
         if oRs[34] == -1 or oRs[34] == 1: # fleet is moving when dest_planetid is not None
 
             # Assign destination planet
-            content.AssignValue("t_planetid", oRs[18])
-            content.AssignValue("t_g", oRs[20])
-            content.AssignValue("t_s", oRs[21])
-            content.AssignValue("t_p", oRs[22])
-            content.AssignValue("t_relation", oRs[25])
-            content.AssignValue("t_planetname", self.getPlanetName(oRs[25], oRs[42], oRs[24], oRs[19]))
+            content.setValue("t_planetid", oRs[18])
+            content.setValue("t_g", oRs[20])
+            content.setValue("t_s", oRs[21])
+            content.setValue("t_p", oRs[22])
+            content.setValue("t_relation", oRs[25])
+            content.setValue("t_planetname", self.getPlanetName(oRs[25], oRs[42], oRs[24], oRs[19]))
 
             # display Cancel Move orders if fleet has covered less than 100 units of distance, or during 2 minutes
             # and if from_planet is not None
@@ -356,7 +356,7 @@ class View(GlobalView):
             if timelimit < 120: timelimit = 120
 
             if not oRs[3] and oRs[35]-oRs[7] < timelimit and oRs[10]:
-                content.AssignValue("timelimit", timelimit-(oRs[35]-oRs[7]))
+                content.setValue("timelimit", timelimit-(oRs[35]-oRs[7]))
                 content.Parse("cancel_moving")
 
             if oRs[10]: content.Parse("from")
@@ -398,13 +398,13 @@ class View(GlobalView):
                     # oRs[37] is the value returned by const_seconds_before_invasion() from DB
                     if oRs[36] < oRs[37]: t = oRs[37] - oRs[36]
                     else: t = 0 
-                    content.AssignValue("invade_time", int(t))
+                    content.setValue("invade_time", int(t))
 
                     if oRs[39] == 0:
                         content.Parse("cant_invade")
                     else:
                         if oRs[58]:
-                            content.AssignValue("prestige", oRs[59])
+                            content.setValue("prestige", oRs[59])
                             content.Parse("can_take")
 
                         content.Parse("invade")
@@ -451,7 +451,7 @@ class View(GlobalView):
                         planetgroup.append(planet)
                         index += 1
                         
-                    content.AssignValue("planetgroup", planetgroup)
+                    content.setValue("planetgroup", planetgroup)
 
                 #
                 # list planets where we have fleets not on our planets
@@ -480,7 +480,7 @@ class View(GlobalView):
                     index += 1
                     showGroup = True
 
-                if showGroup: content.AssignValue("fleetgroup", fleetgroup)
+                if showGroup: content.setValue("fleetgroup", fleetgroup)
 
                 #
                 # list merchant planets in the galaxy of the fleet
@@ -511,7 +511,7 @@ class View(GlobalView):
                     index += 1
                     showGroup = True
 
-                if showGroup: content.AssignValue("merchantplanetsgroup", merchantplanetsgroup)
+                if showGroup: content.setValue("merchantplanetsgroup", merchantplanetsgroup)
 
                 content.Parse("move_fleet")
 
@@ -542,7 +542,7 @@ class View(GlobalView):
                 "    LEFT JOIN db_ships ON (fleets_ships.shipid = db_ships.id)" + \
                 " WHERE fleetid=" + str(fleetid) + \
                 " ORDER BY db_ships.category, db_ships.label"
-        oRss = oConnRows(query)
+        oRss = dbRows(query)
 
         shipCount = 0
 
@@ -582,7 +582,7 @@ class View(GlobalView):
 
             ships.append(ship)
             
-        content.AssignValue("shiplist", ships)
+        content.setValue("shiplist", ships)
 
         content.Parse("display")
 
@@ -595,14 +595,14 @@ class View(GlobalView):
                 " WHERE ownerid=" + str(self.fleet_owner_id) + " AND id="+str(fleetid)
         oRs = oConnExecute(query)
     
-        content.AssignValue("fleet_capacity", oRs[18])
-        content.AssignValue("fleet_ore", oRs[19])
-        content.AssignValue("fleet_hydrocarbon", oRs[20])
-        content.AssignValue("fleet_scientists", oRs[21])
-        content.AssignValue("fleet_soldiers", oRs[22])
-        content.AssignValue("fleet_workers", oRs[23])
+        content.setValue("fleet_capacity", oRs[18])
+        content.setValue("fleet_ore", oRs[19])
+        content.setValue("fleet_hydrocarbon", oRs[20])
+        content.setValue("fleet_scientists", oRs[21])
+        content.setValue("fleet_soldiers", oRs[22])
+        content.setValue("fleet_workers", oRs[23])
     
-        content.AssignValue("fleet_load", oRs[19] + oRs[20] + oRs[21] + oRs[22] + oRs[23])        
+        content.setValue("fleet_load", oRs[19] + oRs[20] + oRs[21] + oRs[22] + oRs[23])        
         
         relation = oRs[17]
         if oRs[7] or oRs[3]: relation = rWar
@@ -615,15 +615,15 @@ class View(GlobalView):
                     " FROM vw_planets WHERE id="+str(oRs[10])
             oRs = oConnExecute(query)
 
-            content.AssignValue("planet_ore", oRs[0])
-            content.AssignValue("planet_hydrocarbon", oRs[1])
-            content.AssignValue("planet_scientists", oRs[2])
-            content.AssignValue("planet_soldiers", oRs[3])
-            content.AssignValue("planet_workers", oRs[4])
+            content.setValue("planet_ore", oRs[0])
+            content.setValue("planet_hydrocarbon", oRs[1])
+            content.setValue("planet_scientists", oRs[2])
+            content.setValue("planet_soldiers", oRs[3])
+            content.setValue("planet_workers", oRs[4])
 
             if not oRs[5]:
-                content.AssignValue("planet_ore", 0)
-                content.AssignValue("planet_hydrocarbon", 0)
+                content.setValue("planet_ore", 0)
+                content.setValue("planet_hydrocarbon", 0)
                 content.Parse("not_enough_workers_to_load")
 
             content.Parse("load")
@@ -633,7 +633,7 @@ class View(GlobalView):
         else:
             content.Parse("cargo")
         
-        return self.Display(content)
+        return self.display(content)
 
     def InstallBuilding(self, fleetid, shipid):
         

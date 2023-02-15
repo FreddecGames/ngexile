@@ -26,7 +26,7 @@ class View(GlobalView):
         self.max_build = 3
         self.max_ship = 3
 
-        self.selected_menu = "commanders"
+        self.selectedMenu = "commanders"
 
         CommanderId = ToInt(request.GET.get("id"), 0)
         NewName = request.GET.get("name")
@@ -60,9 +60,9 @@ class View(GlobalView):
 
     # List the commanders owned by the player
     def ListCommanders(self):
-        content = GetTemplate(self.request, "s03/commanders")
+        content = getTemplate(self.request, "s03/commanders")
 
-        content.AssignValue("planetid", self.CurrentPlanet)
+        content.setValue("planetid", self.CurrentPlanet)
 
         # generate new commanders if needed for the player
         oConnExecute("SELECT sp_commanders_check_new_commanders(" + str(self.UserId) + ")")
@@ -90,9 +90,9 @@ class View(GlobalView):
         commanders_count = 0
 
         commanders = []
-        content.AssignValue("commander_list", commanders)
+        content.setValue("commander_list", commanders)
         available_commanders = []
-        content.AssignValue("available_commanders", available_commanders)
+        content.setValue("available_commanders", available_commanders)
         for oRs in oRss:
             item = {}
             
@@ -161,18 +161,18 @@ class View(GlobalView):
                 item["points"] = oRs[3]
                 item["levelup"] = True
 
-        content.AssignValue("max_commanders", int(self.oPlayerInfo["mod_commanders"]))
+        content.setValue("max_commanders", int(self.oPlayerInfo["mod_commanders"]))
 
         if available_commanders_count == 0: content.Parse("available_commanders_nocommander")
         if commanders_count == 0: content.Parse("commanders_nocommander")
 
-        return self.Display(content)
+        return self.display(content)
 
     def DisplayCommanderEdition(self, CommanderId):
 
-        content = GetTemplate(self.request, "s03/commanders")
+        content = getTemplate(self.request, "s03/commanders")
 
-        content.AssignValue("commanderid", CommanderId)
+        content.setValue("commanderid", CommanderId)
 
         if CommanderId != 0:
 
@@ -188,44 +188,44 @@ class View(GlobalView):
                 # commander not found !
                return HttpResponseRedirect("/s03/commanders/")
 
-            content.AssignValue("name", oRs[13])
-            content.AssignValue("maxpoints", oRs[12])
+            content.setValue("name", oRs[13])
+            content.setValue("maxpoints", oRs[12])
 
-            content.AssignValue("ore", str(oRs[0]).replace(",", "."))
-            content.AssignValue("hydrocarbon", str(oRs[1]).replace(",", "."))
-            content.AssignValue("energy", str(oRs[2]).replace(",", "."))
-            content.AssignValue("workers", str(oRs[3]).replace(",", "."))
+            content.setValue("ore", str(oRs[0]).replace(",", "."))
+            content.setValue("hydrocarbon", str(oRs[1]).replace(",", "."))
+            content.setValue("energy", str(oRs[2]).replace(",", "."))
+            content.setValue("workers", str(oRs[3]).replace(",", "."))
 
-            content.AssignValue("speed", str(oRs[4]).replace(",", "."))
-            content.AssignValue("shield", str(oRs[5]).replace(",", "."))
-            content.AssignValue("handling", str(oRs[6]).replace(",", "."))
-            content.AssignValue("targeting", str(oRs[7]).replace(",", "."))
-            content.AssignValue("damages", str(oRs[8]).replace(",", "."))
-            content.AssignValue("signature", str(oRs[9]).replace(",", "."))
+            content.setValue("speed", str(oRs[4]).replace(",", "."))
+            content.setValue("shield", str(oRs[5]).replace(",", "."))
+            content.setValue("handling", str(oRs[6]).replace(",", "."))
+            content.setValue("targeting", str(oRs[7]).replace(",", "."))
+            content.setValue("damages", str(oRs[8]).replace(",", "."))
+            content.setValue("signature", str(oRs[9]).replace(",", "."))
 
-            content.AssignValue("build", str(oRs[10]).replace(",", "."))
-            content.AssignValue("ship", str(oRs[11]).replace(",", "."))
+            content.setValue("build", str(oRs[10]).replace(",", "."))
+            content.setValue("ship", str(oRs[11]).replace(",", "."))
 
-            content.AssignValue("max_ore", str(self.max_ore).replace(",", "."))
-            content.AssignValue("max_hydrocarbon", str(self.max_hydrocarbon).replace(",", "."))
-            content.AssignValue("max_energy", str(self.max_energy).replace(",", "."))
-            content.AssignValue("max_workers", str(self.max_workers).replace(",", "."))
+            content.setValue("max_ore", str(self.max_ore).replace(",", "."))
+            content.setValue("max_hydrocarbon", str(self.max_hydrocarbon).replace(",", "."))
+            content.setValue("max_energy", str(self.max_energy).replace(",", "."))
+            content.setValue("max_workers", str(self.max_workers).replace(",", "."))
 
-            content.AssignValue("max_speed", str(self.max_speed).replace(",", "."))
-            content.AssignValue("max_shield", str(self.max_shield).replace(",", "."))
-            content.AssignValue("max_handling", str(self.max_handling).replace(",", "."))
-            content.AssignValue("max_targeting", str(self.max_targeting).replace(",", "."))
-            content.AssignValue("max_damages", str(self.max_damages).replace(",", "."))
-            content.AssignValue("max_signature", str(self.max_signature).replace(",", "."))
+            content.setValue("max_speed", str(self.max_speed).replace(",", "."))
+            content.setValue("max_shield", str(self.max_shield).replace(",", "."))
+            content.setValue("max_handling", str(self.max_handling).replace(",", "."))
+            content.setValue("max_targeting", str(self.max_targeting).replace(",", "."))
+            content.setValue("max_damages", str(self.max_damages).replace(",", "."))
+            content.setValue("max_signature", str(self.max_signature).replace(",", "."))
 
-            content.AssignValue("max_build", str(self.max_build).replace(",", "."))
-            content.AssignValue("max_ship", str(self.max_ship).replace(",", "."))
+            content.setValue("max_build", str(self.max_build).replace(",", "."))
+            content.setValue("max_ship", str(self.max_ship).replace(",", "."))
 
-            content.AssignValue("max_recycling", str(self.max_recycling).replace(",", "."))
+            content.setValue("max_recycling", str(self.max_recycling).replace(",", "."))
 
         content.Parse("editcommander")
 
-        return self.Display(content)
+        return self.display(content)
 
     def Max(self, a,b):
         if a<b:

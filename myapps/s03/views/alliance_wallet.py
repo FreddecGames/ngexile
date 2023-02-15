@@ -9,7 +9,7 @@ class View(GlobalView):
         response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
 
-        self.selected_menu = "alliance.wallet"
+        self.selectedMenu = "alliance.wallet"
 
         self.e_no_error = 0
         self.e_not_enough_money = 1
@@ -87,20 +87,20 @@ class View(GlobalView):
         return oRs and oRs[0]
 
     #
-    # Display the wallet page
+    # display the wallet page
     #
     def DisplayPage(self, tpl, cat):
 
-        tpl.AssignValue("walletpage", cat)
+        tpl.setValue("walletpage", cat)
 
         oRs = oConnExecute("SELECT credits, tax FROM alliances WHERE id=" + str(self.AllianceId))
-        tpl.AssignValue("credits", oRs[0])
-        tpl.AssignValue("tax", oRs[1]/10)
+        tpl.setValue("credits", oRs[0])
+        tpl.setValue("tax", oRs[1]/10)
 
         if self.oPlayerInfo["planets"] < 2: tpl.Parse("notax")
 
         oRs = oConnExecute("SELECT COALESCE(sum(credits), 0) FROM alliances_wallet_journal WHERE allianceid=" + str(self.AllianceId) + " AND datetime >= now()-INTERVAL '24 hours'")
-        tpl.AssignValue("last24h", oRs[0])
+        tpl.setValue("last24h", oRs[0])
 
         if self.money_error == self.e_not_enough_money:
             tpl.Parse("not_enough_money")
@@ -114,15 +114,15 @@ class View(GlobalView):
         tpl.Parse("cat3")
         if self.oAllianceRights["can_change_tax_rate"]: tpl.Parse("cat4")
 
-        return self.Display(tpl)
+        return self.display(tpl)
 
     #
-    # Display a journal of the last money operations
+    # display a journal of the last money operations
     # This is viewable by everybody
     #
     def DisplayJournal(self, cat):
-        content = GetTemplate(self.request, "s03/alliance-wallet-journal")
-        content.AssignValue("walletpage", cat)
+        content = getTemplate(self.request, "s03/alliance-wallet-journal")
+        content.setValue("walletpage", cat)
 
         col = ToInt(self.request.GET.get("col"), 0)
         if col < 1 or col > 4: col = 1
@@ -205,7 +205,7 @@ class View(GlobalView):
 
         i = 1
         list = []
-        content.AssignValue("entries", list)
+        content.setValue("entries", list)
         for oRs in oRss:
             item = {}
             list.append(item)
@@ -248,18 +248,18 @@ class View(GlobalView):
         return self.DisplayPage(content, cat)
 
     #
-    # Display the self.requests page
+    # display the self.requests page
     # Allow a player to self.request money from his alliance
     # Treasurer and Leader can see the list of self.request and accept/deny them
     #
     def DisplayRequests(self, cat):
-        content = GetTemplate(self.request, "s03/alliance-wallet-requests")
-        content.AssignValue("walletpage", cat)
+        content = getTemplate(self.request, "s03/alliance-wallet-requests")
+        content.setValue("walletpage", cat)
 
         oRs = oConnExecute("SELECT credits FROM users WHERE id=" + str(self.UserId))
         credits = oRs[0]
 
-        content.AssignValue("player_credits", credits)
+        content.setValue("player_credits", credits)
 
         query = "SELECT credits, description, result" + \
                 " FROM alliances_wallet_requests" + \
@@ -270,8 +270,8 @@ class View(GlobalView):
         if oRs == None:
             content.Parse("request_none")
         else:
-            content.AssignValue("req_credits", oRs[0])
-            content.AssignValue("req_description", oRs[1])
+            content.setValue("req_credits", oRs[0])
+            content.setValue("req_description", oRs[1])
             if (oRs[2]) and not oRs[2]: content.Parse("request_denied")
             else: content.Parse("request_submitted")
 
@@ -290,7 +290,7 @@ class View(GlobalView):
             
             i = 0
             list = []
-            content.AssignValue("entries", list)
+            content.setValue("entries", list)
             for oRs in oRss:
                 item = {}
                 list.append(item)
@@ -311,11 +311,11 @@ class View(GlobalView):
     #
     #
     def DisplayGifts(self, cat):
-        content = GetTemplate(self.request, "s03/alliance-wallet-give")
-        content.AssignValue("walletpage", cat)
+        content = getTemplate(self.request, "s03/alliance-wallet-give")
+        content.setValue("walletpage", cat)
 
         oRs = oConnExecute("SELECT credits FROM users WHERE id=" + str(self.UserId))
-        content.AssignValue("player_credits", oRs[0])
+        content.setValue("player_credits", oRs[0])
 
         if self.can_give_money():
             content.Parse("can_give")
@@ -338,7 +338,7 @@ class View(GlobalView):
             if oRss == None: content.Parse("noentries")
 
             list = []
-            content.AssignValue("entries", list)
+            content.setValue("entries", list)
             for oRs in oRss:
                 item = {}
                 list.append(item)
@@ -351,19 +351,19 @@ class View(GlobalView):
         return self.DisplayPage(content, cat)
 
     #
-    # Display the tax rates page, only viewable by treasurer and leader
+    # display the tax rates page, only viewable by treasurer and leader
     #
     def DisplayTaxRates(self, cat):
 
-        content = GetTemplate(self.request, "s03/alliance-wallet-taxrates")
-        content.AssignValue("walletpage", cat)
+        content = getTemplate(self.request, "s03/alliance-wallet-taxrates")
+        content.setValue("walletpage", cat)
 
         oRs = oConnExecute("SELECT tax FROM alliances WHERE id=" + str(self.AllianceId))
         tax = oRs[0]
 
         # List available taxes
         list = []
-        content.AssignValue("taxes", list)
+        content.setValue("taxes", list)
         for i in range(0, 20):
             item = {}
             list.append(item)
@@ -378,11 +378,11 @@ class View(GlobalView):
         return log(n) / log(100000)
 
     #
-    # Display credits income/outcome historic
+    # display credits income/outcome historic
     #
     def DisplayHistoric(self, cat):
-        content = GetTemplate(self.request, "s03/alliance-wallet-historic")
-        content.AssignValue("walletpage", cat)
+        content = getTemplate(self.request, "s03/alliance-wallet-historic")
+        content.setValue("walletpage", cat)
 
         query = "SELECT date_trunc('day', datetime), int4(sum(GREATEST(0, credits))), int4(-sum(LEAST(0, credits)))" + \
                 " FROM alliances_wallet_journal" + \
@@ -397,7 +397,7 @@ class View(GlobalView):
             if oRs[2] > maxValue: maxValue = oRs[2]
 
         list = []
-        content.AssignValue("entries", list)
+        content.setValue("entries", list)
         for oRs in oRss:
             item = {}
             list.append(item)

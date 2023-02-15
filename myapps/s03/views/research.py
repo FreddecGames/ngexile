@@ -9,7 +9,7 @@ class View(GlobalView):
         response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
         
-        self.selected_menu = "research"
+        self.selectedMenu = "research"
 
         oConnExecute("SELECT sp_update_researches(" + str(self.UserId) + ")")
 
@@ -47,9 +47,9 @@ class View(GlobalView):
                 " WHERE level > 0 OR (researchable AND planet_elements_requirements_met)"
         oRss = oConnExecute(query)
         
-        content = GetTemplate(self.request, "s03/research")
+        content = getTemplate(self.request, "s03/research")
 
-        content.AssignValue("userid", self.UserId)
+        content.setValue("userid", self.UserId)
 
         # number of items in category
         itemCount = 0
@@ -119,9 +119,9 @@ class View(GlobalView):
                     research["noresearchtime"] = True
                     research["complete"] = True
 
-        content.AssignValue("categories", categories)
+        content.setValue("categories", categories)
 
-        return self.Display(content)
+        return self.display(content)
 
     def StartResearch(self, ResearchId):
         oConnExecute("SELECT * FROM sp_start_research(" + str(self.UserId) + ", " + str(ResearchId) + ", false)")

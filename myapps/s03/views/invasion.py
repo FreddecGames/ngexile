@@ -9,7 +9,7 @@ class View(GlobalView):
         response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
 
-        self.selected_menu = "invasion"
+        self.selectedMenu = "invasion"
 
         invasionid = ToInt(request.GET.get("id"), 0)
 
@@ -22,7 +22,7 @@ class View(GlobalView):
 
     def DisplayReport(self, invasionid, readerid):
 
-        content = GetTemplate(self.request, "s03/invasion")
+        content = getTemplate(self.request, "s03/invasion")
 
         query = "SELECT i.id, i.time, i.planet_id, i.planet_name, i.attacker_name, i.defender_name, " + \
                 "i.attacker_succeeded, i.soldiers_total, i.soldiers_lost, i.def_soldiers_total, " + \
@@ -51,72 +51,72 @@ class View(GlobalView):
             else:
                 return HttpResponseRedirect("/s03/overview/")
 
-        content.AssignValue("planetid", oRs[2])
-        content.AssignValue("planetname", oRs[3])
-        content.AssignValue("g", oRs[15])
-        content.AssignValue("s", oRs[16])
-        content.AssignValue("p", oRs[17])
-        content.AssignValue("planet_owner", oRs[5])
-        content.AssignValue("fleet_owner", oRs[4])
-        content.AssignValue("date", oRs[1])
-        content.AssignValue("soldiers_total", oRs[7])
-        content.AssignValue("soldiers_lost", oRs[8])
-        content.AssignValue("soldiers_alive", oRs[7] - oRs[8])
-        content.AssignValue("def_soldiers_total", oRs[9])
-        content.AssignValue("def_soldiers_lost", oRs[10])
-        content.AssignValue("def_soldiers_alive", oRs[9] - oRs[10])
+        content.setValue("planetid", oRs[2])
+        content.setValue("planetname", oRs[3])
+        content.setValue("g", oRs[15])
+        content.setValue("s", oRs[16])
+        content.setValue("p", oRs[17])
+        content.setValue("planet_owner", oRs[5])
+        content.setValue("fleet_owner", oRs[4])
+        content.setValue("date", oRs[1])
+        content.setValue("soldiers_total", oRs[7])
+        content.setValue("soldiers_lost", oRs[8])
+        content.setValue("soldiers_alive", oRs[7] - oRs[8])
+        content.setValue("def_soldiers_total", oRs[9])
+        content.setValue("def_soldiers_lost", oRs[10])
+        content.setValue("def_soldiers_alive", oRs[9] - oRs[10])
         def_total = oRs[9]
         def_losts = oRs[10]
 
         if oRs[4] == viewername: #we are the attacker
-            content.AssignValue("relation", rWar)
+            content.setValue("relation", rWar)
             # display only troops encountered by the attacker's soldiers
             if oRs[9]-oRs[10] == 0:
                 # if no workers remain, display the scientists
                 if oRs[13]-oRs[14] == 0:
                     def_total = def_total + oRs[11]
                     def_losts = def_losts + oRs[12]
-                    content.AssignValue("def_scientists_total", oRs[11])
-                    content.AssignValue("def_scientists_lost", oRs[12])
-                    content.AssignValue("def_scientists_alive", oRs[11] - oRs[12])
+                    content.setValue("def_scientists_total", oRs[11])
+                    content.setValue("def_scientists_lost", oRs[12])
+                    content.setValue("def_scientists_alive", oRs[11] - oRs[12])
                     content.Parse("scientists")
 
                 # if no soldiers remain, display the workers
                 def_total = def_total + oRs[13]
                 def_losts = def_losts + oRs[14]
-                content.AssignValue("def_workers_total", oRs[13])
-                content.AssignValue("def_workers_lost", oRs[14])
-                content.AssignValue("def_workers_alive", oRs[13] - oRs[14])
+                content.setValue("def_workers_total", oRs[13])
+                content.setValue("def_workers_lost", oRs[14])
+                content.setValue("def_workers_alive", oRs[13] - oRs[14])
                 content.Parse("workers")
 
-            content.AssignValue("planetname", oRs[5])
+            content.setValue("planetname", oRs[5])
 
-            content.AssignValue("def_alive", def_total - def_losts)
-            content.AssignValue("def_total", def_total)
-            content.AssignValue("def_losts", def_losts)
+            content.setValue("def_alive", def_total - def_losts)
+            content.setValue("def_total", def_total)
+            content.setValue("def_losts", def_losts)
 
             content.Parse("ally")
             content.Parse("attacker")
             content.Parse("enemy")
             content.Parse("defender")
         else: # ...we are the defender
-            content.AssignValue("relation", rFriend)
+            content.setValue("relation", rFriend)
             def_total = def_total + oRs[11]
             def_losts = def_losts + oRs[12]
-            content.AssignValue("def_scientists_total", oRs[11])
-            content.AssignValue("def_scientists_lost", oRs[12])
-            content.AssignValue("def_scientists_alive", oRs[11] - oRs[12])
+            content.setValue("def_scientists_total", oRs[11])
+            content.setValue("def_scientists_lost", oRs[12])
+            content.setValue("def_scientists_alive", oRs[11] - oRs[12])
             content.Parse("scientists")
             def_total = def_total + oRs[13]
             def_losts = def_losts + oRs[14]
-            content.AssignValue("def_workers_total", oRs[13])
-            content.AssignValue("def_workers_lost", oRs[14])
-            content.AssignValue("def_workers_alive", oRs[13] - oRs[14])
+            content.setValue("def_workers_total", oRs[13])
+            content.setValue("def_workers_lost", oRs[14])
+            content.setValue("def_workers_alive", oRs[13] - oRs[14])
             content.Parse("workers")
 
-            content.AssignValue("def_alive", def_total - def_losts)
-            content.AssignValue("def_total", def_total)
-            content.AssignValue("def_losts", def_losts)
+            content.setValue("def_alive", def_total - def_losts)
+            content.setValue("def_total", def_total)
+            content.setValue("def_losts", def_losts)
 
             content.Parse("ally")
             content.Parse("defender")
@@ -125,7 +125,7 @@ class View(GlobalView):
 
         if self.fleetid != 0:
             # if a fleetid is specified, parse a link to redirect the user to the fleet
-            content.AssignValue("fleetid", self.fleetid)
+            content.setValue("fleetid", self.fleetid)
             content.Parse("justdone")
 
         if oRs[6]:
@@ -136,4 +136,4 @@ class View(GlobalView):
         content.Parse("report")
         content.Parse("invasion_report")
 
-        return self.Display(content)
+        return self.display(content)

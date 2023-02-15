@@ -84,8 +84,8 @@ class View(ExileMixin, View):
             return HttpResponseRedirect("/")
 
         # display Game Over page
-        content = GetTemplate(self.request, "s03/game-over")
-        content.AssignValue("login", username)
+        content = getTemplate(self.request, "s03/game-over")
+        content.setValue("login", username)
 
         if changeNameError != "": action = "continue"
 
@@ -100,7 +100,7 @@ class View(ExileMixin, View):
                 item["id"] = oRs[0]
                 item["recommendation"] = oRs[1]
 
-            content.AssignValue("galaxies", list)
+            content.setValue("galaxies", list)
 
             if changeNameError != "":
                 content.Parse(changeNameError)
@@ -120,8 +120,8 @@ class View(ExileMixin, View):
             if reset_error == 4:
                 content.Parse("no_free_planet")
             else:
-                content.AssignValue("userid", self.UserId)
-                content.AssignValue("reset_error", reset_error)
+                content.setValue("userid", self.UserId)
+                content.setValue("reset_error", reset_error)
                 content.Parse("reset_error")
 
         return render(self.request, content.template, content.data)

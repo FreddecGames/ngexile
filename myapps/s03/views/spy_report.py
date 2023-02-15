@@ -9,7 +9,7 @@ class View(GlobalView):
         response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
 
-        self.selected_menu = "intelligence"
+        self.selectedMenu = "intelligence"
 
         self.id = request.GET.get("id", "")
         if self.id == "":
@@ -58,7 +58,7 @@ class View(GlobalView):
     def DisplayNation(self):
 
         # load template
-        content = GetTemplate(self.request, "s03/spy-report")
+        content = getTemplate(self.request, "s03/spy-report")
 
         #
         # list spied planets
@@ -74,7 +74,7 @@ class View(GlobalView):
         nbplanet = 0
 
         list = []
-        content.AssignValue("planets", list)
+        content.setValue("planets", list)
         for oRs in oRss:
             item = {}
             list.append(item)
@@ -137,27 +137,27 @@ class View(GlobalView):
 
         # display spied nation credits if possible
         if self.credits:
-            content.AssignValue("credits", self.credits)
+            content.setValue("credits", self.credits)
             content.Parse("credits")
 
         if nbresearch != 0:
-            content.AssignValue("nb_research", nbresearch)
+            content.setValue("nb_research", nbresearch)
             content.Parse("researches")
 
-        content.AssignValue("date", self.spydate)
-        content.AssignValue("nation", self.target)
-        content.AssignValue("nb_planet", nbplanet)
-        content.AssignValue("level", self.level)
+        content.setValue("date", self.spydate)
+        content.setValue("nation", self.target)
+        content.setValue("nb_planet", nbplanet)
+        content.setValue("level", self.level)
 
         # spotted is True if our spy has been spotted while he was doing his job
         if self.spotted: content.Parse("spotted")
 
         content.Parse("spynation")
 
-        return self.Display(content)
+        return self.display(content)
 
     def DisplayPlanet(self):
-        content = GetTemplate(self.request, "s03/spy-report")
+        content = getTemplate(self.request, "s03/spy-report")
 
         query = " SELECT spy_id,  planet_id,  planet_name,  s.owner_name,  s.floor,  s.space,  s.ground,  s.ore,  s.hydrocarbon,  s.ore_capacity, " + \
                 " s.hydrocarbon_capacity,  s.ore_production,  s.hydrocarbon_production,  s.energy_consumption,  s.energy_production,  s.workers,  s.workers_capacity,  s.scientists, " + \
@@ -176,45 +176,45 @@ class View(GlobalView):
         planet = oRs[1]
 
         # display basic info
-        content.AssignValue("name", oRs[2])
-        content.AssignValue("location", str(oRs[25]) + ":" + str(oRs[26]) + ":" + str(oRs[27]))
-        content.AssignValue("floor", oRs[4])
-        content.AssignValue("space", oRs[5])
-        content.AssignValue("ground", oRs[6])
+        content.setValue("name", oRs[2])
+        content.setValue("location", str(oRs[25]) + ":" + str(oRs[26]) + ":" + str(oRs[27]))
+        content.setValue("floor", oRs[4])
+        content.setValue("space", oRs[5])
+        content.setValue("ground", oRs[6])
 
-        content.AssignValue("pct_ore", oRs[28])
-        content.AssignValue("pct_hydrocarbon", oRs[29])
+        content.setValue("pct_ore", oRs[28])
+        content.setValue("pct_hydrocarbon", oRs[29])
 
         if oRs[3]:
-            content.AssignValue("owner", oRs[3])
+            content.setValue("owner", oRs[3])
         else:
             content.Parse("no_owner")
 
         if oRs[7]: # display common info
-            content.AssignValue("ore", oRs[7])
-            content.AssignValue("hydrocarbon", oRs[8])
-            content.AssignValue("ore_capacity", oRs[9])
-            content.AssignValue("hydrocarbon_capacity", oRs[10])
-            content.AssignValue("ore_prod", oRs[11])
-            content.AssignValue("hydrocarbon_prod", oRs[12])
-            content.AssignValue("energy_consumption", oRs[13])
-            content.AssignValue("energy_prod", oRs[14])
+            content.setValue("ore", oRs[7])
+            content.setValue("hydrocarbon", oRs[8])
+            content.setValue("ore_capacity", oRs[9])
+            content.setValue("hydrocarbon_capacity", oRs[10])
+            content.setValue("ore_prod", oRs[11])
+            content.setValue("hydrocarbon_prod", oRs[12])
+            content.setValue("energy_consumption", oRs[13])
+            content.setValue("energy_prod", oRs[14])
             content.Parse("common")
 
         if oRs[15]: # display rare info
-            content.AssignValue("workers", oRs[15])
-            content.AssignValue("workers_cap", oRs[16])
-            content.AssignValue("scientists", oRs[17])
-            content.AssignValue("scientists_cap", oRs[18])
-            content.AssignValue("soldiers", oRs[19])
-            content.AssignValue("soldiers_cap", oRs[20])
+            content.setValue("workers", oRs[15])
+            content.setValue("workers_cap", oRs[16])
+            content.setValue("scientists", oRs[17])
+            content.setValue("scientists_cap", oRs[18])
+            content.setValue("soldiers", oRs[19])
+            content.setValue("soldiers_cap", oRs[20])
             content.Parse("rare")
 
         if oRs[21]: # display uncommon info
-            content.AssignValue("radar_strength", oRs[21])
-            content.AssignValue("radar_jamming", oRs[22])
-            content.AssignValue("orbit_ore", oRs[23])
-            content.AssignValue("orbit_hydrocarbon", oRs[24])
+            content.setValue("radar_strength", oRs[21])
+            content.setValue("radar_jamming", oRs[22])
+            content.setValue("orbit_ore", oRs[23])
+            content.setValue("orbit_hydrocarbon", oRs[24])
             content.Parse("uncommon")
 
         # display pending buildings
@@ -229,7 +229,7 @@ class View(GlobalView):
 
         if oRss:
             list = []
-            content.AssignValue("buildings_pendings", list)
+            content.setValue("buildings_pendings", list)
             for oRs in oRss:
                 item = {}
                 list.append(item)
@@ -250,7 +250,7 @@ class View(GlobalView):
 
         if oRss:
             list = []
-            content.AssignValue("buildings", list)
+            content.setValue("buildings", list)
             for oRs in oRss:
                 item = {}
                 list.append(item)
@@ -258,14 +258,14 @@ class View(GlobalView):
                 item["building"] = oRs[2]
                 item["qty"] = oRs[1]
 
-        content.AssignValue("date", self.spydate)
-        content.AssignValue("nation", self.target)
+        content.setValue("date", self.spydate)
+        content.setValue("nation", self.target)
 
-        content.AssignValue("level", self.level)
+        content.setValue("level", self.level)
 
         # spotted is True if our spy has been spotted while he was doing his job
         if self.spotted: content.Parse("spotted")
 
         content.Parse("spyplanet")
 
-        return self.Display(content)
+        return self.display(content)

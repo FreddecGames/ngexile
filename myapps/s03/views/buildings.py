@@ -9,7 +9,7 @@ class View(GlobalView):
         response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
         
-        self.selected_menu = "planet"
+        self.selectedMenu = "planet"
         
         self.showHeader = True
         
@@ -189,9 +189,9 @@ class View(GlobalView):
                 " WHERE planetid=" + str(self.CurrentPlanet) + " AND ((buildable AND research_requirements_met) or quantity > 0)"
     
         oRss = oConnExecute(query)
-        content = GetTemplate(self.request, "s03/buildings")
+        content = getTemplate(self.request, "s03/buildings")
     
-        content.AssignValue("planetid", str(self.CurrentPlanet))
+        content.setValue("planetid", str(self.CurrentPlanet))
     
         cat_id = -1
         lastCategory = -1
@@ -357,15 +357,15 @@ class View(GlobalView):
         
                 category['buildings'].append(building)
     
-        content.AssignValue("categories", categories)
+        content.setValue("categories", categories)
         
-        return self.Display(content)
+        return self.display(content)
     
     def StartBuilding(self, BuildingId):
         oRs = connExecuteRetry("SELECT sp_start_building(" + str(self.UserId) + "," + str(self.CurrentPlanet) + ", " + str(BuildingId) + ", false)")
         
     def CancelBuilding(self, BuildingId):
-        result = oConnRow("SELECT sp_cancel_building(" + str(self.UserId) + "," + str(self.CurrentPlanet) + ", " + str(BuildingId) + ") AS result")
+        result = dbRow("SELECT sp_cancel_building(" + str(self.UserId) + "," + str(self.CurrentPlanet) + ", " + str(BuildingId) + ") AS result")
         print(result)
     
     def DestroyBuilding(self, BuildingId):

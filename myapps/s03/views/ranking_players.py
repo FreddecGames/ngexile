@@ -9,12 +9,12 @@ class View(GlobalView):
         response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
 
-        self.selected_menu = "ranking"
+        self.selectedMenu = "ranking"
 
         return self.DisplayRanking()
 
     def DisplayRanking(self):
-        content = GetTemplate(self.request, "s03/ranking-players")
+        content = getTemplate(self.request, "s03/ranking-players")
 
         #
         # Setup search by Alliance and Nation query string
@@ -53,7 +53,7 @@ class View(GlobalView):
         if reversed: orderby = orderby + " DESC"
         orderby = orderby + ", upper(username)"
 
-        content.AssignValue("sort_column", col)
+        content.setValue("sort_column", col)
 
         #
         # get the score of the tenth user to only show the avatars of the first 10 players
@@ -105,9 +105,9 @@ class View(GlobalView):
         if offset >= nb_pages: offset = nb_pages-1
         if offset < 0: offset = 0
 
-        content.AssignValue("page_displayed", offset+1)
-        content.AssignValue("page_first", offset*displayed+1)
-        content.AssignValue("page_last", min(size, (offset+1)*displayed))
+        content.setValue("page_displayed", offset+1)
+        content.setValue("page_first", offset*displayed+1)
+        content.setValue("page_last", min(size, (offset+1)*displayed))
 
         idx_from = offset+1 - 10
         if idx_from < 1: idx_from = 1
@@ -116,7 +116,7 @@ class View(GlobalView):
         if idx_to > nb_pages: idx_to = nb_pages
 
         list = []
-        content.AssignValue("ps", list)
+        content.setValue("ps", list)
         for i in range(1, nb_pages+1):
             if (i==1) or (i >= idx_from and i <= idx_to) or (i % 10 == 0):
                 item = {}
@@ -150,7 +150,7 @@ class View(GlobalView):
 
         i = 1
         list = []
-        content.AssignValue("players", list)
+        content.setValue("players", list)
         for oRs in oRss:
             item = {}
             list.append(item)
@@ -208,4 +208,4 @@ class View(GlobalView):
 
             i = i + 1
 
-        return self.Display(content)
+        return self.display(content)

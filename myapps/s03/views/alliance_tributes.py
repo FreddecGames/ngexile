@@ -9,7 +9,7 @@ class View(GlobalView):
         response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
 
-        self.selected_menu = "alliance.tributes"
+        self.selectedMenu = "alliance.tributes"
 
         self.invitation_success = ""
         self.cease_success = ""
@@ -72,7 +72,7 @@ class View(GlobalView):
         elif col == 2:
             orderby = "created"
             reversed = True
-        content.AssignValue("col", col)
+        content.setValue("col", col)
         
         if self.request.GET.get("r", "") != "":
             reversed = not reversed
@@ -92,7 +92,7 @@ class View(GlobalView):
 
         i = 0
         list = []
-        content.AssignValue("items", list)
+        content.setValue("items", list)
         for oRs in oRss:
             item = {}
             list.append(item)
@@ -118,7 +118,7 @@ class View(GlobalView):
         elif col == 2:
             orderby = "created"
             reversed = True
-        content.AssignValue("col", col)
+        content.setValue("col", col)
 
         if self.request.GET.get("r", "") != "":
             reversed = not reversed
@@ -138,7 +138,7 @@ class View(GlobalView):
 
         i = 0
         list = []
-        content.AssignValue("items", list)
+        content.setValue("items", list)
         for oRs in oRss:
             item = {}
             list.append(item)
@@ -170,8 +170,8 @@ class View(GlobalView):
         content.Parse("new")
 
     def displayPage(self, cat):
-        content = GetTemplate(self.request, "s03/alliance-tributes")
-        content.AssignValue("cat", cat)
+        content = getTemplate(self.request, "s03/alliance-tributes")
+        content.setValue("cat", cat)
 
         if cat  == 1:
             self.displayTributesReceived(content)
@@ -187,4 +187,4 @@ class View(GlobalView):
         if self.oAllianceRights["can_create_nap"]: content.Parse("cat3")
         content.Parse("nav")
 
-        return self.Display(content)
+        return self.display(content)

@@ -9,13 +9,13 @@ class View(GlobalView):
         response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
 
-        self.selected_menu = "planets"
+        self.selectedMenu = "planets"
 
         return self.ListPlanets()
 
     def ListPlanets(self):
 
-        content = GetTemplate(self.request, "s03/planets")
+        content = getTemplate(self.request, "s03/planets")
 
         #
         # Setup column ordering
@@ -42,7 +42,7 @@ class View(GlobalView):
             reversed = not reversed
         else:
             content.Parse("r" + str(col))
-        content.AssignValue('col', col)
+        content.setValue('col', col)
 
         if reversed: orderby = orderby + " DESC"
         orderby = orderby + ", upper(name)"
@@ -68,7 +68,7 @@ class View(GlobalView):
         oRss = oConnExecuteAll(query)
         
         list = []
-        content.AssignValue("page_planets", list)
+        content.setValue("page_planets", list)
         for oRs in oRss:
             item = {}
             list.append(item)
@@ -214,4 +214,4 @@ class View(GlobalView):
 
             if oRs[0] == self.CurrentPlanet: item["highlight"] = True
 
-        return self.Display(content)
+        return self.display(content)

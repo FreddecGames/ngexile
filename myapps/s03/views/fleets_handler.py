@@ -32,11 +32,11 @@ class View(ExileMixin, View):
 
             oRs = oConnExecute("SELECT sp_fleets_set_category(" + str(self.UserId) + "," + str(fleetid) + "," + str(oldCat) + "," + str(newCat) + ")")
             if oRs and oRs[0]:
-                content = GetTemplate(self.request, "s03/fleets-handler")
+                content = getTemplate(self.request, "s03/fleets-handler")
 
-                content.AssignValue("id", fleetid)
-                content.AssignValue("old", oldCat)
-                content.AssignValue("new", newCat)
+                content.setValue("id", fleetid)
+                content.setValue("old", oldCat)
+                content.setValue("new", newCat)
                 content.Parse("fleet_category_changed")
 
                 return render(self.request, content.template, content.data)
@@ -45,14 +45,14 @@ class View(ExileMixin, View):
         if action == "newcat":
             name = request.GET.get("name")
 
-            content = GetTemplate(self.request, "s03/fleets-handler")
+            content = getTemplate(self.request, "s03/fleets-handler")
 
             if self.isValidCategoryName(name):
                 oRs = oConnExecute("SELECT sp_fleets_categories_add(" + str(self.UserId) + "," + dosql(name) + ")")
 
                 if oRs:
-                    content.AssignValue("id", oRs[0])
-                    content.AssignValue("label", name)
+                    content.setValue("id", oRs[0])
+                    content.setValue("label", name)
                     content.Parse("category")
 
                     return render(self.request, content.template, content.data)
@@ -67,13 +67,13 @@ class View(ExileMixin, View):
             name = request.GET.get("name")
             catid = ToInt(request.GET.get("id"), 0)
 
-            content = GetTemplate(self.request, "s03/fleets-handler")
+            content = getTemplate(self.request, "s03/fleets-handler")
 
             if name == "":
                 oRs = oConnExecute("SELECT sp_fleets_categories_delete(" + str(self.UserId) + "," + str(catid) + ")")
                 if oRs:
-                    content.AssignValue("id", catid)
-                    content.AssignValue("label", name)
+                    content.setValue("id", catid)
+                    content.setValue("label", name)
                     content.Parse("category")
 
                     return render(self.request, content.template, content.data)
@@ -82,8 +82,8 @@ class View(ExileMixin, View):
                 oRs = oConnExecute("SELECT sp_fleets_categories_rename(" + str(self.UserId) + "," + str(catid) + "," + dosql(name) + ")")
 
                 if oRs:
-                    content.AssignValue("id", catid)
-                    content.AssignValue("label", name)
+                    content.setValue("id", catid)
+                    content.setValue("label", name)
                     content.Parse("category")
 
                     return render(self.request, content.template, content.data)

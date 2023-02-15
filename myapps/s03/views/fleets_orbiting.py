@@ -9,14 +9,14 @@ class View(GlobalView):
         response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
 
-        self.selected_menu = "fleets.orbiting"
+        self.selectedMenu = "fleets.orbiting"
 
         return self.listFleetsOrbiting()
 
     # list fleets not belonging to the player that are near his planets
     def listFleetsOrbiting(self):
 
-        content = GetTemplate(self.request, "s03/fleets-orbiting")
+        content = getTemplate(self.request, "s03/fleets-orbiting")
 
         query = "SELECT nav_planet.id, nav_planet.name, nav_planet.galaxy, nav_planet.sector, nav_planet.planet," + \
                 " fleets.id, fleets.name, users.username, alliances.tag, sp_relation(fleets.ownerid, nav_planet.ownerid), fleets.signature" + \
@@ -34,7 +34,7 @@ class View(GlobalView):
             lastplanetid=-1
 
             planets = []
-            content.AssignValue("planets", planets)
+            content.setValue("planets", planets)
             
             for oRs in oRss:
                 
@@ -68,4 +68,4 @@ class View(GlobalView):
                 item["fleetowner"] = oRs[7]
                 item["fleetsignature"] = oRs[10]
 
-        return self.Display(content)
+        return self.display(content)

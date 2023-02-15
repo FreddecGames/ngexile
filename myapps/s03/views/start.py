@@ -15,7 +15,7 @@ class View(ExileMixin, View):
         if response: return response
 
         if not registration["enabled"] or (registration["until"] != None and timezone.now() > registration["until"]):
-            content = GetTemplate(self.request, "s03/start-closed")
+            content = getTemplate(self.request, "s03/start-closed")
             return render(self.request, content.template, content.data)
         
         result = 0
@@ -78,12 +78,12 @@ class View(ExileMixin, View):
                 return HttpResponseRedirect("/s03/overview/")
 
         # display start page
-        content = GetTemplate(self.request, "s03/start")
+        content = getTemplate(self.request, "s03/start")
 
         rss = oConnExecuteAll("SELECT id, recommended FROM sp_get_galaxy_info(" + str(self.UserId) + ")")
 
         list = []
-        content.AssignValue("galaxies", list)
+        content.setValue("galaxies", list)
         for rs in rss:
             item = {}
             list.append(item)

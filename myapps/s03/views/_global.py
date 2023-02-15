@@ -17,7 +17,7 @@ class GlobalView(ExileMixin, View):
     showHeader = False
     url_extra_params = ""
     displayAlliancePlanetName = True
-    selected_menu = ""
+    selectedMenu = ""
     
     def pre_dispatch(self, request, *args, **kwargs):
         
@@ -88,8 +88,8 @@ class GlobalView(ExileMixin, View):
         # retrieve player credits and assign the value, don't use oPlayerInfo as the info may be outdated
         query = "SELECT credits, prestige_points FROM users WHERE id=" + str(self.UserId) + " LIMIT 1"
         oRs = oConnExecute(query)
-        tpl_header.AssignValue("money", oRs[0])
-        tpl_header.AssignValue("pp", oRs[1])
+        tpl_header.setValue("money", oRs[0])
+        tpl_header.setValue("pp", oRs[1])
     
         # assign current planet ore, hydrocarbon, workers and energy
         query = "SELECT ore, ore_production, ore_capacity," + \
@@ -102,9 +102,9 @@ class GlobalView(ExileMixin, View):
                 " FROM vw_planets WHERE id="+str(self.CurrentPlanet)
         oRs = oConnExecute(query)
     
-        tpl_header.AssignValue("ore", oRs[0])
-        tpl_header.AssignValue("ore_production", oRs[1])
-        tpl_header.AssignValue("ore_capacity", oRs[2])
+        tpl_header.setValue("ore", oRs[0])
+        tpl_header.setValue("ore_production", oRs[1])
+        tpl_header.setValue("ore_capacity", oRs[2])
     
         # compute ore level : ore / capacity
         ore_level = self.getpercent(oRs[0], oRs[2], 10)
@@ -116,9 +116,9 @@ class GlobalView(ExileMixin, View):
         else:
             tpl_header.Parse("normal_ore")
     
-        tpl_header.AssignValue("hydrocarbon", oRs[3])
-        tpl_header.AssignValue("hydrocarbon_production", oRs[4])
-        tpl_header.AssignValue("hydrocarbon_capacity", oRs[5])
+        tpl_header.setValue("hydrocarbon", oRs[3])
+        tpl_header.setValue("hydrocarbon_production", oRs[4])
+        tpl_header.setValue("hydrocarbon_capacity", oRs[5])
     
         hydrocarbon_level = self.getpercent(oRs[3], oRs[5], 10)
     
@@ -129,37 +129,37 @@ class GlobalView(ExileMixin, View):
         else:
             tpl_header.Parse("normal_hydrocarbon")
     
-        tpl_header.AssignValue("workers", oRs[6])
-        tpl_header.AssignValue("workers_capacity", oRs[8])
-        tpl_header.AssignValue("workers_idle", oRs[6] - oRs[7])
+        tpl_header.setValue("workers", oRs[6])
+        tpl_header.setValue("workers_capacity", oRs[8])
+        tpl_header.setValue("workers_idle", oRs[6] - oRs[7])
     
         if oRs[6] < oRs[15]: tpl_header.Parse("workers_low")
     
-        tpl_header.AssignValue("soldiers", oRs[20])
-        tpl_header.AssignValue("soldiers_capacity", oRs[21])
+        tpl_header.setValue("soldiers", oRs[20])
+        tpl_header.setValue("soldiers_capacity", oRs[21])
     
         if oRs[20]*250 < oRs[6]+oRs[22]: tpl_header.Parse("soldiers_low")
     
-        tpl_header.AssignValue("scientists", oRs[22])
-        tpl_header.AssignValue("scientists_capacity", oRs[23])
+        tpl_header.setValue("scientists", oRs[22])
+        tpl_header.setValue("scientists_capacity", oRs[23])
     
-        tpl_header.AssignValue("energy_consumption", oRs[9])
-        tpl_header.AssignValue("energy_totalproduction", oRs[10])
-        tpl_header.AssignValue("energy_production", oRs[10]-oRs[9])
+        tpl_header.setValue("energy_consumption", oRs[9])
+        tpl_header.setValue("energy_totalproduction", oRs[10])
+        tpl_header.setValue("energy_production", oRs[10]-oRs[9])
     
-        tpl_header.AssignValue("energy", oRs[18])
-        tpl_header.AssignValue("energy_capacity", oRs[19])
+        tpl_header.setValue("energy", oRs[18])
+        tpl_header.setValue("energy_capacity", oRs[19])
     
         if oRs[9] > oRs[10]: tpl_header.Parse("energy_low")
     
         if oRs[9] > oRs[10]: tpl_header.Parse("energy_production_minus")
         else: tpl_header.Parse("energy_production_normal")
     
-        tpl_header.AssignValue("floor_occupied", oRs[11])
-        tpl_header.AssignValue("floor", oRs[12])
+        tpl_header.setValue("floor_occupied", oRs[11])
+        tpl_header.setValue("floor", oRs[12])
     
-        tpl_header.AssignValue("space_occupied", oRs[13])
-        tpl_header.AssignValue("space", oRs[14])
+        tpl_header.setValue("space_occupied", oRs[13])
+        tpl_header.setValue("space", oRs[14])
     
         # ore/hydro production colors
         if oRs[16] >= 0 and oRs[6] >= oRs[15]:
@@ -176,9 +176,9 @@ class GlobalView(ExileMixin, View):
         # Fill the planet list
         #
         if self.url_extra_params != "":
-            tpl_header.AssignValue("url", "?" + self.url_extra_params + "&planet=")
+            tpl_header.setValue("url", "?" + self.url_extra_params + "&planet=")
         else:
-            tpl_header.AssignValue("url", "?planet=")
+            tpl_header.setValue("url", "?planet=")
 
         # cache the list of planets as they are not supposed to change unless a colonization occurs
         # in case of colonization, let the colonize script reset the session value
@@ -213,7 +213,7 @@ class GlobalView(ExileMixin, View):
     
             if id == self.CurrentPlanet: planet["selected"] = True
     
-        tpl_header.AssignValue("planets", planets)
+        tpl_header.setValue("planets", planets)
     
         query = "SELECT buildingid" +\
                 " FROM planet_buildings INNER JOIN db_buildings ON (db_buildings.id=buildingid AND db_buildings.is_planet_element)" +\
@@ -226,11 +226,11 @@ class GlobalView(ExileMixin, View):
             for item in oRs:
 
                 if i % 3 == 0:
-                    tpl_header.AssignValue("special1", getBuildingLabel(item[0]))
+                    tpl_header.setValue("special1", getBuildingLabel(item[0]))
                 elif i % 3 == 1:
-                    tpl_header.AssignValue("special2", getBuildingLabel(item[0]))
+                    tpl_header.setValue("special2", getBuildingLabel(item[0]))
                 else:
-                    tpl_header.AssignValue("special3", getBuildingLabel(item[0]))
+                    tpl_header.setValue("special3", getBuildingLabel(item[0]))
                     tpl_header.Parse("special")
         
                 i = i + 1
@@ -251,10 +251,10 @@ class GlobalView(ExileMixin, View):
         oRs = oConnExecute(query)
         
         if oRs[0] > 0:
-            tpl.AssignValue("new_mail", oRs[0])
+            tpl.setValue("new_mail", oRs[0])
 
         if oRs[1] > 0:
-            tpl.AssignValue("new_report", oRs[1])
+            tpl.setValue("new_report", oRs[1])
 
         if self.oAllianceRights:
             if self.oAllianceRights["leader"] or self.oAllianceRights["can_manage_description"] or self.oAllianceRights["can_manage_announce"]: tpl.Parse("show_management")
@@ -265,16 +265,16 @@ class GlobalView(ExileMixin, View):
             tpl.Parse("show_mercenary")
             tpl.Parse("show_alliance")
     
-        tpl.AssignValue("cur_planetid", self.CurrentPlanet)
+        tpl.setValue("cur_planetid", self.CurrentPlanet)
     
-        tpl.AssignValue("cur_g", self.CurrentGalaxyId)
-        tpl.AssignValue("cur_s", self.CurrentSectorId)
-        tpl.AssignValue("cur_p", ((self.CurrentPlanet-1) % 25) + 1)
+        tpl.setValue("cur_g", self.CurrentGalaxyId)
+        tpl.setValue("cur_s", self.CurrentSectorId)
+        tpl.setValue("cur_p", ((self.CurrentPlanet-1) % 25) + 1)
     
-        tpl.AssignValue("selectedmenu", self.selected_menu.replace(".","_"))
+        tpl.setValue("selectedmenu", self.selectedMenu.replace(".","_"))
     
-        if self.selected_menu != "":
-            blockname = self.selected_menu + "_selected"
+        if self.selectedMenu != "":
+            blockname = self.selectedMenu + "_selected"
     
             while blockname != "":
                 tpl.Parse(blockname)
@@ -284,12 +284,12 @@ class GlobalView(ExileMixin, View):
                 blockname = blockname[:i]
 
         # Assign the menu
-        tpl_layout.AssignValue("menu", True)
+        tpl_layout.setValue("menu", True)
 
     #
-    # Display the tpl content with the default layout template
+    # display the tpl content with the default layout template
     #
-    def Display(self, tpl):
+    def display(self, tpl):
         
         if self.request.GET.get("xml") == "1":
             return self.displayXML(tpl)
@@ -298,12 +298,12 @@ class GlobalView(ExileMixin, View):
     
             # Initialize the layout
             if self.oPlayerInfo["skin"]:
-                tpl_layout.AssignValue("skin", self.oPlayerInfo["skin"])
+                tpl_layout.setValue("skin", self.oPlayerInfo["skin"])
             else:
-                tpl_layout.AssignValue("skin", "s_transparent")
+                tpl_layout.setValue("skin", "s_transparent")
 
-            tpl_layout.AssignValue("profile_credits", self.oPlayerInfo["credits"])
-            tpl_layout.AssignValue("profile_prestige_points", self.oPlayerInfo["prestige_points"])
+            tpl_layout.setValue("profile_credits", self.oPlayerInfo["credits"])
+            tpl_layout.setValue("profile_prestige_points", self.oPlayerInfo["prestige_points"])
 
             #
             # Fill and parse the header template
@@ -318,35 +318,35 @@ class GlobalView(ExileMixin, View):
             #
             # Fill and parse the layout template
             #
-            if self.oPlayerInfo["timers_enabled"]: tpl_layout.AssignValue("timers_enabled", "true")
-            else: tpl_layout.AssignValue("timers_enabled", "false")
+            if self.oPlayerInfo["timers_enabled"]: tpl_layout.setValue("timers_enabled", "true")
+            else: tpl_layout.setValue("timers_enabled", "false")
     
             #Assign the context/header
             if self.showHeader == True:
                 tpl_layout.Parse("context")
 
             # Assign the scroll value if is assigned
-            tpl_layout.AssignValue("scrolly", self.scrollY)
+            tpl_layout.setValue("scrolly", self.scrollY)
             if self.scrollY != 0: tpl_layout.Parse("scroll")
             
             if self.oPlayerInfo["deletion_date"]:
-                tpl_layout.AssignValue("delete_datetime", self.oPlayerInfo["deletion_date"])
+                tpl_layout.setValue("delete_datetime", self.oPlayerInfo["deletion_date"])
                 tpl_layout.Parse("deleting")
 
             if self.oPlayerInfo["credits"] < 0:
                 bankrupt_hours = self.oPlayerInfo["credits_bankruptcy"]
     
-                tpl_layout.AssignValue("bankruptcy_hours", bankrupt_hours)
+                tpl_layout.setValue("bankruptcy_hours", bankrupt_hours)
                 tpl_layout.Parse("hours")
     
                 tpl_layout.Parse("creditswarning")
 
             if self.IsImpersonating():
-                tpl_layout.AssignValue("username", self.oPlayerInfo["username"])
+                tpl_layout.setValue("username", self.oPlayerInfo["username"])
                 tpl_layout.Parse("impersonating")
             
-            tpl_layout.AssignValue("userid", self.UserId)
-            tpl_layout.AssignValue("server", universe)
+            tpl_layout.setValue("userid", self.UserId)
+            tpl_layout.setValue("server", universe)
             
             tpl_layout.Parse("menu")
 
@@ -368,7 +368,7 @@ class GlobalView(ExileMixin, View):
                 "lcid, security_level" +\
                 " FROM users" +\
                 " WHERE id=" + str(self.UserId)
-        self.oPlayerInfo = oConnRow(query)
+        self.oPlayerInfo = dbRow(query)
         
         # check account still exists or that the player didn't connect with another account meanwhile
         if self.oPlayerInfo == None:
@@ -392,7 +392,7 @@ class GlobalView(ExileMixin, View):
                     " can_manage_description, can_manage_announce, can_see_members_info, can_use_alliance_radars, can_order_other_fleets" +\
                     " FROM alliances_ranks" +\
                     " WHERE allianceid=" + str(self.AllianceId) + " AND rankid=" + str(self.AllianceRank)
-            self.oAllianceRights = oConnRow(query)
+            self.oAllianceRights = dbRow(query)
     
             if self.oAllianceRights == None:
                 self.oAllianceRights = None

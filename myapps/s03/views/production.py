@@ -9,13 +9,13 @@ class View(GlobalView):
         response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
 
-        self.selected_menu = "planet"
+        self.selectedMenu = "planet"
 
         self.showHeader = True
 
         return self.displayPage(True)
 
-    # Display bonus given by a commander (typ=0), building (typ=1) or a research (typ=2)
+    # display bonus given by a commander (typ=0), building (typ=1) or a research (typ=2)
     def DisplayBonus(self, oRss, typ):
         for oRs in oRss:
             item = {}
@@ -69,9 +69,9 @@ class View(GlobalView):
                 " FROM vw_planets WHERE id=" + str(self.CurrentPlanet)
         oRs = oConnExecute(query)
 
-        self.content.AssignValue("workers", oRs[0])
-        self.content.AssignValue("workers_required", oRs[1])
-        self.content.AssignValue("production_percent", oRs[2])
+        self.content.setValue("workers", oRs[0])
+        self.content.setValue("workers_required", oRs[1])
+        self.content.setValue("production_percent", oRs[2])
 
         if oRs[3] <= 1:
             self.content.Parse("condition_excellent")
@@ -89,14 +89,14 @@ class View(GlobalView):
         else:
             self.content.Parse("decaying")
 
-        self.content.AssignValue("final_production", oRs[4])
+        self.content.setValue("final_production", oRs[4])
 
         if RecomputeIfNeeded and oRs[4] > oRs[2]:
             oConnExecute("SELECT sp_update_planet(" + str(self.CurrentPlanet) + ")")
             return self.displayPage(False)
 
-        self.content.AssignValue("a_ore", oRs[5])
-        self.content.AssignValue("a_hydrocarbon", oRs[6])
+        self.content.setValue("a_ore", oRs[5])
+        self.content.setValue("a_hydrocarbon", oRs[6])
 
         # List buildings that produce a resource : ore, hydrocarbon or energy
         query = "SELECT id, production_ore*working_quantity, production_hydrocarbon*working_quantity, energy_production*working_quantity, working_quantity"+ \
@@ -110,7 +110,7 @@ class View(GlobalView):
         buildingCount = 0
 
         list = []
-        self.content.AssignValue("buildings", list)
+        self.content.setValue("buildings", list)
         for oRs in oRss:
             item = {}
             list.append(item)
@@ -130,7 +130,7 @@ class View(GlobalView):
             buildingCount = buildingCount + 1
 
         self.bonuses = []
-        self.content.AssignValue("bonuses", self.bonuses)
+        self.content.setValue("bonuses", self.bonuses)
 
         # Retrieve commander assigned to the planet if any
         query = "SELECT commanders.id, commanders.name," + \
@@ -161,11 +161,11 @@ class View(GlobalView):
 
         self.DisplayBonus(oRs, 2)
 
-        # Display buildings def total if there are bonus and more than 1 building that produces resources
+        # display buildings def total if there are bonus and more than 1 building that produces resources
         if (self.BonusCount > 0) and (buildingCount > 1):
-                self.content.AssignValue("production_ore", int(totalOre))
-                self.content.AssignValue("production_hydrocarbon", int(totalHydrocarbon))
-                self.content.AssignValue("production_energy", int(totalEnergy))
+                self.content.setValue("production_ore", int(totalOre))
+                self.content.setValue("production_hydrocarbon", int(totalHydrocarbon))
+                self.content.setValue("production_energy", int(totalEnergy))
                 self.content.Parse("subtotal")
 
         # Retrieve energy received from antennas
@@ -185,14 +185,14 @@ class View(GlobalView):
                     oConnExecute("SELECT sp_update_planet(" + str(self.CurrentPlanet) + ")")
                     return self.displayPage(False)
 
-                self.content.AssignValue("bonus_production_ore", int(oRs[0]-totalOre))
-                self.content.AssignValue("bonus_production_hydrocarbon", int(oRs[1]-totalHydrocarbon))
-                self.content.AssignValue("bonus_production_energy", int(oRs[2]-totalEnergy))
+                self.content.setValue("bonus_production_ore", int(oRs[0]-totalOre))
+                self.content.setValue("bonus_production_hydrocarbon", int(oRs[1]-totalHydrocarbon))
+                self.content.setValue("bonus_production_energy", int(oRs[2]-totalEnergy))
                 self.content.Parse("bonus")
 
-            self.content.AssignValue("total_production_ore", int(oRs[0]))
-            self.content.AssignValue("total_production_hydrocarbon", int(oRs[1]))
-            self.content.AssignValue("total_production_energy", int(oRs[2]))
+            self.content.setValue("total_production_ore", int(oRs[0]))
+            self.content.setValue("total_production_hydrocarbon", int(oRs[1]))
+            self.content.setValue("total_production_energy", int(oRs[2]))
 
         self.content.Parse("overview")
 
@@ -223,7 +223,7 @@ class View(GlobalView):
         oRss = oConnExecuteAll(query)
 
         list = []
-        self.content.AssignValue("buildings", list)
+        self.content.setValue("buildings", list)
         for oRs in oRss:
             if oRs[1] > 0:
                 item = {}
@@ -344,9 +344,9 @@ class View(GlobalView):
         sending_enabled = 0
 
         sents = []
-        self.content.AssignValue("sents", sents)
+        self.content.setValue("sents", sents)
         receiveds = []
-        self.content.AssignValue("receiveds", receiveds)
+        self.content.setValue("receiveds", receiveds)
         for oRs in oRss:
             item = {}
             
@@ -375,21 +375,21 @@ class View(GlobalView):
                 item["p"] = oRs[5]
                 receiveds.append(item)
 
-        self.content.AssignValue("planetid", "")
-        self.content.AssignValue("name", "")
-        self.content.AssignValue("rel", "")
-        self.content.AssignValue("g", "")
-        self.content.AssignValue("s", "")
-        self.content.AssignValue("p", "")
-        self.content.AssignValue("energy", 0)
-        self.content.AssignValue("effective_energy", 0)
-        self.content.AssignValue("loss", 0)
+        self.content.setValue("planetid", "")
+        self.content.setValue("name", "")
+        self.content.setValue("rel", "")
+        self.content.setValue("g", "")
+        self.content.setValue("s", "")
+        self.content.setValue("p", "")
+        self.content.setValue("energy", 0)
+        self.content.setValue("effective_energy", 0)
+        self.content.setValue("loss", 0)
 
-        self.content.AssignValue("antennas_receive_used", receiving)
-        self.content.AssignValue("antennas_receive_total", max_receive)
+        self.content.setValue("antennas_receive_used", receiving)
+        self.content.setValue("antennas_receive_total", max_receive)
 
-        self.content.AssignValue("antennas_send_used", sending_enabled)
-        self.content.AssignValue("antennas_send_total", max_send)
+        self.content.setValue("antennas_send_used", sending_enabled)
+        self.content.setValue("antennas_send_total", max_send)
 
         if max_send == 0: self.content.Parse("send_no_antenna")
         if max_receive == 0: self.content.Parse("receive_no_antenna")
@@ -415,8 +415,8 @@ class View(GlobalView):
         self.cat = ToInt(self.request.GET.get("cat"), 1)
         if self.cat < 1 or self.cat > 3: self.cat = 1
 
-        self.content = GetTemplate(self.request, "s03/production")
-        self.content.AssignValue("cat", self.cat)
+        self.content = getTemplate(self.request, "s03/production")
+        self.content.setValue("cat", self.cat)
 
         if self.cat == 1:
             self.displayOverview(RecomputeIfNeeded)
@@ -437,4 +437,4 @@ class View(GlobalView):
 
         self.url_extra_params = "cat=" + str(self.cat)
 
-        return self.Display(self.content)
+        return self.display(self.content)

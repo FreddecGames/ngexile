@@ -229,7 +229,7 @@
                             s += '<div class="col text-truncate">'
                                 if (fleet.stance == 1) s += '<img src="{{ PATH_IMAGES }}img/interface/stance_attack.gif" class="me-1 stance" data-bs-toggle="tooltip" data-bs-title="Mode attaque" width="10px" height="10px">'
                                 else s += '<img src="{{ PATH_IMAGES }}img/interface/stance_defend.gif" class="me-1 stance" data-bs-toggle="tooltip" data-bs-title="Mode riposte" width="10px" height="10px">'
-                                s += '<a href="/s03/fleet/?id=' + fleet.id + '" id="fleet' + fleet.id + '" class="text-self" data-bs-toggle="tooltip" data-bs-title="Voir flotte">' + fleet.name + '</a>'
+                                s += '<a href="/s03/fleet/?id=' + fleet.id + '" id="fleet' + fleet.id + '" class="text-info" data-bs-toggle="tooltip" data-bs-title="Voir flotte">' + fleet.name + '</a>'
                                 s += '<small class="ms-2">' + formatnumber(fleet.signature) + '</small>'
                             s += '</div>'
                             if (fleet.commandername != '' && fleet.commandername != 'None') {

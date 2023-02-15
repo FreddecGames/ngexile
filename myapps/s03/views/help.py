@@ -9,7 +9,7 @@ class View(GlobalView):
         response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
 
-        self.selected_menu = "help"
+        self.selectedMenu = "help"
 
         cat = request.GET.get("cat", "")
 
@@ -20,7 +20,7 @@ class View(GlobalView):
 
     def display_help(self, cat):
 
-        content = GetTemplate(self.request, "s03/help")
+        content = getTemplate(self.request, "s03/help")
 
         if cat == "buildings":# display help on buildings
             query = "SELECT id, category," + \
@@ -34,7 +34,7 @@ class View(GlobalView):
             lastCategory = -1
 
             list = []
-            content.AssignValue("categories", list)
+            content.setValue("categories", list)
             for oRs in oRss:
                 
                 category = oRs[1]
@@ -94,7 +94,7 @@ class View(GlobalView):
             lastCategory = -1
 
             list = []
-            content.AssignValue("categories", list)
+            content.setValue("categories", list)
             for oRs in oRss:
 
                 category = oRs[1]
@@ -121,13 +121,13 @@ class View(GlobalView):
                     " signature, capacity, handling, speed, weapon_turrets, weapon_dmg_em + weapon_dmg_explosive + weapon_dmg_kinetic + weapon_dmg_thermal AS weapon_power, " + \
                     " weapon_tracking_speed, hull, shield, recycler_output, long_distance_capacity, droppods, cost_energy, upkeep, required_vortex_strength, leadership" + \
                     " FROM sp_list_available_ships(" + str(self.UserId) + ") WHERE new_shipid IS NULL"
-            oRss = oConnRows(query)
+            oRss = dbRows(query)
 
             category = -1
             lastCategory = -1
 
             list = []
-            content.AssignValue("categories", list)
+            content.setValue("categories", list)
             for oRs in oRss:
 
                 category = oRs["category"]
@@ -192,4 +192,4 @@ class View(GlobalView):
         content.Parse(cat)
         content.Parse("tabnav")
 
-        return self.Display(content)
+        return self.display(content)

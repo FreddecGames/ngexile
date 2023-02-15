@@ -28,7 +28,7 @@ class View(GlobalView):
             connTcg.Execute query, , 128
         end if
 
-        tpl.AssignValue "redeemable_credits", credits
+        tpl.setValue "redeemable_credits", credits
 
         if credits > 0 then
             tpl.Parse "redeem_credits"
@@ -41,9 +41,9 @@ class View(GlobalView):
         response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
         
-        self.selected_menu = "overview"
+        self.selectedMenu = "overview"
         
-        content = GetTemplate(request, "s03/overview")
+        content = getTemplate(request, "s03/overview")
 
         cookieTest = request.COOKIES.get("display_fleets", "") + request.COOKIES.get("display_research", "")
 
@@ -66,12 +66,12 @@ class View(GlobalView):
             content.Parse("defcon_" + str(oRs[3]))
             content.Parse("defcon")
 
-            content.AssignValue("motd", oRs[0])
+            content.setValue("motd", oRs[0])
             content.Parse("announce")
 
-            content.AssignValue("alliance_rank_label", self.oAllianceRights["label"])
-            content.AssignValue("alliance_tag", oRs[1])
-            content.AssignValue("alliance_name", oRs[2])
+            content.setValue("alliance_rank_label", self.oAllianceRights["label"])
+            content.setValue("alliance_tag", oRs[1])
+            content.setValue("alliance_name", oRs[2])
             content.Parse("alliance")
         else:
             content.Parse("no_alliance")
@@ -79,16 +79,16 @@ class View(GlobalView):
         #
         # display player name, credits, score, rank
         #
-        content.AssignValue("nation", self.oPlayerInfo["username"])
-        content.AssignValue("stat_score", self.oPlayerInfo["score"])
-        content.AssignValue("stat_score_delta", self.oPlayerInfo["score"]-self.oPlayerInfo["previous_score"])
+        content.setValue("nation", self.oPlayerInfo["username"])
+        content.setValue("stat_score", self.oPlayerInfo["score"])
+        content.setValue("stat_score_delta", self.oPlayerInfo["score"]-self.oPlayerInfo["previous_score"])
 
         if self.oPlayerInfo["score"] >= self.oPlayerInfo["previous_score"]:
             content.Parse("plus")
         else:
             content.Parse("minus")
 
-        content.AssignValue("stat_credits", self.oPlayerInfo["credits"])
+        content.setValue("stat_credits", self.oPlayerInfo["credits"])
 
         if request.session.get("stat_rank") or request.session.get("stat_score") != self.oPlayerInfo["score"]:
 
@@ -100,21 +100,21 @@ class View(GlobalView):
                 request.session["stat_players"] = oRs[0]
                 request.session["stat_rank"] = oRs[1]
                 
-        content.AssignValue("stat_victory_marks", self.oPlayerInfo["prestige_points"])
-        content.AssignValue("stat_rank", request.session.get("stat_rank"))
-        content.AssignValue("stat_players", request.session.get("stat_players"))
-        content.AssignValue("stat_maxcolonies", int(self.oPlayerInfo["mod_planets"]))
+        content.setValue("stat_victory_marks", self.oPlayerInfo["prestige_points"])
+        content.setValue("stat_rank", request.session.get("stat_rank"))
+        content.setValue("stat_players", request.session.get("stat_players"))
+        content.setValue("stat_maxcolonies", int(self.oPlayerInfo["mod_planets"]))
 
         query = "SELECT (SELECT score_prestige FROM users WHERE id="+str(self.UserId)+"), (SELECT int4(count(1)) FROM vw_players WHERE score_prestige >= (SELECT score_prestige FROM users WHERE id=" + str(self.UserId) + "))"
         oRs = oConnExecute(query)
 
         if oRs:
-            content.AssignValue("stat_score_battle", oRs[0])
+            content.setValue("stat_score_battle", oRs[0])
 
             if oRs[1] > request.session.get("stat_players"):
-                content.AssignValue("stat_rank_battle", request.session.get("stat_players"))
+                content.setValue("stat_rank_battle", request.session.get("stat_players"))
             else:
-                content.AssignValue("stat_rank_battle", oRs[1])
+                content.setValue("stat_rank_battle", oRs[1])
 
         #
         # display empire statistics : planets, workers, scientists, soldiers
@@ -125,17 +125,17 @@ class View(GlobalView):
         oRs = oConnExecute(query)
 
         if oRs:
-            content.AssignValue("date", oRs[6])
+            content.setValue("date", oRs[6])
 
-            content.AssignValue("stat_colonies", oRs[0])
-            content.AssignValue("stat_prod_ore", oRs[1])
-            content.AssignValue("stat_prod_hydrocarbon", oRs[2])
+            content.setValue("stat_colonies", oRs[0])
+            content.setValue("stat_prod_ore", oRs[1])
+            content.setValue("stat_prod_hydrocarbon", oRs[2])
 
             oRs2 = oConnExecute("SELECT COALESCE(int4(sum(cargo_workers)), 0), COALESCE(int4(sum(cargo_scientists)), 0), COALESCE(int4(sum(cargo_soldiers)), 0) FROM fleets WHERE ownerid=" + str(self.UserId))
 
-            content.AssignValue("stat_workers", oRs[3] + oRs2[0])
-            content.AssignValue("stat_scientists", oRs[4] + oRs2[1])
-            content.AssignValue("stat_soldiers", oRs[5] + oRs2[2])
+            content.setValue("stat_workers", oRs[3] + oRs2[0])
+            content.setValue("stat_scientists", oRs[4] + oRs2[1])
+            content.setValue("stat_soldiers", oRs[5] + oRs2[2])
 
         #
         # view current buildings constructions
@@ -177,7 +177,7 @@ class View(GlobalView):
 
                 items = items + 1
 
-        content.AssignValue("constructionyards", constructionyards)
+        content.setValue("constructionyards", constructionyards)
 
         #
         # view current ships constructions
@@ -226,7 +226,7 @@ class View(GlobalView):
                 else:
                     planet["none"] = True
 
-            content.AssignValue("shipyards", shipyards)
+            content.setValue("shipyards", shipyards)
 
         #
         # view current research
@@ -239,9 +239,9 @@ class View(GlobalView):
         i = 0
         if oRs:
             for item in oRs:
-                content.AssignValue("researchid", item[0])
-                content.AssignValue("researchlabel", getResearchLabel(item[0]))
-                content.AssignValue("researchtime", item[1])
+                content.setValue("researchid", item[0])
+                content.setValue("researchlabel", getResearchLabel(item[0]))
+                content.setValue("researchtime", item[1])
                 content.Parse("research")
                 i = i + 1
 
@@ -347,6 +347,6 @@ class View(GlobalView):
                     i = i + 1
 
         if i==0: content.Parse("nofleets")
-        content.AssignValue("fleets", fleets)
+        content.setValue("fleets", fleets)
         
-        return self.Display(content)
+        return self.display(content)

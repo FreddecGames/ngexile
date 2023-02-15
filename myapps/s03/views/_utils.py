@@ -114,12 +114,12 @@ def oConnDoQuery(query):
 
     cursor.execute(query)
 
-def oConnRow(query):
+def dbRow(query):
 
     cursor.execute(query)
     return dict_fetchone(cursor)
 
-def oConnRows(query):
+def dbRows(query):
 
     cursor.execute(query)
     return dict_fetchall(cursor)
@@ -167,20 +167,20 @@ class TemplaceContext():
         self.template = ""        
         self.data = {}
 
-    def AssignValue(self, key, value):
+    def setValue(self, key, value):
         self.data[key] = value
     
     def Parse(self, key):
         self.data[key] = True
         
-def GetTemplate(request, name):
+def getTemplate(request, name):
 
     result = TemplaceContext()
 
     result.template = name + ".html"
 
-    result.AssignValue("PATH_IMAGES", "/static/s03/")
-    result.AssignValue("PATH_TEMPLATE", "/s03/templates")
+    result.setValue("PATH_IMAGES", "/static/s03/")
+    result.setValue("PATH_TEMPLATE", "/s03/templates")
 
     return result
 

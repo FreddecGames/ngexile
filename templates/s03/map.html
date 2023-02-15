@@ -223,7 +223,7 @@
                                 else if (c == 'vortex') classname = 'text-purple'
                                 else if (c == 'friend') classname = 'text-friend'
                                 else if (c == 'ally') classname = 'text-success'
-                                else if (c == 'player') classname = 'text-self'
+                                else if (c == 'player') classname = 'text-info'
                                 
                                 s += '<div class="col-auto lh-1 d-flex align-items-center justify-content-center" style="width:20%; padding:3px;">'
                                     s += '<i class="fa-fw fas fa-circle ' + classname + '" style="font-size:3px;"></i>'
@@ -393,7 +393,7 @@
         
             switch (rel){
             
-                case 2: return "text-self"; break;
+                case 2: return "text-info"; break;
                 case 1: return "text-success"; break;
                 case 0:	return "text-friend"; break;
                 case -1: return "text-danger"; break;
@@ -412,7 +412,7 @@
             
             if (tag != '') s += '<a href="/s03/alliance/?tag=' + tag + '" title="Voir l\'alliance" class="me-1 ' + c + '">[' + tag + ']</a>';
 
-            if (rel == 2 || id != 0) s += '<a href="/s03/fleet/?id=' + id + '" class="text-self">' + name + '</a>';
+            if (rel == 2 || id != 0) s += '<a href="/s03/fleet/?id=' + id + '" class="text-info">' + name + '</a>';
             else s += '<a href="/s03/mails/?subject=À propos de la flotte ' + name + '&to=' + owner + '" title="Contacter ' + owner + '" class="' + c + '">' + name + '</a>';
 
             if (signature > 0) s += '<small class="ms-2">' + formatnumber(signature) + '</small>';
@@ -833,7 +833,7 @@
                                 html += '<a href="/s03/alliance/?tag=' + tag + '" class="me-1 ' + classname + '" data-bs-toggle="tooltip" data-bs-title="Voir alliance">[' + tag + ']</a>'
                             }
                             if (rel == 2) {
-                                html += '<a href="/s03/fleet/?id=' + fleetid + '" class="text-self" data-bs-toggle="tooltip" data-bs-title="Voir flotte">' + fleet + '</a>'
+                                html += '<a href="/s03/fleet/?id=' + fleetid + '" class="text-info" data-bs-toggle="tooltip" data-bs-title="Voir flotte">' + fleet + '</a>'
                             }
                             else {
                                 html += '<a href="/s03/mails/?to=' + owner + '" class="' + classname + '" data-bs-toggle="tooltip" data-bs-title="Contacter propriétaire">' + owner + '</a>'

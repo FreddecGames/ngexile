@@ -9,7 +9,7 @@ class View(GlobalView):
         response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
         
-        self.selected_menu = "reports"
+        self.selectedMenu = "reports"
 
         cat = ToInt(request.GET.get("cat", ""), 0)
 
@@ -18,7 +18,7 @@ class View(GlobalView):
     # display list of messages
     def display_mails(self, cat):
         
-        content = GetTemplate(self.request, "s03/reports")
+        content = getTemplate(self.request, "s03/reports")
 
         query = "SELECT type, subtype, datetime, battleid, fleetid, fleet_name," + \
                 " planetid, planet_name, galaxy, sector, planet," + \
@@ -40,7 +40,7 @@ class View(GlobalView):
         else:
             query = query + " AND type = "+ str(cat) + " ORDER BY datetime DESC LIMIT 1000"
 
-        content.AssignValue("ownerid", self.UserId)
+        content.setValue("ownerid", self.UserId)
         
         oRss = oConnExecuteAll(query)
         content.Parse("tabnav_"+str(cat)+"00_selected")
@@ -115,7 +115,7 @@ class View(GlobalView):
 
                     reports.append(report)
                     
-            content.AssignValue("messages", reports)
+            content.setValue("messages", reports)
 
             #
             # List how many new reports there are for each category
@@ -129,13 +129,13 @@ class View(GlobalView):
             
             total_newreports = 0
             for oRs in oRss:
-                content.AssignValue("tabnav_"+str(oRs[0])+"00_newreports", oRs[1])
+                content.setValue("tabnav_"+str(oRs[0])+"00_newreports", oRs[1])
                 content.Parse("tabnav_"+str(oRs[0])+"00_new")
 
                 total_newreports = total_newreports + oRs[1]
 
             if total_newreports != 0:
-                content.AssignValue("total_newreports", total_newreports)
+                content.setValue("total_newreports", total_newreports)
                 content.Parse("tabnav_000_new")
             
             if not self.IsImpersonating():
@@ -158,4 +158,4 @@ class View(GlobalView):
         content.Parse("tabnav_800")
         content.Parse("tabnav")
         
-        return self.Display(content)
+        return self.display(content)

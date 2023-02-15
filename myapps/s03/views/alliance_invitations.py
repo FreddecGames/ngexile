@@ -10,9 +10,9 @@ class View(GlobalView):
         if response: return response
 
         if self.AllianceId == None:
-            self.selected_menu = "noalliance.invitations"
+            self.selectedMenu = "noalliance.invitations"
         else:
-            self.selected_menu = "alliance.invitations"
+            self.selectedMenu = "alliance.invitations"
 
         self.sLeaveCost = "leavealliancecost"
 
@@ -43,10 +43,10 @@ class View(GlobalView):
         return self.DisplayInvitations()
 
     def DisplayInvitations(self):
-        content = GetTemplate(self.request, "s03/alliance-invitations")
+        content = getTemplate(self.request, "s03/alliance-invitations")
 
         oRs = oConnExecute("SELECT date_part('epoch', const_interval_before_join_new_alliance()) / 3600")
-        content.AssignValue("hours_before_rejoin", int(oRs[0]))
+        content.setValue("hours_before_rejoin", int(oRs[0]))
 
         query = "SELECT alliances.tag, alliances.name, alliances_invitations.created, users.username" + \
                 " FROM alliances_invitations" + \
@@ -81,7 +81,7 @@ class View(GlobalView):
             list.append(item)
 
             i = i + 1
-        content.AssignValue("invitations", list)
+        content.setValue("invitations", list)
 
         if self.invitation_status != "": content.Parse(self.invitation_status)
 
@@ -90,7 +90,7 @@ class View(GlobalView):
         # Parse "cant_join" section if the player can't create/join an alliance
         if not self.oPlayerInfo["can_join_alliance"]: content.Parse("cant_join")
 
-        # Display the "leave" section if the player is in an alliance
+        # display the "leave" section if the player is in an alliance
         if self.AllianceId and self.oPlayerInfo["can_join_alliance"]:
 
             self.request.session[self.sLeaveCost] = 0
@@ -102,7 +102,7 @@ class View(GlobalView):
             if self.request.session.get(self.sLeaveCost) < 2000: self.request.session[self.sLeaveCost] = 0
             '''
             
-            content.AssignValue("credits", self.request.session.get(self.sLeaveCost))
+            content.setValue("credits", self.request.session.get(self.sLeaveCost))
 
             if self.request.session.get(self.sLeaveCost) > 0: content.Parse("charges")
 
@@ -110,4 +110,4 @@ class View(GlobalView):
 
             content.Parse("leave")
 
-        return self.Display(content)
+        return self.display(content)

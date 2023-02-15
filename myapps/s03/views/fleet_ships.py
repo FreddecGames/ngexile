@@ -9,7 +9,7 @@ class View(GlobalView):
         response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
 
-        self.selected_menu = "fleets"
+        self.selectedMenu = "fleets"
 
         self.e_no_error = 0
         self.e_bad_destination = 1
@@ -32,7 +32,7 @@ class View(GlobalView):
     # display fleet info
     def DisplayFleet(self, fleetid):
 
-        content = GetTemplate(self.request, "s03/fleet-ships")
+        content = getTemplate(self.request, "s03/fleet-ships")
 
         # retrieve fleet name, size, position, destination
         query = "SELECT id, name, attackonsight, engaged, size, signature, speed, remaining_time, commanderid, commandername," + \
@@ -50,13 +50,13 @@ class View(GlobalView):
         if oRs[7] or oRs[3]:
             return HttpResponseRedirect("/s03/fleet/?id=" + str(fleetid))
 
-        content.AssignValue("fleetid", fleetid)
-        content.AssignValue("fleetname", oRs[1])
-        content.AssignValue("size", oRs[4])
-        content.AssignValue("speed", oRs[6])
+        content.setValue("fleetid", fleetid)
+        content.setValue("fleetname", oRs[1])
+        content.setValue("size", oRs[4])
+        content.setValue("speed", oRs[6])
 
-        content.AssignValue("fleet_capacity", oRs[18])
-        content.AssignValue("fleet_load", oRs[19] + oRs[20] + oRs[21] + oRs[22] + oRs[23])
+        content.setValue("fleet_capacity", oRs[18])
+        content.setValue("fleet_load", oRs[19] + oRs[20] + oRs[21] + oRs[22] + oRs[23])
 
         shipCount = 0
 
@@ -71,7 +71,7 @@ class View(GlobalView):
             oRss = oConnExecuteAll(query)
 
             list = []
-            content.AssignValue("shiplist", list)
+            content.setValue("shiplist", list)
             for oRs in oRss:
                 if oRs[2] > 0 or oRs[3] > 0:
                     item = {}
@@ -87,7 +87,7 @@ class View(GlobalView):
 
             content.Parse("can_manage")
 
-        return self.Display(content)
+        return self.display(content)
 
     # Transfer ships between the planet and the fleet
     def TransferShips(self, fleetid):

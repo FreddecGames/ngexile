@@ -9,7 +9,7 @@ class View(GlobalView):
         response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
 
-        self.selected_menu = "planet"
+        self.selectedMenu = "planet"
 
         self.showHeader = True
 
@@ -29,9 +29,9 @@ class View(GlobalView):
 
     def DisplayTraining(self):
 
-        content = GetTemplate(self.request, "s03/training")
+        content = getTemplate(self.request, "s03/training")
 
-        content.AssignValue("planetid", str(self.CurrentPlanet))
+        content.setValue("planetid", str(self.CurrentPlanet))
 
         query = "SELECT scientist_ore, scientist_hydrocarbon, scientist_credits," + \
                 " soldier_ore, soldier_hydrocarbon, soldier_credits" + \
@@ -39,22 +39,22 @@ class View(GlobalView):
         oRs = oConnExecute(query)
 
         if oRs:
-            content.AssignValue("scientist_ore", oRs[0])
-            content.AssignValue("scientist_hydrocarbon", oRs[1])
-            content.AssignValue("scientist_credits", oRs[2])
-            content.AssignValue("soldier_ore", oRs[3])
-            content.AssignValue("soldier_hydrocarbon", oRs[4])
-            content.AssignValue("soldier_credits", oRs[5])
+            content.setValue("scientist_ore", oRs[0])
+            content.setValue("scientist_hydrocarbon", oRs[1])
+            content.setValue("scientist_credits", oRs[2])
+            content.setValue("soldier_ore", oRs[3])
+            content.setValue("soldier_hydrocarbon", oRs[4])
+            content.setValue("soldier_credits", oRs[5])
 
         query = "SELECT scientists, scientists_capacity, soldiers, soldiers_capacity, workers FROM vw_planets WHERE id="+str(self.CurrentPlanet)
         oRs = oConnExecute(query)
 
         if oRs:
-            content.AssignValue("scientists", oRs[0])
-            content.AssignValue("scientists_capacity", oRs[1])
+            content.setValue("scientists", oRs[0])
+            content.setValue("scientists_capacity", oRs[1])
 
-            content.AssignValue("soldiers", oRs[2])
-            content.AssignValue("soldiers_capacity", oRs[3])
+            content.setValue("soldiers", oRs[2])
+            content.setValue("soldiers_capacity", oRs[3])
             if oRs[2]*250 < oRs[0]+oRs[4]: content.Parse("not_enough_soldiers")
 
             if oRs[0] < oRs[1]:
@@ -81,7 +81,7 @@ class View(GlobalView):
 
         i = 0
         list = []
-        content.AssignValue("trainings", list)
+        content.setValue("trainings", list)
         for oRs in oRss:
             item = {}
             list.append(item)
@@ -111,7 +111,7 @@ class View(GlobalView):
 
         i = 0
         list = []
-        content.AssignValue("queues", list)
+        content.setValue("queues", list)
         for oRs in oRss:
             item = {}
             list.append(item)
@@ -130,7 +130,7 @@ class View(GlobalView):
 
             i = i + 1
 
-        return self.Display(content)
+        return self.display(content)
 
     def Train(self, Scientists, Soldiers):
 

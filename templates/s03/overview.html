@@ -46,7 +46,7 @@
                                 {% if orientation2 %}Militaire{% endif %}
                                 {% if orientation3 %}Scientifique{% endif %}
                             </span>
-                            <span class="text-self me-2">{{ nation }}</span>
+                            <span class="text-info me-2">{{ nation }}</span>
                         </div>
                         <div class="col-12">
                             <span class="text-normal me-2">Grade</span>
@@ -141,7 +141,7 @@
                                      width="10"
                                      height="10">
                             {% endif %}
-                            <a href="/s03/fleet/?id={{ fleet.id }}" class="text-self" data-bs-toggle="tooltip" data-bs-title="Voir flotte">{{ fleet.name }}</a>
+                            <a href="/s03/fleet/?id={{ fleet.id }}" class="text-info" data-bs-toggle="tooltip" data-bs-title="Voir flotte">{{ fleet.name }}</a>
                         {% elif fleet.ally %}
                             <a href="/s03/mails/?to={{ fleet.name }}" class="text-success" data-bs-toggle="tooltip" data-bs-title="Contacter propriétaire">{{ fleet.name }}</a>
                         {% elif fleet.friend %}

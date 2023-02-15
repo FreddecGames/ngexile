@@ -28,8 +28,8 @@
                 </div>
                 <div class="col-auto">
                     <div class="mb-1">
-                        {% if alliance %}<a href="/s03/alliance/?tag={{ alliancetag }}" class="{% if self %}text-self{% elif ally %}text-success{% elif friend %}text-friend{% elif enemy %}text-danger{% endif %}" data-bs-toggle="tooltip" data-bs-title="Voir alliance">[{{ alliancetag }}]</a>{% endif %}
-                        <span class="{% if self %}text-self{% elif ally %}text-success{% elif friend %}text-friend{% elif enemy %}text-danger{% endif %}">{{ name }}</span>
+                        {% if alliance %}<a href="/s03/alliance/?tag={{ alliancetag }}" class="{% if self %}text-info{% elif ally %}text-success{% elif friend %}text-friend{% elif enemy %}text-danger{% endif %}" data-bs-toggle="tooltip" data-bs-title="Voir alliance">[{{ alliancetag }}]</a>{% endif %}
+                        <span class="{% if self %}text-info{% elif ally %}text-success{% elif friend %}text-friend{% elif enemy %}text-danger{% endif %}">{{ name }}</span>
                     </div>
                     <div class="mb-1">
                         <span class="text-normal me-2">Grade</span>

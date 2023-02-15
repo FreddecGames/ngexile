@@ -9,13 +9,13 @@ class View(GlobalView):
         response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
 
-        self.selected_menu = "fleets.standby"
+        self.selectedMenu = "fleets.standby"
 
         return self.ListStandby()
 
     # List the fleets owned by the player
     def ListStandby(self):
-        content = GetTemplate(self.request, "s03/fleets-standby")
+        content = getTemplate(self.request, "s03/fleets-standby")
 
         # list the ships
         query = "SELECT nav_planet.id, nav_planet.name, nav_planet.galaxy, nav_planet.sector, nav_planet.planet, shipid, quantity" + \
@@ -31,7 +31,7 @@ class View(GlobalView):
             lastplanetid = -1
 
             list = []
-            content.AssignValue("planets", list)
+            content.setValue("planets", list)
             for oRs in oRss:
                 
                 if oRs[0] != lastplanetid:
@@ -52,4 +52,4 @@ class View(GlobalView):
                 item["ship"] = getShipLabel(oRs[5])
                 item["quantity"] = oRs[6]
 
-        return self.Display(content)
+        return self.display(content)

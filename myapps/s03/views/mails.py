@@ -11,7 +11,7 @@ class View(GlobalView):
         response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
 
-        self.selected_menu = "mails"
+        self.selectedMenu = "mails"
 
         self.compose = False
         self.mailto = ""
@@ -150,7 +150,7 @@ class View(GlobalView):
     #
     def display_mails(self):
 
-        content = GetTemplate(self.request, "s03/mail-list")
+        content = getTemplate(self.request, "s03/mail-list")
 
         displayed = 30 # number of messages displayed per page
 
@@ -172,13 +172,13 @@ class View(GlobalView):
         if offset >= nb_pages: offset = nb_pages-1
 
         if offset < 0: offset=0
-        content.AssignValue("offset", offset)
+        content.setValue("offset", offset)
 
         if nb_pages > 50: nb_pages=50
 
         #display all links only if there are a few pages
         list = []
-        content.AssignValue("ps", list)
+        content.setValue("ps", list)
         for i in range(1, nb_pages+1):
             item = {}
             list.append(item)
@@ -193,13 +193,13 @@ class View(GlobalView):
 
             item["offset"] = offset
 
-        content.AssignValue("min", offset*displayed+1)
+        content.setValue("min", offset*displayed+1)
         if offset+1 == nb_pages:
-            content.AssignValue("max", size)
+            content.setValue("max", size)
         else:
-            content.AssignValue("max", (offset+1)*displayed)
+            content.setValue("max", (offset+1)*displayed)
 
-        content.AssignValue("page_display", offset+1)
+        content.setValue("page_display", offset+1)
 
         #display only if there are more than 1 page
         if nb_pages > 1: content.Parse("nav")
@@ -217,7 +217,7 @@ class View(GlobalView):
 
         i = 0
         list = []
-        content.AssignValue("list", list)
+        content.setValue("list", list)
         for oRs in oRss:
             item = {}
             list.append(item)
@@ -274,14 +274,14 @@ class View(GlobalView):
         if not self.IsImpersonating():
             oRs = oConnDoQuery("UPDATE messages SET read_date = now() WHERE ownerid = " + str(self.UserId) + " AND read_date IS NULL" )
 
-        return self.Display(content)
+        return self.display(content)
 
     #
     # display mails sent by the player
     #
     def display_mails_sent(self):
 
-        content = GetTemplate(self.request, "s03/mail-sent")
+        content = getTemplate(self.request, "s03/mail-sent")
 
         displayed = 30 # number of nations displayed per page
 
@@ -304,7 +304,7 @@ class View(GlobalView):
 
         #display all links only if there are a few pages
         list = []
-        content.AssignValue("ps", list)
+        content.setValue("ps", list)
         for i in range(1, nb_pages+1):
             item = {}
             list.append(item)
@@ -319,13 +319,13 @@ class View(GlobalView):
 
             item["offset"] = offset
 
-        content.AssignValue("min", offset*displayed+1)
+        content.setValue("min", offset*displayed+1)
         if offset+1 == nb_pages:
-            content.AssignValue("max", size)
+            content.setValue("max", size)
         else:
-            content.AssignValue("max", (offset+1)*displayed)
+            content.setValue("max", (offset+1)*displayed)
 
-        content.AssignValue("page_display", offset+1)
+        content.setValue("page_display", offset+1)
 
         #display only if there are more than 1 page
         if nb_pages > 1: content.Parse("nav")
@@ -343,7 +343,7 @@ class View(GlobalView):
 
         i = 0
         list = []
-        content.AssignValue("list", list)
+        content.setValue("list", list)
         for oRs in oRss:
             item = {}
             list.append(item)
@@ -391,17 +391,17 @@ class View(GlobalView):
 
         if i == 0: content.Parse("nomails")
 
-        return self.Display(content)
+        return self.display(content)
 
     def display_ignore_list(self):
 
-        content = GetTemplate(self.request, "s03/mail-ignorelist")
+        content = getTemplate(self.request, "s03/mail-ignorelist")
 
         oRss = oConnExecuteAll("SELECT ignored_userid, sp_get_user(ignored_userid), added, blocked FROM messages_ignore_list WHERE userid=" + str(self.UserId))
 
         i = 0
         list = []
-        content.AssignValue("ignorednations", list)
+        content.setValue("ignorednations", list)
         for oRs in oRss:
             item = {}
             list.append(item)
@@ -416,11 +416,11 @@ class View(GlobalView):
 
         if i == 0: content.Parse("noignorednations")
 
-        return self.Display(content)
+        return self.display(content)
 
     def return_ignored_users(self):
 
-        content = GetTemplate(self.request, "s03/mails")
+        content = getTemplate(self.request, "s03/mails")
 
         oRss = oConnExecuteAll("SELECT sp_get_user(ignored_userid) FROM messages_ignore_list WHERE userid=" + userid)
         list = []
@@ -442,14 +442,14 @@ class View(GlobalView):
     # fill combobox with previously sent to
     def display_compose_form(self, mailto, subject, body, credits):
 
-        content = GetTemplate(self.request, "s03/mail-compose")
+        content = getTemplate(self.request, "s03/mail-compose")
 
         # fill the recent addressee list
 
         oRss = oConnExecuteAll("SELECT * FROM sp_get_addressee_list(" + str(self.UserId) + ")")
 
         list = []
-        content.AssignValue("tos", list)
+        content.setValue("tos", list)
         for oRs in oRss:
             item = {}
             list.append(item)
@@ -481,14 +481,14 @@ class View(GlobalView):
                 body = body  + oRs[0]
 
         # re-assign previous values
-        content.AssignValue("mailto", mailto)
-        content.AssignValue("subject", subject)
-        content.AssignValue("message", body)
-        content.AssignValue("mail_credits", credits)
+        content.setValue("mailto", mailto)
+        content.setValue("subject", subject)
+        content.setValue("message", body)
+        content.setValue("mail_credits", credits)
 
         #retrieve player's credits
         oRs = oConnExecute("SELECT credits, now()-game_started > INTERVAL '2 weeks' AND security_level >= 3 FROM users WHERE id="+str(self.UserId))
-        content.AssignValue("player_credits", oRs[0])
+        content.setValue("player_credits", oRs[0])
         if oRs[1]: content.Parse("send_credits")
 
         if self.sendmail_status != "":
@@ -497,4 +497,4 @@ class View(GlobalView):
 
         if self.bbcode: content.Parse("bbcode")
 
-        return self.Display(content)
+        return self.display(content)

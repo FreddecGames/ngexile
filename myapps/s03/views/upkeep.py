@@ -9,13 +9,13 @@ class View(GlobalView):
         response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
 
-        self.selected_menu = "upkeep"
+        self.selectedMenu = "upkeep"
 
         return self.displayUpkeep()
 
     def displayUpkeep(self):
 
-        content = GetTemplate(self.request, "s03/upkeep")
+        content = getTemplate(self.request, "s03/upkeep")
 
         hours = 24 - timezone.now().hour
 
@@ -32,32 +32,32 @@ class View(GlobalView):
                 " WHERE userid=" + str(self.UserId)
         oRs = oConnExecute(query)
 
-        content.AssignValue("commanders_quantity", oRs[18])
-        content.AssignValue("commanders_salary", oRs[19])
-        content.AssignValue("commanders_cost", oRs[20])
-        content.AssignValue("commanders_estimated_cost", int(oRs[21]))
+        content.setValue("commanders_quantity", oRs[18])
+        content.setValue("commanders_salary", oRs[19])
+        content.setValue("commanders_cost", oRs[20])
+        content.setValue("commanders_estimated_cost", int(oRs[21]))
 
-        content.AssignValue("scientists_quantity", oRs[0])
-        content.AssignValue("soldiers_quantity", oRs[1])
-        content.AssignValue("planets_quantity", oRs[2])
-        content.AssignValue("ships_signature", oRs[3])
-        content.AssignValue("ships_in_position_signature", oRs[4])
-        content.AssignValue("ships_parked_signature", oRs[5])
+        content.setValue("scientists_quantity", oRs[0])
+        content.setValue("soldiers_quantity", oRs[1])
+        content.setValue("planets_quantity", oRs[2])
+        content.setValue("ships_signature", oRs[3])
+        content.setValue("ships_in_position_signature", oRs[4])
+        content.setValue("ships_parked_signature", oRs[5])
 
-        content.AssignValue("planets_cost", int(oRs[6]))
-        content.AssignValue("scientists_cost", oRs[7])
-        content.AssignValue("soldiers_cost", oRs[8])
-        content.AssignValue("ships_cost", oRs[9])
-        content.AssignValue("ships_in_position_cost", oRs[10])
-        content.AssignValue("ships_parked_cost", oRs[11])
+        content.setValue("planets_cost", int(oRs[6]))
+        content.setValue("scientists_cost", oRs[7])
+        content.setValue("soldiers_cost", oRs[8])
+        content.setValue("ships_cost", oRs[9])
+        content.setValue("ships_in_position_cost", oRs[10])
+        content.setValue("ships_parked_cost", oRs[11])
 
-        content.AssignValue("scientists_estimated_cost", oRs[12])
-        content.AssignValue("soldiers_estimated_cost", oRs[13])
-        content.AssignValue("planets_estimated_cost", oRs[14])
-        content.AssignValue("ships_estimated_cost", oRs[15])
-        content.AssignValue("ships_in_position_estimated_cost", oRs[16])
-        content.AssignValue("ships_parked_estimated_cost", oRs[17])
+        content.setValue("scientists_estimated_cost", oRs[12])
+        content.setValue("soldiers_estimated_cost", oRs[13])
+        content.setValue("planets_estimated_cost", oRs[14])
+        content.setValue("ships_estimated_cost", oRs[15])
+        content.setValue("ships_in_position_estimated_cost", oRs[16])
+        content.setValue("ships_parked_estimated_cost", oRs[17])
 
-        content.AssignValue("total_estimation", int(oRs[12] + oRs[13] + oRs[14] + oRs[15] + oRs[16] + oRs[17] + oRs[21]))
+        content.setValue("total_estimation", int(oRs[12] + oRs[13] + oRs[14] + oRs[15] + oRs[16] + oRs[17] + oRs[21]))
 
-        return self.Display(content)
+        return self.display(content)

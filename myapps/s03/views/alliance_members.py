@@ -9,7 +9,7 @@ class View(GlobalView):
         response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
 
-        self.selected_menu = "alliance.members"
+        self.selectedMenu = "alliance.members"
 
         if self.AllianceId == None: return HttpResponseRedirect("/s03/alliance/")
         if not self.oAllianceRights["leader"] and not self.oAllianceRights["can_see_members_info"]: return HttpResponseRedirect("/s03/alliance/")
@@ -96,7 +96,7 @@ class View(GlobalView):
         oRss = oConnExecuteAll(query)
         
         list = []
-        content.AssignValue("ranks", list)
+        content.setValue("ranks", list)
         
         for oRs in oRss:
             
@@ -121,7 +121,7 @@ class View(GlobalView):
             content.Parse("viewonly")
 
         if ParseR: content.Parse("r" + str(col))
-        content.AssignValue("col", col)
+        content.setValue("col", col)
 
         totalColonies = 0
         totalCredits = 0
@@ -129,7 +129,7 @@ class View(GlobalView):
         totalScoreDelta = 0
         i = 1
         list = []
-        content.AssignValue("players", list)
+        content.setValue("players", list)
         for oRs in oRss:
             totalColonies = totalColonies + oRs[2]
             totalCredits = totalCredits + oRs[10]
@@ -205,10 +205,10 @@ class View(GlobalView):
 
             i = i + 1
 
-        content.AssignValue("total_colonies", totalColonies)
-        content.AssignValue("total_credits", totalCredits)
-        content.AssignValue("total_score", totalScore)
-        content.AssignValue("total_score_delta", totalScoreDelta)
+        content.setValue("total_colonies", totalColonies)
+        content.setValue("total_credits", totalCredits)
+        content.setValue("total_score", totalScore)
+        content.setValue("total_score_delta", totalScoreDelta)
 
         if totalScore != 0:
             if totalScoreDelta > 0: content.Parse("total_plus")
@@ -233,7 +233,7 @@ class View(GlobalView):
 
             i = 0
             list = []
-            content.AssignValue("invits", list)
+            content.setValue("invits", list)
             for oRs in oRss:
                 item = {}
                 list.append(item)
@@ -253,7 +253,7 @@ class View(GlobalView):
                 content.Parse(self.invitation_success)
                 content.Parse("message")
 
-            content.AssignValue("player", self.username)
+            content.setValue("player", self.username)
 
         content.Parse("invitations")
 
@@ -262,9 +262,9 @@ class View(GlobalView):
     #
     def displayPage(self, cat):
 
-        content = GetTemplate(self.request, "s03/alliance-members")
+        content = getTemplate(self.request, "s03/alliance-members")
 
-        content.AssignValue("cat", cat)
+        content.setValue("cat", cat)
 
         if cat == 1:
             self.displayMembers(content)
@@ -278,7 +278,7 @@ class View(GlobalView):
             content.Parse("cat2")
             content.Parse("nav")
 
-        return self.Display(content)
+        return self.display(content)
 
     def SaveRanks(self):
         # retrieve alliance members# id and assign new rank

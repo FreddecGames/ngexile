@@ -11,7 +11,7 @@ class View(GlobalView):
         response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
 
-        self.selected_menu = "planet"
+        self.selectedMenu = "planet"
 
         self.showHeader = True
 
@@ -73,7 +73,7 @@ class View(GlobalView):
 
     def DisplayPlanet(self):
 
-        content = GetTemplate(self.request, "s03/planet")
+        content = getTemplate(self.request, "s03/planet")
 
         CmdReq=""
 
@@ -86,43 +86,43 @@ class View(GlobalView):
         oRs = oConnExecute(query)
 
         if oRs:
-            content.AssignValue("planet_id", oRs[0])
-            content.AssignValue("planet_name", oRs[1])
-            content.AssignValue("planet_img", self.planetimg(oRs[0], oRs[18]))
+            content.setValue("planet_id", oRs[0])
+            content.setValue("planet_name", oRs[1])
+            content.setValue("planet_img", self.planetimg(oRs[0], oRs[18]))
 
-            content.AssignValue("pla_g", oRs[2])
-            content.AssignValue("pla_s", oRs[3])
-            content.AssignValue("pla_p", oRs[4])
+            content.setValue("pla_g", oRs[2])
+            content.setValue("pla_s", oRs[3])
+            content.setValue("pla_p", oRs[4])
 
-            content.AssignValue("floor_occupied", oRs[5])
-            content.AssignValue("floor", oRs[6])
+            content.setValue("floor_occupied", oRs[5])
+            content.setValue("floor", oRs[6])
 
-            content.AssignValue("space_occupied", oRs[7])
-            content.AssignValue("space", oRs[8])
+            content.setValue("space_occupied", oRs[7])
+            content.setValue("space", oRs[8])
 
-            content.AssignValue("workers", oRs[9])
-            content.AssignValue("workers_capacity", oRs[10])
+            content.setValue("workers", oRs[9])
+            content.setValue("workers_capacity", oRs[10])
 
-            content.AssignValue("scientists", oRs[12])
-            content.AssignValue("scientists_capacity", oRs[13])
+            content.setValue("scientists", oRs[12])
+            content.setValue("scientists_capacity", oRs[13])
 
-            content.AssignValue("soldiers", oRs[14])
-            content.AssignValue("soldiers_capacity", oRs[15])
+            content.setValue("soldiers", oRs[14])
+            content.setValue("soldiers_capacity", oRs[15])
 
-            content.AssignValue("growth", oRs[11]/10)
+            content.setValue("growth", oRs[11]/10)
 
             if oRs[17]:
                 content.Parse("suspend")
             else:
                 content.Parse("resume")
 
-            content.AssignValue("buy_ore", oRs[19])
-            content.AssignValue("buy_hydrocarbon", oRs[20])
+            content.setValue("buy_ore", oRs[19])
+            content.setValue("buy_hydrocarbon", oRs[20])
 
             # retrieve commander assigned to this planet
             if oRs[16]:
                 oCmdRs = oConnExecute("SELECT name FROM commanders WHERE ownerid="+str(self.UserId)+" AND id="+str(oRs[16]))
-                content.AssignValue("commandername", oCmdRs[0])
+                content.setValue("commandername", oCmdRs[0])
                 CmdId = oRs[16]
                 content.Parse("commander")
             else:
@@ -147,7 +147,7 @@ class View(GlobalView):
         ShowGroup = False
 
         cmd_groups = []
-        content.AssignValue("optgroups", cmd_groups)
+        content.setValue("optgroups", cmd_groups)
         
         cmd_nones = {'typ':'none', 'cmds':[]}
         cmd_fleets = {'typ':'fleet', 'cmds':[]}
@@ -194,7 +194,7 @@ class View(GlobalView):
 
         i = 0
         list = []
-        content.AssignValue("buildings", list)
+        content.setValue("buildings", list)
         for oRs in oRss:
             item = {}
             list.append(item)
@@ -220,7 +220,7 @@ class View(GlobalView):
         i = 0
 
         list = []
-        content.AssignValue("ships", list)
+        content.setValue("ships", list)
         for oRs in oRss:
             item = {}
             list.append(item)
@@ -247,7 +247,7 @@ class View(GlobalView):
         i = 0
 
         list = []
-        content.AssignValue("fleets", list)
+        content.setValue("fleets", list)
         for oRs in oRss:
             item = {}
             list.append(item)
@@ -293,4 +293,4 @@ class View(GlobalView):
 
         content.Parse("ondev")
 
-        return self.Display(content)
+        return self.display(content)

@@ -15,24 +15,24 @@ def FormatBattle(view, battleid, creator, pointofview, ispubliclink):
 
     if oRs == None: return
 
-    content = GetTemplate(view.request, "s03/battle")
+    content = getTemplate(view.request, "s03/battle")
 
-    content.AssignValue("battleid", battleid)
-    content.AssignValue("userid", creator)
-    content.AssignValue("key", oRs[8])
+    content.setValue("battleid", battleid)
+    content.setValue("userid", creator)
+    content.setValue("key", oRs[8])
 
     if not ispubliclink:
         # link for the freely viewable report of this battle
-        content.AssignValue("baseurl", view.request.META.get("HTTP_HOST"))
+        content.setValue("baseurl", view.request.META.get("HTTP_HOST"))
         content.Parse("publiclink")
 
-    content.AssignValue("time", oRs[0])
-    content.AssignValue("planetid", oRs[1])
-    content.AssignValue("planet", oRs[2])
-    content.AssignValue("g", oRs[3])
-    content.AssignValue("s", oRs[4])
-    content.AssignValue("p", oRs[5])
-    content.AssignValue("rounds", oRs[6])
+    content.setValue("time", oRs[0])
+    content.setValue("planetid", oRs[1])
+    content.setValue("planet", oRs[2])
+    content.setValue("g", oRs[3])
+    content.setValue("s", oRs[4])
+    content.setValue("p", oRs[5])
+    content.setValue("rounds", oRs[6])
 
     rounds = oRs[6]
     hasWon = oRs[7]
@@ -53,7 +53,7 @@ def FormatBattle(view, battleid, creator, pointofview, ispubliclink):
 
     if oRss:
         opponents = []
-        content.AssignValue("opponents", opponents)
+        content.setValue("opponents", opponents)
         
         lastFleetId = -1
         lastCategory = -1

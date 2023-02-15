@@ -11,7 +11,7 @@ class View(GlobalView):
         response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
 
-        self.selected_menu = "intelligence"
+        self.selectedMenu = "intelligence"
 
         self.nation_cost_lvl_0 = 250
         self.nation_cost_lvl_1 = 500
@@ -69,24 +69,24 @@ class View(GlobalView):
     # display mercenary service page
     #
     def DisplayIntelligence(self):
-        content = GetTemplate(self.request, "s03/mercenary-intelligence")
+        content = getTemplate(self.request, "s03/mercenary-intelligence")
 
         # Assign service costs
-        content.AssignValue("nation_cost_lvl_0", self.nation_cost_lvl_0)
-        content.AssignValue("fleets_cost_lvl_0", self.fleets_cost_lvl_0)
-        content.AssignValue("planet_cost_lvl_0", self.planet_cost_lvl_0)
+        content.setValue("nation_cost_lvl_0", self.nation_cost_lvl_0)
+        content.setValue("fleets_cost_lvl_0", self.fleets_cost_lvl_0)
+        content.setValue("planet_cost_lvl_0", self.planet_cost_lvl_0)
 
-        content.AssignValue("nation_cost_lvl_1", self.nation_cost_lvl_1)
-        content.AssignValue("fleets_cost_lvl_1", self.fleets_cost_lvl_1)
-        content.AssignValue("planet_cost_lvl_1", self.planet_cost_lvl_1)
+        content.setValue("nation_cost_lvl_1", self.nation_cost_lvl_1)
+        content.setValue("fleets_cost_lvl_1", self.fleets_cost_lvl_1)
+        content.setValue("planet_cost_lvl_1", self.planet_cost_lvl_1)
 
-        content.AssignValue("nation_cost_lvl_2", self.nation_cost_lvl_2)
-        content.AssignValue("fleets_cost_lvl_2", self.fleets_cost_lvl_2)
-        content.AssignValue("planet_cost_lvl_2", self.planet_cost_lvl_2)
+        content.setValue("nation_cost_lvl_2", self.nation_cost_lvl_2)
+        content.setValue("fleets_cost_lvl_2", self.fleets_cost_lvl_2)
+        content.setValue("planet_cost_lvl_2", self.planet_cost_lvl_2)
 
-        content.AssignValue("nation_cost_lvl_3", self.nation_cost_lvl_3)
-        content.AssignValue("fleets_cost_lvl_3", self.fleets_cost_lvl_3)
-        content.AssignValue("planet_cost_lvl_3", self.planet_cost_lvl_3)
+        content.setValue("nation_cost_lvl_3", self.nation_cost_lvl_3)
+        content.setValue("fleets_cost_lvl_3", self.fleets_cost_lvl_3)
+        content.setValue("planet_cost_lvl_3", self.planet_cost_lvl_3)
 
         # display errors
         intell_type = self.request.POST.get("spy", "")
@@ -96,7 +96,7 @@ class View(GlobalView):
         else:
             content.Parse(str(intell_type) + "_ok")
 
-        return self.Display(content)
+        return self.display(content)
 
     # action : type of order
     # self.level : self.level of the recruited spy, determine spottedChance and -Modifier values

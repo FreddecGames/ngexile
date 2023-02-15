@@ -9,7 +9,7 @@ class View(GlobalView):
         response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
         
-        self.selected_menu = "planet"
+        self.selectedMenu = "planet"
 
         self.showHeader = True
 
@@ -112,8 +112,8 @@ class View(GlobalView):
                     item["ship"] = True
                     queues.append(item)
                 
-        content.AssignValue("queues", queues)
-        content.AssignValue("underconstructions", underconstructions)
+        content.setValue("queues", queues)
+        content.setValue("underconstructions", underconstructions)
 
     # List all the available ships for construction
     def ListShips(self):
@@ -126,22 +126,22 @@ class View(GlobalView):
                 " FROM vw_ships WHERE planetid=" + str(self.CurrentPlanet)
 
         if self.ShipFilter == 1:
-            self.selected_menu = "shipyard_military"
+            self.selectedMenu = "shipyard_military"
             query = query + " AND weapon_power > 0 AND required_shipid IS NULL" # military ships only
         elif self.ShipFilter == 2:
-            self.selected_menu = "shipyard_unarmed"
+            self.selectedMenu = "shipyard_unarmed"
             query = query + " AND weapon_power = 0 AND required_shipid IS NULL" # non-military ships
         elif self.ShipFilter == 3:
-            self.selected_menu = "shipyard_upgrade"
+            self.selectedMenu = "shipyard_upgrade"
             query = query + " AND required_shipid IS NOT NULL" # upgrade ships only
         query = query + " ORDER BY category, id"
         
-        oRss = oConnRows(query)
+        oRss = dbRows(query)
 
-        content = GetTemplate(self.request, "s03/shipyard")
+        content = getTemplate(self.request, "s03/shipyard")
 
-        content.AssignValue("planetid", self.CurrentPlanet)
-        content.AssignValue("filter", self.ShipFilter)
+        content.setValue("planetid", self.CurrentPlanet)
+        content.setValue("filter", self.ShipFilter)
 
         # number of items in category
         itemCount = 0
@@ -264,19 +264,19 @@ class View(GlobalView):
                         ship["buildingsrequired"] = True
         
         if count == 0: content.Parse("no_shipyard")
-        else: content.AssignValue("categories", categories)
+        else: content.setValue("categories", categories)
         
         if buildable > 0: content.Parse("build")
         else: content.Parse("nobuild")
 
         self.displayQueue(content, str(self.CurrentPlanet))
 
-        return self.Display(content)
+        return self.display(content)
 
     # List all the available ships for recycling
     def ListRecycleShips(self):
 
-        self.selected_menu = "planet"
+        self.selectedMenu = "planet"
 
         # list ships that are on the planet
         query = "SELECT id, category, name, int4(cost_ore * const_recycle_ore(planet_ownerid)) AS cost_ore, int4(cost_hydrocarbon * const_recycle_hydrocarbon(planet_ownerid)) AS cost_hydrocarbon, cost_credits, workers, crew, capacity," + \
@@ -286,12 +286,12 @@ class View(GlobalView):
                 " FROM vw_ships" + \
                 " WHERE quantity > 0 AND planetid=" + str(self.CurrentPlanet)
 
-        oRss = oConnRows(query)
+        oRss = dbRows(query)
         
-        content = GetTemplate(self.request, "s03/shipyard-recycle")
+        content = getTemplate(self.request, "s03/shipyard-recycle")
 
-        content.AssignValue("planetid", str(self.CurrentPlanet))
-        content.AssignValue("filter", self.ShipFilter)
+        content.setValue("planetid", str(self.CurrentPlanet))
+        content.setValue("filter", self.ShipFilter)
 
         # number of items in category
         itemCount = 0
@@ -362,14 +362,14 @@ class View(GlobalView):
             count = count + 1
 
         if count == 0: content.Parse("no_shipyard")
-        content.AssignValue("categories", categories)
+        content.setValue("categories", categories)
         
         if buildable > 0: content.Parse("build")
         else: content.Parse("nobuild")
 
         self.displayQueue(content, str(self.CurrentPlanet))
 
-        return self.Display(content)
+        return self.display(content)
 
     # build ships
 

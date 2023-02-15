@@ -9,7 +9,7 @@ class View(GlobalView):
         response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
 
-        self.selected_menu = "merchants"
+        self.selectedMenu = "merchants"
 
         self.ExecuteOrder()
 
@@ -20,12 +20,12 @@ class View(GlobalView):
 
         # get market template
 
-        content = GetTemplate(self.request, "s03/market-sell")
+        content = getTemplate(self.request, "s03/market-sell")
 
         planet = ToInt(self.request.GET.get("planet", "").strip(), 0)
         if planet != 0:
             planet_query = " AND v.id=" + str(planet)
-            content.AssignValue("get_planet", planet)
+            content.setValue("get_planet", planet)
         else: planet_query = ""
 
         # retrieve ore, hydrocarbon, sales quantities on the planet
@@ -43,7 +43,7 @@ class View(GlobalView):
         count = 0
         i = 1
         list = []
-        content.AssignValue("m_planets", list)
+        content.setValue("m_planets", list)
         for oRs in oRss:
             item = {}
             list.append(item)
@@ -93,16 +93,16 @@ class View(GlobalView):
 
         if planet_query != "":
             self.showHeader = True
-            self.selected_menu = "planet"
+            self.selectedMenu = "planet"
 
             content.Parse("planetid")
         else:
-            content.AssignValue("total", total)
+            content.setValue("total", total)
             content.Parse("totalprice")
 
         if count > 0: content.Parse("sell")
 
-        return self.Display(content)
+        return self.display(content)
 
     # execute sell orders
     def ExecuteOrder(self):

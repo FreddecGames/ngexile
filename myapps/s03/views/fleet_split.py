@@ -11,7 +11,7 @@ class View(GlobalView):
         response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
 
-        self.selected_menu = "fleets"
+        self.selectedMenu = "fleets"
 
         self.fleet_split_error = 0
         self.e_no_error = 0
@@ -34,7 +34,7 @@ class View(GlobalView):
     # display fleet info
     def DisplayExchangeForm(self, fleetid):
 
-        content = GetTemplate(self.request, "s03/fleet-split")
+        content = getTemplate(self.request, "s03/fleet-split")
 
         # retrieve fleet name, size, position, destination
         query = "SELECT id, name, attackonsight, engaged, size, signature, speed, remaining_time, commanderid, commandername," + \
@@ -54,19 +54,19 @@ class View(GlobalView):
         if oRs[24] != 0:
             return HttpResponseRedirect("/s03/fleet/?id=" + str(fleetid))
 
-        content.AssignValue("fleetid", fleetid)
-        content.AssignValue("fleetname", oRs[1])
-        content.AssignValue("size", oRs[4])
-        content.AssignValue("speed", oRs[6])
+        content.setValue("fleetid", fleetid)
+        content.setValue("fleetname", oRs[1])
+        content.setValue("size", oRs[4])
+        content.setValue("speed", oRs[6])
 
-        content.AssignValue("fleet_capacity", oRs[18])
-        content.AssignValue("available_ore", oRs[19])
-        content.AssignValue("available_hydrocarbon", oRs[20])
-        content.AssignValue("available_scientists", oRs[21])
-        content.AssignValue("available_soldiers", oRs[22])
-        content.AssignValue("available_workers", oRs[23])
+        content.setValue("fleet_capacity", oRs[18])
+        content.setValue("available_ore", oRs[19])
+        content.setValue("available_hydrocarbon", oRs[20])
+        content.setValue("available_scientists", oRs[21])
+        content.setValue("available_soldiers", oRs[22])
+        content.setValue("available_workers", oRs[23])
 
-        content.AssignValue("fleet_load", oRs[19] + oRs[20] + oRs[21] + oRs[22] + oRs[23])
+        content.setValue("fleet_load", oRs[19] + oRs[20] + oRs[21] + oRs[22] + oRs[23])
 
         shipCount = 0
         # retrieve the list of ships in the fleet
@@ -80,7 +80,7 @@ class View(GlobalView):
         oRss = oConnExecuteAll(query)
 
         list = []
-        content.AssignValue("ships", list)
+        content.setValue("ships", list)
         for oRs in oRss:
             item = {}
             list.append(item)
@@ -103,7 +103,7 @@ class View(GlobalView):
             item["t_workers"] = self.request.POST.get("load_workers")
             item["t_soldiers"] = self.request.POST.get("load_soldiers")
 
-        return self.Display(content)
+        return self.display(content)
 
     # split current fleet into 2 fleets
     def SplitFleet(self, fleetid):

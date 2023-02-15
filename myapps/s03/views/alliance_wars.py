@@ -9,7 +9,7 @@ class View(GlobalView):
         response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
 
-        self.selected_menu = "alliance.wars"
+        self.selectedMenu = "alliance.wars"
 
         self.result = ""
         self.cease_success = ""
@@ -84,7 +84,7 @@ class View(GlobalView):
         elif col == 2:
             orderby = "created"
             reversed = True
-        content.AssignValue("col", col)
+        content.setValue("col", col)
 
         if self.request.GET.get("r", "") != "":
             reversed = not reversed
@@ -109,7 +109,7 @@ class View(GlobalView):
 
         i = 0
         list = []
-        content.AssignValue("wars", list)
+        content.setValue("wars", list)
         for oRs in oRss:
             item = {}
             list.append(item)
@@ -160,15 +160,15 @@ class View(GlobalView):
 
             oRs = oConnExecute("SELECT id, tag, name, sp_alliance_war_cost(id) + (const_coef_score_to_war()*sp_alliance_value(" + str(self.AllianceId) + "))::integer FROM alliances WHERE lower(tag)=lower(" + dosql(self.tag) + ")")
             if oRs == None:
-                content.AssignValue("tag", self.tag)
+                content.setValue("tag", self.tag)
 
                 content.Parse("unknown")
                 content.Parse("message")
                 content.Parse("newwar")
             else:
-                content.AssignValue("tag", oRs[1])
-                content.AssignValue("name", oRs[2])
-                content.AssignValue("cost", oRs[3])
+                content.setValue("tag", oRs[1])
+                content.setValue("name", oRs[2])
+                content.setValue("cost", oRs[3])
 
                 content.Parse("newwar_confirm")
 
@@ -177,13 +177,13 @@ class View(GlobalView):
                 content.Parse(self.result)
                 content.Parse("message")
 
-            content.AssignValue("tag", self.tag)
+            content.setValue("tag", self.tag)
 
             content.Parse("newwar")
 
     def displayPage(self, cat):
-        content = GetTemplate(self.request, "s03/alliance-wars")
-        content.AssignValue("cat", cat)
+        content = getTemplate(self.request, "s03/alliance-wars")
+        content.setValue("cat", cat)
 
         if cat == 1:
             self.displayWars(content)
@@ -196,4 +196,4 @@ class View(GlobalView):
         if self.oAllianceRights["can_create_nap"]: content.Parse("cat2")
         content.Parse("nav")
 
-        return self.Display(content)
+        return self.display(content)

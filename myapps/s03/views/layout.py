@@ -9,6 +9,6 @@ class View(GlobalView):
         response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
         
-        content = GetTemplate(request, "s03/layout")
+        content = getTemplate(request, "s03/layout")
         
-        return self.Display(content)
+        return self.display(content)

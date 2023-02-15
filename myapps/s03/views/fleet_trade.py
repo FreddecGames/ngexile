@@ -11,7 +11,7 @@ class View(GlobalView):
         response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
         
-        self.selected_menu = "fleets"
+        self.selectedMenu = "fleets"
         
         self.can_command_alliance_fleets = -1
         
@@ -51,7 +51,7 @@ class View(GlobalView):
     
     # display fleet info
     def DisplayExchangeForm(self, fleetid):
-        content = GetTemplate(self.request, "s03/fleet-trade")
+        content = getTemplate(self.request, "s03/fleet-trade")
     
         # retrieve fleet name, size, position, destination
         query = "SELECT id, name, attackonsight, engaged, size, signature, speed, remaining_time, commanderid, commandername," +\
@@ -77,19 +77,19 @@ class View(GlobalView):
             else:
                 return HttpResponseRedirect("/s03/fleet/?id=" + str(self.fleetid))
             
-        content.AssignValue("fleetid", self.fleetid)
-        content.AssignValue("fleetname", oRs[1])
-        content.AssignValue("size", oRs[4])
-        content.AssignValue("speed", oRs[6])
+        content.setValue("fleetid", self.fleetid)
+        content.setValue("fleetname", oRs[1])
+        content.setValue("size", oRs[4])
+        content.setValue("speed", oRs[6])
     
-        content.AssignValue("fleet_capacity", oRs[18])
-        content.AssignValue("fleet_ore", oRs[19])
-        content.AssignValue("fleet_hydrocarbon", oRs[20])
-        content.AssignValue("fleet_scientists", oRs[21])
-        content.AssignValue("fleet_soldiers", oRs[22])
-        content.AssignValue("fleet_workers", oRs[23])
+        content.setValue("fleet_capacity", oRs[18])
+        content.setValue("fleet_ore", oRs[19])
+        content.setValue("fleet_hydrocarbon", oRs[20])
+        content.setValue("fleet_scientists", oRs[21])
+        content.setValue("fleet_soldiers", oRs[22])
+        content.setValue("fleet_workers", oRs[23])
     
-        content.AssignValue("fleet_load", oRs[19] + oRs[20] + oRs[21] + oRs[22] + oRs[23])
+        content.setValue("fleet_load", oRs[19] + oRs[20] + oRs[21] + oRs[22] + oRs[23])
     
         if relation == rSelf:
             # retrieve planet ore, hydrocarbon, workers, relation
@@ -99,15 +99,15 @@ class View(GlobalView):
                     " FROM vw_planets WHERE id="+str(oRs[10])
             oRs = oConnExecute(query)
 
-            content.AssignValue("planet_ore", oRs[0])
-            content.AssignValue("planet_hydrocarbon", oRs[1])
-            content.AssignValue("planet_scientists", oRs[2])
-            content.AssignValue("planet_soldiers", oRs[3])
-            content.AssignValue("planet_workers", oRs[4])
+            content.setValue("planet_ore", oRs[0])
+            content.setValue("planet_hydrocarbon", oRs[1])
+            content.setValue("planet_scientists", oRs[2])
+            content.setValue("planet_soldiers", oRs[3])
+            content.setValue("planet_workers", oRs[4])
 
             if not oRs[5]:
-                content.AssignValue("planet_ore", 0)
-                content.AssignValue("planet_hydrocarbon", 0)
+                content.setValue("planet_ore", 0)
+                content.setValue("planet_hydrocarbon", 0)
                 content.Parse("not_enough_workers_to_load")
 
             content.Parse("load")
@@ -117,7 +117,7 @@ class View(GlobalView):
         else:
             content.Parse("cargo")
     
-        return self.Display(content)
+        return self.display(content)
     
     def TransferResources(self, fleetid):
     

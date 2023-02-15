@@ -9,12 +9,12 @@ class View(GlobalView):
         response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
 
-        self.selected_menu = "ranking"
+        self.selectedMenu = "ranking"
 
         return self.DisplayRankingAlliances(request.GET.get("tag"), request.GET.get("name"))
 
     def DisplayRankingAlliances(self, search_tag, search_name):
-        content = GetTemplate(self.request, "s03/ranking-alliances")
+        content = getTemplate(self.request, "s03/ranking-alliances")
 
         #
         # search by parameter
@@ -55,7 +55,7 @@ class View(GlobalView):
         if reversed: orderby = orderby + " DESC"
         orderby = orderby + ", upper(alliances.name)"
 
-        content.AssignValue("sort_column", col)
+        content.setValue("sort_column", col)
 
         #
         # start offset
@@ -91,9 +91,9 @@ class View(GlobalView):
 
         if oRss == None: content.Parse("noresult")
 
-        content.AssignValue("page_displayed", offset+1)
-        content.AssignValue("page_first", offset*displayed+1)
-        content.AssignValue("page_last", min(size, (offset+1)*displayed))
+        content.setValue("page_displayed", offset+1)
+        content.setValue("page_first", offset*displayed+1)
+        content.setValue("page_last", min(size, (offset+1)*displayed))
 
         idx_from = offset+1 - 10
         if idx_from < 1: idx_from = 1
@@ -102,7 +102,7 @@ class View(GlobalView):
         if idx_to > nb_pages: idx_to = nb_pages
 
         list = []
-        content.AssignValue("ps", list)
+        content.setValue("ps", list)
         for i in range(1, nb_pages+1):
             if (i==1) or (i >= idx_from and i <= idx_to) or (i % 10 == 0):
                 item = {}
@@ -124,7 +124,7 @@ class View(GlobalView):
 
         i = 1
         list = []
-        content.AssignValue("alliances", list)
+        content.setValue("alliances", list)
         for oRs in oRss:
             item = {}
             list.append(item)
@@ -151,4 +151,4 @@ class View(GlobalView):
 
             i = i + 1
 
-        return self.Display(content)
+        return self.display(content)

@@ -11,7 +11,7 @@ class View(GlobalView):
         response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
 
-        self.selected_menu = "noalliance.create"
+        self.selectedMenu = "noalliance.create"
 
         self.name = ""
         self.tag = ""
@@ -68,7 +68,7 @@ class View(GlobalView):
 
     def DisplayAllianceCreate(self):
 
-        content = GetTemplate(self.request, "s03/alliance-create")
+        content = getTemplate(self.request, "s03/alliance-create")
 
         if self.oPlayerInfo["can_join_alliance"]:
             if self.create_result == -2: content.Parse("name_already_used")
@@ -78,12 +78,12 @@ class View(GlobalView):
 
             if not self.valid_tag: content.Parse("invalid_tag")
 
-            content.AssignValue("name", self.name)
-            content.AssignValue("tag", self.tag)
-            content.AssignValue("description", self.description)
+            content.setValue("name", self.name)
+            content.setValue("tag", self.tag)
+            content.setValue("description", self.description)
 
             content.Parse("create")
         else:
             content.Parse("cant_create")
 
-        return self.Display(content)
+        return self.display(content)

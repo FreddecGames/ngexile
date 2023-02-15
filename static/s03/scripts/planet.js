@@ -1,7 +1,7 @@
 function planet_str(id, name, g, s, p, rel) {
     
 	if (rel == 2)
-		var s = '<a href="/s03/planet/?planet=' + id + '" class="text-self" data-bs-toggle="tooltip" data-bs-title="Voir planète">' + name + '</a> <a href="/s03/map/?g=' + g + '&s=' + s + '" class="ms-1 text-self" data-bs-toggle="tooltip" data-bs-title="Carte spatiale">' + g + '.' + s + '.' + p + '</a>';
+		var s = '<a href="/s03/planet/?planet=' + id + '" class="text-info" data-bs-toggle="tooltip" data-bs-title="Voir planète">' + name + '</a> <a href="/s03/map/?g=' + g + '&s=' + s + '" class="ms-1 text-info" data-bs-toggle="tooltip" data-bs-title="Carte spatiale">' + g + '.' + s + '.' + p + '</a>';
 	else {
         
 		switch(rel) {

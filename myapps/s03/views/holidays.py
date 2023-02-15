@@ -18,7 +18,7 @@ class View(ExileMixin, View):
         if self.UserId == "":
             return HttpResponseRedirect("/")
 
-        content = GetTemplate(self.request, "s03/holidays")
+        content = getTemplate(self.request, "s03/holidays")
 
         # retrieve remaining time
         query = "SELECT username," + \
@@ -42,14 +42,14 @@ class View(ExileMixin, View):
         if oRs[2] <= 0:
             return HttpResponseRedirect("/s03/overview/")
 
-        content.AssignValue("login", oRs[0])
-        content.AssignValue("remaining_time", oRs[2])
+        content.setValue("login", oRs[0])
+        content.setValue("remaining_time", oRs[2])
 
         # only allow to unlock the account after 2 days of holidays
         if oRs[1] < 0:
             content.Parse("unlock")
         else:
-            content.AssignValue("remaining_time_before_unlock", oRs[1])
+            content.setValue("remaining_time_before_unlock", oRs[1])
             content.Parse("cant_unlock")
 
         return render(self.request, content.template, content.data)

@@ -8,9 +8,9 @@ class View(GlobalView):
         response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
 
-        self.selected_menu = "fleets.fleets"
+        self.selectedMenu = "fleets.fleets"
 
-        content = GetTemplate(self.request, "s03/fleets")
+        content = getTemplate(self.request, "s03/fleets")
 
         query = "SELECT category, label" + \
                 " FROM users_fleets_categories" + \
@@ -19,7 +19,7 @@ class View(GlobalView):
         oRss = oConnExecuteAll(query)
 
         list = []
-        content.AssignValue("categories", list)
+        content.setValue("categories", list)
         
         for oRs in oRss:
         
@@ -48,7 +48,7 @@ class View(GlobalView):
         oRss = oConnExecuteAll(query)
 
         list = []
-        content.AssignValue("fleets", list)
+        content.setValue("fleets", list)
         for oRs in oRss:
             item = {}
             list.append(item)
@@ -151,5 +151,5 @@ class View(GlobalView):
 
         content.Parse("list")
 
-        return self.Display(content)
+        return self.display(content)
 

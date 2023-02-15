@@ -14,7 +14,7 @@ class View(GlobalView):
 
         self.onlineusers_refreshtime = 60
 
-        self.selected_menu = "chat"
+        self.selectedMenu = "chat"
 
         chatid = ToInt(request.GET.get("id"), 0)
         action = request.GET.get("a")
@@ -83,13 +83,13 @@ class View(GlobalView):
 
         # load the template
 
-        content = GetTemplate(self.request, "s03/chat-handler")
-        content.AssignValue("username", self.oPlayerInfo["username"])
-        content.AssignValue("chatid", userChatId)
+        content = getTemplate(self.request, "s03/chat-handler")
+        content.setValue("username", self.oPlayerInfo["username"])
+        content.setValue("chatid", userChatId)
 
         if oRss:
             list = []
-            content.AssignValue("lines", list)
+            content.setValue("lines", list)
             for oRs in oRss:
                 item = {}
                 list.append(item)
@@ -113,7 +113,7 @@ class View(GlobalView):
             oRss = oConnExecuteAll(query)
 
             list = []
-            content.AssignValue("online_users", list)
+            content.setValue("online_users", list)
             for oRs in oRss:
                 item = {}
                 list.append(item)
@@ -131,8 +131,8 @@ class View(GlobalView):
 
     def displayChatList(self):
 
-        content = GetTemplate(self.request, "s03/chat-handler")
-        content.AssignValue("username", self.oPlayerInfo["username"])
+        content = getTemplate(self.request, "s03/chat-handler")
+        content.setValue("username", self.oPlayerInfo["username"])
 
         query = "SELECT name, topic, count(chat_onlineusers.userid)" + \
                 " FROM chat" + \
@@ -143,7 +143,7 @@ class View(GlobalView):
         oRss = oConnExecuteAll(query)
 
         list = []
-        content.AssignValue("publicchats", list)
+        content.setValue("publicchats", list)
         for oRs in oRss:
             item = {}
             list.append(item)
@@ -177,9 +177,9 @@ class View(GlobalView):
     def displayChat(self):
         self.request.session["chatinstance"] = ToInt(self.request.session.get("chatinstance"), 0) + 1
 
-        content = GetTemplate(self.request, "s03/chat")
-        content.AssignValue("username", self.oPlayerInfo["username"])
-        content.AssignValue("chatinstance", self.request.session.get("chatinstance"))
+        content = getTemplate(self.request, "s03/chat")
+        content.setValue("username", self.oPlayerInfo["username"])
+        content.setValue("chatinstance", self.request.session.get("chatinstance"))
 
         if (self.AllianceId):
             chatid = self.getChatId(0)
@@ -196,7 +196,7 @@ class View(GlobalView):
         oRss = oConnExecuteAll(query)
 
         list = []
-        content.AssignValue("joins", list)
+        content.setValue("joins", list)
         for oRs in oRss:
             if self.addChat(oRs[0]):
                 item = {}
@@ -208,16 +208,16 @@ class View(GlobalView):
 
                 self.request.session["lastchatmsg_" + str(oRs[0])] = ""
 
-        content.AssignValue("now", timezone.now())
+        content.setValue("now", timezone.now())
 
         content.Parse("chat")
 
-        return self.Display(content)
+        return self.display(content)
 
     def joinChat(self):
 
-        content = GetTemplate(self.request, "s03/chat-handler")
-        content.AssignValue("username", self.oPlayerInfo["username"])
+        content = getTemplate(self.request, "s03/chat-handler")
+        content.setValue("username", self.oPlayerInfo["username"])
 
         pwd = self.request.GET.get("pass", "").strip()
 
@@ -238,9 +238,9 @@ class View(GlobalView):
             oRs = oConnExecute(query)
 
             if oRs:
-                content.AssignValue("id", chatid)
-                content.AssignValue("name", oRs[0])
-                content.AssignValue("topic", oRs[1])
+                content.setValue("id", chatid)
+                content.setValue("name", oRs[0])
+                content.setValue("topic", oRs[1])
                 content.Parse("setactive")
                 content.Parse("join")
 

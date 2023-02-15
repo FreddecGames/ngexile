@@ -11,7 +11,7 @@ class View(GlobalView):
         response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
 
-        self.selected_menu = "battles"
+        self.selectedMenu = "battles"
 
         id = ToInt(request.GET.get("id"), 0)
         if id == 0:
@@ -38,6 +38,6 @@ class View(GlobalView):
         if display_battle:
 
             content = FormatBattle(self, id, creator, fromview, False)
-            return self.Display(content)
+            return self.display(content)
         else:
             return HttpResponseRedirect("/s03/reports/")

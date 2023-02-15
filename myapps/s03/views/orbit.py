@@ -11,7 +11,7 @@ class View(GlobalView):
         response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
         
-        self.selected_menu = "planet"
+        self.selectedMenu = "planet"
 
         self.showHeader = True
 
@@ -28,9 +28,9 @@ class View(GlobalView):
 
     def DisplayFleets(self):
         
-        content = GetTemplate(self.request, "s03/orbit")
+        content = getTemplate(self.request, "s03/orbit")
 
-        content.AssignValue("planetid", str(self.CurrentPlanet))
+        content.setValue("planetid", str(self.CurrentPlanet))
 
         # list the fleets near the planet
         query = "SELECT id, name, attackonsight, engaged, size, signature, speed, remaining_time, commanderid, commandername," + \
@@ -46,7 +46,7 @@ class View(GlobalView):
             content.Parse("nofleets")
         else:
             fleets = []
-            content.AssignValue("fleets", fleets)
+            content.setValue("fleets", fleets)
             
             for oRs in oRss:
                 manage = False
@@ -111,12 +111,12 @@ class View(GlobalView):
                 " WHERE planetid=" + str(self.CurrentPlanet) + \
                 " ORDER BY category, label"
 
-        oRss = oConnRows(query)
+        oRss = dbRows(query)
         if not oRss:
             content.Parse("noships")
         else:
             ships = []
-            content.AssignValue("ships", ships)
+            content.setValue("ships", ships)
             
             for oRs in oRss:
                 ship = {}
@@ -166,12 +166,12 @@ class View(GlobalView):
 
         # Assign the fleet name passed in form body
         if self.fleet_creation_error != "":
-            content.AssignValue("fleetname", self.request.POST.get("name"))
+            content.setValue("fleetname", self.request.POST.get("name"))
 
             content.Parse(self.fleet_creation_error)
             content.Parse("error")
 
-        return self.Display(content)
+        return self.display(content)
 
     #
     # Create the new fleet

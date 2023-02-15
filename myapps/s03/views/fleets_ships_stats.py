@@ -9,7 +9,7 @@ class View(GlobalView):
         response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
 
-        self.selected_menu = "fleets_ships_stats"
+        self.selectedMenu = "fleets_ships_stats"
 
         return self.ListShips()
 
@@ -24,14 +24,14 @@ class View(GlobalView):
                 " ORDER BY shipid"
         oRss = oConnExecuteAll(query)
 
-        content = GetTemplate(self.request, "s03/fleets-ships-stats")
+        content = getTemplate(self.request, "s03/fleets-ships-stats")
 
         count = 0
         kills = 0
         losses = 0
         
         cats = []
-        content.AssignValue("cats", cats)
+        content.setValue("cats", cats)
         
         lastCategory = -1
         for oRs in oRss:
@@ -59,7 +59,7 @@ class View(GlobalView):
         if count == 0: content.Parse("no_ship")
         else: content.Parse("total")
         
-        content.AssignValue("kills", kills)
-        content.AssignValue("losses", losses)
+        content.setValue("kills", kills)
+        content.setValue("losses", losses)
 
-        return self.Display(content)
+        return self.display(content)

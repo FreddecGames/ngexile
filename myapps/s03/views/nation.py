@@ -11,13 +11,13 @@ class View(GlobalView):
         response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
 
-        self.selected_menu = "nation"
+        self.selectedMenu = "nation"
 
         return self.display_nation()
 
     def display_nation_search(self, nation):
 
-        content = GetTemplate(self.request, "s03/nation-search")
+        content = getTemplate(self.request, "s03/nation-search")
 
         query = "SELECT username" + \
                 " FROM users" + \
@@ -26,14 +26,14 @@ class View(GlobalView):
         oRss = oConnExecuteAll(query)
 
         list = []
-        content.AssignValue("nations", list)
+        content.setValue("nations", list)
         for oRs in oRss:
             item = {}
             list.append(item)
             
             item["nation"] = oRs[0]
 
-        return self.Display(content)
+        return self.display(content)
 
     def display_nation(self):
 
@@ -43,7 +43,7 @@ class View(GlobalView):
         if not isValidName(nation):        
             return HttpResponseRedirect("/s03/nation/")
 
-        content = GetTemplate(self.request, "s03/nation")
+        content = getTemplate(self.request, "s03/nation")
 
         query = "SELECT u.username, u.avatar_url, u.description, sp_relation(u.id, "+str(self.UserId)+"), " + \
                 " u.alliance_id, a.tag, a.name, u.id, GREATEST(u.regdate, u.game_started) AS regdate, r.label," + \
@@ -63,21 +63,21 @@ class View(GlobalView):
 
         nationId = oRs[7]
 
-        content.AssignValue("name", oRs[0])
-        content.AssignValue("regdate", oRs[8])
+        content.setValue("name", oRs[0])
+        content.setValue("regdate", oRs[8])
 
-        content.AssignValue("alliance_joined", oRs[10])
+        content.setValue("alliance_joined", oRs[10])
 
         if oRs[1] == None or oRs[1] == "":
             content.Parse("noavatar")
         else:
-            content.AssignValue("avatar_url", oRs[1])
+            content.setValue("avatar_url", oRs[1])
             content.Parse("avatar")
 
         if oRs[7] != self.UserId: content.Parse("sendmail")
 
         if oRs[2] and oRs[2] != "":
-            content.AssignValue("description", oRs[2])
+            content.setValue("description", oRs[2])
 
         if oRs[3] < rFriend:
             content.Parse("enemy")
@@ -107,7 +107,7 @@ class View(GlobalView):
                         content.Parse("noplanets")
 
                     planets = []
-                    content.AssignValue("planets", planets)
+                    content.setValue("planets", planets)
                     for rs in oPlanetsRs:
                         i = {}
                         planets.append(i)
@@ -135,7 +135,7 @@ class View(GlobalView):
                 if oFleetsRs == None: content.Parse("nofleets")
 
                 fleets = []
-                content.AssignValue("fleets", fleets)
+                content.setValue("fleets", fleets)
                 for rs in oFleetsRs:
                     i = {}
                     fleets.append(i)
@@ -179,9 +179,9 @@ class View(GlobalView):
                 content.Parse("allied")
 
         if oRs[4] != None:
-            content.AssignValue("alliancename", oRs[6])
-            content.AssignValue("alliancetag", oRs[5])
-            content.AssignValue("rank_label", oRs[9])
+            content.setValue("alliancename", oRs[6])
+            content.setValue("alliancetag", oRs[5])
+            content.setValue("rank_label", oRs[9])
 
             if oRs[3] == rSelf:
                 content.Parse("self")
@@ -203,7 +203,7 @@ class View(GlobalView):
         oRss = oConnExecuteAll(query)
 
         list = []
-        content.AssignValue("alliances", list)
+        content.setValue("alliances", list)
         for oRs in oRss:
             item = {}
             list.append(item)
@@ -213,4 +213,4 @@ class View(GlobalView):
             item["joined"] = oRs[2]
             item["left"] = oRs[3]
 
-        return self.Display(content)
+        return self.display(content)

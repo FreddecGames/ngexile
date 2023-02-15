@@ -11,7 +11,7 @@ class View(GlobalView):
         response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
 
-        self.selected_menu = "alliance.manage"
+        self.selectedMenu = "alliance.manage"
 
         if self.AllianceId == None: return HttpResponseRedirect("/s03/alliance/")
         if not (self.oAllianceRights["leader"] or self.oAllianceRights["can_manage_description"] or self.oAllianceRights["can_manage_announce"]): return HttpResponseRedirect("/s03/alliance/")
@@ -33,11 +33,11 @@ class View(GlobalView):
         return self.displayOptions(cat)
 
     #
-    # Display alliance description page
+    # display alliance description page
     #
     def displayGeneral(self, content):
 
-        # Display alliance tag, name, description, creation date, number of members
+        # display alliance tag, name, description, creation date, number of members
         query = "SELECT id, tag, name, description, created, (SELECT count(*) FROM users WHERE alliance_id=alliances.id), logo_url," + \
                 " max_members" + \
                 " FROM alliances" + \
@@ -46,30 +46,30 @@ class View(GlobalView):
         oRs = oConnExecute(query)
 
         if oRs:
-            content.AssignValue("tag", oRs[1])
-            content.AssignValue("name", oRs[2])
-            content.AssignValue("description", oRs[3])
-            content.AssignValue("created", oRs[4])
-            content.AssignValue("members", oRs[5])
-            content.AssignValue("max_members", oRs[7])
+            content.setValue("tag", oRs[1])
+            content.setValue("name", oRs[2])
+            content.setValue("description", oRs[3])
+            content.setValue("created", oRs[4])
+            content.setValue("members", oRs[5])
+            content.setValue("max_members", oRs[7])
 
             if oRs[6] != "":
-                content.AssignValue("logo_url", oRs[6])
+                content.setValue("logo_url", oRs[6])
                 content.Parse("logo")
 
         content.Parse("general")
 
     #
-    # Display alliance MotD (message of the day)
+    # display alliance MotD (message of the day)
     #
     def displayMotD(self, content):
 
-        # Display alliance MotD (message of the day)
+        # display alliance MotD (message of the day)
         query = "SELECT announce, defcon FROM alliances WHERE id=" + str(self.AllianceId)
         oRs = oConnExecute(query)
 
         if oRs:
-            content.AssignValue("announce", oRs[0])
+            content.setValue("announce", oRs[0])
             content.Parse("defcon_" + str(oRs[1]))
 
         content.Parse("motd")
@@ -82,7 +82,7 @@ class View(GlobalView):
                 " FROM alliances_ranks" + \
                 " WHERE allianceid=" + str(self.AllianceId) + \
                 " ORDER BY rankid"
-        oRss = oConnRows(query)
+        oRss = dbRows(query)
         list = []
         for oRs in oRss:
             item = {}
@@ -121,15 +121,15 @@ class View(GlobalView):
 
             list.append(item)
 
-        content.AssignValue("ranks", list)
+        content.setValue("ranks", list)
 
     #
     # Load template and display the right page
     #
     def displayOptions(self, cat):
 
-        content = GetTemplate(self.request, "s03/alliance-manage")
-        content.AssignValue("cat", cat)
+        content = getTemplate(self.request, "s03/alliance-manage")
+        content.setValue("cat", cat)
         
         if cat == 1:
             self.displayGeneral(content)
@@ -148,7 +148,7 @@ class View(GlobalView):
         if self.oAllianceRights["leader"]: content.Parse("cat3")
         content.Parse("nav")
 
-        return self.Display(content)
+        return self.display(content)
 
     def SaveGeneral(self):
 
@@ -180,7 +180,7 @@ class View(GlobalView):
             " FROM alliances_ranks" + \
             " WHERE allianceid=" + str(self.AllianceId) + \
             " ORDER BY rankid"
-        oRss = oConnRows(query)
+        oRss = dbRows(query)
         for oRs in oRss:
             name = self.request.POST.get("n" + str(oRs['rankid'])).strip()
             if len(name) > 2:

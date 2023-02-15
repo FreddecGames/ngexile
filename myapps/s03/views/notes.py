@@ -11,7 +11,7 @@ class View(GlobalView):
         response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
 
-        self.selected_menu = "notes"
+        self.selectedMenu = "notes"
 
         self.notes_status = ""
 
@@ -29,16 +29,16 @@ class View(GlobalView):
 
     def display_notes(self):
 
-        content = GetTemplate(self.request, "s03/notes")
+        content = getTemplate(self.request, "s03/notes")
 
-        content.AssignValue("maxlength", 5000)
+        content.setValue("maxlength", 5000)
 
         oRs = oConnExecute("SELECT notes FROM users WHERE id = " + str(self.UserId) + " LIMIT 1" )
 
-        content.AssignValue("data_notes", oRs[0])
+        content.setValue("data_notes", oRs[0])
 
         if self.notes_status != "":
             content.Parse(self.notes_status)
             content.Parse("error")
 
-        return self.Display(content)
+        return self.display(content)

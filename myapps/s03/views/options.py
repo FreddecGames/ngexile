@@ -11,7 +11,7 @@ class View(GlobalView):
         response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
 
-        self.selected_menu = "options"
+        self.selectedMenu = "options"
 
         if request.GET.get("frame") == "1":
             oConnDoQuery("UPDATE users SET inframe=True WHERE id="+ str(self.UserId))
@@ -130,20 +130,20 @@ class View(GlobalView):
                 " WHERE users.id = "+str(self.UserId)
         oRs = oConnExecute(query)
 
-        content.AssignValue("regdate", oRs[1])
-        content.AssignValue("description", oRs[2])
-        content.AssignValue("ip", self.request.META.get("remote_addr"))
+        content.setValue("regdate", oRs[1])
+        content.setValue("description", oRs[2])
+        content.setValue("ip", self.request.META.get("remote_addr"))
 
         if oRs[0] == None or oRs[0] == "":
             content.Parse("noavatar")
         else:
-            content.AssignValue("avatar_url", oRs[0])
+            content.setValue("avatar_url", oRs[0])
             content.Parse("avatar")
 
         if oRs[4]:
-            content.AssignValue("alliancename", oRs[6])
-            content.AssignValue("alliancetag", oRs[5])
-            content.AssignValue("rank_label", oRs[7])
+            content.setValue("alliancename", oRs[6])
+            content.setValue("alliancetag", oRs[5])
+            content.setValue("rank_label", oRs[7])
 
             content.Parse("alliance")
         else:
@@ -158,7 +158,7 @@ class View(GlobalView):
         if oRs[0] == None:
             content.Parse("delete_account")
         else:
-            content.AssignValue("remainingtime", oRs[0])
+            content.setValue("remainingtime", oRs[0])
             content.Parse("account_deleting")
 
         if oRs[1]: content.Parse("timers_enabled")
@@ -167,7 +167,7 @@ class View(GlobalView):
 
         content.Parse("skin_" + str(oRs[5]))
 
-        content.AssignValue("email", str(oRs[3]))
+        content.setValue("email", str(oRs[3]))
 
         content.Parse("options")
 
@@ -182,7 +182,7 @@ class View(GlobalView):
             remainingtime = 0
 
         if remainingtime > 0:
-            content.AssignValue("remaining_time", remainingtime)
+            content.setValue("remaining_time", remainingtime)
             content.Parse("start_in")
             self.showSubmit = False
         else:
@@ -191,7 +191,7 @@ class View(GlobalView):
             oRs = oConnExecute("SELECT int4(date_part('epoch', now()-last_holidays)) FROM users WHERE id="+str(self.UserId))
 
             if (oRs[0]) and oRs[0] < holidays_breaktime:
-                content.AssignValue("remaining_time", holidays_breaktime-oRs[0])
+                content.setValue("remaining_time", holidays_breaktime-oRs[0])
                 content.Parse("cant_enable")
                 self.showSubmit = False
             else:
@@ -211,9 +211,9 @@ class View(GlobalView):
 
         oRs = oConnExecute("SELECT autosignature FROM users WHERE id="+str(self.UserId))
         if oRs:
-            content.AssignValue("autosignature", oRs[0])
+            content.setValue("autosignature", oRs[0])
         else:
-            content.AssignValue("autosignature", "")
+            content.setValue("autosignature", "")
 
         content.Parse("mail")
 
@@ -223,11 +223,11 @@ class View(GlobalView):
         self.showSubmit = False
 
     def displayPage(self):
-        content = GetTemplate(self.request, "s03/options")
+        content = getTemplate(self.request, "s03/options")
 
-        content.AssignValue("cat", self.optionCat)
-        content.AssignValue("name", self.oPlayerInfo["username"])
-        content.AssignValue("universe", universe)
+        content.setValue("cat", self.optionCat)
+        content.setValue("name", self.oPlayerInfo["username"])
+        content.setValue("universe", universe)
 
         if self.optionCat == 2:
             self.display_options(content)
@@ -256,4 +256,4 @@ class View(GlobalView):
 
         if self.showSubmit: content.Parse("submit")
 
-        return self.Display(content)
+        return self.display(content)
