@@ -329,43 +329,6 @@ class GlobalView(ExileMixin, View):
     def logpage(self):
         self.pagelogged = True
 
-    '''
-    sub RedirectTo(url)
-        logpage()
-    
-        pageTerminated = true
-    
-        Response.Redirect url
-        Response.End
-    end sub
-    '''
-    
-    '''
-    sub displayXML(tpl)
-        dim tpl_xml
-        set tpl_xml = GetTemplate("layoutxml")
-    
-        dim oRs, query
-    
-        ' retrieve number of new messages & reports
-        query = "SELECT (SELECT int4(COUNT(*)) FROM messages WHERE ownerid=" & UserId & " AND read_date is NULL)," & _
-                "(SELECT int4(COUNT(*)) FROM reports WHERE ownerid=" & UserId & " AND read_date is NULL AND datetime <= now());"
-        set oRs = oConn.Execute(query)
-    
-        tpl_xml.AssignValue "new_mail", oRs(0)
-        tpl_xml.AssignValue "new_report", oRs(1)
-    
-        tpl_xml.AssignValue "content", tpl.output
-        tpl_xml.AssignValue "selectedmenu", Replace(selected_menu,".","_")
-        tpl_xml.Parse ""
-    
-        response.contentType = "text/xml"
-    
-        Session("details") = "sending page"
-        response.write tpl_xml.output
-    end sub
-    '''
-
     #
     # Display the tpl content with the default layout template
     #
