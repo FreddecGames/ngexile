@@ -51,7 +51,7 @@
         }
 
         function setmaximum(res, res_max) {
-            var maxload = parseInt(document.getElementById("capacityNew2").innerHTML);
+            var maxload = parseInt(document.getElementById("capacityNew2").innerHTML.replace(' ', ''));
 
             for (i = 0; i < resources.length; i++) {
                 if (resources[i] != res)

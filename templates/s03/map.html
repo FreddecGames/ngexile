@@ -567,7 +567,7 @@
                                         s += '</div>'
                                     s += '</div>'
                                 s += '">'
-                                    s += '<img width=16 height=16 src="{{PATH_IMAGES}}img/map/info.gif">'
+                                    s += '<small class="text-normal"><i class="fa-fw fas fa-info"></i></small>'
                                 s += '</a>'
                             }
                             else s += '&nbsp;'
@@ -715,7 +715,7 @@
                                 else s += '<span class="' + c + '">' + name + '</span>'
                             }
                             else if (rel==-3 && isNaN(parseInt(img))) s += ''
-                            else if (rel==-3) s += '<span class="text-muted">Inhabitée</span>'
+                            else if (rel==-3) s += '<small class="text-muted">Inhabitée</small>'
                             else {
                                 if (owner == '') s += '<span class="' + c + '" title="Planète occupée">Occupée</span>';
                                 else s += '<a href="/s03/nation/?name=' + owner + '" class="' + c + '" data-bs-toggle="tooltip" data-bs-custom-class="tooltip-light" data-bs-title="Voir profil">' + owner + '</a>'
