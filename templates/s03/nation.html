@@ -87,7 +87,7 @@
                             <a href="/s03/map/?g={{ planet.g }}&s={{ planet.s }}" data-bs-toggle="tooltip" data-bs-title="Carte spatiale">{{ planet.g }}.{{ planet.s }}.{{ planet.p }}</a>
                         </div>
                     {% empty %}
-                        <div class="col-auto">
+                        <div class="col text-center">
                             <span class="text-normal">Aucune planète</span>
                         </div>
                     {% endfor %}
@@ -126,7 +126,7 @@
                         </div>
                     </div>
                 {% empty %}
-                    <div class="list-group-item">
+                    <div class="list-group-item text-center">
                         <span class="text-normal">Aucune flotte</span>
                     </div>
                 {% endfor %}

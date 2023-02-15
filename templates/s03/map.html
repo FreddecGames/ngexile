@@ -870,7 +870,7 @@
                     {% for fleet in movings %}
                         <script>radarFleet({{ fleet.relation }}, "{{ fleet.alliancetag }}", "{{ fleet.name }}", "{{ fleet.fleetid }}", "{{ fleet.fleetname }}", {{ fleet.signature }}, "{{ fleet.f_planetid }}", "{{ fleet.f_planetname }}", "{{ fleet.f_g }}", "{{ fleet.f_s }}", "{{ fleet.f_p }}", {{ fleet.f_relation }}, "{{ fleet.t_planetid }}", "{{ fleet.t_planetname }}", "{{ fleet.t_g }}", "{{ fleet.t_s }}", "{{ fleet.t_p }}", {{ fleet.t_relation }}, {{ fleet.time}}, {% if fleet.losing %}true{% else %}false{% endif %});</script>
                     {% empty %}
-                        <div class="list-group-item">
+                        <div class="list-group-item text-center">
                             <span class="text-normal">Aucune flotte détectée</span>
                         </div>
                     {% endfor %}
@@ -886,7 +886,7 @@
                     {% for fleet in enterings %}
                         <script>radarFleet({{ fleet.relation }}, "{{ fleet.alliancetag }}", "{{ fleet.name }}", "{{ fleet.fleetid }}", "{{ fleet.fleetname }}", {{ fleet.signature }}, "{{ fleet.f_planetid }}", "{{ fleet.f_planetname }}", "{{ fleet.f_g }}", "{{ fleet.f_s }}", "{{ fleet.f_p }}", {{ fleet.f_relation }}, "{{ fleet.t_planetid }}", "{{ fleet.t_planetname }}", "{{ fleet.t_g }}", "{{ fleet.t_s }}", "{{ fleet.t_p }}", {{ fleet.t_relation }}, {{ fleet.time}}, {% if fleet.losing %}true{% else %}false{% endif %});</script>
                     {% empty %}
-                        <div class="list-group-item">
+                        <div class="list-group-item text-center">
                             <span class="text-normal">Aucune flotte détectée</span>
                         </div>
                     {% endfor %}
@@ -902,7 +902,7 @@
                     {% for fleet in leavings %}
                         <script>radarFleet({{ fleet.relation }}, "{{ fleet.alliancetag }}", "{{ fleet.name }}", "{{ fleet.fleetid }}", "{{ fleet.fleetname }}", {{ fleet.signature }}, "{{ fleet.f_planetid }}", "{{ fleet.f_planetname }}", "{{ fleet.f_g }}", "{{ fleet.f_s }}", "{{ fleet.f_p }}", {{ fleet.f_relation }}, "{{ fleet.t_planetid }}", "{{ fleet.t_planetname }}", "{{ fleet.t_g }}", "{{ fleet.t_s }}", "{{ fleet.t_p }}", {{ fleet.t_relation }}, {{ fleet.time}}, {% if fleet.losing %}true{% else %}false{% endif %});</script>
                     {% empty %}
-                        <div class="list-group-item">
+                        <div class="list-group-item text-center">
                             <span class="text-normal">Aucune flotte détectée</span>
                         </div>
                     {% endfor %}

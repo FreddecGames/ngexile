@@ -8,7 +8,7 @@
             <div class="card">
                 <div class="card-header">
                     <div class="row gx-3">
-                        <div class="col"><a href="/s03/orbit/?planet={{ planet.planetid }}" data-bs-toggle="tooltip" data-bs-title="Voir orbite">{{ planet.planetname }}</a></div>
+                        <div class="col"><a href="/s03/orbit/?planet={{ planet.planetid }}" class="fs-6" data-bs-toggle="tooltip" data-bs-title="Voir orbite">{{ planet.planetname }}</a></div>
                         <div class="col-auto"><a href="/s03/map/?g={{ planet.g }}&s={{ planet.s }}&p={{ planetp }}" data-bs-toggle="tooltip" data-bs-title="Carte spatiale">{{ planet.g }}.{{ planet.s }}.{{ planet.p }}</a></div>
                     </div>
                 </div>
@@ -27,8 +27,10 @@
             </div>
         </div>
     {% empty %}
-        <div class="col-12 text-center">
-            <span class="text-normal">Aucun vaisseau en attente</span>
+        <div class="col-12">
+            <div class="card card-body text-center">
+                <span class="text-normal">Aucun vaisseau en attente</span>
+            </div>
         </div>
     {% endfor %}
 </div>

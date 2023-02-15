@@ -34,8 +34,8 @@ def isValidName(myName):
     if myName == "" or len(myName) < 2 or len(myName) > 12:
         return False
     else:
+    
         p = re.compile("^[a-zA-Z0-9]+([ ]?[\-]?[ ]?[a-zA-Z0-9]+)*$")
-
         return p.match(myName)
 
 
@@ -54,8 +54,8 @@ def isValidObjectName(myName):
     if myName == "" or len(myName) < 2 or len(myName) > 16:
         return False
     else:
+    
         p = re.compile("^[a-zA-Z0-9\- ]+$")
-
         return p.match(myName)
 
 #--- cast functions
