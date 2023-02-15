@@ -4,8 +4,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.views import View
 
-from myapps.s03.lib.exile import *
-from myapps.s03.lib.template import *
+from myapps.s03.views._utils import *
 
 from myapps.s03.views.cache import *
 
@@ -26,11 +25,9 @@ class GlobalView(ExileMixin, View):
         
         response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
-        
-        if not request.session.get(sUser):
-            return HttpResponseRedirect("/") # Redirect to home page
 
         request.session["details"] = ""
+        self.UserId = request.user.id
         
         # Check that this session is still valid
         response = self.CheckSessionValidity()
@@ -282,29 +279,6 @@ class GlobalView(ExileMixin, View):
             tpl.Parse("show_mercenary")
             tpl.Parse("show_alliance")
     
-        #
-        # Fill admin info
-        #
-        if self.request.session.get("privilege", 0) >= 100:
-            
-            query = "SELECT int4(MAX(id)) FROM log_http_errors"
-            oRs = oConnExecute(query)
-            last_errorid = oRs[0]
-    
-            query = "SELECT int4(MAX(id)) FROM log_notices"
-            oRs = oConnExecute(query)
-            last_noticeid = oRs[0]
-    
-            query = "SELECT COALESCE(dev_lasterror, 0), COALESCE(dev_lastnotice, 0) FROM users WHERE id=" + self.request.session.get(sLogonUserID)
-            oRs = oConnExecute(query)
-            if last_errorid > oRs[0]:
-                tpl.AssignValue("new_error", last_errorid-oRs[0])
-    
-            if last_noticeid > oRs[1]:
-                tpl.AssignValue("new_notice", last_noticeid-oRs[1])
-    
-            tpl.Parse("dev")
-    
         tpl.AssignValue("cur_planetid", self.CurrentPlanet)
     
         tpl.AssignValue("cur_g", self.CurrentGalaxyId)
@@ -387,41 +361,6 @@ class GlobalView(ExileMixin, View):
             if self.IsImpersonating():
                 tpl_layout.AssignValue("username", self.oPlayerInfo["username"])
                 tpl_layout.Parse("impersonating")
-                
-            #
-            # Fill admin info
-            #
-            '''
-            if self.request.session.get(sPrivilege) > 100:
-    
-                # Assign the time taken to generate the page
-                tpl_layout.AssignValue("render_time",  (time.clock() - self.StartTime))
-    
-                # Assign number of logged players
-                oRs = oConnExecute("SELECT int4(count(*)) FROM vw_players WHERE lastactivity >= now()-INTERVAL '20 minutes'")
-                tpl_layout.AssignValue("players", oRs[0])
-                tpl_layout.Parse("dev")
-    
-                if self.oPlayerInfo["privilege"] == -2:
-                    oRs = oConnExecute("SELECT start_time, min_end_time, end_time FROM users_holidays WHERE userid="+str(self.UserId))
-    
-                    if oRs:
-                        tpl_layout.AssignValue("start_datetime", oRs[0])
-                        tpl_layout.AssignValue("min_end_datetime", oRs[1])
-                        tpl_layout.AssignValue("end_datetime", oRs[2])
-                        tpl_layout.Parse("onholidays")
-    
-                if self.oPlayerInfo["privilege"] == -1:
-                    tpl_layout.AssignValue("ban_datetime", self.oPlayerInfo["ban_datetime"])
-                    tpl_layout.AssignValue("ban_reason", self.oPlayerInfo["ban_reason"])
-                    tpl_layout.AssignValue("ban_reason_public", self.oPlayerInfo["ban_reason_public"])
-    
-                    if self.oPlayerInfo["ban_expire"]:
-                        tpl_layout.AssignValue("ban_expire_datetime", self.oPlayerInfo["ban_expire"])
-                        tpl_layout.Parse("banned.expire")
-    
-                    tpl_layout.Parse("banned")
-            '''
             
             tpl_layout.AssignValue("userid", self.UserId)
             tpl_layout.AssignValue("server", universe)
@@ -460,7 +399,6 @@ class GlobalView(ExileMixin, View):
     # Check that our user is valid, otherwise redirect user to home page
     #
     def CheckSessionValidity(self):
-        self.UserId = self.request.session.get(sUser)
     
         # check that this session is still used
         # if a user tries to login multiple times, the first sessions are abandonned
@@ -481,18 +419,6 @@ class GlobalView(ExileMixin, View):
     
         self.SecurityLevel = self.oPlayerInfo["security_level"]
         self.displayAlliancePlanetName = self.oPlayerInfo["display_alliance_planet_name"]
-    
-        self.request.session["LCID"] = self.oPlayerInfo["lcid"]
-        
-        '''
-        if self.request.session.get(sPrivilege) < 100:
-            if self.request.COOKIES.get("username") == "":
-                self.request.COOKIES["username"] = self.oPlayerInfo["username"]
-            elif self.request.COOKIES.get("username") != self.oPlayerInfo["username"]:
-                self.log_notice("username cookie", "Last browser username cookie : \"" + self.request.COOKIES.get("username", "") + "\"", 1)
-                
-                self.request.COOKIES["username"] = self.oPlayerInfo["username"]
-        '''
         
         if self.oPlayerInfo["privilege"] == -1: return HttpResponseRedirect("/s03/locked/")
         if self.oPlayerInfo["privilege"] == -2: return HttpResponseRedirect("/s03/holidays/")

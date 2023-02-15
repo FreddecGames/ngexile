@@ -5,9 +5,7 @@ from django.shortcuts import render
 from django.utils import timezone
 from django.views import View
 
-from myapps.s03.lib.exile import *
-from myapps.s03.lib.template import *
-from myapps.s03.lib.accounts import *
+from myapps.s03.views._utils import *
 
 class View(ExileMixin, View):
 
@@ -52,44 +50,35 @@ class View(ExileMixin, View):
 
         if result == 0:
             orientation = int(request.POST.get("orientation", 0))
-            allowed = False
+            
+            oConnDoQuery("UPDATE users SET orientation=" + str(orientation) + " WHERE id=" + str(self.UserId))
 
-            for i in allowedOrientations:
-                if i == orientation:
-                    allowed = True
-                    break
+            rs = oConnExecute("SELECT sp_reset_account(" + str(self.UserId) + "," + str(galaxy) + ")")
+            result = rs[0]
 
-            if allowed:
-                oConnDoQuery("UPDATE users SET orientation=" + str(orientation) + " WHERE id=" + str(self.UserId))
+            if result == 0:
 
-                rs = oConnExecute("SELECT sp_reset_account(" + str(self.UserId) + "," + str(galaxy) + ")")
-                result = rs[0]
+                if orientation == 1:    # merchant
+                    oConnDoQuery("INSERT INTO researches(userid, researchid, level) VALUES(" + str(self.UserId) + ",10,1)")
+                    oConnDoQuery("INSERT INTO researches(userid, researchid, level) VALUES(" + str(self.UserId) + ",11,1)")
+                    oConnDoQuery("INSERT INTO researches(userid, researchid, level) VALUES(" + str(self.UserId) + ",12,1)")
 
-                if result == 0:
-    
-                    if orientation == 1:    # merchant
-                        oConnDoQuery("INSERT INTO researches(userid, researchid, level) VALUES(" + str(self.UserId) + ",10,1)")
-                        oConnDoQuery("INSERT INTO researches(userid, researchid, level) VALUES(" + str(self.UserId) + ",11,1)")
-                        oConnDoQuery("INSERT INTO researches(userid, researchid, level) VALUES(" + str(self.UserId) + ",12,1)")
-    
-                    elif orientation == 2:    # military
-                        oConnDoQuery("INSERT INTO researches(userid, researchid, level) VALUES(" + str(self.UserId) + ",20,1)")
-                        oConnDoQuery("INSERT INTO researches(userid, researchid, level) VALUES(" + str(self.UserId) + ",21,1)")
-                        oConnDoQuery("INSERT INTO researches(userid, researchid, level) VALUES(" + str(self.UserId) + ",22,1)")
-    
-                    elif orientation == 3:    # scientist
-                        oConnDoQuery("INSERT INTO researches(userid, researchid, level) VALUES(" + str(self.UserId) + ",30,1)")
-                        oConnDoQuery("INSERT INTO researches(userid, researchid, level) VALUES(" + str(self.UserId) + ",31,1)")
-                        oConnDoQuery("INSERT INTO researches(userid, researchid, level) VALUES(" + str(self.UserId) + ",32,1)")
-    
-                    oConnExecute("SELECT sp_update_researches(" + str(self.UserId) + ")")
-    
-                    return HttpResponseRedirect("/s03/overview/")
+                elif orientation == 2:    # military
+                    oConnDoQuery("INSERT INTO researches(userid, researchid, level) VALUES(" + str(self.UserId) + ",20,1)")
+                    oConnDoQuery("INSERT INTO researches(userid, researchid, level) VALUES(" + str(self.UserId) + ",21,1)")
+                    oConnDoQuery("INSERT INTO researches(userid, researchid, level) VALUES(" + str(self.UserId) + ",22,1)")
+
+                elif orientation == 3:    # scientist
+                    oConnDoQuery("INSERT INTO researches(userid, researchid, level) VALUES(" + str(self.UserId) + ",30,1)")
+                    oConnDoQuery("INSERT INTO researches(userid, researchid, level) VALUES(" + str(self.UserId) + ",31,1)")
+                    oConnDoQuery("INSERT INTO researches(userid, researchid, level) VALUES(" + str(self.UserId) + ",32,1)")
+
+                oConnExecute("SELECT sp_update_researches(" + str(self.UserId) + ")")
+
+                return HttpResponseRedirect("/s03/overview/")
 
         # display start page
         content = GetTemplate(self.request, "s03/start")
-        for i in allowedOrientations:
-            content.Parse("orientation_" + str(i))
 
         rss = oConnExecuteAll("SELECT id, recommended FROM sp_get_galaxy_info(" + str(self.UserId) + ")")
 

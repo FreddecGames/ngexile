@@ -4,8 +4,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.views import View
 
-from myapps.s03.lib.exile import *
-from myapps.s03.lib.template import *
+from myapps.s03.views._utils import *
 
 class View(ExileMixin, View):
 

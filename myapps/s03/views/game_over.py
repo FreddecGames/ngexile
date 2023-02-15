@@ -4,9 +4,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.views import View
 
-from myapps.s03.lib.exile import *
-from myapps.s03.lib.template import *
-from myapps.s03.lib.accounts import *
+from myapps.s03.views._utils import *
 
 class View(ExileMixin, View):
 
@@ -48,43 +46,42 @@ class View(ExileMixin, View):
 
         changeNameError = ""
 
-        if allowedRetry:
-            action = request.POST.get("action")
+        action = request.POST.get("action")
 
-            if action == "retry":
-                # check if user wants to change name
-                if request.POST.get("username") != username:
+        if action == "retry":
+            # check if user wants to change name
+            if request.POST.get("username") != username:
 
-                    # check that the login is not banned
-                    oRs = oConnExecute("SELECT 1 FROM banned_logins WHERE " + dosql(username) + " ~* login LIMIT 1;")
-                    if oRs == None:
+                # check that the login is not banned
+                oRs = oConnExecute("SELECT 1 FROM banned_logins WHERE " + dosql(username) + " ~* login LIMIT 1;")
+                if oRs == None:
 
-                        # check that the username is correct
-                        if not isValidName(request.POST.get("username")):
-                            changeNameError = "check_username"
-                        else:
-                            # try to rename user and catch any error
-                            oConnDoQuery("UPDATE users SET alliance_id=NULL WHERE id=" + str(self.UserId))
-
-                            oConnDoQuery("UPDATE users SET username=" + dosql(request.POST.get("username")) + " WHERE id=" + str(self.UserId))
-
-                            if err.Number != 0:
-                                changeNameError = "username_exists"
-                            else:
-                                # update the commander name
-                                oConnDoQuery("UPDATE commanders SET name=" + dosql(request.POST.get("login")) + " WHERE name=" + dosql(username) + " AND ownerid=" + str(self.UserId))
-
-                if changeNameError == "":
-                    oRs = oConnExecute("SELECT sp_reset_account(" + str(self.UserId) + "," + str(ToInt(request.POST.get("galaxy"), 1)) + ")")
-                    if oRs[0] == 0:
-                        return HttpResponseRedirect("/s03/overview/")
-
+                    # check that the username is correct
+                    if not isValidName(request.POST.get("username")):
+                        changeNameError = "check_username"
                     else:
-                        reset_error = oRs[0]
+                        # try to rename user and catch any error
+                        oConnDoQuery("UPDATE users SET alliance_id=NULL WHERE id=" + str(self.UserId))
 
-            elif action == "abandon":
-                oConnDoQuery("UPDATE users SET deletion_date=now()/*+INTERVAL '2 days'*/ WHERE id=" + str(self.UserId))
-                return HttpResponseRedirect("/")
+                        oConnDoQuery("UPDATE users SET username=" + dosql(request.POST.get("username")) + " WHERE id=" + str(self.UserId))
+
+                        if err.Number != 0:
+                            changeNameError = "username_exists"
+                        else:
+                            # update the commander name
+                            oConnDoQuery("UPDATE commanders SET name=" + dosql(request.POST.get("login")) + " WHERE name=" + dosql(username) + " AND ownerid=" + str(self.UserId))
+
+            if changeNameError == "":
+                oRs = oConnExecute("SELECT sp_reset_account(" + str(self.UserId) + "," + str(ToInt(request.POST.get("galaxy"), 1)) + ")")
+                if oRs[0] == 0:
+                    return HttpResponseRedirect("/s03/overview/")
+
+                else:
+                    reset_error = oRs[0]
+
+        elif action == "abandon":
+            oConnDoQuery("UPDATE users SET deletion_date=now()/*+INTERVAL '2 days'*/ WHERE id=" + str(self.UserId))
+            return HttpResponseRedirect("/")
 
         # display Game Over page
         content = GetTemplate(self.request, "s03/game-over")
@@ -111,7 +108,7 @@ class View(ExileMixin, View):
 
             content.Parse("changename")
         else:
-            if allowedRetry: content.Parse("retry")
+            content.Parse("retry")
             content.Parse("choice")
 
             if bankruptcy > 0:

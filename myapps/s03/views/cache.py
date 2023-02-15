@@ -3,8 +3,7 @@
 from django.core.cache import cache
 from django.utils import timezone
 
-from myapps.s03.lib.exile import *
-from myapps.s03.lib.sql import *
+from myapps.s03.views._utils import *
 
 # this script is made to cache some data from the sql server that doesn't change often
 

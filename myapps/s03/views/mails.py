@@ -2,7 +2,7 @@
 
 from myapps.s03.views._global import *
 
-from myapps.s03.lib.accounts import *
+from myapps.s03.views._utils import *
 
 class View(GlobalView):
 
@@ -474,8 +474,6 @@ class View(GlobalView):
 
         if (self.oAllianceRights):
             if self.oAllianceRights["can_mail_alliance"]: content.Parse("sendalliance")
-
-        if hasAdmins: content.Parse("sendadmins")
 
         # if is a payed account, append the autosignature text to message body
         if self.oPlayerInfo["paid"]:

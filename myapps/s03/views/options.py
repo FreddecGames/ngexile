@@ -2,7 +2,7 @@
 
 from myapps.s03.views._global import *
 
-from myapps.s03.lib.accounts import *
+from myapps.s03.views._utils import *
 
 class View(GlobalView):
 
@@ -48,9 +48,6 @@ class View(GlobalView):
 
         if self.optionCat < 1 or self.optionCat > 6:
             self.optionCat = 1
-
-        if not allowedHolidays and self.optionCat == 3:
-            self.optionCat = 1 # only display holidays formular if it is allowed
 
         if request.POST.get("submit", "") != "":
 
@@ -252,7 +249,7 @@ class View(GlobalView):
         content.Parse("cat"+str(self.optionCat)+"_selected")
         content.Parse("cat1")
         content.Parse("cat2")
-        if allowedHolidays: content.Parse("cat3")
+        content.Parse("cat3")
         content.Parse("cat5")
         content.Parse("cat6")
         content.Parse("nav")

@@ -6,8 +6,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.views import View
 
-from myapps.s03.lib.exile import *
-from myapps.s03.lib.template import *
+from myapps.s03.views._utils import *
 
 from myapps.s03.views.cache import *
 
@@ -20,7 +19,7 @@ class View(ExileMixin, View):
 
         if maintenance and not request.user.is_superuser : return HttpResponseRedirect("/")
 
-        self.UserId = ToInt(request.session.get(sUser), 0)
+        self.UserId = request.user.id
         if self.UserId == 0: return HttpResponseRedirect("/")
 
         action = request.GET.get("a")

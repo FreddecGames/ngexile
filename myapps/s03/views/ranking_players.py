@@ -9,7 +9,7 @@ class View(GlobalView):
         response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
 
-        self.selected_menu = "ranking.players"
+        self.selected_menu = "ranking"
 
         return self.DisplayRanking()
 

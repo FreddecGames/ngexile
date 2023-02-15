@@ -1,7 +1,18 @@
 {% extends "s03/layout.html" %}
 {% load humanize %}
 {% block content %}
-<div class="page-content">
+    <div class="page-content">
+        <ul class="nav nav-tabs mt-0 mb-3">
+            <li class="nav-item">
+                <a href="/s03/ranking-players/" class="nav-link">Joueurs</a>
+            </li>
+            <li class="nav-item active">
+                <a href="/s03/ranking-alliances/" class="nav-link">Alliances</a>
+            </li>
+        </ul>
+    </div>
+    <div class="scroll-content" style="height:calc(100% - 52px);">
+        <div class="page-content">
 <div class="mb-3">
     <div class="row gx-3 align-items-center">
         <div class="col-auto"><span class="text-normal">Trié par</span></div>
@@ -49,11 +60,11 @@
                     <div class="col-2 text-end">
                         {{ alliance.stat_colonies }} <small class="text-normal">planètes</small>
                     </div>
-                    <div class="col-2 text-end">
+                    <div class="col-3 text-end">
                         {{ alliance.score|intcomma }}
                         <small class="ms-2 {% if alliance.score_delta > 0 %}text-success{% else %}text-danger{% endif %}">{% if alliance.score_delta > 0 %}+{% endif %}{{ alliance.score_delta|intcomma }}</small>
                     </div>
-                    <div class="col-3 text-end">
+                    <div class="col-2 text-end">
                         <span class="text-normal">{{ alliance.created }}</span>
                     </div>
                 </div>
@@ -64,6 +75,7 @@
             </div>
         {% endfor %}
     </div>
+</div>
 </div>
 </div>
 {% endblock %}

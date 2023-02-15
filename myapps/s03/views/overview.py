@@ -3,7 +3,7 @@
 from math import sqrt
 
 from myapps.s03.views._global import *
-from myapps.s03.lib.accounts import *
+from myapps.s03.views._utils import *
 
 class View(GlobalView):
     
