@@ -29,7 +29,7 @@ class View(GlobalView):
                 " int4(upkeep_ships_parked + ships_parked_signature*cost_ships_parked/24*"+str(hours)+"),"+ \
                 " commanders, commanders_salary, cost_commanders, upkeep_commanders + int4(commanders_salary*cost_commanders/24*"+str(hours)+")" + \
                 " FROM vw_players_upkeep" + \
-                " WHERE userid=" + str(self.UserId)
+                " WHERE userid=" + str(self.userId)
         oRs = oConnExecute(query)
 
         content.setValue("commanders_quantity", oRs[18])

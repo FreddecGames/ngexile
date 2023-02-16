@@ -22,11 +22,11 @@ class View(GlobalView):
 
         if request.POST.get("action") == "assigncommander":
             if ToInt(request.POST.get("commander"), 0) != 0: # assign selected commander
-                query = "SELECT * FROM sp_commanders_assign(" + str(self.UserId) + "," + str(ToInt(request.POST.get("commander"), 0)) + "," + str(self.CurrentPlanet) + ",null)"
+                query = "SELECT * FROM sp_commanders_assign(" + str(self.userId) + "," + str(ToInt(request.POST.get("commander"), 0)) + "," + str(self.CurrentPlanet) + ",null)"
                 oConnDoQuery(query)
             else:
                 # unassign current planet commander
-                query = "UPDATE nav_planet SET commanderid=null WHERE ownerid=" + str(self.UserId) + " AND id=" + str(self.CurrentPlanet)
+                query = "UPDATE nav_planet SET commanderid=null WHERE ownerid=" + str(self.userId) + " AND id=" + str(self.CurrentPlanet)
                 oConnDoQuery(query)
 
         elif request.POST.get("action") == "rename":
@@ -34,36 +34,36 @@ class View(GlobalView):
                 self.planet_error = self.e_rename_bad_name
             else:
                 query = "UPDATE nav_planet SET name=" + dosql(request.POST.get("name")) + \
-                        " WHERE ownerid=" + str(self.UserId) + " AND id=" + str(self.CurrentPlanet)
+                        " WHERE ownerid=" + str(self.userId) + " AND id=" + str(self.CurrentPlanet)
 
                 oConnDoQuery(query)
 
         elif request.POST.get("action") == "firescientists":
             amount = ToInt(request.POST.get("amount"), 0)
-            oConnExecute("SELECT sp_dismiss_staff(" + str(self.UserId) + "," + str(self.CurrentPlanet) + "," + str(amount) + ",0,0)")
+            oConnExecute("SELECT sp_dismiss_staff(" + str(self.userId) + "," + str(self.CurrentPlanet) + "," + str(amount) + ",0,0)")
         elif request.POST.get("action") == "firesoldiers":
             amount = ToInt(request.POST.get("amount"), 0)
-            oConnExecute("SELECT sp_dismiss_staff(" + str(self.UserId) + "," + str(self.CurrentPlanet) + "," + "0," + str(amount) + ",0)")
+            oConnExecute("SELECT sp_dismiss_staff(" + str(self.userId) + "," + str(self.CurrentPlanet) + "," + "0," + str(amount) + ",0)")
         elif request.POST.get("action") == "fireworkers":
             amount = ToInt(request.POST.get("amount"), 0)
-            oConnExecute("SELECT sp_dismiss_staff(" + str(self.UserId) + "," + str(self.CurrentPlanet) + "," + "0,0," + str(amount) + ")")
+            oConnExecute("SELECT sp_dismiss_staff(" + str(self.userId) + "," + str(self.CurrentPlanet) + "," + "0,0," + str(amount) + ")")
 
         elif request.POST.get("action") == "abandon":
-            oConnExecute("SELECT sp_abandon_planet(" + str(self.UserId) + "," + str(self.CurrentPlanet) + ")")
+            oConnExecute("SELECT sp_abandon_planet(" + str(self.userId) + "," + str(self.CurrentPlanet) + ")")
             return HttpResponseRedirect("/s03/overview/")
 
         elif request.POST.get("action") == "resources_price":
             query = "UPDATE nav_planet SET" + \
                     " buy_ore = GREATEST(0, LEAST(1000, " + str(ToInt(request.POST.get("buy_ore"), 0)) + "))" + \
                     " ,buy_hydrocarbon = GREATEST(0, LEAST(1000, " + str(ToInt(request.POST.get("buy_hydrocarbon"), 0)) + "))" + \
-                    " WHERE ownerid=" + str(self.UserId) + " AND id=" + str(self.CurrentPlanet)
+                    " WHERE ownerid=" + str(self.userId) + " AND id=" + str(self.CurrentPlanet)
             oConnDoQuery(query)
 
         if request.GET.get("a") == "suspend":
             oConnExecute("SELECT sp_update_planet_production(" + str(self.CurrentPlanet) + ")")
-            oConnDoQuery("UPDATE nav_planet SET mod_production_workers=0, recruit_workers=False WHERE ownerid=" + str(self.UserId) + " AND id=" + str(self.CurrentPlanet) )
+            oConnDoQuery("UPDATE nav_planet SET mod_production_workers=0, recruit_workers=False WHERE ownerid=" + str(self.userId) + " AND id=" + str(self.CurrentPlanet) )
         elif request.GET.get("a")== "resume":
-            oConnDoQuery("UPDATE nav_planet SET recruit_workers=True WHERE ownerid=" + str(self.UserId) + " AND id=" + str(self.CurrentPlanet) )
+            oConnDoQuery("UPDATE nav_planet SET recruit_workers=True WHERE ownerid=" + str(self.userId) + " AND id=" + str(self.CurrentPlanet) )
             oConnExecute("SELECT sp_update_planet(" + str(self.CurrentPlanet) + ")")
 
         return self.DisplayPlanet()
@@ -118,7 +118,7 @@ class View(GlobalView):
 
             # retrieve commander assigned to this planet
             if oRs[16]:
-                oCmdRs = oConnExecute("SELECT name FROM commanders WHERE ownerid="+str(self.UserId)+" AND id="+str(oRs[16]))
+                oCmdRs = oConnExecute("SELECT name FROM commanders WHERE ownerid="+str(self.userId)+" AND id="+str(oRs[16]))
                 content.setValue("commandername", oCmdRs[0])
                 CmdId = oRs[16]
                 content.Parse("commander")
@@ -135,7 +135,7 @@ class View(GlobalView):
 
         query = " SELECT id, name, fleetname, planetname, fleetid " + \
                 " FROM vw_commanders" + \
-                " WHERE ownerid="+str(self.UserId) + \
+                " WHERE ownerid="+str(self.userId) + \
                 " ORDER BY fleetid IS NOT NULL, planetid IS NOT NULL, fleetid, planetid "
         oRss = oConnExecuteAll(query)
 
@@ -172,7 +172,7 @@ class View(GlobalView):
 
             if item == "fleet":
                 item["name"] = oRs[2]
-                activityRs = oConnExecute("SELECT dest_planetid, engaged, action FROM fleets WHERE ownerid="+str(self.UserId)+" AND id="+str(oRs[4]))
+                activityRs = oConnExecute("SELECT dest_planetid, engaged, action FROM fleets WHERE ownerid="+str(self.userId)+" AND id="+str(oRs[4]))
                 if activityRs[0] == None and (not activityRs[1]) and activityRs[2]==0:
                     item["assigned"] = True
                 else:
@@ -208,7 +208,7 @@ class View(GlobalView):
 
         query = "SELECT shipid, remaining_time, recycle" + \
                 " FROM vw_ships_under_construction" + \
-                " WHERE ownerid=" + str(self.UserId) + " AND planetid=" + str(self.CurrentPlanet) + " AND end_time IS NOT NULL" + \
+                " WHERE ownerid=" + str(self.userId) + " AND planetid=" + str(self.CurrentPlanet) + " AND end_time IS NOT NULL" + \
                 " ORDER BY remaining_time DESC"
 
         # view current ships constructions
@@ -234,7 +234,7 @@ class View(GlobalView):
 
         # list the fleets near the planet
         query = "SELECT id, name, attackonsight, engaged, size, signature, commanderid, (SELECT name FROM commanders WHERE id=commanderid) as commandername," + \
-                " action, sp_relation(ownerid, " + str(self.UserId) + ") AS relation, sp_get_user(ownerid) AS ownername" + \
+                " action, sp_relation(ownerid, " + str(self.userId) + ") AS relation, sp_get_user(ownerid) AS ownername" + \
                 " FROM fleets" + \
                 " WHERE action != -1 AND action != 1 AND planetid=" + str(self.CurrentPlanet) + \
                 " ORDER BY upper(name)"

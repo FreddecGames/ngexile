@@ -155,7 +155,7 @@ class View(GlobalView):
         # List researches that gives production bonus
         query = "SELECT researchid, '', level*mod_production_ore, level*mod_production_hydrocarbon, level*mod_production_energy, level" + \
                 " FROM researches INNER JOIN db_research ON researches.researchid=db_research.id" + \
-                " WHERE userid=" + str(self.UserId) +" AND ((mod_production_ore > 0) OR (mod_production_hydrocarbon > 0) OR (mod_production_energy > 0)) AND (level > 0);"
+                " WHERE userid=" + str(self.userId) +" AND ((mod_production_ore > 0) OR (mod_production_hydrocarbon > 0) OR (mod_production_energy > 0)) AND (level > 0);"
 
         oRs = oConnExecuteAll(query)
 
@@ -329,8 +329,8 @@ class View(GlobalView):
 
             return HttpResponseRedirect("/s03/production/?cat=" + str(self.cat))
 
-        query = "SELECT t.planetid, sp_get_planet_name(" + str(self.UserId) + ", n1.id), sp_relation(n1.ownerid," + str(self.UserId) + "), n1.galaxy, n1.sector, n1.planet, " + \
-                "        t.target_planetid, sp_get_planet_name(" + str(self.UserId) + ", n2.id), sp_relation(n2.ownerid," + str(self.UserId) + "), n2.galaxy, n2.sector, n2.planet, " + \
+        query = "SELECT t.planetid, sp_get_planet_name(" + str(self.userId) + ", n1.id), sp_relation(n1.ownerid," + str(self.userId) + "), n1.galaxy, n1.sector, n1.planet, " + \
+                "        t.target_planetid, sp_get_planet_name(" + str(self.userId) + ", n2.id), sp_relation(n2.ownerid," + str(self.userId) + "), n2.galaxy, n2.sector, n2.planet, " + \
                 "        t.energy, t.effective_energy, enabled" + \
                 " FROM planet_energy_transfer t" + \
                 "    INNER JOIN nav_planet n1 ON (t.planetid=n1.id)" + \

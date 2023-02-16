@@ -35,7 +35,7 @@ class View(GlobalView):
 
         query = "SELECT scientist_ore, scientist_hydrocarbon, scientist_credits," + \
                 " soldier_ore, soldier_hydrocarbon, soldier_credits" + \
-                " FROM sp_get_training_price(" + str(self.UserId) + ")"
+                " FROM sp_get_training_price(" + str(self.userId) + ")"
         oRs = oConnExecute(query)
 
         if oRs:
@@ -134,7 +134,7 @@ class View(GlobalView):
 
     def Train(self, Scientists, Soldiers):
 
-        oRs = connExecuteRetry("SELECT * FROM sp_start_training(" + str(self.UserId) + "," + str(self.CurrentPlanet) + "," + str(Scientists) + "," + str(Soldiers) + ")")
+        oRs = connExecuteRetry("SELECT * FROM sp_start_training(" + str(self.userId) + "," + str(self.CurrentPlanet) + "," + str(Scientists) + "," + str(Soldiers) + ")")
 
         if oRs:
             self.train_error = oRs[0]

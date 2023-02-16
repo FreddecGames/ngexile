@@ -316,11 +316,11 @@ class View(GlobalView):
         return self.display(content)
     
     def StartBuilding(self, BuildingId):
-        oRs = connExecuteRetry("SELECT sp_start_building(" + str(self.UserId) + "," + str(self.CurrentPlanet) + ", " + str(BuildingId) + ", false)")
+        oRs = connExecuteRetry("SELECT sp_start_building(" + str(self.userId) + "," + str(self.CurrentPlanet) + ", " + str(BuildingId) + ", false)")
         
     def CancelBuilding(self, BuildingId):
-        result = dbRow("SELECT sp_cancel_building(" + str(self.UserId) + "," + str(self.CurrentPlanet) + ", " + str(BuildingId) + ") AS result")
+        result = dbRow("SELECT sp_cancel_building(" + str(self.userId) + "," + str(self.CurrentPlanet) + ", " + str(BuildingId) + ") AS result")
         print(result)
     
     def DestroyBuilding(self, BuildingId):
-        connExecuteRetryNoRecords("SELECT sp_destroy_building(" + str(self.UserId) + "," + str(self.CurrentPlanet) + "," + str(BuildingId) + ")")
+        connExecuteRetryNoRecords("SELECT sp_destroy_building(" + str(self.userId) + "," + str(self.CurrentPlanet) + "," + str(BuildingId) + ")")

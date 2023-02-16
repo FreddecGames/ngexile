@@ -34,7 +34,7 @@ class View(GlobalView):
 
         if action == "cancel":
             self.tag = request.GET.get("tag").strip()
-            oRs = oConnExecute("SELECT sp_alliance_tribute_cancel(" + str(self.UserId) + "," + dosql(self.tag) + ")")
+            oRs = oConnExecute("SELECT sp_alliance_tribute_cancel(" + str(self.userId) + "," + dosql(self.tag) + ")")
 
             if oRs[0] == 0:
                 self.cease_success = "ok"
@@ -49,7 +49,7 @@ class View(GlobalView):
             self.credits = ToInt(request.POST.get("credits"), 0)
 
             if self.tag != "" and self.credits > 0:
-                oRs = oConnExecute("SELECT sp_alliance_tribute_new(" + str(self.UserId) + "," + dosql(self.tag) + "," + str(self.credits) + ")")
+                oRs = oConnExecute("SELECT sp_alliance_tribute_new(" + str(self.userId) + "," + dosql(self.tag) + "," + str(self.credits) + ")")
                 if oRs[0] == 0:
                     self.invitation_success = "ok"
                     self.tag = ""

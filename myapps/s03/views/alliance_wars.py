@@ -32,7 +32,7 @@ class View(GlobalView):
 
         if action == "pay":
             tag = request.GET.get("tag", "").strip()
-            oRs = oConnExecute("SELECT sp_alliance_war_pay_bill(" + str(self.UserId) + "," + dosql(self.tag) + ")")
+            oRs = oConnExecute("SELECT sp_alliance_war_pay_bill(" + str(self.userId) + "," + dosql(self.tag) + ")")
 
             if oRs[0] == 0:
                 self.cease_success = "ok"
@@ -45,7 +45,7 @@ class View(GlobalView):
 
         elif action == "stop":
             self.tag = request.GET.get("tag", "").strip()
-            oRs = oConnExecute("SELECT sp_alliance_war_stop(" + str(self.UserId) + "," + dosql(self.tag) + ")")
+            oRs = oConnExecute("SELECT sp_alliance_war_stop(" + str(self.userId) + "," + dosql(self.tag) + ")")
 
             if oRs[0] == 0:
                 self.cease_success = "ok"
@@ -59,7 +59,7 @@ class View(GlobalView):
         elif action == "new2":
             self.tag = request.POST.get("tag", "").strip()
 
-            oRs = oConnExecute("SELECT sp_alliance_war_declare(" + str(self.UserId) + "," + dosql(self.tag) + ")")
+            oRs = oConnExecute("SELECT sp_alliance_war_declare(" + str(self.userId) + "," + dosql(self.tag) + ")")
             if oRs[0] == 0:
                 self.result = "ok"
                 self.tag = ""

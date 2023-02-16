@@ -31,12 +31,12 @@ class View(GlobalView):
             if self.oAllianceRights["can_kick_player"]:
                 if action == "kick":
                     self.username = request.GET.get("name").strip()
-                    oConnExecute("SELECT sp_alliance_kick_member("+str(self.UserId)+","+dosql(self.username)+")")
+                    oConnExecute("SELECT sp_alliance_kick_member("+str(self.userId)+","+dosql(self.username)+")")
         
         if cat == 2 and self.username != "":
             if self.oAllianceRights["can_invite_player"]:
 
-                oRs = oConnExecute("SELECT sp_alliance_invite(" + str(self.UserId) + "," + dosql(self.username) + ")")
+                oRs = oConnExecute("SELECT sp_alliance_invite(" + str(self.userId) + "," + dosql(self.username) + ")")
                 if oRs[0] == 0:
                     self.invitation_success = "ok"
                     self.username = ""
@@ -107,7 +107,7 @@ class View(GlobalView):
             item["rank_label"] = oRs[1]
 
         # list members
-        query = "SELECT username, CASE WHEN id="+str(self.UserId)+" OR score_visibility >=1 THEN score ELSE 0 END AS score, int4((SELECT count(1) FROM nav_planet WHERE ownerid=users.id)) AS colonies," + \
+        query = "SELECT username, CASE WHEN id="+str(self.userId)+" OR score_visibility >=1 THEN score ELSE 0 END AS score, int4((SELECT count(1) FROM nav_planet WHERE ownerid=users.id)) AS colonies," + \
                 " date_part('epoch', now()-lastactivity) / 3600, alliance_joined, alliance_rank, privilege, score-previous_score AS score_delta, id," + \
                 " 0, credits, score_visibility, orientation, COALESCE(date_part('epoch', leave_alliance_datetime-now()), 0)" + \
                 " FROM users" + \
@@ -159,7 +159,7 @@ class View(GlobalView):
 
             if oRs[10] < 0: item["lowcredits"] = True
 
-            if oRs[11] >= 1 or oRs[8] == self.UserId:
+            if oRs[11] >= 1 or oRs[8] == self.userId:
                 totalScore = totalScore + oRs[1]
                 totalScoreDelta = totalScoreDelta + oRs[7]
 
@@ -188,7 +188,7 @@ class View(GlobalView):
                 item["2weeksplus"] = True
 
             if self.oAllianceRights["leader"]:
-                if oRs[5] > self.AllianceRank or oRs[8] == self.UserId:
+                if oRs[5] > self.AllianceRank or oRs[8] == self.userId:
                     item["manage"] = True
                 else:
                     item["cant_manage"] = True
@@ -290,8 +290,8 @@ class View(GlobalView):
         for oRs in oRss:
             query = " UPDATE users SET" + \
                     " alliance_rank=" + str(ToInt(self.request.POST.get("player" + str(oRs[0])), 100)) + \
-                    " WHERE id=" + str(oRs[0]) + " AND alliance_id=" + str(self.AllianceId) + " AND (alliance_rank > 0 OR id=" + str(self.UserId) + ")"
+                    " WHERE id=" + str(oRs[0]) + " AND alliance_id=" + str(self.AllianceId) + " AND (alliance_rank > 0 OR id=" + str(self.userId) + ")"
             oConnDoQuery(query)
 
         # if leader demotes himself
-        if ToInt(self.request.POST.get("player" + str(self.UserId)), 100) > 0: return HttpResponseRedirect("/s03/alliance/")
+        if ToInt(self.request.POST.get("player" + str(self.userId)), 100) > 0: return HttpResponseRedirect("/s03/alliance/")

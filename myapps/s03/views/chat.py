@@ -54,7 +54,7 @@ class View(GlobalView):
     def addLine(self, chatid, msg):
         msg = msg.strip()[:260]
         if msg != "":
-            connExecuteRetryNoRecords("INSERT INTO chat_lines(chatid, allianceid, userid, username, message) VALUES(" + str(chatid) + "," + str(sqlValue(self.AllianceId)) + "," + str(self.UserId) + "," + dosql(self.oPlayerInfo["username"]) + "," + dosql(msg) + ")")
+            connExecuteRetryNoRecords("INSERT INTO chat_lines(chatid, allianceid, userid, username, message) VALUES(" + str(chatid) + "," + str(sqlValue(self.AllianceId)) + "," + str(self.userId) + "," + dosql(self.oPlayerInfo["username"]) + "," + dosql(msg) + ")")
         return HttpResponse(" ")
 
     def refreshContent(self, chatid):
@@ -191,7 +191,7 @@ class View(GlobalView):
         query = "SELECT chat.id, chat.name, chat.topic" + \
                 " FROM users_chats" + \
                 "    INNER JOIN chat ON (chat.id=users_chats.chatid AND ((chat.password = '') OR (chat.password = users_chats.password)))" + \
-                " WHERE userid = " + str(self.UserId) + \
+                " WHERE userid = " + str(self.userId) + \
                 " ORDER BY users_chats.added"
         oRss = oConnExecuteAll(query)
 
@@ -231,7 +231,7 @@ class View(GlobalView):
 
         if chatid != 0:
             # save the chatid to the user chatlist
-            query = "INSERT INTO users_chats(userid, chatid, password) VALUES(" + str(self.UserId) + "," + str(chatid) + "," + dosql(pwd) + ")"
+            query = "INSERT INTO users_chats(userid, chatid, password) VALUES(" + str(self.userId) + "," + str(chatid) + "," + dosql(pwd) + ")"
             oConnDoQuery(query)
 
             query = "SELECT name, topic FROM chat WHERE id=" + str(chatid)
@@ -259,7 +259,7 @@ class View(GlobalView):
 
         self.removeChat(chatid)
 
-        query = "DELETE FROM users_chats WHERE userid=" + str(self.UserId) + " AND chatid=" + str(chatid)
+        query = "DELETE FROM users_chats WHERE userid=" + str(self.userId) + " AND chatid=" + str(chatid)
         oConnDoQuery(query)
 
         query = "DELETE FROM chat WHERE id > 0 AND NOT public AND name IS NOT NULL AND id=" + str(chatid) + " AND (SELECT count(1) FROM users_chats WHERE chatid=chat.id) = 0"

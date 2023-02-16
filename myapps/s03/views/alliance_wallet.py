@@ -27,9 +27,9 @@ class View(GlobalView):
         id = ToInt(self.request.GET.get("id"), 0)
 
         if action == "accept":
-            oConnExecute("SELECT sp_alliance_money_accept(" + str(self.UserId) + "," + str(id) + ")")
+            oConnExecute("SELECT sp_alliance_money_accept(" + str(self.userId) + "," + str(id) + ")")
         elif action == "deny":
-            oConnExecute("SELECT sp_alliance_money_deny(" + str(self.UserId) + "," + str(id) + ")")
+            oConnExecute("SELECT sp_alliance_money_deny(" + str(self.userId) + "," + str(id) + ")")
 
         #
         # player gives or self.requests credits
@@ -40,15 +40,15 @@ class View(GlobalView):
         if self.request.POST.get("cancel", "") != "":
             credits = 0
             description = ""
-            oConnExecute("SELECT sp_alliance_money_request("+str(self.UserId)+","+str(credits)+","+dosql(description)+")")
+            oConnExecute("SELECT sp_alliance_money_request("+str(self.userId)+","+str(credits)+","+dosql(description)+")")
 
         if credits != 0:
             if self.request.POST.get("request", "") != "":
-                oConnExecute("SELECT sp_alliance_money_request("+str(self.UserId)+","+str(credits)+","+dosql(description)+")")
+                oConnExecute("SELECT sp_alliance_money_request("+str(self.userId)+","+str(credits)+","+dosql(description)+")")
             elif self.request.POST.get("give") != "" and (credits > 0):
 
                 if self.can_give_money():
-                    oRs = oConnExecute("SELECT sp_alliance_transfer_money("+str(self.UserId)+","+str(credits)+","+dosql(description)+",0)")
+                    oRs = oConnExecute("SELECT sp_alliance_transfer_money("+str(self.userId)+","+str(credits)+","+dosql(description)+",0)")
                     if oRs[0] != 0: self.money_error = self.e_not_enough_money
                 else:
                     self.money_error = self.e_can_give_money_after_a_week
@@ -59,7 +59,7 @@ class View(GlobalView):
         taxrates = request.POST.get("taxrates", "")
 
         if taxrates != "":
-            connExecuteRetryNoRecords("SELECT sp_alliance_set_tax("+str(self.UserId)+","+dosql(taxrates)+")")
+            connExecuteRetryNoRecords("SELECT sp_alliance_set_tax("+str(self.userId)+","+dosql(taxrates)+")")
 
         #
         # retrieve which page is displayed
@@ -82,7 +82,7 @@ class View(GlobalView):
 
     def can_give_money(self):
 
-        oRs = oConnExecute("SELECT game_started < now() - INTERVAL '2 weeks' FROM users WHERE id=" + str(self.UserId))
+        oRs = oConnExecute("SELECT game_started < now() - INTERVAL '2 weeks' FROM users WHERE id=" + str(self.userId))
 
         return oRs and oRs[0]
 
@@ -164,7 +164,7 @@ class View(GlobalView):
                     " ,wallet_display[2]=" + str(displaySetTax) + \
                     " ,wallet_display[3]=" + str(displayTaxes) + \
                     " ,wallet_display[4]=" + str(displayKicksBreaks) + \
-                    " WHERE id=" + str(self.UserId)
+                    " WHERE id=" + str(self.userId)
             oConnDoQuery(query)
         else:
             query = "SELECT COALESCE(wallet_display[1], True)," + \
@@ -172,7 +172,7 @@ class View(GlobalView):
                     " COALESCE(wallet_display[3], True)," + \
                     " COALESCE(wallet_display[4], True)" + \
                     " FROM users" + \
-                    " WHERE id=" + str(self.UserId)
+                    " WHERE id=" + str(self.userId)
             oRs = oConnExecute(query)
 
             displayGiftsRequests = oRs[0]
@@ -256,14 +256,14 @@ class View(GlobalView):
         content = getTemplate(self.request, "s03/alliance-wallet-requests")
         content.setValue("walletpage", cat)
 
-        oRs = oConnExecute("SELECT credits FROM users WHERE id=" + str(self.UserId))
+        oRs = oConnExecute("SELECT credits FROM users WHERE id=" + str(self.userId))
         credits = oRs[0]
 
         content.setValue("player_credits", credits)
 
         query = "SELECT credits, description, result" + \
                 " FROM alliances_wallet_requests" + \
-                " WHERE allianceid=" + str(self.AllianceId) + " AND userid=" + str(self.UserId)
+                " WHERE allianceid=" + str(self.AllianceId) + " AND userid=" + str(self.userId)
 
         oRs = oConnExecute(query)
 
@@ -314,7 +314,7 @@ class View(GlobalView):
         content = getTemplate(self.request, "s03/alliance-wallet-give")
         content.setValue("walletpage", cat)
 
-        oRs = oConnExecute("SELECT credits FROM users WHERE id=" + str(self.UserId))
+        oRs = oConnExecute("SELECT credits FROM users WHERE id=" + str(self.userId))
         content.setValue("player_credits", oRs[0])
 
         if self.can_give_money():

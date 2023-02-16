@@ -30,7 +30,7 @@ class View(GlobalView):
                 " upkeep_commanders, upkeep_planets, upkeep_scientists, upkeep_ships, upkeep_ships_in_position, upkeep_ships_parked, upkeep_soldiers," + \
                 " name" + \
                 " FROM vw_reports" + \
-                " WHERE ownerid = " + str(self.UserId)
+                " WHERE ownerid = " + str(self.userId)
 
         #
         # Limit the list to the current category or only display 100 reports if no categories specified
@@ -40,7 +40,7 @@ class View(GlobalView):
         else:
             query = query + " AND type = "+ str(cat) + " ORDER BY datetime DESC LIMIT 1000"
 
-        content.setValue("ownerid", self.UserId)
+        content.setValue("ownerid", self.userId)
         
         oRss = oConnExecuteAll(query)
         content.Parse("tabnav_"+str(cat)+"00_selected")
@@ -124,7 +124,7 @@ class View(GlobalView):
                     " FROM reports AS r" + \
                     " WHERE datetime <= now()" + \
                     " GROUP BY r.type, r.ownerid, r.read_date" + \
-                    " HAVING r.ownerid = " + str(self.UserId) + " AND read_date is null"
+                    " HAVING r.ownerid = " + str(self.userId) + " AND read_date is null"
             oRss = oConnExecuteAll(query)
             
             total_newreports = 0
@@ -141,11 +141,11 @@ class View(GlobalView):
             if not self.IsImpersonating():
                 # flag only the current category of reports as read
                 if cat != 0:
-                    oConnDoQuery("UPDATE reports SET read_date = now() WHERE ownerid = " + str(self.UserId) + " AND type = "+str(cat)+ " AND read_date is null AND datetime <= now()")
+                    oConnDoQuery("UPDATE reports SET read_date = now() WHERE ownerid = " + str(self.userId) + " AND type = "+str(cat)+ " AND read_date is null AND datetime <= now()")
 
                 # flag all reports as read
                 if self.request.GET.get("cat", "") == "0":
-                    oConnDoQuery("UPDATE reports SET read_date = now() WHERE ownerid = " + str(self.UserId) + " AND read_date is null AND datetime <= now()")
+                    oConnDoQuery("UPDATE reports SET read_date = now() WHERE ownerid = " + str(self.userId) + " AND read_date is null AND datetime <= now()")
             
         content.Parse("tabnav_000")
         content.Parse("tabnav_100")

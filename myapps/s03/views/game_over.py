@@ -15,13 +15,13 @@ class View(ExileMixin, View):
 
         reset_error = 0
 
-        self.UserId = ToInt(self.request.session.get("user"), "")
+        self.userId = ToInt(self.request.session.get("user"), "")
 
-        if self.UserId == "":
+        if self.userId == "":
             return HttpResponseRedirect("/")
 
         # check that the player has no more planets
-        oRs = oConnExecute("SELECT int4(count(1)) FROM nav_planet WHERE ownerid=" + str(self.UserId))
+        oRs = oConnExecute("SELECT int4(count(1)) FROM nav_planet WHERE ownerid=" + str(self.userId))
         if oRs == None:
             return HttpResponseRedirect("/")
 
@@ -29,7 +29,7 @@ class View(ExileMixin, View):
 
         # retreive player username and number of resets
 
-        query = "SELECT username, resets, credits_bankruptcy, int4(score_research) FROM users WHERE id=" + str(self.UserId)
+        query = "SELECT username, resets, credits_bankruptcy, int4(score_research) FROM users WHERE id=" + str(self.userId)
         oRs = oConnExecute(query)
 
         username = oRs[0]
@@ -61,18 +61,18 @@ class View(ExileMixin, View):
                         changeNameError = "check_username"
                     else:
                         # try to rename user and catch any error
-                        oConnDoQuery("UPDATE users SET alliance_id=NULL WHERE id=" + str(self.UserId))
+                        oConnDoQuery("UPDATE users SET alliance_id=NULL WHERE id=" + str(self.userId))
 
-                        oConnDoQuery("UPDATE users SET username=" + dosql(request.POST.get("username")) + " WHERE id=" + str(self.UserId))
+                        oConnDoQuery("UPDATE users SET username=" + dosql(request.POST.get("username")) + " WHERE id=" + str(self.userId))
 
                         if err.Number != 0:
                             changeNameError = "username_exists"
                         else:
                             # update the commander name
-                            oConnDoQuery("UPDATE commanders SET name=" + dosql(request.POST.get("login")) + " WHERE name=" + dosql(username) + " AND ownerid=" + str(self.UserId))
+                            oConnDoQuery("UPDATE commanders SET name=" + dosql(request.POST.get("login")) + " WHERE name=" + dosql(username) + " AND ownerid=" + str(self.userId))
 
             if changeNameError == "":
-                oRs = oConnExecute("SELECT sp_reset_account(" + str(self.UserId) + "," + str(ToInt(request.POST.get("galaxy"), 1)) + ")")
+                oRs = oConnExecute("SELECT sp_reset_account(" + str(self.userId) + "," + str(ToInt(request.POST.get("galaxy"), 1)) + ")")
                 if oRs[0] == 0:
                     return HttpResponseRedirect("/s03/overview/")
 
@@ -80,7 +80,7 @@ class View(ExileMixin, View):
                     reset_error = oRs[0]
 
         elif action == "abandon":
-            oConnDoQuery("UPDATE users SET deletion_date=now()/*+INTERVAL '2 days'*/ WHERE id=" + str(self.UserId))
+            oConnDoQuery("UPDATE users SET deletion_date=now()/*+INTERVAL '2 days'*/ WHERE id=" + str(self.userId))
             return HttpResponseRedirect("/")
 
         # display Game Over page
@@ -90,7 +90,7 @@ class View(ExileMixin, View):
         if changeNameError != "": action = "continue"
 
         if action == "continue":
-            oRss = oConnExecuteAll("SELECT id, recommended FROM sp_get_galaxy_info(" + str(self.UserId) + ")")
+            oRss = oConnExecuteAll("SELECT id, recommended FROM sp_get_galaxy_info(" + str(self.userId) + ")")
 
             list = []
             for oRs in oRss:
@@ -120,7 +120,7 @@ class View(ExileMixin, View):
             if reset_error == 4:
                 content.Parse("no_free_planet")
             else:
-                content.setValue("userid", self.UserId)
+                content.setValue("userid", self.userId)
                 content.setValue("reset_error", reset_error)
                 content.Parse("reset_error")
 

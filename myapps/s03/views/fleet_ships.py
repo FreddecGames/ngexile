@@ -38,7 +38,7 @@ class View(GlobalView):
         query = "SELECT id, name, attackonsight, engaged, size, signature, speed, remaining_time, commanderid, commandername," + \
                 " planetid, planet_name, planet_galaxy, planet_sector, planet_planet, planet_ownerid, planet_owner_name, planet_owner_relation," + \
                 " cargo_capacity, cargo_ore, cargo_hydrocarbon, cargo_scientists, cargo_soldiers, cargo_workers" + \
-                " FROM vw_fleets WHERE ownerid="+str(self.UserId)+" AND id="+str(fleetid)
+                " FROM vw_fleets WHERE ownerid="+str(self.userId)+" AND id="+str(fleetid)
 
         oRs = oConnExecute(query)
 
@@ -113,7 +113,7 @@ class View(GlobalView):
             quantity = ToInt(self.request.POST.get("addship" + str(shipid)), 0)
 
             if quantity > 0:
-                oConnExecute("SELECT sp_transfer_ships_to_fleet(" + str(self.UserId) + "," + str(fleetid) + "," + str(shipid) + "," + str(quantity) + ")")
+                oConnExecute("SELECT sp_transfer_ships_to_fleet(" + str(self.userId) + "," + str(fleetid) + "," + str(shipid) + "," + str(quantity) + ")")
 
         # for each ship id, check if the player wants to remove ships of this kind
         for i in shipsArray:
@@ -122,7 +122,7 @@ class View(GlobalView):
             quantity = ToInt(self.request.POST.get("removeship" + str(shipid)), 0)
             if quantity > 0:
                 ShipsRemoved = ShipsRemoved + quantity
-                oConnExecute("SELECT sp_transfer_ships_to_planet(" + str(self.UserId) + "," + str(fleetid) + "," + str(shipid) + "," + str(quantity) + ")")
+                oConnExecute("SELECT sp_transfer_ships_to_planet(" + str(self.userId) + "," + str(fleetid) + "," + str(shipid) + "," + str(quantity) + ")")
 
         if ShipsRemoved > 0:
             oRs = oConnExecute("SELECT id FROM fleets WHERE id=" + str(fleetid))

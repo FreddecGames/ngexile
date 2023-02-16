@@ -18,7 +18,7 @@ class View(GlobalView):
         if self.AllianceId and self.hasRight("can_order_other_fleets"):
             self.can_command_alliance_fleets = self.AllianceId
         
-        self.fleet_owner_id = self.UserId
+        self.fleet_owner_id = self.userId
         
         self.fleetid = ToInt(self.request.GET.get("id"), 0)
         
@@ -42,7 +42,7 @@ class View(GlobalView):
         # retrieve fleet owner
         query = "SELECT ownerid" +\
                 " FROM vw_fleets as f" +\
-                " WHERE (ownerid=" + str(self.UserId) + " OR (shared AND owner_alliance_id=" + str(self.can_command_alliance_fleets) + ")) AND id=" + str(self.fleetid)
+                " WHERE (ownerid=" + str(self.userId) + " OR (shared AND owner_alliance_id=" + str(self.can_command_alliance_fleets) + ")) AND id=" + str(self.fleetid)
         oRs = oConnExecute(query)
         if oRs:
             self.fleet_owner_id = oRs[0]

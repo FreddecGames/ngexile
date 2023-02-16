@@ -62,7 +62,7 @@ class View(GlobalView):
                 " (SELECT int4(COALESCE(sum(soldiers), 0)) FROM planet_training_pending WHERE planetid=t.id) AS soldiers_training," + \
                 " credits_production, credits_random_production, production_prestige" + \
                 " FROM vw_planets AS t" + \
-                " WHERE planet_floor > 0 AND planet_space > 0 AND ownerid="+str(self.UserId)+ \
+                " WHERE planet_floor > 0 AND planet_space > 0 AND ownerid="+str(self.userId)+ \
                 " ORDER BY "+orderby
 
         oRss = oConnExecuteAll(query)

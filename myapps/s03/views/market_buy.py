@@ -33,11 +33,11 @@ class View(GlobalView):
                 " sp_get_planet_blocus_strength(v.id) >= v.space," + \
                 " workers, workers_for_maintenance," + \
                 " (SELECT has_merchants FROM nav_galaxies WHERE id=v.galaxy) as has_merchants," + \
-                " (sp_get_resource_price(" + str(self.UserId) + ", v.galaxy)).buy_ore::real AS p_ore," + \
-                " (sp_get_resource_price(" + str(self.UserId) + ", v.galaxy)).buy_hydrocarbon AS p_hydrocarbon" + \
+                " (sp_get_resource_price(" + str(self.userId) + ", v.galaxy)).buy_ore::real AS p_ore," + \
+                " (sp_get_resource_price(" + str(self.userId) + ", v.galaxy)).buy_hydrocarbon AS p_hydrocarbon" + \
                 " FROM vw_planets AS v" + \
                 "    LEFT JOIN market_purchases AS m ON (m.planetid=v.id)" + \
-                " WHERE floor > 0 AND v.ownerid="+str(self.UserId) + get_planet + \
+                " WHERE floor > 0 AND v.ownerid="+str(self.userId) + get_planet + \
                 " ORDER BY v.id"
         oRss = oConnExecuteAll(query)
 
@@ -134,7 +134,7 @@ class View(GlobalView):
         if self.request.GET.get("a", "") != "buy": return
 
         # for each planet owned, check what the player buys
-        query = "SELECT id FROM nav_planet WHERE ownerid="+str(self.UserId)
+        query = "SELECT id FROM nav_planet WHERE ownerid="+str(self.userId)
         planetsArray = oConnExecuteAll(query)
 
         for i in planetsArray:
@@ -146,5 +146,5 @@ class View(GlobalView):
 
             if ore > 0 or hydrocarbon > 0:
 
-                query = "SELECT * FROM sp_buy_resources(" + str(self.UserId) + "," + str(planetid) + "," + str(ore*1000) + "," + str(hydrocarbon*1000) + ")"
+                query = "SELECT * FROM sp_buy_resources(" + str(self.userId) + "," + str(planetid) + "," + str(ore*1000) + "," + str(hydrocarbon*1000) + ")"
                 oConnDoQuery(query)

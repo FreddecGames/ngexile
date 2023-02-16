@@ -121,14 +121,14 @@ class View(GlobalView):
             return
         else:
             id = oRs[0]
-            if id == self.UserId:
+            if id == self.userId:
                 self.intell_error = self.e_own_nation_planet
                 return
 
         #
         # Begin transaction
         #
-        oRs = oConnExecute("SELECT sp_create_spy('" + str(self.UserId) + "', int2(" + str(typ) + "), int2(" + str(self.level) + ") )")
+        oRs = oConnExecute("SELECT sp_create_spy('" + str(self.userId) + "', int2(" + str(typ) + "), int2(" + str(self.level) + ") )")
         reportid = oRs[0]
         if reportid < 0:
             self.intell_error = self.e_general_error
@@ -216,7 +216,7 @@ class View(GlobalView):
         # Add spy reports in report list
         #
         query = " INSERT INTO reports(ownerid, type, subtype, datetime, spyid, description) " + \
-                " VALUES(" + str(self.UserId) + ", " + str(self.category) + ", " + str(typ*10) + ", now() + " + str(spyingTime + nb_planet) + "*interval '1 minute', " + str(reportid) + ", sp_get_user(" + str(id) + ")) "
+                " VALUES(" + str(self.userId) + ", " + str(self.category) + ", " + str(typ*10) + ", now() + " + str(spyingTime + nb_planet) + "*interval '1 minute', " + str(reportid) + ", sp_get_user(" + str(id) + ")) "
 
         oConnDoQuery(query)
 
@@ -224,19 +224,19 @@ class View(GlobalView):
             # update report if spy has been spotted
             query = " UPDATE spy " + \
                     " SET spotted=" + str(spotted) + \
-                    " WHERE id=" + str(reportid) + " AND userid=" + str(self.UserId)
+                    " WHERE id=" + str(reportid) + " AND userid=" + str(self.userId)
             oConnDoQuery(query)
 
             # add report in spied nation's report list
             query = " INSERT INTO reports(ownerid, type, subtype, datetime, spyid, description) " + \
-                    " VALUES(" + str(id) + ", " + str(self.category) + ", " + str(typ) + ", now() + " + str(spyingTime + nb_planet) + "*interval '40 seconds', " + str(reportid) + ", sp_get_user(" + str(self.UserId) + ")) "
+                    " VALUES(" + str(id) + ", " + str(self.category) + ", " + str(typ) + ", now() + " + str(spyingTime + nb_planet) + "*interval '40 seconds', " + str(reportid) + ", sp_get_user(" + str(self.userId) + ")) "
 
             oConnDoQuery(query)
 
         #
         # withdraw the operation cost from player's account
         #
-        query = "UPDATE users SET prestige_points=prestige_points - " + str(cost) + " WHERE id=" + str(self.UserId)
+        query = "UPDATE users SET prestige_points=prestige_points - " + str(cost) + " WHERE id=" + str(self.userId)
 
         oConnDoQuery(query)
 
@@ -258,14 +258,14 @@ class View(GlobalView):
             if oRs == None:
                 self.intell_error = self.e_planet_not_exists
                 return
-            elif oRs[0] == self.UserId:
+            elif oRs[0] == self.userId:
                 self.intell_error = self.e_own_nation_planet
                 return
 
         #
         # Begin transaction
         #
-        oRs = oConnExecute("SELECT sp_create_spy('" + str(self.UserId) + "', int2(" + str(typ) + "), int2(" + str(self.level) + ") )")
+        oRs = oConnExecute("SELECT sp_create_spy('" + str(self.userId) + "', int2(" + str(typ) + "), int2(" + str(self.level) + ") )")
         reportid = oRs[0]
         if reportid < 0:
             self.intell_error = self.e_general_error
@@ -460,7 +460,7 @@ class View(GlobalView):
         # Add spy reports in report list
         #
         query = " INSERT INTO reports(ownerid, type, subtype, datetime, spyid, planetid) " + \
-                " VALUES(" + str(self.UserId) + ", " + str(self.category) + ", " + str(typ*10) + ", now()+" + str(spyingTime) + "*interval '1 minute', " + str(reportid) + ", " + str(planet) + ") "
+                " VALUES(" + str(self.userId) + ", " + str(self.category) + ", " + str(typ*10) + ", now()+" + str(spyingTime) + "*interval '1 minute', " + str(reportid) + ", " + str(planet) + ") "
 
         oConnDoQuery(query)
 
@@ -468,19 +468,19 @@ class View(GlobalView):
         if spotted and self.request.session.get("privilege", 0) < 100:
             query = "UPDATE spy SET" + \
                     " spotted=" + str(spotted) + \
-                    " WHERE id=" + str(reportid) + " AND userid=" + str(self.UserId)
+                    " WHERE id=" + str(reportid) + " AND userid=" + str(self.userId)
 
             oConnDoQuery(query)
 
             # add report in spied nation's report list
             query = " INSERT INTO reports(ownerid, type, subtype, datetime, spyid, planetid, description) " + \
-                    " VALUES(" + str(id) + "," + str(self.category) + "," + str(typ) + ", now()+" + str(spyingTime) + "*interval '40 seconds'," + str(reportid) + "," + str(planet) + ", sp_get_user(" + str(self.UserId) + "))"
+                    " VALUES(" + str(id) + "," + str(self.category) + "," + str(typ) + ", now()+" + str(spyingTime) + "*interval '40 seconds'," + str(reportid) + "," + str(planet) + ", sp_get_user(" + str(self.userId) + "))"
 
             oConnDoQuery(query)
 
         #
         # withdraw the operation cost from player's account
         #
-        query = "UPDATE users SET prestige_points = prestige_points - " + str(cost) + " WHERE id=" + str(self.UserId)
+        query = "UPDATE users SET prestige_points = prestige_points - " + str(cost) + " WHERE id=" + str(self.userId)
 
         oConnDoQuery(query)

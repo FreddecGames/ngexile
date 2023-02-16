@@ -20,7 +20,7 @@ class View(GlobalView):
         query = "SELECT category, shipid, killed, lost" + \
                 " FROM users_ships_kills" + \
                 "    INNER JOIN db_ships ON (db_ships.id = users_ships_kills.shipid)" + \
-                " WHERE userid=" + str(self.UserId) + \
+                " WHERE userid=" + str(self.userId) + \
                 " ORDER BY shipid"
         oRss = oConnExecuteAll(query)
 

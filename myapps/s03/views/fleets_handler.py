@@ -19,8 +19,8 @@ class View(ExileMixin, View):
 
         if maintenance and not request.user.is_superuser : return HttpResponseRedirect("/")
 
-        self.UserId = request.user.id
-        if self.UserId == 0: return HttpResponseRedirect("/")
+        self.userId = request.user.id
+        if self.userId == 0: return HttpResponseRedirect("/")
 
         action = request.GET.get("a")
 
@@ -30,7 +30,7 @@ class View(ExileMixin, View):
             oldCat = ToInt(request.GET.get("old"), 0)
             newCat = ToInt(request.GET.get("new"), 0)
 
-            oRs = oConnExecute("SELECT sp_fleets_set_category(" + str(self.UserId) + "," + str(fleetid) + "," + str(oldCat) + "," + str(newCat) + ")")
+            oRs = oConnExecute("SELECT sp_fleets_set_category(" + str(self.userId) + "," + str(fleetid) + "," + str(oldCat) + "," + str(newCat) + ")")
             if oRs and oRs[0]:
                 content = getTemplate(self.request, "s03/fleets-handler")
 
@@ -48,7 +48,7 @@ class View(ExileMixin, View):
             content = getTemplate(self.request, "s03/fleets-handler")
 
             if self.isValidCategoryName(name):
-                oRs = oConnExecute("SELECT sp_fleets_categories_add(" + str(self.UserId) + "," + dosql(name) + ")")
+                oRs = oConnExecute("SELECT sp_fleets_categories_add(" + str(self.userId) + "," + dosql(name) + ")")
 
                 if oRs:
                     content.setValue("id", oRs[0])
@@ -70,7 +70,7 @@ class View(ExileMixin, View):
             content = getTemplate(self.request, "s03/fleets-handler")
 
             if name == "":
-                oRs = oConnExecute("SELECT sp_fleets_categories_delete(" + str(self.UserId) + "," + str(catid) + ")")
+                oRs = oConnExecute("SELECT sp_fleets_categories_delete(" + str(self.userId) + "," + str(catid) + ")")
                 if oRs:
                     content.setValue("id", catid)
                     content.setValue("label", name)
@@ -79,7 +79,7 @@ class View(ExileMixin, View):
                     return render(self.request, content.template, content.data)
 
             elif self.isValidCategoryName(name):
-                oRs = oConnExecute("SELECT sp_fleets_categories_rename(" + str(self.UserId) + "," + str(catid) + "," + dosql(name) + ")")
+                oRs = oConnExecute("SELECT sp_fleets_categories_rename(" + str(self.userId) + "," + str(catid) + "," + dosql(name) + ")")
 
                 if oRs:
                     content.setValue("id", catid)

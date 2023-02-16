@@ -13,9 +13,9 @@ class View(ExileMixin, View):
         response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
 
-        self.UserId = ToInt(self.request.session.get("user"), "")
+        self.userId = ToInt(self.request.session.get("user"), "")
 
-        if self.UserId == "":
+        if self.userId == "":
             return HttpResponseRedirect("/")
 
         content = getTemplate(self.request, "s03/holidays")
@@ -24,7 +24,7 @@ class View(ExileMixin, View):
         query = "SELECT username," + \
                 " (SELECT int4(date_part('epoch', min_end_time-now())) FROM users_holidays WHERE userid=id)," + \
                 " (SELECT int4(date_part('epoch', end_time-now())) FROM users_holidays WHERE userid=id)" + \
-                " FROM users WHERE privilege=-2 AND id=" + str(self.UserId)
+                " FROM users WHERE privilege=-2 AND id=" + str(self.userId)
 
         oRs = oConnExecute(query)
         
@@ -35,7 +35,7 @@ class View(ExileMixin, View):
         action = request.POST.get("unlock", "")
 
         if action != "" and oRs[1] < 0:
-            oConnExecute("SELECT sp_stop_holidays("+str(self.UserId)+")")
+            oConnExecute("SELECT sp_stop_holidays("+str(self.userId)+")")
             return HttpResponseRedirect("/s03/overview/")
 
         # if remaining time is negative, return to overview page

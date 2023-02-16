@@ -191,7 +191,7 @@ class View(GlobalView):
 
         # create a new fleet at the current planet with the given name
         
-        oRs = oConnExecute("SELECT sp_create_fleet(" + str(self.UserId) + "," + str(self.CurrentPlanet) + "," + dosql(fleetname) + ")")
+        oRs = oConnExecute("SELECT sp_create_fleet(" + str(self.userId) + "," + str(self.CurrentPlanet) + "," + dosql(fleetname) + ")")
         if not oRs:
             return
         
@@ -213,10 +213,10 @@ class View(GlobalView):
 
             # add the ships type by type
             if quantity > 0:
-                oRs = oConnExecute("SELECT * FROM sp_transfer_ships_to_fleet(" + str(self.UserId) + ", " + str(fleetid) + ", " + str(shipid) + ", " + str(quantity) + ")")
+                oRs = oConnExecute("SELECT * FROM sp_transfer_ships_to_fleet(" + str(self.userId) + ", " + str(fleetid) + ", " + str(shipid) + ", " + str(quantity) + ")")
                 cant_use_ship = cant_use_ship or oRs[0] == 3
 
         # delete the fleet if there is no ships in it
-        oConnDoQuery("DELETE FROM fleets WHERE size=0 AND id=" + str(fleetid) + " AND ownerid=" + str(self.UserId))
+        oConnDoQuery("DELETE FROM fleets WHERE size=0 AND id=" + str(fleetid) + " AND ownerid=" + str(self.userId))
 
         if cant_use_ship and self.fleet_creation_error == "": self.fleet_creation_error = "ship_cant_be_used"

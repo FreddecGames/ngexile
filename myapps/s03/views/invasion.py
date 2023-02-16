@@ -18,7 +18,7 @@ class View(GlobalView):
 
         self.fleetid = ToInt(request.GET.get("fleetid"), 0)
 
-        return self.DisplayReport(invasionid, self.UserId)
+        return self.DisplayReport(invasionid, self.userId)
 
     def DisplayReport(self, invasionid, readerid):
 

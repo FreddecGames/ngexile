@@ -40,7 +40,7 @@ class View(GlobalView):
 
             Id = ToInt(request.GET.get("mailid"), 0)
 
-            query = "SELECT sender, subject, body FROM messages WHERE ownerid=" + str(self.UserId) + " AND id=" + str(Id) + " LIMIT 1"
+            query = "SELECT sender, subject, body FROM messages WHERE ownerid=" + str(self.userId) + " AND id=" + str(Id) + " LIMIT 1"
             oRs = oConnExecute(query)
 
             if oRs:
@@ -88,7 +88,7 @@ class View(GlobalView):
                 if self.mailto == "":
                     self.sendmail_status = "mail_missing_to"
                 else:
-                    oRs = oConnExecute("SELECT sp_send_message("+ str(self.UserId) + "," + dosql(self.mailto) + "," + dosql(self.mailsubject) + "," + dosql(self.mailbody) + "," + str(self.moneyamount) + "," + str(self.bbcode) + ")")
+                    oRs = oConnExecute("SELECT sp_send_message("+ str(self.userId) + "," + dosql(self.mailto) + "," + dosql(self.mailsubject) + "," + dosql(self.mailbody) + "," + str(self.moneyamount) + "," + str(self.bbcode) + ")")
 
                     if oRs[0] != 0:
                         if oRs[0] == 1:
@@ -120,15 +120,15 @@ class View(GlobalView):
             query = "id=" + mailId
 
             if query != "False":
-                oConnDoQuery("UPDATE messages SET deleted=True WHERE " + query + " AND ownerid = " + str(self.UserId))
+                oConnDoQuery("UPDATE messages SET deleted=True WHERE " + query + " AND ownerid = " + str(self.userId))
 
         if request.GET.get("a", "") == "ignore":
-            oConnExecute("SELECT sp_ignore_sender(" + str(self.UserId) + "," + dosql(request.GET.get("user")) + ")")
+            oConnExecute("SELECT sp_ignore_sender(" + str(self.userId) + "," + dosql(request.GET.get("user")) + ")")
 
             return self.return_ignored_users
 
         if request.GET.get("a", "") == "unignore":
-            oConnDoQuery("DELETE FROM messages_ignore_list WHERE userid=" + str(self.UserId) + " AND ignored_userid=(SELECT id FROM users WHERE lower(username)=lower(" + dosql(request.GET.get("user")) + "))")
+            oConnDoQuery("DELETE FROM messages_ignore_list WHERE userid=" + str(self.userId) + " AND ignored_userid=(SELECT id FROM users WHERE lower(username)=lower(" + dosql(request.GET.get("user")) + "))")
 
             return self.return_ignored_users()
 
@@ -138,7 +138,7 @@ class View(GlobalView):
             return self.display_ignore_list()
         elif request.GET.get("a") == "unignorelist":
             for self.mailto in request.POST.getlist("unignore"):
-                oConnDoQuery("DELETE FROM messages_ignore_list WHERE userid=" + str(self.UserId) + " AND ignored_userid=" + dosql(self.mailto))
+                oConnDoQuery("DELETE FROM messages_ignore_list WHERE userid=" + str(self.userId) + " AND ignored_userid=" + dosql(self.mailto))
 
             return self.display_ignore_list()
         elif request.GET.get("a") == "sent":
@@ -164,7 +164,7 @@ class View(GlobalView):
         search_cond = ""
 
         # get total number of mails that could be displayed
-        query = "SELECT count(1) FROM messages WHERE "+search_cond+" deleted=False AND ownerid = " + str(self.UserId)
+        query = "SELECT count(1) FROM messages WHERE "+search_cond+" deleted=False AND ownerid = " + str(self.userId)
         oRs = oConnExecute(query)
         size = int(oRs[0])
         nb_pages = int(size/displayed)
@@ -209,8 +209,8 @@ class View(GlobalView):
                 " FROM messages" + \
                 "    LEFT JOIN users ON (upper(users.username) = upper(messages.sender) AND messages.datetime >= users.game_started)" + \
                 "    LEFT JOIN alliances ON (users.alliance_id = alliances.id)" + \
-                "    LEFT JOIN messages_ignore_list ON (userid=" + str(self.UserId) + " AND ignored_userid = users.id)" + \
-                " WHERE " + search_cond + " deleted=False AND ownerid = " + str(self.UserId) + \
+                "    LEFT JOIN messages_ignore_list ON (userid=" + str(self.userId) + " AND ignored_userid = users.id)" + \
+                " WHERE " + search_cond + " deleted=False AND ownerid = " + str(self.userId) + \
                 " ORDER BY datetime DESC, messages.id DESC" + \
                 " OFFSET " + str(offset*displayed) + " LIMIT "+str(displayed)
         oRss = oConnExecuteAll(query)
@@ -272,7 +272,7 @@ class View(GlobalView):
         if i == 0: content.Parse("nomails")
 
         if not self.IsImpersonating():
-            oRs = oConnDoQuery("UPDATE messages SET read_date = now() WHERE ownerid = " + str(self.UserId) + " AND read_date IS NULL" )
+            oRs = oConnDoQuery("UPDATE messages SET read_date = now() WHERE ownerid = " + str(self.userId) + " AND read_date IS NULL" )
 
         return self.display(content)
 
@@ -294,7 +294,7 @@ class View(GlobalView):
         messages_filter = "datetime > now()-INTERVAL '2 weeks' AND "
 
         # get total number of mails that could be displayed
-        query = "SELECT count(1) FROM messages WHERE "+messages_filter+"senderid = " + str(self.UserId)
+        query = "SELECT count(1) FROM messages WHERE "+messages_filter+"senderid = " + str(self.userId)
         oRs = oConnExecute(query)
         size = int(oRs[0])
         nb_pages = int(size/displayed)
@@ -334,7 +334,7 @@ class View(GlobalView):
                 " FROM messages" + \
                 "    LEFT JOIN users ON (users.id = messages.ownerid AND messages.datetime >= users.game_started)" + \
                 "    LEFT JOIN alliances ON (users.alliance_id = alliances.id)" + \
-                " WHERE "+messages_filter+"senderid = " + str(self.UserId) + \
+                " WHERE "+messages_filter+"senderid = " + str(self.userId) + \
                 " ORDER BY datetime DESC"
 
         query = query + " OFFSET "+str(offset*displayed)+" LIMIT "+str(displayed)
@@ -397,7 +397,7 @@ class View(GlobalView):
 
         content = getTemplate(self.request, "s03/mail-ignorelist")
 
-        oRss = oConnExecuteAll("SELECT ignored_userid, sp_get_user(ignored_userid), added, blocked FROM messages_ignore_list WHERE userid=" + str(self.UserId))
+        oRss = oConnExecuteAll("SELECT ignored_userid, sp_get_user(ignored_userid), added, blocked FROM messages_ignore_list WHERE userid=" + str(self.userId))
 
         i = 0
         list = []
@@ -446,7 +446,7 @@ class View(GlobalView):
 
         # fill the recent addressee list
 
-        oRss = oConnExecuteAll("SELECT * FROM sp_get_addressee_list(" + str(self.UserId) + ")")
+        oRss = oConnExecuteAll("SELECT * FROM sp_get_addressee_list(" + str(self.userId) + ")")
 
         list = []
         content.setValue("tos", list)
@@ -487,7 +487,7 @@ class View(GlobalView):
         content.setValue("mail_credits", credits)
 
         #retrieve player's credits
-        oRs = oConnExecute("SELECT credits, now()-game_started > INTERVAL '2 weeks' AND security_level >= 3 FROM users WHERE id="+str(self.UserId))
+        oRs = oConnExecute("SELECT credits, now()-game_started > INTERVAL '2 weeks' AND security_level >= 3 FROM users WHERE id="+str(self.userId))
         content.setValue("player_credits", oRs[0])
         if oRs[1]: content.Parse("send_credits")
 

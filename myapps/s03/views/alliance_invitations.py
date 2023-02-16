@@ -22,7 +22,7 @@ class View(GlobalView):
         alliance_tag = request.GET.get("tag", "").strip()
 
         if action == "accept":
-            oRs = oConnExecute("SELECT sp_alliance_accept_invitation(" + str(self.UserId) + "," + dosql(alliance_tag) + ")")
+            oRs = oConnExecute("SELECT sp_alliance_accept_invitation(" + str(self.userId) + "," + dosql(alliance_tag) + ")")
 
             if oRs[0] == 0:
                 return HttpResponseRedirect("/s03/alliance/")
@@ -33,10 +33,10 @@ class View(GlobalView):
                 self.invitation_status = "cant_rejoin_previous_alliance"
 
         elif action == "decline":
-            oConnExecute("SELECT sp_alliance_decline_invitation(" + str(self.UserId) + "," + dosql(alliance_tag) + ")")
+            oConnExecute("SELECT sp_alliance_decline_invitation(" + str(self.userId) + "," + dosql(alliance_tag) + ")")
         elif action == "leave":
             if request.POST.get("leave", "") == "1":
-                oRs = oConnExecute("SELECT sp_alliance_leave(" + str(self.UserId) + ",0)")
+                oRs = oConnExecute("SELECT sp_alliance_leave(" + str(self.userId) + ",0)")
                 if oRs[0] == 0:
                     return HttpResponseRedirect("/s03/alliance/")
 
@@ -52,7 +52,7 @@ class View(GlobalView):
                 " FROM alliances_invitations" + \
                 "        INNER JOIN alliances ON alliances.id = alliances_invitations.allianceid"+ \
                 "        LEFT JOIN users ON users.id = alliances_invitations.recruiterid"+ \
-                " WHERE userid=" + str(self.UserId) + " AND NOT declined" + \
+                " WHERE userid=" + str(self.userId) + " AND NOT declined" + \
                 " ORDER BY created DESC"
 
         oRss = oConnExecuteAll(query)

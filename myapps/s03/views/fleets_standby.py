@@ -21,7 +21,7 @@ class View(GlobalView):
         query = "SELECT nav_planet.id, nav_planet.name, nav_planet.galaxy, nav_planet.sector, nav_planet.planet, shipid, quantity" + \
                 " FROM planet_ships" + \
                 "    INNER JOIN nav_planet ON (planet_ships.planetid = nav_planet.id)" + \
-                " WHERE nav_planet.ownerid =" + str(self.UserId) + \
+                " WHERE nav_planet.ownerid =" + str(self.userId) + \
                 " ORDER BY nav_planet.id, shipid"
         oRss = oConnExecuteAll(query)
 

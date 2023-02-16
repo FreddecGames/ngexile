@@ -17,14 +17,14 @@ class View(GlobalView):
         if id == 0:
             return HttpResponseRedirect("/s03/reports/")
 
-        creator = self.UserId
+        creator = self.userId
 
-        fromview = ToInt(request.GET.get("v"), self.UserId)
+        fromview = ToInt(request.GET.get("v"), self.userId)
 
         display_battle = True
 
         # check that we took part in the battle to display it
-        oRs = oConnExecute("SELECT battleid FROM battles_ships WHERE battleid=" + str(id) + " AND owner_id=" + str(self.UserId) + " LIMIT 1")
+        oRs = oConnExecute("SELECT battleid FROM battles_ships WHERE battleid=" + str(id) + " AND owner_id=" + str(self.userId) + " LIMIT 1")
         display_battle = oRs != None
 
         if not display_battle and self.AllianceId:

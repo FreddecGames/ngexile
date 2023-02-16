@@ -65,10 +65,10 @@ class View(GlobalView):
         content.setValue("planetid", self.CurrentPlanet)
 
         # generate new commanders if needed for the player
-        oConnExecute("SELECT sp_commanders_check_new_commanders(" + str(self.UserId) + ")")
+        oConnExecute("SELECT sp_commanders_check_new_commanders(" + str(self.userId) + ")")
 
         # retrieve how many commanders are controled by the player
-        oRs = oConnExecute("SELECT int4(count(1)) FROM commanders WHERE recruited <= now() AND ownerid=" + str(self.UserId))
+        oRs = oConnExecute("SELECT int4(count(1)) FROM commanders WHERE recruited <= now() AND ownerid=" + str(self.userId))
         can_engage_commander = oRs[0] < self.oPlayerInfo["mod_commanders"]
 
         # Retrieve all the commanders belonging to the player
@@ -82,7 +82,7 @@ class View(GlobalView):
                 " FROM commanders AS c" + \
                 "    LEFT JOIN fleets AS f ON (c.id=f.commanderid)" + \
                 "    LEFT JOIN nav_planet AS p ON (c.id=p.commanderid)" + \
-                " WHERE c.ownerid=" + str(self.UserId) + \
+                " WHERE c.ownerid=" + str(self.userId) + \
                 " ORDER BY upper(c.name)"
         oRss = oConnExecuteAll(query)
 
@@ -181,7 +181,7 @@ class View(GlobalView):
                     " mod_fleet_tracking_speed, mod_fleet_damage, mod_fleet_signature," + \
                     " mod_construction_speed_buildings, mod_construction_speed_ships," + \
                     " points, name" + \
-                    " FROM commanders WHERE points > 0 AND id=" + str(CommanderId) + " AND ownerid=" + str(self.UserId)
+                    " FROM commanders WHERE points > 0 AND id=" + str(CommanderId) + " AND ownerid=" + str(self.userId)
             oRs = oConnExecute(query)
 
             if oRs == None:
@@ -266,11 +266,11 @@ class View(GlobalView):
                 "    ,mod_construction_speed_buildings=mod_construction_speed_buildings + 0.05*" + str(build) + \
                 "    ,mod_construction_speed_ships=mod_construction_speed_ships + 0.05*" + str(ship) + \
                 "    ,points=points-" + str(total) + \
-                " WHERE ownerid=" + str(self.UserId) + " AND id=" + str(CommanderId) + " AND points >= " + str(total)
+                " WHERE ownerid=" + str(self.userId) + " AND id=" + str(CommanderId) + " AND points >= " + str(total)
 
         oConnDoQuery(query)
 
-        query = "SELECT sp_commanders_update_salary(" + str(self.UserId) + ", " + str(CommanderId) + ")"
+        query = "SELECT sp_commanders_update_salary(" + str(self.userId) + ", " + str(CommanderId) + ")"
         oConnDoQuery(query)
 
         query = "SELECT mod_production_ore, mod_production_hydrocarbon, mod_production_energy," + \
@@ -278,7 +278,7 @@ class View(GlobalView):
                     " mod_fleet_tracking_speed, mod_fleet_damage, mod_fleet_signature," + \
                     " mod_construction_speed_buildings, mod_construction_speed_ships" + \
                     " FROM commanders" + \
-                    " WHERE id=" + str(CommanderId) + " AND ownerid=" + str(self.UserId)
+                    " WHERE id=" + str(CommanderId) + " AND ownerid=" + str(self.userId)
         oRs = oConnExecute(query)
 
         if oRs[0] <= self.max_ore+0.0001 and oRs[1] <= self.max_hydrocarbon+0.0001 and oRs[2] <= self.max_energy+0.0001 and oRs[3] <= self.max_workers+0.0001 and \
@@ -295,24 +295,24 @@ class View(GlobalView):
 
     def RenameCommander(self, CommanderId, NewName):
 
-        query = "SELECT sp_commanders_rename(" + str(self.UserId) + "," + str(CommanderId) + "," + dosql(NewName) + ")"
+        query = "SELECT sp_commanders_rename(" + str(self.userId) + "," + str(CommanderId) + "," + dosql(NewName) + ")"
         oConnDoQuery(query)
         return HttpResponseRedirect("/s03/commanders/")
 
     def EngageCommander(self, CommanderId):
 
-        query = "SELECT sp_commanders_engage(" + str(self.UserId) + "," + str(CommanderId) + ")"
+        query = "SELECT sp_commanders_engage(" + str(self.userId) + "," + str(CommanderId) + ")"
         oConnDoQuery(query)
         return HttpResponseRedirect("/s03/commanders/")
 
     def FireCommander(self, CommanderId):
 
-        query = "SELECT sp_commanders_fire(" + str(self.UserId) + "," + str(CommanderId) + ")"
+        query = "SELECT sp_commanders_fire(" + str(self.userId) + "," + str(CommanderId) + ")"
         oConnDoQuery(query)
         return HttpResponseRedirect("/s03/commanders/")
 
     def TrainCommander(self, CommanderId):
 
-        query = "SELECT sp_commanders_train(" + str(self.UserId) + "," + str(CommanderId) + ")"
+        query = "SELECT sp_commanders_train(" + str(self.userId) + "," + str(CommanderId) + ")"
         oConnDoQuery(query)
         return HttpResponseRedirect("/s03/commanders/")

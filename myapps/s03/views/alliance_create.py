@@ -33,7 +33,7 @@ class View(GlobalView):
 
             if self.valid_name and self.valid_tag:
 
-                oRs = oConnExecute("SELECT sp_create_alliance(" + str(self.UserId) + "," + dosql(self.name) + "," + dosql(self.tag) + "," + dosql(self.description) + ")")
+                oRs = oConnExecute("SELECT sp_create_alliance(" + str(self.userId) + "," + dosql(self.name) + "," + dosql(self.tag) + "," + dosql(self.description) + ")")
 
                 self.create_result = oRs[0]
                 if self.create_result >= -1:

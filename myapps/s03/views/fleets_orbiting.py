@@ -24,7 +24,7 @@ class View(GlobalView):
                 "    INNER JOIN fleets ON fleets.planetid=nav_planet.id" + \
                 "    INNER JOIN users ON fleets.ownerid=users.id" + \
                 "    LEFT JOIN alliances ON users.alliance_id=alliances.id" + \
-                " WHERE nav_planet.ownerid=" + str(self.UserId) + " AND fleets.ownerid != nav_planet.ownerid AND action != 1 AND action != -1" + \
+                " WHERE nav_planet.ownerid=" + str(self.userId) + " AND fleets.ownerid != nav_planet.ownerid AND action != 1 AND action != -1" + \
                 " ORDER BY nav_planet.id, upper(alliances.tag), upper(fleets.name)"
         oRss = oConnExecuteAll(query)
 

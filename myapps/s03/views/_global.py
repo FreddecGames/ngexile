@@ -22,8 +22,11 @@ class GlobalView(ExileMixin, View):
         
         response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
+    
+        if not request.user.is_authenticated:
+            return HttpResponseRedirect('/')
 
-        self.UserId = request.user.id
+        self.userId = request.user.id
         
         response = self.CheckSessionValidity()
         if response: return response
@@ -168,7 +171,7 @@ class GlobalView(ExileMixin, View):
         # retrieve planet list
         query = "SELECT id, name, galaxy, sector, planet" + \
                 " FROM nav_planet" + \
-                " WHERE planet_floor > 0 AND planet_space > 0 AND ownerid=" + str(self.UserId) + \
+                " WHERE planet_floor > 0 AND planet_space > 0 AND ownerid=" + str(self.userId) + \
                 " ORDER BY id"
         oRs = oConnExecuteAll(query)
 
@@ -226,8 +229,8 @@ class GlobalView(ExileMixin, View):
         tpl = tpl_layout
     
         # retrieve number of new messages & reports
-        query = "SELECT (SELECT int4(COUNT(*)) FROM messages WHERE ownerid=" + str(self.UserId) + " AND read_date is NULL)," + \
-                "(SELECT int4(COUNT(*)) FROM reports WHERE ownerid=" + str(self.UserId) + " AND read_date is NULL AND datetime <= now());"
+        query = "SELECT (SELECT int4(COUNT(*)) FROM messages WHERE ownerid=" + str(self.userId) + " AND read_date is NULL)," + \
+                "(SELECT int4(COUNT(*)) FROM reports WHERE ownerid=" + str(self.userId) + " AND read_date is NULL AND datetime <= now());"
         oRs = oConnExecute(query)
         
         if oRs[0] > 0:
@@ -302,7 +305,7 @@ class GlobalView(ExileMixin, View):
                 " timers_enabled, display_alliance_planet_name, prestige_points, (inframe IS NOT NULL AND inframe) AS inframe, COALESCE(skin, 's_default') AS skin," +\
                 "lcid, security_level" +\
                 " FROM users" +\
-                " WHERE id=" + str(self.UserId)
+                " WHERE id=" + str(self.userId)
         self.oPlayerInfo = dbRow(query)
         
         # check account still exists or that the player didn't connect with another account meanwhile
@@ -334,8 +337,8 @@ class GlobalView(ExileMixin, View):
 
         # log activity
         if not self.IsImpersonating():
-            oConnExecute("SELECT sp_log_activity(" + str(self.UserId) + "," + dosql(self.request.META.get("REMOTE_ADDR")) + ", 0)")
-            oConnDoQuery("UPDATE users SET lastlogin=now() WHERE id=" + str(self.UserId))
+            oConnExecute("SELECT sp_log_activity(" + str(self.userId) + "," + dosql(self.request.META.get("REMOTE_ADDR")) + ", 0)")
+            oConnDoQuery("UPDATE users SET lastlogin=now() WHERE id=" + str(self.userId))
 
     # set the new current planet, if the planet doesn't belong to the player then go back to the session planet
     def SetCurrentPlanet(self, planetid):
@@ -346,7 +349,7 @@ class GlobalView(ExileMixin, View):
         #
         if (planetid != "") and (planetid != self.CurrentPlanet):
             # check that the new planet belongs to the player
-            oRs = oConnExecute("SELECT galaxy, sector FROM nav_planet WHERE planet_floor > 0 AND planet_space > 0 AND id=" + str(planetid) + " and ownerid=" + str(self.UserId))
+            oRs = oConnExecute("SELECT galaxy, sector FROM nav_planet WHERE planet_floor > 0 AND planet_space > 0 AND id=" + str(planetid) + " and ownerid=" + str(self.userId))
             if oRs:
                 self.CurrentPlanet = planetid
                 self.CurrentGalaxyId = oRs[0]
@@ -355,7 +358,7 @@ class GlobalView(ExileMixin, View):
     
                 # save the last planetid
                 if not self.request.user.is_impersonate:
-                    oConnDoQuery("UPDATE users SET lastplanetid=" + str(planetid) + " WHERE id=" + str(self.UserId))
+                    oConnDoQuery("UPDATE users SET lastplanetid=" + str(planetid) + " WHERE id=" + str(self.userId))
     
                 return
     
@@ -366,7 +369,7 @@ class GlobalView(ExileMixin, View):
     
         if self.CurrentPlanet != None and self.CurrentPlanet != "":
             # check if the planet still belongs to the player
-            oRs = oConnExecute("SELECT galaxy, sector FROM nav_planet WHERE planet_floor > 0 AND planet_space > 0 AND id=" + str(self.CurrentPlanet) + " AND ownerid=" + str(self.UserId))
+            oRs = oConnExecute("SELECT galaxy, sector FROM nav_planet WHERE planet_floor > 0 AND planet_space > 0 AND id=" + str(self.CurrentPlanet) + " AND ownerid=" + str(self.userId))
             if oRs:
                 # the planet still belongs to the player, exit
                 self.CurrentGalaxyId = oRs[0]
@@ -374,7 +377,7 @@ class GlobalView(ExileMixin, View):
                 return
     
         # there is no active planet, select the first planet available
-        oRs = oConnExecute("SELECT id, galaxy, sector FROM nav_planet WHERE planet_floor > 0 AND planet_space > 0 AND ownerid=" + str(self.UserId) + " LIMIT 1")
+        oRs = oConnExecute("SELECT id, galaxy, sector FROM nav_planet WHERE planet_floor > 0 AND planet_space > 0 AND ownerid=" + str(self.userId) + " LIMIT 1")
     
         # if player owns no planets then the game is over
         if oRs == None:
@@ -388,7 +391,7 @@ class GlobalView(ExileMixin, View):
     
         # save the last planetid
         if not self.request.user.is_impersonate:
-            oConnDoQuery("UPDATE users SET lastplanetid=" + str(self.CurrentPlanet) + " WHERE id=" + str(self.UserId))
+            oConnDoQuery("UPDATE users SET lastplanetid=" + str(self.CurrentPlanet) + " WHERE id=" + str(self.userId))
     
         # a player may wish to destroy a building on a planet that belonged to him
         # if the planet doesn't belong to him anymore, the action may be performed on another planet

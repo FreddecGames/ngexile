@@ -35,7 +35,7 @@ class View(GlobalView):
 
         reversed = False
         if col == 1:
-            orderby = "CASE WHEN score_visibility=2 OR v.id="+str(self.UserId)+"THEN upper(username) ELSE '' END, upper(username)"
+            orderby = "CASE WHEN score_visibility=2 OR v.id="+str(self.userId)+"THEN upper(username) ELSE '' END, upper(username)"
         elif col == 2:
             orderby = "upper(alliances.name)"
         elif col == 3:
@@ -86,7 +86,7 @@ class View(GlobalView):
             index = 0
             found = False
             for oRs in oRss:
-                if oRs[0] == self.UserId:
+                if oRs[0] == self.userId:
                     found = True
                     break
 
@@ -139,9 +139,9 @@ class View(GlobalView):
         # Retrieve players to display
         query = "SELECT username, v.score, v.score_prestige," + \
                 "COALESCE(date_part('day', now()-lastactivity), 15), alliances.name, alliances.tag, v.id, avatar_url, v.alliance_id, v.score-v.previous_score AS score_delta," + \
-                "v.score >= " + str(TenthUserScore) + " OR score_visibility = 2 OR (score_visibility = 1 AND alliance_id IS NOT NULL AND alliance_id="+str(sqlValue(self.AllianceId))+") OR v.id="+str(self.UserId) + \
+                "v.score >= " + str(TenthUserScore) + " OR score_visibility = 2 OR (score_visibility = 1 AND alliance_id IS NOT NULL AND alliance_id="+str(sqlValue(self.AllianceId))+") OR v.id="+str(self.userId) + \
                 " FROM vw_players v" + \
-                "    LEFT JOIN alliances ON ((v.score >= " + str(TenthUserScore) + " OR score_visibility = 2 OR v.id="+str(self.UserId)+" OR (score_visibility = 1 AND alliance_id IS NOT NULL AND alliance_id="+str(sqlValue(self.AllianceId))+")) AND alliances.id=v.alliance_id)" + \
+                "    LEFT JOIN alliances ON ((v.score >= " + str(TenthUserScore) + " OR score_visibility = 2 OR v.id="+str(self.userId)+" OR (score_visibility = 1 AND alliance_id IS NOT NULL AND alliance_id="+str(sqlValue(self.AllianceId))+")) AND alliances.id=v.alliance_id)" + \
                 " WHERE True "+searchby + \
                 " ORDER BY "+orderby+" OFFSET "+str(offset*displayed)+" LIMIT "+str(displayed)
         oRss = oConnExecuteAll(query)
@@ -187,7 +187,7 @@ class View(GlobalView):
                 item["2weeksplus"] = True
 
             if visible:
-                if oRs[6] == self.UserId:
+                if oRs[6] == self.userId:
                     item["self"] = True
                 elif self.AllianceId and oRs[8] == self.AllianceId:
                     item["ally"] = True

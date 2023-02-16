@@ -36,22 +36,22 @@ class View(GlobalView):
         self.hours = 24
 
         if action == "accept":
-            oRs = oConnExecute("SELECT sp_alliance_nap_accept(" + str(self.UserId) + "," + dosql(targetalliancetag) + ")")
+            oRs = oConnExecute("SELECT sp_alliance_nap_accept(" + str(self.userId) + "," + dosql(targetalliancetag) + ")")
             if oRs[0] == 0:
                 self.nap_success = "ok"
             elif oRs[0] == 5:
                 self.nap_success = "too_many"
 
         elif action == "decline":
-            oConnExecute("SELECT sp_alliance_nap_decline(" + str(self.UserId) + "," + dosql(targetalliancetag) + ")")
+            oConnExecute("SELECT sp_alliance_nap_decline(" + str(self.userId) + "," + dosql(targetalliancetag) + ")")
         elif action == "cancel":
-            oConnExecute("SELECT sp_alliance_nap_cancel(" + str(self.UserId) + "," + dosql(targetalliancetag) + ")")
+            oConnExecute("SELECT sp_alliance_nap_cancel(" + str(self.userId) + "," + dosql(targetalliancetag) + ")")
         elif action == "sharelocs":
-            oConnExecute("SELECT sp_alliance_nap_toggle_share_locs(" + str(self.UserId) + "," + dosql(targetalliancetag) + ")")
+            oConnExecute("SELECT sp_alliance_nap_toggle_share_locs(" + str(self.userId) + "," + dosql(targetalliancetag) + ")")
         elif action == "shareradars":
-            oConnExecute("SELECT sp_alliance_nap_toggle_share_radars(" + str(self.UserId) + "," + dosql(targetalliancetag) + ")")
+            oConnExecute("SELECT sp_alliance_nap_toggle_share_radars(" + str(self.userId) + "," + dosql(targetalliancetag) + ")")
         elif action == "break":
-            oRs = oConnExecute("SELECT sp_alliance_nap_break(" + str(self.UserId) + "," + dosql(targetalliancetag) + ")")
+            oRs = oConnExecute("SELECT sp_alliance_nap_break(" + str(self.userId) + "," + dosql(targetalliancetag) + ")")
 
             if oRs[0] == 0:
                 self.break_success = "ok"
@@ -69,7 +69,7 @@ class View(GlobalView):
 
             self.hours = ToInt(request.POST.get("hours"), 0)
 
-            oRs = oConnExecute("SELECT sp_alliance_nap_request(" + str(self.UserId) + "," + dosql(self.tag) + "," + str(self.hours) + ")")
+            oRs = oConnExecute("SELECT sp_alliance_nap_request(" + str(self.userId) + "," + dosql(self.tag) + "," + str(self.hours) + ")")
             if oRs[0] == 0:
                 self.invitation_success = "ok"
                 self.tag = ""
