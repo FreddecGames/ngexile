@@ -30,7 +30,7 @@ class View(GlobalView):
         
         content = getTemplate(self.request, "s03/orbit")
 
-        content.setValue("planetid", str(self.CurrentPlanet))
+        content.setValue("planetid", str(self.currentPlanetId))
 
         # list the fleets near the planet
         query = "SELECT id, name, attackonsight, engaged, size, signature, speed, remaining_time, commanderid, commandername," + \
@@ -38,7 +38,7 @@ class View(GlobalView):
                 " destplanetid, destplanet_name, destplanet_galaxy, destplanet_sector, destplanet_planet, destplanet_ownerid, destplanet_owner_name, destplanet_owner_relation," + \
                 " action, cargo_ore, cargo_hydrocarbon, cargo_scientists, cargo_soldiers, cargo_workers" + \
                 " FROM vw_fleets " + \
-                " WHERE planetid="+ str(self.CurrentPlanet) +" AND action != 1 AND action != -1" + \
+                " WHERE planetid="+ str(self.currentPlanetId) +" AND action != 1 AND action != -1" + \
                 " ORDER BY upper(name)"
         oRss = oConnExecuteAll(query)
 
@@ -108,7 +108,7 @@ class View(GlobalView):
         query = "SELECT shipid, quantity," + \
                 " signature, capacity, handling, speed, (weapon_dmg_em + weapon_dmg_explosive + weapon_dmg_kinetic + weapon_dmg_thermal) AS weapon_power, weapon_turrets, weapon_tracking_speed, hull, shield, recycler_output, long_distance_capacity, droppods" + \
                 " FROM planet_ships LEFT JOIN db_ships ON (planet_ships.shipid = db_ships.id)" + \
-                " WHERE planetid=" + str(self.CurrentPlanet) + \
+                " WHERE planetid=" + str(self.currentPlanetId) + \
                 " ORDER BY category, label"
 
         oRss = dbRows(query)
@@ -191,7 +191,7 @@ class View(GlobalView):
 
         # create a new fleet at the current planet with the given name
         
-        oRs = oConnExecute("SELECT sp_create_fleet(" + str(self.userId) + "," + str(self.CurrentPlanet) + "," + dosql(fleetname) + ")")
+        oRs = oConnExecute("SELECT sp_create_fleet(" + str(self.userId) + "," + str(self.currentPlanetId) + "," + dosql(fleetname) + ")")
         if not oRs:
             return
         

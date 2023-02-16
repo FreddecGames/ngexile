@@ -80,8 +80,8 @@ class View(GlobalView):
 
         query = "SELECT alliances.id, alliances.tag, alliances.name, sum(users.score) AS alliance_score, count(*) AS members, sum(planets) AS planets," + \
                 " int4(alliances.score / count(*)) AS score_average, sum(users.score)-sum(users.previous_score) as score_delta," + \
-                " created, EXISTS(SELECT 1 FROM alliances_naps WHERE allianceid1=alliances.id AND allianceid2=" + str(sqlValue(self.AllianceId)) + ")," + \
-                " max_members, EXISTS(SELECT 1 FROM alliances_wars WHERE (allianceid1=alliances.id AND allianceid2=" + str(sqlValue(self.AllianceId)) + ") OR (allianceid1=" + str(sqlValue(self.AllianceId)) + " AND allianceid2=alliances.id))" + \
+                " created, EXISTS(SELECT 1 FROM alliances_naps WHERE allianceid1=alliances.id AND allianceid2=" + str(sqlValue(self.allianceId)) + ")," + \
+                " max_members, EXISTS(SELECT 1 FROM alliances_wars WHERE (allianceid1=alliances.id AND allianceid2=" + str(sqlValue(self.allianceId)) + ") OR (allianceid1=" + str(sqlValue(self.allianceId)) + " AND allianceid2=alliances.id))" + \
                 " FROM users INNER JOIN alliances ON alliances.id=alliance_id" + \
                 " WHERE alliances.visible"+searchby + \
                 " GROUP BY alliances.id, alliances.name, alliances.tag, alliances.score, alliances.previous_score, alliances.created, alliances.max_members" + \
@@ -143,7 +143,7 @@ class View(GlobalView):
             if oRs[6] > 0: item["plus"] = True
             if oRs[6] < 0: item["minus"] = True
 
-            if self.AllianceId and oRs[0] == self.AllianceId: item["playeralliance"] = True
+            if self.allianceId and oRs[0] == self.allianceId: item["playeralliance"] = True
             if oRs[9]:
                 item["nap"] = True
             elif oRs[11]:

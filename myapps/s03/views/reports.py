@@ -138,7 +138,7 @@ class View(GlobalView):
                 content.setValue("total_newreports", total_newreports)
                 content.Parse("tabnav_000_new")
             
-            if not self.IsImpersonating():
+            if not self.request.user.is_impersonate:
                 # flag only the current category of reports as read
                 if cat != 0:
                     oConnDoQuery("UPDATE reports SET read_date = now() WHERE ownerid = " + str(self.userId) + " AND type = "+str(cat)+ " AND read_date is null AND datetime <= now()")

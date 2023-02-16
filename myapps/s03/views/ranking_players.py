@@ -139,9 +139,9 @@ class View(GlobalView):
         # Retrieve players to display
         query = "SELECT username, v.score, v.score_prestige," + \
                 "COALESCE(date_part('day', now()-lastactivity), 15), alliances.name, alliances.tag, v.id, avatar_url, v.alliance_id, v.score-v.previous_score AS score_delta," + \
-                "v.score >= " + str(TenthUserScore) + " OR score_visibility = 2 OR (score_visibility = 1 AND alliance_id IS NOT NULL AND alliance_id="+str(sqlValue(self.AllianceId))+") OR v.id="+str(self.userId) + \
+                "v.score >= " + str(TenthUserScore) + " OR score_visibility = 2 OR (score_visibility = 1 AND alliance_id IS NOT NULL AND alliance_id="+str(sqlValue(self.allianceId))+") OR v.id="+str(self.userId) + \
                 " FROM vw_players v" + \
-                "    LEFT JOIN alliances ON ((v.score >= " + str(TenthUserScore) + " OR score_visibility = 2 OR v.id="+str(self.userId)+" OR (score_visibility = 1 AND alliance_id IS NOT NULL AND alliance_id="+str(sqlValue(self.AllianceId))+")) AND alliances.id=v.alliance_id)" + \
+                "    LEFT JOIN alliances ON ((v.score >= " + str(TenthUserScore) + " OR score_visibility = 2 OR v.id="+str(self.userId)+" OR (score_visibility = 1 AND alliance_id IS NOT NULL AND alliance_id="+str(sqlValue(self.allianceId))+")) AND alliances.id=v.alliance_id)" + \
                 " WHERE True "+searchby + \
                 " ORDER BY "+orderby+" OFFSET "+str(offset*displayed)+" LIMIT "+str(displayed)
         oRss = oConnExecuteAll(query)
@@ -189,7 +189,7 @@ class View(GlobalView):
             if visible:
                 if oRs[6] == self.userId:
                     item["self"] = True
-                elif self.AllianceId and oRs[8] == self.AllianceId:
+                elif self.allianceId and oRs[8] == self.allianceId:
                     item["ally"] = True
 
                 # show avatar only if top 10

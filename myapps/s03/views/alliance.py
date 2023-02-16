@@ -15,7 +15,7 @@ class View(GlobalView):
 
         tag = request.GET.get('tag', '')
         
-        if tag == '' and self.AllianceId == None:
+        if tag == '' and self.allianceId == None:
             return HttpResponseRedirect('/s03/alliance-invitations/')
 
         tpl = getTemplate(self.request, 's03/alliance')
@@ -30,7 +30,7 @@ class View(GlobalView):
 
         if tag == '':
         
-            query = query + ' WHERE id=' + str(self.AllianceId) + ' LIMIT 1'
+            query = query + ' WHERE id=' + str(self.allianceId) + ' LIMIT 1'
             
         else:
         

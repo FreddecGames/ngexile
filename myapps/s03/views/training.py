@@ -31,7 +31,7 @@ class View(GlobalView):
 
         content = getTemplate(self.request, "s03/training")
 
-        content.setValue("planetid", str(self.CurrentPlanet))
+        content.setValue("planetid", str(self.currentPlanetId))
 
         query = "SELECT scientist_ore, scientist_hydrocarbon, scientist_credits," + \
                 " soldier_ore, soldier_hydrocarbon, soldier_credits" + \
@@ -46,7 +46,7 @@ class View(GlobalView):
             content.setValue("soldier_hydrocarbon", oRs[4])
             content.setValue("soldier_credits", oRs[5])
 
-        query = "SELECT scientists, scientists_capacity, soldiers, soldiers_capacity, workers FROM vw_planets WHERE id="+str(self.CurrentPlanet)
+        query = "SELECT scientists, scientists_capacity, soldiers, soldiers_capacity, workers FROM vw_planets WHERE id="+str(self.currentPlanetId)
         oRs = oConnExecute(query)
 
         if oRs:
@@ -75,7 +75,7 @@ class View(GlobalView):
 
         # training in process
         query = "SELECT id, scientists, soldiers, int4(date_part('epoch', end_time-now()))" + \
-                " FROM planet_training_pending WHERE planetid="+str(self.CurrentPlanet)+" AND end_time IS NOT NULL" + \
+                " FROM planet_training_pending WHERE planetid="+str(self.currentPlanetId)+" AND end_time IS NOT NULL" + \
                 " ORDER BY start_time"
         oRss = oConnExecuteAll(query)
 
@@ -105,7 +105,7 @@ class View(GlobalView):
                 "    int4(ceiling(1.0*planet_training_pending.soldiers/GREATEST(1, training_soldiers)) * date_part('epoch', INTERVAL '1 hour'))" + \
                 " FROM planet_training_pending" + \
                 "    JOIN nav_planet ON (nav_planet.id=planet_training_pending.planetid)" + \
-                " WHERE planetid="+str(self.CurrentPlanet)+" AND end_time IS NULL" + \
+                " WHERE planetid="+str(self.currentPlanetId)+" AND end_time IS NULL" + \
                 " ORDER BY start_time"
         oRss = oConnExecuteAll(query)
 
@@ -134,7 +134,7 @@ class View(GlobalView):
 
     def Train(self, Scientists, Soldiers):
 
-        oRs = connExecuteRetry("SELECT * FROM sp_start_training(" + str(self.userId) + "," + str(self.CurrentPlanet) + "," + str(Scientists) + "," + str(Soldiers) + ")")
+        oRs = connExecuteRetry("SELECT * FROM sp_start_training(" + str(self.userId) + "," + str(self.currentPlanetId) + "," + str(Scientists) + "," + str(Soldiers) + ")")
 
         if oRs:
             self.train_error = oRs[0]
@@ -142,6 +142,6 @@ class View(GlobalView):
             self.train_error = 1
 
     def CancelTraining(self, queueId):
-        connExecuteRetryNoRecords("SELECT * FROM sp_cancel_training(" + str(self.CurrentPlanet) + ", " + str(queueId) + ")")
+        connExecuteRetryNoRecords("SELECT * FROM sp_cancel_training(" + str(self.currentPlanetId) + ", " + str(queueId) + ")")
         return HttpResponseRedirect("?")
 

@@ -62,14 +62,14 @@ class View(GlobalView):
     def ListCommanders(self):
         content = getTemplate(self.request, "s03/commanders")
 
-        content.setValue("planetid", self.CurrentPlanet)
+        content.setValue("planetid", self.currentPlanetId)
 
         # generate new commanders if needed for the player
         oConnExecute("SELECT sp_commanders_check_new_commanders(" + str(self.userId) + ")")
 
         # retrieve how many commanders are controled by the player
         oRs = oConnExecute("SELECT int4(count(1)) FROM commanders WHERE recruited <= now() AND ownerid=" + str(self.userId))
-        can_engage_commander = oRs[0] < self.oPlayerInfo["mod_commanders"]
+        can_engage_commander = oRs[0] < self.profile["mod_commanders"]
 
         # Retrieve all the commanders belonging to the player
         query = "SELECT c.id, c.name, c.recruited, points, added, salary, can_be_fired, " + \
@@ -161,7 +161,7 @@ class View(GlobalView):
                 item["points"] = oRs[3]
                 item["levelup"] = True
 
-        content.setValue("max_commanders", int(self.oPlayerInfo["mod_commanders"]))
+        content.setValue("max_commanders", int(self.profile["mod_commanders"]))
 
         if available_commanders_count == 0: content.Parse("available_commanders_nocommander")
         if commanders_count == 0: content.Parse("commanders_nocommander")

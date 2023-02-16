@@ -30,7 +30,7 @@ class View(GlobalView):
         return self.ListResearches()
 
     def HasEnoughFunds(self, credits):
-        return self.oPlayerInfo["credits"] >= credits
+        return self.profile["credits"] >= credits
 
     # List all the available researches
     def ListResearches(self):

@@ -38,7 +38,7 @@ class View(GlobalView):
     def display_nation(self):
 
         nation = self.request.GET.get("name", "").strip()
-        if nation == "": nation = self.oPlayerInfo["username"]
+        if nation == "": nation = self.profile["username"]
 
         if not isValidName(nation):        
             return HttpResponseRedirect("/s03/nation/")
@@ -87,14 +87,14 @@ class View(GlobalView):
 
             if oRs[3] == rAlliance:
                 content.Parse("ally")
-                show_details = self.oAllianceRights["leader"] or self.oAllianceRights["can_see_members_info"]
+                show_details = self.allianceRights["leader"] or self.allianceRights["can_see_members_info"]
             else:
                 content.Parse("self")
                 show_details = True
 
             if show_details:
                 if oRs[3] == rAlliance:
-                    if not self.oAllianceRights["leader"]:
+                    if not self.allianceRights["leader"]:
                         show_details = False
 
                 if show_details:
@@ -125,7 +125,7 @@ class View(GlobalView):
                     " FROM vw_fleets WHERE ownerid=" + str(oRs[7])
 
                 if oRs[3] == rAlliance:
-                    if not self.oAllianceRights["leader"]:
+                    if not self.allianceRights["leader"]:
                         query = query + " AND action != 0"
 
                 query = query + " ORDER BY planetid, upper(name)"

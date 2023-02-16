@@ -9,7 +9,7 @@ class View(GlobalView):
         response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
 
-        if self.AllianceId == None:
+        if self.allianceId == None:
             self.selectedMenu = "noalliance.invitations"
         else:
             self.selectedMenu = "alliance.invitations"
@@ -69,8 +69,8 @@ class View(GlobalView):
 
             item["recruiter"] = oRs[3]
 
-            if self.oPlayerInfo["can_join_alliance"]:
-                if self.AllianceId:
+            if self.profile["can_join_alliance"]:
+                if self.allianceId:
                     item["cant_accept"] = True
                 else:
                     item["accept"] = True
@@ -88,10 +88,10 @@ class View(GlobalView):
         if i == 0: content.Parse("noinvitations")
 
         # Parse "cant_join" section if the player can't create/join an alliance
-        if not self.oPlayerInfo["can_join_alliance"]: content.Parse("cant_join")
+        if not self.profile["can_join_alliance"]: content.Parse("cant_join")
 
         # display the "leave" section if the player is in an alliance
-        if self.AllianceId and self.oPlayerInfo["can_join_alliance"]:
+        if self.allianceId and self.profile["can_join_alliance"]:
 
             self.request.session[self.sLeaveCost] = 0
             

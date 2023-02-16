@@ -39,7 +39,7 @@ class View(GlobalView):
                 " ore_capacity, hydrocarbon_capacity," + \
                 " scientists, scientists_capacity, soldiers, soldiers_capacity, energy_production-energy_consumption" + \
                 " FROM vw_planets" + \
-                " WHERE id="+str(self.CurrentPlanet)
+                " WHERE id="+str(self.currentPlanetId)
         oRs = oConnExecute(query)
     
         if oRs == None: return
@@ -64,7 +64,7 @@ class View(GlobalView):
         self.pSoldiersCapacity = oRs[15]
     
         # Retrieve buildings of current planet
-        query = "SELECT planetid, buildingid, quantity FROM planet_buildings WHERE quantity > 0 AND planetid=" + str(self.CurrentPlanet)
+        query = "SELECT planetid, buildingid, quantity FROM planet_buildings WHERE quantity > 0 AND planetid=" + str(self.currentPlanetId)
         oPlanetBuildings = oConnExecute(query)
         
         if not oPlanetBuildings:
@@ -163,12 +163,12 @@ class View(GlobalView):
                 "construction_maximum, quantity, build_status, construction_time, destroyable, '', production_ore, production_hydrocarbon, energy_production, buildings_requirements_met, destruction_time," + \
                 "upkeep, energy_consumption, buildable" + \
                 " FROM vw_buildings" + \
-                " WHERE planetid=" + str(self.CurrentPlanet) + " AND ((buildable AND research_requirements_met) or quantity > 0)"
+                " WHERE planetid=" + str(self.currentPlanetId) + " AND ((buildable AND research_requirements_met) or quantity > 0)"
     
         oRss = oConnExecute(query)
         content = getTemplate(self.request, "s03/buildings")
     
-        content.setValue("planetid", str(self.CurrentPlanet))
+        content.setValue("planetid", str(self.currentPlanetId))
     
         cat_id = -1
         lastCategory = -1
@@ -256,7 +256,7 @@ class View(GlobalView):
                         building["not_enough_space"] = True
                         notenoughspace = True
                         
-                    if oRs[2] > 0 and oRs[2] > self.oPlayerInfo["prestige_points"]:
+                    if oRs[2] > 0 and oRs[2] > self.profile["prestige_points"]:
                         building["not_enough_prestige"] = True
                         notenoughresources = True
                         
@@ -316,11 +316,11 @@ class View(GlobalView):
         return self.display(content)
     
     def StartBuilding(self, BuildingId):
-        oRs = connExecuteRetry("SELECT sp_start_building(" + str(self.userId) + "," + str(self.CurrentPlanet) + ", " + str(BuildingId) + ", false)")
+        oRs = connExecuteRetry("SELECT sp_start_building(" + str(self.userId) + "," + str(self.currentPlanetId) + ", " + str(BuildingId) + ", false)")
         
     def CancelBuilding(self, BuildingId):
-        result = dbRow("SELECT sp_cancel_building(" + str(self.userId) + "," + str(self.CurrentPlanet) + ", " + str(BuildingId) + ") AS result")
+        result = dbRow("SELECT sp_cancel_building(" + str(self.userId) + "," + str(self.currentPlanetId) + ", " + str(BuildingId) + ") AS result")
         print(result)
     
     def DestroyBuilding(self, BuildingId):
-        connExecuteRetryNoRecords("SELECT sp_destroy_building(" + str(self.userId) + "," + str(self.CurrentPlanet) + "," + str(BuildingId) + ")")
+        connExecuteRetryNoRecords("SELECT sp_destroy_building(" + str(self.userId) + "," + str(self.currentPlanetId) + "," + str(BuildingId) + ")")

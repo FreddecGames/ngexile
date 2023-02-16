@@ -22,11 +22,11 @@ class View(GlobalView):
         # If the player is on the map and change the current planet, find the galaxy/sector
         planet = request.GET.get("planet", "")
         if planet != "":
-            galaxy = self.CurrentGalaxyId
-            sector = self.CurrentSectorId
+            galaxy = self.currentPlanetGalaxy
+            sector = self.currentPlanetSector
         else:
-            if galaxy != "": galaxy = ToInt(galaxy,self.CurrentGalaxyId)
-            if sector != "": sector = ToInt(sector,self.CurrentSectorId)
+            if galaxy != "": galaxy = ToInt(galaxy,self.currentPlanetGalaxy)
+            if sector != "": sector = ToInt(sector,self.currentPlanetSector)
 
         return self.DisplayMap(galaxy, sector)
 
@@ -353,10 +353,10 @@ class View(GlobalView):
         oRs = oConnExecute(query)
         radarstrength = oRs[0]
 
-        if self.AllianceId == None:
+        if self.allianceId == None:
             aid = -1
         else:
-            aid = self.AllianceId
+            aid = self.allianceId
         
         #
         # Main query : retrieve planets info in the sector
@@ -537,11 +537,7 @@ class View(GlobalView):
                     displayPlanetInfo = True
                     displayResources = True
                 elif rel == rAlliance:
-                    if self.displayAlliancePlanetName:
-                        planet["planetname"] = oRs[2]
-                    else:
-                        planet["planetname"] = ""
-
+                    planet["planetname"] = ""
                     displayElements = True
                     displayPlanetInfo = True
                     displayResources = True

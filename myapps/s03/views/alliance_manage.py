@@ -13,15 +13,15 @@ class View(GlobalView):
 
         self.selectedMenu = "alliance.manage"
 
-        if self.AllianceId == None: return HttpResponseRedirect("/s03/alliance/")
-        if not (self.oAllianceRights["leader"] or self.oAllianceRights["can_manage_description"] or self.oAllianceRights["can_manage_announce"]): return HttpResponseRedirect("/s03/alliance/")
+        if self.allianceId == None: return HttpResponseRedirect("/s03/alliance/")
+        if not (self.allianceRights["leader"] or self.allianceRights["can_manage_description"] or self.allianceRights["can_manage_announce"]): return HttpResponseRedirect("/s03/alliance/")
 
         cat = ToInt(request.GET.get("cat", ""), 1)
         if cat < 1 or cat > 3: cat = 1
 
-        if cat == 3 and not self.oAllianceRights["leader"]: cat=1
-        if cat == 1 and not (self.oAllianceRights["leader"] or self.oAllianceRights["can_manage_description"]): cat=2
-        if cat == 2 and not (self.oAllianceRights["leader"] or self.oAllianceRights["can_manage_announce"]): cat=1
+        if cat == 3 and not self.allianceRights["leader"]: cat=1
+        if cat == 1 and not (self.allianceRights["leader"] or self.allianceRights["can_manage_description"]): cat=2
+        if cat == 2 and not (self.allianceRights["leader"] or self.allianceRights["can_manage_announce"]): cat=1
         
         self.changes_status = ""
         
@@ -41,7 +41,7 @@ class View(GlobalView):
         query = "SELECT id, tag, name, description, created, (SELECT count(*) FROM users WHERE alliance_id=alliances.id), logo_url," + \
                 " max_members" + \
                 " FROM alliances" + \
-                " WHERE id=" + str(self.AllianceId)
+                " WHERE id=" + str(self.allianceId)
 
         oRs = oConnExecute(query)
 
@@ -65,7 +65,7 @@ class View(GlobalView):
     def displayMotD(self, content):
 
         # display alliance MotD (message of the day)
-        query = "SELECT announce, defcon FROM alliances WHERE id=" + str(self.AllianceId)
+        query = "SELECT announce, defcon FROM alliances WHERE id=" + str(self.allianceId)
         oRs = oConnExecute(query)
 
         if oRs:
@@ -80,7 +80,7 @@ class View(GlobalView):
                 " can_accept_money_requests, can_change_tax_rate, can_mail_alliance, is_default, members_displayed, can_manage_description, can_manage_announce, " + \
                 " enabled, can_see_members_info, can_order_other_fleets, can_use_alliance_radars" + \
                 " FROM alliances_ranks" + \
-                " WHERE allianceid=" + str(self.AllianceId) + \
+                " WHERE allianceid=" + str(self.allianceId) + \
                 " ORDER BY rankid"
         oRss = dbRows(query)
         list = []
@@ -143,9 +143,9 @@ class View(GlobalView):
             content.Parse("error")
 
         content.Parse("cat"+str(cat)+"_selected")
-        if self.oAllianceRights["leader"] or self.oAllianceRights["can_manage_description"]: content.Parse("cat1")
-        if self.oAllianceRights["leader"] or self.oAllianceRights["can_manage_announce"]: content.Parse("cat2")
-        if self.oAllianceRights["leader"]: content.Parse("cat3")
+        if self.allianceRights["leader"] or self.allianceRights["can_manage_description"]: content.Parse("cat1")
+        if self.allianceRights["leader"] or self.allianceRights["can_manage_announce"]: content.Parse("cat2")
+        if self.allianceRights["leader"]: content.Parse("cat3")
         content.Parse("nav")
 
         return self.display(content)
@@ -162,7 +162,7 @@ class View(GlobalView):
             self.changes_status = "check_logo"
         else:
             # save updated information
-            oConnDoQuery("UPDATE alliances SET logo_url=" + dosql(logo) + ", description=" + dosql(description) + " WHERE id = " + str(self.AllianceId))
+            oConnDoQuery("UPDATE alliances SET logo_url=" + dosql(logo) + ", description=" + dosql(description) + " WHERE id = " + str(self.allianceId))
 
             self.changes_status = "done"
 
@@ -171,14 +171,14 @@ class View(GlobalView):
         defcon = ToInt(self.request.POST.get("defcon"), 5)
 
         # save updated information
-        oConnDoQuery("UPDATE alliances SET defcon=" + str(defcon) + ", announce=" + dosql(MotD) + " WHERE id = " + str(self.AllianceId))
+        oConnDoQuery("UPDATE alliances SET defcon=" + str(defcon) + ", announce=" + dosql(MotD) + " WHERE id = " + str(self.allianceId))
         self.changes_status = "done"
 
     def SaveRanks(self):
     
         query = "SELECT rankid, leader" + \
             " FROM alliances_ranks" + \
-            " WHERE allianceid=" + str(self.AllianceId) + \
+            " WHERE allianceid=" + str(self.allianceId) + \
             " ORDER BY rankid"
         oRss = dbRows(query)
         for oRs in oRss:
@@ -202,7 +202,7 @@ class View(GlobalView):
                         ", members_displayed=leader OR " + str(ToBool(self.request.POST.get("c" + str(oRs['rankid']) + "_13"), False)) + \
                         ", can_order_other_fleets=leader OR " + str(ToBool(self.request.POST.get("c" + str(oRs['rankid']) + "_14"), False)) + \
                         ", can_use_alliance_radars=leader OR " + str(ToBool(self.request.POST.get("c" + str(oRs['rankid']) + "_15"), False)) + \
-                        ", enabled=leader OR EXISTS(SELECT 1 FROM users WHERE alliance_id=" + str(self.AllianceId) + " AND alliance_rank=" + str(oRs['rankid']) + " LIMIT 1) OR " + str(ToBool(self.request.POST.get("c" + str(oRs['rankid']) + "_enabled"), False)) + " OR " + str(ToBool(self.request.POST.get("c" + str(oRs['rankid']) + "_0"), False)) + \
-                        " WHERE allianceid=" + str(self.AllianceId) + " AND rankid=" + str(oRs['rankid'])
+                        ", enabled=leader OR EXISTS(SELECT 1 FROM users WHERE alliance_id=" + str(self.allianceId) + " AND alliance_rank=" + str(oRs['rankid']) + " LIMIT 1) OR " + str(ToBool(self.request.POST.get("c" + str(oRs['rankid']) + "_enabled"), False)) + " OR " + str(ToBool(self.request.POST.get("c" + str(oRs['rankid']) + "_0"), False)) + \
+                        " WHERE allianceid=" + str(self.allianceId) + " AND rankid=" + str(oRs['rankid'])
 
                 connExecuteRetryNoRecords(query)

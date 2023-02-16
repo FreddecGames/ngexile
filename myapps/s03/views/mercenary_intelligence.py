@@ -167,7 +167,7 @@ class View(GlobalView):
             cost = self.nation_cost_lvl_3
             spyingTime = round(300 + random() * 150)
 
-        if self.oPlayerInfo["prestige_points"] < cost:
+        if self.profile["prestige_points"] < cost:
             self.intell_error = self.e_not_enough_money
             return
 
@@ -292,7 +292,7 @@ class View(GlobalView):
             cost = self.planet_cost_lvl_3
             spyingTime = round(100 + random() * 50)
 
-        if self.oPlayerInfo["prestige_points"] < cost:
+        if self.profile["prestige_points"] < cost:
             self.intell_error = self.e_not_enough_money
             return
 

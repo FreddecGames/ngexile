@@ -17,7 +17,7 @@ class View(GlobalView):
 
         self.money_error = self.e_no_error
 
-        if self.AllianceId == None:
+        if self.allianceId == None:
             return HttpResponseRedirect("/s03/overview/")
 
         #
@@ -66,8 +66,8 @@ class View(GlobalView):
         #
         category = ToInt(request.GET.get("cat"), 1)
 
-        if not self.oAllianceRights["can_ask_money"] and category == 2: category = 1
-        if not self.oAllianceRights["can_change_tax_rate"] and category == 4: category = 1
+        if not self.allianceRights["can_ask_money"] and category == 2: category = 1
+        if not self.allianceRights["can_change_tax_rate"] and category == 4: category = 1
 
         if category == 2:
             return self.DisplayRequests(2)
@@ -93,13 +93,13 @@ class View(GlobalView):
 
         tpl.setValue("walletpage", cat)
 
-        oRs = oConnExecute("SELECT credits, tax FROM alliances WHERE id=" + str(self.AllianceId))
+        oRs = oConnExecute("SELECT credits, tax FROM alliances WHERE id=" + str(self.allianceId))
         tpl.setValue("credits", oRs[0])
         tpl.setValue("tax", oRs[1]/10)
 
-        if self.oPlayerInfo["planets"] < 2: tpl.Parse("notax")
+        if self.profile["planets"] < 2: tpl.Parse("notax")
 
-        oRs = oConnExecute("SELECT COALESCE(sum(credits), 0) FROM alliances_wallet_journal WHERE allianceid=" + str(self.AllianceId) + " AND datetime >= now()-INTERVAL '24 hours'")
+        oRs = oConnExecute("SELECT COALESCE(sum(credits), 0) FROM alliances_wallet_journal WHERE allianceid=" + str(self.allianceId) + " AND datetime >= now()-INTERVAL '24 hours'")
         tpl.setValue("last24h", oRs[0])
 
         if self.money_error == self.e_not_enough_money:
@@ -110,9 +110,9 @@ class View(GlobalView):
         tpl.Parse("cat"+str(cat)+"_selected")
 
         tpl.Parse("cat1")
-        if self.oAllianceRights["can_ask_money"]: tpl.Parse("cat2")
+        if self.allianceRights["can_ask_money"]: tpl.Parse("cat2")
         tpl.Parse("cat3")
-        if self.oAllianceRights["can_change_tax_rate"]: tpl.Parse("cat4")
+        if self.allianceRights["can_change_tax_rate"]: tpl.Parse("cat4")
 
         return self.display(tpl)
 
@@ -194,7 +194,7 @@ class View(GlobalView):
         # List wallet journal
         query = "SELECT Max(datetime), userid, int4(sum(credits)), description, source, destination, type, groupid"+ \
                 " FROM alliances_wallet_journal"+ \
-                " WHERE allianceid=" + str(self.AllianceId) + query + " AND datetime >= now()-INTERVAL '1 week'"+ \
+                " WHERE allianceid=" + str(self.allianceId) + query + " AND datetime >= now()-INTERVAL '1 week'"+ \
                 " GROUP BY userid, description, source, destination, type, groupid"+ \
                 " ORDER BY Max(datetime) DESC"+ \
                 " LIMIT 500"
@@ -263,7 +263,7 @@ class View(GlobalView):
 
         query = "SELECT credits, description, result" + \
                 " FROM alliances_wallet_requests" + \
-                " WHERE allianceid=" + str(self.AllianceId) + " AND userid=" + str(self.userId)
+                " WHERE allianceid=" + str(self.allianceId) + " AND userid=" + str(self.userId)
 
         oRs = oConnExecute(query)
 
@@ -277,12 +277,12 @@ class View(GlobalView):
 
         content.Parse("request")
 
-        if self.oAllianceRights["can_accept_money_requests"]:
+        if self.allianceRights["can_accept_money_requests"]:
             # List money self.requests
             query = "SELECT r.id, datetime, username, r.credits, r.description" + \
                     " FROM alliances_wallet_requests r" + \
                     "    INNER JOIN users ON users.id=r.userid" + \
-                    " WHERE allianceid=" + str(self.AllianceId) + " AND result IS NULL"
+                    " WHERE allianceid=" + str(self.allianceId) + " AND result IS NULL"
 
             oRss = oConnExecuteAll(query)
             
@@ -324,12 +324,12 @@ class View(GlobalView):
 
         content.Parse("give")
 
-        if self.oAllianceRights["can_accept_money_requests"]:
+        if self.allianceRights["can_accept_money_requests"]:
             # list gifts for the last 7 days
 
             query = "SELECT datetime, credits, source, description" + \
                     " FROM alliances_wallet_journal" + \
-                    " WHERE allianceid="+str(self.AllianceId)+" AND type=0 AND datetime >= now()-INTERVAL '1 week'" + \
+                    " WHERE allianceid="+str(self.allianceId)+" AND type=0 AND datetime >= now()-INTERVAL '1 week'" + \
                     " ORDER BY datetime DESC"
             oRss = oConnExecuteAll(query)
             
@@ -358,7 +358,7 @@ class View(GlobalView):
         content = getTemplate(self.request, "s03/alliance-wallet-taxrates")
         content.setValue("walletpage", cat)
 
-        oRs = oConnExecute("SELECT tax FROM alliances WHERE id=" + str(self.AllianceId))
+        oRs = oConnExecute("SELECT tax FROM alliances WHERE id=" + str(self.allianceId))
         tax = oRs[0]
 
         # List available taxes
@@ -386,7 +386,7 @@ class View(GlobalView):
 
         query = "SELECT date_trunc('day', datetime), int4(sum(GREATEST(0, credits))), int4(-sum(LEAST(0, credits)))" + \
                 " FROM alliances_wallet_journal" + \
-                " WHERE allianceid=" + str(self.AllianceId) + \
+                " WHERE allianceid=" + str(self.allianceId) + \
                 " GROUP BY date_trunc('day', datetime)" + \
                 " ORDER BY date_trunc('day', datetime)"
         oRss = oConnExecuteAll(query)

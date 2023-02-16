@@ -18,8 +18,8 @@ class View(GlobalView):
         self.can_command_alliance_fleets = -1
         self.can_install_building = False
 
-        if self.AllianceId and self.hasRight("can_order_other_fleets"):
-            self.can_command_alliance_fleets = self.AllianceId
+        if self.allianceId and self.hasRight("can_order_other_fleets"):
+            self.can_command_alliance_fleets = self.allianceId
 
         self.fleet_owner_id = self.userId
 
@@ -76,7 +76,7 @@ class View(GlobalView):
         if oRs == None:
             return HttpResponseRedirect("/s03/fleets/")
 
-        if self.AllianceId:
+        if self.allianceId:
             if oRs[57]:
                 content.Parse("shared")
             else:
@@ -527,7 +527,7 @@ class View(GlobalView):
 
         # display header
         if oRs[34] == 0 and oRs[17] == rSelf:
-            self.CurrentPlanet = oRs[10]
+            self.currentPlanetId = oRs[10]
             self.showHeader = True
         else:
             content.Parse("header_credits")
@@ -643,7 +643,7 @@ class View(GlobalView):
 
         if oRs[0] >= 0:
             # set as the new planet in == it has been colonized, the player expects to see its new planet after colonization
-            self.CurrentPlanet = oRs[0]
+            self.currentPlanetId = oRs[0]
         elif oRs[0] == -7:
             self.action_result = "error_max_planets_reached"
         elif oRs[0] == -8:

@@ -15,8 +15,8 @@ class View(GlobalView):
         
         self.can_command_alliance_fleets = -1
         
-        if self.AllianceId and self.hasRight("can_order_other_fleets"):
-            self.can_command_alliance_fleets = self.AllianceId
+        if self.allianceId and self.hasRight("can_order_other_fleets"):
+            self.can_command_alliance_fleets = self.allianceId
         
         self.fleet_owner_id = self.userId
         

@@ -27,7 +27,6 @@ class View(ExileMixin, View):
             
         account = dbRow('SELECT lastplanetid, privilege, resets FROM sp_account_connect(' + str(self.userId) + ', 1036,' + dosql(ipaddress) + ',' + dosql(forwardedfor) + ',' + dosql(useragent) + ', 0)');
 
-        request.session[sPlanet] = account['lastplanetid']
         request.session[sPrivilege] = account['privilege']
         
         if (account['privilege'] == -3 and account['resets'] == 0): return HttpResponseRedirect('/s03/start/')

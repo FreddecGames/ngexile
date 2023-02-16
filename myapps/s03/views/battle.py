@@ -27,10 +27,10 @@ class View(GlobalView):
         oRs = oConnExecute("SELECT battleid FROM battles_ships WHERE battleid=" + str(id) + " AND owner_id=" + str(self.userId) + " LIMIT 1")
         display_battle = oRs != None
 
-        if not display_battle and self.AllianceId:
-            if self.oAllianceRights["can_see_reports"]:
+        if not display_battle and self.allianceId:
+            if self.allianceRights["can_see_reports"]:
                 # check if it is a report from alliance reports
-                oRs = oConnExecute("SELECT owner_id FROM battles_ships WHERE battleid=" + str(id) + " AND (SELECT alliance_id FROM users WHERE id=owner_id)=" + str(self.AllianceId) + " LIMIT 1")
+                oRs = oConnExecute("SELECT owner_id FROM battles_ships WHERE battleid=" + str(id) + " AND (SELECT alliance_id FROM users WHERE id=owner_id)=" + str(self.allianceId) + " LIMIT 1")
                 display_battle = oRs != None
                 if oRs:
                     creator = oRs[0]#fromview

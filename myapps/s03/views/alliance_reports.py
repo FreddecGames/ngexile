@@ -13,8 +13,8 @@ class View(GlobalView):
 
         cat = ToInt(request.GET.get("cat"), 0)
 
-        if self.AllianceId == None: return HttpResponseRedirect("/s03/alliance/")
-        if not self.oAllianceRights["can_see_reports"]: return HttpResponseRedirect("/s03/alliance/")
+        if self.allianceId == None: return HttpResponseRedirect("/s03/alliance/")
+        if not self.allianceRights["can_see_reports"]: return HttpResponseRedirect("/s03/alliance/")
 
         return self.display_reports(cat)
 
@@ -31,7 +31,7 @@ class View(GlobalView):
                 " alliance_tag, alliance_name," + \
                 " invasionid, spyid, spy_key, description, ownerid, invited_username, login, buildingid" + \
                 " FROM vw_alliances_reports" + \
-                " WHERE ownerallianceid = " + str(self.AllianceId)
+                " WHERE ownerallianceid = " + str(self.allianceId)
 
         #
         # Limit the list to the current category or only display 100 reports if no categories specified

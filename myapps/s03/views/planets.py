@@ -75,7 +75,7 @@ class View(GlobalView):
             
             mood_delta = 0
 
-            item["planet_img"] = self.planetimg(oRs[0], oRs[29])
+            item["planet_img"] = self.planetImg(oRs[0], oRs[29])
 
             item["planet_id"] = oRs[0]
             item["planet_name"] = oRs[1]
@@ -90,7 +90,7 @@ class View(GlobalView):
             item["ore_capacity"] = oRs[7]
 
             # compute ore level : ore / capacity
-            ore_level = self.getpercent(oRs[5], oRs[7], 10)
+            ore_level = self.getPercent(oRs[5], oRs[7], 10)
 
             if ore_level >= 90:
                 item["high_ore"] = True
@@ -105,7 +105,7 @@ class View(GlobalView):
             item["hydrocarbon_capacity"] = oRs[10]
 
             # compute hydrocarbon level : hydrocarbon / capacity
-            hydrocarbon_level = self.getpercent(oRs[8], oRs[10], 10)
+            hydrocarbon_level = self.getPercent(oRs[8], oRs[10], 10)
 
             if hydrocarbon_level >= 90:
                 item["high_hydrocarbon"] = True
@@ -120,7 +120,7 @@ class View(GlobalView):
             item["energy_capacity"] = oRs[14]
 
             # compute energy level : energy / capacity
-            energy_level = self.getpercent(oRs[31], oRs[14], 10)
+            energy_level = self.getPercent(oRs[31], oRs[14], 10)
 
             item["normal_energy"] = True
 
@@ -212,6 +212,6 @@ class View(GlobalView):
             item["upkeep_workers"] = oRs[28]
             item["upkeep_soldiers"] = int((oRs[23]+oRs[26]) / 250)
 
-            if oRs[0] == self.CurrentPlanet: item["highlight"] = True
+            if oRs[0] == self.currentPlanetId: item["highlight"] = True
 
         return self.display(content)

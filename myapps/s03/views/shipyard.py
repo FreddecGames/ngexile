@@ -47,7 +47,7 @@ class View(GlobalView):
         
         # Retrieve recordset of current planet
         query = "SELECT ore_capacity, hydrocarbon_capacity, energy_capacity, workers_capacity"+ \
-                " FROM vw_planets WHERE id="+str(self.CurrentPlanet)
+                " FROM vw_planets WHERE id="+str(self.currentPlanetId)
         self.oPlanet = oConnExecute(query)
 
     def displayQueue(self, content, planetid):
@@ -123,7 +123,7 @@ class View(GlobalView):
                 " construction_time, hull, shield, weapon_power, weapon_ammo, weapon_tracking_speed, weapon_turrets, signature, speed," + \
                 " handling, buildingid, recycler_output, droppods, long_distance_capacity, quantity, buildings_requirements_met, research_requirements_met," + \
                 " required_shipid, required_ship_count, COALESCE(new_shipid, id) AS shipid, cost_prestige, upkeep, required_vortex_strength, mod_leadership" + \
-                " FROM vw_ships WHERE planetid=" + str(self.CurrentPlanet)
+                " FROM vw_ships WHERE planetid=" + str(self.currentPlanetId)
 
         if self.ShipFilter == 1:
             self.selectedMenu = "shipyard_military"
@@ -140,7 +140,7 @@ class View(GlobalView):
 
         content = getTemplate(self.request, "s03/shipyard")
 
-        content.setValue("planetid", self.CurrentPlanet)
+        content.setValue("planetid", self.currentPlanetId)
         content.setValue("filter", self.ShipFilter)
 
         # number of items in category
@@ -181,8 +181,8 @@ class View(GlobalView):
 
                 if oRs["cost_prestige"] > 0:
                     ship["required_pp"] = oRs["cost_prestige"]
-                    ship["pp"] = self.oPlayerInfo["prestige_points"]
-                    if oRs["cost_prestige"] > self.oPlayerInfo["prestige_points"]: ship["required_pp_not_enough"] = True
+                    ship["pp"] = self.profile["prestige_points"]
+                    if oRs["cost_prestige"] > self.profile["prestige_points"]: ship["required_pp_not_enough"] = True
 
                 ship["ore"] = oRs["cost_ore"]
                 ship["hydrocarbon"] = oRs["cost_hydrocarbon"]
@@ -269,7 +269,7 @@ class View(GlobalView):
         if buildable > 0: content.Parse("build")
         else: content.Parse("nobuild")
 
-        self.displayQueue(content, str(self.CurrentPlanet))
+        self.displayQueue(content, str(self.currentPlanetId))
 
         return self.display(content)
 
@@ -284,13 +284,13 @@ class View(GlobalView):
                 " handling, buildingid, recycler_output, droppods, long_distance_capacity, quantity, true, true," + \
                 " NULL, 0, COALESCE(new_shipid, id) AS shipid" + \
                 " FROM vw_ships" + \
-                " WHERE quantity > 0 AND planetid=" + str(self.CurrentPlanet)
+                " WHERE quantity > 0 AND planetid=" + str(self.currentPlanetId)
 
         oRss = dbRows(query)
         
         content = getTemplate(self.request, "s03/shipyard-recycle")
 
-        content.setValue("planetid", str(self.CurrentPlanet))
+        content.setValue("planetid", str(self.currentPlanetId))
         content.setValue("filter", self.ShipFilter)
 
         # number of items in category
@@ -367,14 +367,14 @@ class View(GlobalView):
         if buildable > 0: content.Parse("build")
         else: content.Parse("nobuild")
 
-        self.displayQueue(content, str(self.CurrentPlanet))
+        self.displayQueue(content, str(self.currentPlanetId))
 
         return self.display(content)
 
     # build ships
 
     def StartShip(self, ShipId, quantity):
-        connExecuteRetryNoRecords("SELECT sp_start_ship(" + str(self.CurrentPlanet) + "," + str(ShipId) + "," + str(quantity) + ", false)")
+        connExecuteRetryNoRecords("SELECT sp_start_ship(" + str(self.currentPlanetId) + "," + str(ShipId) + "," + str(quantity) + ", false)")
 
     def BuildShips(self):
 
@@ -389,7 +389,7 @@ class View(GlobalView):
     # recycle ships
 
     def RecycleShip(self, ShipId, quantity):
-        connExecuteRetryNoRecords("SELECT sp_start_ship_recycling(" + str(self.CurrentPlanet) + "," + str(ShipId) + "," + str(quantity) + ")")
+        connExecuteRetryNoRecords("SELECT sp_start_ship_recycling(" + str(self.currentPlanetId) + "," + str(ShipId) + "," + str(quantity) + ")")
 
     def RecycleShips(self):
 
@@ -402,7 +402,7 @@ class View(GlobalView):
         return HttpResponseRedirect("/s03/shipyard/?recycle=1")
 
     def CancelQueue(self, QueueId):
-        connExecuteRetryNoRecords("SELECT sp_cancel_ship(" + str(self.CurrentPlanet) + ", " + str(QueueId) + ")")
+        connExecuteRetryNoRecords("SELECT sp_cancel_ship(" + str(self.currentPlanetId) + ", " + str(QueueId) + ")")
         
         if self.request.GET.get("recycle", "") != "":
             return HttpResponseRedirect("/s03/shipyard/?recycle=1")

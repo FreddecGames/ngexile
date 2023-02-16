@@ -17,14 +17,14 @@ class View(GlobalView):
         cat = ToInt(request.GET.get("cat"), 0)
         if cat < 1 or cat > 3: cat = 1
 
-        if not (self.oAllianceRights["can_create_nap"] or self.oAllianceRights["can_break_nap"]) and cat == 3: cat = 1
+        if not (self.allianceRights["can_create_nap"] or self.allianceRights["can_break_nap"]) and cat == 3: cat = 1
 
         #
         # Process actions
         #
 
         # redirect the player to the alliance page if he is not part of an alliance
-        if self.AllianceId == None:
+        if self.allianceId == None:
             return HttpResponseRedirect("/s03/alliance/")
 
         action = request.GET.get("a", "")
@@ -86,7 +86,7 @@ class View(GlobalView):
         query = "SELECT w.created, alliances.id, alliances.tag, alliances.name, w.credits, w.next_transfer"+ \
                 " FROM alliances_tributes w" + \
                 "    INNER JOIN alliances ON (allianceid = alliances.id)" + \
-                " WHERE target_allianceid=" + str(self.AllianceId) + \
+                " WHERE target_allianceid=" + str(self.allianceId) + \
                 " ORDER BY " + orderby
         oRss = oConnExecuteAll(query)
 
@@ -132,7 +132,7 @@ class View(GlobalView):
         query = "SELECT w.created, alliances.id, alliances.tag, alliances.name, w.credits"+ \
                 " FROM alliances_tributes w" + \
                 "    INNER JOIN alliances ON (target_allianceid = alliances.id)" + \
-                " WHERE allianceid=" + str(self.AllianceId) + \
+                " WHERE allianceid=" + str(self.allianceId) + \
                 " ORDER BY " + orderby
         oRss = oConnExecuteAll(query)
 
@@ -149,11 +149,11 @@ class View(GlobalView):
             item["name"] = oRs[3]
             item["credits"] = oRs[4]
 
-            if self.oAllianceRights["can_break_nap"]: item["cancel"] = True
+            if self.allianceRights["can_break_nap"]: item["cancel"] = True
 
             i = i + 1
 
-        if self.oAllianceRights["can_break_nap"] and (i > 0): content.Parse("tributes_sent_cancel")
+        if self.allianceRights["can_break_nap"] and (i > 0): content.Parse("tributes_sent_cancel")
 
         if i == 0: content.Parse("none")
 
@@ -184,7 +184,7 @@ class View(GlobalView):
 
         content.Parse("cat1")
         content.Parse("cat2")
-        if self.oAllianceRights["can_create_nap"]: content.Parse("cat3")
+        if self.allianceRights["can_create_nap"]: content.Parse("cat3")
         content.Parse("nav")
 
         return self.display(content)

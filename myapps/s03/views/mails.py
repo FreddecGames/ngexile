@@ -59,7 +59,7 @@ class View(GlobalView):
                 self.compose = True
 
         # send email
-        elif request.POST.get("sendmail", "") != "" and not self.IsImpersonating():
+        elif request.POST.get("sendmail", "") != "" and not self.request.user.is_impersonate:
 
             self.compose = True
 
@@ -271,7 +271,7 @@ class View(GlobalView):
 
         if i == 0: content.Parse("nomails")
 
-        if not self.IsImpersonating():
+        if not self.request.user.is_impersonate:
             oRs = oConnDoQuery("UPDATE messages SET read_date = now() WHERE ownerid = " + str(self.userId) + " AND read_date IS NULL" )
 
         return self.display(content)
@@ -471,11 +471,11 @@ class View(GlobalView):
         else:
             content.Parse("nation_selected")
 
-        if (self.oAllianceRights):
-            if self.oAllianceRights["can_mail_alliance"]: content.Parse("sendalliance")
+        if (self.allianceRights):
+            if self.allianceRights["can_mail_alliance"]: content.Parse("sendalliance")
 
         # if is a payed account, append the autosignature text to message body
-        if self.oPlayerInfo["paid"]:
+        if self.profile["paid"]:
             oRs = oConnExecute("SELECT autosignature FROM users WHERE id="+userid)
             if oRs:
                 body = body  + oRs[0]

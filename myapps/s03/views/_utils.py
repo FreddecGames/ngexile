@@ -18,7 +18,6 @@ rFriend = 0
 rAlliance = 1
 rSelf = 2
 
-sPlanet = "planet"
 sPrivilege = "Privilege"
 
 #--- string check functions
@@ -185,7 +184,11 @@ def getTemplate(request, name):
 class ExileMixin(LoginRequiredMixin):
 
     def pre_dispatch(self, request, *args, **kwargs):
-                
+        
+        #---
+        
         if maintenance: return HttpResponseRedirect('/s03/maintenance/')
+        
+        #---
         
         connectDB()

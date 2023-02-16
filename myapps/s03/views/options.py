@@ -226,7 +226,7 @@ class View(GlobalView):
         content = getTemplate(self.request, "s03/options")
 
         content.setValue("cat", self.optionCat)
-        content.setValue("name", self.oPlayerInfo["username"])
+        content.setValue("name", self.profile["username"])
 
         if self.optionCat == 2:
             self.display_options(content)

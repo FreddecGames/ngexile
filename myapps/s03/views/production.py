@@ -66,7 +66,7 @@ class View(GlobalView):
         query = "SELECT workers, workers_for_maintenance, int4(workers/GREATEST(1.0, workers_for_maintenance)*100), int4(previous_buildings_dilapidation / 100.0)," + \
                 " int4(production_percent*100)," + \
                 " pct_ore, pct_hydrocarbon" + \
-                " FROM vw_planets WHERE id=" + str(self.CurrentPlanet)
+                " FROM vw_planets WHERE id=" + str(self.currentPlanetId)
         oRs = oConnExecute(query)
 
         self.content.setValue("workers", oRs[0])
@@ -92,7 +92,7 @@ class View(GlobalView):
         self.content.setValue("final_production", oRs[4])
 
         if RecomputeIfNeeded and oRs[4] > oRs[2]:
-            oConnExecute("SELECT sp_update_planet(" + str(self.CurrentPlanet) + ")")
+            oConnExecute("SELECT sp_update_planet(" + str(self.currentPlanetId) + ")")
             return self.displayPage(False)
 
         self.content.setValue("a_ore", oRs[5])
@@ -101,7 +101,7 @@ class View(GlobalView):
         # List buildings that produce a resource : ore, hydrocarbon or energy
         query = "SELECT id, production_ore*working_quantity, production_hydrocarbon*working_quantity, energy_production*working_quantity, working_quantity"+ \
                 " FROM vw_buildings" + \
-                " WHERE planetid="+str(self.CurrentPlanet)+" AND (production_ore > 0 OR production_hydrocarbon > 0 OR energy_production > 0) AND working_quantity > 0;"
+                " WHERE planetid="+str(self.currentPlanetId)+" AND (production_ore > 0 OR production_hydrocarbon > 0 OR energy_production > 0) AND working_quantity > 0;"
         oRss = oConnExecuteAll(query)
 
         totalOre = 0
@@ -136,7 +136,7 @@ class View(GlobalView):
         query = "SELECT commanders.id, commanders.name," + \
                 "commanders.mod_production_ore-1, commanders.mod_production_hydrocarbon-1, commanders.mod_production_energy-1" + \
                 " FROM commanders INNER JOIN nav_planet ON (commanders.id = nav_planet.commanderid)" + \
-                " WHERE nav_planet.id=" + str(self.CurrentPlanet)
+                " WHERE nav_planet.id=" + str(self.currentPlanetId)
 
         oRs = oConnExecuteAll(query)
 
@@ -146,7 +146,7 @@ class View(GlobalView):
         query = "SELECT buildingid, '', mod_production_ore*quantity, mod_production_hydrocarbon*quantity, mod_production_energy*quantity" + \
                 " FROM planet_buildings" + \
                 "    INNER JOIN db_buildings ON (db_buildings.id = planet_buildings.buildingid)" + \
-                " WHERE planetid="+str(self.CurrentPlanet)+" AND (mod_production_ore != 0 OR mod_production_hydrocarbon != 0 OR mod_production_energy != 0)"
+                " WHERE planetid="+str(self.currentPlanetId)+" AND (mod_production_ore != 0 OR mod_production_hydrocarbon != 0 OR mod_production_energy != 0)"
 
         oRs = oConnExecuteAll(query)
 
@@ -169,12 +169,12 @@ class View(GlobalView):
                 self.content.Parse("subtotal")
 
         # Retrieve energy received from antennas
-        query = "SELECT int4(COALESCE(sum(effective_energy), 0)) FROM planet_energy_transfer WHERE target_planetid=" + str(self.CurrentPlanet)
+        query = "SELECT int4(COALESCE(sum(effective_energy), 0)) FROM planet_energy_transfer WHERE target_planetid=" + str(self.currentPlanetId)
         oRs = oConnExecute(query)
         EnergyReceived = oRs[0]
 
         # Assign total production variables
-        query = "SELECT ore_production, hydrocarbon_production, energy_production-"+str(EnergyReceived)+" FROM nav_planet WHERE id=" + str(self.CurrentPlanet)
+        query = "SELECT ore_production, hydrocarbon_production, energy_production-"+str(EnergyReceived)+" FROM nav_planet WHERE id=" + str(self.currentPlanetId)
         oRs = oConnExecute(query)
 
         if oRs:
@@ -182,7 +182,7 @@ class View(GlobalView):
             if self.BonusCount > 0:
 
                 if RecomputeIfNeeded and (oRs[0]-totalOre < 0 or oRs[1]-totalHydrocarbon < 0 or oRs[2]-totalEnergy < 0):
-                    oConnExecute("SELECT sp_update_planet(" + str(self.CurrentPlanet) + ")")
+                    oConnExecute("SELECT sp_update_planet(" + str(self.currentPlanetId) + ")")
                     return self.displayPage(False)
 
                 self.content.setValue("bonus_production_ore", int(oRs[0]-totalOre))
@@ -202,7 +202,7 @@ class View(GlobalView):
             query = "SELECT buildingid, quantity - CASE WHEN destroy_datetime IS NULL THEN 0 ELSE 1 END, disabled" + \
                     " FROM planet_buildings" + \
                     "    INNER JOIN db_buildings ON (planet_buildings.buildingid=db_buildings.id)" + \
-                    " WHERE can_be_disabled AND planetid=" + str(self.CurrentPlanet)
+                    " WHERE can_be_disabled AND planetid=" + str(self.currentPlanetId)
             oRss = oConnExecuteAll(query)
             for oRs in oRss:
 
@@ -210,7 +210,7 @@ class View(GlobalView):
 
                 query = "UPDATE planet_buildings SET" + \
                         " disabled=LEAST(quantity - CASE WHEN destroy_datetime IS NULL THEN 0 ELSE 1 END, " + str(quantity) + ")" + \
-                        "WHERE planetid=" + str(self.CurrentPlanet) + " AND buildingid =" + str(oRs[0])
+                        "WHERE planetid=" + str(self.currentPlanetId) + " AND buildingid =" + str(oRs[0])
                 oConnDoQuery(query)
 
             return HttpResponseRedirect("/s03/production/?cat=" + str(self.cat))
@@ -218,7 +218,7 @@ class View(GlobalView):
         query = "SELECT buildingid, quantity - CASE WHEN destroy_datetime IS NULL THEN 0 ELSE 1 END, disabled, energy_consumption, int4(workers*maintenance_factor/100.0), upkeep" + \
                 " FROM planet_buildings" + \
                 "    INNER JOIN db_buildings ON (planet_buildings.buildingid=db_buildings.id)" + \
-                " WHERE can_be_disabled AND planetid=" + str(self.CurrentPlanet) + \
+                " WHERE can_be_disabled AND planetid=" + str(self.currentPlanetId) + \
                 " ORDER BY buildingid"
         oRss = oConnExecuteAll(query)
 
@@ -256,7 +256,7 @@ class View(GlobalView):
 
     def displayReceiveSendEnergy(self):
 
-        query = "SELECT energy_receive_antennas, energy_send_antennas FROM nav_planet WHERE id=" + str(self.CurrentPlanet)
+        query = "SELECT energy_receive_antennas, energy_send_antennas FROM nav_planet WHERE id=" + str(self.currentPlanetId)
         oRs = oConnExecute(query)
 
         max_receive = oRs[0]
@@ -269,9 +269,9 @@ class View(GlobalView):
             energy_to = ToInt(self.request.GET.get("to"), 0)
 
             if energy_from != 0:
-                query = "DELETE FROM planet_energy_transfer WHERE planetid=" + str(energy_from) + " AND target_planetid=" + str(self.CurrentPlanet)
+                query = "DELETE FROM planet_energy_transfer WHERE planetid=" + str(energy_from) + " AND target_planetid=" + str(self.currentPlanetId)
             else:
-                query = "DELETE FROM planet_energy_transfer WHERE planetid=" + str(self.CurrentPlanet) + " AND target_planetid=" + str(energy_to)
+                query = "DELETE FROM planet_energy_transfer WHERE planetid=" + str(self.currentPlanetId) + " AND target_planetid=" + str(energy_to)
 
             oConnDoQuery(query)
 
@@ -283,7 +283,7 @@ class View(GlobalView):
 
             query = "SELECT target_planetid, energy, enabled" + \
                     " FROM planet_energy_transfer" + \
-                    " WHERE planetid=" + str(self.CurrentPlanet)
+                    " WHERE planetid=" + str(self.currentPlanetId)
             oRss = oConnExecuteAll(query)
             list = []
             for oRs in oRss:
@@ -307,7 +307,7 @@ class View(GlobalView):
                     query = query + "enabled=" + str(I)
 
                 if query != "":
-                    query = "UPDATE planet_energy_transfer SET " + query + " WHERE planetid=" + str(self.CurrentPlanet) + " AND target_planetid=" + str(oRs[0])
+                    query = "UPDATE planet_energy_transfer SET " + query + " WHERE planetid=" + str(self.currentPlanetId) + " AND target_planetid=" + str(oRs[0])
                     oConnDoQuery(query)
 
                     update_planet = True
@@ -318,13 +318,13 @@ class View(GlobalView):
             energy = ToInt(self.request.POST.get("energy"), 0)
 
             if g != 0 and s != 0 and p != 0 and energy > 0:
-                query = "INSERT INTO planet_energy_transfer(planetid, target_planetid, energy) VALUES(" + str(self.CurrentPlanet) + ", sp_planet(" + str(g) + "," + str(s) + "," + str(p) + ")," + str(energy) + ")"
+                query = "INSERT INTO planet_energy_transfer(planetid, target_planetid, energy) VALUES(" + str(self.currentPlanetId) + ", sp_planet(" + str(g) + "," + str(s) + "," + str(p) + ")," + str(energy) + ")"
                 oConnDoQuery(query)
 
                 update_planet = True
 
             if update_planet:
-                query = "SELECT sp_update_planet(" + str(self.CurrentPlanet) + ")"
+                query = "SELECT sp_update_planet(" + str(self.currentPlanetId) + ")"
                 oConnDoQuery(query)
 
             return HttpResponseRedirect("/s03/production/?cat=" + str(self.cat))
@@ -335,7 +335,7 @@ class View(GlobalView):
                 " FROM planet_energy_transfer t" + \
                 "    INNER JOIN nav_planet n1 ON (t.planetid=n1.id)" + \
                 "    INNER JOIN nav_planet n2 ON (t.target_planetid=n2.id)" + \
-                " WHERE planetid=" + str(self.CurrentPlanet) + " OR target_planetid=" + str(self.CurrentPlanet) + \
+                " WHERE planetid=" + str(self.currentPlanetId) + " OR target_planetid=" + str(self.currentPlanetId) + \
                 " ORDER BY not enabled, planetid, target_planetid"
         oRss = oConnExecuteAll(query)
 
@@ -352,9 +352,9 @@ class View(GlobalView):
             
             item["energy"] = oRs[12]
             item["effective_energy"] = oRs[13]
-            item["loss"] = self.getpercent(oRs[12]-oRs[13], oRs[12], 1)
+            item["loss"] = self.getPercent(oRs[12]-oRs[13], oRs[12], 1)
 
-            if oRs[0] == self.CurrentPlanet:
+            if oRs[0] == self.currentPlanetId:
                 sending = sending + 1
                 if oRs[14]: sending_enabled = sending_enabled + 1
                 item["planetid"] = oRs[6]
@@ -435,6 +435,6 @@ class View(GlobalView):
         self.content.Parse("cat3")
         self.content.Parse("nav")
 
-        self.url_extra_params = "cat=" + str(self.cat)
+        self.urlExtraParams = "cat=" + str(self.cat)
 
         return self.display(self.content)

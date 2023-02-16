@@ -17,14 +17,14 @@ class View(GlobalView):
         cat = ToInt(request.GET.get("cat"), 0)
         if cat < 1 or cat > 2: cat = 1
 
-        if not (self.oAllianceRights["can_create_nap"] or self.oAllianceRights["can_break_nap"]) and cat != 1: cat = 1
+        if not (self.allianceRights["can_create_nap"] or self.allianceRights["can_break_nap"]) and cat != 1: cat = 1
 
         #
         # Process actions
         #
 
         # redirect the player to the alliance page if he is not part of an alliance
-        if self.AllianceId == None:
+        if self.allianceId == None:
             return HttpResponseRedirect("/s03/alliance/")
 
         action = request.GET.get("a", "")
@@ -98,12 +98,12 @@ class View(GlobalView):
         query = "SELECT w.created, alliances.id, alliances.tag, alliances.name, cease_fire_requested, date_part('epoch', cease_fire_expire-now())::integer, w.can_fight < now() AS can_fight, True AS attacker, next_bill < now() + INTERVAL '1 week', sp_alliance_war_cost(allianceid2), next_bill"+ \
                 " FROM alliances_wars w" + \
                 "    INNER JOIN alliances ON (allianceid2 = alliances.id)" + \
-                " WHERE allianceid1=" + str(self.AllianceId) + \
+                " WHERE allianceid1=" + str(self.allianceId) + \
                 " UNION " + \
                 "SELECT w.created, alliances.id, alliances.tag, alliances.name, cease_fire_requested, date_part('epoch', cease_fire_expire-now())::integer, w.can_fight < now() AS can_fight, False AS attacker, False, 0, next_bill"+ \
                 " FROM alliances_wars w" + \
                 "    INNER JOIN alliances ON (allianceid1 = alliances.id)" + \
-                " WHERE allianceid2=" + str(self.AllianceId) + \
+                " WHERE allianceid2=" + str(self.allianceId) + \
                 " ORDER BY " + orderby
         oRss = oConnExecuteAll(query)
 
@@ -119,7 +119,7 @@ class View(GlobalView):
             item["tag"] = oRs[2]
             item["name"] = oRs[3]
 
-            if self.oAllianceRights["can_break_nap"]:
+            if self.allianceRights["can_break_nap"]:
                 if oRs[4] == None:
                     if oRs[7]:
                         if oRs[8]:
@@ -128,7 +128,7 @@ class View(GlobalView):
 
                         item["stop"] = True
 
-                elif oRs[4] == self.AllianceId:
+                elif oRs[4] == self.allianceId:
                     item["time"] = oRs[5]
                     item["ceasing"] = True
                 else:
@@ -145,7 +145,7 @@ class View(GlobalView):
 
             i = i + 1
 
-        if self.oAllianceRights["can_break_nap"] and (i > 0): content.Parse("cease")
+        if self.allianceRights["can_break_nap"] and (i > 0): content.Parse("cease")
 
         if i == 0: content.Parse("nowars")
 
@@ -158,7 +158,7 @@ class View(GlobalView):
 
             self.tag = self.request.POST.get("tag").strip()
 
-            oRs = oConnExecute("SELECT id, tag, name, sp_alliance_war_cost(id) + (const_coef_score_to_war()*sp_alliance_value(" + str(self.AllianceId) + "))::integer FROM alliances WHERE lower(tag)=lower(" + dosql(self.tag) + ")")
+            oRs = oConnExecute("SELECT id, tag, name, sp_alliance_war_cost(id) + (const_coef_score_to_war()*sp_alliance_value(" + str(self.allianceId) + "))::integer FROM alliances WHERE lower(tag)=lower(" + dosql(self.tag) + ")")
             if oRs == None:
                 content.setValue("tag", self.tag)
 
@@ -193,7 +193,7 @@ class View(GlobalView):
         content.Parse("cat" + str(cat) + "_selected")
 
         content.Parse("cat1")
-        if self.oAllianceRights["can_create_nap"]: content.Parse("cat2")
+        if self.allianceRights["can_create_nap"]: content.Parse("cat2")
         content.Parse("nav")
 
         return self.display(content)

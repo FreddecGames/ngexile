@@ -38,15 +38,15 @@ class View(GlobalView):
 
     def getChatId(self, id):
 
-        if id == 0 and self.AllianceId:
-            id = self.request.session.get("alliancechat_" + str(self.AllianceId))
+        if id == 0 and self.allianceId:
+            id = self.request.session.get("alliancechat_" + str(self.allianceId))
 
             if id == None or id == "":
-                query = "SELECT chatid FROM alliances WHERE id=" + str(self.AllianceId)
+                query = "SELECT chatid FROM alliances WHERE id=" + str(self.allianceId)
                 oRs = oConnExecute(query)
 
                 if oRs:
-                    self.request.session["alliancechat_" + str(self.AllianceId)] = oRs[0]
+                    self.request.session["alliancechat_" + str(self.allianceId)] = oRs[0]
                     return oRs[0]
                     
         return id
@@ -54,7 +54,7 @@ class View(GlobalView):
     def addLine(self, chatid, msg):
         msg = msg.strip()[:260]
         if msg != "":
-            connExecuteRetryNoRecords("INSERT INTO chat_lines(chatid, allianceid, userid, username, message) VALUES(" + str(chatid) + "," + str(sqlValue(self.AllianceId)) + "," + str(self.userId) + "," + dosql(self.oPlayerInfo["username"]) + "," + dosql(msg) + ")")
+            connExecuteRetryNoRecords("INSERT INTO chat_lines(chatid, allianceid, userid, username, message) VALUES(" + str(chatid) + "," + str(sqlValue(self.allianceId)) + "," + str(self.userId) + "," + dosql(self.profile["username"]) + "," + dosql(msg) + ")")
         return HttpResponse(" ")
 
     def refreshContent(self, chatid):
@@ -84,7 +84,7 @@ class View(GlobalView):
         # load the template
 
         content = getTemplate(self.request, "s03/chat-handler")
-        content.setValue("username", self.oPlayerInfo["username"])
+        content.setValue("username", self.profile["username"])
         content.setValue("chatid", userChatId)
 
         if oRss:
@@ -132,7 +132,7 @@ class View(GlobalView):
     def displayChatList(self):
 
         content = getTemplate(self.request, "s03/chat-handler")
-        content.setValue("username", self.oPlayerInfo["username"])
+        content.setValue("username", self.profile["username"])
 
         query = "SELECT name, topic, count(chat_onlineusers.userid)" + \
                 " FROM chat" + \
@@ -178,10 +178,10 @@ class View(GlobalView):
         self.request.session["chatinstance"] = ToInt(self.request.session.get("chatinstance"), 0) + 1
 
         content = getTemplate(self.request, "s03/chat")
-        content.setValue("username", self.oPlayerInfo["username"])
+        content.setValue("username", self.profile["username"])
         content.setValue("chatinstance", self.request.session.get("chatinstance"))
 
-        if (self.AllianceId):
+        if (self.allianceId):
             chatid = self.getChatId(0)
             self.request.session["lastchatmsg_" + str(chatid)] = ""
             #self.request.session["lastchatactivity_" + str(chatid)] = str(timezone.now()-timezone.timedelta(seconds=self.onlineusers_refreshtime))
@@ -217,7 +217,7 @@ class View(GlobalView):
     def joinChat(self):
 
         content = getTemplate(self.request, "s03/chat-handler")
-        content.setValue("username", self.oPlayerInfo["username"])
+        content.setValue("username", self.profile["username"])
 
         pwd = self.request.GET.get("pass", "").strip()
 

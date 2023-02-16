@@ -12,7 +12,7 @@ class View(GlobalView):
         dim connTcg, oRs, query, credits
         set connTcg = openDB(connectionStrings.tcg)
 
-        query = "SELECT COALESCE(sum(accumulated_credits), 0)::integer FROM profiles WHERE lower(username)=lower(" & dosql(oPlayerInfo("username")) & ")"
+        query = "SELECT COALESCE(sum(accumulated_credits), 0)::integer FROM profiles WHERE lower(username)=lower(" & dosql(profile("username")) & ")"
 
         set oRs = connTcg.Execute(query)
 
@@ -24,7 +24,7 @@ class View(GlobalView):
             oConn.Execute query, , 128
             credits = 0
 
-            query = "UPDATE profiles SET accumulated_credits=0 WHERE lower(username)=lower(" & dosql(oPlayerInfo("username")) & ")"
+            query = "UPDATE profiles SET accumulated_credits=0 WHERE lower(username)=lower(" & dosql(profile("username")) & ")"
             connTcg.Execute query, , 128
         end if
 
@@ -51,12 +51,12 @@ class View(GlobalView):
             query = "UPDATE users SET password=" + dosql("cheat-") + " || now() WHERE id=" + UserId
             oConnDoQuery(query)
 
-        content.Parse("orientation" + str(self.oPlayerInfo["orientation"]))
+        content.Parse("orientation" + str(self.profile["orientation"]))
         content.Parse("nation")
 
         # display Alliance Message of the Day (MotD)
-        if self.AllianceId:
-            query = "SELECT announce, tag, name, defcon FROM alliances WHERE id=" + str(self.AllianceId)
+        if self.allianceId:
+            query = "SELECT announce, tag, name, defcon FROM alliances WHERE id=" + str(self.allianceId)
             oRs = oConnExecute(query)
             if oRs == None: oRs = None
         else:
@@ -69,7 +69,7 @@ class View(GlobalView):
             content.setValue("motd", oRs[0])
             content.Parse("announce")
 
-            content.setValue("alliance_rank_label", self.oAllianceRights["label"])
+            content.setValue("alliance_rank_label", self.allianceRights["label"])
             content.setValue("alliance_tag", oRs[1])
             content.setValue("alliance_name", oRs[2])
             content.Parse("alliance")
@@ -79,31 +79,31 @@ class View(GlobalView):
         #
         # display player name, credits, score, rank
         #
-        content.setValue("nation", self.oPlayerInfo["username"])
-        content.setValue("stat_score", self.oPlayerInfo["score"])
-        content.setValue("stat_score_delta", self.oPlayerInfo["score"]-self.oPlayerInfo["previous_score"])
+        content.setValue("nation", self.profile["username"])
+        content.setValue("stat_score", self.profile["score"])
+        content.setValue("stat_score_delta", self.profile["score"]-self.profile["previous_score"])
 
-        if self.oPlayerInfo["score"] >= self.oPlayerInfo["previous_score"]:
+        if self.profile["score"] >= self.profile["previous_score"]:
             content.Parse("plus")
         else:
             content.Parse("minus")
 
-        content.setValue("stat_credits", self.oPlayerInfo["credits"])
+        content.setValue("stat_credits", self.profile["credits"])
 
-        if request.session.get("stat_rank") or request.session.get("stat_score") != self.oPlayerInfo["score"]:
+        if request.session.get("stat_rank") or request.session.get("stat_score") != self.profile["score"]:
 
-            query = "SELECT int4(count(1)), (SELECT int4(count(1)) FROM vw_players WHERE score >= "+str(self.oPlayerInfo["score"])+") FROM vw_players"
+            query = "SELECT int4(count(1)), (SELECT int4(count(1)) FROM vw_players WHERE score >= "+str(self.profile["score"])+") FROM vw_players"
             oRs = oConnExecute(query)
 
             if oRs:
-                request.session["stat_score"] = self.oPlayerInfo["score"]
+                request.session["stat_score"] = self.profile["score"]
                 request.session["stat_players"] = oRs[0]
                 request.session["stat_rank"] = oRs[1]
                 
-        content.setValue("stat_victory_marks", self.oPlayerInfo["prestige_points"])
+        content.setValue("stat_victory_marks", self.profile["prestige_points"])
         content.setValue("stat_rank", request.session.get("stat_rank"))
         content.setValue("stat_players", request.session.get("stat_players"))
-        content.setValue("stat_maxcolonies", int(self.oPlayerInfo["mod_planets"]))
+        content.setValue("stat_maxcolonies", int(self.profile["mod_planets"]))
 
         query = "SELECT (SELECT score_prestige FROM users WHERE id="+str(self.userId)+"), (SELECT int4(count(1)) FROM vw_players WHERE score_prestige >= (SELECT score_prestige FROM users WHERE id=" + str(self.userId) + "))"
         oRs = oConnExecute(query)

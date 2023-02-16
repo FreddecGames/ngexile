@@ -111,7 +111,7 @@ class View(GlobalView):
 
                     count = count + 1
 
-            if oRs[0] == self.CurrentPlanet: item["highlight"] = True
+            if oRs[0] == self.currentPlanetId: item["highlight"] = True
 
             i = i + 1
 

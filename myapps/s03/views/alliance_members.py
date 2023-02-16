@@ -11,8 +11,8 @@ class View(GlobalView):
 
         self.selectedMenu = "alliance.members"
 
-        if self.AllianceId == None: return HttpResponseRedirect("/s03/alliance/")
-        if not self.oAllianceRights["leader"] and not self.oAllianceRights["can_see_members_info"]: return HttpResponseRedirect("/s03/alliance/")
+        if self.allianceId == None: return HttpResponseRedirect("/s03/alliance/")
+        if not self.allianceRights["leader"] and not self.allianceRights["can_see_members_info"]: return HttpResponseRedirect("/s03/alliance/")
 
         self.invitation_success = ""
 
@@ -26,15 +26,15 @@ class View(GlobalView):
         self.username = request.POST.get("name", "").strip()
 
         if cat == 1:
-            if self.oAllianceRights["leader"] and request.POST.get("submit", "") != "": self.SaveRanks()
+            if self.allianceRights["leader"] and request.POST.get("submit", "") != "": self.SaveRanks()
 
-            if self.oAllianceRights["can_kick_player"]:
+            if self.allianceRights["can_kick_player"]:
                 if action == "kick":
                     self.username = request.GET.get("name").strip()
                     oConnExecute("SELECT sp_alliance_kick_member("+str(self.userId)+","+dosql(self.username)+")")
         
         if cat == 2 and self.username != "":
-            if self.oAllianceRights["can_invite_player"]:
+            if self.allianceRights["can_invite_player"]:
 
                 oRs = oConnExecute("SELECT sp_alliance_invite(" + str(self.userId) + "," + dosql(self.username) + ")")
                 if oRs[0] == 0:
@@ -91,7 +91,7 @@ class View(GlobalView):
         # list ranks
         query = "SELECT rankid, label" + \
                 " FROM alliances_ranks" + \
-                " WHERE enabled AND allianceid=" + str(self.AllianceId) + \
+                " WHERE enabled AND allianceid=" + str(self.allianceId) + \
                 " ORDER BY rankid"
         oRss = oConnExecuteAll(query)
         
@@ -111,11 +111,11 @@ class View(GlobalView):
                 " date_part('epoch', now()-lastactivity) / 3600, alliance_joined, alliance_rank, privilege, score-previous_score AS score_delta, id," + \
                 " 0, credits, score_visibility, orientation, COALESCE(date_part('epoch', leave_alliance_datetime-now()), 0)" + \
                 " FROM users" + \
-                " WHERE alliance_id=" + str(self.AllianceId) + \
+                " WHERE alliance_id=" + str(self.allianceId) + \
                 " ORDER BY " + orderby
         oRss = oConnExecuteAll(query)
 
-        if self.oAllianceRights["can_kick_player"]:
+        if self.allianceRights["can_kick_player"]:
             content.Parse("recruit")
         else:
             content.Parse("viewonly")
@@ -150,7 +150,7 @@ class View(GlobalView):
 
             item["orientation" + str(oRs[12])] = True
 
-            if oRs[5] > self.AllianceRank and self.oAllianceRights["can_kick_player"]:
+            if oRs[5] > self.allianceRankId and self.allianceRights["can_kick_player"]:
                 item["kick_price"] = oRs[9]
             else:
                 item["kick_price"] = 0
@@ -187,8 +187,8 @@ class View(GlobalView):
             elif oRs[3] > 14*24:
                 item["2weeksplus"] = True
 
-            if self.oAllianceRights["leader"]:
-                if oRs[5] > self.AllianceRank or oRs[8] == self.userId:
+            if self.allianceRights["leader"]:
+                if oRs[5] > self.allianceRankId or oRs[8] == self.userId:
                     item["manage"] = True
                 else:
                     item["cant_manage"] = True
@@ -197,8 +197,8 @@ class View(GlobalView):
                 item["leaving_time"] = oRs[13]
                 item["leaving"] = True
             elif oRs[13] == 0:
-                if self.oAllianceRights["can_kick_player"]:
-                    if oRs[5] > self.AllianceRank:
+                if self.allianceRights["can_kick_player"]:
+                    if oRs[5] > self.allianceRankId:
                         item["kick"] = True
                     else:
                         item["cant_kick"] = True
@@ -221,12 +221,12 @@ class View(GlobalView):
 
     def displayInvitations(self, content):
 
-        if self.oAllianceRights["can_invite_player"]:
+        if self.allianceRights["can_invite_player"]:
             query = "SELECT recruit.username, created, recruiters.username, declined" + \
                     " FROM alliances_invitations" + \
                     "        INNER JOIN users AS recruit ON recruit.id = alliances_invitations.userid" + \
                     "        LEFT JOIN users AS recruiters ON recruiters.id = alliances_invitations.recruiterid" + \
-                    " WHERE allianceid=" + str(self.AllianceId) + \
+                    " WHERE allianceid=" + str(self.allianceId) + \
                     " ORDER BY created DESC"
 
             oRss = oConnExecuteAll(query)
@@ -273,7 +273,7 @@ class View(GlobalView):
 
         content.Parse("cat" + str(cat) + "_selected")
         
-        if self.oAllianceRights["can_invite_player"]:
+        if self.allianceRights["can_invite_player"]:
             content.Parse("cat1")
             content.Parse("cat2")
             content.Parse("nav")
@@ -284,13 +284,13 @@ class View(GlobalView):
         # retrieve alliance members# id and assign new rank
         query = "SELECT id" + \
                 " FROM users" + \
-                " WHERE alliance_id=" + str(self.AllianceId)
+                " WHERE alliance_id=" + str(self.allianceId)
         oRss = oConnExecuteAll(query)
 
         for oRs in oRss:
             query = " UPDATE users SET" + \
                     " alliance_rank=" + str(ToInt(self.request.POST.get("player" + str(oRs[0])), 100)) + \
-                    " WHERE id=" + str(oRs[0]) + " AND alliance_id=" + str(self.AllianceId) + " AND (alliance_rank > 0 OR id=" + str(self.userId) + ")"
+                    " WHERE id=" + str(oRs[0]) + " AND alliance_id=" + str(self.allianceId) + " AND (alliance_rank > 0 OR id=" + str(self.userId) + ")"
             oConnDoQuery(query)
 
         # if leader demotes himself

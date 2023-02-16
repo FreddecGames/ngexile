@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 
-import re
-
 from myapps.s03.views._global import *
 
 class View(GlobalView):
@@ -70,7 +68,7 @@ class View(GlobalView):
 
         content = getTemplate(self.request, "s03/alliance-create")
 
-        if self.oPlayerInfo["can_join_alliance"]:
+        if self.profile["can_join_alliance"]:
             if self.create_result == -2: content.Parse("name_already_used")
             if self.create_result == -3: content.Parse("tag_already_used")
 

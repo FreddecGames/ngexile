@@ -37,13 +37,13 @@ class View(GlobalView):
         viewername = oRs[18]
 
         # compare the attacker name and defender name with the name of who is reading this report
-        if oRs[4] != viewername and oRs[5] != viewername and self.AllianceId:
+        if oRs[4] != viewername and oRs[5] != viewername and self.allianceId:
             # if we are not the attacker or defender, check if we can view this invasion as a member of our alliance of we are ambassador
-            if self.oAllianceRights["can_see_reports"]:
+            if self.allianceRights["can_see_reports"]:
                 # find the name of the member that did this invasion, either the attacker or the defender
                 query = "SELECT username" + \
                         " FROM users" + \
-                        " WHERE (username="+dosql(oRs[4])+" OR username="+dosql(oRs[5])+") AND alliance_id="+str(self.AllianceId)+" AND alliance_joined <= (SELECT time FROM invasions WHERE id="+str(invasionid)+")"
+                        " WHERE (username="+dosql(oRs[4])+" OR username="+dosql(oRs[5])+") AND alliance_id="+str(self.allianceId)+" AND alliance_joined <= (SELECT time FROM invasions WHERE id="+str(invasionid)+")"
                 oRs2 = oConnExecute(query)
                 if oRs2 == None:
                     return HttpResponseRedirect("/s03/overview/")
