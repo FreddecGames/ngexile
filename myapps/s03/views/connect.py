@@ -11,20 +11,27 @@ class View(ExileMixin, View):
         
         response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
+    
+        if not request.user.is_authenticated:
+            return HttpResponseRedirect('/')
+        
+        self.userId = request.user.id
         
         return super().dispatch(request, *args, **kwargs)
 
     def get(self, request, *args, **kwargs):
-    
-        if not request.user.is_authenticated:
-            return HttpResponseRedirect("/")
-            
-        rs = oConnExecute('SELECT id, lastplanetid, privilege, resets FROM sp_account_connect(' + str(request.user.id) + ', 1036,' + dosql(self.ipaddress) + ',' + dosql(self.forwardedfor) + ',' + dosql(self.useragent) + ', 0)');
-
-        request.session[sPlanet] = rs[1]
-        request.session[sPrivilege] = rs[2]
         
-        if (rs[2] == -3): return HttpResponseRedirect("/s03/wait/")
-        elif (rs[2] == -2): return HttpResponseRedirect("/s03/holidays/")
-        elif (rs[2] < 100 and rs[3] == 0): return HttpResponseRedirect("/s03/start/")
-        else: return HttpResponseRedirect("/s03/overview/")
+        ipaddress = request.META.get('REMOTE_ADDR', '')
+        useragent = request.META.get('HTTP_USER_AGENT', '')
+        forwardedfor = request.META.get('HTTP_X_FORWARDED_FOR', '')
+            
+        account = dbRow('SELECT lastplanetid, privilege, resets FROM sp_account_connect(' + str(self.userId) + ', 1036,' + dosql(ipaddress) + ',' + dosql(forwardedfor) + ',' + dosql(useragent) + ', 0)');
+
+        request.session[sPlanet] = account['lastplanetid']
+        request.session[sPrivilege] = account['privilege']
+        
+        if (account['privilege'] == -3 and account['resets'] == 0): return HttpResponseRedirect('/s03/start/')
+        elif (account['privilege'] == -3): return HttpResponseRedirect('/s03/wait/')
+        elif (account['privilege'] == -2): return HttpResponseRedirect('/s03/holidays/')
+        
+        else: return HttpResponseRedirect('/s03/overview/')

@@ -25,31 +25,28 @@
                 else $('description').innerHTML = $('orientation' + opt).innerHTML;
             }
 
-            {% if galaxies %}
+            var rec = [];
+            {% for galaxy in galaxies %}rec[{{ galaxy.id }}] = {{ galaxy.recommended }};{% endfor %}
             
-                var rec = [];
-                {% for galaxy in galaxies %}rec[{{galaxy.id}}] = {{galaxy.recommendation}};{% endfor %}
+            function showRecommendation(obj) {
+            
+                var r = rec[obj.options[obj.selectedIndex].value];
+                if (r == 2) {
                 
-                function showRecommendation(obj) {
-                
-                    var r = rec[obj.options[obj.selectedIndex].value];
-                    if (r == 2) {
-                    
-                        $("recommendation").innerHTML = 'Galaxie recommandée';
-                        $("recommendation").className = 'text-success';
-                    }
-                    else if (r == 1) {
-                    
-                        $("recommendation").innerHTML = '';
-                        $("recommendation").className = '';
-                    }
-                    else {
-                    
-                        $("recommendation").innerHTML = 'Galaxie non recommandée';
-                        $("recommendation").className = 'text-danger';
-                    }
+                    $("recommendation").innerHTML = 'Galaxie recommandée';
+                    $("recommendation").className = 'text-success';
                 }
-            {% endif %}
+                else if (r == 1) {
+                
+                    $("recommendation").innerHTML = '';
+                    $("recommendation").className = '';
+                }
+                else {
+                
+                    $("recommendation").innerHTML = 'Galaxie non recommandée';
+                    $("recommendation").className = 'text-danger';
+                }
+            }
         </script>
         <div id="orientation1" class="hidden">
             <ul style="list-style: inside;">
@@ -99,18 +96,8 @@
                     </div>
                     <div class="mb-3">
                         <div class="row gx-3 align-items-center">
-                            <div class="col-6 text-end"><span>Nom de nation</span></div>
+                            <div class="col-6 text-end"><span>Nom de joueur</span></div>
                             <div class="col-auto"><input type="text" class="form-control" name="name" value=""/></div>
-                            {% if error_10 %}
-                                <div class="col-12 text-center">
-                                    <span class="text-danger">Ce nom de nation est déjà utilisé</span>
-                                </div>
-                            {% endif %}
-                            {% if error_11 %}
-                                <div class="col-12 text-center">
-                                    <span class="text-danger">Ce nom de nation est invalide</span>
-                                </div>
-                            {% endif %}
                         </div>
                     </div>
                     {% if galaxies %}
@@ -152,16 +139,19 @@
                     </div>
                     <input type="submit" class="btn btn-primary" value="Valider">
                 </form>
-                {% if error_2 %}
-                    <div class="text-danger">
-                        Désolé, aucune planète ne peut actuellement accueillir notre nation.
+                {% for message in messages %}
+                    <div class="mt-2 alert alert-{{ message.tags }}">
+                        {% if message.message == 'name_invalid' %}Ce nom de joueur est invalide
+                        {% elif message.message == 'name_already_used' %}Ce nom de joueur est déjà utilisé
+                        {% elif message.message == 'orientation_invalid' %}Cette orientation est invalide
+                        {% elif message.message == 'reset_error_-2' %}Désolé, aucune planète ne peut actuellement vous accueillir
+                        {% else %}{{ message }}
+                        {% endif %}
                     </div>
-                {% endif %}
+                {% endfor %}
             </div>
         </div>
-        {% if galaxies %}
-            <script>showRecommendation($("galaxies"));</script>
-        {% endif %}
+        <script>showRecommendation($("galaxies"));</script>
         <script async src="https://www.googletagmanager.com/gtag/js?id=G-212X2QX8W5"></script>
         <script>
             window.dataLayer = window.dataLayer || []

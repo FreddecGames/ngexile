@@ -188,8 +188,4 @@ class ExileMixin(LoginRequiredMixin):
                 
         if maintenance: return HttpResponseRedirect('/s03/maintenance/')
         
-        self.ipaddress = request.META.get("REMOTE_ADDR", "")
-        self.forwardedfor = request.META.get("HTTP_X_FORWARDED_FOR", "")
-        self.useragent = request.META.get("HTTP_USER_AGENT", "")
-        
         connectDB()

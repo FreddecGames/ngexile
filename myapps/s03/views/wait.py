@@ -13,7 +13,7 @@ class View(ExileMixin, View):
         response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
 
-        self.UserId = ToInt(self.request.session.get("user"), "")
+        self.UserId = request.user.id
 
         if self.UserId == "":
             return HttpResponseRedirect("/")

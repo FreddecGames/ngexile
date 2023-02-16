@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from django.contrib import messages
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.utils import timezone
@@ -13,84 +14,71 @@ class View(ExileMixin, View):
 
         response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
-
-        if not registration["enabled"] or (registration["until"] != None and timezone.now() > registration["until"]):
-            content = getTemplate(self.request, "s03/start-closed")
-            return render(self.request, content.template, content.data)
+    
+        if not request.user.is_authenticated:
+            return HttpResponseRedirect('/')
         
-        result = 0
+        self.userId = request.user.id
+        
+        return super().dispatch(request, *args, **kwargs)
 
-        self.UserId = int(request.session.get("user", 0))
-
-        galaxy = int(request.POST.get("galaxy", 0))
-        if galaxy == None: galaxy = 0
-
-        if not self.UserId or self.UserId == 0:
-            return HttpResponseRedirect("/")
-
-        # check if it is the first login of the player
-        rs = oConnExecute("SELECT username FROM users WHERE resets=0 AND id=" + str(self.UserId))
-        if not rs:
-            return HttpResponseRedirect("/")
-
-        userName = rs[0]
-        if not userName: userName = request.user.username
-
-        newName = request.POST.get('name', '')
-        if newName != '':
-            # try to rename user and catch any error
-            try:
-                if isValidName(newName):
-                    oConnDoQuery("UPDATE users SET username=" + dosql(newName) + " WHERE id=" + str(self.UserId))
-                    userName = newName
-                else:
-                    result = 11
-            except:
-                result = 10
-
-        if result == 0:
-            orientation = int(request.POST.get("orientation", 0))
+    def post(self, request, *args, **kwargs):
+        
+        if not registration['enabled'] or (registration['until'] != None and timezone.now() > registration['until']):
+            return HttpResponseRedirect('/s03/start/')
             
-            oConnDoQuery("UPDATE users SET orientation=" + str(orientation) + " WHERE id=" + str(self.UserId))
-
-            rs = oConnExecute("SELECT sp_reset_account(" + str(self.UserId) + "," + str(galaxy) + ")")
-            result = rs[0]
-
-            if result == 0:
-
-                if orientation == 1:    # merchant
-                    oConnDoQuery("INSERT INTO researches(userid, researchid, level) VALUES(" + str(self.UserId) + ",10,1)")
-                    oConnDoQuery("INSERT INTO researches(userid, researchid, level) VALUES(" + str(self.UserId) + ",11,1)")
-                    oConnDoQuery("INSERT INTO researches(userid, researchid, level) VALUES(" + str(self.UserId) + ",12,1)")
-
-                elif orientation == 2:    # military
-                    oConnDoQuery("INSERT INTO researches(userid, researchid, level) VALUES(" + str(self.UserId) + ",20,1)")
-                    oConnDoQuery("INSERT INTO researches(userid, researchid, level) VALUES(" + str(self.UserId) + ",21,1)")
-                    oConnDoQuery("INSERT INTO researches(userid, researchid, level) VALUES(" + str(self.UserId) + ",22,1)")
-
-                elif orientation == 3:    # scientist
-                    oConnDoQuery("INSERT INTO researches(userid, researchid, level) VALUES(" + str(self.UserId) + ",30,1)")
-                    oConnDoQuery("INSERT INTO researches(userid, researchid, level) VALUES(" + str(self.UserId) + ",31,1)")
-                    oConnDoQuery("INSERT INTO researches(userid, researchid, level) VALUES(" + str(self.UserId) + ",32,1)")
-
-                oConnExecute("SELECT sp_update_researches(" + str(self.UserId) + ")")
-
-                return HttpResponseRedirect("/s03/overview/")
-
-        # display start page
-        content = getTemplate(self.request, "s03/start")
-
-        rss = oConnExecuteAll("SELECT id, recommended FROM sp_get_galaxy_info(" + str(self.UserId) + ")")
-
-        list = []
-        content.setValue("galaxies", list)
-        for rs in rss:
-            item = {}
-            list.append(item)
-            item["id"] = rs[0]
-            item["recommendation"] = rs[1]
-
-        if result != 0:
-            content.Parse("error_" + str(result))
+        newName = request.POST.get('name', '')
+        if not isValidName(newName):
+            messages.error(request, 'name_invalid')
+            return HttpResponseRedirect('/s03/start/')
         
-        return render(self.request, content.template, content.data)
+        try:
+            oConnDoQuery('UPDATE users SET username=' + dosql(newName) + ' WHERE id=' + str(self.userId))
+        except:
+            messages.error(request, 'name_already_used')
+            return HttpResponseRedirect('/s03/start/')
+            
+        orientation = int(request.POST.get('orientation', 0))
+        if not orientation:
+            messages.error(request, 'orientation_invalid')
+            return HttpResponseRedirect('/s03/start/')
+        
+        oConnDoQuery('UPDATE users SET orientation=' + str(orientation) + ' WHERE id=' + str(self.userId))
+        
+        galaxy = int(request.POST.get('galaxy', 0))
+        result = oConnExecute('SELECT sp_reset_account(' + str(self.userId) + ',' + str(galaxy) + ')')
+        if result != 0:
+            messages.error(request, 'reset_error_' + result)
+            return HttpResponseRedirect('/s03/start/')
+        
+        if orientation == 1:
+            oConnDoQuery('INSERT INTO researches(userid, researchid, level) VALUES(' + str(self.userId) + ',10,1)')
+            oConnDoQuery('INSERT INTO researches(userid, researchid, level) VALUES(' + str(self.userId) + ',11,1)')
+            oConnDoQuery('INSERT INTO researches(userid, researchid, level) VALUES(' + str(self.userId) + ',12,1)')
+
+        elif orientation == 2:
+            oConnDoQuery('INSERT INTO researches(userid, researchid, level) VALUES(' + str(self.userId) + ',20,1)')
+            oConnDoQuery('INSERT INTO researches(userid, researchid, level) VALUES(' + str(self.userId) + ',21,1)')
+            oConnDoQuery('INSERT INTO researches(userid, researchid, level) VALUES(' + str(self.userId) + ',22,1)')
+
+        elif orientation == 3:
+            oConnDoQuery('INSERT INTO researches(userid, researchid, level) VALUES(' + str(self.userId) + ',30,1)')
+            oConnDoQuery('INSERT INTO researches(userid, researchid, level) VALUES(' + str(self.userId) + ',31,1)')
+            oConnDoQuery('INSERT INTO researches(userid, researchid, level) VALUES(' + str(self.userId) + ',32,1)')
+
+        oConnExecute('SELECT sp_update_researches(' + str(self.userId) + ')')
+
+        return HttpResponseRedirect('/s03/overview/')
+        
+    def get(self, request, *args, **kwargs):
+
+        if not registration['enabled'] or (registration['until'] != None and timezone.now() > registration['until']):
+            tpl = getTemplate(self.request, 's03/start-closed')
+            return render(self.request, tpl.template, tpl.data)
+
+        tpl = getTemplate(self.request, 's03/start')
+
+        galaxies = dbRows('SELECT id, recommended FROM sp_get_galaxy_info(' + str(self.userId) + ')')
+        tpl.setValue('galaxies', galaxies)
+        
+        return render(self.request, tpl.template, tpl.data)

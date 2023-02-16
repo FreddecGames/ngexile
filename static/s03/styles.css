@@ -307,3 +307,15 @@ a:hover, a:focus { text-decoration: none; }
     --bs-list-group-bg: #3c3c3c;
     --bs-list-group-border-color: #2d2d2d;
 }
+
+.alert {
+    --bs-alert-padding-x: 1rem;
+    --bs-alert-padding-y: .5rem;
+    --bs-alert-margin-bottom: 0;
+}
+
+.alert-error {
+    --bs-alert-color: #fff;
+    --bs-alert-bg: #dc3545;
+    --bs-alert-border-color: #dc3545;
+}
