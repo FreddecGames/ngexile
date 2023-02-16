@@ -12,37 +12,32 @@ class View(ExileMixin, View):
 
         response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
-
-        self.UserId = request.user.id
-
-        if self.UserId == "":
-            return HttpResponseRedirect("/")
-
-        content = getTemplate(self.request, "s03/wait")
-
-        # retrieve remaining time
-        query = "SELECT username, COALESCE(date_part('epoch', ban_expire-now()), 0) AS remaining_time FROM users WHERE /*privilege=-3 AND*/ id=" + str(self.UserId)
-
-        oRs = oConnExecute(query)
-
-        if oRs == None:
-            return HttpResponseRedirect("/")
-
-        remainingTime = oRs[1]
+    
+        if not request.user.is_authenticated:
+            return HttpResponseRedirect('/')
         
-        # check to unlock holidays mode
-        action = request.POST.get("unlock", "")
+        self.userId = request.user.id
+        
+        return super().dispatch(request, *args, **kwargs)
 
-        if action != "" and remainingTime < 0:
-            oConnDoQuery("UPDATE users SET privilege=0 WHERE ban_expire < now() AND id="+str(self.UserId))
-            return HttpResponseRedirect("/s03/start/")
+    def post(self, request, *args, **kwargs):
+        
+        remainingTime = oConnExecute("SELECT COALESCE(date_part('epoch', ban_expire-now()), 0) FROM users WHERE id=" + str(self.userId))
+        if remainingTime[0] > 0:
+            return HttpResponseRedirect('/s03/wait/')
+        
+        action = request.POST.get("action", "")
+        if action == 'unlock':
+            oConnDoQuery("UPDATE users SET privilege=0 WHERE ban_expire < now() AND id=" + str(self.userId))
+            return HttpResponseRedirect('/s03/overview/')
+        
+        return HttpResponseRedirect('/s03/wait/')
+        
+    def get(self, request, *args, **kwargs):
 
-        content.setValue("login", oRs[0])
-        content.setValue("remaining_time_before_unlock", int(oRs[1]))
+        tpl = getTemplate(self.request, "s03/wait")
 
-        if remainingTime < 0:
-            content.Parse("unlock")
-        else:
-            content.Parse("cant_unlock")
+        profile = dbRow("SELECT username, COALESCE(date_part('epoch', ban_expire-now()), 0) AS remaining_time FROM users WHERE id=" + str(self.userId))
+        tpl.setValue("profile", profile)
 
-        return render(self.request, content.template, content.data)
+        return render(self.request, tpl.template, tpl.data)

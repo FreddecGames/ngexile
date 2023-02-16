@@ -47,8 +47,8 @@ class View(ExileMixin, View):
         
         galaxy = int(request.POST.get('galaxy', 0))
         result = oConnExecute('SELECT sp_reset_account(' + str(self.userId) + ',' + str(galaxy) + ')')
-        if result != 0:
-            messages.error(request, 'reset_error_' + result)
+        if result[0] != 0:
+            messages.error(request, 'reset_error_' + result[0])
             return HttpResponseRedirect('/s03/start/')
         
         if orientation == 1:
@@ -68,7 +68,7 @@ class View(ExileMixin, View):
 
         oConnExecute('SELECT sp_update_researches(' + str(self.userId) + ')')
 
-        return HttpResponseRedirect('/s03/overview/')
+        return HttpResponseRedirect('/s03/wait/')
         
     def get(self, request, *args, **kwargs):
 

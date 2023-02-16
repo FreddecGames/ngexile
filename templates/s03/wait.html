@@ -26,7 +26,7 @@
                     <span class="text-normal">Commandant</span>
                 </div>
                 <div class="mb-3">
-                    <span class="fs-5 text-info">{{ login }}</span>
+                    <span class="fs-5 text-info">{{ profile.username }}</span>
                 </div>
                 <div class="mb-0">
                     <span>Votre vaisseau de colonisation est en route vers sa planète de destination.</span>
@@ -34,14 +34,15 @@
                 <div class="mb-3">
                     <span>Lorsqu'il sera arrivé, vous pourrez coloniser la planète et commencer à fonder votre empire.</span>
                 </div>
-                {% if unlock %}
+                {% if profile.remaining_time <= 0 %}
                     <form method="post" action="?">
                         {% csrf_token %}
-                        <input type="submit" class="btn btn-primary" name="unlock" value="Coloniser">
+                        <input type="hidden" name="action" value="unlock">
+                        <input type="submit" class="btn btn-primary" value="Coloniser">
                     </form>
                 {% else %}
-                    Temps restant avant arrivée: <script type="text/javascript">putcountdown1({{remaining_time_before_unlock}},"", "");</script>
-                    <script type="text/javascript">putcountdown2({{remaining_time_before_unlock}},"", "<form method='post' action='?'>{% csrf_token %}<input type='submit' class='btn btn-primary' name='unlock' value='Coloniser'></form>");</script>
+                    Temps restant avant arrivée: <script type="text/javascript">putcountdown1({{profile.remaining_time}},"", "");</script>
+                    <script type="text/javascript">putcountdown2({{profile.remaining_time}},"", "<form method='post' action='?'>{% csrf_token %}<input type='hidden' name='action' value='unlock'><input type='submit' class='btn btn-primary' value='Coloniser'></form>");</script>
                 {% endif %}
             </div>
         </div>
