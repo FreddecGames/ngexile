@@ -227,7 +227,6 @@ class View(GlobalView):
 
         content.setValue("cat", self.optionCat)
         content.setValue("name", self.oPlayerInfo["username"])
-        content.setValue("universe", universe)
 
         if self.optionCat == 2:
             self.display_options(content)

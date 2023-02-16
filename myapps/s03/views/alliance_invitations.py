@@ -95,13 +95,6 @@ class View(GlobalView):
 
             self.request.session[self.sLeaveCost] = 0
             
-            '''
-            oRs = oConnExecute("SELECT sp_alliance_get_leave_cost(" + str(self.UserId) + ")")
-            
-            self.request.session[self.sLeaveCost] = oRs[0]
-            if self.request.session.get(self.sLeaveCost) < 2000: self.request.session[self.sLeaveCost] = 0
-            '''
-            
             content.setValue("credits", self.request.session.get(self.sLeaveCost))
 
             if self.request.session.get(self.sLeaveCost) > 0: content.Parse("charges")

@@ -24,9 +24,6 @@ class View(ExileMixin, View):
         request.session[sPlanet] = rs[1]
         request.session[sPrivilege] = rs[2]
         
-        result = oConnExecute('SELECT username FROM users WHERE id=' + str(rs[0]))
-        if not result[0]: oConnDoQuery('UPDATE users SET username=' + dosql(request.user.username) + ' WHERE username IS NULL AND id=' + str(rs[0]))
-        
         if (rs[2] == -3): return HttpResponseRedirect("/s03/wait/")
         elif (rs[2] == -2): return HttpResponseRedirect("/s03/holidays/")
         elif (rs[2] < 100 and rs[3] == 0): return HttpResponseRedirect("/s03/start/")

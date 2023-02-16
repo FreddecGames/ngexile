@@ -38,8 +38,6 @@ class View(GlobalView):
 
                 oConnDoQuery(query)
 
-                self.InvalidatePlanetList()
-
         elif request.POST.get("action") == "firescientists":
             amount = ToInt(request.POST.get("amount"), 0)
             oConnExecute("SELECT sp_dismiss_staff(" + str(self.UserId) + "," + str(self.CurrentPlanet) + "," + str(amount) + ",0,0)")
@@ -52,7 +50,6 @@ class View(GlobalView):
 
         elif request.POST.get("action") == "abandon":
             oConnExecute("SELECT sp_abandon_planet(" + str(self.UserId) + "," + str(self.CurrentPlanet) + ")")
-            self.InvalidatePlanetList()
             return HttpResponseRedirect("/s03/overview/")
 
         elif request.POST.get("action") == "resources_price":

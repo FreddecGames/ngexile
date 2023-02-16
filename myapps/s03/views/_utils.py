@@ -19,11 +19,7 @@ rAlliance = 1
 rSelf = 2
 
 sPlanet = "planet"
-sPlanetList = "planetlist"
-sPlanetListCount = "planetlistcount"
 sPrivilege = "Privilege"
-
-universe = "s03"
 
 #--- string check functions
 

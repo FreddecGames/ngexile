@@ -34,6 +34,5 @@ class View(ExileMixin, View):
         
         content.setValue("skin", "s_default")
         content.setValue("timers_enabled", "false")
-        content.setValue("server", universe)
         
         return render(self.request, content.template, content.data)

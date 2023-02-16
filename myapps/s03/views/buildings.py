@@ -13,9 +13,6 @@ class View(GlobalView):
         
         self.showHeader = True
         
-        retrieveBuildingsCache()
-        retrieveBuildingsReqCache()
-        
         Action = request.GET.get("a", "").lower()
         BuildingId = ToInt(request.GET.get("b"), "")
         
@@ -30,25 +27,9 @@ class View(GlobalView):
     
             elif Action== "destroy":
                 self.DestroyBuilding(BuildingId)
-        
-        y = ToInt(request.GET.get("y"),"")
-        scriptname = request.META.get("SCRIPT_NAME")
-        
-        if y != "":
-            request.session["scrollExpire"] = 5/(24*3600) # allow 5 seconds
-            request.session["scrollPage"] = scriptname
-            request.session["scrolly"] = y
-            
-            return HttpResponseRedirect(scriptname + "?planet=" + str(self.CurrentPlanet))
-        else:
-            
-            # if scrolly is stored in the session and is still valid, set the scrolly of the displayed page
-            if request.session.get("scrolly") != "" and request.session.get("scrollExpire", 0) > 0 and request.session.get("scrollPage") == scriptname:
-                self.scrollY = request.session.get("scrolly")
-                request.session["scrolly"] = ""
-            
-            self.RetrievePlanetInfo()
-            return self.ListBuildings()
+                
+        self.RetrievePlanetInfo()
+        return self.ListBuildings()
 
     def RetrievePlanetInfo(self):
         # Retrieve recordset of current planet
@@ -177,10 +158,6 @@ class View(GlobalView):
     # List all the available buildings
     def ListBuildings(self):
     
-        # count number of buildings under construction
-        oRs = oConnExecute("SELECT int4(count(*)) FROM planet_buildings_pending WHERE planetid=" + str(self.CurrentPlanet) + " LIMIT 1")
-        underConstructionCount = oRs[0]
-    
         # list buildings that can be built on the planet
         query = "SELECT id, category, cost_prestige, cost_ore, cost_hydrocarbon, cost_energy, cost_credits, workers, floor, space," + \
                 "construction_maximum, quantity, build_status, construction_time, destroyable, '', production_ore, production_hydrocarbon, energy_production, buildings_requirements_met, destruction_time," + \
@@ -237,29 +214,6 @@ class View(GlobalView):
                 building["ore_modifier"] = int(OreProd*(self.OreBonus-100)/100)
                 building["hydro_modifier"] = int(HydroProd*(self.HydroBonus-100)/100)
                 building["energy_modifier"] = int(EnergyProd*(self.EnergyBonus-100)/100)
-        
-                if OreProd != 0 or HydroProd != 0 or EnergyProd != 0:
-                    if self.OreBonus < 100 and OreProd != 0:
-                        building["tipprod_ore_malus"] = True
-                    else:
-                        building["tipprod_ore_bonus"] = True
-                    
-                    building["tipprod_ore"] = True
-
-                    if self.HydroBonus < 100 and HydroProd != 0:
-                        building["tipprod.hydro.malus"] = True
-                    else:
-                        building["tipprod.hydro.bonus"] = True
-                    
-                    building["tipprod.hydro"] = True
-
-                    if self.EnergyBonus < 100 and EnergyProd != 0:
-                        building["tipprod.energy.malus"] = True
-                    else:
-                        building["tipprod.energy.bonus"] = True
-                    
-                    building["tipprod.energy"] = True
-                    building["tipprod"] = True
                 
                 maximum = oRs[10]
                 quantity = oRs[11]

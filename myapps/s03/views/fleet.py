@@ -644,9 +644,6 @@ class View(GlobalView):
         if oRs[0] >= 0:
             # set as the new planet in == it has been colonized, the player expects to see its new planet after colonization
             self.CurrentPlanet = oRs[0]
-
-            # invalidate planet list to reload it in == a planet has been colonized
-            self.InvalidatePlanetList()
         elif oRs[0] == -7:
             self.action_result = "error_max_planets_reached"
         elif oRs[0] == -8:
@@ -709,7 +706,6 @@ class View(GlobalView):
             self.action_result = "error_invade_enemy_ships"
 
         if res > 0:
-            self.InvalidatePlanetList()
             return HttpResponseRedirect("/s03/invasion/?id=" + str(res) + "+fleetid=" + str(fleetid))
 
     def ExecuteOrder(self, fleetid):

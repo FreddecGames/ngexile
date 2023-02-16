@@ -13,7 +13,6 @@ class GlobalView(ExileMixin, View):
     CurrentPlanet = None
     CurrentGalaxyId = None
     CurrentSectorId = None
-    scrollY = 0 # how much will be scrolled in vertical after the page is loaded
     showHeader = False
     url_extra_params = ""
     displayAlliancePlanetName = True
@@ -57,10 +56,6 @@ class GlobalView(ExileMixin, View):
 
     def IsImpersonating(self):
         return self.request.user.is_impersonate
-    
-    # Call this function when the name of a planet has changed or has been colonized or abandonned
-    def InvalidatePlanetList(self):
-        self.request.session[sPlanetList] = None
 
     # return image of a planet according to its it and its floor
     def planetimg(self,id,floor):
@@ -195,9 +190,6 @@ class GlobalView(ExileMixin, View):
             planetListArray = oRs
             planetListCount = len(oRs)
 
-        self.request.session[sPlanetList] = planetListArray
-        self.request.session[sPlanetListCount] = planetListCount
-
         planets = []
         for item in planetListArray:
             id = item[0]
@@ -325,10 +317,6 @@ class GlobalView(ExileMixin, View):
             if self.showHeader == True:
                 tpl_layout.Parse("context")
 
-            # Assign the scroll value if is assigned
-            tpl_layout.setValue("scrolly", self.scrollY)
-            if self.scrollY != 0: tpl_layout.Parse("scroll")
-            
             if self.oPlayerInfo["deletion_date"]:
                 tpl_layout.setValue("delete_datetime", self.oPlayerInfo["deletion_date"])
                 tpl_layout.Parse("deleting")
@@ -346,7 +334,6 @@ class GlobalView(ExileMixin, View):
                 tpl_layout.Parse("impersonating")
             
             tpl_layout.setValue("userid", self.UserId)
-            tpl_layout.setValue("server", universe)
             
             tpl_layout.Parse("menu")
 
@@ -425,8 +412,6 @@ class GlobalView(ExileMixin, View):
     
                 return
     
-            self.InvalidatePlanetList()
-    
         # 
         # retrieve current planet from session
         #
@@ -440,8 +425,6 @@ class GlobalView(ExileMixin, View):
                 self.CurrentGalaxyId = oRs[0]
                 self.CurrentSectorId = oRs[1]
                 return
-    
-            self.InvalidatePlanetList()
     
         # there is no active planet, select the first planet available
         oRs = oConnExecute("SELECT id, galaxy, sector FROM nav_planet WHERE planet_floor > 0 AND planet_space > 0 AND ownerid=" + str(self.UserId) + " LIMIT 1")
