@@ -1,6 +1,6 @@
 {% load humanize %}
 <script>
-    function jump(obj) { eval("location='{{ url }}" + obj.options[obj.selectedIndex].value + "'") }
+    function jump(obj) { eval("location='{{ url|safe }}" + obj.options[obj.selectedIndex].value + "'") }
 
     function nextplanet() {
     

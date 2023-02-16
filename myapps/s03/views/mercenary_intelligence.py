@@ -41,9 +41,6 @@ class View(GlobalView):
         # process page
         #
 
-        if self.SecurityLevel < 3:
-            return HttpResponseRedirect("/")
-
         self.category = 8
 
         spotted = False

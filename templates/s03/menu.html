@@ -85,7 +85,7 @@
         <div class="px-3 py-2 text-bg-warning">
             <div><b>Fonds insuffisants</b></div>
             <div>Nous sommes actuellement en déficit, cette situation est tolérable pendant un moment mais nous devons réagir. Nous pouvons soit alléger nos coûts d'entretien, soit augmenter nos revenus en vendant une plus grande partie de notre production.</div>
-            <div>Vous avez {% if hours %}{{ bankruptcy_hours|intcomma }} heure(s){% endif %} pour faire revenir l'argent de la trésorerie dans le positif avant qu'un coup d'état n'éclate et que vous soyiez chassé de votre poste.</div>
+            <div>Vous avez {{ bankruptcy_hours|intcomma }} heure(s) pour faire revenir l'argent de la trésorerie dans le positif avant qu'un coup d'état n'éclate et que vous soyiez chassé de votre poste.</div>
             <div>Chaque heure passée en déficit, le nombre d'heures avant le coup d'état diminue d'une heure. Celui-ci remonte chaque heure passée dans le positif.</div>
         </div>
     {% endif %}

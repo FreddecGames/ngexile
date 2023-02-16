@@ -94,7 +94,7 @@
                             </div>
                             <div class="col-12">
                                 <a href="/s03/training/?planet={{ planet.planet_id }}"><img src="{{ PATH_IMAGES }}img/interface/soldiers.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Soldats"></a>
-                                <span>{{ planet.soldiers|intcomma }}</span>
+                                <span class="{% if soldiers_low %}text-danger{% endif %}">{{ planet.soldiers|intcomma }}</span>
                                 <small class="text-normal">/{{ planet.soldiers_capacity|intcomma }}</small>
                                 {% if planet.soldiers_training %}<small class="text-success">+{{ planet.soldiers_training|intcomma }}</small>{% endif %}
                             </div>

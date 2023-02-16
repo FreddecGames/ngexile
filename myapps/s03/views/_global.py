@@ -73,107 +73,95 @@ class GlobalView(ExileMixin, View):
     #
     # Parse the header, list the planets owned by the player and show the resources of the current planet
     #
-    def FillHeader(self, tpl):
-        if self.CurrentPlanet == 0:
-            return
+    def fillHeader(self, tpl):
 
-        # Initialize the header
-        tpl_header = tpl
-
-        # retrieve player credits and assign the value, don't use oPlayerInfo as the info may be outdated
-        query = "SELECT credits, prestige_points FROM users WHERE id=" + str(self.UserId) + " LIMIT 1"
-        oRs = oConnExecute(query)
-        tpl_header.setValue("money", oRs[0])
-        tpl_header.setValue("pp", oRs[1])
-    
-        # assign current planet ore, hydrocarbon, workers and energy
         query = "SELECT ore, ore_production, ore_capacity," + \
-                "hydrocarbon, hydrocarbon_production, hydrocarbon_capacity," + \
-                "workers, workers_busy, workers_capacity," + \
-                "energy_consumption, energy_production," + \
-                "floor_occupied, floor," + \
-                "space_occupied, space, workers_for_maintenance," + \
-                "mod_production_ore, mod_production_hydrocarbon, energy, energy_capacity, soldiers, soldiers_capacity, scientists, scientists_capacity" +\
-                " FROM vw_planets WHERE id="+str(self.CurrentPlanet)
+                " hydrocarbon, hydrocarbon_production, hydrocarbon_capacity," + \
+                " workers, workers_busy, workers_capacity," + \
+                " energy_consumption, energy_production," + \
+                " floor_occupied, floor," + \
+                " space_occupied, space, workers_for_maintenance," + \
+                " mod_production_ore, mod_production_hydrocarbon, energy, energy_capacity, soldiers, soldiers_capacity, scientists, scientists_capacity" + \
+                " FROM vw_planets WHERE id=" + str(self.CurrentPlanet)
         oRs = oConnExecute(query)
     
-        tpl_header.setValue("ore", oRs[0])
-        tpl_header.setValue("ore_production", oRs[1])
-        tpl_header.setValue("ore_capacity", oRs[2])
+        tpl.setValue("ore", oRs[0])
+        tpl.setValue("ore_production", oRs[1])
+        tpl.setValue("ore_capacity", oRs[2])
     
         # compute ore level : ore / capacity
         ore_level = self.getpercent(oRs[0], oRs[2], 10)
     
         if ore_level >= 90:
-            tpl_header.Parse("high_ore")
+            tpl.Parse("high_ore")
         elif ore_level >= 70:
-            tpl_header.Parse("medium_ore")
+            tpl.Parse("medium_ore")
         else:
-            tpl_header.Parse("normal_ore")
+            tpl.Parse("normal_ore")
     
-        tpl_header.setValue("hydrocarbon", oRs[3])
-        tpl_header.setValue("hydrocarbon_production", oRs[4])
-        tpl_header.setValue("hydrocarbon_capacity", oRs[5])
+        tpl.setValue("hydrocarbon", oRs[3])
+        tpl.setValue("hydrocarbon_production", oRs[4])
+        tpl.setValue("hydrocarbon_capacity", oRs[5])
     
         hydrocarbon_level = self.getpercent(oRs[3], oRs[5], 10)
     
         if hydrocarbon_level >= 90:
-            tpl_header.Parse("high_hydrocarbon")
+            tpl.Parse("high_hydrocarbon")
         elif hydrocarbon_level >= 70:
-            tpl_header.Parse("medium_hydrocarbon")
+            tpl.Parse("medium_hydrocarbon")
         else:
-            tpl_header.Parse("normal_hydrocarbon")
+            tpl.Parse("normal_hydrocarbon")
     
-        tpl_header.setValue("workers", oRs[6])
-        tpl_header.setValue("workers_capacity", oRs[8])
-        tpl_header.setValue("workers_idle", oRs[6] - oRs[7])
+        tpl.setValue("workers", oRs[6])
+        tpl.setValue("workers_capacity", oRs[8])
+        tpl.setValue("workers_idle", oRs[6] - oRs[7])
     
-        if oRs[6] < oRs[15]: tpl_header.Parse("workers_low")
+        if oRs[6] < oRs[15]: tpl.Parse("workers_low")
     
-        tpl_header.setValue("soldiers", oRs[20])
-        tpl_header.setValue("soldiers_capacity", oRs[21])
+        tpl.setValue("soldiers", oRs[20])
+        tpl.setValue("soldiers_capacity", oRs[21])
     
-        if oRs[20]*250 < oRs[6]+oRs[22]: tpl_header.Parse("soldiers_low")
+        if oRs[20]*250 < oRs[6]+oRs[22]: tpl.Parse("soldiers_low")
     
-        tpl_header.setValue("scientists", oRs[22])
-        tpl_header.setValue("scientists_capacity", oRs[23])
+        tpl.setValue("scientists", oRs[22])
+        tpl.setValue("scientists_capacity", oRs[23])
     
-        tpl_header.setValue("energy_consumption", oRs[9])
-        tpl_header.setValue("energy_totalproduction", oRs[10])
-        tpl_header.setValue("energy_production", oRs[10]-oRs[9])
+        tpl.setValue("energy_consumption", oRs[9])
+        tpl.setValue("energy_totalproduction", oRs[10])
+        tpl.setValue("energy_production", oRs[10]-oRs[9])
     
-        tpl_header.setValue("energy", oRs[18])
-        tpl_header.setValue("energy_capacity", oRs[19])
+        tpl.setValue("energy", oRs[18])
+        tpl.setValue("energy_capacity", oRs[19])
     
-        if oRs[9] > oRs[10]: tpl_header.Parse("energy_low")
+        if oRs[9] > oRs[10]: tpl.Parse("energy_low")
     
-        if oRs[9] > oRs[10]: tpl_header.Parse("energy_production_minus")
-        else: tpl_header.Parse("energy_production_normal")
+        if oRs[9] > oRs[10]: tpl.Parse("energy_production_minus")
+        else: tpl.Parse("energy_production_normal")
     
-        tpl_header.setValue("floor_occupied", oRs[11])
-        tpl_header.setValue("floor", oRs[12])
+        tpl.setValue("floor_occupied", oRs[11])
+        tpl.setValue("floor", oRs[12])
     
-        tpl_header.setValue("space_occupied", oRs[13])
-        tpl_header.setValue("space", oRs[14])
+        tpl.setValue("space_occupied", oRs[13])
+        tpl.setValue("space", oRs[14])
     
         # ore/hydro production colors
         if oRs[16] >= 0 and oRs[6] >= oRs[15]:
-            tpl_header.Parse("normal_ore_production")
+            tpl.Parse("normal_ore_production")
         else:
-            tpl_header.Parse("medium_ore_production")
+            tpl.Parse("medium_ore_production")
 
         if oRs[17] >= 0 and oRs[6] >= oRs[15]:
-            tpl_header.Parse("normal_hydrocarbon_production")
+            tpl.Parse("normal_hydrocarbon_production")
         else:
-            tpl_header.Parse("medium_hydrocarbon_production")
+            tpl.Parse("medium_hydrocarbon_production")
 
         #
         # Fill the planet list
         #
         if self.url_extra_params != "":
-            tpl_header.setValue("url", "?" + self.url_extra_params + "&planet=")
+            tpl.setValue("url", "?" + self.url_extra_params + "&planet=")
         else:
-            tpl_header.setValue("url", "?planet=")
+            tpl.setValue("url", "?planet=")
 
         # cache the list of planets as they are not supposed to change unless a colonization occurs
         # in case of colonization, let the colonize script reset the session value
@@ -205,7 +193,7 @@ class GlobalView(ExileMixin, View):
     
             if id == self.CurrentPlanet: planet["selected"] = True
     
-        tpl_header.setValue("planets", planets)
+        tpl.setValue("planets", planets)
     
         query = "SELECT buildingid" +\
                 " FROM planet_buildings INNER JOIN db_buildings ON (db_buildings.id=buildingid AND db_buildings.is_planet_element)" +\
@@ -218,21 +206,21 @@ class GlobalView(ExileMixin, View):
             for item in oRs:
 
                 if i % 3 == 0:
-                    tpl_header.setValue("special1", getBuildingLabel(item[0]))
+                    tpl.setValue("special1", getBuildingLabel(item[0]))
                 elif i % 3 == 1:
-                    tpl_header.setValue("special2", getBuildingLabel(item[0]))
+                    tpl.setValue("special2", getBuildingLabel(item[0]))
                 else:
-                    tpl_header.setValue("special3", getBuildingLabel(item[0]))
-                    tpl_header.Parse("special")
+                    tpl.setValue("special3", getBuildingLabel(item[0]))
+                    tpl.Parse("special")
         
                 i = i + 1
     
-        if i % 3 != 0: tpl_header.Parse("special")
+        if i % 3 != 0: tpl.Parse("special")
     
     #
     # Parse the menu
     #
-    def FillMenu(self, tpl_layout):
+    def fillMenu(self, tpl_layout):
         # Initialize the menu template
 
         tpl = tpl_layout
@@ -252,10 +240,6 @@ class GlobalView(ExileMixin, View):
             if self.oAllianceRights["leader"] or self.oAllianceRights["can_manage_description"] or self.oAllianceRights["can_manage_announce"]: tpl.Parse("show_management")
             if self.oAllianceRights["leader"] or self.oAllianceRights["can_see_reports"]: tpl.Parse("show_reports")
             if self.oAllianceRights["leader"] or self.oAllianceRights["can_see_members_info"]: tpl.Parse("show_members")
-    
-        if self.SecurityLevel >= 3:
-            tpl.Parse("show_mercenary")
-            tpl.Parse("show_alliance")
     
         tpl.setValue("cur_planetid", self.CurrentPlanet)
     
@@ -278,66 +262,30 @@ class GlobalView(ExileMixin, View):
         # Assign the menu
         tpl_layout.setValue("menu", True)
 
-    #
-    # display the tpl content with the default layout template
-    #
     def display(self, tpl):
         
-        if self.request.GET.get("xml") == "1":
-            return self.displayXML(tpl)
-        else:
-            tpl_layout = tpl
-    
-            # Initialize the layout
-            if self.oPlayerInfo["skin"]:
-                tpl_layout.setValue("skin", self.oPlayerInfo["skin"])
-            else:
-                tpl_layout.setValue("skin", "s_transparent")
+        tpl.setValue("profile_credits", self.oPlayerInfo["credits"])
+        tpl.setValue("profile_prestige_points", self.oPlayerInfo["prestige_points"])
 
-            tpl_layout.setValue("profile_credits", self.oPlayerInfo["credits"])
-            tpl_layout.setValue("profile_prestige_points", self.oPlayerInfo["prestige_points"])
+        if self.showHeader == True:
+            self.fillHeader(tpl)
+            tpl.Parse("header")
 
-            #
-            # Fill and parse the header template
-            #
-            if self.showHeader == True: self.FillHeader(tpl_layout)
-    
-            #
-            # Fill and parse the menu template
-            #
-            self.FillMenu(tpl_layout)
-    
-            #
-            # Fill and parse the layout template
-            #
-            if self.oPlayerInfo["timers_enabled"]: tpl_layout.setValue("timers_enabled", "true")
-            else: tpl_layout.setValue("timers_enabled", "false")
-    
-            #Assign the context/header
-            if self.showHeader == True:
-                tpl_layout.Parse("context")
+        self.fillMenu(tpl)
 
-            if self.oPlayerInfo["deletion_date"]:
-                tpl_layout.setValue("delete_datetime", self.oPlayerInfo["deletion_date"])
-                tpl_layout.Parse("deleting")
+        if self.oPlayerInfo["deletion_date"]:
+            tpl.setValue("delete_datetime", self.oPlayerInfo["deletion_date"])
+            tpl.Parse("deleting")
 
-            if self.oPlayerInfo["credits"] < 0:
-                bankrupt_hours = self.oPlayerInfo["credits_bankruptcy"]
-    
-                tpl_layout.setValue("bankruptcy_hours", bankrupt_hours)
-                tpl_layout.Parse("hours")
-    
-                tpl_layout.Parse("creditswarning")
+        if self.oPlayerInfo["credits"] < 0:
+            tpl.setValue("bankruptcy_hours", self.oPlayerInfo["credits_bankruptcy"])
+            tpl.Parse("creditswarning")
 
-            if self.IsImpersonating():
-                tpl_layout.setValue("username", self.oPlayerInfo["username"])
-                tpl_layout.Parse("impersonating")
-            
-            tpl_layout.setValue("userid", self.UserId)
-            
-            tpl_layout.Parse("menu")
+        if self.IsImpersonating():
+            tpl.setValue("username", self.oPlayerInfo["username"])
+            tpl.Parse("impersonating")
 
-        return render(self.request, tpl_layout.template, tpl_layout.data)
+        return render(self.request, tpl.template, tpl.data)
 
     #
     # Check that our user is valid, otherwise redirect user to home page
@@ -361,7 +309,6 @@ class GlobalView(ExileMixin, View):
         if self.oPlayerInfo == None:
             return HttpResponseRedirect("/") # Redirect to home page
     
-        self.SecurityLevel = self.oPlayerInfo["security_level"]
         self.displayAlliancePlanetName = self.oPlayerInfo["display_alliance_planet_name"]
         
         if self.oPlayerInfo["privilege"] == -1: return HttpResponseRedirect("/s03/locked/")
