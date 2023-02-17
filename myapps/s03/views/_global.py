@@ -195,6 +195,7 @@ class GlobalView(ExileMixin, View):
         if self.allianceRights:
         
             if self.allianceRights["leader"] or self.allianceRights["can_manage_description"] or self.allianceRights["can_manage_announce"]: tpl.Parse("show_management")
+            if self.allianceRights["leader"]: tpl.Parse("show_ranks")
             if self.allianceRights["leader"] or self.allianceRights["can_see_reports"]: tpl.Parse("show_reports")
             if self.allianceRights["leader"] or self.allianceRights["can_see_members_info"]: tpl.Parse("show_members")
         

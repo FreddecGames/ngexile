@@ -8,99 +8,63 @@ class View(GlobalView):
 
         response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
+        
+        return super().dispatch(request, *args, **kwargs)
 
-        if self.allianceId == None:
-            self.selectedMenu = "noalliance.invitations"
-        else:
-            self.selectedMenu = "alliance.invitations"
+    def post(self, request, *args, **kwargs):
+        
+        if self.allianceId and self.profile['can_join_alliance'] and int(request.POST.get('leave', 0)) == 1:
+            dbQuery('SELECT sp_alliance_leave(' + str(self.userId) + ', 0)')
+            return HttpResponseRedirect('/s03/alliance/')
+        
+        return HttpResponseRedirect('/s03/alliance-invitations/')
 
-        self.sLeaveCost = "leavealliancecost"
+    def get(self, request, *args, **kwargs):
+    
+        action = request.GET.get('a', '').strip()
+        if action == 'accept' and self.profile['can_join_alliance'] and not self.allianceId:
+        
+            alliance_tag = request.GET.get('tag', '').strip()
+            result = dbExecute('SELECT sp_alliance_accept_invitation(' + str(self.userId) + ',' + dosql(alliance_tag) + ')')
+            if result == 0: return HttpResponseRedirect('/s03/alliance/')
 
-        self.leave_status = ""
-        self.invitation_status = ""
-        action = request.GET.get("a", "").strip()
-        alliance_tag = request.GET.get("tag", "").strip()
-
-        if action == "accept":
-            oRs = oConnExecute("SELECT sp_alliance_accept_invitation(" + str(self.userId) + "," + dosql(alliance_tag) + ")")
-
-            if oRs[0] == 0:
-                return HttpResponseRedirect("/s03/alliance/")
-
-            elif oRs[0] == 4:
-                self.invitation_status = "max_members_reached"
-            elif oRs[0] == 6:
-                self.invitation_status = "cant_rejoin_previous_alliance"
-
-        elif action == "decline":
-            oConnExecute("SELECT sp_alliance_decline_invitation(" + str(self.userId) + "," + dosql(alliance_tag) + ")")
-        elif action == "leave":
-            if request.POST.get("leave", "") == "1":
-                oRs = oConnExecute("SELECT sp_alliance_leave(" + str(self.userId) + ",0)")
-                if oRs[0] == 0:
-                    return HttpResponseRedirect("/s03/alliance/")
-
-        return self.DisplayInvitations()
-
-    def DisplayInvitations(self):
-        content = getTemplate(self.request, "s03/alliance-invitations")
-
-        oRs = oConnExecute("SELECT date_part('epoch', const_interval_before_join_new_alliance()) / 3600")
-        content.setValue("hours_before_rejoin", int(oRs[0]))
-
-        query = "SELECT alliances.tag, alliances.name, alliances_invitations.created, users.username" + \
-                " FROM alliances_invitations" + \
-                "        INNER JOIN alliances ON alliances.id = alliances_invitations.allianceid" + \
-                "        LEFT JOIN users ON users.id = alliances_invitations.recruiterid" + \
-                " WHERE userid=" + str(self.userId) + " AND NOT declined" + \
-                " ORDER BY created DESC"
-
-        oRss = oConnExecuteAll(query)
-
-        i = 0
-        list = []
-        for oRs in oRss:
-            item = {}
-            item["tag"] = oRs[0]
-            item["name"] = oRs[1]
-
-            created = oRs[2]
-            item["date"] = created
-
-            item["recruiter"] = oRs[3]
-
-            if self.profile["can_join_alliance"]:
-                if self.allianceId:
-                    item["cant_accept"] = True
-                else:
-                    item["accept"] = True
-
-            else:
-                item["cant_join"] = True
-
-            list.append(item)
-
-            i = i + 1
-        content.setValue("invitations", list)
-
-        if self.invitation_status != "": content.Parse(self.invitation_status)
-
-        if i == 0: content.Parse("noinvitations")
-
-        # Parse "cant_join" section if the player can't create/join an alliance
-        if not self.profile["can_join_alliance"]: content.Parse("cant_join")
-
-        # display the "leave" section if the player is in an alliance
-        if self.allianceId and self.profile["can_join_alliance"]:
-
-            self.request.session[self.sLeaveCost] = 0
+            if result == 4: messages.error(request, 'max_members_reached')
+            elif result == 6: messages.error(request, 'cant_rejoin_previous_alliance')
             
-            content.setValue("credits", self.request.session.get(self.sLeaveCost))
+            return HttpResponseRedirect('/s03/alliance-invitations/')
+        
+        #---
+            
+        elif action == 'decline':
+        
+            alliance_tag = request.GET.get('tag', '').strip()
+            dbQuery('SELECT sp_alliance_decline_invitation(' + str(self.userId) + ',' + dosql(alliance_tag) + ')')
+        
+        #---
 
-            if self.request.session.get(self.sLeaveCost) > 0: content.Parse("charges")
+        content = getTemplate(self.request, 's03/alliance-invitations')
+        
+        if self.allianceId == None: self.selectedMenu = 'noalliance.invitations'
+        else: self.selectedMenu = 'alliance.invitations'
+        
+        #---
 
-            if self.leave_status != "": content.Parse(self.leave_status)
+        query = 'SELECT alliances.tag, alliances.name, alliances_invitations.created, users.username' + \
+                ' FROM alliances_invitations' + \
+                '  INNER JOIN alliances ON alliances.id = alliances_invitations.allianceid' + \
+                '  LEFT JOIN users ON users.id = alliances_invitations.recruiterid' + \
+                ' WHERE userid=' + str(self.userId) + ' AND NOT declined' + \
+                ' ORDER BY created DESC'
+        invitations = dbRows(query)
+        content.setValue('invitations', invitations)
+        
+        #---
 
-            content.Parse("leave")
+        if not self.profile['can_join_alliance']: content.Parse('cant_join')
+        elif self.allianceId: content.Parse('cant_accept')
+        
+        #---
+
+        if self.allianceId and self.profile['can_join_alliance']: content.Parse('can_leave')
 
         return self.display(content)

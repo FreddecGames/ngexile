@@ -132,7 +132,9 @@
             putMenu("/s03/alliance/", "alliance", "Alliance", 2);
                 putMenu("/s03/alliance/", "alliance_overview", "Vue d'ensemble", 3);
                 {% if show_management %}putMenu("/s03/alliance-manage/", "alliance_manage", "Gestion", 3);{% endif %}
+                {% if show_ranks %}putMenu("/s03/alliance-ranks/", "alliance_ranks", "Grades", 3);{% endif %}
                 {% if show_members %}putMenu("/s03/alliance-members/", "alliance_members", "Membres", 3);{% endif %}
+                {% if show_members %}putMenu("/s03/alliance-recruitment/", "alliance_recruitment", "Recrutement", 3);{% endif %}
                 putMenu("/s03/alliance-naps/", "alliance_naps", "PNA", 3);
                 putMenu("/s03/alliance-tributes/", "alliance_tributes", "Tributs", 3);
                 putMenu("/s03/alliance-wars/", "alliance_wars", "Guerres", 3);

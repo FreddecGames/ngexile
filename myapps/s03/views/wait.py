@@ -26,24 +26,18 @@ class View(ExileMixin, View):
 
     def post(self, request, *args, **kwargs):
         
-        remainingTime = dbExecute("SELECT COALESCE(date_part('epoch', ban_expire-now()), 0) FROM users WHERE id=" + str(self.userId))
-        if remainingTime > 0:
-            return HttpResponseRedirect('/s03/wait/')
-        
-        #---
-        
-        action = request.POST.get("action", "")
+        action = request.POST.get('action', '')
         if action == 'unlock':
-            dbQuery("UPDATE users SET privilege=0 WHERE ban_expire < now() AND id=" + str(self.userId))
+            dbQuery('UPDATE users SET privilege=0 WHERE id=' + str(self.userId))
             return HttpResponseRedirect('/s03/overview/')
         
         return HttpResponseRedirect('/s03/wait/')
         
     def get(self, request, *args, **kwargs):
 
-        tpl = getTemplate(self.request, "s03/wait")
+        tpl = getTemplate(self.request, 's03/wait')
 
-        profile = dbRow("SELECT username, COALESCE(date_part('epoch', ban_expire-now()), 0) AS remaining_time FROM users WHERE id=" + str(self.userId))
-        tpl.setValue("profile", profile)
+        profile = dbRow('SELECT username, FROM users WHERE id=' + str(self.userId))
+        tpl.setValue('profile', profile)
 
         return render(self.request, tpl.template, tpl.data)

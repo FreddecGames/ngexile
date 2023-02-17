@@ -34,16 +34,11 @@
                 <div class="mb-3">
                     <span>Lorsqu'il sera arrivé, vous pourrez coloniser la planète et commencer à fonder votre empire.</span>
                 </div>
-                {% if profile.remaining_time <= 0 %}
-                    <form method="post" action="?">
-                        {% csrf_token %}
-                        <input type="hidden" name="action" value="unlock">
-                        <input type="submit" class="btn btn-primary" value="Coloniser">
-                    </form>
-                {% else %}
-                    Temps restant avant arrivée: <script type="text/javascript">putcountdown1({{profile.remaining_time}},"", "");</script>
-                    <script type="text/javascript">putcountdown2({{profile.remaining_time}},"", "<form method='post' action='?'>{% csrf_token %}<input type='hidden' name='action' value='unlock'><input type='submit' class='btn btn-primary' value='Coloniser'></form>");</script>
-                {% endif %}
+                <form method="post" action="?">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="unlock">
+                    <input type="submit" class="btn btn-primary" value="Coloniser">
+                </form>
             </div>
         </div>
     </body>

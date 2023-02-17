@@ -27,9 +27,9 @@ class View(GlobalView):
         
         #---
         
-        result = dbExecute("SELECT sp_create_alliance(" + str(self.userId) + "," + dosql(name) + "," + dosql(tag) + ", '')")
+        result = dbExecute('SELECT sp_create_alliance(' + str(self.userId) + ',' + dosql(name) + ',' + dosql(tag) + ', '')')
         if result >= -1:
-            return HttpResponseRedirect("/s03/alliance/")
+            return HttpResponseRedirect('/s03/alliance/')
             
         if result == -2: messages.error(request, 'name_already_used')
         if result == -3: messages.error(request, 'tag_already_used')
@@ -38,10 +38,10 @@ class View(GlobalView):
 
     def get(self, request, *args, **kwargs):
 
-        tpl = getTemplate(self.request, "s03/alliance-create")
+        tpl = getTemplate(self.request, 's03/alliance-create')
 
-        self.selectedMenu = "noalliance.create"
+        self.selectedMenu = 'noalliance.create'
 
-        tpl.setValue("can_join_alliance", self.profile["can_join_alliance"])
+        tpl.setValue('can_join_alliance', self.profile['can_join_alliance'])
 
         return self.display(tpl)

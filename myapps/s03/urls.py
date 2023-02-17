@@ -12,6 +12,8 @@ from .views import alliance_invitations
 from .views import alliance_manage
 from .views import alliance_members
 from .views import alliance_naps
+from .views import alliance_ranks
+from .views import alliance_recruitment
 from .views import alliance_reports
 from .views import alliance_tributes
 from .views import alliance_wallet
@@ -72,6 +74,8 @@ urlpatterns = [
     path('alliance-manage/', alliance_manage.View.as_view()),
     path('alliance-members/', alliance_members.View.as_view()),
     path('alliance-naps/', alliance_naps.View.as_view()),
+    path('alliance-ranks/', alliance_ranks.View.as_view()),
+    path('alliance-recruitment/', alliance_recruitment.View.as_view()),
     path('alliance-reports/', alliance_reports.View.as_view()),
     path('alliance-tributes/', alliance_tributes.View.as_view()),
     path('alliance-wallet/', alliance_wallet.View.as_view()),

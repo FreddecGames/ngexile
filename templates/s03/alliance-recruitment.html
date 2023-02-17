@@ -1,0 +1,63 @@
+{% extends "s03/layout.html" %}
+{% load humanize %}
+{% block content %}
+<div class="page-content">
+    {% if can_invite %}
+    <form action="?" method="post">
+        {% csrf_token %}
+        <div class="card mb-3">
+            <div class="card-header">
+                <span class="fs-6">Inviter une nation à rallier notre alliance</span>
+            </div>
+            <div class="card-body">
+                <div class="row gx-2 align-items-center justify-content-center">
+                    <div class="col-auto"><span class="text-normal">Joueur</span></div>
+                    <div class="col-auto"><input type="text" class="form-control" name="name" value=""></div>
+                    <div class="col-auto"><input type="submit" class="btn btn-primary" name="submit" value="Inviter"></div>
+                </div>
+                {% for message in messages %}
+                    <div class="mt-2 alert alert-{{ message.tags }} text-center">
+                        {% if message.message == 'no_right' %}Vous n'êtes pas en droit de rallier de nouvelles nations
+                        {% elif message.message == 'name_unknown' %}Aucune nation répondant à ce nom n'a été trouvée
+                        {% elif message.message == 'already_member' %}Cette nation est déjà membre de notre alliance !
+                        {% elif message.message == 'already_invited-2' %}Cette nation a déjà été invitée récemment
+                        {% elif message.message == 'impossible-2' %}Cette nation ne peut être invitée
+                        {% else %}{{ message }}
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </form>
+    {% endif %}
+    <div class="card">
+        <div class="card-header">
+            <span class="fs-6">Invitations de ralliement en cours</span>
+        </div>
+        <div class="list-group list-group-flush">
+            {% for invitation in invits %}
+                <div class="list-group-item">
+                    <div class="row gx-3 align-items-center">
+                        <div class="col">
+                            {{ invitation.name }}
+                        </div>
+                        <div class="col-2">
+                            <span class="text-normal">{{ invitation.date }}</span>
+                        </div>
+                        <div class="col-2">
+                            <span class="text-normal">{{ invitation.recruiter }}</span>
+                        </div>
+                        <div class="col-1 text-end">
+                            <span class="text-success">En attente</span>
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <div class="list-group-item text-center">
+                    <span class="text-normal">Aucune invitation</span>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}
