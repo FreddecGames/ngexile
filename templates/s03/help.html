@@ -15,6 +15,9 @@
         <li class="nav-item {% if ships %}active{% endif %}">
             <a href="/s03/help/?cat=ships" class="nav-link">Vaisseaux</a>
         </li>
+        <li class="nav-item {% if orientations %}active{% endif %}">
+            <a href="/s03/help/?cat=orientations" class="nav-link">Orientations</a>
+        </li>
         <li class="nav-item {% if tags %}active{% endif %}">
             <a href="/s03/help/?cat=tags" class="nav-link">Balises</a>
         </li>
@@ -488,6 +491,66 @@
             </div>
         </div>
         {% endfor %}
+    </div>
+    {% endif %}
+    {% if orientations %}
+    <div class="row g-3">
+        <div class="col-6">
+            <div class="h-100 card">
+                <div class="card-header">
+                    <span class="fs-6">Marchand</span>
+                </div>
+                <div class="card-body">
+                    <ul class="mb-0 ps-1 text-normal" style="list-style: inside;">
+                        <li>Prix de vente des ressources augmenté de 10%</li>
+                        <li>La guilde marchande viendra plus vite sur vos planètes lors de vos achats</li>
+                        <li>La production de minerai et d'hydrocarbure est augmentée de 5%</li>
+                        <li>Le coût d'entretien de vos planètes est diminué de 10%</li>
+                        <li>Les points de prestige gagnés par les bâtiments augmentés de 5%</li>
+                        <li>Vous aurez accès à un vaisseau de transport supérieur aux vaisseaux de transport classiques</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-6">
+            <div class="h-100 card">
+                <div class="card-header">
+                    <span class="fs-6">Militaire</span>
+                </div>
+                <div class="card-body">
+                    <ul class="mb-0 ps-1 text-normal" style="list-style: inside;">
+                        <li>Prime sur les fossoyeurs détruits augmentée de 15%</li>
+                        <li>Vitesse de construction des vaisseaux augmentée de 20%</li>
+                        <li>Les boucliers de vos vaisseaux sont augmentés de 10%</li>
+                        <li>La manoeuvrabilité de vos vaisseaux est augmentée de 10%</li>
+                        <li>Le coût d'entretien de vos soldats est diminué de 10%</li>
+                        <li>Les salaires de vos commandants sont diminués de 10%</li>
+                        <li>Les points de prestige gagnés lors des combats sont augmentés de 5%</li>
+                        <li>Votre premier commandant est spécialisé dans les combats spatiaux</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-6">
+            <div class="h-100 card">
+                <div class="card-header">
+                    <span class="fs-6">Scientifique</span>
+                </div>
+                <div class="card-body">
+                    <ul class="mb-0 ps-1 text-normal" style="list-style: inside;">
+                        <li>Vitesse de construction des bâtiments augmentée de 10%</li>
+                        <li>Le coût des recherches est diminué de 20%</li>
+                        <li>Le temps des recherches est diminué de 5%</li>
+                        <li>Le coût d'entretien de vos scientifiques est diminué de 20%</li>
+                        <li>Vos vaisseaux se déplacent 20% plus vite</li>
+                        <li>Vos centrales produisent 20% d'énergie en plus</li>
+                        <li>Les points de prestige gagnés par les bâtiments sont augmentés de 3%</li>
+                        <li>Les points de prestige gagnés lors des combats sont augmentés de 3%</li>
+                        <li>Vous aurez accès à une technologie permettant la construction de vaisseaux de déploiement qui pourront installer instantanément des bâtiments sur vos planètes ou les planètes de vos alliés</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
     </div>
     {% endif %}
     {% if tags %}

@@ -4,9 +4,9 @@
 <div class="page-content">
     <script>
         var ranks = new Array()
-        {% for rank in ranks %}ranks[{{rank.rank_id}}] = '{{rank.rank_label}}';{% endfor %}
+        {% for rank in ranks %}ranks[{{rank.rankid}}] = '{{rank.label}}';{% endfor %}
         
-        {% if recruit %}
+        {% if can_kick %}
             function showKick(name) {
             
                 $("kick" + name).style.display = "none";
@@ -24,7 +24,7 @@
             if (!manage) s = ranks[rank];
             else {
             
-                s = '<select name="player' + id + '" class="form-control" onchange="showSubmit()">';
+                s = '<select name="member' + id + '" class="form-control" onchange="showSubmit()">';
                 for (var x in ranks) s += '<option value="' + x + '"' + (rank == x ? ' selected' : '') + '>' + ranks[x] + '</option>';
                 s += '</select>';
             }
@@ -47,68 +47,66 @@
         </div>
     </div>
     <div class="mb-3">
-        <form action="?cat={{cat}}" method="post">
+        <form action="?" method="post">
             {% csrf_token %}
             <div class="card">
                 <div class="list-group list-group-flush">
-                    {% for player in players %}
+                    {% for member in members %}
                         <div class="list-group-item">
                             <div class="row gx-3 align-items-center">
-                                <div class="col-auto">{{ player.place }}.</div>
+                                <div class="col-auto">
+                                    {{ forloop.counter }}
+                                    <span class="text-normal">.</span>
+                                </div>
                                 <div class="col">
-                                    <div><a href="/s03/nation/?name={{ player.name }}" data-bs-toggle="tooltip" data-bs-title="Voir profil">{{ player.name }}</a></div>
+                                    <div><a href="/s03/nation/?name={{ member.username }}" data-bs-toggle="tooltip" data-bs-title="Voir profil">{{ member.username }}</a></div>
                                     <div>
                                         <small class="text-normal">
-                                            {% if player.orientation1 %}Marchand{% endif %}
-                                            {% if player.orientation2 %}Militaire{% endif %}
-                                            {% if player.orientation3 %}Scientifique{% endif %}
+                                            {% if member.orientation == 1 %}Marchand{% endif %}
+                                            {% if member.orientation == 2 %}Militaire{% endif %}
+                                            {% if member.orientation == 3 %}Scientifique{% endif %}
                                         </small>
                                     </div>
                                 </div>
                                 <div class="col-2">
-                                    {% if player.scoreshown %}
-                                        <div>{{ player.score|intcomma }}</div>
-                                        <div><small class="{% if player.score_delta > 0 %}text-success{% else %}text-danger{% endif %}">{% if player.score_delta > 0 %}+{% endif %}{{ player.score_delta|intcomma }}</small></div>
+                                    {% if member.scoreShown %}
+                                        <div>{{ member.score|intcomma }}</div>
+                                        <div><small class="{% if member.score_delta > 0 %}text-success{% else %}text-danger{% endif %}">{% if member.score_delta > 0 %}+{% endif %}{{ member.score_delta|intcomma }}</small></div>
                                     {% else %}
                                         <span class="text-normal">Non publié</span>
                                     {% endif %}
                                 </div>
                                 <div class="col-1">
                                     <img src="/static/s03/img/interface/planet.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Planètes">
-                                    {{ player.stat_colonies|intcomma }}
+                                    {{ member.colonies|intcomma }}
                                 </div>
                                 <div class="col-2">
                                     <img src="/static/s03/img/interface/credits.gif" data-bs-toggle="tooltip" data-bs-title="Crédits" class="res" width="16px" height="16px">
-                                    <span class="{% if player.credits < 0 %}text-danger{% endif %}">{{ player.credits|intcomma }}</span>
+                                    <span class="{% if member.credits < 0 %}text-danger{% endif %}">{{ member.credits|intcomma }}</span>
                                 </div>
                                 <div class="col-1">
-                                    {% if player.onholidays %}<span class="text-normal">En vacances</span>{% endif %}
-                                    {% if player.online %}<span class="text-success">En ligne</span>{% endif %}
-                                    {% if player.less1h %}<span class="text-success">&lt;1 heure</span>{% endif %}
-                                    {% if player.hours %}<span class="text-success">{{ player.hours_delay }} heure(s)</span>{% endif %}
-                                    {% if player.days %}<span class="text-danger">{{ player.days_delay }} jour(s)</span>{% endif %}
-                                    {% if player.1weekplus %}<span class="text-danger">>1 semaine</span>{% endif %}
-                                    {% if player.2weeksplus %}<span class="text-danger">>2 semaines</span>{% endif %}
+                                    {% if member.onholidays %}<span class="text-normal">En vacances</span>{% endif %}
+                                    {% if member.online %}<span class="text-success">En ligne</span>{% endif %}
+                                    {% if member.less1h %}<span class="text-success">&lt;1 heure</span>{% endif %}
+                                    {% if member.hours %}<span class="text-success">{{ member.lastactivity|add:"0" }} heure(s)</span>{% endif %}
+                                    {% if member.days %}<span class="text-danger">{{ member.days }} jour(s)</span>{% endif %}
+                                    {% if member.1weekplus %}<span class="text-danger">>1 semaine</span>{% endif %}
+                                    {% if member.2weeksplus %}<span class="text-danger">>2 semaines</span>{% endif %}
                                 </div>
                                 <div class="col-1">
-                                    <span class="text-normal">{{ player.joined }}</span>
+                                    <span class="text-normal">{{ member.alliance_joined }}</span>
                                 </div>
-                                <div id="statusref{{ player.id }}" class="col-3 d-flex align-items-center">
-                                    <script>displayStatus({{player.id}}, {{player.rank}}, 0{% if player.manage %}1{% endif %}, 0{% if player.kick %}1{% endif %});</script>
-                                    {% if player.kick %}
-                                        <span id="kick{{ player.id }}" onclick="return showKick({{ player.id }});"><a href="?#" class="ms-2">Exclure</a></span>
-                                        <span id="kickConfirm{{ player.id }}" class="hidden w-100 text-end">
-                                            {% if player.kick_price > 0 %}
-                                                <small class="text-normal me-2">Coût</small>
-                                                <img src="/static/s03/img/interface/credits.gif" data-bs-toggle="tooltip" data-bs-title="Crédits" class="res" width="16px" height="16px">
-                                                {{ player.kick_price|intcomma }}
-                                            {% endif %}
-                                            <a href="?cat={{ cat }}&a=kick&name={{ player.name }}" class="ms-2 btn btn-primary">Confirmer</a>
+                                <div id="statusref{{ member.id }}" class="col-3 d-flex align-items-center">
+                                    <script>displayStatus({{member.id}}, {{member.alliance_rank}}, 0{% if member.can_manage %}1{% endif %}, 0{% if can_kick %}1{% endif %});</script>
+                                    {% if member.can_kick %}
+                                        <span id="kick{{ member.id }}" onclick="return showKick({{ member.id }});"><a href="?#" class="ms-2">Exclure</a></span>
+                                        <span id="kickConfirm{{ member.id }}" class="hidden w-100 text-end">
+                                            <a href="?cat={{ cat }}&a=kick&name={{ member.name }}" class="ms-2 btn btn-primary">Confirmer</a>
                                         </span>
-                                    {% elif player.leaving %}
+                                    {% elif member.leaving_time %}
                                         <div class="ms-2 text-end text-danger">
                                             <div><small>Quitte</small></div>
-                                            <span class="text-yellow"><script>putcountdown1({{ player.leaving_time }}, "Terminé", "?cat={{cat}}");</script></span>
+                                            <span class="text-yellow"><script>putcountdown1({{ member.leaving_time }}, "Terminé", "?");</script></span>
                                         </div>
                                     {% endif %}
                                 </div>

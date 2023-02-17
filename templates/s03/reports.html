@@ -323,7 +323,7 @@
                                 {% endif %}
                                 </span></div>
                             {% elif message.type == 502 %}
-                                <div><span class="text-normal">Vous avez reçu la somme de <img src="{{ PATH_IMAGES }}img/interface/credits.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Crédit"><span class="text-white">{{ message.credits|intcomma }}</span> par messagerie de la part de <a href="/s03/nation/?name={{ message.username }}" data-bs-toggle="tooltip" data-bs-title="Voir profil">{{ message.username }}</a>.
+                                <div><span class="text-normal">Vous avez reçu la somme de <img src="{{ PATH_IMAGES }}img/interface/credits.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Crédit"><span class="text-white">{{ message.credits|intcomma }}</span> par messagerie de la part de <a href="/s03/nation/?name={{ message.username }}" data-bs-toggle="tooltip" data-bs-title="Voir profil">{{ message.username }}</a>.</div>
                             {% elif message.type == 503 %}
                                 <div><span class="text-normal">Suite au dépôt de
                                     {% if message.ore > 0 %}<img src="{{ PATH_IMAGES}}img/interface/ore.gif" width="16px" height="16px" class="ms-1 res" data-bs-toggle="tooltip" data-bs-title="Minerai"><span class="text-white">{{message.ore|intcomma}}</span>{% endif %}
