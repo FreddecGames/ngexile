@@ -92,7 +92,7 @@ class View(GlobalView):
 
         if request.session.get("stat_rank") or request.session.get("stat_score") != self.profile["score"]:
 
-            query = "SELECT int4(count(1)), (SELECT int4(count(1)) FROM vw_players WHERE score >= "+str(self.profile["score"])+") FROM vw_players"
+            query = "SELECT int4(count(1)), (SELECT int4(count(1)) FROM vw_players WHERE score >= " + str(self.profile["score"])+") FROM vw_players"
             oRs = oConnExecute(query)
 
             if oRs:
@@ -105,7 +105,7 @@ class View(GlobalView):
         content.setValue("stat_players", request.session.get("stat_players"))
         content.setValue("stat_maxcolonies", int(self.profile["mod_planets"]))
 
-        query = "SELECT (SELECT score_prestige FROM users WHERE id="+str(self.userId)+"), (SELECT int4(count(1)) FROM vw_players WHERE score_prestige >= (SELECT score_prestige FROM users WHERE id=" + str(self.userId) + "))"
+        query = "SELECT (SELECT score_prestige FROM users WHERE id=" + str(self.userId)+"), (SELECT int4(count(1)) FROM vw_players WHERE score_prestige >= (SELECT score_prestige FROM users WHERE id=" + str(self.userId) + "))"
         oRs = oConnExecute(query)
 
         if oRs:
@@ -142,8 +142,8 @@ class View(GlobalView):
         #
         query = "SELECT p.id, p.name, p.galaxy, p.sector, p.planet, b.buildingid, b.remaining_time, destroying" +\
                 " FROM nav_planet AS p" +\
-                "	 LEFT JOIN vw_buildings_under_construction2 AS b ON (p.id=b.planetid)"+\
-                " WHERE p.ownerid="+str(self.userId)+\
+                "	 LEFT JOIN vw_buildings_under_construction2 AS b ON (p.id=b.planetid)" +\
+                " WHERE p.ownerid=" + str(self.userId)+\
                 " ORDER BY p.id, destroying, remaining_time DESC"
         oRs = oConnExecuteAll(query)
 
@@ -185,7 +185,7 @@ class View(GlobalView):
         query = "SELECT p.id, p.name, p.galaxy, p.sector, p.planet, s.shipid, s.remaining_time, s.recycle, p.shipyard_next_continue IS NOT NULL, p.shipyard_suspended," +\
                 " (SELECT shipid FROM planet_ships_pending WHERE planetid=p.id ORDER BY start_time LIMIT 1)" +\
                 " FROM nav_planet AS p" +\
-                "	LEFT JOIN vw_ships_under_construction AS s ON (p.id=s.planetid AND p.ownerid=s.ownerid AND s.end_time IS NOT NULL)"+\
+                "	LEFT JOIN vw_ships_under_construction AS s ON (p.id=s.planetid AND p.ownerid=s.ownerid AND s.end_time IS NOT NULL)" +\
                 " WHERE (s.recycle OR EXISTS(SELECT 1 FROM planet_buildings WHERE (buildingid = 105 OR buildingid = 205) AND planetid=p.id)) AND p.ownerid=" + str(self.userId) +\
                 " ORDER BY p.id, s.remaining_time DESC"
         oRs = oConnExecuteAll(query)
@@ -257,7 +257,7 @@ class View(GlobalView):
                 "( SELECT int4(COALESCE(max(nav_planet.radar_strength), 0)) FROM nav_planet WHERE nav_planet.galaxy = f.destplanet_galaxy AND nav_planet.sector = f.destplanet_sector AND nav_planet.ownerid IS NOT NULL AND EXISTS ( SELECT 1 FROM vw_friends_radars WHERE vw_friends_radars.friend = nav_planet.ownerid AND vw_friends_radars.userid = users.id)) AS to_radarstrength, " +\
                 "attackonsight" +\
                 " FROM users, vw_fleets f " +\
-                " WHERE users.id="+str(self.userId)+" AND (""action"" = 1 OR ""action"" = -1) AND (ownerid="+str(self.userId)+" OR (destplanetid IS NOT NULL AND destplanetid IN (SELECT id FROM nav_planet WHERE ownerid="+str(self.userId)+")))" +\
+                " WHERE users.id=" + str(self.userId)+" AND (""action"" = 1 OR ""action"" = -1) AND (ownerid=" + str(self.userId)+" OR (destplanetid IS NOT NULL AND destplanetid IN (SELECT id FROM nav_planet WHERE ownerid=" + str(self.userId)+")))" +\
                 " ORDER BY ownerid, COALESCE(remaining_time, 0)"
         oRs = oConnExecuteAll(query)
 

@@ -115,7 +115,7 @@ class View(GlobalView):
         orderby = orderby + ", tag"
 
         # List Non Aggression Pacts
-        query = "SELECT n.allianceid2, tag, name, "+ \
+        query = "SELECT n.allianceid2, tag, name, " + \
                 " (SELECT COALESCE(sum(score)/1000, 0) AS score FROM users WHERE alliance_id=allianceid2), n.created, date_part('epoch', n.break_interval)::integer, date_part('epoch', break_on-now())::integer," + \
                 " share_locs, share_radars" + \
                 " FROM alliances_naps n" + \

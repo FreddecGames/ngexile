@@ -55,9 +55,9 @@ class View(GlobalView):
                 " from_radarstrength, to_radarstrength, alliances.tag, radar_jamming, destplanet_radar_jamming" + \
                 " FROM vw_fleets_moving v" + \
                 "    LEFT JOIN alliances ON alliances.id = owner_alliance_id" + \
-                " WHERE userid="+str(self.userId)+" AND ("+ \
-                "    (planetid >= sp_first_planet("+str(galaxy)+","+str(sector)+") AND planetid <= sp_last_planet("+str(galaxy)+","+str(sector)+")) OR"+ \
-                "    (destplanetid >= sp_first_planet("+str(galaxy)+","+str(sector)+") AND destplanetid <= sp_last_planet("+str(galaxy)+","+str(sector)+")))" + \
+                " WHERE userid=" + str(self.userId)+" AND (" + \
+                "    (planetid >= sp_first_planet(" + str(galaxy)+"," + str(sector)+") AND planetid <= sp_last_planet(" + str(galaxy)+"," + str(sector)+")) OR" + \
+                "    (destplanetid >= sp_first_planet(" + str(galaxy)+"," + str(sector)+") AND destplanetid <= sp_last_planet(" + str(galaxy)+"," + str(sector)+")))" + \
                 " ORDER BY remaining_time"
         oRss = oConnExecuteAll(query)
 
@@ -224,12 +224,12 @@ class View(GlobalView):
             #
             # display map of galaxies with 8 galaxies per row
             #
-            query = "SELECT n.id, "+ \
-                    " n.colonies > 0,"+ \
-                    " False AND EXISTS(SELECT 1 FROM nav_planet WHERE galaxy=n.id AND ownerid IN (SELECT friend FROM vw_friends WHERE vw_friends.userid="+str(self.userId)+") LIMIT 1),"+ \
-                    " EXISTS(SELECT 1 FROM nav_planet WHERE galaxy=n.id AND ownerid IN (SELECT ally FROM vw_allies WHERE vw_allies.userid="+str(self.userId)+") LIMIT 1),"+ \
-                    " EXISTS(SELECT 1 FROM nav_planet WHERE galaxy=n.id AND ownerid = "+str(self.userId)+" LIMIT 1) AS hasplanets"+ \
-                    " FROM nav_galaxies AS n"+ \
+            query = "SELECT n.id, " + \
+                    " n.colonies > 0," + \
+                    " False AND EXISTS(SELECT 1 FROM nav_planet WHERE galaxy=n.id AND ownerid IN (SELECT friend FROM vw_friends WHERE vw_friends.userid=" + str(self.userId)+") LIMIT 1)," + \
+                    " EXISTS(SELECT 1 FROM nav_planet WHERE galaxy=n.id AND ownerid IN (SELECT ally FROM vw_allies WHERE vw_allies.userid=" + str(self.userId)+") LIMIT 1)," + \
+                    " EXISTS(SELECT 1 FROM nav_planet WHERE galaxy=n.id AND ownerid = " + str(self.userId)+" LIMIT 1) AS hasplanets" + \
+                    " FROM nav_galaxies AS n" + \
                     " ORDER BY n.id;"
             oRss = oConnExecuteAll(query)
 
@@ -316,14 +316,14 @@ class View(GlobalView):
         # Retrieve/Save fleets in the sector
         #
         
-        query = "SELECT f.planetid, f.id, f.name, sp_relation(f.ownerid, "+str(self.userId)+"), f.signature," + \
-                "    EXISTS(SELECT 1 FROM fleets AS fl WHERE fl.planetid=f.planetid and fl.action != 1 and fl.action != -1 and fl.ownerid IN (SELECT ally FROM vw_allies WHERE userid="+str(self.userId)+") LIMIT 1)," + \
+        query = "SELECT f.planetid, f.id, f.name, sp_relation(f.ownerid, " + str(self.userId)+"), f.signature," + \
+                "    EXISTS(SELECT 1 FROM fleets AS fl WHERE fl.planetid=f.planetid and fl.action != 1 and fl.action != -1 and fl.ownerid IN (SELECT ally FROM vw_allies WHERE userid=" + str(self.userId)+") LIMIT 1)," + \
                 " action=1 OR action=-1, (SELECT tag FROM alliances WHERE id=users.alliance_id), username, shared," + \
-                "    EXISTS(SELECT 1 FROM fleets AS fl WHERE fl.planetid=f.planetid and fl.action != 1 and fl.action != -1 and fl.ownerid ="+str(self.userId)+" LIMIT 1)" + \
+                "    EXISTS(SELECT 1 FROM fleets AS fl WHERE fl.planetid=f.planetid and fl.action != 1 and fl.action != -1 and fl.ownerid =" + str(self.userId)+" LIMIT 1)" + \
                 " FROM fleets as f" + \
                 "    INNER JOIN users ON (f.ownerid=users.id)" + \
                 " WHERE ((action != 1 AND action != -1) OR engaged) AND" + \
-                "    planetid >= sp_first_planet("+str(galaxy)+","+str(sector)+") AND planetid <= sp_last_planet("+str(galaxy)+","+str(sector)+")" + \
+                "    planetid >= sp_first_planet(" + str(galaxy)+"," + str(sector)+") AND planetid <= sp_last_planet(" + str(galaxy)+"," + str(sector)+")" + \
                 " ORDER BY f.planetid, upper(f.name)"
         oRss = oConnExecuteAll(query)
 
@@ -338,7 +338,7 @@ class View(GlobalView):
         query = "SELECT planetid, label, description" + \
                 " FROM planet_buildings" + \
                 "    INNER JOIN db_buildings ON db_buildings.id=buildingid" + \
-                " WHERE planetid >= sp_first_planet("+str(galaxy)+","+str(sector)+") AND planetid <= sp_last_planet("+str(galaxy)+","+str(sector)+") AND is_planet_element" + \
+                " WHERE planetid >= sp_first_planet(" + str(galaxy)+"," + str(sector)+") AND planetid <= sp_last_planet(" + str(galaxy)+"," + str(sector)+") AND is_planet_element" + \
                 " ORDER BY planetid, upper(label)"
         oRss = oConnExecuteAll(query)
 
@@ -349,7 +349,7 @@ class View(GlobalView):
         #
         # Retrieve biggest radar strength in the sector that the player has access to
         #
-        query = "SELECT * FROM sp_get_user_rs("+str(self.userId)+","+str(galaxy)+","+str(sector)+")"
+        query = "SELECT * FROM sp_get_user_rs(" + str(self.userId)+"," + str(galaxy)+"," + str(sector)+")"
         oRs = oConnExecute(query)
         radarstrength = oRs[0]
 
@@ -361,7 +361,7 @@ class View(GlobalView):
         #
         # Main query : retrieve planets info in the sector
         #
-        query = "SELECT nav_planet.id, nav_planet.planet, nav_planet.name, nav_planet.ownerid,"+ \
+        query = "SELECT nav_planet.id, nav_planet.planet, nav_planet.name, nav_planet.ownerid," + \
                 " users.username, sp_relation(nav_planet.ownerid," + str(self.userId) + "), floor, space, GREATEST(0, radar_strength), radar_jamming," + \
                 " orbit_ore, orbit_hydrocarbon, alliances.tag," + \
                 " (SELECT SUM(quantity*signature) FROM planet_ships LEFT JOIN db_ships ON (planet_ships.shipid = db_ships.id) WHERE planet_ships.planetid=nav_planet.id), " + \
@@ -369,8 +369,8 @@ class View(GlobalView):
                 " planet_pct_ore, planet_pct_hydrocarbon, spawn_ore, spawn_hydrocarbon, vortex_strength," + \
                 " COALESCE(buy_ore, 0) AS buy_ore, COALESCE(buy_hydrocarbon, 0) as buy_hydrocarbon," + \
                 " sp_locs_shared(COALESCE(" + str(aid) + ", -1), COALESCE(users.alliance_id, -1)) AS locs_shared" + \
-                " FROM nav_planet"+ \
-                "    LEFT JOIN users ON (users.id = ownerid)"+ \
+                " FROM nav_planet" + \
+                "    LEFT JOIN users ON (users.id = ownerid)" + \
                 "    LEFT JOIN alliances ON (users.alliance_id=alliances.id)" + \
                 " WHERE galaxy=" + str(galaxy) + " AND sector=" + str(sector) + \
                 " ORDER BY planet"

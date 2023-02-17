@@ -38,7 +38,7 @@ class View(GlobalView):
         query = "SELECT id, name, attackonsight, engaged, size, signature, speed, remaining_time, commanderid, commandername," + \
                 " planetid, planet_name, planet_galaxy, planet_sector, planet_planet, planet_ownerid, planet_owner_name, planet_owner_relation," + \
                 " cargo_capacity, cargo_ore, cargo_hydrocarbon, cargo_scientists, cargo_soldiers, cargo_workers" + \
-                " FROM vw_fleets WHERE ownerid="+str(self.userId)+" AND id="+str(fleetid)
+                " FROM vw_fleets WHERE ownerid=" + str(self.userId)+" AND id=" + str(fleetid)
 
         oRs = oConnExecute(query)
 

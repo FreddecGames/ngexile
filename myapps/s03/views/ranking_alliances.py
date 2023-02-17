@@ -69,7 +69,7 @@ class View(GlobalView):
         displayed = 25 # number of nations on each page
 
         # retrieve number of alliances
-        query = "SELECT count(DISTINCT alliance_id) FROM users INNER JOIN alliances ON alliances.id=alliance_id WHERE alliances.visible"+searchby
+        query = "SELECT count(DISTINCT alliance_id) FROM users INNER JOIN alliances ON alliances.id=alliance_id WHERE alliances.visible" +searchby
         oRs = oConnExecute(query)
         size = int(oRs[0])
 
@@ -83,10 +83,10 @@ class View(GlobalView):
                 " created, EXISTS(SELECT 1 FROM alliances_naps WHERE allianceid1=alliances.id AND allianceid2=" + str(sqlValue(self.allianceId)) + ")," + \
                 " max_members, EXISTS(SELECT 1 FROM alliances_wars WHERE (allianceid1=alliances.id AND allianceid2=" + str(sqlValue(self.allianceId)) + ") OR (allianceid1=" + str(sqlValue(self.allianceId)) + " AND allianceid2=alliances.id))" + \
                 " FROM users INNER JOIN alliances ON alliances.id=alliance_id" + \
-                " WHERE alliances.visible"+searchby + \
+                " WHERE alliances.visible" +searchby + \
                 " GROUP BY alliances.id, alliances.name, alliances.tag, alliances.score, alliances.previous_score, alliances.created, alliances.max_members" + \
-                " ORDER BY "+orderby+ \
-                " OFFSET "+str(offset*displayed)+" LIMIT "+str(displayed)
+                " ORDER BY " +orderby+ \
+                " OFFSET " + str(offset*displayed)+" LIMIT " + str(displayed)
         oRss = oConnExecuteAll(query)
 
         if oRss == None: content.Parse("noresult")

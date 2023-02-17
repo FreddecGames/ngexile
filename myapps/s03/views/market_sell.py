@@ -35,7 +35,7 @@ class View(GlobalView):
                 " (sp_market_price((sp_get_resource_price(0, galaxy)).sell_ore, planet_stock_ore))," + \
                 " (sp_market_price((sp_get_resource_price(0, galaxy)).sell_hydrocarbon, planet_stock_hydrocarbon))" + \
                 " FROM vw_planets AS v" + \
-                " WHERE floor > 0 AND v.ownerid="+str(self.userId) + planet_query + \
+                " WHERE floor > 0 AND v.ownerid=" + str(self.userId) + planet_query + \
                 " ORDER BY v.id"
         oRss = oConnExecuteAll(query)
 
@@ -110,7 +110,7 @@ class View(GlobalView):
         if self.request.GET.get("a") != "sell": return
 
         # for each planet owned, check what the player sells
-        query = "SELECT id FROM nav_planet WHERE ownerid="+str(self.userId)
+        query = "SELECT id FROM nav_planet WHERE ownerid=" + str(self.userId)
         planetsArray = oConnExecuteAll(query)
 
         for i in planetsArray:

@@ -38,12 +38,12 @@ class View(GlobalView):
         if cat == 0:
             query = query + " ORDER BY datetime DESC LIMIT 100"
         else:
-            query = query + " AND type = "+ str(cat) + " ORDER BY datetime DESC LIMIT 1000"
+            query = query + " AND type = " + str(cat) + " ORDER BY datetime DESC LIMIT 1000"
 
         content.setValue("ownerid", self.userId)
         
         oRss = oConnExecuteAll(query)
-        content.Parse("tabnav_"+str(cat)+"00_selected")
+        content.Parse("tabnav_" + str(cat)+"00_selected")
         if oRss == None: content.Parse("noreports")
         else:
             #
@@ -129,8 +129,8 @@ class View(GlobalView):
             
             total_newreports = 0
             for oRs in oRss:
-                content.setValue("tabnav_"+str(oRs[0])+"00_newreports", oRs[1])
-                content.Parse("tabnav_"+str(oRs[0])+"00_new")
+                content.setValue("tabnav_" + str(oRs[0])+"00_newreports", oRs[1])
+                content.Parse("tabnav_" + str(oRs[0])+"00_new")
 
                 total_newreports = total_newreports + oRs[1]
 
@@ -141,7 +141,7 @@ class View(GlobalView):
             if not self.request.user.is_impersonate:
                 # flag only the current category of reports as read
                 if cat != 0:
-                    oConnDoQuery("UPDATE reports SET read_date = now() WHERE ownerid = " + str(self.userId) + " AND type = "+str(cat)+ " AND read_date is null AND datetime <= now()")
+                    oConnDoQuery("UPDATE reports SET read_date = now() WHERE ownerid = " + str(self.userId) + " AND type = " + str(cat)+ " AND read_date is null AND datetime <= now()")
 
                 # flag all reports as read
                 if self.request.GET.get("cat", "") == "0":

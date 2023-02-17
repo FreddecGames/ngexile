@@ -27,7 +27,7 @@ class View(GlobalView):
 
         query = "SELECT id, key, userid, type, level, date, credits, spotted, target_name" + \
                 " FROM spy" + \
-                " WHERE id="+str(self.id)+" AND key="+dosql(key)
+                " WHERE id=" + str(self.id)+" AND key=" +dosql(key)
 
         oRs = oConnExecute(query)
 

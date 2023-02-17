@@ -71,7 +71,7 @@ class View(GlobalView):
 
         query = "SELECT chat_lines.id, datetime, allianceid, username, message" + \
                 " FROM chat_lines" + \
-                " WHERE chatid=" + str(chatid) + " AND chat_lines.id > GREATEST((SELECT id FROM chat_lines WHERE chatid="+ str(chatid) +" ORDER BY datetime DESC OFFSET 100 LIMIT 1), " + str(lastmsgid) + ")" + \
+                " WHERE chatid=" + str(chatid) + " AND chat_lines.id > GREATEST((SELECT id FROM chat_lines WHERE chatid=" + str(chatid) +" ORDER BY datetime DESC OFFSET 100 LIMIT 1), " + str(lastmsgid) + ")" + \
                 " ORDER BY chat_lines.id"
         oRss = oConnExecuteAll(query)
 

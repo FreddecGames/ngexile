@@ -35,7 +35,7 @@ class View(ExileMixin, View):
         action = request.POST.get("unlock", "")
 
         if action != "" and oRs[1] < 0:
-            oConnExecute("SELECT sp_stop_holidays("+str(self.userId)+")")
+            oConnExecute("SELECT sp_stop_holidays(" + str(self.userId)+")")
             return HttpResponseRedirect("/s03/overview/")
 
         # if remaining time is negative, return to overview page

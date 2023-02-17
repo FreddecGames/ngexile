@@ -37,7 +37,7 @@ class View(GlobalView):
                 " (sp_get_resource_price(" + str(self.userId) + ", v.galaxy)).buy_hydrocarbon AS p_hydrocarbon" + \
                 " FROM vw_planets AS v" + \
                 "    LEFT JOIN market_purchases AS m ON (m.planetid=v.id)" + \
-                " WHERE floor > 0 AND v.ownerid="+str(self.userId) + get_planet + \
+                " WHERE floor > 0 AND v.ownerid=" + str(self.userId) + get_planet + \
                 " ORDER BY v.id"
         oRss = oConnExecuteAll(query)
 
@@ -134,7 +134,7 @@ class View(GlobalView):
         if self.request.GET.get("a", "") != "buy": return
 
         # for each planet owned, check what the player buys
-        query = "SELECT id FROM nav_planet WHERE ownerid="+str(self.userId)
+        query = "SELECT id FROM nav_planet WHERE ownerid=" + str(self.userId)
         planetsArray = oConnExecuteAll(query)
 
         for i in planetsArray:

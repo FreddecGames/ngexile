@@ -40,15 +40,15 @@ class View(GlobalView):
         if self.request.POST.get("cancel", "") != "":
             credits = 0
             description = ""
-            oConnExecute("SELECT sp_alliance_money_request("+str(self.userId)+","+str(credits)+","+dosql(description)+")")
+            oConnExecute("SELECT sp_alliance_money_request(" + str(self.userId)+"," + str(credits)+"," +dosql(description)+")")
 
         if credits != 0:
             if self.request.POST.get("request", "") != "":
-                oConnExecute("SELECT sp_alliance_money_request("+str(self.userId)+","+str(credits)+","+dosql(description)+")")
+                oConnExecute("SELECT sp_alliance_money_request(" + str(self.userId)+"," + str(credits)+"," +dosql(description)+")")
             elif self.request.POST.get("give") != "" and (credits > 0):
 
                 if self.can_give_money():
-                    oRs = oConnExecute("SELECT sp_alliance_transfer_money("+str(self.userId)+","+str(credits)+","+dosql(description)+",0)")
+                    oRs = oConnExecute("SELECT sp_alliance_transfer_money(" + str(self.userId)+"," + str(credits)+"," +dosql(description)+",0)")
                     if oRs[0] != 0: self.money_error = self.e_not_enough_money
                 else:
                     self.money_error = self.e_can_give_money_after_a_week
@@ -59,7 +59,7 @@ class View(GlobalView):
         taxrates = request.POST.get("taxrates", "")
 
         if taxrates != "":
-            connExecuteRetryNoRecords("SELECT sp_alliance_set_tax("+str(self.userId)+","+dosql(taxrates)+")")
+            connExecuteRetryNoRecords("SELECT sp_alliance_set_tax(" + str(self.userId)+"," +dosql(taxrates)+")")
 
         #
         # retrieve which page is displayed
@@ -107,7 +107,7 @@ class View(GlobalView):
         elif self.money_error == self.e_can_give_money_after_a_week:
             tpl.Parse("can_give_money_after_a_week")
 
-        tpl.Parse("cat"+str(cat)+"_selected")
+        tpl.Parse("cat" + str(cat)+"_selected")
 
         tpl.Parse("cat1")
         if self.allianceRights["can_ask_money"]: tpl.Parse("cat2")
@@ -192,11 +192,11 @@ class View(GlobalView):
         if not displayKicksBreaks: query = query + " AND type != 2 AND type != 5 AND type != 10 AND type != 11"
 
         # List wallet journal
-        query = "SELECT Max(datetime), userid, int4(sum(credits)), description, source, destination, type, groupid"+ \
-                " FROM alliances_wallet_journal"+ \
-                " WHERE allianceid=" + str(self.allianceId) + query + " AND datetime >= now()-INTERVAL '1 week'"+ \
-                " GROUP BY userid, description, source, destination, type, groupid"+ \
-                " ORDER BY Max(datetime) DESC"+ \
+        query = "SELECT Max(datetime), userid, int4(sum(credits)), description, source, destination, type, groupid" + \
+                " FROM alliances_wallet_journal" + \
+                " WHERE allianceid=" + str(self.allianceId) + query + " AND datetime >= now()-INTERVAL '1 week'" + \
+                " GROUP BY userid, description, source, destination, type, groupid" + \
+                " ORDER BY Max(datetime) DESC" + \
                 " LIMIT 500"
 
         oRss = oConnExecuteAll(query)
@@ -329,7 +329,7 @@ class View(GlobalView):
 
             query = "SELECT datetime, credits, source, description" + \
                     " FROM alliances_wallet_journal" + \
-                    " WHERE allianceid="+str(self.allianceId)+" AND type=0 AND datetime >= now()-INTERVAL '1 week'" + \
+                    " WHERE allianceid=" + str(self.allianceId)+" AND type=0 AND datetime >= now()-INTERVAL '1 week'" + \
                     " ORDER BY datetime DESC"
             oRss = oConnExecuteAll(query)
             

@@ -39,10 +39,10 @@ class View(GlobalView):
         if cat == 0:
             query = query + " ORDER BY datetime DESC LIMIT 200"
         else:
-            query = query + " AND type = "+ str(cat) + " ORDER BY datetime DESC LIMIT 200"
+            query = query + " AND type = " + str(cat) + " ORDER BY datetime DESC LIMIT 200"
 
         oRss = oConnExecuteAll(query)
-        content.Parse("tabnav_"+str(cat)+"00_selected")
+        content.Parse("tabnav_" + str(cat)+"00_selected")
         if oRss == None: content.Parse("noreports")
         else:
             #

@@ -26,21 +26,21 @@ class View(GlobalView):
 
             item["mod_production_ore"] = round(oRs[2]*100)
             if oRs[2] > 0:
-                item["mod_production_ore"] = "+" + str(round(oRs[2]*100))
+                item["mod_production_ore"] = " +" + str(round(oRs[2]*100))
                 item["ore_positive"] = True
             elif oRs[2] < 0:
                 item["ore_negative"] = True
 
             item["mod_production_hydrocarbon"] = round(oRs[3]*100)
             if oRs[3] > 0:
-                item["mod_production_hydrocarbon"] = "+" + str(round(oRs[3]*100))
+                item["mod_production_hydrocarbon"] = " +" + str(round(oRs[3]*100))
                 item["hydrocarbon_positive"] = True
             elif oRs[3] < 0:
                 item["hydrocarbon_negative"] = True
 
             item["mod_production_energy"] = round(oRs[4]*100)
             if oRs[4] > 0:
-                item["mod_production_energy"] = "+" + str(round(oRs[4]*100))
+                item["mod_production_energy"] = " +" + str(round(oRs[4]*100))
                 item["energy_positive"] = True
             elif oRs[4] < 0:
                 item["energy_negative"] = True
@@ -99,9 +99,9 @@ class View(GlobalView):
         self.content.setValue("a_hydrocarbon", oRs[6])
 
         # List buildings that produce a resource : ore, hydrocarbon or energy
-        query = "SELECT id, production_ore*working_quantity, production_hydrocarbon*working_quantity, energy_production*working_quantity, working_quantity"+ \
+        query = "SELECT id, production_ore*working_quantity, production_hydrocarbon*working_quantity, energy_production*working_quantity, working_quantity" + \
                 " FROM vw_buildings" + \
-                " WHERE planetid="+str(self.currentPlanetId)+" AND (production_ore > 0 OR production_hydrocarbon > 0 OR energy_production > 0) AND working_quantity > 0;"
+                " WHERE planetid=" + str(self.currentPlanetId)+" AND (production_ore > 0 OR production_hydrocarbon > 0 OR energy_production > 0) AND working_quantity > 0;"
         oRss = oConnExecuteAll(query)
 
         totalOre = 0
@@ -146,7 +146,7 @@ class View(GlobalView):
         query = "SELECT buildingid, '', mod_production_ore*quantity, mod_production_hydrocarbon*quantity, mod_production_energy*quantity" + \
                 " FROM planet_buildings" + \
                 "    INNER JOIN db_buildings ON (db_buildings.id = planet_buildings.buildingid)" + \
-                " WHERE planetid="+str(self.currentPlanetId)+" AND (mod_production_ore != 0 OR mod_production_hydrocarbon != 0 OR mod_production_energy != 0)"
+                " WHERE planetid=" + str(self.currentPlanetId)+" AND (mod_production_ore != 0 OR mod_production_hydrocarbon != 0 OR mod_production_energy != 0)"
 
         oRs = oConnExecuteAll(query)
 
@@ -174,7 +174,7 @@ class View(GlobalView):
         EnergyReceived = oRs[0]
 
         # Assign total production variables
-        query = "SELECT ore_production, hydrocarbon_production, energy_production-"+str(EnergyReceived)+" FROM nav_planet WHERE id=" + str(self.currentPlanetId)
+        query = "SELECT ore_production, hydrocarbon_production, energy_production-" + str(EnergyReceived)+" FROM nav_planet WHERE id=" + str(self.currentPlanetId)
         oRs = oConnExecute(query)
 
         if oRs:

@@ -39,7 +39,7 @@ class View(GlobalView):
                 " ore_capacity, hydrocarbon_capacity," + \
                 " scientists, scientists_capacity, soldiers, soldiers_capacity, energy_production-energy_consumption" + \
                 " FROM vw_planets" + \
-                " WHERE id="+str(self.currentPlanetId)
+                " WHERE id=" + str(self.currentPlanetId)
         oRs = oConnExecute(query)
     
         if oRs == None: return

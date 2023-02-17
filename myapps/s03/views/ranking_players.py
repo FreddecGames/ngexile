@@ -35,7 +35,7 @@ class View(GlobalView):
 
         reversed = False
         if col == 1:
-            orderby = "CASE WHEN score_visibility=2 OR v.id="+str(self.userId)+"THEN upper(username) ELSE '' END, upper(username)"
+            orderby = "CASE WHEN score_visibility=2 OR v.id=" + str(self.userId)+"THEN upper(username) ELSE '' END, upper(username)"
         elif col == 2:
             orderby = "upper(alliances.name)"
         elif col == 3:
@@ -60,7 +60,7 @@ class View(GlobalView):
         #
         query = "SELECT score" + \
                 " FROM vw_players" + \
-                " WHERE True "+searchby + \
+                " WHERE True " +searchby + \
                 " ORDER BY score DESC OFFSET 9 LIMIT 1"
         oRs = oConnExecute(query)
 
@@ -79,8 +79,8 @@ class View(GlobalView):
         if offset < 0:
             query = "SELECT v.id" + \
                     " FROM vw_players v LEFT JOIN alliances ON alliances.id=v.alliance_id" + \
-                    " WHERE True "+searchby + \
-                    " ORDER BY "+orderby
+                    " WHERE True " +searchby + \
+                    " ORDER BY " +orderby
             oRss = oConnExecuteAll(query)
 
             index = 0
@@ -97,7 +97,7 @@ class View(GlobalView):
             offset = myOffset
 
         # get total number of players that could be displayed
-        query = "SELECT count(1) FROM vw_players WHERE True "+searchby
+        query = "SELECT count(1) FROM vw_players WHERE True " +searchby
         oRs = oConnExecute(query)
         size = int(oRs[0])
         nb_pages = int(size/displayed)
@@ -139,11 +139,11 @@ class View(GlobalView):
         # Retrieve players to display
         query = "SELECT username, v.score, v.score_prestige," + \
                 "COALESCE(date_part('day', now()-lastactivity), 15), alliances.name, alliances.tag, v.id, avatar_url, v.alliance_id, v.score-v.previous_score AS score_delta," + \
-                "v.score >= " + str(TenthUserScore) + " OR score_visibility = 2 OR (score_visibility = 1 AND alliance_id IS NOT NULL AND alliance_id="+str(sqlValue(self.allianceId))+") OR v.id="+str(self.userId) + \
+                "v.score >= " + str(TenthUserScore) + " OR score_visibility = 2 OR (score_visibility = 1 AND alliance_id IS NOT NULL AND alliance_id=" + str(sqlValue(self.allianceId))+") OR v.id=" + str(self.userId) + \
                 " FROM vw_players v" + \
-                "    LEFT JOIN alliances ON ((v.score >= " + str(TenthUserScore) + " OR score_visibility = 2 OR v.id="+str(self.userId)+" OR (score_visibility = 1 AND alliance_id IS NOT NULL AND alliance_id="+str(sqlValue(self.allianceId))+")) AND alliances.id=v.alliance_id)" + \
-                " WHERE True "+searchby + \
-                " ORDER BY "+orderby+" OFFSET "+str(offset*displayed)+" LIMIT "+str(displayed)
+                "    LEFT JOIN alliances ON ((v.score >= " + str(TenthUserScore) + " OR score_visibility = 2 OR v.id=" + str(self.userId)+" OR (score_visibility = 1 AND alliance_id IS NOT NULL AND alliance_id=" + str(sqlValue(self.allianceId))+")) AND alliances.id=v.alliance_id)" + \
+                " WHERE True " +searchby + \
+                " ORDER BY " +orderby+" OFFSET " + str(offset*displayed)+" LIMIT " + str(displayed)
         oRss = oConnExecuteAll(query)
 
         if oRs == None: content.Parse("noresult")

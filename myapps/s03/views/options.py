@@ -14,7 +14,7 @@ class View(GlobalView):
         self.selectedMenu = "options"
 
         if request.GET.get("frame") == "1":
-            oConnDoQuery("UPDATE users SET inframe=True WHERE id="+ str(self.userId))
+            oConnDoQuery("UPDATE users SET inframe=True WHERE id=" + str(self.userId))
 
         holidays_breaktime = 7*24*60*60 # time before being able to set the holidays again
 
@@ -87,22 +87,22 @@ class View(GlobalView):
                 query = query + " WHERE id=" + str(self.userId)
             elif self.optionCat == 3:
                 if request.POST.get("holidays"):
-                    oRs = oConnExecute("SELECT COALESCE(int4(date_part('epoch', now()-last_holidays)), 10000000) AS holidays_cooldown, (SELECT 1 FROM users_holidays WHERE userid=users.id) FROM users WHERE id="+ str(self.userId))
+                    oRs = oConnExecute("SELECT COALESCE(int4(date_part('epoch', now()-last_holidays)), 10000000) AS holidays_cooldown, (SELECT 1 FROM users_holidays WHERE userid=users.id) FROM users WHERE id=" + str(self.userId))
 
                     if oRs[0] > holidays_breaktime and oRs[1] == None:
-                        query = "INSERT INTO users_holidays(userid, start_time, min_end_time, end_time) VALUES("+str(self.userId)+",now()+INTERVAL '24 hours', now()+INTERVAL '72 hours', now()+INTERVAL '22 days')"
+                        query = "INSERT INTO users_holidays(userid, start_time, min_end_time, end_time) VALUES(" + str(self.userId)+",now()+INTERVAL '24 hours', now()+INTERVAL '72 hours', now()+INTERVAL '22 days')"
                         oConnDoQuery(query)
 
                         return HttpResponseRedirect("?cat=3")
 
             elif self.optionCat == 4:
 
-                oConnDoQuery("DELETE FROM users_reports WHERE userid="+str(self.userId))
+                oConnDoQuery("DELETE FROM users_reports WHERE userid=" + str(self.userId))
 
                 for x in request.POST.getlist("r"):
                     typ = int(x / 100)
                     subtyp = x % 100
-                    oConnExecute("INSERT INTO users_reports(userid, type, subtype) VALUES("+str(self.userId)+","+dosql(typ)+","+dosql(subtyp)+")")
+                    oConnExecute("INSERT INTO users_reports(userid, type, subtype) VALUES(" + str(self.userId)+"," +dosql(typ)+"," +dosql(subtyp)+")")
 
             elif self.optionCat == 5:
                 if autosignature != "":
@@ -127,7 +127,7 @@ class View(GlobalView):
                 " FROM users" + \
                 " LEFT JOIN alliances AS a ON (users.alliance_id = a.id)" + \
                 " LEFT JOIN alliances_ranks AS r ON (users.alliance_id = r.allianceid AND users.alliance_rank = r.rankid) " + \
-                " WHERE users.id = "+str(self.userId)
+                " WHERE users.id = " + str(self.userId)
         oRs = oConnExecute(query)
 
         content.setValue("regdate", oRs[1])
@@ -153,7 +153,7 @@ class View(GlobalView):
 
     def display_options(self, content):
 
-        oRs = oConnExecute("SELECT int4(date_part('epoch', deletion_date-now())), timers_enabled, display_alliance_planet_name, email, score_visibility, skin FROM users WHERE id="+str(self.userId))
+        oRs = oConnExecute("SELECT int4(date_part('epoch', deletion_date-now())), timers_enabled, display_alliance_planet_name, email, score_visibility, skin FROM users WHERE id=" + str(self.userId))
 
         if oRs[0] == None:
             content.Parse("delete_account")
@@ -174,7 +174,7 @@ class View(GlobalView):
     def display_holidays(self, content):
 
         # check if holidays will be activated soon
-        oRs = oConnExecute("SELECT int4(date_part('epoch', start_time-now())) FROM users_holidays WHERE userid="+str(self.userId))
+        oRs = oConnExecute("SELECT int4(date_part('epoch', start_time-now())) FROM users_holidays WHERE userid=" + str(self.userId))
 
         if oRs:
             remainingtime = oRs[0]
@@ -188,7 +188,7 @@ class View(GlobalView):
         else:
 
             # holidays can be activated only if never took any holidays or it was at least 7 days ago
-            oRs = oConnExecute("SELECT int4(date_part('epoch', now()-last_holidays)) FROM users WHERE id="+str(self.userId))
+            oRs = oConnExecute("SELECT int4(date_part('epoch', now()-last_holidays)) FROM users WHERE id=" + str(self.userId))
 
             if (oRs[0]) and oRs[0] < holidays_breaktime:
                 content.setValue("remaining_time", holidays_breaktime-oRs[0])
@@ -201,15 +201,15 @@ class View(GlobalView):
 
     def display_reports(self, content):
 
-        oRss = oConnExecuteAll("SELECT type*100+subtype FROM users_reports WHERE userid="+str(self.userId))
+        oRss = oConnExecuteAll("SELECT type*100+subtype FROM users_reports WHERE userid=" + str(self.userId))
         for oRs in oRss:
-            content.Parse("c"+str(oRs[0]))
+            content.Parse("c" + str(oRs[0]))
 
         content.Parse("reports")
 
     def display_mail(self, content):
 
-        oRs = oConnExecute("SELECT autosignature FROM users WHERE id="+str(self.userId))
+        oRs = oConnExecute("SELECT autosignature FROM users WHERE id=" + str(self.userId))
         if oRs:
             content.setValue("autosignature", oRs[0])
         else:
@@ -245,7 +245,7 @@ class View(GlobalView):
             content.Parse(self.changes_status)
             content.Parse("changes")
 
-        content.Parse("cat"+str(self.optionCat)+"_selected")
+        content.Parse("cat" + str(self.optionCat)+"_selected")
         content.Parse("cat1")
         content.Parse("cat2")
         content.Parse("cat3")

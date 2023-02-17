@@ -42,7 +42,7 @@ class View(GlobalView):
                 " cargo_capacity, cargo_ore, cargo_hydrocarbon, cargo_scientists, cargo_soldiers, cargo_workers," + \
                 " action " + \
                 " FROM vw_fleets" + \
-                " WHERE ownerid="+str(self.userId)+" AND id="+str(fleetid)
+                " WHERE ownerid=" + str(self.userId)+" AND id=" + str(fleetid)
 
         oRs = oConnExecute(query)
 
@@ -93,10 +93,10 @@ class View(GlobalView):
             item["quantity"] = oRs[4]
 
             if self.fleet_split_error != self.e_no_error:
-                item["transfer"] = self.request.POST.get("transfership"+str(oRs[0]))
+                item["transfer"] = self.request.POST.get("transfership" + str(oRs[0]))
 
         if self.fleet_split_error != self.e_no_error:
-            content.Parse("error"+str(self.fleet_split_error))
+            content.Parse("error" + str(self.fleet_split_error))
             item["t_ore"] = self.request.POST.get("load_ore")
             item["t_hydrocarbon"] = self.request.POST.get("load_hydrocarbon")
             item["t_scientists"] = self.request.POST.get("load_scientists")
@@ -117,7 +117,7 @@ class View(GlobalView):
         #
         # retrieve the planet where the current fleet is patrolling
         #
-        query = "SELECT planetid FROM vw_fleets WHERE ownerid="+str(self.userId)+" AND id="+str(fleetid)
+        query = "SELECT planetid FROM vw_fleets WHERE ownerid=" + str(self.userId)+" AND id=" + str(fleetid)
         oRs = oConnExecute(query)
         if oRs == None: return
 
@@ -129,7 +129,7 @@ class View(GlobalView):
         query = " SELECT id, action, cargo_ore, cargo_hydrocarbon, " + \
                 " cargo_scientists, cargo_soldiers, cargo_workers" + \
                 " FROM vw_fleets" + \
-                " WHERE ownerid="+str(self.userId)+" AND id="+str(fleetid)
+                " WHERE ownerid=" + str(self.userId)+" AND id=" + str(fleetid)
         oRs = oConnExecute(query)
 
         if oRs == None or (oRs[1] != 0):
@@ -186,12 +186,12 @@ class View(GlobalView):
             if quantity > 0:
                 # add the ships to the new fleet
                 query = " INSERT INTO fleets_ships (fleetid, shipid, quantity)" + \
-                        " VALUES (" + str(newfleetid) +","+ str(shipid) +","+ str(quantity) + ")"
+                        " VALUES (" + str(newfleetid) +"," + str(shipid) +"," + str(quantity) + ")"
                 oConnDoQuery(query)
 
         # reset fleets idleness, partly to prevent cheating and being able to do multiple invasions with only a fleet
         oConnDoQuery("UPDATE fleets SET idle_since=now()" + \
-                        " WHERE ownerid =" + str(self.userId) + " AND (id="+str(newfleetid)+" OR id="+str(fleetid)+")")
+                        " WHERE ownerid =" + str(self.userId) + " AND (id=" + str(newfleetid)+" OR id=" + str(fleetid)+")")
 
         #
         # 3/ Move the resources to the new fleet
@@ -199,7 +199,7 @@ class View(GlobalView):
         #
         
         # retrieve new fleet's cargo capacity
-        oRs = oConnExecute("SELECT cargo_capacity FROM vw_fleets WHERE ownerid="+str(self.userId)+" AND id="+str(newfleetid))
+        oRs = oConnExecute("SELECT cargo_capacity FROM vw_fleets WHERE ownerid=" + str(self.userId)+" AND id=" + str(newfleetid))
         if oRs == None:
                 return
 
@@ -223,9 +223,9 @@ class View(GlobalView):
         if ore != 0 or hydrocarbon != 0 or scientists != 0 or soldiers != 0 or workers != 0:
             # a/ put the resources to the new fleet
             oConnDoQuery("UPDATE fleets SET" + \
-                        " cargo_ore="+str(ore)+", cargo_hydrocarbon="+str(hydrocarbon)+", " + \
-                        " cargo_scientists="+str(scientists)+", cargo_soldiers="+str(soldiers)+", " + \
-                        " cargo_workers="+str(workers) + \
+                        " cargo_ore=" + str(ore)+", cargo_hydrocarbon=" + str(hydrocarbon)+", " + \
+                        " cargo_scientists=" + str(scientists)+", cargo_soldiers=" + str(soldiers)+", " + \
+                        " cargo_workers=" + str(workers) + \
                         " WHERE id =" + str(newfleetid) + " AND ownerid =" + str(self.userId))
 
         #
@@ -236,10 +236,10 @@ class View(GlobalView):
 
             # a/ remove the resources from the 'source# fleet
             oConnDoQuery("UPDATE fleets SET" + \
-                        " cargo_ore=cargo_ore-"+str(ore)+", cargo_hydrocarbon=cargo_hydrocarbon-"+str(hydrocarbon)+", " + \
-                        " cargo_scientists=cargo_scientists-"+str(scientists)+", " + \
-                        " cargo_soldiers=cargo_soldiers-"+str(soldiers)+", " + \
-                        " cargo_workers=cargo_workers-"+str(workers) + \
+                        " cargo_ore=cargo_ore-" + str(ore)+", cargo_hydrocarbon=cargo_hydrocarbon-" + str(hydrocarbon)+", " + \
+                        " cargo_scientists=cargo_scientists-" + str(scientists)+", " + \
+                        " cargo_soldiers=cargo_soldiers-" + str(soldiers)+", " + \
+                        " cargo_workers=cargo_workers-" + str(workers) + \
                         " WHERE id =" + str(fleetid) + " AND ownerid =" + str(self.userId))
                         
                         
@@ -261,7 +261,7 @@ class View(GlobalView):
         query = "DELETE FROM fleets WHERE ownerid=" + str(self.userId) + " AND size=0"
         oConnDoQuery(query)
 
-        return HttpResponseRedirect("/s03/fleet/?id="+str(newfleetid))
+        return HttpResponseRedirect("/s03/fleet/?id=" + str(newfleetid))
 
     def ExecuteOrder(self, fleetid):
         if self.request.POST.get("split") == "1":

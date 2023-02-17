@@ -88,7 +88,7 @@ class View(GlobalView):
                 if self.mailto == "":
                     self.sendmail_status = "mail_missing_to"
                 else:
-                    oRs = oConnExecute("SELECT sp_send_message("+ str(self.userId) + "," + dosql(self.mailto) + "," + dosql(self.mailsubject) + "," + dosql(self.mailbody) + "," + str(self.moneyamount) + "," + str(self.bbcode) + ")")
+                    oRs = oConnExecute("SELECT sp_send_message(" + str(self.userId) + "," + dosql(self.mailto) + "," + dosql(self.mailsubject) + "," + dosql(self.mailbody) + "," + str(self.moneyamount) + "," + str(self.bbcode) + ")")
 
                     if oRs[0] != 0:
                         if oRs[0] == 1:
@@ -164,7 +164,7 @@ class View(GlobalView):
         search_cond = ""
 
         # get total number of mails that could be displayed
-        query = "SELECT count(1) FROM messages WHERE "+search_cond+" deleted=False AND ownerid = " + str(self.userId)
+        query = "SELECT count(1) FROM messages WHERE " +search_cond+" deleted=False AND ownerid = " + str(self.userId)
         oRs = oConnExecute(query)
         size = int(oRs[0])
         nb_pages = int(size/displayed)
@@ -205,14 +205,14 @@ class View(GlobalView):
         if nb_pages > 1: content.Parse("nav")
 
         query = "SELECT sender, subject, body, datetime, messages.id, read_date, avatar_url, users.id, messages.credits," + \
-                " users.privilege, bbcode, owner, messages_ignore_list.added, alliances.tag"+ \
+                " users.privilege, bbcode, owner, messages_ignore_list.added, alliances.tag" + \
                 " FROM messages" + \
                 "    LEFT JOIN users ON (upper(users.username) = upper(messages.sender) AND messages.datetime >= users.game_started)" + \
                 "    LEFT JOIN alliances ON (users.alliance_id = alliances.id)" + \
                 "    LEFT JOIN messages_ignore_list ON (userid=" + str(self.userId) + " AND ignored_userid = users.id)" + \
                 " WHERE " + search_cond + " deleted=False AND ownerid = " + str(self.userId) + \
                 " ORDER BY datetime DESC, messages.id DESC" + \
-                " OFFSET " + str(offset*displayed) + " LIMIT "+str(displayed)
+                " OFFSET " + str(offset*displayed) + " LIMIT " + str(displayed)
         oRss = oConnExecuteAll(query)
 
         i = 0
@@ -294,7 +294,7 @@ class View(GlobalView):
         messages_filter = "datetime > now()-INTERVAL '2 weeks' AND "
 
         # get total number of mails that could be displayed
-        query = "SELECT count(1) FROM messages WHERE "+messages_filter+"senderid = " + str(self.userId)
+        query = "SELECT count(1) FROM messages WHERE " +messages_filter+"senderid = " + str(self.userId)
         oRs = oConnExecute(query)
         size = int(oRs[0])
         nb_pages = int(size/displayed)
@@ -330,14 +330,14 @@ class View(GlobalView):
         #display only if there are more than 1 page
         if nb_pages > 1: content.Parse("nav")
 
-        query = "SELECT messages.id, owner, avatar_url, datetime, subject, body, messages.credits, users.id, bbcode, alliances.tag"+ \
+        query = "SELECT messages.id, owner, avatar_url, datetime, subject, body, messages.credits, users.id, bbcode, alliances.tag" + \
                 " FROM messages" + \
                 "    LEFT JOIN users ON (users.id = messages.ownerid AND messages.datetime >= users.game_started)" + \
                 "    LEFT JOIN alliances ON (users.alliance_id = alliances.id)" + \
-                " WHERE "+messages_filter+"senderid = " + str(self.userId) + \
+                " WHERE " +messages_filter+"senderid = " + str(self.userId) + \
                 " ORDER BY datetime DESC"
 
-        query = query + " OFFSET "+str(offset*displayed)+" LIMIT "+str(displayed)
+        query = query + " OFFSET " + str(offset*displayed)+" LIMIT " + str(displayed)
 
         oRss = oConnExecuteAll(query)
 
@@ -474,12 +474,6 @@ class View(GlobalView):
         if (self.allianceRights):
             if self.allianceRights["can_mail_alliance"]: content.Parse("sendalliance")
 
-        # if is a payed account, append the autosignature text to message body
-        if self.profile["paid"]:
-            oRs = oConnExecute("SELECT autosignature FROM users WHERE id="+userid)
-            if oRs:
-                body = body  + oRs[0]
-
         # re-assign previous values
         content.setValue("mailto", mailto)
         content.setValue("subject", subject)
@@ -487,7 +481,7 @@ class View(GlobalView):
         content.setValue("mail_credits", credits)
 
         #retrieve player's credits
-        oRs = oConnExecute("SELECT credits, now()-game_started > INTERVAL '2 weeks' AND security_level >= 3 FROM users WHERE id="+str(self.userId))
+        oRs = oConnExecute("SELECT credits, now()-game_started > INTERVAL '2 weeks' AND security_level >= 3 FROM users WHERE id=" + str(self.userId))
         content.setValue("player_credits", oRs[0])
         if oRs[1]: content.Parse("send_credits")
 

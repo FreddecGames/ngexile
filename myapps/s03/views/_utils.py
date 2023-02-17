@@ -175,7 +175,6 @@ def getTemplate(request, name):
     result.template = name + ".html"
 
     result.setValue("PATH_IMAGES", "/static/s03/")
-    result.setValue("PATH_TEMPLATE", "/s03/templates")
 
     return result
 

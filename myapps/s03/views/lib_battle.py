@@ -6,7 +6,7 @@ def FormatBattle(view, battleid, creator, pointofview, ispubliclink):
 
     # Retrieve/assign battle info
     query = "SELECT time, planetid, name, galaxy, sector, planet, rounds," + \
-            "EXISTS(SELECT 1 FROM battles_ships WHERE battleid=" + str(battleid) + " AND owner_id=" + str(creator) + " AND won LIMIT 1), MD5(key||"+str(creator)+")," + \
+            "EXISTS(SELECT 1 FROM battles_ships WHERE battleid=" + str(battleid) + " AND owner_id=" + str(creator) + " AND won LIMIT 1), MD5(key||" + str(creator)+")," + \
             "EXISTS(SELECT 1 FROM battles_ships WHERE battleid=" + str(battleid) + " AND owner_id=" + str(creator) + " AND damages > 0 LIMIT 1) AS see_details" + \
             " FROM battles" + \
             "    INNER JOIN nav_planet ON (planetid=nav_planet.id)" + \

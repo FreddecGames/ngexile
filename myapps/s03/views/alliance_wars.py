@@ -95,12 +95,12 @@ class View(GlobalView):
         orderby = orderby + ", tag"
 
         # List wars
-        query = "SELECT w.created, alliances.id, alliances.tag, alliances.name, cease_fire_requested, date_part('epoch', cease_fire_expire-now())::integer, w.can_fight < now() AS can_fight, True AS attacker, next_bill < now() + INTERVAL '1 week', sp_alliance_war_cost(allianceid2), next_bill"+ \
+        query = "SELECT w.created, alliances.id, alliances.tag, alliances.name, cease_fire_requested, date_part('epoch', cease_fire_expire-now())::integer, w.can_fight < now() AS can_fight, True AS attacker, next_bill < now() + INTERVAL '1 week', sp_alliance_war_cost(allianceid2), next_bill" + \
                 " FROM alliances_wars w" + \
                 "    INNER JOIN alliances ON (allianceid2 = alliances.id)" + \
                 " WHERE allianceid1=" + str(self.allianceId) + \
                 " UNION " + \
-                "SELECT w.created, alliances.id, alliances.tag, alliances.name, cease_fire_requested, date_part('epoch', cease_fire_expire-now())::integer, w.can_fight < now() AS can_fight, False AS attacker, False, 0, next_bill"+ \
+                "SELECT w.created, alliances.id, alliances.tag, alliances.name, cease_fire_requested, date_part('epoch', cease_fire_expire-now())::integer, w.can_fight < now() AS can_fight, False AS attacker, False, 0, next_bill" + \
                 " FROM alliances_wars w" + \
                 "    INNER JOIN alliances ON (allianceid1 = alliances.id)" + \
                 " WHERE allianceid2=" + str(self.allianceId) + \

@@ -60,7 +60,7 @@ class View(GlobalView):
         if value == None:
             sqlValue = "None"
         else:
-            sqlValue = "'"+value+"'"
+            sqlValue = "'" +value+"'"
 
     #
     # display mercenary service page
@@ -191,7 +191,7 @@ class View(GlobalView):
             if planet_limit == 0 or nb_planet < planet_limit:
                 # add planet to the spy report
                 query = " INSERT INTO spy_planet(spy_id,  planet_id,  planet_name,  floor,  space, pct_ore, pct_hydrocarbon,  ground) " + \
-                        " VALUES("+ str(reportid) +"," + str(oRs[0]) +"," + dosql(oRs[1]) +"," + str(oRs[2]) + "," + str(oRs[3]) + "," + str(oRs[4]) + "," + str(oRs[5]) + "," + str(oRs[6]) +")"
+                        " VALUES(" + str(reportid) +"," + str(oRs[0]) +"," + dosql(oRs[1]) +"," + str(oRs[2]) + "," + str(oRs[3]) + "," + str(oRs[4]) + "," + str(oRs[5]) + "," + str(oRs[6]) +")"
                 oConnDoQuery(query)
 
                 nb_planet = nb_planet + 1
@@ -209,7 +209,7 @@ class View(GlobalView):
             for oRs in oRss:
                 # add research info to spy report
                 query = " INSERT INTO spy_research(spy_id,  research_id,  research_level) " + \
-                        " VALUES("+ str(reportid) +", " + str(oRs[0]) +", " + str(oRs[1]) +") "
+                        " VALUES(" + str(reportid) +", " + str(oRs[0]) +", " + str(oRs[1]) +") "
                 oConnDoQuery(query)
 
         #
@@ -340,14 +340,14 @@ class View(GlobalView):
 
                 # basic info retrieved by all spies
                 query = " INSERT INTO spy_planet(spy_id,  planet_id,  planet_name, owner_name, floor, space, pct_ore, pct_hydrocarbon, ground ) " + \
-                        " VALUES ("+ str(reportid) +", " + sqlValue(oRs[0]) + "," + sqlValue(planetname) +"," + dosql(oRs[3]) +"," + \
+                        " VALUES (" + str(reportid) +", " + sqlValue(oRs[0]) + "," + sqlValue(planetname) +"," + dosql(oRs[3]) +"," + \
                         sqlValue(oRs[4]) + "," + sqlValue(oRs[5]) + "," + sqlValue(oRs[28]) + "," + sqlValue(oRs[29]) + "," + sqlValue(oRs[8]) + ")"
 
                 oConnDoQuery(query)
 
                 # common info retrieved by spies which self.level >= 0 (actually, all)
                 if self.level >= 0:
-                    query = " UPDATE spy_planet SET"+ \
+                    query = " UPDATE spy_planet SET" + \
                             " radar_strength=" + sqlValue(oRs[17]) + ", radar_jamming=" + sqlValue(oRs[18]) + ", " + \
                             " orbit_ore=" + sqlValue(oRs[20]) + ", orbit_hydrocarbon=" + sqlValue(oRs[21]) + \
                             " WHERE spy_id=" + str(reportid) + " AND planet_id=" + sqlValue(oRs[0])
@@ -356,7 +356,7 @@ class View(GlobalView):
 
                 # uncommon info retrieved by skilled spies with self.level >= 1 : ore, hydrocarbon, energy
                 if self.level >= 1:
-                    query = "UPDATE spy_planet SET"+ \
+                    query = "UPDATE spy_planet SET" + \
                             " ore=" + sqlValue(oRs[9]) + ", hydrocarbon=" + sqlValue(oRs[10]) + \
                             ", ore_capacity=" + sqlValue(oRs[11]) + ", hydrocarbon_capacity=" + sqlValue(oRs[12]) + \
                             ", ore_production=" + sqlValue(oRs[13]) + ", hydrocarbon_production=" + sqlValue(oRs[14]) + \
@@ -369,7 +369,7 @@ class View(GlobalView):
                     #
                     # rare info that can be retrieved by veteran spies only : workers, scientists, soldiers
                     #
-                    query = "UPDATE spy_planet SET"+ \
+                    query = "UPDATE spy_planet SET" + \
                             " workers=" + sqlValue(oRs[22]) + ", workers_capacity=" + sqlValue(oRs[23]) + ", " + \
                             " scientists=" + sqlValue(oRs[24]) + ", scientists_capacity=" + sqlValue(oRs[25]) + ", " + \
                             " soldiers=" + sqlValue(oRs[26]) + ", soldiers_capacity=" + sqlValue(oRs[27]) + \
@@ -452,7 +452,7 @@ class View(GlobalView):
                 # nobody own this planet
                 #
                 query = " INSERT INTO spy_planet(spy_id, planet_id, floor, space) " + \
-                        " VALUES("+ str(reportid) +", " + sqlValue(oRs[0]) +", " + sqlValue(oRs[4]) +", " + sqlValue(oRs[5]) +") "
+                        " VALUES(" + str(reportid) +", " + sqlValue(oRs[0]) +", " + sqlValue(oRs[4]) +", " + sqlValue(oRs[5]) +") "
                 oConnDoQuery(query)
                 return
 

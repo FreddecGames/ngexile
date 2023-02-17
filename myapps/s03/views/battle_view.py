@@ -27,7 +27,7 @@ class View(ExileMixin, View):
         id = request.GET.get("id", "")
         if id == "": return HttpResponseRedirect("/s03/reports/")
 
-        #oKeyRs = oConnExecute(" SELECT 1 FROM battles WHERE id="+str(id)+" AND "+dosql(battlekey)+"=MD5(key||"+str(creator)+") ")
+        #oKeyRs = oConnExecute(" SELECT 1 FROM battles WHERE id=" + str(id)+" AND " +dosql(battlekey)+"=MD5(key||" + str(creator)+") ")
         #if oKeyRs == None: return HttpResponseRedirect("/s03/reports/")
         
         content = FormatBattle(self, id, creator, fromview, True)

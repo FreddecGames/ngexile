@@ -48,7 +48,7 @@ class View(GlobalView):
 
     def DisplayBonus(self, item, bonus, value):
         if value > 0:
-            bonus["bonus"] = "+" + str(value)
+            bonus["bonus"] = " +" + str(value)
             bonus["positive"] = True
         elif value < 0:
             bonus["bonus"] = value

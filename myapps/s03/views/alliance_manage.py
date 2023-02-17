@@ -142,7 +142,7 @@ class View(GlobalView):
             content.Parse(self.changes_status)
             content.Parse("error")
 
-        content.Parse("cat"+str(cat)+"_selected")
+        content.Parse("cat" + str(cat)+"_selected")
         if self.allianceRights["leader"] or self.allianceRights["can_manage_description"]: content.Parse("cat1")
         if self.allianceRights["leader"] or self.allianceRights["can_manage_announce"]: content.Parse("cat2")
         if self.allianceRights["leader"]: content.Parse("cat3")

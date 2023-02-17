@@ -50,8 +50,8 @@ class View(GlobalView):
 
         query = "SELECT alliances.tag, alliances.name, alliances_invitations.created, users.username" + \
                 " FROM alliances_invitations" + \
-                "        INNER JOIN alliances ON alliances.id = alliances_invitations.allianceid"+ \
-                "        LEFT JOIN users ON users.id = alliances_invitations.recruiterid"+ \
+                "        INNER JOIN alliances ON alliances.id = alliances_invitations.allianceid" + \
+                "        LEFT JOIN users ON users.id = alliances_invitations.recruiterid" + \
                 " WHERE userid=" + str(self.userId) + " AND NOT declined" + \
                 " ORDER BY created DESC"
 

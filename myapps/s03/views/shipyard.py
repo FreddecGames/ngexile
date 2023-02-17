@@ -46,8 +46,8 @@ class View(GlobalView):
     def RetrieveData(self):
         
         # Retrieve recordset of current planet
-        query = "SELECT ore_capacity, hydrocarbon_capacity, energy_capacity, workers_capacity"+ \
-                " FROM vw_planets WHERE id="+str(self.currentPlanetId)
+        query = "SELECT ore_capacity, hydrocarbon_capacity, energy_capacity, workers_capacity" + \
+                " FROM vw_planets WHERE id=" + str(self.currentPlanetId)
         self.oPlanet = oConnExecute(query)
 
     def displayQueue(self, content, planetid):
@@ -384,7 +384,7 @@ class View(GlobalView):
             quantity = ToInt(self.request.POST.get("s" + str(shipid)), 0)
             if quantity > 0: self.StartShip(shipid, quantity)
             
-        return HttpResponseRedirect("/s03/shipyard/?f="+str(self.ShipFilter))
+        return HttpResponseRedirect("/s03/shipyard/?f=" + str(self.ShipFilter))
         
     # recycle ships
 
@@ -407,4 +407,4 @@ class View(GlobalView):
         if self.request.GET.get("recycle", "") != "":
             return HttpResponseRedirect("/s03/shipyard/?recycle=1")
         else:
-            return HttpResponseRedirect("/s03/shipyard/?f="+str(self.ShipFilter))
+            return HttpResponseRedirect("/s03/shipyard/?f=" + str(self.ShipFilter))

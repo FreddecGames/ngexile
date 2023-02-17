@@ -83,7 +83,7 @@ class View(GlobalView):
         orderby = orderby + ", tag"
 
         # List
-        query = "SELECT w.created, alliances.id, alliances.tag, alliances.name, w.credits, w.next_transfer"+ \
+        query = "SELECT w.created, alliances.id, alliances.tag, alliances.name, w.credits, w.next_transfer" + \
                 " FROM alliances_tributes w" + \
                 "    INNER JOIN alliances ON (allianceid = alliances.id)" + \
                 " WHERE target_allianceid=" + str(self.allianceId) + \
@@ -129,7 +129,7 @@ class View(GlobalView):
         orderby = orderby + ", tag"
 
         # List
-        query = "SELECT w.created, alliances.id, alliances.tag, alliances.name, w.credits"+ \
+        query = "SELECT w.created, alliances.id, alliances.tag, alliances.name, w.credits" + \
                 " FROM alliances_tributes w" + \
                 "    INNER JOIN alliances ON (target_allianceid = alliances.id)" + \
                 " WHERE allianceid=" + str(self.allianceId) + \

@@ -118,7 +118,7 @@ class View(GlobalView):
 
             # retrieve commander assigned to this planet
             if oRs[16]:
-                oCmdRs = oConnExecute("SELECT name FROM commanders WHERE ownerid="+str(self.userId)+" AND id="+str(oRs[16]))
+                oCmdRs = oConnExecute("SELECT name FROM commanders WHERE ownerid=" + str(self.userId)+" AND id=" + str(oRs[16]))
                 content.setValue("commandername", oCmdRs[0])
                 CmdId = oRs[16]
                 content.Parse("commander")
@@ -135,7 +135,7 @@ class View(GlobalView):
 
         query = " SELECT id, name, fleetname, planetname, fleetid " + \
                 " FROM vw_commanders" + \
-                " WHERE ownerid="+str(self.userId) + \
+                " WHERE ownerid=" + str(self.userId) + \
                 " ORDER BY fleetid IS NOT NULL, planetid IS NOT NULL, fleetid, planetid "
         oRss = oConnExecuteAll(query)
 
@@ -172,7 +172,7 @@ class View(GlobalView):
 
             if item == "fleet":
                 item["name"] = oRs[2]
-                activityRs = oConnExecute("SELECT dest_planetid, engaged, action FROM fleets WHERE ownerid="+str(self.userId)+" AND id="+str(oRs[4]))
+                activityRs = oConnExecute("SELECT dest_planetid, engaged, action FROM fleets WHERE ownerid=" + str(self.userId)+" AND id=" + str(oRs[4]))
                 if activityRs[0] == None and (not activityRs[1]) and activityRs[2]==0:
                     item["assigned"] = True
                 else:
@@ -184,7 +184,7 @@ class View(GlobalView):
 
         # view current buildings constructions
         query = "SELECT buildingid, remaining_time, destroying" + \
-                " FROM vw_buildings_under_construction2 WHERE planetid="+str(self.currentPlanetId) + \
+                " FROM vw_buildings_under_construction2 WHERE planetid=" + str(self.currentPlanetId) + \
                 " ORDER BY remaining_time DESC"
 
         oRss = oConnExecuteAll(query)

@@ -27,8 +27,8 @@ class View(GlobalView):
         query = "SELECT i.id, i.time, i.planet_id, i.planet_name, i.attacker_name, i.defender_name, " + \
                 "i.attacker_succeeded, i.soldiers_total, i.soldiers_lost, i.def_soldiers_total, " + \
                 "i.def_soldiers_lost, i.def_scientists_total, i.def_scientists_lost, i.def_workers_total, " + \
-                "i.def_workers_lost, galaxy, sector, planet, sp_get_user("+str(readerid)+") " + \
-                "FROM invasions AS i INNER JOIN nav_planet ON nav_planet.id = i.planet_id WHERE i.id = "+str(invasionid)
+                "i.def_workers_lost, galaxy, sector, planet, sp_get_user(" + str(readerid)+") " + \
+                "FROM invasions AS i INNER JOIN nav_planet ON nav_planet.id = i.planet_id WHERE i.id = " + str(invasionid)
         oRs = oConnExecute(query)
 
         if oRs == None:
@@ -43,7 +43,7 @@ class View(GlobalView):
                 # find the name of the member that did this invasion, either the attacker or the defender
                 query = "SELECT username" + \
                         " FROM users" + \
-                        " WHERE (username="+dosql(oRs[4])+" OR username="+dosql(oRs[5])+") AND alliance_id="+str(self.allianceId)+" AND alliance_joined <= (SELECT time FROM invasions WHERE id="+str(invasionid)+")"
+                        " WHERE (username=" +dosql(oRs[4])+" OR username=" +dosql(oRs[5])+") AND alliance_id=" + str(self.allianceId)+" AND alliance_joined <= (SELECT time FROM invasions WHERE id=" + str(invasionid)+")"
                 oRs2 = oConnExecute(query)
                 if oRs2 == None:
                     return HttpResponseRedirect("/s03/overview/")

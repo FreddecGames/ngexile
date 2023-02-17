@@ -38,7 +38,7 @@ class View(GlobalView):
                 " destplanetid, destplanet_name, destplanet_galaxy, destplanet_sector, destplanet_planet, destplanet_ownerid, destplanet_owner_name, destplanet_owner_relation," + \
                 " action, cargo_ore, cargo_hydrocarbon, cargo_scientists, cargo_soldiers, cargo_workers" + \
                 " FROM vw_fleets " + \
-                " WHERE planetid="+ str(self.currentPlanetId) +" AND action != 1 AND action != -1" + \
+                " WHERE planetid=" + str(self.currentPlanetId) +" AND action != 1 AND action != -1" + \
                 " ORDER BY upper(name)"
         oRss = oConnExecuteAll(query)
 
