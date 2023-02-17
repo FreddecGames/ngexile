@@ -2,8 +2,8 @@
 {% load humanize %}
 {% block content %}
 <div class="page-content">
-{% if create %}
-    <form method="post" action="?a=new">
+{% if can_join_alliance %}
+    <form method="post" action="?">
         {% csrf_token %}
         <div class="card">
             <div class="card-header">
@@ -23,26 +23,28 @@
                 </div>
             </div>
             <div class="card-body">
-                <div class="row g-1 flex-column">
-                    <div class="col-12">
-                        <div class="row gx-2 align-items-center justify-content-center">
-                            <div class="col-auto">Nom</div>
-                            <div class="col-auto"><input type="text" class="form-control" name="alliancename" maxlength="32" size="32" value="{{ name }}"></div>
-                            <div class="col-auto">Tag</div>
-                            <div class="col-auto"><input type="text" class="form-control" name="alliancetag" maxlength="4" size="4" value="{{ tag }}"></div>
-                            <div class="col-auto"><input type="submit" class="btn btn-primary" value="Créer" /></div>
-                        </div>
-                    </div>
-                    {% if name_already_used %}<div class="col-12 text-center"><span class="text-danger">Ce nom est déjà utilisé, veuillez en choisir un autre.</span></div>{% endif %}
-                    {% if invalid_name %}<div class="col-12 text-center"><span class="text-danger">Entrez un nom de 4 à 32 lettres (A-Z, 0-9, -, .).</span></div>{% endif %}
-                    {% if tag_already_used %}<div class="col-12 text-center"><span class="text-danger">Ce tag est déjà utilisé, veuillez en choisir un autre.</span></div>{% endif %}
-                    {% if invalid_tag %}<div class="col-12 text-center"><span class="text-danger">Le tag doit être composé de 2 à 4 lettres.</span></div>{% endif %}
+                <div class="row gx-2 align-items-center justify-content-center">
+                    <div class="col-auto">Nom</div>
+                    <div class="col-auto"><input type="text" class="form-control" name="alliancename" maxlength="32" size="32" value=""></div>
+                    <div class="col-auto">Tag</div>
+                    <div class="col-auto"><input type="text" class="form-control" name="alliancetag" maxlength="4" size="4" value=""></div>
+                    <div class="col-auto"><input type="submit" class="btn btn-primary" value="Créer" /></div>
                 </div>
+                {% for message in messages %}
+                    <div class="mt-2 alert alert-{{ message.tags }} text-center">
+                        {% if message.message == 'name_invalid' %}Entrez un nom de 4 à 32 lettres (A-Z, 0-9, -, .)
+                        {% elif message.message == 'name_already_used' %}Ce nom est déjà utilisé, veuillez en choisir un autre
+                        {% elif message.message == 'tag_invalid' %}Le tag doit être composé de 2 à 4 lettres
+                        {% elif message.message == 'tag_already_used-2' %}Ce tag est déjà utilisé, veuillez en choisir un autre
+                        {% else %}{{ message }}
+                        {% endif %}
+                    </div>
+                {% endfor %}
             </div>
         </div>
     </form>
 {% else %}
-    <div class="text-center">
+    <div class="card card-body text-center">
         <span class="text-danger">Vous avez récemment quitté une alliance, il vous est actuellement impossible de créer une alliance.</span>
     </div>
 {% endif %}

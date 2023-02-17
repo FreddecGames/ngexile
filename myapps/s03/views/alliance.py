@@ -22,7 +22,7 @@ class View(GlobalView):
 
         self.selectedMenu = 'alliance.overview'
         
-        #--- alliance data
+        #---
         
         query = 'SELECT id, name, tag, description, (SELECT count(*) FROM users WHERE alliance_id=alliances.id) AS members,' + \
                 ' logo_url, max_members' + \
@@ -40,7 +40,7 @@ class View(GlobalView):
         alliance = dbRow(query)
         tpl.setValue('alliance', alliance)
         
-        #--- alliance displayed ranks
+        #---
         
         query = 'SELECT rankid, label' + \
                 ' FROM alliances_ranks' + \
@@ -50,7 +50,7 @@ class View(GlobalView):
         ranks = dbRows(query)
         tpl.setValue('ranks', ranks)
         
-        #--- alliance members per rank
+        #---
         
         for rank in ranks:
         
@@ -62,7 +62,7 @@ class View(GlobalView):
             members = dbRows(query)
             rank['members'] = members
         
-        #--- alliance naps
+        #---
         
         query = 'SELECT tag, name' + \
                 ' FROM alliances_naps INNER JOIN alliances ON (alliances_naps.allianceid1=alliances.id)' + \
@@ -71,7 +71,7 @@ class View(GlobalView):
         naps = dbRows(query)
         tpl.setValue('naps', naps)
         
-        #--- alliance wars
+        #---
 
         query = 'SELECT alliances.tag, alliances.name'+ \
                 ' FROM alliances_wars w' + \

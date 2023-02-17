@@ -12,9 +12,13 @@ class View(ExileMixin, View):
 
         response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
-    
+        
+        #---
+        
         if not request.user.is_authenticated:
             return HttpResponseRedirect('/')
+        
+        #---
         
         self.userId = request.user.id
         
@@ -22,13 +26,15 @@ class View(ExileMixin, View):
 
     def post(self, request, *args, **kwargs):
         
-        remainingTime = oConnExecute("SELECT COALESCE(date_part('epoch', ban_expire-now()), 0) FROM users WHERE id=" + str(self.userId))
-        if remainingTime[0] > 0:
+        remainingTime = dbExecute("SELECT COALESCE(date_part('epoch', ban_expire-now()), 0) FROM users WHERE id=" + str(self.userId))
+        if remainingTime > 0:
             return HttpResponseRedirect('/s03/wait/')
+        
+        #---
         
         action = request.POST.get("action", "")
         if action == 'unlock':
-            oConnDoQuery("UPDATE users SET privilege=0 WHERE ban_expire < now() AND id=" + str(self.userId))
+            dbQuery("UPDATE users SET privilege=0 WHERE ban_expire < now() AND id=" + str(self.userId))
             return HttpResponseRedirect('/s03/overview/')
         
         return HttpResponseRedirect('/s03/wait/')

@@ -8,80 +8,40 @@ class View(GlobalView):
 
         response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
+        
+        return super().dispatch(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+    
+        name = request.POST.get('alliancename', '').strip()
+        if not isValidAllianceName(name):
+            messages.error(request, 'name_invalid')
+            return HttpResponseRedirect('/s03/alliance-create/')
+        
+        #---
+
+        tag = request.POST.get('alliancetag', '').strip()
+        if not isValidAllianceTag(tag):
+            messages.error(request, 'tag_invalid')
+            return HttpResponseRedirect('/s03/alliance-create/')
+        
+        #---
+        
+        result = dbExecute("SELECT sp_create_alliance(" + str(self.userId) + "," + dosql(name) + "," + dosql(tag) + ", '')")
+        if result >= -1:
+            return HttpResponseRedirect("/s03/alliance/")
+            
+        if result == -2: messages.error(request, 'name_already_used')
+        if result == -3: messages.error(request, 'tag_already_used')
+
+        return HttpResponseRedirect('/s03/alliance-create/')
+
+    def get(self, request, *args, **kwargs):
+
+        tpl = getTemplate(self.request, "s03/alliance-create")
 
         self.selectedMenu = "noalliance.create"
 
-        self.name = ""
-        self.tag = ""
-        self.description = ""
+        tpl.setValue("can_join_alliance", self.profile["can_join_alliance"])
 
-        self.valid_name = True
-        self.valid_tag = True
-        self.valid_description = True
-        self.create_result = 0
-
-        if request.GET.get("a") == "new":
-            self.name = request.POST.get("alliancename", "").strip()
-            self.tag = request.POST.get("alliancetag", "").strip()
-            self.description = request.POST.get("description", "").strip()
-
-            self.valid_name = self.isValidAlliancename(self.name)
-            self.valid_tag = (request.session.get(sPrivilege) > 100) or self.isValidAlliancetag(self.tag)
-            self.valid_description = self.isValiddescription(self.description)
-
-            if self.valid_name and self.valid_tag:
-
-                oRs = oConnExecute("SELECT sp_create_alliance(" + str(self.userId) + "," + dosql(self.name) + "," + dosql(self.tag) + "," + dosql(self.description) + ")")
-
-                self.create_result = oRs[0]
-                if self.create_result >= -1:
-                    return HttpResponseRedirect("/s03/alliance/")
-
-        return self.DisplayAllianceCreate()
-
-    #
-    # return if the given self.name is valid for an alliance
-    #
-    def isValidAlliancename(self, myname):
-
-        if myname == "" or len(myname) < 4 or len(myname) > 32:
-            return False
-        else:
-            p = re.compile("^[a-zA-Z0-9]+([ ]?[.]?[\-]?[ ]?[a-zA-Z0-9]+)*$")
-            return p.match(myname)
-
-    #
-    # return if the given self.tag is valid
-    #
-    def isValidAlliancetag(self, tag):
-
-        if tag == "" or len(tag) < 2 or len(tag) > 4:
-            return False
-        else:
-            p = re.compile("^[a-zA-Z0-9]+$")
-            return p.match(tag)
-
-    def isValiddescription(self, description):
-        return len(description) < 8192
-
-    def DisplayAllianceCreate(self):
-
-        content = getTemplate(self.request, "s03/alliance-create")
-
-        if self.profile["can_join_alliance"]:
-            if self.create_result == -2: content.Parse("name_already_used")
-            if self.create_result == -3: content.Parse("tag_already_used")
-
-            if not self.valid_name: content.Parse("invalid_name")
-
-            if not self.valid_tag: content.Parse("invalid_tag")
-
-            content.setValue("name", self.name)
-            content.setValue("tag", self.tag)
-            content.setValue("description", self.description)
-
-            content.Parse("create")
-        else:
-            content.Parse("cant_create")
-
-        return self.display(content)
+        return self.display(tpl)

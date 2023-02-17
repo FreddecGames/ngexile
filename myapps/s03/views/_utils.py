@@ -53,6 +53,28 @@ def isValidObjectName(myName):
         p = re.compile("^[a-zA-Z0-9\- ]+$")
         return p.match(myName)
 
+def isValidAllianceName(myName):
+    
+    myName = myName.strip()
+    
+    if myName == "" or len(myName) < 4 or len(myName) > 32:
+        return False
+    else:
+    
+        p = re.compile("^[a-zA-Z0-9]+([ ]?[.]?[\-]?[ ]?[a-zA-Z0-9]+)*$")
+        return p.match(myName)
+
+def isValidAllianceTag(myTag):
+    
+    myTag = myTag.strip()
+    
+    if myTag == "" or len(myTag) < 2 or len(myTag) > 4:
+        return False
+    else:
+    
+        p = re.compile("^[a-zA-Z0-9]+$")
+        return p.match(myTag)
+
 #--- cast functions
 
 def ToInt(s, defaultValue):
@@ -108,6 +130,10 @@ def oConnExecuteAll(query):
 def oConnDoQuery(query):
 
     cursor.execute(query)
+    
+def dbQuery(query):
+
+    cursor.execute(query)
 
 def dbRow(query):
 
@@ -118,6 +144,12 @@ def dbRows(query):
 
     cursor.execute(query)
     return dict_fetchall(cursor)
+
+def dbExecute(query):
+
+    cursor.execute(query)
+    results = cursor.fetchall()
+    return results[0][0]
 
 def dosql(ch):
 
