@@ -136,11 +136,11 @@ class View(GlobalView):
             self.fleet_split_error = self.e_occupied
             return
 
-        ore = min( ToInt(self.request.POST.get("load_ore"), 0), oRs[2] )
-        hydrocarbon = min( ToInt(self.request.POST.get("load_hydrocarbon"), 0), oRs[3] )
-        scientists = min( ToInt(self.request.POST.get("load_scientists"), 0), oRs[4] )
-        soldiers = min( ToInt(self.request.POST.get("load_soldiers"), 0), oRs[5] )
-        workers = min( ToInt(self.request.POST.get("load_workers"), 0), oRs[6] )
+        ore = max(min(ToInt(self.request.POST.get("load_ore"), 0), oRs[2]), 0)
+        hydrocarbon = max(min(ToInt(self.request.POST.get("load_hydrocarbon"), 0), oRs[3]), 0)
+        scientists = max(min(ToInt(self.request.POST.get("load_scientists"), 0), oRs[4]), 0)
+        soldiers = max(min(ToInt(self.request.POST.get("load_soldiers"), 0), oRs[5]), 0)
+        workers = max(min(ToInt(self.request.POST.get("load_workers"), 0), oRs[6]), 0)
 
         #
         # begin transaction

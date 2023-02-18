@@ -34,7 +34,7 @@ class View(GlobalView):
                 return HttpResponseRedirect('/s03/alliance/')
                 
         return HttpResponseRedirect('/s03/alliance-members/')
-                
+        
     def get(self, request, *args, **kwargs):
 
         action = request.GET.get('a', '').strip()
