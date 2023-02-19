@@ -34,7 +34,7 @@
                         </div>
                         {% if not nap.breaking_time %}
                             <div class="col-2 text-end">
-                                {% if can_create %}<a href="?a=sharelocs&tag={{ nap.tag }}">{% if nap.share_locs %}Oui{% else %}}Non{% endif %}</a>
+                                {% if can_create %}<a href="?a=sharelocs&tag={{ nap.tag }}">{% if nap.share_locs %}Oui{% else %}Non{% endif %}</a>
                                 {% else %}{% if nap.share_locs %}Oui{% else %}Non{% endif %}
                                 {% endif %}
                             </div>
