@@ -96,7 +96,7 @@ class View(GlobalView):
 
         #---
         
-        query = 'SELECT alliances.tag, alliances.name, alliances_naps_offers.created, recruiters.username, declined, date_part(\'epoch\', break_interval)::integer' + \
+        query = 'SELECT alliances.tag, alliances.name, alliances_naps_offers.created, recruiters.username, declined, date_part(\'epoch\', break_interval)::integer AS break_interval' + \
                 ' FROM alliances_naps_offers' + \
                 '  INNER JOIN alliances ON alliances.id = alliances_naps_offers.targetallianceid' + \
                 '  LEFT JOIN users AS recruiters ON recruiters.id = alliances_naps_offers.recruiterid' + \

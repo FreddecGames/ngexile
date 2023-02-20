@@ -205,7 +205,7 @@
             <span class="fs-6">Nos demandes de pacte aux autres alliances</span>
         </div>
         <div class="list-group list-group-flush">
-            {% for request in newnaps %}
+            {% for request in requests %}
                 <div class="list-group-item">
                     <div class="row gx-3 align-items-center">
                         <div class="col">
@@ -221,7 +221,7 @@
                             <script>document.write(formattime({{request.break_interval}}))</script>
                         </div>
                         <div class="col-auto">
-                            {% if not request.declined %}En attente</span>
+                            {% if not request.declined %}<span class="text-yellow">En attente</span>
                             {% else %}<span class="text-danger">Refusée</span>
                             {% endif %}
                         </div>
