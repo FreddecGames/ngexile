@@ -37,7 +37,7 @@ class View(ExileMixin, View):
 
         tpl = getTemplate(self.request, 's03/wait')
 
-        profile = dbRow('SELECT username, FROM users WHERE id=' + str(self.userId))
+        profile = dbRow('SELECT username FROM users WHERE id=' + str(self.userId))
         tpl.setValue('profile', profile)
 
         return render(self.request, tpl.template, tpl.data)
