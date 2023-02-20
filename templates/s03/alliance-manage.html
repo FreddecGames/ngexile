@@ -3,6 +3,54 @@
 {% load bbcode_tags %}
 {% block content %}
 <div class="page-content">
+    <ul class="nav nav-tabs mt-0 mb-3">
+        <li class="nav-item">
+            <a href="/s03/alliance/" class="nav-link">Aperçu</a>
+        </li>
+        {% if show_management %}
+            <li class="nav-item active">
+                <a href="/s03/alliance-manage/" class="nav-link">Gestion</a>
+            </li>
+        {% endif %}
+        {% if show_ranks %}
+            <li class="nav-item">
+                <a href="/s03/alliance-ranks/" class="nav-link">Grades</a>
+            </li>
+        {% endif %}
+        {% if show_members %}
+            <li class="nav-item">
+                <a href="/s03/alliance-members/" class="nav-link">Membres</a>
+            </li>
+        {% endif %}
+        {% if show_members %}
+            <li class="nav-item">
+                <a href="/s03/alliance-recruitment/" class="nav-link">Recrutement</a>
+            </li>
+        {% endif %}
+        <li class="nav-item">
+            <a href="/s03/alliance-naps/" class="nav-link">PNA</a>
+        </li>
+        <li class="nav-item">
+            <a href="/s03/alliance-tributes/" class="nav-link">Tributs</a>
+        </li>
+        <li class="nav-item">
+            <a href="/s03/alliance-wars/" class="nav-link">Guerres</a>
+        </li>
+        <li class="nav-item">
+            <a href="/s03/alliance-wallet/" class="nav-link">Portefeuille</a>
+        </li>
+        {% if show_reports %}
+            <li class="nav-item">
+                <a href="/s03/alliance-reports/" class="nav-link">Rapports</a>
+            </li>
+        {% endif %}
+        <li class="nav-item">
+            <a href="/s03/alliance-invitations/" class="nav-link">Invitations</a>
+        </li>
+    </ul>
+</div>
+<div class="scroll-content" style="height:calc(100% - 52px);">
+<div class="page-content">
     <form method="post" action="?cat={{ cat }}">
         {% csrf_token %}
         <div class="card">
@@ -69,5 +117,6 @@
             </div>
         </div>
     </form>
+</div>
 </div>
 {% endblock %}

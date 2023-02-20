@@ -2,43 +2,65 @@
 {% load humanize %}
 {% block content %}
 <div class="page-content">
-{% if nav %}
     <ul class="nav nav-tabs mt-0 mb-3">
-        {% if cat1 %}
-            <li class="nav-item {% if cat1_selected %}active{% endif %}">
-                <a href="?cat=1" class="nav-link">Tributs perçus</a>
+        <li class="nav-item">
+            <a href="/s03/alliance/" class="nav-link">Aperçu</a>
+        </li>
+        {% if show_management %}
+            <li class="nav-item">
+                <a href="/s03/alliance-manage/" class="nav-link">Gestion</a>
             </li>
         {% endif %}
-        {% if cat2 %}
-            <li class="nav-item {% if cat2_selected %}active{% endif %}">
-                <a href="?cat=2" class="nav-link">Tributs envoyés</a>
+        {% if show_ranks %}
+            <li class="nav-item">
+                <a href="/s03/alliance-ranks/" class="nav-link">Grades</a>
             </li>
         {% endif %}
-        {% if cat3 %}
-            <li class="nav-item {% if cat3_selected %}active{% endif %}">
-                <a href="?cat=3" class="nav-link">Nouveau tribut</a>
+        {% if show_members %}
+            <li class="nav-item">
+                <a href="/s03/alliance-members/" class="nav-link">Membres</a>
             </li>
         {% endif %}
+        {% if show_members %}
+            <li class="nav-item">
+                <a href="/s03/alliance-recruitment/" class="nav-link">Recrutement</a>
+            </li>
+        {% endif %}
+        <li class="nav-item">
+            <a href="/s03/alliance-naps/" class="nav-link">PNA</a>
+        </li>
+        <li class="nav-item active">
+            <a href="/s03/alliance-tributes/" class="nav-link">Tributs</a>
+        </li>
+        <li class="nav-item">
+            <a href="/s03/alliance-wars/" class="nav-link">Guerres</a>
+        </li>
+        <li class="nav-item">
+            <a href="/s03/alliance-wallet/" class="nav-link">Portefeuille</a>
+        </li>
+        {% if show_reports %}
+            <li class="nav-item">
+                <a href="/s03/alliance-reports/" class="nav-link">Rapports</a>
+            </li>
+        {% endif %}
+        <li class="nav-item">
+            <a href="/s03/alliance-invitations/" class="nav-link">Invitations</a>
+        </li>
     </ul>
-{% endif %}
-{% if cat1_selected %}
-    <div class="mb-3">
-        <div class="row gx-3 align-items-center">
-            <div class="col-auto"><span class="text-normal">Trié par</span></div>
-            <div class="col-auto"><a href="?col=1{% if r1 %}&r=1{% endif %}" class="{% if col == 1 %}badge text-bg-primary{% endif %}">Alliance{% if col == 1 %}<i class="ms-1 fa-fw fas {% if r1 %}fa-caret-down{% else %}fa-caret-up{% endif %}"></i>{% endif %}</a></div>
-            <div class="col-auto"><a href="?col=2{% if r2 %}&r=1{% endif %}" class="{% if col == 2 %}badge text-bg-primary{% endif %}">Date{% if col == 2 %}<i class="ms-1 fa-fw fas {% if r3 %}fa-caret-down{% else %}fa-caret-up{% endif %}"></i>{% endif %}</a></div>
-        </div>
-    </div>
-    <div class="card">
+</div>
+<div class="scroll-content" style="height:calc(100% - 52px);">
+<div class="page-content">
+    <div class="card mb-3">
         <div class="card-header">
             <span class="fs-6">Nos tributs</span>
         </div>
         <div class="list-group list-group-flush">
-            {% for item in items %}
+            {% for item in sent_tributes %}
                 <div class="list-group-item">
                     <div class="row gx-3 align-items-center">
                         <div class="col-auto">
-                            {{ item.place }}.
+                            {{ forloop.counter }}
+                            <span class="text-normal">.</span>
                         </div>
                         <div class="col">
                             <a href="/s03/alliance/?tag={{ item.tag }}" data-bs-toggle="tooltip" data-bs-title="Voir alliance">[{{ item.tag }}] {{ item.name }}</a>
@@ -50,9 +72,9 @@
                             <img src="{{ PATH_IMAGES }}img/interface/credits.gif" data-bs-toggle="tooltip" data-bs-title="Crédits" class="res" width="16px" height="16px">
                             {{ item.credits|intcomma }}
                         </div>
-                        {% if cancel %}
+                        {% if can_break %}
                             <div class="col-auto">
-                                <a href="?cat={{ cat }}&a=cancel&tag={{ item.tag }}" class="btn btn-danger">Annuler</a>
+                                <a href="?a=cancel&tag={{ item.tag }}" class="btn btn-danger">Annuler</a>
                             </div>
                         {% endif %}
                     </div>
@@ -62,21 +84,14 @@
                     <span class="text-normal">Aucun</span>
                 </div>
             {% endfor %}
-            {% if message %}
-                <div class="list-group-item text-center">
-                    {% if norights %}<span class="text-danger">Vous n'êtes pas en droit de faire une telle demande</span>{% endif %}
-                    {% if unknown %}<span class="text-danger">Aucune alliance avec un tel tag n'a été trouvée</span>{% endif %}
+            {% for message in messages %}
+                <div class="list-group-item">
+                    <div class="alert alert-{{ message.tags }} text-center">
+                        {% if message.message == 'norights' %}Vous n'êtes pas en droit de faire une telle demande{% endif %}
+                        {% if message.message == 'unknown' %}Aucune alliance avec un tel tag n'a été trouvée{% endif %}
+                    </div>
                 </div>
-            {% endif %}
-        </div>
-    </div>
-{% endif %}
-{% if cat2_selected %}
-    <div class="mb-3">
-        <div class="row gx-3 align-items-center">
-            <div class="col-auto"><span class="text-normal">Trié par</span></div>
-            <div class="col-auto"><a href="?col=1{% if r1 %}&r=1{% endif %}" class="{% if col == 1 %}badge text-bg-primary{% endif %}">Alliance{% if col == 1 %}<i class="ms-1 fa-fw fas {% if r1 %}fa-caret-down{% else %}fa-caret-up{% endif %}"></i>{% endif %}</a></div>
-            <div class="col-auto"><a href="?col=2{% if r2 %}&r=1{% endif %}" class="{% if col == 2 %}badge text-bg-primary{% endif %}">Date{% if col == 2 %}<i class="ms-1 fa-fw fas {% if r3 %}fa-caret-down{% else %}fa-caret-up{% endif %}"></i>{% endif %}</a></div>
+            {% endfor %}
         </div>
     </div>
     <div class="card">
@@ -84,11 +99,12 @@
             <span class="fs-6">Nos tributs perçus</span>
         </div>
         <div class="list-group list-group-flush">
-            {% for item in items %}
+            {% for item in received_tributes %}
                 <div class="list-group-item">
                     <div class="row gx-3 align-items-center">
                         <div class="col-auto">
-                            {{ item.place }}.
+                            {{ forloop.counter }}
+                            <span class="text-normal">.</span>
                         </div>
                         <div class="col">
                             <a href="/s03/alliance/?tag={{ item.tag }}" data-bs-toggle="tooltip" data-bs-title="Voir alliance">[{{ item.tag }}] {{ item.name }}</a>
@@ -112,49 +128,50 @@
             {% endfor %}
         </div>
     </div>
-{% endif %}
-{% if new %}
-<form action="?cat={{ cat }}&a=new" method="post">
-    {% csrf_token %}
-    <div class="card mb-3">
-        <div class="card-header">
-            <span class="fs-6">Créer un virement automatique</span>
+    {% if can_create %}
+    <form action="?" method="post">
+        {% csrf_token %}
+        <div class="card mt-3">
+            <div class="card-header">
+                <span class="fs-6">Créer un virement automatique</span>
+            </div>
+            <div class="card-body">
+                <div class="mb-2 text-center">
+                    <span class="text-normal">Veuillez indiquer le tag de l'alliance à laquelle envoyer les crédits chaque jour.</span>
+                </div>
+                <div class="row gx-2 align-items-center justify-content-center">
+                    <div class="col-auto">
+                        <span>Alliance (tag)</span>
+                    </div>
+                    <div class="col-auto">
+                        <input type="text" class="form-control" name="tag" value="{{ tag }}" maxlength="4" />
+                    </div>
+                    <div class="col-auto">
+                        <span>Crédits</span>
+                    </div>
+                    <div class="col-auto">
+                        <input type="number" class="form-control" name="credits" value="{{ credits }}" maxlength="10" />
+                    </div>
+                    <div class="col-auto">
+                        <img src="{{ PATH_IMAGES }}img/interface/credits.gif" data-bs-toggle="tooltip" data-bs-title="Crédits" class="res" width="16px" height="16px">
+                    </div>
+                    <div class="col-auto">
+                        <input type="submit" class="btn btn-primary" name="submit" value="Envoyer">
+                    </div>
+                </div>
+                {% for message in messages %}
+                    <div class="mt-2">
+                        <div class="alert alert-{{ message.tags }} text-center">
+                            {% if message.message == 'new_norights' %}Vous n'êtes pas en droit de faire une telle demande{% endif %}
+                            {% if message.message == 'new_unknown' %}Aucune alliance avec un tel tag n'a été trouvée{% endif %}
+                            {% if message.message == 'new_already_exists' %}Nous avons déjà un versement automatique avec cette alliance, annuler celui existant et recommencez{% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
         </div>
-        <div class="card-body">
-            <div class="mb-2 text-center">
-                <span class="text-normal">Veuillez indiquer le tag de l'alliance à laquelle envoyer les crédits chaque jour.</span>
-            </div>
-            <div class="row gx-2 align-items-center justify-content-center">
-                <div class="col-auto">
-                    <span>Alliance (tag)</span>
-                </div>
-                <div class="col-auto">
-                    <input type="text" class="form-control" name="tag" value="{{ tag }}" maxlength="4" />
-                </div>
-                <div class="col-auto">
-                    <span>Crédits</span>
-                </div>
-                <div class="col-auto">
-                    <input type="number" class="form-control" name="credits" value="{{ credits }}" maxlength="10" />
-                </div>
-                <div class="col-auto">
-                    <img src="{{ PATH_IMAGES }}img/interface/credits.gif" data-bs-toggle="tooltip" data-bs-title="Crédits" class="res" width="16px" height="16px">
-                </div>
-                <div class="col-auto">
-                    <input type="submit" class="btn btn-primary" name="submit" value="Envoyer">
-                </div>
-            </div>
-            {% if message %}
-            <div class="mt-2 text-center">
-                {% if ok %}<span class="text-success">Tribut automatique créé</span>{% endif %}
-                {% if norights %}<span class="text-danger">Vous n'êtes pas en droit de faire une telle demande</span>{% endif %}
-                {% if unknown %}<span class="text-danger">Aucune alliance avec un tel tag n'a été trouvée</span>{% endif %}
-                {% if already_exists %}<span class="text-danger">Nous avons déjà un versement automatique avec cette alliance, annuler celui existant et recommencez.</span>{% endif %}
-            </div>
-            {% endif %}
-        </div>
-    </div>
-</form>
-{% endif %}
+    </form>
+    {% endif %}
+</div>
 </div>
 {% endblock %}

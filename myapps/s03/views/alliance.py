@@ -20,7 +20,7 @@ class View(GlobalView):
 
         tpl = getTemplate(self.request, 's03/alliance')
 
-        self.selectedMenu = 'alliance.overview'
+        self.selectedMenu = 'alliance'
         
         #---
         

@@ -18,10 +18,10 @@ class View(GlobalView):
         
         if self.allianceRights['can_create_nap']:
         
-            self.tag = request.POST.get('tag', '').strip()
-            self.hours = int(request.POST.get('hours', 0))
+            tag = request.POST.get('tag', '').strip()
+            hours = int(request.POST.get('hours', 0))
 
-            result = dbExecute('SELECT sp_alliance_nap_request(' + str(self.userId) + ',' + dosql(self.tag) + ',' + str(self.hours) + ')')
+            result = dbExecute('SELECT sp_alliance_nap_request(' + str(self.userId) + ',' + dosql(tag) + ',' + str(hours) + ')')
             
             if result == 1: messages.error(request, 'norights')
             elif result == 2: messages.error(request, 'unknown')

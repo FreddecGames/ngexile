@@ -2,53 +2,382 @@
 {% load humanize %}
 {% block content %}
 <div class="page-content">
-<div class="card card-body  mb-3">
-    <div class="row gx-3 align-items-center">
-        <div class="col-auto">
-            <img src="{{ PATH_IMAGES }}img/interface/wallet.jpg" class="rounded" width="64" height="64">
-        </div>
-        <div class="col">
-            <div class="row g-1 flex-column">
-                <div class="col-12">
-                    <span class="text-normal me-2">Solde</span>
-                    {{ credits|intcomma }}
-                </div>
-                <div class="col-12">
-                    <span class="text-normal me-2">Dernière 24 heures</span>
-                    {{ last24h|intcomma }}
-                </div>
-                <div class="col-12">
-                    <span class="text-normal me-2">Taxe</span>
-                    {{ tax|floatformat:1 }}%
-                    {% if notax %}<span class="text-success ms-2">Exonéré</span>{% endif %}
+    <ul class="nav nav-tabs mt-0 mb-3">
+        <li class="nav-item">
+            <a href="/s03/alliance/" class="nav-link">Aperçu</a>
+        </li>
+        {% if show_management %}
+            <li class="nav-item">
+                <a href="/s03/alliance-manage/" class="nav-link">Gestion</a>
+            </li>
+        {% endif %}
+        {% if show_ranks %}
+            <li class="nav-item">
+                <a href="/s03/alliance-ranks/" class="nav-link">Grades</a>
+            </li>
+        {% endif %}
+        {% if show_members %}
+            <li class="nav-item">
+                <a href="/s03/alliance-members/" class="nav-link">Membres</a>
+            </li>
+        {% endif %}
+        {% if show_members %}
+            <li class="nav-item">
+                <a href="/s03/alliance-recruitment/" class="nav-link">Recrutement</a>
+            </li>
+        {% endif %}
+        <li class="nav-item">
+            <a href="/s03/alliance-naps/" class="nav-link">PNA</a>
+        </li>
+        <li class="nav-item">
+            <a href="/s03/alliance-tributes/" class="nav-link">Tributs</a>
+        </li>
+        <li class="nav-item">
+            <a href="/s03/alliance-wars/" class="nav-link">Guerres</a>
+        </li>
+        <li class="nav-item active">
+            <a href="/s03/alliance-wallet/" class="nav-link">Portefeuille</a>
+        </li>
+        {% if show_reports %}
+            <li class="nav-item">
+                <a href="/s03/alliance-reports/" class="nav-link">Rapports</a>
+            </li>
+        {% endif %}
+        <li class="nav-item">
+            <a href="/s03/alliance-invitations/" class="nav-link">Invitations</a>
+        </li>
+    </ul>
+</div>
+<div class="scroll-content" style="height:calc(100% - 52px);">
+<div class="page-content">
+    <div class="card card-body mb-3">
+        <div class="row gx-3 align-items-center">
+            <div class="col-auto">
+                <img src="{{ PATH_IMAGES }}img/interface/wallet.jpg" class="rounded" width="64" height="64">
+            </div>
+            <div class="col">
+                <div class="row g-1 flex-column">
+                    <div class="col-12">
+                        <span class="text-normal me-2">Solde</span>
+                        {{ alliance.credits|intcomma }}
+                    </div>
+                    <div class="col-12">
+                        <span class="text-normal me-2">Dernière 24 heures</span>
+                        {{ alliance.last24h|intcomma }}
+                    </div>
+                    <div class="col-12">
+                        <span class="text-normal me-2">Taxe</span>
+                        {{ alliance.taxrate|floatformat:1 }}%
+                        {% if notax %}<span class="text-success ms-2">Exonéré</span>{% endif %}
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+    <ul class="nav nav-tabs mt-0 mb-3">
+        <li class="nav-item">
+            <button type="button" role="tab" class="nav-link active" data-bs-toggle="tab" data-bs-target="#journal-pane">Journal</a>
+        </li>
+        {% if can_ask or can_accept %}
+        <li class="nav-item">
+            <button type="button" role="tab" class="nav-link" data-bs-toggle="tab" data-bs-target="#request-pane">Financement</a>
+        </li>
+        {% endif %}
+        <li class="nav-item">
+            <button type="button" role="tab" class="nav-link" data-bs-toggle="tab" data-bs-target="#gift-pane">Don</a>
+        </li>
+        {% if can_settax %}
+        <li class="nav-item">
+            <button type="button" role="tab" class="nav-link" data-bs-toggle="tab" data-bs-target="#tax-pane">Taxes</a>
+        </li>
+        {% endif %}
+    </ul>
 </div>
-<ul class="nav nav-tabs mt-0 mb-3">
-    {% if cat1 %}
-        <li class="nav-item {% if cat1_selected %}active{% endif %}">
-            <a href="?cat=1" class="nav-link">Journal</a>
-        </li>
-    {% endif %}
-    {% if cat2 %}
-        <li class="nav-item {% if cat2_selected %}active{% endif %}">
-            <a href="?cat=2" class="nav-link">Financement</a>
-        </li>
-    {% endif %}
-    {% if cat3 %}
-        <li class="nav-item {% if cat3_selected %}active{% endif %}">
-            <a href="?cat=3" class="nav-link">Don</a>
-        </li>
-    {% endif %}
-    {% if cat4 %}
-        <li class="nav-item {% if cat4_selected %}active{% endif %}">
-            <a href="?cat=4" class="nav-link">Taxes</a>
-        </li>
-    {% endif %}
-</ul>
-{% block page %}</div>
-{% endblock %}
+<div class="scroll-content" style="height:calc(100% - 158px);">
+    <div class="page-content">
+        <div class="tab-content">
+            <div class="tab-pane fade show active" id="journal-pane" role="tabpanel" tabindex="0">
+                <form action="?" method="get">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <div class="row gx-3 align-items-center">
+                            <div class="col-auto">
+                                <span class="text-normal">Filtres</span>
+                            </div>
+                            <div class="col-auto">
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="gifts" name="gifts" value="1" {% if filters.displaygiftsrequests %}checked{% endif %}>
+                                    <label class="form-check-label" for="gifts">Financements et dons</label>
+                                </div>
+                            </div>
+                            <div class="col-auto">
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="settax" name="settax" value="1" {% if filters.displaysettax %}checked{% endif %}>
+                                    <label class="form-check-label" for="settax">Modifications de taxe</label>
+                                </div>
+                            </div>
+                            <div class="col-auto">
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="taxes" name="taxes" value="1" {% if filters.displaytaxes %}checked{% endif %}>
+                                    <label class="form-check-label" for="taxes">Taxes collectées</label>
+                                </div>
+                            </div>
+                            <div class="col-auto">
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="kicksbreaks" name="kicksbreaks" value="1" {% if filters.displaykicksbreaks %}checked{% endif %}>
+                                    <label class="form-check-label" for="kicksbreaks">Exclusions et Ruptures de pacte</label>
+                                </div>
+                            </div>
+                            <div class="col-auto">
+                                <input type="submit" class="btn btn-primary" name="refresh" value="Actualiser">
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                <div class="card">
+                    <div class="list-group list-group-flush">
+                        {% for entry in entries %}
+                            <div class="list-group-item {% if  entry.type == 0 %}bg-success{% elif entry.type == 4 %}bg-info{% elif entry.type == 2 %}bg-danger{% endif %}">
+                                <div class="row gx-3 align-items-center">
+                                    <div class="col-2">
+                                        <span class="text-normal">{{ entry.date }}</span>
+                                    </div>
+                                    <div class="col-3">
+                                        {% if entry.type == 0 %}Don{% endif %}
+                                        {% if entry.type == 1 %}Taxe{% endif %}
+                                        {% if entry.type == 2 %}Départ du membre{% endif %}
+                                        {% if entry.type == 3 %}Financement{% endif %}
+                                        {% if entry.type == 4 %}Taxe changée{% endif %}
+                                        {% if entry.type == 5 %}Exclusion du membre{% endif %}
+                                        {% if entry.type == 10 or entry.type == 11 %}PNA rompu{% endif %}
+                                        {% if entry.type == 12 %}Guerre{% endif %}
+                                        {% if entry.type == 20 %}Tribut{% endif %}
+                                    </div>
+                                    <div class="col">
+                                        {% if entry.source %}{{ entry.source }}{% endif %}
+                                        {% if entry.destination %}{{ entry.destination }}{% endif %}
+                                    </div>
+                                    {% if entry.credits > 0 %}
+                                    <div class="col-auto">
+                                        <span class="text-success">+{{ entry.credits|intcomma }}</span>
+                                    </div>
+                                    {% elif entry.credits < 0 %}
+                                    <div class="col-auto">
+                                        <span class="text-danger">-{{ entry.credits|intcomma }}</span>
+                                    </div>
+                                    {% endif %}
+                                    {% if entry.description %}
+                                    <div class="col-auto">
+                                        {% if entry.entry.type == 4 %}Nouvelle taxe{% endif %}
+                                        {{ entry.description }}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        {% empty %}
+                            <div class="list-group-item text-center">
+                                <span class="text-normal">Aucun mouvement effectué récemment</span>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="request-pane" role="tabpanel" tabindex="0">
+                {% if can_ask %}
+                    <form action="?" method="post">
+                        {% csrf_token %}
+                        <div class="card">
+                            <div class="card-header">
+                                <span class="fs-6">Demande de financement</span>
+                            </div>
+                            <div class="card-body">
+                                <div class="row gy-1 gx-3 align-items-center">
+                                    <div class="col-4 text-end">
+                                        <span class="text-normal">Trésorerie</span>
+                                    </div>
+                                    <div class="col-8">
+                                        {{ user.credits|intcomma }} <span class="text-normal">crédits</span>
+                                    </div>
+                                    <div class="col-4 text-end">
+                                        <span class="text-normal">Financement</span>
+                                    </div>
+                                    <div class="col-8 d-flex align-items-center">
+                                        <input type="number" class="form-control" min="0" name="credits" value="{{ user_request.credits }}" size="8" maxlength="8">
+                                        <span class="ms-2 text-normal">crédits</span>
+                                    </div>
+                                    <div class="col-4 text-end">
+                                        <span class="text-normal">Description</span>
+                                    </div>
+                                    <div class="col-8">
+                                        <input type="text" class="form-control" name="description" value="{{ user_request.description }}" size="64" maxlength="64">
+                                    </div>
+                                    {% if user_request %}
+                                        <div class="col-4 text-end">
+                                            <span class="text-normal">Etat</span>
+                                        </div>
+                                        <div class="col-8">
+                                            {% if user_request.result %}<span class="text-success">En cours ...</span>
+                                            {% else %}<span class="text-danger">Demande refusée</span>
+                                            {% endif %}
+                                        </div>
+                                    {% endif %}
+                                    <div class="col-4 text-end">
+                                    </div>
+                                    <div class="col-8">
+                                        {% if user_request %}<input type="submit" class="btn btn-danger" name="cancel" value="Annuler">
+                                        {% else %}<input type="submit" class="btn btn-primary" name="request" value="Demander">
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                {% endif %}
+                {% if can_accept %}
+                    <div class="mt-3 card">
+                        <div class="card-header">
+                            <span class="fs-6">En tant que trésorier, vous pouvez accepter ou refuser les demandes d'argent</span>
+                        </div>
+                        <div class="list-group list-group-flush">
+                            {% for entry in requests %}
+                                <div class="list-group-item">
+                                    <div class="row gx-3 align-items-center">
+                                        <div class="col-2">
+                                            <span class="text-normal">{{ entry.datetime }}</span>
+                                        </div>
+                                        <div class="col">
+                                            {{ entry.username }}
+                                        </div>
+                                        <div class="col-auto">
+                                            {{ entry.credits|intcomma }} <span class="text-normal">crédits</span>
+                                        </div>
+                                        <div class="col-auto">
+                                            <span class="text-normal">{{ entry.description }}</span>
+                                        </div>
+                                        <div class="col-auto">
+                                            <a href="?a=deny&id={{ entry.id }}" class="btn btn-danger">Refuser</a>
+                                        </div>
+                                        <div class="col-auto">
+                                            <a href="?a=accept&id={{ entry.id }}" class="btn btn-primary">Accepter</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% empty %}
+                                <div class="list-group-item text-center">
+                                    <span class="text-normal">Aucune demande</span>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+            <div class="tab-pane fade" id="gift-pane" role="tabpanel" tabindex="0">
+                <form action="?" method="post">
+                    {% csrf_token %}
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="fs-6">Don d'argent</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="row gy-1 gx-3 align-items-center">
+                                <div class="col-4 text-end">
+                                    <span class="text-normal">Trésorerie</span>
+                                </div>
+                                <div class="col-8">
+                                    {{ user.credits|intcomma }} <span class="text-normal">crédits</span>
+                                </div>
+                                <div class="col-4 text-end">
+                                    <span class="text-normal">Somme</span>
+                                </div>
+                                <div class="col-8 d-flex align-items-center">
+                                    <input type="number" class="form-control" min="0" name="credits" value="" size="8" maxlength="8">
+                                    <span class="ms-2 text-normal">crédits</span>
+                                </div>
+                                <div class="col-4 text-end">
+                                    <span class="text-normal">Description</span>
+                                </div>
+                                <div class="col-8">
+                                    <input type="text" class="form-control" name="description" value="{{ description }}" size="64" maxlength="64">
+                                </div>
+                                <div class="col-4 text-end">
+                                </div>
+                                <div class="col-8">
+                                    {% if can_give %}<input type="submit" class="btn btn-primary" name="give" value="Donner">
+                                    {% else %}<span class="text-danger">Impossible de faire un don avant deux semaines de jeu</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                {% if can_accept %}
+                    <div class="mt-3 card">
+                        <div class="card-header">
+                            <span class="fs-6">Dons d'argent ces 7 derniers jours</span>
+                        </div>
+                        <div class="list-group list-group-flush">
+                            {% for entry in gifts %}
+                                <div class="list-group-item">
+                                    <div class="row gx-3 align-items-center">
+                                        <div class="col-2">
+                                            <span class="text-normal">{{ entry.datetime }}</span>
+                                        </div>
+                                        <div class="col">
+                                            {{ entry.source }}
+                                        </div>
+                                        <div class="col-auto">
+                                            {{ entry.credits|intcomma }} <span class="text-normal">crédits</span>
+                                        </div>
+                                        <div class="col-auto">
+                                            <span class="text-normal">{{ entry.description }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% empty %}
+                                <div class="list-group-item text-center">
+                                    <span class="text-normal">Aucun don</span>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+            {% if can_settax %}
+            <div class="tab-pane fade" id="tax-pane" role="tabpanel" tabindex="0">
+                <form action="?" method="post">
+                    {% csrf_token %}
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="fs-6">Taxes</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-2 text-center">
+                                <span class="text-normal">Veuillez choisir un taux de taxe pour tous les membres de l'alliance. Chaque vente effectuée auprès de la guilde marchande se verra taxé par le taux établi par le responsable de l'alliance ou le trésorier. Les membres de l'alliance ayant moins de 2 planètes sont exonérés de cette taxe.</span>
+                            </div>
+                            <div class="row gx-2 align-items-center justify-content-center">
+                                <div class="col-auto">
+                                    <span class="text-normal">Taux</span>
+                                </div>
+                                <div class="col-auto">
+                                    <select class="form-control" name="taxrates">
+                                        {% for tax in taxes %}
+                                            <option value="{{ tax.taxrates }}" {% if tax.taxrates == alliance.tax %}selected{% endif %}>
+                                                {{ tax.tax }}
+                                            </option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="col-auto">
+                                    <input type="submit" class="btn btn-primary" name="tax" value="Modifier">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
 </div>
 {% endblock %}

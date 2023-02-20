@@ -124,6 +124,7 @@ class GlobalView(ExileMixin, View):
         
         tpl.setValue("profile_credits", self.profile["credits"])
         tpl.setValue("profile_prestige_points", self.profile["prestige_points"])
+        tpl.setValue("profile_alliance_id", self.allianceId)
         
         #---
         

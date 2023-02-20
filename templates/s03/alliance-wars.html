@@ -2,34 +2,60 @@
 {% load humanize %}
 {% block content %}
 <div class="page-content">
-<script>
-    function confirmStopWar(tag) {
-    
-        return confirm("Êtes-vous sûr de vouloir arrêter la guerre avec [" + tag + "] ?");
-    }
-</script>
-{% if nav %}
     <ul class="nav nav-tabs mt-0 mb-3">
-        {% if cat1 %}
-            <li class="nav-item {% if cat1_selected %}active{% endif %}">
-                <a href="?cat=1" class="nav-link">Guerres en cours</a>
+        <li class="nav-item">
+            <a href="/s03/alliance/" class="nav-link">Aperçu</a>
+        </li>
+        {% if show_management %}
+            <li class="nav-item">
+                <a href="/s03/alliance-manage/" class="nav-link">Gestion</a>
             </li>
         {% endif %}
-        {% if cat2 %}
-            <li class="nav-item {% if cat2_selected %}active{% endif %}">
-                <a href="?cat=2" class="nav-link">Déclaration de guerre</a>
+        {% if show_ranks %}
+            <li class="nav-item">
+                <a href="/s03/alliance-ranks/" class="nav-link">Grades</a>
             </li>
         {% endif %}
+        {% if show_members %}
+            <li class="nav-item">
+                <a href="/s03/alliance-members/" class="nav-link">Membres</a>
+            </li>
+        {% endif %}
+        {% if show_members %}
+            <li class="nav-item">
+                <a href="/s03/alliance-recruitment/" class="nav-link">Recrutement</a>
+            </li>
+        {% endif %}
+        <li class="nav-item">
+            <a href="/s03/alliance-naps/" class="nav-link">PNA</a>
+        </li>
+        <li class="nav-item">
+            <a href="/s03/alliance-tributes/" class="nav-link">Tributs</a>
+        </li>
+        <li class="nav-item active">
+            <a href="/s03/alliance-wars/" class="nav-link">Guerres</a>
+        </li>
+        <li class="nav-item">
+            <a href="/s03/alliance-wallet/" class="nav-link">Portefeuille</a>
+        </li>
+        {% if show_reports %}
+            <li class="nav-item">
+                <a href="/s03/alliance-reports/" class="nav-link">Rapports</a>
+            </li>
+        {% endif %}
+        <li class="nav-item">
+            <a href="/s03/alliance-invitations/" class="nav-link">Invitations</a>
+        </li>
     </ul>
-{% endif %}
-{% if cat1_selected %}
-    <div class="mb-3">
-        <div class="row gx-3 align-items-center">
-            <div class="col-auto"><span class="text-normal">Trié par</span></div>
-            <div class="col-auto"><a href="?col=1{% if r1 %}&r=1{% endif %}" class="{% if col == 1 %}badge text-bg-primary{% endif %}">Alliance{% if col == 1 %}<i class="ms-1 fa-fw fas {% if r1 %}fa-caret-down{% else %}fa-caret-up{% endif %}"></i>{% endif %}</a></div>
-            <div class="col-auto"><a href="?col=2{% if r2 %}&r=1{% endif %}" class="{% if col == 2 %}badge text-bg-primary{% endif %}">Date{% if col == 2 %}<i class="ms-1 fa-fw fas {% if r3 %}fa-caret-down{% else %}fa-caret-up{% endif %}"></i>{% endif %}</a></div>
-        </div>
-    </div>
+</div>
+<div class="scroll-content" style="height:calc(100% - 52px);">
+<div class="page-content">
+    <script>
+        function confirmStopWar(tag) {
+        
+            return confirm("Êtes-vous sûr de vouloir arrêter la guerre avec [" + tag + "] ?");
+        }
+    </script>
     <div class="card">
         <div class="card-header">
             <span class="fs-6">Guerres</span>
@@ -39,7 +65,8 @@
                 <div class="list-group-item">
                     <div class="row gx-3 align-items-center">
                         <div class="col-auto">
-                            {{ war.place }}.
+                            {{ forloop.counter }}
+                            <span class="text-normal">.</span>
                         </div>
                         <div class="col">
                             <a href="/s03/alliance/?tag={{ war.tag }}" data-bs-toggle="tooltip" data-bs-title="Voir alliance">[{{ war.tag }}] {{ war.name }}</a>
@@ -48,24 +75,26 @@
                             <span class="text-normal">{{ war.created }}</span>
                         </div>
                         <div class="col-auto">
-                            {% if war.cant_fight %}<span class="text-success">Préparation en cours</span>
+                            {% if not war.can_fight %}<span class="text-success">Préparation en cours</span>
                             {% else %}{{ war.next_bill }}
                             {% endif %}
                         </div>
-                        {% if war.extend %}
+                        {% if can_create %}
                         <div class="col-auto">
-                            <a href="?cat={{ cat }}&a=pay&tag={{ war.tag }}">Étendre la guerre d'une semaine</a>
+                            <a href="?a=pay&tag={{ war.tag }}">Étendre la guerre d'une semaine</a>
                             <img src="{{ PATH_IMAGES }}img/interface/credits.gif" data-bs-toggle="tooltip" data-bs-title="Crédits" class="res" width="16px" height="16px">
                             {{ war.cost|intcomma }}
                         </div>
                         {% endif %}
                         <div class="col-auto">
                             {% if war.ceasing %}Fin de guerre demandée <span class="ms-2 text-yellow"><script>putcountdown1({{war.time }}, "Terminé", "?")</script></span>{% endif %}
-                            {% if war.cease_requested %}
-                                <a href="?cat={{ cat }}&a=cease&tag={{ war.tag }}" class="btn btn-primary">Accepter la fin de la guerre <span class="ms-2 text-yellow"><script>putcountdown1({{war.time}}, "Terminé", "?")</script></span></a>
-                            {% endif %}
-                            {% if war.stop %}
-                                <a href="?cat={{ cat }}&a=stop&tag={{ war.tag }}" class="btn btn-danger" onclick="return confirmStopWar('{{ war.tag }}')">Arrêter la guerre</a>
+                            {% if can_break %}
+                                {% if war.cease_requested %}
+                                    <a href="?a=cease&tag={{ war.tag }}" class="btn btn-primary">Accepter la fin de la guerre <span class="ms-2 text-yellow"><script>putcountdown1({{war.time}}, "Terminé", "?")</script></span></a>
+                                {% endif %}
+                                {% if war.stop %}
+                                    <a href="?a=stop&tag={{ war.tag }}" class="btn btn-danger" onclick="return confirmStopWar('{{ war.tag }}')">Arrêter la guerre</a>
+                                {% endif %}
                             {% endif %}
                         </div>
                     </div>
@@ -75,84 +104,91 @@
                     <span class="text-normal">Aucune</span>
                 </div>
             {% endfor %}
-            {% if message %}
-                <div class="list-group-item text-center">
-                    {% if norights %}<span class="text-danger">Vous n'êtes pas en droit de faire une telle demande</span>{% endif %}
-                    {% if unknown %}<span class="text-danger">Aucune alliance avec un tel tag n'a été trouvée</span>{% endif %}
-                    {% if war_not_found %}<span class="text-danger">Nous ne sommes pas en guerre avec cette alliance</span>{% endif %}
+            {% for message in messages %}
+                <div class="list-group-item">
+                    <div class="alert alert-{{ message.tags }} text-center">
+                        {% if message.message == 'norights' %}Vous n'êtes pas en droit de faire une telle demande{% endif %}
+                        {% if message.message == 'unknown' %}Aucune alliance avec un tel tag n'a été trouvée{% endif %}
+                        {% if message.message == 'war_not_found' %}Nous ne sommes pas en guerre avec cette alliance{% endif %}
+                    </div>
                 </div>
-            {% endif %}
+            {% endfor %}
         </div>
     </div>
-{% endif %}
-{% if cat2_selected %}
-    {% if newwar %}
-        <form action="?cat={{ cat }}&a=new" method="post">
-            {% csrf_token %}
-            <div class="card">
-                <div class="card-header">
-                    <span class="fs-6">Déclarer la guerre</span>
+    {% if can_create %}
+        {% if not newwar_confirm %}
+            <form action="?" method="get">
+                {% csrf_token %}
+                <input type="hidden" name="a" value="new" />
+                <div class="card mt-3">
+                    <div class="card-header">
+                        <span class="fs-6">Déclarer la guerre</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-2 text-center">
+                            <span class="text-normal">Veuillez indiquer le tag de l'alliance à laquelle déclarer la guerre.<br>Le coût est proportionnel à la force des alliances actuellement en guerre contre l'alliance ciblée.</span>
+                        </div>
+                        <div class="row gx-2 align-items-center justify-content-center">
+                            <div class="col-auto">
+                                <span>Alliance (tag)</span>
+                            </div>
+                            <div class="col-auto">
+                                <input type="text" class="form-control" name="tag" value="{{ tag }}" maxlength="4" />
+                            </div>
+                            <div class="col-auto">
+                                <input type="submit" class="btn btn-primary" name="submit" value="Envoyer">
+                            </div>
+                        </div>
+                        {% for message in messages %}
+                            <div class="mt-2">
+                                <div class="alert alert-{{ message.tags }} text-center">
+                                    {% if message.message == 'new_norights' %}Vous n'êtes pas en droit de faire une telle demande{% endif %}
+                                    {% if message.message == 'new_unknown' %}Aucune alliance avec un tel tag n'a été trouvée{% endif %}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
                 </div>
-                <div class="card-body">
-                    <div class="mb-2 text-center">
-                        <span class="text-normal">Veuillez indiquer le tag de l'alliance à laquelle déclarer la guerre.<br>Le coût est proportionnel à la force des alliances actuellement en guerre contre l'alliance ciblée.</span>
+            </form>
+        {% else %}
+            <form action="?" method="post">
+                {% csrf_token %}
+                <input type="hidden" name="tag" value="{{ newwar.tag }}"/>
+                <div class="card mt-3">
+                    <div class="card-header">
+                        <span class="fs-6">Déclaration de guerre</span>
                     </div>
-                    <div class="row gx-2 align-items-center justify-content-center">
-                        <div class="col-auto">
-                            <span>Alliance (tag)</span>
+                    <div class="card-body">
+                        <div class="mb-2 text-center">
+                            <span class="text-normal">Veuillez confirmer la déclaration de guerre à l'encontre de l'alliance <span class="text-white">[{{ newwar.tag }}] {{ newwar.name }}</span>.</span>
                         </div>
-                        <div class="col-auto">
-                            <input type="text" class="form-control" name="tag" value="{{ tag }}" maxlength="4" />
+                        <div class="row gx-2 align-items-center justify-content-center">
+                            <div class="col-auto">
+                                <span class="text-normal">Coût</span>
+                            </div>
+                            <div class="col-auto">
+                                <img src="{{ PATH_IMAGES }}img/interface/credits.gif" data-bs-toggle="tooltip" data-bs-title="Crédits" class="res" width="16px" height="16px">
+                                {{ newwar.cost|intcomma }}
+                                <span class="text-normal">par semaine</span>
+                            </div>
+                            <div class="col-auto">
+                                <input type="submit" class="btn btn-primary" name="submit" value="Confirmer">
+                            </div>
                         </div>
-                        <div class="col-auto">
-                            <input type="submit" class="btn btn-primary" name="submit" value="Envoyer">
-                        </div>
+                        {% for message in messages %}
+                            <div class="mt-2">
+                                <div class="alert alert-{{ message.tags }} text-center">
+                                    {% if message.message == 'new_norights' %}Vous n'êtes pas en droit de faire une telle demande{% endif %}
+                                    {% if message.message == 'new_unknown' %}Aucune alliance avec un tel tag n'a été trouvée{% endif %}
+                                    {% if message.message == 'not_enough_credits' %}Pas assez de crédits !{% endif %}
+                                </div>
+                            </div>
+                        {% endfor %}
                     </div>
-                    {% if message %}
-                    <div class="mt-2 text-center">
-                        {% if norights %}<span class="text-danger">Vous n'êtes pas en droit de faire une telle demande</span>{% endif %}
-                        {% if unknown %}<span class="text-danger">Aucune alliance avec un tel tag n'a été trouvée</span>{% endif %}
-                    </div>
-                    {% endif %}
                 </div>
-            </div>
-        </form>
+            </form>
+        {% endif %}
     {% endif %}
-    {% if newwar_confirm %}
-        <form action="?cat={{ cat }}&a=new2" method="post">
-            {% csrf_token %}
-            <input type="hidden" name="tag" value="{{ tag }}"/>
-            <div class="card">
-                <div class="card-header">
-                    <span class="fs-6">Déclaration de guerre</span>
-                </div>
-                <div class="card-body">
-                    <div class="mb-2 text-center">
-                        <span class="text-normal">Veuillez confirmer la déclaration de guerre à l'encontre de l'alliance <span class="text-white">[{{ tag }}] {{ name }}</span>.</span>
-                    </div>
-                    <div class="row gx-2 align-items-center justify-content-center">
-                        <div class="col-auto">
-                            <span class="text-normal">Coût</span>
-                        </div>
-                        <div class="col-auto">
-                            <img src="{{ PATH_IMAGES }}img/interface/credits.gif" data-bs-toggle="tooltip" data-bs-title="Crédits" class="res" width="16px" height="16px">
-                            {{ cost|intcomma }}
-                        </div>
-                        <div class="col-auto">
-                            <input type="submit" class="btn btn-primary" name="submit" value="Confirmer">
-                        </div>
-                    </div>
-                    {% if message %}
-                    <div class="mt-2 text-center">
-                        {% if ok %}<span class="text-success">Guerre déclarée</span>{% endif %}
-                        {% if norights %}<span class="text-danger">Vous n'êtes pas en droit de faire une telle demande</span>{% endif %}
-                        {% if not_enough_credits %}<span class="text-danger">Pas assez de crédits !</span>{% endif %}
-                    </div>
-                    {% endif %}
-                </div>
-            </div>
-        </form>
-    {% endif %}
-{% endif %}
+</div>
 </div>
 {% endblock %}

@@ -2,6 +2,17 @@
 {% load humanize %}
 {% block content %}
 <div class="page-content">
+    <ul class="nav nav-tabs mt-0 mb-3">
+        <li class="nav-item">
+            <a href="/s03/alliance-invitations/" class="nav-link">Invitations</a>
+        </li>
+        <li class="nav-item active">
+            <a href="/s03/alliance-create/" class="nav-link">Création</a>
+        </li>
+    </ul>
+</div>
+<div class="scroll-content" style="height:calc(100% - 52px);">
+<div class="page-content">
 {% if can_join_alliance %}
     <form method="post" action="?">
         {% csrf_token %}
@@ -48,5 +59,6 @@
         <span class="text-danger">Vous avez récemment quitté une alliance, il vous est actuellement impossible de créer une alliance.</span>
     </div>
 {% endif %}
+</div>
 </div>
 {% endblock %}
