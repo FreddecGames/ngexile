@@ -125,12 +125,8 @@ class View(GlobalView):
         if request.GET.get("a", "") == "ignore":
             oConnExecute("SELECT sp_ignore_sender(" + str(self.userId) + "," + dosql(request.GET.get("user")) + ")")
 
-            return self.return_ignored_users
-
         if request.GET.get("a", "") == "unignore":
             oConnDoQuery("DELETE FROM messages_ignore_list WHERE userid=" + str(self.userId) + " AND ignored_userid=(SELECT id FROM users WHERE lower(username)=lower(" + dosql(request.GET.get("user")) + "))")
-
-            return self.return_ignored_users()
 
         if self.compose:
             return self.display_compose_form(self.mailto, self.mailsubject, self.mailbody, self.moneyamount)
@@ -417,21 +413,6 @@ class View(GlobalView):
         if i == 0: content.Parse("noignorednations")
 
         return self.display(content)
-
-    def return_ignored_users(self):
-
-        content = getTemplate(self.request, "s03/mails")
-
-        oRss = oConnExecuteAll("SELECT sp_get_user(ignored_userid) FROM messages_ignore_list WHERE userid=" + userid)
-        list = []
-        for oRs in oRss:
-            item = {}
-            list.append(item)
-            
-            item["user"] = oRs[0]
-            content.Parse("ignored_user")
-
-        response.write(content.Output)
 
     # quote reply
     def quote_mail(self, body):
