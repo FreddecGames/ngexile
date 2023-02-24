@@ -9,318 +9,174 @@ class View(GlobalView):
         response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
         
-        self.selectedMenu = "planet"
+        return super().dispatch(request, *args, **kwargs)
+
+    def get(self, request, *args, **kwargs):
+        
+        action = request.GET.get("a", "").lower()
+        
+        #---
+        
+        if action == "build":
+            buildingId = ToInt(request.GET.get("b"), "")
+            dbExecute("SELECT sp_start_building(" + str(self.userId) + "," + str(self.currentPlanetId) + ", " + str(buildingId) + ", false)")
+            return HttpResponseRedirect('/s03/buildings/')
+        
+        #---
+        
+        elif action== "cancel":
+            buildingId = ToInt(request.GET.get("b"), "")
+            dbExecute("SELECT sp_cancel_building(" + str(self.userId) + "," + str(self.currentPlanetId) + ", " + str(buildingId) + ")")
+            return HttpResponseRedirect('/s03/buildings/')
+        
+        #---
+        
+        elif action== "destroy":
+            buildingId = ToInt(request.GET.get("b"), "")
+            dbExecute("SELECT sp_destroy_building(" + str(self.userId) + "," + str(self.currentPlanetId) + "," + str(buildingId) + ")")
+            return HttpResponseRedirect('/s03/buildings/')
+        
+        #---
         
         self.showHeader = True
+        self.selectedMenu = "planet"
         
-        Action = request.GET.get("a", "").lower()
-        BuildingId = ToInt(request.GET.get("b"), "")
-        
-        if BuildingId != "":
-            BuildingId = BuildingId
-        
-            if Action == "build":
-                self.StartBuilding(BuildingId)
-        
-            elif Action== "cancel":
-                self.CancelBuilding(BuildingId)
-    
-            elif Action== "destroy":
-                self.DestroyBuilding(BuildingId)
+        content = getTemplate(self.request, "s03/buildings")
                 
-        self.RetrievePlanetInfo()
-        return self.ListBuildings()
-
-    def RetrievePlanetInfo(self):
-        # Retrieve recordset of current planet
-        query = "SELECT ore, hydrocarbon, workers-workers_busy, workers_capacity - workers, energy, " + \
-                " floor - floor_occupied, space - space_occupied," + \
-                " mod_production_ore, mod_production_hydrocarbon, mod_production_energy," + \
-                " ore_capacity, hydrocarbon_capacity," + \
-                " scientists, scientists_capacity, soldiers, soldiers_capacity, energy_production-energy_consumption" + \
+        #---
+        
+        query = "SELECT mod_production_ore, mod_production_hydrocarbon, mod_production_energy," + \
+                " (floor - floor_occupied) AS free_floor, (space - space_occupied) AS free_space," + \
+                " ore, hydrocarbon, workers, scientists, soldiers, (workers - workers_busy) AS free_workers," + \
+                " ore_capacity, hydrocarbon_capacity, workers_capacity, scientists_capacity, soldiers_capacity" + \
                 " FROM vw_planets" + \
                 " WHERE id=" + str(self.currentPlanetId)
-        oRs = oConnExecute(query)
-    
-        if oRs == None: return
-    
-        self.OreBonus = oRs[7]
-        self.HydroBonus = oRs[8]
-        self.EnergyBonus = oRs[9]
-        self.pOre = oRs[0]
-        self.pHydrocarbon = oRs[1]
-        self.pWorkers = oRs[2]
-        self.pVacantWorkers = oRs[3]
-        self.pEnergy = oRs[4]
-        self.pFloor = oRs[5]
-        self.pSpace = oRs[6]
-        self.pBonusEnergy = oRs[9]
-        self.pOreCapacity = oRs[10]
-        self.pHydrocarbonCapacity = oRs[11]
-    
-        self.pScientists = oRs[12]
-        self.pScientistsCapacity = oRs[13]
-        self.pSoldiers = oRs[14]
-        self.pSoldiersCapacity = oRs[15]
-    
-        # Retrieve buildings of current planet
-        query = "SELECT planetid, buildingid, quantity FROM planet_buildings WHERE quantity > 0 AND planetid=" + str(self.currentPlanetId)
-        oPlanetBuildings = oConnExecute(query)
+        planet = dbRow(query)
         
-        if not oPlanetBuildings:
-            self.buildingsCount = -1
-        else:
-            self.buildingsArray = oPlanetBuildings
-            self.buildingsCount = len(self.buildingsArray)
-    
-    # check if we already have this building on the planet and return the number of this building on this planet
-    def BuildingQuantity(self, BuildingId):
-    
-        Quantity = 0
-    
-        for i in self.buildingsArray:
-            if BuildingId == i[1]:
-                Quantity = int(i[2])
-                break
-                
-        return Quantity
-    
-    # check if some buildings on the planet requires the presence of the given building
-    def HasBuildingThatDependsOn(self, BuildingId):
-        ret = False
-    
-        for i in retrieveBuildingsReqCache():
-            if BuildingId == i[1]:
-                requiredBuildId = i[0]
-    
-                if self.BuildingQuantity(requiredBuildId) > 0:
-                    ret = True
-                    break
-                    
-        return ret
-    
-    def HasEnoughWorkersToDestroy(self, BuildingId):
-        ret = True
-        
-        for i in retrieveBuildingsCache():
-            if BuildingId == i[0]:
-                if i[5]/2 > self.pWorkers:
-                    ret = False
-                    break
-                    
-        return ret
-    
-    def HasEnoughStorageAfterDestruction(self, BuildingId):
-        ret = True
-    
-        # 1/ if we want to destroy a building that increase max population: check that 
-        # the population is less than the limit after the building destruction
-        # 2/ if the building produces energy, check that there will be enough energy after
-        # the building destruction
-        # 3/ if the building increases the capacity of ore or hydrocarbon, check that there is not
-        # too much ore/hydrocarbon
-        for i in retrieveBuildingsCache():
-            if BuildingId == i[0]:
-                if i[1] > 0 and self.pVacantWorkers < i[1]:
-                    ret = False
-                    break
-    
-                # check if scientists/soldiers are lost
-                if self.pScientists > self.pScientistsCapacity-i[6]:
-                    ret = False
-                    break
-    
-                if self.pSoldiers > self.pSoldiersCapacity-i[7]:
-                    ret = False
-                    break
-    
-                # check if a storage building is destroyed
-                if self.pOre > self.pOreCapacity-i[3]:
-                    ret = False
-                    break
-    
-                if self.pHydrocarbon > self.pHydrocarbonCapacity-i[4]:
-                    ret = False
-                    break
-                    
-        return ret
+        #---
 
-    def getBuildingMaintenanceWorkers(self, BuildingId):
-        ret = 0
-    
-        for i in retrieveBuildingsCache():
-            if BuildingId == i[0]:
-                ret = i[11]
-                break
-                    
-        return ret
-    
-    # List all the available buildings
-    def ListBuildings(self):
-    
-        # list buildings that can be built on the planet
-        query = "SELECT id, category, cost_prestige, cost_ore, cost_hydrocarbon, cost_energy, cost_credits, workers, floor, space," + \
-                "construction_maximum, quantity, build_status, construction_time, destroyable, '', production_ore, production_hydrocarbon, energy_production, buildings_requirements_met, destruction_time," + \
-                "upkeep, energy_consumption, buildable" + \
-                " FROM vw_buildings" + \
-                " WHERE planetid=" + str(self.currentPlanetId) + " AND ((buildable AND research_requirements_met) or quantity > 0)"
-    
-        oRss = oConnExecute(query)
-        content = getTemplate(self.request, "s03/buildings")
-    
-        content.setValue("planetid", str(self.currentPlanetId))
-    
-        cat_id = -1
-        lastCategory = -1
+        query = "SELECT buildingid, quantity FROM planet_buildings WHERE quantity > 0 AND planetid=" + str(self.currentPlanetId)
+        results = dbRows(query)
+        
+        planetBuildings = {}
+        for result in results:
+            planetBuildings[str(result['buildingid'])] = result['quantity']
             
+        #---
+        
+        query = "SELECT buildingid, required_buildingid" + \
+                " FROM db_buildings_req_building" + \
+                "  INNER JOIN db_buildings ON (db_buildings.id=db_buildings_req_building.buildingid)" + \
+                " WHERE db_buildings.destroyable"
+        results = dbRows(query)
+        
+        buildReqs = {}
+        for result in results:
+            if str(result['buildingid']) in planetBuildings:
+                buildReqs[str(result['required_buildingid'])] = result['buildingid']
+        
+        #---
+        
+        query = "SELECT vw_buildings.id, vw_buildings.category, vw_buildings.cost_prestige, vw_buildings.cost_ore, vw_buildings.cost_hydrocarbon, vw_buildings.workers, vw_buildings.floor, vw_buildings.space," + \
+                " vw_buildings.construction_maximum, vw_buildings.quantity, vw_buildings.build_status, vw_buildings.construction_time, vw_buildings.destroyable, vw_buildings.production_ore, vw_buildings.production_hydrocarbon, vw_buildings.energy_production, vw_buildings.buildings_requirements_met, vw_buildings.destruction_time," + \
+                " vw_buildings.upkeep, vw_buildings.energy_consumption, vw_buildings.buildable," + \
+                " db_buildings.label, db_buildings.description, db_buildings.maintenance_factor," + \
+                " db_buildings.storage_ore, db_buildings.storage_hydrocarbon, db_buildings.storage_workers, db_buildings.storage_scientists, db_buildings.storage_soldiers" + \
+                " FROM vw_buildings" + \
+                "  INNER JOIN db_buildings ON db_buildings.id=vw_buildings.id" + \
+                " WHERE planetid=" + str(self.currentPlanetId) + " AND ((vw_buildings.buildable AND vw_buildings.research_requirements_met) or vw_buildings.quantity > 0)" + \
+                " ORDER BY vw_buildings.category, vw_buildings.id"
+        buildings = dbRows(query)
+        
         categories = []
-        index = 1
-        for oRs in oRss:
-            # if can be built or has some already built, display it
-            if oRs[19] or oRs[11] > 0:
+        content.setValue('categories', categories)
+
+        lastCategory = -1
         
-                BuildingId = oRs[0]
-        
-                CatId = oRs[1]
-        
-                if CatId != lastCategory:
-                    category = {'id': CatId, 'buildings':[]}
-                    categories.append(category)
-                    lastCategory = CatId
-                    
-                building = {}
-                building["id"] = BuildingId
-                building["name"] = getBuildingLabel(oRs[0])
-        
-                building["ore"] = oRs[3]
-                building["hydrocarbon"] = oRs[4]
-                building["energy"] = oRs[5]
-                building["credits"] = oRs[6]
-                building["workers"] = oRs[7]
-                building["prestige"] = oRs[2]
-        
-                building["floor"] = oRs[8]
-                building["space"] = oRs[9]
-                building["time"] = oRs[13]
-                building["description"] = getBuildingDescription(oRs[0])
-        
-                OreProd= oRs[16]
-                HydroProd= oRs[17]
-                EnergyProd= oRs[18]
-        
-                building["ore_prod"] = int(OreProd)
-                building["hydro_prod"] = int(HydroProd)
-                building["energy_prod"] = int(EnergyProd)
-                building["ore_modifier"] = int(OreProd*(self.OreBonus-100)/100)
-                building["hydro_modifier"] = int(HydroProd*(self.HydroBonus-100)/100)
-                building["energy_modifier"] = int(EnergyProd*(self.EnergyBonus-100)/100)
+        for building in buildings:
+            if building['quantity'] > 0 or building['buildings_requirements_met']:
                 
-                maximum = oRs[10]
-                quantity = oRs[11]
-        
-                building["quantity"] = quantity
-        
-                status = oRs[12]
-        
-                building["remainingtime"] = ""
-                building["nextdestroytime"] = ""
-        
-                if status:
-                    if status < 0: status = 0
-        
-                    building["remainingtime"] = status
-                    building["underconstruction"] = True
-                    building["isbuilding"] = True
-        
-                elif not oRs[23]:
-                    building["limitreached"] = True
-                elif (quantity > 0) and (quantity >= maximum):
-                    if quantity == 1:
-                        building["built"] = True
-                    else:
-                        building["limitreached"] = True
+                if building['category'] != lastCategory:
+                    lastCategory = building['category']
                     
-                elif not oRs[19]:
-        
+                    category = { 'id':building['category'], 'buildings':[] }
+                    categories.append(category)
+            
+                category['buildings'].append(building)
+                
+                building["ore_modifier"] = int(building["production_ore"] * (planet['mod_production_ore'] - 100) / 100)
+                building["hydro_modifier"] = int(building["production_hydrocarbon"] * (planet['mod_production_hydrocarbon'] - 100) / 100)
+                building["energy_modifier"] = int(building["energy_production"] * (planet['mod_production_energy'] - 100) / 100)
+                
+                building["production_ore"] = int(building["production_ore"])
+                building["production_hydrocarbon"] = int(building["production_hydrocarbon"])
+                building["energy_production"] = int(building["energy_production"])
+                
+                building["workers_for_maintenance"] = int(building["workers"] * building["maintenance_factor"] / 100)
+                
+                if building["build_status"]:                
+                    building["isbuilding"] = True
+                    building["remainingtime"] = building["build_status"]
+                    
+                elif not building["buildable"]:
+                    building["limitreached"] = True
+                    
+                elif building['quantity'] > 0 and building['quantity'] >= building['construction_maximum']:
+                    if building['quantity'] == 1: building["built"] = True
+                    else: building["limitreached"] = True
+                    
+                elif not building['buildings_requirements_met']:        
                     building["buildings_required"] = True
         
                 else:
-                    notenoughspace = False
-                    notenoughresources = False
+                    building["build"] = True
         
-                    if oRs[8] > self.pFloor:
+                    if building['floor'] > planet['free_floor']:
                         building["not_enough_floor"] = True
-                        notenoughspace = True
+                        building["build"] = False
                         
-                    if oRs[9] > self.pSpace:
+                    if building['space'] > planet['free_space']:
                         building["not_enough_space"] = True
-                        notenoughspace = True
+                        building["build"] = False
                         
-                    if oRs[2] > 0 and oRs[2] > self.profile["prestige_points"]:
+                    if building['cost_prestige'] > 0 and building['cost_prestige'] > self.profile["prestige_points"]:
                         building["not_enough_prestige"] = True
-                        notenoughresources = True
+                        building["build"] = False
                         
-                    if oRs[3] > 0 and oRs[3] > self.pOre:
+                    if building['cost_ore'] > 0 and building['cost_ore'] > planet['ore']:
                         building["not_enough_ore"] = True
-                        notenoughresources = True
+                        building["build"] = False
                         
-                    if oRs[4] > 0 and oRs[4] > self.pHydrocarbon:
+                    if building['cost_hydrocarbon'] > 0 and building['cost_hydrocarbon'] > planet['hydrocarbon']:
                         building["not_enough_hydrocarbon"] = True
-                        notenoughresources = True
-                    
-                    if oRs[5] > 0 and oRs[5] > self.pEnergy:
-                        building["not_enough_energy"] = True
-                        notenoughresources = True
+                        building["build"] = False
                         
-                    if oRs[7] > 0 and oRs[7] > self.pWorkers:
+                    if building['workers'] > 0 and building['workers'] > planet['free_workers']:
                         building["not_enough_workers"] = True
-                        notenoughresources = True
-                    
-                    if notenoughspace: building["not_enough.space"] = True
-                    if notenoughresources: building["not_enough.resources"] = True
+                        building["build"] = False
+                        
+                if building['quantity'] > 0 and building['destroyable']:
         
-                    if notenoughspace or notenoughresources:
-                        building["not_enough"] = True
-                    else:
-                        building["build"] = True
-
-                if (quantity > 0) and oRs[14]:
-        
-                    if oRs[20]:
-                        building["nextdestroytime"] = oRs[20]
-                        building["next_destruction_in"] = True
+                    if building['destruction_time']:
                         building["isdestroying"] = True
-                    elif not self.HasEnoughWorkersToDestroy(BuildingId):
+                        building["nextdestroytime"] = building['destruction_time']
+                        
+                    elif building['workers'] / 2 > planet['free_workers']:
                         building["workers_required"] = True
-                    elif self.HasBuildingThatDependsOn(BuildingId):
+                        
+                    elif str(building['id']) in buildReqs:
                         building["required"] = True
-                    elif not self.HasEnoughStorageAfterDestruction(BuildingId):
+                        
+                    elif planet['workers'] > planet['workers_capacity'] - building['storage_workers'] \
+                      or planet['scientists'] > planet['scientists_capacity'] - building['storage_scientists'] \
+                      or planet['soldiers'] > planet['soldiers_capacity'] - building['storage_soldiers'] \
+                      or planet['ore'] > planet['ore_capacity'] - building['storage_ore'] \
+                      or planet['hydrocarbon'] > planet['hydrocarbon_capacity'] - building['storage_hydrocarbon']:
                         building["capacity"] = True
+                        
                     else:
                         building["destroy"] = True
-                    
-                else:
-                    building["empty"] = True
-                    
-                building["index"] = index
-                index = index + 1
-        
-                building["workers_for_maintenance"] = self.getBuildingMaintenanceWorkers(BuildingId)
-                building["upkeep"] = oRs[21]
-                building["upkeep_energy"] = oRs[22]
-        
-                category['buildings'].append(building)
-    
-        content.setValue("categories", categories)
+                
+        #---
         
         return self.display(content)
-    
-    def StartBuilding(self, BuildingId):
-        oRs = connExecuteRetry("SELECT sp_start_building(" + str(self.userId) + "," + str(self.currentPlanetId) + ", " + str(BuildingId) + ", false)")
-        
-    def CancelBuilding(self, BuildingId):
-        result = dbRow("SELECT sp_cancel_building(" + str(self.userId) + "," + str(self.currentPlanetId) + ", " + str(BuildingId) + ") AS result")
-        print(result)
-    
-    def DestroyBuilding(self, BuildingId):
-        connExecuteRetryNoRecords("SELECT sp_destroy_building(" + str(self.userId) + "," + str(self.currentPlanetId) + "," + str(BuildingId) + ")")
