@@ -31,6 +31,7 @@ class View(ExileMixin, View):
             newCat = ToInt(request.GET.get("new"), 0)
 
             oRs = oConnExecute("SELECT sp_fleets_set_category(" + str(self.userId) + "," + str(fleetid) + "," + str(oldCat) + "," + str(newCat) + ")")
+            print(oRs)
             if oRs and oRs[0]:
                 content = getTemplate(self.request, "s03/fleets-handler")
 

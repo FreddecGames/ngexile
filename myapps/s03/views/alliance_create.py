@@ -27,7 +27,7 @@ class View(GlobalView):
         
         #---
         
-        result = dbExecute('SELECT sp_create_alliance(' + str(self.userId) + ',' + dosql(name) + ',' + dosql(tag) + ', '')')
+        result = dbExecute('SELECT sp_create_alliance(' + str(self.userId) + ',' + dosql(name) + ',' + dosql(tag) + ', \'\')')
         if result >= -1:
             return HttpResponseRedirect('/s03/alliance/')
             
