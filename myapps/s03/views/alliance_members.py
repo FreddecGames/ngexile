@@ -26,11 +26,11 @@ class View(GlobalView):
             for member in members:
             
                 query = 'UPDATE users SET' + \
-                        ' alliance_rank=' + self.request.POST.get('player' + str(member['id']), '100') + \
+                        ' alliance_rank=' + self.request.POST.get('member' + str(member['id']), '100') + \
                         ' WHERE id=' + str(member['id']) + ' AND alliance_id=' + str(self.allianceId) + ' AND (alliance_rank > 0 OR id=' + str(self.userId) + ')'
                 dbQuery(query)
 
-            if int(self.request.POST.get('player' + str(self.userId), 100)) > 0:
+            if int(self.request.POST.get('member' + str(self.userId), 100)) > 0:
                 return HttpResponseRedirect('/s03/alliance/')
                 
         return HttpResponseRedirect('/s03/alliance-members/')

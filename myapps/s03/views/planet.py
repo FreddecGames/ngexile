@@ -2,14 +2,22 @@
 
 from myapps.s03.views._global import *
 
-from myapps.s03.views._utils import *
-
 class View(GlobalView):
 
     def dispatch(self, request, *args, **kwargs):
 
         response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
+        
+        return super().dispatch(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        
+        action = request.POST.get("action")
+        
+        return HttpResponseRedirect('/s03/planet/')
+    
+    def get(self, request, *args, **kwargs):
 
         self.selectedMenu = "planet"
 
