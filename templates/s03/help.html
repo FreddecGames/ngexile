@@ -15,6 +15,9 @@
         <li class="nav-item {% if ships %}active{% endif %}">
             <a href="/s03/help/?cat=ships" class="nav-link">Vaisseaux</a>
         </li>
+        <li class="nav-item {% if battle %}active{% endif %}">
+            <a href="/s03/help/?cat=battle" class="nav-link">Combat</a>
+        </li>
         <li class="nav-item {% if orientations %}active{% endif %}">
             <a href="/s03/help/?cat=orientations" class="nav-link">Orientations</a>
         </li>
@@ -548,6 +551,39 @@
                         <li>Les points de prestige gagnés lors des combats sont augmentés de 3%</li>
                         <li>Vous aurez accès à une technologie permettant la construction de vaisseaux de déploiement qui pourront installer instantanément des bâtiments sur vos planètes ou les planètes de vos alliés</li>
                     </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    {% if battle %}
+    <div class="row g-3">
+        <div class="col-6">
+            <div class="h-100 card">
+                <div class="card-header">
+                    <span class="fs-6">Généralité</span>
+                </div>
+                <div class="card-body">
+                    <div class="row gy-2">
+                        <div class="col-12"><span class="text-normal">Un combat dure toujours 5 minutes, quelles que soient la signature des flottes impliquées.</span></div>
+                        <div class="col-12"><span class="text-normal">Un combat dure 25 rounds au maximum.</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6">
+            <div class="h-100 card">
+                <div class="card-header">
+                    <span class="fs-6">Rapport de combat</span>
+                </div>
+                <div class="card-body">
+                    <div class="row gy-2">
+                        <div class="col-12"><span class="text-normal">Un rapport de combat est généré pour chaque combat (même si il n'y a eu aucune perte).</span></div>
+                        <div class="col-12"><span class="text-normal">Le rapport est envoyé à chacun des joueurs ayant au moins 1 flotte impliquée dans le combat.</span></div>
+                        <div class="col-12"><span class="text-normal">Le rapport est visible pour n'importe quel joueur si celui-ci connaît le lien public.</span></div>
+                        <div class="col-12"><span class="text-normal">La composition d'une flotte est affichée si la flotte a perdu au moins 1 vaisseau ou si la flotte vous appartient ou si la flotte appartient à un allié ou un membre d'une alliance en PNA ; par conséquent, ce n'est pas toujours les mêmes infos affichées en fonction de qui regarde la rapport.</span></div>
+                        <div class="col-12"><span class="text-normal">Seules les catégories des vaisseaux perdus seront affichées si le combat n'a duré qu'1 seul round et que la flotte ne vous appartient pas, ni à un allié, ni à un membre d'une alliance en PNA.</span></div>
+                    </div>
                 </div>
             </div>
         </div>

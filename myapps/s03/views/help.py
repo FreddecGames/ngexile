@@ -13,7 +13,7 @@ class View(GlobalView):
 
         cat = request.GET.get("cat", "")
 
-        if cat == "" or cat != "buildings" and cat != "research" and cat != "ships" and cat != "orientations" and cat != "tags":
+        if cat == "" or cat != "buildings" and cat != "research" and cat != "ships" and cat != "orientations" and cat != "battle" and cat != "tags":
             cat = "general"
 
         return self.display_help(cat)
