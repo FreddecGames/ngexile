@@ -19,7 +19,6 @@ from .views import alliance_tributes
 from .views import alliance_wallet
 from .views import alliance_wars
 from .views import battle
-from .views import battle_view
 from .views import buildings
 from .views import chat
 from .views import commanders
@@ -81,7 +80,6 @@ urlpatterns = [
     path('alliance-wallet/', alliance_wallet.View.as_view()),
     path('alliance-wars/', alliance_wars.View.as_view()),
     path('alliance/', alliance.View.as_view()),
-    path('battle-view/', battle_view.View.as_view()),
     path('battle/', battle.View.as_view()),
     path('buildings/', buildings.View.as_view()),
     path('chat/', chat.View.as_view()),
