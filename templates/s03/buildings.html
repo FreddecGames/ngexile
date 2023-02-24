@@ -65,6 +65,7 @@
                             {% if category.id == 33 %}<span class="fs-6">Stockage d'énergie</span>{% endif %}
                             {% if category.id == 40 %}<span class="fs-6">Armement</span>{% endif %}
                             {% if category.id == 80 %}<span class="fs-6">Espace</span>{% endif %}
+                            {% if category.id == 100 %}<span class="fs-6">Evénements</span>{% endif %}
                             {% if category.id == 110 %}<span class="fs-6">Evénements</span>{% endif %}
                         </div>
                         <div class="list-group list-group-flush">
@@ -83,21 +84,27 @@
                                                         <div class='col-auto'>
                                                             <img src='/static/s03/img/interface/ore.gif' class='res' width='16' height='16'>
                                                             <span class='text-normal'>{{ building.production_ore|intcomma }}</span>
-                                                            {% if building.ore_modifier %}<small class='ms-1 text-success'>+{{ building.ore_modifier|intcomma }}</small>{% endif %}
+                                                            {% if building.ore_modifier > 0 %}<small class='ms-1 text-success'>+{{ building.ore_modifier|intcomma }}</small>
+                                                            {% elif building.ore_modifier < 0 %}<small class='ms-1 text-danger'>{{ building.ore_modifier|intcomma }}</small>
+                                                            {% endif %}
                                                         </div>
                                                         {% endif %}
                                                         {% if building.production_hydrocarbon %}
                                                         <div class='col-auto'>
                                                             <img src='/static/s03/img/interface/hydrocarbon.gif' class='res' width='16' height='16'>
                                                             <span class='text-normal'>{{ building.production_hydrocarbon|intcomma }}</span>
-                                                            {% if building.hydro_modifier %}<small class='ms-1 text-success'>+{{ building.hydro_modifier|intcomma }}</small>{% endif %}
+                                                            {% if building.hydro_modifier > 0 %}<small class='ms-1 text-success'>+{{ building.hydro_modifier|intcomma }}</small>
+                                                            {% elif building.hydro_modifier < 0 %}<small class='ms-1 text-danger'>{{ building.hydro_modifier|intcomma }}</small>
+                                                            {% endif %}
                                                         </div>
                                                         {% endif %}
                                                         {% if building.energy_production %}
                                                         <div class='col-auto'>
                                                             <img src='/static/s03/img/interface/energy.gif' class='res' width='16' height='16'>
                                                             <span class='text-normal'>{{ building.energy_production|intcomma }}</span>
-                                                            {% if building.energy_modifier %}<small class='ms-1 text-success'>+{{ building.energy_modifier|intcomma }}</small>{% endif %}
+                                                            {% if building.energy_modifier > 0 %}<small class='ms-1 text-success'>+{{ building.energy_modifier|intcomma }}</small>
+                                                            {% elif building.energy_modifier < 0 %}<small class='ms-1 text-danger'>{{ building.energy_modifier|intcomma }}</small>
+                                                            {% endif %}
                                                         </div>
                                                         {% endif %}
                                                     </div>
