@@ -23,6 +23,7 @@ class View(GlobalView):
             credits = ToInt(request.POST.get("credits"), 0)
             description = request.POST.get("description", "").strip()
             result = dbExecute("SELECT sp_alliance_transfer_money(" + str(self.userId) + "," + str(credits) + "," + dosql(description) + ",0)")
+            print(result)
             if result != 0: messages.error(request, 'not_enough_money')
 
         elif action == 'request' and self.allianceRights["can_ask_money"]:
@@ -147,7 +148,7 @@ class View(GlobalView):
                     " FROM alliances_wallet_requests r" + \
                     "  INNER JOIN users ON users.id=r.userid" + \
                     " WHERE allianceid=" + str(self.allianceId) + " AND result IS NULL"
-            requests = dbRow(query)
+            requests = dbRows(query)
             tpl.setValue("requests", requests)
 
         #---
@@ -158,7 +159,7 @@ class View(GlobalView):
                     " FROM alliances_wallet_journal" + \
                     " WHERE allianceid=" + str(self.allianceId)+" AND type=0 AND datetime >= now()-INTERVAL '1 week'" + \
                     " ORDER BY datetime DESC"
-            gifts = dbRow(query)
+            gifts = dbRows(query)
             tpl.setValue("gifts", gifts)
 
         #---
