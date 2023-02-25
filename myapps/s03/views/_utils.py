@@ -149,7 +149,8 @@ def dbExecute(query):
 
     cursor.execute(query)
     results = cursor.fetchall()
-    return results[0][0]
+    if len(results) > 0: return results[0][0]
+    return None
 
 def dosql(ch):
 

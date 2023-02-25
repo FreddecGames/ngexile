@@ -64,7 +64,10 @@
                                  class="rounded" />
                         </div>
                         <div class="col">
-                            <div class="row gx-3 mb-1">
+                            <div class="row gx-3 mb-1 align-items-baseline">
+                                <div class="col-auto">
+                                    <span class="{% if message.ownerid == request.user.id %}text-info{% else %}text-success{% endif %}">{{ message.login }}</span>
+                                </div>
                                 <div class="col-auto">
                                     <span class="fs-6">
                                         {%   if message.type == 110 %}Demande de financement

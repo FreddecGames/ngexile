@@ -16,6 +16,26 @@ class View(GlobalView):
         battleId = ToInt(request.GET.get('id'), 0)
         if battleId == 0: return HttpResponseRedirect('/s03/reports/')
         
+        fromview = ToInt(request.GET.get('v'), 0)
+        if fromview == 0: return HttpResponseRedirect('/s03/reports/')
+        
+        #---
+        
+        result = dbExecute('SELECT battleid FROM battles_ships WHERE battleid=' + str(battleId) + ' AND owner_id=' + str(fromview) + ' LIMIT 1')
+        display = result != None
+        
+        if not display and self.allianceId and self.allianceRights['can_see_reports']:
+            result = dbExecute("SELECT owner_id FROM battles_ships WHERE battleid=" + str(battleId) + " AND (SELECT alliance_id FROM users WHERE id=owner_id)=" + str(self.allianceId) + " LIMIT 1")
+            display = result != None
+        
+        if not display:
+            key = request.GET.get("key", "")
+            if key == "": return HttpResponseRedirect("/s03/reports/")
+            result = dbExecute("SELECT 1 FROM battles WHERE id=" + str(battleId) + " AND key=" + dosql(key))
+            display = result != None
+            
+        if not display: return HttpResponseRedirect("/s03/reports/")            
+            
         #---
         
         content = getTemplate(request, 's03/battle')
@@ -24,7 +44,11 @@ class View(GlobalView):
         
         #---
         
-        query = 'SELECT battles.id, time, planetid, name, galaxy, sector, planet, rounds' + \
+        content.setValue('fromview', fromview)
+        
+        #---
+        
+        query = 'SELECT battles.id, time, planetid, name, galaxy, sector, planet, rounds, key' + \
                 ' FROM battles' + \
                 '  INNER JOIN nav_planet ON planetid=nav_planet.id' + \
                 ' WHERE battles.id=' + str(battleId)
@@ -44,7 +68,7 @@ class View(GlobalView):
         #---
         
         query = 'SELECT owner_name, fleet_name, shipid, shipcategory, shiplabel, count, lost, killed, won, relation1, owner_id , relation2, fleet_id, attacked, mod_shield, mod_handling, mod_tracking_speed, mod_damage, alliancetag' + \
-                ' FROM sp_get_battle_result(' + str(battleId) + ',' + str(self.userId) + ',' + str(self.userId) + ')'
+                ' FROM sp_get_battle_result(' + str(battleId) + ',' + str(fromview) + ',' + str(fromview) + ')'
         battleShips = dbRows(query)
         
         fleets = []
@@ -93,14 +117,14 @@ class View(GlobalView):
                 ship = { 'kills':[] }
                 fleet['ships'].append(ship)
                 
-                ship['name'] = battleShip['shiplabel']
+                ship['name'] = battleShip['shiplabel']                
                 ship['count'] = battleShip['count']
                 ship['lost'] = battleShip['lost']
                 ship['killed'] = battleShip['killed']
                 ship['after'] = battleShip['count'] - battleShip['lost']
                 
                 for kill in kills:
-                    if kill['fleet_id'] == battleShip['fleet_id'] and kill['shipid'] == battleShip['shipid']:                        
+                    if kill['fleet_id'] == battleShip['fleet_id'] and kill['shipid'] == battleShip['shipid']: 
                         ship['kills'].append({ 'name':getShipLabel(kill['destroyed_shipid']), 'count':kill['count'] })
                     
         #---
