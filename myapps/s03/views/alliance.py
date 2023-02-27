@@ -15,7 +15,7 @@ class View(GlobalView):
 
         tag = request.GET.get('tag', '')
         
-        if tag == '' and self.allianceId == None:
+        if tag == '' and self.allianceId == None and not isValidAllianceTag(tag):
             return HttpResponseRedirect('/s03/alliance-invitations/')
 
         tpl = getTemplate(self.request, 's03/alliance')

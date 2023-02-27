@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 from django.http import HttpResponse
-from django.utils.dateparse import parse_date
 
 from myapps.s03.views._global import *
 
@@ -11,19 +10,24 @@ class View(GlobalView):
 
         response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
+        
+        return super().dispatch(request, *args, **kwargs)
 
-        self.onlineusers_refreshtime = 60
+    def get(self, request, *args, **kwargs):
 
-        self.selectedMenu = "chat"
-
-        chatid = ToInt(request.GET.get("id"), 0)
         action = request.GET.get("a")
-
+        
+        #---
+        
         if action == "send":
-            return self.addLine(chatid, request.GET.get("l", ""))
+            chatid = ToInt(request.GET.get("id"), 0)
+            msg = request.GET.get("l", "").strip()[:260]
+            if msg != "": dbQuery("INSERT INTO chat_lines(chatid, allianceid, userid, username, message) VALUES(" + str(chatid) + "," + str(sqlValue(self.allianceId)) + "," + str(self.userId) + "," + dosql(self.profile["username"]) + "," + dosql(msg) + ")")
+            return HttpResponse("")
 
         if action == "refresh":
-            return self.refreshChat(chatid)
+            chatid = ToInt(request.GET.get("id"), 0)
+            return self.refreshContent(chatid)
 
         if action == "join":
             return self.joinChat()
@@ -33,7 +37,8 @@ class View(GlobalView):
 
         if action == "chatlist":
             return self.displayChatList()
-
+    
+        self.selectedMenu = "chat"
         return self.displayChat()
 
     def getChatId(self, id):
@@ -50,12 +55,6 @@ class View(GlobalView):
                     return oRs[0]
                     
         return id
-
-    def addLine(self, chatid, msg):
-        msg = msg.strip()[:260]
-        if msg != "":
-            connExecuteRetryNoRecords("INSERT INTO chat_lines(chatid, allianceid, userid, username, message) VALUES(" + str(chatid) + "," + str(sqlValue(self.allianceId)) + "," + str(self.userId) + "," + dosql(self.profile["username"]) + "," + dosql(msg) + ")")
-        return HttpResponse(" ")
 
     def refreshContent(self, chatid):
         if chatid != 0 and self.request.session.get("chat_joined_" + str(chatid)) != "1": return HttpResponse(" ")
@@ -126,9 +125,6 @@ class View(GlobalView):
 
         return render(self.request, content.template, content.data)
 
-    def refreshChat(self, chatid):
-        return self.refreshContent(chatid)
-
     def displayChatList(self):
 
         content = getTemplate(self.request, "s03/chat-handler")
@@ -154,11 +150,8 @@ class View(GlobalView):
 
         return render(self.request, content.template, content.data)
 
-    # add a chat to the joined chat list
     def addChat(self, chatid):
         result = True
-
-        #self.request.session["lastchatactivity_" + str(chatid)] = timezone.now()-self.onlineusers_refreshtime
 
         if self.request.session.get("chat_joined_" + str(chatid)) != "1":
             self.request.session["chat_joined_count"] = ToInt(self.request.session.get("chat_joined_count"), 0) + 1
@@ -167,12 +160,6 @@ class View(GlobalView):
             result = True
         
         return result
-
-    # remove a chat from list
-    def removeChat(self, chatid):
-        if self.request.session.get("chat_joined_" + str(chatid)) == "1":
-            self.request.session["chat_joined_" + str(chatid)] = ""
-            self.request.session["chat_joined_count"] = self.request.session.get("chat_joined_count") - 1
 
     def displayChat(self):
         self.request.session["chatinstance"] = ToInt(self.request.session.get("chatinstance"), 0) + 1
@@ -184,7 +171,6 @@ class View(GlobalView):
         if (self.allianceId):
             chatid = self.getChatId(0)
             self.request.session["lastchatmsg_" + str(chatid)] = ""
-            #self.request.session["lastchatactivity_" + str(chatid)] = str(timezone.now()-timezone.timedelta(seconds=self.onlineusers_refreshtime))
 
             content.Parse("alliance")
 
@@ -257,7 +243,9 @@ class View(GlobalView):
     def leaveChat(self, chatid):
         self.request.session["lastchatmsg_" + str(chatid)] = ""
 
-        self.removeChat(chatid)
+        if self.request.session.get("chat_joined_" + str(chatid)) == "1":
+            self.request.session["chat_joined_" + str(chatid)] = ""
+            self.request.session["chat_joined_count"] = self.request.session.get("chat_joined_count") - 1
 
         query = "DELETE FROM users_chats WHERE userid=" + str(self.userId) + " AND chatid=" + str(chatid)
         oConnDoQuery(query)
