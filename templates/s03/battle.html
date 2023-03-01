@@ -13,7 +13,7 @@
                     <span class="text-normal">Localisation</span>
                 </div>
                 <div class="col-9">
-                    {{ battle.galaxy }}.{{ battle.sector }}.{{ battle.planet }}
+                    <a href="/s03/map/?g={{ battle.galaxy }}&s={{ battle.sector }}" data-bs-toggle="tooltip" data-bs-title="Carte spatiale">{{ battle.galaxy }}.{{ battle.sector }}.{{ battle.planet }}</a>
                 </div>
                 <div class="col-3 text-end">
                     <span class="text-normal">Date</span>

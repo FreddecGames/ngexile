@@ -41,7 +41,7 @@
 <div class="scroll-content" style="height:calc(100% - 158px);">
     <div class="page-content">
         <script>
-            function confirmAbandon() { return window.confirm('Êtes-vous sûr de vouloir abandonner la planète "{{planet_name}}" ?'); }
+            function confirmAbandon() { return window.confirm('Êtes-vous sûr de vouloir abandonner la planète "{{planet.name}}" ?'); }
             function confirmScientists(id) { return window.confirm('Êtes-vous sûr de vouloir renvoyer ' + getval('scientists' + id) + ' scientifiques ?'); }
             function confirmSoldiers(id) { return window.confirm('Êtes-vous sûr de vouloir renvoyer ' + getval('soldiers' + id) + ' soldats ?'); }
             function confirmWorkers(id) { return window.confirm('Êtes-vous sûr de vouloir renvoyer ' + getval('workers' + id) + ' travailleurs ?'); }

@@ -33,6 +33,7 @@ class View(GlobalView):
             return self.joinChat()
 
         if action == "leave":
+            chatid = ToInt(request.GET.get("id"), 0)
             return self.leaveChat(chatid)
 
         if action == "chatlist":
