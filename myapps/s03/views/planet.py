@@ -127,7 +127,7 @@ class View(GlobalView):
         query = 'SELECT id, name, galaxy, sector, planet, planet_floor, commanderid,' + \
                 ' floor_occupied, floor, space_occupied, space,' + \
                 ' workers, workers_capacity, scientists, scientists_capacity, soldiers, soldiers_capacity,' + \
-                ' (mod_production_workers / 10) AS growth, recruit_workers,' + \
+                ' (mod_production_workers /10.0) AS growth, recruit_workers,' + \
                 ' COALESCE(buy_ore, 0) AS buy_ore, COALESCE(buy_hydrocarbon, 0) AS buy_hydrocarbon' + \
                 ' FROM vw_planets WHERE id=' + str(self.currentPlanetId)
         planet = dbRow(query)

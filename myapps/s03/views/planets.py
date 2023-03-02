@@ -124,7 +124,7 @@ class View(GlobalView):
 
             item["normal_energy"] = True
 
-            credits = oRs[37] + (oRs[38] / 2)
+            credits = (oRs[37] + (oRs[38] / 2)) * 24
 
             item["credits"] = int(credits)
             if credits < 0:
