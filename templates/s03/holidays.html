@@ -30,26 +30,26 @@
                     <span class="text-normal">Commandant</span>
                 </div>
                 <div class="mb-3">
-                    <span class="fs-5 text-info">{{ login }}</span>
+                    <span class="fs-5 text-info">{{ user.username }}</span>
                 </div>
                 <div class="mb-3">
-                    <span>Votre compte est actuellement en mode vacances, vos planètes sont protégées de toutes attaques et invasion mais toutes vos productions, constructions et recherches sont suspendues.</span>
+                    <span class="text-normal">Votre compte est actuellement en mode vacances, vos planètes sont protégées de toutes attaques et invasion mais toutes vos productions, constructions et recherches sont suspendues.</span>
                 </div>
                 <div class="mb-3">
-                    <span>En cliquant sur Débloquer, le mode vacances sera arrêté, vos productions, constructions et recherches reprendront et vos planètes ne seront plus protégées.</span>
+                    <span class="text-normal">En cliquant sur Débloquer, le mode vacances sera arrêté, vos productions, constructions et recherches reprendront et vos planètes ne seront plus protégées.</span>
                 </div>
                 <div class="mb-3">
-                    Temps restant: <script type="text/javascript">putcountdown1({{remaining_time}},"", "");</script>
+                    Temps restant: <span class="text-yellow"><script type="text/javascript">putcountdown1({{ user.remaining_time}},"", "");</script></span>
                 </div>
                 <div class="mb-0">
-                    {% if unlock %}
+                    {% if user.min_time <= 0 %}
                         <form method="post" action="?">
                             {% csrf_token %}
                             <input onclick="return alertAbort()" class="btn btn-primary" type="submit" name="unlock" value="Débloquer">
                         </form>
                     {% else %}
-                        Temps restant avant déblocage: <script>putcountdown1({{remaining_time_before_unlock}},"", "");</script>
-                        <script>putcountdown2({{remaining_time_before_unlock}},"", "<form method='post' action='?'>{% csrf_token %}<input onclick='return alertAbort()' class='btn btn-primary' type='submit' name='unlock' value='Débloquer'></form>");</script>
+                        Temps restant avant déblocage: <script>putcountdown1({{user.min_time}},"", "");</script>
+                        <script>putcountdown2({{user.min_time}},"", "<form method='post' action='?'>{% csrf_token %}<input onclick='return alertAbort()' class='btn btn-primary' type='submit' name='unlock' value='Débloquer'></form>");</script>
                     {% endif %}
                 </div>
             </div>

@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 
-from django.http import HttpResponse
-
 from myapps.s03.views._global import *
 
 class View(GlobalView):

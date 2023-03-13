@@ -19,37 +19,37 @@
         return confirm('Êtes-vous sûr de vouloir effectuer un entraînement intensif pour ' + prestige + ' points de prestige ?');
     }
 </script>
-{% if commander_list %}
+{% if commanders %}
     <div class="card">
         <div class="card-header">
             <div class="row gx-3 align-items-baseline">
                 <div class="col"><span class="fs-6">Les commandants de votre empire</span></div>
-                <div class="col-auto">{{ commander_list|length }} <small class="text-normal">/{{ max_commanders }}</small></div>
+                <div class="col-auto">{{ commanders|length }} <small class="text-normal">/{{ max_commanders }}</small></div>
             </div>
         </div>
         <div class="list-group list-group-flush">
-            {% for commander in commander_list %}
+            {% for commander in commanders %}            
                 <div class="list-group-item">
                     <div class="row gx-3">
                         <div class="col-4">
                             <div class="row gy-1 gx-3">
-                                <div id="renamebox{{ commander.id }}" class="hidden">
+                                <div id="renamebox{{ commander.cmd_id }}" class="hidden">
                                     <form action='?' method='get' class="row gx-2">
                                         <input type='hidden' name='a' value='rename'>
-                                        <input type='hidden' name='id' value='{{ commander.id }}'>
-                                        <div class="col"><input type='text' class="form-control" name='name' size="28" maxlength="32" value='{{ commander.name }}'></div>
+                                        <input type='hidden' name='id' value='{{ commander.cmd_id }}'>
+                                        <div class="col"><input type='text' class="form-control" name='name' size="28" maxlength="32" value='{{ commander.cmd_name }}'></div>
                                         <div class="col-auto"><input type='submit' value='OK' class="btn btn-primary"></div>
                                         <div class="col-auto"><button type="button" onclick='hide();' class="btn btn-danger"><i class="fa-fw fas fa-times"></i></button></div>
                                     </form>
                                 </div>
-                                <div id="renameref{{ commander.id }}" class="col">
+                                <div id="renameref{{ commander.cmd_id }}" class="col">
                                     <span class="text-normal"><i class="fa-fw fas fa-user-astronaut"></i></span>
-                                    {{ commander.name }}
-                                    <a href="#" name="{{ commander.name }}" onclick="return show('renameref{{ commander.id }}','renamebox{{ commander.id }}')" data-bs-toggle="tooltip" data-bs-title="Renommer"><i class="fa-fw fas fa-edit"></i></a>
+                                    {{ commander.cmd_name }}
+                                    <a href="#" name="{{ commander.cmd_name }}" class="ms-1" onclick="return show('renameref{{ commander.cmd_id }}','renamebox{{ commander.cmd_id }}')" data-bs-toggle="tooltip" data-bs-title="Renommer"><i class="fa-fw fas fa-edit"></i></a>
                                 </div>
-                                {% if commander.can_fire %}
+                                {% if commander.can_be_fired %}
                                 <div class="col-auto">
-                                    <a href="?a=fire&id={{ commander.id }}" onclick="return confirmFireCommander('{{ commander.name }}')">Renvoyer</a>
+                                    <a href="?a=fire&id={{ commander.id }}" onclick="return confirmFireCommander('{{ commander.cmd_name }}')">Renvoyer</a>
                                 </div>
                                 {% endif %}
                                 <div class="col-12"></div>
@@ -62,53 +62,46 @@
                                 <div class="col-9"><span class="text-normal">{{ commander.recruited|timezone:"Europe/Paris"|date:"d M Y H:i" }}</span></div>
                                 <div class="col-3 text-end"><span class="text-normal">Affectation</span></div>
                                 <div class="col-9">
-                                    {% if commander.not_assigned %}<span class="text-normal">Aucune</span>
-                                    {% elif commander.planet_command %}
+                                    {% if commander.planet_id %}
                                         <img src="{{ PATH_IMAGES }}img/interface/planet.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Planète">
-                                        <script>putplanet("{{commander.planetid}}","{{commander.commandment}}","{{commander.g}}","{{commander.s}}","{{commander.p}}", 2);</script>
-                                    {% elif commander.fleet_command %}
+                                        <script>putplanet("{{commander.planet_id}}","{{commander.planet_name}}","{{commander.galaxy}}","{{commander.sector}}","{{commander.planet}}", 2);</script>
+                                    {% elif commander.fleet_id %}
                                         <img src="{{ PATH_IMAGES }}img/interface/fleets.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Flotte">
-                                        <a href="/s03/fleet/?id={{ commander.fleetid }}" data-bs-toggle="tooltip" data-bs-title="Voir flotte">{{ commander.commandment }}</a>
+                                        <a href="/s03/fleet/?id={{ commander.fleet_id }}" data-bs-toggle="tooltip" data-bs-title="Voir flotte">{{ commander.fleet_name }}</a>
+                                    {% else %}
+                                        <span class="text-normal">Aucune</span>
                                     {% endif %}
                                 </div>
                             </div>
                         </div>
                         <div class="col">
                             <div class="row gy-1 gx-3">
-                                {% for bonus in commander.bonuses %}
+                                {% if commander.mod_production_ore %}<div class="col-12"><span class="text-success">{{ commander.mod_production_ore }}% Planète - Production de minerai</span></div>{% endif %}
+                                {% if commander.mod_production_hydrocarbon %}<div class="col-12"><span class="text-success">{{ commander.mod_production_hydrocarbon }}% Planète - Production d'hydrocarbure</span></div>{% endif %}
+                                {% if commander.mod_production_energy %}<div class="col-12"><span class="text-success">{{ commander.mod_production_energy }}% Planète - Production d'énergie</span></div>{% endif %}
+                                {% if commander.mod_production_workers %}<div class="col-12"><span class="text-success">{{ commander.mod_production_workers }}% Planète - Formation des travailleurs</span></div>{% endif %}
+                                {% if commander.mod_construction_speed_buildings %}<div class="col-12"><span class="text-success">{{ commander.mod_construction_speed_buildings }}% Planète - Vitesse de construction des bâtiments</span></div>{% endif %}
+                                {% if commander.mod_construction_speed_ships %}<div class="col-12"><span class="text-success">{{ commander.mod_construction_speed_ships }}% Planète - Vitesse de construction des vaisseaux</span></div>{% endif %}
+                                {% if commander.mod_fleet_speed %}<div class="col-12"><span class="text-success">{{ commander.mod_fleet_speed }}% Flotte - Vitesse</span></div>{% endif %}
+                                {% if commander.mod_fleet_shield %}<div class="col-12"><span class="text-success">{{ commander.mod_fleet_shield }}% Flotte - Bouclier</span></div>{% endif %}
+                                {% if commander.mod_fleet_handling %}<div class="col-12"><span class="text-success">{{ commander.mod_fleet_handling }}% Flotte - Manœuvrabilité</span></div>{% endif %}
+                                {% if commander.mod_fleet_tracking_speed %}<div class="col-12"><span class="text-success">{{ commander.mod_fleet_tracking_speed }}% Flotte - Ciblage</span></div>{% endif %}
+                                {% if commander.mod_fleet_damage %}<div class="col-12"><span class="text-success">{{ commander.mod_fleet_damage }}% Flotte - Dégats</span></div>{% endif %}
+                                {% if commander.mod_fleet_signature %}<div class="col-12"><span class="text-success">{{ commander.mod_fleet_signature }}% Flotte - Réduction signature</span></div>{% endif %}
+                                {% if commander.points %}
                                     <div class="col-12">
-                                        <span class="text-success">
-                                            {{ bonus.bonus }}%
-                                            {% if bonus.description14 %}Planète - Production de minerai{% endif %}
-                                            {% if bonus.description15 %}Planète - Production d'hydrocarbure{% endif %}
-                                            {% if bonus.description16 %}Planète - Production d'énergie{% endif %}
-                                            {% if bonus.description17 %}Planète - Formation des travailleurs{% endif %}
-                                            {% if bonus.description24 %}Planète - Vitesse de construction des bâtiments{% endif %}
-                                            {% if bonus.description25 %}Planète - Vitesse de construction des vaisseaux{% endif %}
-                                            {% if bonus.description18 %}Flotte - Vitesse{% endif %}
-                                            {% if bonus.description19 %}Flotte - Bouclier{% endif %}
-                                            {% if bonus.description20 %}Flotte - Manœuvrabilité{% endif %}
-                                            {% if bonus.description21 %}Flotte - Ciblage{% endif %}
-                                            {% if bonus.description22 %}Flotte - Dégats{% endif %}
-                                            {% if bonus.description23 %}Flotte - Réduction signature{% endif %}
-                                        </span>
-                                    </div>
-                                {% endfor %}
-                                {% if commander.levelup %}
-                                    <div class="col-12">
-                                        <a href="?a=skills&id={{ commander.id }}">Répartir les {{ commander.points }} points de compétences restants</a>
+                                        <a href="?a=skills&id={{ commander.cmd_id }}">Répartir les {{ commander.points }} points de compétences restants</a>
                                     </div>
                                 {% endif %}
-                                {% if commander.train %}
+                                {% if commander.can_train %}
                                     <div class="col-12">
-                                        <a href="?a=train&id={{ commander.id }}" onclick="return confirmTrain('{{ commander.prestige|intcomma }}')">
+                                        <a href="?a=train&id={{ commander.cmd_id }}" onclick="return confirmTrain('{{ commander.train_cost|intcomma }}')">
                                             Entrainement intensif pour
                                             <img src="{{ PATH_IMAGES }}img/interface/prestige.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Prestige">
-                                            {{ commander.prestige|intcomma }}
+                                            {{ commander.train_cost|intcomma }}
                                         </a>
                                     </div>
-                                {% endif %}
-                                {% if commander.cant_train %}
+                                {% else %}
                                     <div class="col-12">
                                         <span class="text-danger">Vous ne pouvez entrainer ce commandant qu'une fois par jour</span>
                                     </div>
@@ -143,11 +136,11 @@
                             <div class="row gy-1 gx-3">
                                 <div class="col">
                                     <span class="text-normal"><i class="fa-fw fas fa-user-astronaut"></i></span>
-                                    {{ commander.name }}
+                                    {{ commander.cmd_name }}
                                 </div>
-                                {% if commander.can_engage %}
+                                {% if can_engage %}
                                 <div class="col-auto">
-                                    <a href="?a=engage&id={{ commander.id }}" onclick="return confirmEngageCommander('{{ commander.name }}')">Engager</a>
+                                    <a href="?a=engage&id={{ commander.cmd_id }}" onclick="return confirmEngageCommander('{{ commander.cmd_name }}')">Engager</a>
                                 </div>
                                 {% endif %}
                                 <div class="col-12"></div>
@@ -162,26 +155,19 @@
                         </div>
                         <div class="col">
                             <div class="row gy-1 gx-3">
-                                {% for bonus in commander.bonuses %}
-                                    <div class="col-12">
-                                        <span class="text-success">
-                                            {{ bonus.bonus }}%
-                                            {% if bonus.description14 %}Planète - Production de minerai{% endif %}
-                                            {% if bonus.description15 %}Planète - Production d'hydrocarbure{% endif %}
-                                            {% if bonus.description16 %}Planète - Production d'énergie{% endif %}
-                                            {% if bonus.description17 %}Planète - Formation des travailleurs{% endif %}
-                                            {% if bonus.description24 %}Planète - Vitesse de construction des bâtiments{% endif %}
-                                            {% if bonus.description25 %}Planète - Vitesse de construction des vaisseaux{% endif %}
-                                            {% if bonus.description18 %}Flotte - Vitesse{% endif %}
-                                            {% if bonus.description19 %}Flotte - Bouclier{% endif %}
-                                            {% if bonus.description20 %}Flotte - Manœuvrabilité{% endif %}
-                                            {% if bonus.description21 %}Flotte - Ciblage{% endif %}
-                                            {% if bonus.description22 %}Flotte - Dégats{% endif %}
-                                            {% if bonus.description23 %}Flotte - Réduction signature{% endif %}
-                                        </span>
-                                    </div>
-                                {% endfor %}
-                                {% if commander.levelup %}
+                                {% if commander.mod_production_ore %}<div class="col-12"><span class="text-success">{{ commander.mod_production_ore }}% Planète - Production de minerai</span></div>{% endif %}
+                                {% if commander.mod_production_hydrocarbon %}<div class="col-12"><span class="text-success">{{ commander.mod_production_hydrocarbon }}% Planète - Production d'hydrocarbure</span></div>{% endif %}
+                                {% if commander.mod_production_energy %}<div class="col-12"><span class="text-success">{{ commander.mod_production_energy }}% Planète - Production d'énergie</span></div>{% endif %}
+                                {% if commander.mod_production_workers %}<div class="col-12"><span class="text-success">{{ commander.mod_production_workers }}% Planète - Formation des travailleurs</span></div>{% endif %}
+                                {% if commander.mod_construction_speed_buildings %}<div class="col-12"><span class="text-success">{{ commander.mod_construction_speed_buildings }}% Planète - Vitesse de construction des bâtiments</span></div>{% endif %}
+                                {% if commander.mod_construction_speed_ships %}<div class="col-12"><span class="text-success">{{ commander.mod_construction_speed_ships }}% Planète - Vitesse de construction des vaisseaux</span></div>{% endif %}
+                                {% if commander.mod_fleet_speed %}<div class="col-12"><span class="text-success">{{ commander.mod_fleet_speed }}% Flotte - Vitesse</span></div>{% endif %}
+                                {% if commander.mod_fleet_shield %}<div class="col-12"><span class="text-success">{{ commander.mod_fleet_shield }}% Flotte - Bouclier</span></div>{% endif %}
+                                {% if commander.mod_fleet_handling %}<div class="col-12"><span class="text-success">{{ commander.mod_fleet_handling }}% Flotte - Manœuvrabilité</span></div>{% endif %}
+                                {% if commander.mod_fleet_tracking_speed %}<div class="col-12"><span class="text-success">{{ commander.mod_fleet_tracking_speed }}% Flotte - Ciblage</span></div>{% endif %}
+                                {% if commander.mod_fleet_damage %}<div class="col-12"><span class="text-success">{{ commander.mod_fleet_damage }}% Flotte - Dégats</span></div>{% endif %}
+                                {% if commander.mod_fleet_signature %}<div class="col-12"><span class="text-success">{{ commander.mod_fleet_signature }}% Flotte - Réduction signature</span></div>{% endif %}
+                                {% if commander.points %}
                                     <div class="col-12">
                                         {{ commander.points }} points de compétences restants à distribuer
                                     </div>
@@ -198,7 +184,7 @@
         </div>
     </div>
 {% endif %}
-{% if editcommander %}
+{% if commander %}
 <script>
     function confirmAssign() {
     
@@ -210,7 +196,7 @@
 
     var count = 0;
     var skills = [];
-    var points = {{maxpoints}};
+    var points = {{ commander.points }};
 
     function sk(i,j) {
     
@@ -269,36 +255,37 @@
         count++;
     }
 </script>
-<form action="?a=edit&id={{ commanderid }}" method="post">
+<form action="?" method="post">
     {% csrf_token %}
+    <input type="hidden" name="id" value="{{ commander.id }}" />
     <div class="card">
         <div class="card-header">
             <a href="/s03/commanders/" class="me-2"><i class="fa-fw fas fa-long-arrow-alt-left"></i> Retour</a>
-            <span class="fs-6"><span class="text-normal"><i class="fa-fw fas fa-user-astronaut"></i></span> {{ name }}</span>
+            <span class="fs-6"><span class="text-normal"><i class="fa-fw fas fa-user-astronaut"></i></span> {{ commander.name }}</span>
         </div>
         <div class="card-body">
             <div class="row gx-3 gy-3">
                 <div class="col-6">
                     <div class="row g-1 flex-column">
                         <script>
-                            addskill('fleet_speed', 'Flotte - Vitesse', 0.02, {{speed}}, {{max_speed}}, 1000);
-                            addskill('fleet_shield', 'Flotte - Bouclier', 0.02, {{shield}}, {{max_shield}}, 1000);
-                            addskill('fleet_handling', 'Flotte - Manœuvrabilité', 0.05, {{handling}}, {{max_handling}}, 1000);
-                            addskill('fleet_targeting', 'Flotte - Ciblage', 0.05, {{targeting}}, {{max_targeting}}, 1000);
-                            addskill('fleet_damages', 'Flotte - Dégats', 0.02, {{damages}}, {{max_damages}}, 1000);
-                            addskill('fleet_signature', 'Flotte - Réduction signature', 0.02, {{signature}}, {{max_signature}}, 400);
+                            addskill('fleet_speed', 'Flotte - Vitesse', 0.02, {{ commander.mod_fleet_speed }}, 1.3, 1000);
+                            addskill('fleet_shield', 'Flotte - Bouclier', 0.02, {{ commander.mod_fleet_shield }}, 1.4, 1000);
+                            addskill('fleet_handling', 'Flotte - Manœuvrabilité', 0.05, {{ commander.mod_fleet_handling }}, 1.75, 1000);
+                            addskill('fleet_targeting', 'Flotte - Ciblage', 0.05, {{ commander.mod_fleet_tracking_speed }}, 1.75, 1000);
+                            addskill('fleet_damages', 'Flotte - Dégats', 0.02, {{ commander.mod_fleet_damage }}, 1.3, 1000);
+                            addskill('fleet_signature', 'Flotte - Réduction signature', 0.02, {{ commander.mod_fleet_signature }}, 1.2, 400);
                         </script>
                     </div>
                 </div>
                 <div class="col-6">
                     <div class="row g-1 flex-column">
                         <script>
-                            addskill('ore', 'Planète - Production de minerai', 0.01, {{ore}}, {{max_ore}}, 100);
-                            addskill('hydrocarbon', 'Planète - Production d\'hydrocarbure', 0.01, {{hydrocarbon}}, {{max_hydrocarbon}}, 100);
-                            addskill('energy', 'Planète - Production d\'énergie', 0.1, {{energy}}, {{max_energy}}, 1000);
-                            addskill('workers', 'Planète - Formation des travailleurs', 0.1, {{workers}}, {{max_workers}}, 1000);
-                            addskill('buildindspeed', 'Planète - Vitesse de construction des bâtiments', 0.05, {{build}}, {{max_build}}, 1000);
-                            addskill('shipconstructionspeed', 'Planète - Vitesse de construction des vaisseaux', 0.05, {{ship}}, {{max_ship}}, 2500);
+                            addskill('ore', 'Planète - Production de minerai', 0.01, {{ commander.mod_production_ore }}, 2.0, 100);
+                            addskill('hydrocarbon', 'Planète - Production d\'hydrocarbure', 0.01, {{ commander.mod_production_hydrocarbon }}, 2.0, 100);
+                            addskill('energy', 'Planète - Production d\'énergie', 0.1, {{ commander.mod_production_energy }}, 2.0, 1000);
+                            addskill('workers', 'Planète - Formation des travailleurs', 0.1, {{ commander.mod_production_workers }}, 2.0, 1000);
+                            addskill('buildindspeed', 'Planète - Vitesse de construction des bâtiments', 0.05, {{ commander.mod_construction_speed_buildings }}, 3.0, 1000);
+                            addskill('shipconstructionspeed', 'Planète - Vitesse de construction des vaisseaux', 0.05, {{ commander.mod_construction_speed_ships }}, 3.0, 2500);
                         </script>
                     </div>
                 </div>
@@ -306,7 +293,7 @@
                     <div class="row gx-3 align-items-center justify-content-end">
                         <div class="col-auto">
                             <span class="text-normal">Points restant</span>
-                            <span id="points">{{ maxpoints }}</span>
+                            <span id="points">{{ commander.points }}</span>
                         </div>
                         <div class="col-auto">
                             <input type="submit" class="btn btn-primary" value="Valider" onclick="return confirmAssign()">

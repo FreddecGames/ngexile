@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
@@ -12,44 +13,41 @@ class View(ExileMixin, View):
 
         response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
-
-        self.userId = ToInt(self.request.session.get("user"), "")
-
-        if self.userId == "":
-            return HttpResponseRedirect("/")
-
-        content = getTemplate(self.request, "s03/holidays")
-
-        # retrieve remaining time
-        query = "SELECT username," + \
-                " (SELECT int4(date_part('epoch', min_end_time-now())) FROM users_holidays WHERE userid=id)," + \
-                " (SELECT int4(date_part('epoch', end_time-now())) FROM users_holidays WHERE userid=id)" + \
-                " FROM users WHERE privilege=-2 AND id=" + str(self.userId)
-
-        oRs = oConnExecute(query)
         
-        if oRs == None:
-            return HttpResponseRedirect("/")
+        #---
+        
+        if not request.user.is_authenticated:
+            return HttpResponseRedirect('/')
+        
+        #---
+        
+        self.userId = request.user.id
+        
+        return super().dispatch(request, *args, **kwargs)
 
-        # check to unlock holidays mode
+    def post(self, request, *args, **kwargs):
+        
         action = request.POST.get("unlock", "")
-
-        if action != "" and oRs[1] < 0:
-            oConnExecute("SELECT sp_stop_holidays(" + str(self.userId)+")")
+        
+        if action != "":
+            dbQuery("SELECT sp_stop_holidays(" + str(self.userId) + ")")
             return HttpResponseRedirect("/s03/overview/")
+        
+        return HttpResponseRedirect('/s03/holidays/')
+        
+    def get(self, request, *args, **kwargs):
 
-        # if remaining time is negative, return to overview page
-        if oRs[2] <= 0:
-            return HttpResponseRedirect("/s03/overview/")
+        tpl = getTemplate(self.request, 's03/holidays')
 
-        content.setValue("login", oRs[0])
-        content.setValue("remaining_time", oRs[2])
-
-        # only allow to unlock the account after 2 days of holidays
-        if oRs[1] < 0:
-            content.Parse("unlock")
-        else:
-            content.setValue("remaining_time_before_unlock", oRs[1])
-            content.Parse("cant_unlock")
-
-        return render(self.request, content.template, content.data)
+        query = "SELECT username," + \
+                " (SELECT int4(date_part('epoch', min_end_time-now())) FROM users_holidays WHERE userid=id) AS min_time," + \
+                " (SELECT int4(date_part('epoch', end_time-now())) FROM users_holidays WHERE userid=id) AS remaining_time" + \
+                " FROM users WHERE privilege=-2 AND id=" + str(self.userId)
+        user = dbRow(query)
+        
+        if user == None: return HttpResponseRedirect("/")
+        if user['remaining_time'] <= 0: return HttpResponseRedirect("/s03/overview/")
+        
+        tpl.setValue('user', user)
+        
+        return render(self.request, tpl.template, tpl.data)
