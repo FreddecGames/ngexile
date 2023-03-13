@@ -8,250 +8,155 @@ class View(GlobalView):
 
     def dispatch(self, request, *args, **kwargs):
 
-        response = super().pre_dispatch(request, *args, **kwargs)
-        if response: return response
+        connectDB()
         
-        return super().dispatch(request, *args, **kwargs)
-
-    def get(self, request, *args, **kwargs):
-
+        self.userId = request.user.id
+        
         action = request.GET.get("a")
         
         #---
         
         if action == "send":
+        
             chatid = ToInt(request.GET.get("id"), 0)
             msg = request.GET.get("l", "").strip()[:260]
-            if msg != "": dbQuery("INSERT INTO chat_lines(chatid, allianceid, userid, username, message) VALUES(" + str(chatid) + "," + str(sqlValue(self.allianceId)) + "," + str(self.userId) + "," + dosql(self.profile["username"]) + "," + dosql(msg) + ")")
-            return HttpResponse("")
-
-        if action == "refresh":
-            chatid = ToInt(request.GET.get("id"), 0)
-            return self.refreshContent(chatid)
-
-        if action == "join":
-            return self.joinChat()
-
-        if action == "leave":
-            chatid = ToInt(request.GET.get("id"), 0)
-            return self.leaveChat(chatid)
-
-        if action == "chatlist":
-            return self.displayChatList()
-    
-        self.selectedMenu = "chat"
-        return self.displayChat()
-
-    def getChatId(self, id):
-
-        if id == 0 and self.allianceId:
-            id = self.request.session.get("alliancechat_" + str(self.allianceId))
-
-            if id == None or id == "":
-                query = "SELECT chatid FROM alliances WHERE id=" + str(self.allianceId)
-                oRs = oConnExecute(query)
-
-                if oRs:
-                    self.request.session["alliancechat_" + str(self.allianceId)] = oRs[0]
-                    return oRs[0]
-                    
-        return id
-
-    def refreshContent(self, chatid):
-        if chatid != 0 and self.request.session.get("chat_joined_" + str(chatid)) != "1": return HttpResponse(" ")
-
-        userChatId = chatid
-
-        chatid = self.getChatId(chatid)
-
-        refresh_userlist = True
-
-        lastmsgid = self.request.session.get("lastchatmsg_" + str(chatid), "")
-        if lastmsgid == "": lastmsgid = 0
-
-        query = "SELECT chat_lines.id, datetime, allianceid, username, message" + \
-                " FROM chat_lines" + \
-                " WHERE chatid=" + str(chatid) + " AND chat_lines.id > GREATEST((SELECT id FROM chat_lines WHERE chatid=" + str(chatid) +" ORDER BY datetime DESC OFFSET 100 LIMIT 1), " + str(lastmsgid) + ")" + \
-                " ORDER BY chat_lines.id"
-        oRss = oConnExecuteAll(query)
-
-        if oRss == None: oRss = None
-
-        # if there's no line to send and no list of users to send, exit
-        if oRss == None and not refresh_userlist:
-            return HttpResponse(" ") # return an empty string : fix safari "undefined XMLHttpRequest.status" bug
-
-        # load the template
-
-        content = getTemplate(self.request, "s03/chat-handler")
-        content.setValue("username", self.profile["username"])
-        content.setValue("chatid", userChatId)
-
-        if oRss:
-            list = []
-            content.setValue("lines", list)
-            for oRs in oRss:
-                item = {}
-                list.append(item)
-                
-                self.request.session["lastchatmsg_" + str(chatid)] = oRs[0]
-
-                item["lastmsgid"] = oRs[0]
-                item["datetime"] = oRs[1]
-                item["author"] = oRs[3]
-                item["line"] = oRs[4]
-                item["alliancetag"] = getAllianceTag(oRs[2])
-
-        # update user lastactivity in the DB and retrieve users online only every 3 minutes
-        if refresh_userlist:
-
-            # retrieve online users in chat
-            query = "SELECT users.alliance_id, users.username, date_part('epoch', now()-chat_onlineusers.lastactivity)" + \
-                    " FROM chat_onlineusers" + \
-                    "    INNER JOIN users ON (users.id=chat_onlineusers.userid)" + \
-                    " WHERE chat_onlineusers.lastactivity > now()-INTERVAL '10 minutes' AND chatid=" + str(chatid)
-            oRss = oConnExecuteAll(query)
-
-            list = []
-            content.setValue("online_users", list)
-            for oRs in oRss:
-                item = {}
-                list.append(item)
-                
-                item["alliancetag"] = getAllianceTag(oRs[0])
-                item["user"] = oRs[1]
-                item["lastactivity"] = oRs[2]
-
-        content.Parse("refresh")
-
-        return render(self.request, content.template, content.data)
-
-    def displayChatList(self):
-
-        content = getTemplate(self.request, "s03/chat-handler")
-        content.setValue("username", self.profile["username"])
-
-        query = "SELECT name, topic, count(chat_onlineusers.userid)" + \
-                " FROM chat" + \
-                "    LEFT JOIN chat_onlineusers ON (chat_onlineusers.chatid = chat.id AND chat_onlineusers.lastactivity > now()-INTERVAL '10 minutes')" + \
-                " WHERE name IS NOT NULL AND password = \'\' AND public" + \
-                " GROUP BY name, topic" + \
-                " ORDER BY length(name), name"
-        oRss = oConnExecuteAll(query)
-
-        list = []
-        content.setValue("publicchats", list)
-        for oRs in oRss:
-            item = {}
-            list.append(item)
             
-            item["name"] = oRs[0]
-            item["topic"] = oRs[1]
-            item["online"] = oRs[2]
-
-        return render(self.request, content.template, content.data)
-
-    def addChat(self, chatid):
-        result = True
-
-        if self.request.session.get("chat_joined_" + str(chatid)) != "1":
-            self.request.session["chat_joined_count"] = ToInt(self.request.session.get("chat_joined_count"), 0) + 1
-            self.request.session["chat_joined_" + str(chatid)] = "1"
-
-            result = True
+            if msg != "": dbQuery("INSERT INTO chat_lines(chatid, allianceid, userid, username, message) VALUES(" + str(chatid) + "," + str(sqlValue(self.allianceId)) + "," + str(self.userId) + "," + dosql(self.profile["username"]) + "," + dosql(msg) + ")")
+            
+            return HttpResponse("")
         
-        return result
+        #---
 
-    def displayChat(self):
-        self.request.session["chatinstance"] = ToInt(self.request.session.get("chatinstance"), 0) + 1
+        elif action == "refresh":
+        
+            chatid = ToInt(request.GET.get("id"), 0)
+            
+            lastmsgid = request.session.get("lastchatmsg_" + str(chatid), "")
+            if lastmsgid == "": lastmsgid = 0
+            
+            tpl = getTemplate(request, "s03/chat-handler")
+            
+            query = "SELECT chat_lines.id, datetime, allianceid, username, message, alliances.tag" + \
+                    " FROM chat_lines" + \
+                    "  LEFT JOIN alliances ON (chat_lines.allianceid=alliances.id)" + \
+                    " WHERE chat_lines.chatid=" + str(chatid) + " AND chat_lines.id > GREATEST((SELECT id FROM chat_lines WHERE chatid=" + str(chatid) +" ORDER BY datetime DESC OFFSET 100 LIMIT 1), " + str(lastmsgid) + ")" + \
+                    " ORDER BY chat_lines.id"
+            lines = dbRows(query)
+            tpl.setValue("lines", lines)
+            
+            if len(lines) > 0:
+                self.request.session["lastchatmsg_" + str(chatid)] = lines[len(lines) - 1]['id']
+            
+            query = "SELECT users.alliance_id, users.username, date_part('epoch', now()-chat_onlineusers.lastactivity) AS lastactivity, alliances.tag" + \
+                    " FROM chat_onlineusers" + \
+                    "  INNER JOIN users ON (users.id=chat_onlineusers.userid)" + \
+                    "  LEFT JOIN alliances ON (users.alliance_id=alliances.id)" + \
+                    " WHERE chat_onlineusers.lastactivity > now()-INTERVAL '10 minutes' AND chat_onlineusers.chatid=" + str(chatid)
+            users = dbRows(query)
+            tpl.setValue("users", users)
+            
+            tpl.setValue("refresh", True)
+            tpl.setValue("chatid", chatid)
+            
+            return render(request, tpl.template, tpl.data)
+        
+        #---
+            
+        elif action == "join":
+            
+            tpl = getTemplate(request, "s03/chat-handler")
+            
+            pwd = request.GET.get("pass", "").strip()
+            chatname = request.GET.get("chat", "").strip()
+            query = "SELECT sp_chat_join(" + dosql(chatname) + "," + dosql(pwd) + ")"
+            result = dbExecute(query)
+            
+            if result != 0:
+                
+                chatid = result
+                
+                query = "INSERT INTO users_chats(userid, chatid, password) VALUES(" + str(self.userId) + "," + str(chatid) + "," + dosql(pwd) + ")"
+                dbQuery(query)
+                
+                query = "SELECT id, name, topic FROM chat WHERE id=" + str(chatid)
+                chat = dbRow(query)
+                tpl.setValue("chat", chat)
+                
+                request.session["lastchatmsg_" + str(chatid)] = ""
+                
+                tpl.Parse("join")
+                
+            else:
+                tpl.Parse("join_badpassword")
+            
+            return render(request, tpl.template, tpl.data)
+            
+        #---
+            
+        elif action == "leave":
+        
+            chatid = ToInt(request.GET.get("id"), 0)
+            
+            request.session["lastchatmsg_" + str(chatid)] = ""            
+            
+            query = "DELETE FROM users_chats WHERE userid=" + str(self.userId) + " AND chatid=" + str(chatid)
+            dbQuery(query)
+
+            query = "DELETE FROM chat WHERE id > 0 AND NOT public AND name IS NOT NULL AND id=" + str(chatid) + " AND (SELECT count(1) FROM users_chats WHERE chatid=chat.id) = 0"
+            dbQuery(query)
+            
+            return HttpResponse("")
+            
+        #---
+            
+        elif action == "chatlist":
+            
+            tpl = getTemplate(request, "s03/chat-handler")
+            
+            query = "SELECT name, topic, count(chat_onlineusers.userid) AS online" + \
+                    " FROM chat" + \
+                    "    LEFT JOIN chat_onlineusers ON (chat_onlineusers.chatid = chat.id AND chat_onlineusers.lastactivity > now()-INTERVAL '10 minutes')" + \
+                    " WHERE name IS NOT NULL AND password = \'\' AND public" + \
+                    " GROUP BY name, topic" + \
+                    " ORDER BY length(name), name"
+            chats = dbRows(query)
+            tpl.setValue("chats", chats)
+        
+            return render(request, tpl.template, tpl.data)
+            
+        #---
+        
+        response = super().pre_dispatch(request, *args, **kwargs)
+        if response: return response
+            
+        #---
+        
+        self.selectedMenu = "chat"
 
         content = getTemplate(self.request, "s03/chat")
+        
+        #---
+        
         content.setValue("username", self.profile["username"])
-        content.setValue("chatinstance", self.request.session.get("chatinstance"))
+        content.setValue("now", timezone.now())
+        
+        #---
 
         if (self.allianceId):
-            chatid = self.getChatId(0)
-            self.request.session["lastchatmsg_" + str(chatid)] = ""
-
+            self.request.session["lastchatmsg_" + str(0)] = ""
             content.Parse("alliance")
 
+        #---
+        
         query = "SELECT chat.id, chat.name, chat.topic" + \
                 " FROM users_chats" + \
                 "    INNER JOIN chat ON (chat.id=users_chats.chatid AND ((chat.password = '') OR (chat.password = users_chats.password)))" + \
                 " WHERE userid = " + str(self.userId) + \
                 " ORDER BY users_chats.added"
-        oRss = oConnExecuteAll(query)
-
-        list = []
-        content.setValue("joins", list)
-        for oRs in oRss:
-            if self.addChat(oRs[0]):
-                item = {}
-                list.append(item)
-                
-                item["id"] = oRs[0]
-                item["name"] = oRs[1]
-                item["topic"] = oRs[2]
-
-                self.request.session["lastchatmsg_" + str(oRs[0])] = ""
-
-        content.setValue("now", timezone.now())
-
-        content.Parse("chat")
+        joins = dbRows(query)
+        content.setValue("joins", joins)
+        
+        for join in joins:
+            self.request.session["lastchatmsg_" + str(join['id'])] = ""
 
         return self.display(content)
-
-    def joinChat(self):
-
-        content = getTemplate(self.request, "s03/chat-handler")
-        content.setValue("username", self.profile["username"])
-
-        pwd = self.request.GET.get("pass", "").strip()
-
-        # join chat
-        query = "SELECT sp_chat_join(" + dosql(self.request.GET.get("chat", "").strip()) + "," + dosql(pwd) + ")"
-        oRs = oConnExecute(query)
-
-        chatid = oRs[0]
-
-        if not self.addChat(oRs[0]): return
-
-        if chatid != 0:
-            # save the chatid to the user chatlist
-            query = "INSERT INTO users_chats(userid, chatid, password) VALUES(" + str(self.userId) + "," + str(chatid) + "," + dosql(pwd) + ")"
-            oConnDoQuery(query)
-
-            query = "SELECT name, topic FROM chat WHERE id=" + str(chatid)
-            oRs = oConnExecute(query)
-
-            if oRs:
-                content.setValue("id", chatid)
-                content.setValue("name", oRs[0])
-                content.setValue("topic", oRs[1])
-                content.Parse("setactive")
-                content.Parse("join")
-
-                self.request.session["lastchatmsg_" + str(chatid)] = ""
-
-            else:
-                content.Parse("join_error")
-
-        else:
-            content.Parse("join_badpassword")
-
-        return render(self.request, content.template, content.data)
-
-    def leaveChat(self, chatid):
-        self.request.session["lastchatmsg_" + str(chatid)] = ""
-
-        if self.request.session.get("chat_joined_" + str(chatid)) == "1":
-            self.request.session["chat_joined_" + str(chatid)] = ""
-            self.request.session["chat_joined_count"] = self.request.session.get("chat_joined_count") - 1
-
-        query = "DELETE FROM users_chats WHERE userid=" + str(self.userId) + " AND chatid=" + str(chatid)
-        oConnDoQuery(query)
-
-        query = "DELETE FROM chat WHERE id > 0 AND NOT public AND name IS NOT NULL AND id=" + str(chatid) + " AND (SELECT count(1) FROM users_chats WHERE chatid=chat.id) = 0"
-        oConnDoQuery(query)
-        
-        return HttpResponse(" ")

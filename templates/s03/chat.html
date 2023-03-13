@@ -3,9 +3,7 @@
 {% load humanize %}
 {% block content %}
 <div class="page-content">
-    {% if chat %}
         <script>
-var chatInstance = {{chatinstance}};
 var chatDateTime = new Date(new Date({{now|timezone:"Europe/Paris"|date:"Y"}},{{now|timezone:"Europe/Paris"|date:"m"}}-1,{{now|timezone:"Europe/Paris"|date:"d"}},{{now|timezone:"Europe/Paris"|date:"H"}},{{now|timezone:"Europe/Paris"|date:"i"}},{{now|timezone:"Europe/Paris"|date:"s"}},{{now|date:"z"}}));
 var pageLocation = location.href;
 
@@ -160,7 +158,7 @@ Chat.prototype = {
         this.tab.className = 'nav-item'
 
 		this.tab.innerHTML = '<a href="#" class="nav-link" onclick="chatlist['+id+'].setActive(); return false;">' + name +
-							 (canClose?'&nbsp;<i class="ms-1 fa-fw fas fa-times text-danger" data-bs-toggle="tooltip" data-bs-title="Fermer le salon" onclick="chatlist['+id+'].close();"></i>':'') + '</a>';
+							 (canClose?'&nbsp;<i class="ms-1 fa-fw fas fa-times text-danger" data-bs-toggle="tooltip" data-bs-title="Fermer le salon" onclick="event.stopPropagation(); chatlist['+id+'].close(); return false;"></i>':'') + '</a>';
 
 		tabs.insertBefore(this.tab, newtab);
 
@@ -180,10 +178,6 @@ Chat.prototype = {
 
 		checkNewTabVisility();
 
-		// send leave command
-		var url = pageLocation + "?a=leave&id="+this.id;
-		openURL(url, leaveChatResponse);
-
 		// activate first possible tab
 		if(activeChat == this) {
 			activeChat = null;
@@ -195,12 +189,16 @@ Chat.prototype = {
 					previousTab = chatlist[x];
 					break;
 				}
-
+            
 			if(previousTab)
 				previousTab.setActive();
 			else
 				showJoinChatForm();
 		}
+
+		// send leave command
+		var url = "/s03/chat/?a=leave&id="+this.id;
+		openURL(url, leaveChatResponse);
 	},
 
 	setTopic: function(topic) {
@@ -293,6 +291,8 @@ Chat.prototype = {
 	},
 
 	addLine: function(tag, author, datetime, line) {
+        if (tag == 'None') tag = ''
+    
 		this.refreshTime -= 100;
 		if(this.refreshTime > max_refreshtime) this.refreshTime = max_refreshtime;
 		if(this.refreshTime < min_refreshtime) this.refreshTime = min_refreshtime;
@@ -367,12 +367,11 @@ Chat.prototype = {
 			return;
 		}
 
-		var url = pageLocation + "?a=refresh&id=" + this.id;
+		var url = "/s03/chat/?a=refresh&id=" + this.id;
 
 		var c = this;
 		var cb = function(req) {
 					try {
-						{% if dev %}						alert(req.status + '\r\n'+req.responseText);{% endif %}
 						if(req.status==200)
 							eval(req.responseText);
 					} catch(e) {
@@ -519,11 +518,6 @@ function addChat(id, name, topic, canClose, showTag) {
 	return c;
 }
 
-function leaveChat(id)
-{
-	chatlist[id].close();
-}
-
 function showJoinChatForm()
 {
 	if(activeChat) activeChat.setInactive();
@@ -621,21 +615,17 @@ function showJoinChatForm()
         </form>
         <div id="publicchats"></div>
     </div>
-<script>
-oChat = $('chat');
-oChatLine = $('chatline');
-{% endif %}
+    <script>
+        oChat = $('chat')
+        oChatLine = $('chatline')
 
-{% if alliance %}var allianceChat = addChat(0,'Alliance','',false,false);{% endif %}
+        {% if alliance %}addChat(0, 'Alliance', '', false, false){% endif %}
 
-{% for join in joins %}
-var chat = addChat({{join.id}},'{{join.name}}','{{join.topic}}',true,true);
-{% if join.setactive %}chat.setActive();{% endif %}
-{% endfor %}
+        {% for join in joins %}
+            addChat({{ join.id }}, '{{ join.name }}', '{{ join.topic }}', true, true)
+        {% endfor %}
 
-{% if chat %}
-if(chatlist.length == 0) showJoinChatForm();
-        </script>
-    {% endif %}
+        if (chatlist.length == 0) showJoinChatForm()
+    </script>
 </div>
 {% endblock %}

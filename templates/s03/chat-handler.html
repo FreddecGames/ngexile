@@ -1,26 +1,29 @@
 {% load tz %}
+
 {% if join %}
-    var chat = addChat({{ id }},'{{name }}','{{ topic }}',true,true);
-    {% if setactive %}chat.setActive();{% endif %}
+    var chat = addChat({{ chat.id }},'{{chat.name }}','{{ chat.topic }}',true,true);
+    chat.setActive();
 {% endif %}
 {% if join_badpassword %}alert('Nom de salon ou mot de passe incorrect.');{% endif %}
 {% if join_error %}alert('Impossible de rejoindre ce salon.');{% endif %}
+
 {% if refresh %}
     var chat = chatlist[{{ chatid }}];
-    if(chat) {
+    if (chat) {
     {% for line in lines %}
-        chat.addLine('{{ line.alliancetag }}', '{{ line.author }}', new Date({{ line.datetime|timezone:"Europe/Paris"|date:"Y" }},{{ line.datetime|timezone:"Europe/Paris"|date:"m" }}-1,{{ line.datetime|timezone:"Europe/Paris"|date:"d" }},{{ line.datetime|timezone:"Europe/Paris"|date:"H" }},{{ line.datetime|timezone:"Europe/Paris"|date:"i" }},{{ line.datetime|timezone:"Europe/Paris"|date:"s" }},{{ line.datetime|timezone:"Europe/Paris"|date:"z" }}), '{{ line.line }}');
+        chat.addLine('{{ line.tag }}', '{{ line.username }}', new Date({{ line.datetime|timezone:"Europe/Paris"|date:"Y" }},{{ line.datetime|timezone:"Europe/Paris"|date:"m" }}-1,{{ line.datetime|timezone:"Europe/Paris"|date:"d" }},{{ line.datetime|timezone:"Europe/Paris"|date:"H" }},{{ line.datetime|timezone:"Europe/Paris"|date:"i" }},{{ line.datetime|timezone:"Europe/Paris"|date:"s" }},{{ line.datetime|timezone:"Europe/Paris"|date:"z" }}), '{{ line.message }}');
     {% endfor %}
     chat.display();
-    {% if online_users %}
+    {% if users %}
         chat.clearUsers();
-        {% for user in online_users %}chat.addUser('{{ user.alliancetag }}', '{{ user.user }}', {{ user.lastactivity }});{% endfor %}
+        {% for user in users %}chat.addUser('{{ user.tag }}', '{{ user.username }}', {{ user.lastactivity }});{% endfor %}
         chat.displayUsers();
     {% endif %}
     }
 {% endif %}
-{% if publicchats %}
+
+{% if chats %}
     displayPublicChats([0
-    {% for chat in publicchats %},['{{ chat.name }}','{{ chat.topic }}',{{ chat.online }}]{% endfor %}
+    {% for chat in chats %},['{{ chat.name }}','{{ chat.topic }}',{{ chat.online }}]{% endfor %}
     ]);
 {% endif %}

@@ -116,11 +116,11 @@ class View(GlobalView):
             # build the query of which mails to delete
             query = "False"
 
-            mailId = request.POST.get("mailId", "")
-            query = "id=" + mailId
+            mailId = ToInt(request.POST.get("mailId"), 0)
+            query = "id=" + str(mailId)
 
             if query != "False":
-                oConnDoQuery("UPDATE messages SET deleted=True WHERE " + query + " AND ownerid = " + str(self.userId))
+                oConnDoQuery("UPDATE messages SET deleted=TRUE WHERE " + query + " AND ownerid = " + str(self.userId))
 
         if request.GET.get("a", "") == "ignore":
             oConnExecute("SELECT sp_ignore_sender(" + str(self.userId) + "," + dosql(request.GET.get("user")) + ")")
