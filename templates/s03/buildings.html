@@ -191,7 +191,7 @@
                                                 {% if building.isbuilding %}
                                                     <div class="row g-1 flex-column">
                                                         <div class="col-12"><span class="text-yellow"><script>putcountdown1({{ building.remainingtime }}, '')</script></span></div>
-                                                        <div class="col-12"><script>putcountdown2({{ building.remainingtime }}, '<a href="?planet={{ cur_planetid }}&a=cancel&b={{ building.id }}" class="btn btn-danger">Annuler</a>', '<a href="#">Terminé</a>')</script></div>
+                                                        <div class="col-12"><script>putcountdown2({{ building.remainingtime }}, '<a href="?planet={{ cur_planetid }}&a=cancel&b={{ building.id }}" class="btn btn-danger">Annuler</a>', '<a href="?planet={{ cur_planetid }}">Terminé</a>')</script></div>
                                                     </div>
                                                 {% elif building.buildings_required %}
                                                     <div><span class="text-danger">Bâtiment(s) requis</span></div>
@@ -218,7 +218,7 @@
                                                 {% if building.isdestroying %}
                                                     <div class="row g-1 flex-column">
                                                         <div class="col-12"><script>putcountdown1({{ building.nextdestroytime }}, '')</script></div>
-                                                        <div class="col-12"><script>putcountdown2({{ building.nextdestroytime }}, '<span class="text-danger">Démolition en cours</span>', '<a href="#">Terminé</a>')</script></div>
+                                                        <div class="col-12"><script>putcountdown2({{ building.nextdestroytime }}, '<span class="text-danger">Démolition en cours</span>', '<a href="?planet={{ cur_planetid }}">Terminé</a>')</script></div>
                                                     </div>
                                                 {% elif building.workers_required %}
                                                     <div><span class="text-danger">Pas assez de travailleurs</span></div>

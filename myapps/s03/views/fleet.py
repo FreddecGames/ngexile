@@ -299,7 +299,7 @@ class View(GlobalView):
                 fleet["cargo_load"] = oFleetsRs[5]
                 fleet["cargo_capacity"] = oFleetsRs[6]
 
-                if oFleetsRs[8] == self.userId:
+                if oFleetsRs[8] == self.fleet_owner_id:
                     if oRs[34] == 0 and oFleetsRs[7] == 0: fleet["merge"] = True
 
                     fleet["playerfleet"] = True
