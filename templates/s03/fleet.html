@@ -239,7 +239,7 @@
                                             {{ fleet.recycler_output|intcomma }} <span class="text-normal">unités /heure</span>
                                         </div>
                                         <div class="col-auto">
-                                            {% if fleet.can_recycle %}<a href="?id={{ fleet.id }}&action=recycle">Recycler</a>{% endif %}
+                                            {% if can_recycle %}<a href="?id={{ fleet.id }}&action=recycle">Recycler</a>{% endif %}
                                             {% if fleet.action == 2 %}<a href="?id={{ fleet.id }}&action=stoprecycling">Stopper</a>{% endif %}
                                         </div>
                                     </div>
