@@ -31,7 +31,7 @@ class View(GlobalView):
         ship = max(0, ToInt(request.POST.get("shipconstructionspeed"), 0))
 
         total = ore + hydrocarbon + energy + workers + fleetspeed + fleetshield + fleethandling + fleettargeting + fleetdamages + fleetsignature + build + ship
-
+        
         query = "UPDATE commanders SET" + \
                 "    mod_production_ore=mod_production_ore + 0.01*" + str(ore) + \
                 "    ,mod_production_hydrocarbon=mod_production_hydrocarbon + 0.01*" + str(hydrocarbon) + \
