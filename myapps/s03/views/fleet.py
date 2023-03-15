@@ -42,7 +42,7 @@ class View(GlobalView):
             droppods = ToInt(request.POST.get("droppods"), 0)
             
             result = dbExecute("SELECT sp_invade_planet(" + str(self.fleetOwnerId) + "," + str(self.fleetId) + "," + str(droppods) +"," + str(ToBool(take, False)) +")")            
-            if result > 0: return HttpResponseRedirect("/s03/invasion/?id=" + str(result) + " +fleetid=" + str(self.fleetId))
+            if result > 0: return HttpResponseRedirect("/s03/invasion/?id=" + str(result) + "&fleetid=" + str(self.fleetId))
             elif result == -1: messages.error(request, 'error_soldiers')
             elif result == -2: messages.error(request, 'error_fleet')
             elif result == -3: messages.error(request, 'error_planet')
@@ -354,9 +354,12 @@ class View(GlobalView):
         
         #---
         
+        if fleet['planet_ownerid']: planet_ownerid = fleet['planet_ownerid']
+        else: planet_ownerid = self.userId
+
         query = "SELECT db_ships.id, fleets_ships.quantity, label, description," + \
                 " signature, capacity, handling, speed, weapon_turrets, weapon_dmg_em+weapon_dmg_explosive+weapon_dmg_kinetic+weapon_dmg_thermal AS weapon_power, weapon_tracking_speed, hull, shield, recycler_output, long_distance_capacity, droppods," + \
-                " buildingid, sp_can_build_on(" + str(fleet['planetid']) + ", db_ships.buildingid," + str(fleet['planet_ownerid']) + ")=0 AS can_build" + \
+                " buildingid, sp_can_build_on(" + str(fleet['planetid']) + ", db_ships.buildingid," + str(planet_ownerid) + ")=0 AS can_build" + \
                 " FROM fleets_ships" + \
                 "    LEFT JOIN db_ships ON (fleets_ships.shipid = db_ships.id)" + \
                 " WHERE fleetid=" + str(fleet['id']) + \

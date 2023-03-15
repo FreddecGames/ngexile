@@ -5,10 +5,11 @@ from myapps.s03.views._global import *
 class View(GlobalView):
 
     def dispatch(self, request, *args, **kwargs):
-
-        connectDB()
         
-        self.userId = request.user.id
+        response = super().pre_dispatch(request, *args, **kwargs)
+        if response: return response
+            
+        #---
         
         action = request.GET.get("a")
         
@@ -17,17 +18,23 @@ class View(GlobalView):
         if action == "send":
         
             chatid = ToInt(request.GET.get("id"), 0)
+            
             msg = request.GET.get("l", "").strip()[:260]
             
-            if msg != "": dbQuery("INSERT INTO chat_lines(chatid, allianceid, userid, username, message) VALUES(" + str(chatid) + "," + str(sqlValue(self.allianceId)) + "," + str(self.userId) + "," + dosql(self.profile["username"]) + "," + dosql(msg) + ")")
+            if msg != "":
+                dbQuery("INSERT INTO chat_lines(chatid, allianceid, userid, username, message) VALUES(" + str(chatid) + "," + str(sqlValue(self.allianceId)) + "," + str(self.userId) + "," + dosql(self.profile["username"]) + "," + dosql(msg) + ")")
             
             return HttpResponse("")
         
         #---
 
         elif action == "refresh":
-        
+            
+            userchatid = -1
             chatid = ToInt(request.GET.get("id"), 0)
+            if chatid == 0 and self.allianceId:
+                userchatid = 0
+                chatid = dbExecute("SELECT chatid FROM alliances WHERE id=" + str(self.allianceId))
             
             lastmsgid = request.session.get("lastchatmsg_" + str(chatid), "")
             if lastmsgid == "": lastmsgid = 0
@@ -43,7 +50,7 @@ class View(GlobalView):
             tpl.setValue("lines", lines)
             
             if len(lines) > 0:
-                self.request.session["lastchatmsg_" + str(chatid)] = lines[len(lines) - 1]['id']
+                request.session["lastchatmsg_" + str(chatid)] = lines[len(lines) - 1]['id']
             
             query = "SELECT users.alliance_id, users.username, date_part('epoch', now()-chat_onlineusers.lastactivity) AS lastactivity, alliances.tag" + \
                     " FROM chat_onlineusers" + \
@@ -54,7 +61,9 @@ class View(GlobalView):
             tpl.setValue("users", users)
             
             tpl.setValue("refresh", True)
-            tpl.setValue("chatid", chatid)
+            
+            if userchatid == 0: tpl.setValue("chatid", 0)
+            else: tpl.setValue("chatid", chatid)
             
             return render(request, tpl.template, tpl.data)
         
@@ -124,11 +133,6 @@ class View(GlobalView):
             
         #---
         
-        response = super().pre_dispatch(request, *args, **kwargs)
-        if response: return response
-            
-        #---
-        
         self.selectedMenu = "chat"
 
         content = getTemplate(self.request, "s03/chat")
@@ -141,7 +145,8 @@ class View(GlobalView):
         #---
 
         if (self.allianceId):
-            self.request.session["lastchatmsg_" + str(0)] = ""
+            chatid = dbExecute("SELECT chatid FROM alliances WHERE id=" + str(self.allianceId))
+            self.request.session["lastchatmsg_" + str(chatid)] = ""
             content.Parse("alliance")
 
         #---
