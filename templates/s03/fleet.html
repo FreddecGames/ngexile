@@ -3,19 +3,19 @@
 {% block content %}
 {% if context %}<div class="scroll-content" style="height:calc(100% - 106px);">{% endif %}
 <div class="page-content">
-    {% if idle %}
+    {% if fleet.action == 0 %}
         <script>
-        function confirmAbandon() { return confirm('Êtes-vous sûr de vouloir abandonner la flotte "{{ fleetname }}" ?\r\nLes vaisseaux seront endommagés de telle sorte qu\'ils ne pourront être réutilisés !'); }
+        function confirmAbandon() { return confirm('Êtes-vous sûr de vouloir abandonner la flotte "{{ fleet.name }}" ?\r\nLes vaisseaux seront endommagés de telle sorte qu\'ils ne pourront être réutilisés !'); }
         </script>
         <div id="renamebox" class="hidden">
-            <form action="?id={{ fleetid }}" method="post" class="row gx-2">
+            <form action="?id={{ fleet.id }}" method="post" class="row gx-2">
                 {% csrf_token %}
                 <input type='hidden' name='action' value='rename'>
                 <div class="col">
                     <input type='text'
                            class="form-control"
                            name='newname'
-                           value='{{ fleetname }}'>
+                           value='{{ fleet.name }}'>
                 </div>
                 <div class="col-auto">
                     <input type="submit" class="btn btn-primary" value='OK'>
@@ -34,14 +34,14 @@
                 <div id="renameref" class="card-header">
                     <div class="row gx-3 align-items-baseline">
                         <div class="col">
-                            <span class="fs-6">{{ fleetname }}</span>
+                            <span class="fs-6">{{ fleet.name }}</span>
                         </div>
-                        {% if idle %}
+                        {% if fleet.action == 0 %}
                             <div class="col-auto">
                                 <a href="#" onclick="return show('renameref','renamebox')">Renommer</a>
                             </div>
                             <div class="col-auto">
-                                <a href="?planet={{ planetid }}&id={{ fleetid }}&action=abandon"
+                                <a href="?planet={{ fleet.planetid }}&id={{ fleet.id }}&action=abandon"
                                    onclick="return confirmAbandon()">Abandonner</a>
                             </div>
                         {% endif %}
@@ -58,81 +58,77 @@
                                 <div class="row gx-3 align-items-center">
                                     <div class="col">
                                         <div class="row gx-3 align-items-center">
-                                            {% if recycling %}
-                                                <div class="col-auto">
-                                                    <span class="text-success">En recyclage</span>
-                                                </div>
-                                                <div class="col">
-                                                    <script>putplanet("{{planetid}}","{{planetname}}","{{g}}","{{s}}","{{p}}",{{relation}});</script>
-                                                </div>
-                                                <div class="col-auto">
-                                                    <span class="text-yellow"><script>putcountdown1({{time}}, 'Cycle terminé', '?id={{fleetid}}')</script></span>
-                                                </div>
-                                            {% endif %}
-                                            {% if patrolling %}
-                                                <div class="col-auto">
-                                                    <span class="text-normal">En patrouille</span>
-                                                </div>
-                                                <div class="col">
-                                                    <script>putplanet("{{planetid}}","{{planetname}}","{{g}}","{{s}}","{{p}}",{{relation}});</script>
-                                                </div>
-                                            {% endif %}
-                                            {% if fighting %}
+                                            {% if fleet.engaged %}
                                                 <div class="col-auto">
                                                     <span class="text-danger">En combat</span>
                                                 </div>
                                                 <div class="col">
-                                                    <script>putplanet("{{planetid}}","{{planetname}}","{{g}}","{{s}}","{{p}}",{{relation}});</script>
+                                                    <script>putplanet("{{fleet.planetid}}","{{fleet.planet_name}}","{{fleet.planet_galaxy}}","{{fleet.planet_sector}}","{{fleet.planet_planet}}",{{fleet.planet_owner_relation}});</script>
                                                 </div>
-                                            {% endif %}
-                                            {% if moving %}
+                                            {% elif fleet.action == -1 or fleet.action == 1 %}
                                                 <div class="col-auto">
                                                     <span class="text-success">En transit</span>
                                                 </div>
                                                 <div class="col">
-                                                    <script>putplanet("{{planetid}}","{{planetname}}","{{g}}","{{s}}","{{p}}",{{relation}});</script>
+                                                    <script>putplanet("{{fleet.planetid}}","{{fleet.planet_name}}","{{fleet.planet_galaxy}}","{{fleet.planet_sector}}","{{fleet.planet_planet}}",{{fleet.planet_owner_relation}});</script>
                                                     <small class="mx-1 text-normal"><i class="fa-fw fas fa-long-arrow-alt-right"></i></small>
-                                                    <script>putplanet("{{t_planetid}}","{{t_planetname}}","{{t_g}}","{{t_s}}","{{t_p}}",{{t_relation}});</script>
+                                                    <script>putplanet("{{fleet.destplanetid}}","{{fleet.destplanet_name}}","{{fleet.destplanet_galaxy}}","{{fleet.destplanet_sector}}","{{fleet.destplanet_planet}}",{{fleet.destplanet_owner_relation}});</script>
                                                 </div>
                                                 <div class="col-auto">
-                                                    <span class="text-yellow"><script>putcountdown1({{time}}, 'Arrivé', '?id={{fleetid}}')</script></span>
+                                                    <span class="text-yellow"><script>putcountdown1({{fleet.remaining_time}}, 'Arrivé', '?id={{fleet.id}}')</script></span>
                                                 </div>
-                                            {% endif %}
-                                            {% if waiting %}
+                                            {% elif fleet.action == 2 %}
+                                                <div class="col-auto">
+                                                    <span class="text-success">En recyclage</span>
+                                                </div>
+                                                <div class="col">
+                                                    <script>putplanet("{{fleet.planetid}}","{{fleet.planet_name}}","{{fleet.planet_galaxy}}","{{fleet.planet_sector}}","{{fleet.planet_planet}}",{{fleet.planet_owner_relation}});</script>
+                                                </div>
+                                                <div class="col-auto">
+                                                    <span class="text-yellow"><script>putcountdown1({{fleet.remaining_time}}, 'Cycle terminé', '?id={{fleet.id}}')</script></span>
+                                                </div>
+                                            {% elif fleet.action == 4 %}
                                                 <div class="col-auto">
                                                     <span class="text-normal">En attente</span>
                                                 </div>
                                                 <div class="col-auto">
-                                                    <span class="text-yellow"><script>putcountdown1({{time }}, 'Terminé', '?id={{fleetid}}')</script></span>
+                                                    <span class="text-yellow"><script>putcountdown1({{fleet.remaining_time}}, 'Terminé', '?id={{fleet.id}}')</script></span>
+                                                </div>
+                                            {% elif fleet.action == 0 %}
+                                                <div class="col-auto">
+                                                    <span class="text-normal">En patrouille</span>
+                                                </div>
+                                                <div class="col">
+                                                    <script>putplanet("{{fleet.planetid}}","{{fleet.planet_name}}","{{fleet.planet_galaxy}}","{{fleet.planet_sector}}","{{fleet.planet_planet}}",{{fleet.planet_owner_relation}});</script>
                                                 </div>
                                             {% endif %}
                                         </div>
-                                        {% if actions %}
+                                        {% if actions|length > 0 %}
                                             <ul class="mt-1 mb-0">
                                                 {% for action in actions %}
                                                     <li>
-                                                        {% if action.move %}
+                                                        {% if action.action == 1 %}
                                                             <span class="text-normal pe-3">Aller vers</span>
-                                                            <script>putplanet("{{planetid}}","{{planetname}}","{{g}}","{{s}}","{{p}}",{{relation}});</script>
+                                                            <script>putplanet("{{action.id}}","{{action.name}}","{{action.galaxy}}","{{action.sector}}","{{action.planet}}",{{action.relation}});</script>
+                                                        {% elif action.action == 0 and action.ore > 0 %}<span class="text-normal">Tout charger</span>
+                                                        {% elif action.action == 0 and action.ore < 0 %}<span class="text-normal">Tout décharger</span>
+                                                        {% elif action.action == 2 %}<span class="text-normal">Récolter les ressources</span>
+                                                        {% elif action.action == 5 %}<span class="text-normal">Envahir</span>
+                                                        {% elif action.action == 4 %}<span class="text-normal">Attendre</span>
                                                         {% endif %}
-                                                        {% if action.loadall %}<span class="text-normal">Tout charger</span>{% endif %}
-                                                        {% if action.unloadall %}<span class="text-normal">Tout décharger</span>{% endif %}
-                                                        {% if action.recycle %}<span class="text-normal">Récolter les ressources</span>{% endif %}
-                                                        {% if action.invade %}<span class="text-normal">Envahir</span>{% endif %}
-                                                        {% if action.waiting %}<span class="text-normal">Attendre</span>{% endif %}
                                                     </li>
                                                 {% endfor %}
                                             </ul>
                                         {% endif %}
                                     </div>
-                                    {% if warp %}
+                                    {% if fleet.can_warp %}
                                         <div class="col-auto">
-                                            <a href="?id={{ fleetid }}&action=warp">Emprunter le vortex</a>
+                                            <a href="?id={{ fleet.id }}&action=warp">Emprunter le vortex</a>
                                         </div>
                                     {% endif %}
-                                    {% if waiting %}
+                                    {% if fleet.action == 4 %}
                                         <div class="col-auto">
-                                            <a href="?id={{ fleetid }}&action=stopwaiting">Stopper</a>
+                                            <a href="?id={{ fleet.id }}&action=stopwaiting">Stopper</a>
                                         </div>
                                     {% endif %}
                                 </div>
@@ -147,7 +143,7 @@
                             <div class="col-9">
                                 <div class="row gx-3 align-items-center">
                                     <div class="col">
-                                        {% if attack %}
+                                        {% if fleet.attackonsight %}
                                             <img src="{{ PATH_IMAGES }}img/interface/stance_attack.gif"
                                                  class="me-1 stance"
                                                  data-bs-toggle="tooltip"
@@ -166,10 +162,11 @@
                                         {% endif %}
                                     </div>
                                     <div class="col-auto">
-                                        {% if setstance %}
-                                            <a href="?id={{ fleetid }}&action={% if setstance_attack %}attack{% endif %}{% if setstance_defend %}defend{% endif %}">
-                                                {% if setstance_attack %}Attaquer{% endif %}
-                                                {% if setstance_defend %}Riposter{% endif %}
+                                        {% if fleet.firepower > 0 %}
+                                            <a href="?id={{ fleet.id }}&action={% if fleet.attackonsight %}defend{% else %}attack{% endif %}">
+                                                {% if fleet.attackonsight %}Riposter
+                                                {% else %}Attaquer
+                                                {% endif %}
                                             </a>
                                         {% endif %}
                                     </div>
@@ -178,33 +175,25 @@
                         </div>
                     </div>
                     <div id="commandersbox" class="hidden">
-                        <form action='?id={{ fleetid }}' method='post' class="row gx-2">
+                        <form action='?id={{ fleet.id }}' method='post' class="row gx-2">
                             {% csrf_token %}
                             <input type='hidden' name='action' value='assigncommander'>
-                            <div class="col">
-                                <select class="form-control" name='commander'>
-                                    {% if unassigncommander %}
-                                        <option value='0'>
-                                            Aucun
-                                        </option>
-                                    {% endif %}
-                                    {% if nocommander %}
-                                        <option value='0'>
-                                            Aucun
-                                        </option>
-                                    {% endif %}
-                                    {% for optgroup in optgroups %}
-                                        <optgroup label='{% if optgroup.fleet %}sur Flottes{% endif %}{% if optgroup.planet %}sur Planètes{% endif %}{% if optgroup.none %}Non affectés{% endif %}'>
-                                            {% for cmd_option in optgroup.cmd_options %}
-                                                <option value={{ cmd_option.cmd_id }}{% if cmd_option.selected %} selected{% endif %}>&middot;&nbsp;{{ cmd_option.cmd_name }}
-                                                    {% if cmd_option.assigned %}({{ cmd_option.name }}){% endif %}
-                                                    {% if cmd_option.unavailable %}(Indisponible){% endif %}
-                                                </option>
-                                            {% endfor %}
-                                        </optgroup>
-                                    {% endfor %}
-                                </select>
-                            </div>
+                            <div class="col-auto"><select class="form-control" name='commander'>
+                                {% if planet.commanderid %}<option value='0'>Renvoyer</option>
+                                {% else %}<option value='0'>Aucun</option>
+                                {% endif %}
+                                {% for optgroup in optgroups %}
+                                    <optgroup label="{% if optgroup.typ == 'fleet' %}sur Flottes{% endif %}{% if optgroup.typ == 'planet' %}sur Planètes{% endif %}{% if optgroup.typ == 'none' %}Non affectés{% endif %}">
+                                        {% for cmd in optgroup.cmds %}
+                                            <option value={{ cmd.id }}{% if cmd.id == planet.commanderid %} selected{% endif %}>&middot;&nbsp;{{ cmd.name }}
+                                                {% if cmd.fleetname %}({{ cmd.fleetname }}){% endif %}
+                                                {% if cmd.planetname %}({{ cmd.planetname }}){% endif %}
+                                                {% if cmd.unavailable %}(Indisponible){% endif %}
+                                            </option>
+                                        {% endfor %}
+                                    </optgroup>
+                                {% endfor %}
+                            </select></div>
                             <div class="col-auto">
                                 <input type="submit" class="btn btn-primary" value='OK'>
                             </div>
@@ -223,20 +212,22 @@
                             <div id="cmdref" class="col-9">
                                 <div class="row gx-3 align-items-center">
                                     <div class="col-auto">
-                                        {{ fleet_leadership|intcomma }} <small class="text-normal">/{{ fleet_size|intcomma }}</small>
-                                        <small class="ms-3 text-normal">efficacité</small> {{ fleet_commander_efficiency }}%
+                                        {{ fleet.leadership|intcomma }} <small class="text-normal">/{{ fleet.size|intcomma }}</small>
+                                        <small class="ms-3 text-normal">efficacité</small> {{ fleet.commander_efficiency }}%
                                     </div>
                                     <div class="col">
-                                        {% if commander %}<i class="fa-fw fas fa-user-astronaut text-normal"></i> {{ commandername }}{% endif %}
+                                        {% if fleet.commanderid %}<i class="fa-fw fas fa-user-astronaut text-normal"></i> {{ fleet.commandername }}{% endif %}
                                     </div>
+                                    {% if fleet.action == 0 %}
                                     <div class="col-auto">
                                         <a href="#" onclick="return show('cmdref','commandersbox')">Changer</a>
                                     </div>
+                                    {% endif %}
                                 </div>
                             </div>
                         </div>
                     </div>
-                    {% if not hide_recycling %}
+                    {% if fleet.recycler_output > 0 %}
                         <div class="col-12">
                             <div class="row gx-3 align-items-center">
                                 <div class="col-3">
@@ -245,20 +236,20 @@
                                 <div class="col-9">
                                     <div class="row gx-3 align-items-center">
                                         <div class="col">
-                                            {{ recycler_output|intcomma }} <span class="text-normal">unités /heure</span>
+                                            {{ fleet.recycler_output|intcomma }} <span class="text-normal">unités /heure</span>
                                         </div>
                                         <div class="col-auto">
-                                            {% if recycle %}<a href="?id={{ fleetid }}&action=recycle">Recycler</a>{% endif %}
-                                            {% if recycling %}<a href="?id={{ fleetid }}&action=stoprecycling">Stopper</a>{% endif %}
+                                            {% if fleet.can_recycle %}<a href="?id={{ fleet.id }}&action=recycle">Recycler</a>{% endif %}
+                                            {% if fleet.action == 2 %}<a href="?id={{ fleet.id }}&action=stoprecycling">Stopper</a>{% endif %}
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     {% endif %}
-                    {% if invade %}
+                    {% if can_invade %}
                         <div id="invadebox" class="hidden">
-                            <form action="?id={{ fleetid }}"
+                            <form action="?id={{ fleet.id }}"
                                   method="post"
                                   class="row gx-2 align-items-center">
                                 {% csrf_token %}
@@ -275,12 +266,12 @@
                                            maxlength="6"
                                            align="right"
                                            class="form-control"
-                                           value="{{ fleet_droppods }}">
+                                           value="{{ fleet.droppods }}">
                                 </div>
                                 <div class="col-auto">
                                     <span class="text-normal">soldats</span>
                                 </div>
-                                {% if can_take %}
+                                {% if can_take_planet %}
                                     <div class="col-auto">
                                         <div class="form-check">
                                             <input class="form-check-input" type="checkbox" id="take" name="take">
@@ -295,7 +286,7 @@
                                              class="res"
                                              width="16px"
                                              height="16px">
-                                        {{ prestige }}
+                                        {{ prestige_cost }}
                                     </div>
                                 {% endif %}
                                 <div class="col-auto">
@@ -309,7 +300,7 @@
                             </form>
                         </div>
                     {% endif %}
-                    {% if not hide_droppods %}
+                    {% if fleet.droppods > 0 %}
                         <div class="col-12">
                             <div class="row gx-3 align-items-center">
                                 <div class="col-3">
@@ -318,9 +309,9 @@
                                 <div id="invaderef" class="col-9">
                                     <div class="row gx-3 align-items-center">
                                         <div class="col">
-                                            {{ fleet_droppods|intcomma }} <span class="text-normal">soldats</span>
+                                            {{ fleet.droppods|intcomma }} <span class="text-normal">soldats</span>
                                         </div>
-                                        {% if invade %}
+                                        {% if can_invade %}
                                             <div class="col-auto">
                                                 <script>putcountdown2({{invade_time}},"Invasion possible dans ", '<a href="#" onclick=\'return show("invaderef","invadebox")\'>Envahir</a>');putcountdown1({{invade_time}},"","#")</script>
                                             </div>
@@ -336,7 +327,7 @@
                                 <span class="text-normal">Saut intergalactique</span>
                             </div>
                             <div class="col-9">
-                                <span class="text-normal">signature max</span> <span class="{% if insufficient_long_distance_capacity %}text-danger{% endif %}">{{ fleet_long_distance_capacity|intcomma }}</span> <span class="ms-3 text-normal">stabilité requise</span> {{ fleet_required_vortex_strength|intcomma }}
+                                <span class="text-normal">signature max</span> <span class="{% if insufficient_long_distance_capacity %}text-danger{% endif %}">{{ fleet.long_distance_capacity|intcomma }}</span> <span class="ms-3 text-normal">stabilité requise</span> {{ fleet.required_vortex_strength|intcomma }}
                             </div>
                         </div>
                     </div>
@@ -346,7 +337,7 @@
                                 <span class="text-normal">Signature</span>
                             </div>
                             <div class="col-9">
-                                {{ fleet_real_signature|intcomma }} <span class="ms-3 text-normal">détectée</span> {{ fleet_signature|intcomma }}
+                                {{ fleet.real_signature|intcomma }} <span class="ms-3 text-normal">détectée</span> {{ fleet.signature|intcomma }}
                             </div>
                         </div>
                     </div>
@@ -361,7 +352,7 @@
                                      class="res"
                                      width="16px"
                                      height="16px">
-                                {{ fleet_upkeep|intcomma }} <span class="ms-3 text-normal">x{{ fleet_upkeep_multiplicator }}</span>
+                                {{ fleet.upkeep|intcomma }} <span class="ms-3 text-normal">x{{ fleet.upkeep_multiplicator }}</span>
                             </div>
                         </div>
                     </div>
@@ -373,11 +364,11 @@
                             <div class="col-9">
                                 <div class="row gx-3 align-items-center">
                                     <div class="col">
-                                        {{ fleet_speed|intcomma }}
+                                        {{ fleet.speed|intcomma }}
                                     </div>
-                                    {% if cancel_moving %}
+                                    {% if can_cancel_moving %}
                                         <div class="col-auto">
-                                            <span class="text-normal">Perte du contact</span> <span class="text-yellow"><script>putcountdown1({{timelimit}},"Effective"," ");</script></span> <script>putcountdown2({{timelimit}},'<a href="?id={{fleetid}}&action=return">Annuler</a>', '');</script>
+                                            <span class="text-normal">Perte du contact</span> <span class="text-yellow"><script>putcountdown1({{timelimit}},"Effective"," ");</script></span> <script>putcountdown2({{timelimit}},'<a href="?id={{fleet.id}}&action=return">Annuler</a>', '');</script>
                                         </div>
                                     {% endif %}
                                 </div>
@@ -393,23 +384,22 @@
                                 <div class="row gx-3 align-items-center">
                                     <div class="col">
                                         Flotte partagée à l'alliance
-                                        <a href="?id={{ fleetid }}&action=share">
-                                            {% if shared %}Oui{% endif %}
-                                            {% if not_shared %}Non{% endif %}
+                                        <a href="?id={{ fleet.id }}&action=share">
+                                            {% if shared %}Oui{% else %}Non{% endif %}
                                         </a>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    {% if not hide_cargo %}
+                    {% if fleet.cargo_capacity > 0 %}
                         <div class="col-12">
                             <div class="row gx-3 align-items-center">
                                 <div class="col-3">
                                     <span class="text-normal">Cargaison</span>
                                 </div>
                                 <div class="col-9">
-                                    <span id="load">{{ fleet_load|intcomma }}</span> <small class="text-normal">/{{ fleet_capacity|intcomma }} unités</small>
+                                    <span id="load">{{ fleet.cargo_load|intcomma }}</span> <small class="text-normal">/{{ fleet.cargo_capacity|intcomma }} unités</small>
                                 </div>
                             </div>
                         </div>
@@ -464,7 +454,7 @@
                 </div>
             </div>
             </div>
-            {% if move_fleet %}
+            {% if can_move %}
                 <script>
                 var tab = new Array();
 
@@ -476,18 +466,19 @@
                     setval("p",tab[dest][2]);	
                 }
                 
-                function d(idx, name, g, s, p) { tab[idx] = new Array(g, s, p); }
+                var index = 0
+                function d(idx, name, g, s, p) { tab[index] = new Array(g, s, p); index++; }
                 
                 {% if planetgroup %}
-                    {% for location in planetgroup %}d({{location.index}},'{{location.name}}',{{location.to_g}},{{location.to_s}},{{location.to_p}});{% endfor %}
+                    {% for location in planetgroup %}d({{location.id}},'{{location.name}}',{{location.galaxy}},{{location.sector}},{{location.planet}});{% endfor %}
                 {% endif %}
 
                 {% if fleetgroup %}
-                    {% for location in fleetgroup %}d({{location.index}},'{{location.name}}',{{location.to_g}},{{location.to_s}},{{location.to_p}});{% endfor %}
+                    {% for location in fleetgroup %}d({{location.planetid}},'{{location.name}}',{{location.planet_galaxy}},{{location.planet_sector}},{{location.planet_planet}});{% endfor %}
                 {% endif %}
 
                 {% if merchantplanetsgroup %}
-                    {% for location in merchantplanetsgroup %}d({{location.index}},'',{{location.to_g}},{{location.to_s}},{{location.to_p}});{% endfor %}
+                    {% for location in merchantplanetsgroup %}d({{location.id}},'',{{location.galaxy}},{{location.sector}},{{location.planet}});{% endfor %}
                 {% endif %}
 
                 function setTravelTime(seconds)
@@ -532,8 +523,8 @@
                     var distance = 0;
                     var time = 0;
 
-                    if({{g}} != to_g) {
-                        if({{fleet_real_signature}} > {{fleet_long_distance_capacity}}) {
+                    if({{fleet.planet_galaxy}} != to_g) {
+                        if({{fleet.real_signature}} > {{fleet.long_distance_capacity}}) {
                             var s = "-";
                             if(oTravelCost.innerHTML != s) oTravelCost.innerHTML = s;
 
@@ -543,19 +534,19 @@
                         }
 
                         distance = 200;
-                        time = {{fleet_required_vortex_strength}}*24*3600;
+                        time = {{fleet.required_vortex_strength}}*24*3600;
                     }
                     else {
-                        if({{s}} != to_s)
-                            distance = 6*Math.sqrt( Math.pow(Math.floor((to_s-1) / 10) - Math.floor(({{s}}-1)/10), 2) + Math.pow((to_s-1) % 10 - ({{s}}-1)%10, 2) );
+                        if({{fleet.planet_sector}} != to_s)
+                            distance = 6*Math.sqrt( Math.pow(Math.floor((to_s-1) / 10) - Math.floor(({{fleet.planet_sector}}-1)/10), 2) + Math.pow((to_s-1) % 10 - ({{fleet.planet_sector}}-1)%10, 2) );
                         else
-                        if({{p}} != to_p)
-                            distance = Math.sqrt( Math.pow(Math.floor((to_p-1) / 5) - Math.floor(({{p}}-1)/5), 2) + Math.pow((to_p-1) % 5 - ({{p}}-1)%5, 2) );
+                        if({{fleet.planet_planet}} != to_p)
+                            distance = Math.sqrt( Math.pow(Math.floor((to_p-1) / 5) - Math.floor(({{fleet.planet_planet}}-1)/5), 2) + Math.pow((to_p-1) % 5 - ({{fleet.planet_planet}}-1)%5, 2) );
 
-                        time = Math.floor(distance * (1000.0/{{fleet_speed}}) * 3600);
+                        time = Math.floor(distance * (1000.0/{{fleet.speed}}) * 3600);
                     }
                     
-                    cost = Math.floor(distance / 200.0 * {{fleet_real_signature}});
+                    cost = Math.floor(distance / 200.0 * {{fleet.real_signature}});
 
                     setTravelTime(time);
 
@@ -563,7 +554,7 @@
                     if(oTravelCost.innerHTML != cost) oTravelCost.innerHTML = formatnumber(cost);
                 }
                 </script>
-                <form method="post" action="?id={{ fleetid }}">
+                <form method="post" action="?id={{ fleet.id }}">
                     {% csrf_token %}
                     <input type="hidden" name="action" value="move">
                     <input type="hidden" name="loop" value="0">
@@ -607,7 +598,7 @@
                                                            name="g"
                                                            size="3"
                                                            maxlength="2"
-                                                           value="{{g}}">
+                                                           value="{{fleet.planet_galaxy}}">
                                                 </div>
                                                 <div class="col-auto">
                                                     <input type="number"
@@ -616,7 +607,7 @@
                                                            name="s"
                                                            size="3"
                                                            maxlength="2"
-                                                           value="{{s}}">
+                                                           value="{{fleet.planet_sector}}">
                                                 </div>
                                                 <div class="col-auto">
                                                     <input type="number"
@@ -625,7 +616,7 @@
                                                            name="p"
                                                            size="3"
                                                            maxlength="2"
-                                                           value="{{p}}">
+                                                           value="{{fleet.planet_planet}}">
                                                 </div>
                                                 <div class="col">
                                                     <select class="form-control"
@@ -635,8 +626,8 @@
                                                         {% if planetgroup %}
                                                             <optgroup label="Planètes">
                                                                 {% for location in planetgroup %}
-                                                                    <option{% if location.selected %} selected{% endif %}>
-                                                                        {{ location.name }} ({{ location.to_g }}.{{ location.to_s }}.{{ location.to_p }})
+                                                                    <option>
+                                                                        {{ location.name }} ({{ location.galaxy }}.{{ location.sector }}.{{ location.planet }})
                                                                     </option>
                                                                 {% endfor %}
                                                             </optgroup>
@@ -644,8 +635,8 @@
                                                         {% if fleetgroup %}
                                                             <optgroup label="Vers Flottes">
                                                                 {% for location in fleetgroup %}
-                                                                    <option{% if location.selected %} selected{% endif %}>
-                                                                        {{ location.fleet_name }} ({{ location.to_g }}.{{ location.to_s }}.{{ location.to_p }})
+                                                                    <option>
+                                                                        {{ location.fleet_name }} ({{ location.planet_galaxy }}.{{ location.planet_sector }}.{{ location.planet_planet }})
                                                                     </option>
                                                                 {% endfor %}
                                                             </optgroup>
@@ -653,8 +644,8 @@
                                                         {% if merchantplanetsgroup %}
                                                             <optgroup label="Planètes marchandes">
                                                                 {% for location in merchantplanetsgroup %}
-                                                                    <option{% if location.selected %} selected{% endif %}>
-                                                                        Marchand ({{ location.to_g }}.{{ location.to_s }}.{{ location.to_p }})
+                                                                    <option>
+                                                                        Marchand ({{ location.galaxy }}.{{ location.sector }}.{{ location.planet }})
                                                                     </option>
                                                                 {% endfor %}
                                                             </optgroup>
@@ -713,7 +704,7 @@
                 </form>
                 <script>window.setTimeout("updatetravel()", 500);</script>
             {% endif %}
-            {% if not hide_cargo %}
+            {% if fleet.cargo_capacity > 0 %}
                 <div class="mt-3" id="cargobox">
                     <script>
                 function load_all(o,h,s,so,w) {
@@ -736,85 +727,13 @@
                     return false;
                 }
                 {% if unload %}
-                    showUnload({{ fleet_ore }},{{ fleet_hydrocarbon }},{{ fleet_scientists }},{{ fleet_soldiers }},{{ fleet_workers }},0
+                    showUnload({{ fleet.cargo_ore }},{{ fleet.cargo_hydrocarbon }},{{ fleet.cargo_scientists }},{{ fleet.cargo_soldiers }},{{ fleet.cargo_workers }},0
                     {% if canload %}1{% endif %}
                     );
                 {% endif %}
                     </script>
-                    {% if cargo %}
-                        <div class="card">
-                            <div class="card-header">
-                                <span class="fs-6">Cargaison</span>
-                                <span class="ms-2 text-normal">Aucune action possible</span>
-                            </div>
-                            <div class="card-body">
-                                <div class="row gx-3 gy-1 align-items-center justify-content-center">
-                                    {% if fleet_load <= 0 %}
-                                        <div class="col-auto">
-                                            <span class="text-normal">Vide</span>
-                                        </div>
-                                    {% else %}
-                                        {% if fleet_ore > 0 %}
-                                            <div class="col-auto">
-                                                <img src="{{ PATH_IMAGES }}img/interface/ore.gif"
-                                                     data-bs-toggle="tooltip"
-                                                     data-bs-title="Minerai"
-                                                     class="res"
-                                                     width="16px"
-                                                     height="16px"/>
-                                                {{ fleet_ore|intcomma }}
-                                            </div>
-                                        {% endif %}
-                                        {% if fleet_hydrocarbon > 0 %}
-                                            <div class="col-auto">
-                                                <img src="{{ PATH_IMAGES }}img/interface/hydrocarbon.gif"
-                                                     data-bs-toggle="tooltip"
-                                                     data-bs-title="Hydrocarbure"
-                                                     class="res"
-                                                     width="16px"
-                                                     height="16px"/>
-                                                {{ fleet_hydrocarbon|intcomma }}
-                                            </div>
-                                        {% endif %}
-                                        {% if fleet_scientists > 0 %}
-                                            <div class="col-auto">
-                                                <img src="{{ PATH_IMAGES }}img/interface/scientists.gif"
-                                                     data-bs-toggle="tooltip"
-                                                     data-bs-title="Scientifiques"
-                                                     class="res"
-                                                     width="16px"
-                                                     height="16px"/>
-                                                {{ fleet_scientists|intcomma }}
-                                            </div>
-                                        {% endif %}
-                                        {% if fleet_soldiers > 0 %}
-                                            <div class="col-auto">
-                                                <img src="{{ PATH_IMAGES }}img/interface/soldiers.gif"
-                                                     data-bs-toggle="tooltip"
-                                                     data-bs-title="Soldats"
-                                                     class="res"
-                                                     width="16px"
-                                                     height="16px"/>
-                                                {{ fleet_soldiers|intcomma }}
-                                            </div>
-                                        {% endif %}
-                                        {% if fleet_workers > 0 %}
-                                            <div class="col-auto">
-                                                <img src="{{ PATH_IMAGES }}img/interface/workers.gif"
-                                                     data-bs-toggle="tooltip"
-                                                     data-bs-title="Travailleurs"
-                                                     class="res"
-                                                     width="16px"
-                                                     height="16px"/>
-                                                {{ fleet_workers|intcomma }}
-                                            </div>
-                                        {% endif %}
-                                    {% endif %}
-                                </div>
-                            </div>
-                        </div>
-                    {% elif load %}
-                        <form method="post" action="/s03/fleet-trade/?id={{ fleetid }}">
+                    {% if can_load_cargo %}
+                        <form method="post" action="/s03/fleet-trade/?id={{ fleet.id }}">
                             {% csrf_token %}
                             <div class="card">
                                 <div class="card-header">
@@ -845,7 +764,7 @@
                                                     <span class="text-normal">Minerai</span>
                                                 </div>
                                                 <div class="col-2 text-end">
-                                                    {{ fleet_ore|intcomma }}
+                                                    {{ fleet.cargo_ore|intcomma }}
                                                 </div>
                                                 <div class="col-auto d-flex align-items-center">
                                                     <input type="number"
@@ -855,10 +774,10 @@
                                                            id="unload_ore"
                                                            value="0"
                                                            size="6"/>
-                                                    <a href="#" class="ms-2" onclick="setval('unload_ore', {{ fleet_ore }})">max</a>
+                                                    <a href="#" class="ms-2" onclick="setval('unload_ore', {{ fleet.cargo_ore }})">max</a>
                                                 </div>
                                                 <div class="col-3 text-end">
-                                                    {{ planet_ore|intcomma }}
+                                                    {{ planet.ore|intcomma }}
                                                 </div>
                                                 <div class="col-auto d-flex align-items-center">
                                                     <input type="number"
@@ -868,7 +787,7 @@
                                                            id="load_ore"
                                                            value="0"
                                                            size="6"/>
-                                                    <a href="#" class="ms-2" onclick="setval('load_ore', {{ planet_ore }})">max</a>
+                                                    <a href="#" class="ms-2" onclick="setval('load_ore', {{ planet.ore }})">max</a>
                                                 </div>
                                             </div>
                                         </div>
@@ -884,7 +803,7 @@
                                                     <span class="text-normal">Hydrocarbure</span>
                                                 </div>
                                                 <div class="col-2 text-end">
-                                                    {{ fleet_hydrocarbon|intcomma }}
+                                                    {{ fleet.cargo_hydrocarbon|intcomma }}
                                                 </div>
                                                 <div class="col-auto d-flex align-items-center">
                                                     <input type="number"
@@ -896,10 +815,10 @@
                                                            size="6"/>
                                                     <a href="#"
                                                        class="ms-2"
-                                                       onclick="setval('unload_hydrocarbon', {{ fleet_hydrocarbon }})">max</a>
+                                                       onclick="setval('unload_hydrocarbon', {{ fleet.cargo_hydrocarbon }})">max</a>
                                                 </div>
                                                 <div class="col-3 text-end">
-                                                    {{ planet_hydrocarbon|intcomma }}
+                                                    {{ planet.hydrocarbon|intcomma }}
                                                 </div>
                                                 <div class="col-auto d-flex align-items-center">
                                                     <input type="number"
@@ -911,7 +830,7 @@
                                                            size="6"/>
                                                     <a href="#"
                                                        class="ms-2"
-                                                       onclick="setval('load_hydrocarbon', {{ planet_hydrocarbon }})">max</a>
+                                                       onclick="setval('load_hydrocarbon', {{ planet.hydrocarbon }})">max</a>
                                                 </div>
                                             </div>
                                         </div>
@@ -927,7 +846,7 @@
                                                     <span class="text-normal">Scientifiques</span>
                                                 </div>
                                                 <div class="col-2 text-end">
-                                                    {{ fleet_scientists|intcomma }}
+                                                    {{ fleet.cargo_scientists|intcomma }}
                                                 </div>
                                                 <div class="col-auto d-flex align-items-center">
                                                     <input type="number"
@@ -939,10 +858,10 @@
                                                            size="6"/>
                                                     <a href="#"
                                                        class="ms-2"
-                                                       onclick="setval('unload_scientists', {{ fleet_scientists }})">max</a>
+                                                       onclick="setval('unload_scientists', {{ fleet.cargo_scientists }})">max</a>
                                                 </div>
                                                 <div class="col-3 text-end">
-                                                    {{ planet_scientists|intcomma }}
+                                                    {{ planet.scientists|intcomma }}
                                                 </div>
                                                 <div class="col-auto d-flex align-items-center">
                                                     <input type="number"
@@ -954,7 +873,7 @@
                                                            size="6"/>
                                                     <a href="#"
                                                        class="ms-2"
-                                                       onclick="setval('load_scientists', {{ planet_scientists }})">max</a>
+                                                       onclick="setval('load_scientists', {{ planet.scientists }})">max</a>
                                                 </div>
                                             </div>
                                         </div>
@@ -970,7 +889,7 @@
                                                     <span class="text-normal">Soldats</span>
                                                 </div>
                                                 <div class="col-2 text-end">
-                                                    {{ fleet_soldiers|intcomma }}
+                                                    {{ fleet.cargo_soldiers|intcomma }}
                                                 </div>
                                                 <div class="col-auto d-flex align-items-center">
                                                     <input type="number"
@@ -982,10 +901,10 @@
                                                            size="6"/>
                                                     <a href="#"
                                                        class="ms-2"
-                                                       onclick="setval('unload_soldiers', {{ fleet_soldiers }})">max</a>
+                                                       onclick="setval('unload_soldiers', {{ fleet.cargo_soldiers }})">max</a>
                                                 </div>
                                                 <div class="col-3 text-end">
-                                                    {{ planet_soldiers|intcomma }}
+                                                    {{ planet.soldiers|intcomma }}
                                                 </div>
                                                 <div class="col-auto d-flex align-items-center">
                                                     <input type="number"
@@ -997,7 +916,7 @@
                                                            size="6"/>
                                                     <a href="#"
                                                        class="ms-2"
-                                                       onclick="setval('load_soldiers', {{ planet_soldiers }})">max</a>
+                                                       onclick="setval('load_soldiers', {{ planet.soldiers }})">max</a>
                                                 </div>
                                             </div>
                                         </div>
@@ -1013,7 +932,7 @@
                                                     <span class="text-normal">Travailleurs</span>
                                                 </div>
                                                 <div class="col-2 text-end">
-                                                    {{ fleet_workers|intcomma }}
+                                                    {{ fleet.cargo_workers|intcomma }}
                                                 </div>
                                                 <div class="col-auto d-flex align-items-center">
                                                     <input type="number"
@@ -1025,10 +944,10 @@
                                                            size="6"/>
                                                     <a href="#"
                                                        class="ms-2"
-                                                       onclick="setval('unload_workers', {{ fleet_workers }})">max</a>
+                                                       onclick="setval('unload_workers', {{ fleet.cargo_workers }})">max</a>
                                                 </div>
                                                 <div class="col-3 text-end">
-                                                    {{ planet_workers|intcomma }}
+                                                    {{ planet.workers|intcomma }}
                                                 </div>
                                                 <div class="col-auto d-flex align-items-center">
                                                     <input type="number"
@@ -1040,7 +959,7 @@
                                                            size="6"/>
                                                     <a href="#"
                                                        class="ms-2"
-                                                       onclick="setval('load_workers', {{ planet_workers }})">max</a>
+                                                       onclick="setval('load_workers', {{ planet.workers }})">max</a>
                                                 </div>
                                             </div>
                                         </div>
@@ -1048,11 +967,11 @@
                                             <div class="row gx-3 align-items-center justify-content-end">
                                                 <div class="col-auto">
                                                     <a href="#"
-                                                       onclick="return unload_all({{ fleet_ore }}, {{ fleet_hydrocarbon }}, {{ fleet_scientists }}, {{ fleet_soldiers }}, {{ fleet_workers }})">Tout décharger</a>
+                                                       onclick="return unload_all({{ fleet.cargo_ore }}, {{ fleet.cargo_hydrocarbon }}, {{ fleet.cargo_scientists }}, {{ fleet.cargo_soldiers }}, {{ fleet.cargo_workers }})">Tout décharger</a>
                                                 </div>
                                                 <div class="col-auto">
                                                     <a href="#"
-                                                       onclick="return load_all({{ planet_ore }}, {{ planet_hydrocarbon }}, {{ planet_scientists }}, {{ planet_soldiers }}, {{ planet_workers }})">Tout charger</a>
+                                                       onclick="return load_all({{ planet.ore }}, {{ planet.hydrocarbon }}, {{ planet.scientists }}, {{ planet.soldiers }}, {{ planet.workers }})">Tout charger</a>
                                                 </div>
                                                 <div class="col-auto">
                                                     <input type="submit" class="btn btn-primary" value="Transférer">
@@ -1063,8 +982,8 @@
                                 </div>
                             </div>
                         </form>
-                    {% elif unload %}
-                        <form method="post" action="/s03/fleet-trade/?id={{ fleetid }}">
+                    {% elif can_unload_cargo %}
+                        <form method="post" action="/s03/fleet-trade/?id={{ fleet.id }}">
                             {% csrf_token %}
                             <div class="card">
                                 <div class="card-header">
@@ -1095,7 +1014,7 @@
                                                     <span class="text-normal">Minerai</span>
                                                 </div>
                                                 <div class="col-2 text-end">
-                                                    {{ fleet_ore|intcomma }}
+                                                    {{ fleet.cargo_ore|intcomma }}
                                                 </div>
                                                 <div class="col-auto d-flex align-items-center">
                                                     <input type="number"
@@ -1105,10 +1024,10 @@
                                                            id="unload_ore"
                                                            value="0"
                                                            size="6"/>
-                                                    <a href="#" class="ms-2" onclick="setval('unload_ore', {{ fleet_ore }})">max</a>
+                                                    <a href="#" class="ms-2" onclick="setval('unload_ore', {{ fleet.cargo_ore }})">max</a>
                                                 </div>
                                                 <div class="col-3 text-end">
-                                                    {{ planet_ore|intcomma }}
+                                                    {{ planet.ore|intcomma }}
                                                 </div>
                                                 <div class="col-auto d-flex align-items-center">
                                                     <input type="number"
@@ -1118,7 +1037,7 @@
                                                            id="load_ore"
                                                            value="0"
                                                            size="6"/>
-                                                    <a href="#" class="ms-2" onclick="setval('load_ore', {{ planet_ore }})">max</a>
+                                                    <a href="#" class="ms-2" onclick="setval('load_ore', {{ planet.ore }})">max</a>
                                                 </div>
                                             </div>
                                         </div>
@@ -1134,7 +1053,7 @@
                                                     <span class="text-normal">Hydrocarbure</span>
                                                 </div>
                                                 <div class="col-2 text-end">
-                                                    {{ fleet_hydrocarbon|intcomma }}
+                                                    {{ fleet.cargo_hydrocarbon|intcomma }}
                                                 </div>
                                                 <div class="col-auto d-flex align-items-center">
                                                     <input type="number"
@@ -1146,10 +1065,10 @@
                                                            size="6"/>
                                                     <a href="#"
                                                        class="ms-2"
-                                                       onclick="setval('unload_hydrocarbon', {{ fleet_hydrocarbon }})">max</a>
+                                                       onclick="setval('unload_hydrocarbon', {{ fleet.cargo_hydrocarbon }})">max</a>
                                                 </div>
                                                 <div class="col-3 text-end">
-                                                    {{ planet_hydrocarbon|intcomma }}
+                                                    {{ planet.hydrocarbon|intcomma }}
                                                 </div>
                                                 <div class="col-auto d-flex align-items-center">
                                                     <input type="number"
@@ -1161,7 +1080,7 @@
                                                            size="6"/>
                                                     <a href="#"
                                                        class="ms-2"
-                                                       onclick="setval('load_hydrocarbon', {{ planet_hydrocarbon }})">max</a>
+                                                       onclick="setval('load_hydrocarbon', {{ planet.hydrocarbon }})">max</a>
                                                 </div>
                                             </div>
                                         </div>
@@ -1177,7 +1096,7 @@
                                                     <span class="text-normal">Scientifiques</span>
                                                 </div>
                                                 <div class="col-2 text-end">
-                                                    {{ fleet_scientists|intcomma }}
+                                                    {{ fleet.cargo_scientists|intcomma }}
                                                 </div>
                                                 <div class="col-auto d-flex align-items-center">
                                                     <input type="number"
@@ -1189,10 +1108,10 @@
                                                            size="6"/>
                                                     <a href="#"
                                                        class="ms-2"
-                                                       onclick="setval('unload_scientists', {{ fleet_scientists }})">max</a>
+                                                       onclick="setval('unload_scientists', {{ fleet.cargo_scientists }})">max</a>
                                                 </div>
                                                 <div class="col-3 text-end">
-                                                    {{ planet_scientists|intcomma }}
+                                                    {{ planet.scientists|intcomma }}
                                                 </div>
                                                 <div class="col-auto d-flex align-items-center">
                                                     <input type="number"
@@ -1204,7 +1123,7 @@
                                                            size="6"/>
                                                     <a href="#"
                                                        class="ms-2"
-                                                       onclick="setval('load_scientists', {{ planet_scientists }})">max</a>
+                                                       onclick="setval('load_scientists', {{ planet.scientists }})">max</a>
                                                 </div>
                                             </div>
                                         </div>
@@ -1220,7 +1139,7 @@
                                                     <span class="text-normal">Soldats</span>
                                                 </div>
                                                 <div class="col-2 text-end">
-                                                    {{ fleet_soldiers|intcomma }}
+                                                    {{ fleet.cargo_soldiers|intcomma }}
                                                 </div>
                                                 <div class="col-auto d-flex align-items-center">
                                                     <input type="number"
@@ -1232,10 +1151,10 @@
                                                            size="6"/>
                                                     <a href="#"
                                                        class="ms-2"
-                                                       onclick="setval('unload_soldiers', {{ fleet_soldiers }})">max</a>
+                                                       onclick="setval('unload_soldiers', {{ fleet.cargo_soldiers }})">max</a>
                                                 </div>
                                                 <div class="col-3 text-end">
-                                                    {{ planet_soldiers|intcomma }}
+                                                    {{ planet.soldiers|intcomma }}
                                                 </div>
                                                 <div class="col-auto d-flex align-items-center">
                                                     <input type="number"
@@ -1247,7 +1166,7 @@
                                                            size="6"/>
                                                     <a href="#"
                                                        class="ms-2"
-                                                       onclick="setval('load_soldiers', {{ planet_soldiers }})">max</a>
+                                                       onclick="setval('load_soldiers', {{ planet.soldiers }})">max</a>
                                                 </div>
                                             </div>
                                         </div>
@@ -1263,7 +1182,7 @@
                                                     <span class="text-normal">Travailleurs</span>
                                                 </div>
                                                 <div class="col-2 text-end">
-                                                    {{ fleet_workers|intcomma }}
+                                                    {{ fleet.cargo_workers|intcomma }}
                                                 </div>
                                                 <div class="col-auto d-flex align-items-center">
                                                     <input type="number"
@@ -1275,10 +1194,10 @@
                                                            size="6"/>
                                                     <a href="#"
                                                        class="ms-2"
-                                                       onclick="setval('unload_workers', {{ fleet_workers }})">max</a>
+                                                       onclick="setval('unload_workers', {{ fleet.cargo_workers }})">max</a>
                                                 </div>
                                                 <div class="col-3 text-end">
-                                                    {{ planet_workers|intcomma }}
+                                                    {{ planet.workers|intcomma }}
                                                 </div>
                                                 <div class="col-auto d-flex align-items-center">
                                                     <input type="number"
@@ -1290,7 +1209,7 @@
                                                            size="6"/>
                                                     <a href="#"
                                                        class="ms-2"
-                                                       onclick="setval('load_workers', {{ planet_workers }})">max</a>
+                                                       onclick="setval('load_workers', {{ planet.workers }})">max</a>
                                                 </div>
                                             </div>
                                         </div>
@@ -1298,11 +1217,11 @@
                                             <div class="row gx-3 align-items-center justify-content-end">
                                                 <div class="col-auto">
                                                     <a href="#"
-                                                       onclick="return unload_all({{ fleet_ore }}, {{ fleet_hydrocarbon }}, {{ fleet_scientists }}, {{ fleet_soldiers }}, {{ fleet_workers }})">Tout décharger</a>
+                                                       onclick="return unload_all({{ fleet.cargo_ore }}, {{ fleet.cargo_hydrocarbon }}, {{ fleet.cargo_scientists }}, {{ fleet.cargo_soldiers }}, {{ fleet.cargo_workers }})">Tout décharger</a>
                                                 </div>
                                                 <div class="col-auto">
                                                     <a href="#"
-                                                       onclick="return load_all({{ planet_ore }}, {{ planet_hydrocarbon }}, {{ planet_scientists }}, {{ planet_soldiers }}, {{ planet_workers }})">Tout charger</a>
+                                                       onclick="return load_all({{ planet.ore }}, {{ planet.hydrocarbon }}, {{ planet.scientists }}, {{ planet.soldiers }}, {{ planet.workers }})">Tout charger</a>
                                                 </div>
                                                 <div class="col-auto">
                                                     <input type="submit" class="btn btn-primary" value="Transférer">
@@ -1313,6 +1232,78 @@
                                 </div>
                             </div>
                         </form>
+                    {% else %}
+                        <div class="card">
+                            <div class="card-header">
+                                <span class="fs-6">Cargaison</span>
+                                <span class="ms-2 text-normal">Aucune action possible</span>
+                            </div>
+                            <div class="card-body">
+                                <div class="row gx-3 gy-1 align-items-center justify-content-center">
+                                    {% if fleet.cargo_load <= 0 %}
+                                        <div class="col-auto">
+                                            <span class="text-normal">Vide</span>
+                                        </div>
+                                    {% else %}
+                                        {% if fleet.cargo_ore > 0 %}
+                                            <div class="col-auto">
+                                                <img src="{{ PATH_IMAGES }}img/interface/ore.gif"
+                                                     data-bs-toggle="tooltip"
+                                                     data-bs-title="Minerai"
+                                                     class="res"
+                                                     width="16px"
+                                                     height="16px"/>
+                                                {{ fleet.cargo_ore|intcomma }}
+                                            </div>
+                                        {% endif %}
+                                        {% if fleet.cargo_hydrocarbon > 0 %}
+                                            <div class="col-auto">
+                                                <img src="{{ PATH_IMAGES }}img/interface/hydrocarbon.gif"
+                                                     data-bs-toggle="tooltip"
+                                                     data-bs-title="Hydrocarbure"
+                                                     class="res"
+                                                     width="16px"
+                                                     height="16px"/>
+                                                {{ fleet.cargo_hydrocarbon|intcomma }}
+                                            </div>
+                                        {% endif %}
+                                        {% if fleet.cargo_scientists > 0 %}
+                                            <div class="col-auto">
+                                                <img src="{{ PATH_IMAGES }}img/interface/scientists.gif"
+                                                     data-bs-toggle="tooltip"
+                                                     data-bs-title="Scientifiques"
+                                                     class="res"
+                                                     width="16px"
+                                                     height="16px"/>
+                                                {{ fleet.cargo_scientists|intcomma }}
+                                            </div>
+                                        {% endif %}
+                                        {% if fleet.cargo_soldiers > 0 %}
+                                            <div class="col-auto">
+                                                <img src="{{ PATH_IMAGES }}img/interface/soldiers.gif"
+                                                     data-bs-toggle="tooltip"
+                                                     data-bs-title="Soldats"
+                                                     class="res"
+                                                     width="16px"
+                                                     height="16px"/>
+                                                {{ fleet.cargo_soldiers|intcomma }}
+                                            </div>
+                                        {% endif %}
+                                        {% if fleet.cargo_workers > 0 %}
+                                            <div class="col-auto">
+                                                <img src="{{ PATH_IMAGES }}img/interface/workers.gif"
+                                                     data-bs-toggle="tooltip"
+                                                     data-bs-title="Travailleurs"
+                                                     class="res"
+                                                     width="16px"
+                                                     height="16px"/>
+                                                {{ fleet.cargo_workers|intcomma }}
+                                            </div>
+                                        {% endif %}
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
                     {% endif %}
                 </div>
             {% endif %}
@@ -1324,21 +1315,21 @@
                         <div class="col">
                             <span class="fs-6">Vaisseaux</span>
                         </div>
-                        {% if manage %}
+                        {% if can_manage %}
                             <div class="col-auto">
-                                <a href="/s03/fleet-ships/?id={{ fleetid }}">Gérer</a>
+                                <a href="/s03/fleet-ships/?id={{ fleet.id }}">Gérer</a>
                             </div>
                         {% endif %}
-                        {% if split %}
+                        {% if can_split %}
                             <div class="col-auto">
-                                <a href="/s03/fleet-split/?id={{ fleetid }}">Scinder</a>
+                                <a href="/s03/fleet-split/?id={{ fleet.id }}">Scinder</a>
                             </div>
                         {% endif %}
                     </div>
                 </div>
                 <div class="card-body">
                 <div class="row gy-2 flex-column">
-                    {% for ship in shiplist %}
+                    {% for ship in ships %}
                         <div class="col-12">
                             <div class="row gx-3">
                                 <div class="col-auto pe-0">
@@ -1349,52 +1340,46 @@
                                         <div class='row gx-3 gy-1'>
                                             <div class='col-auto'>
                                                 <small class='text-normal'>Signature</small>
-                                                <span class='text-white'>{{ ship.ship_signature|intcomma }}</span>
+                                                <span class='text-white'>{{ ship.signature|intcomma }}</span>
                                             </div>
-                                            {% if ship.ship_cargo > 0 %}
+                                            {% if ship.capacity > 0 %}
                                                 <div class='col-auto'>
                                                     <small class='text-normal'>Cargo</small>
-                                                    <span class='text-white'>{{ ship.ship_cargo|intcomma }}</span>
+                                                    <span class='text-white'>{{ ship.capacity|intcomma }}</span>
                                                 </div>
                                             {% endif %}
                                             <div class='col-auto'>
                                                 <small class='text-normal'>Vitesse</small>
-                                                <span class='text-white'>{{ ship.ship_speed|intcomma }}</span>
+                                                <span class='text-white'>{{ ship.speed|intcomma }}</span>
                                             </div>
                                             <div class='col-auto'>
                                                 <small class='text-normal'>Manœuvrabilité</small>
-                                                <span class='text-white'>{{ ship.ship_handling|intcomma }}</span>
+                                                <span class='text-white'>{{ ship.handling|intcomma }}</span>
                                             </div>
-                                            {% if ship.ship_leadership > 0 %}
-                                                <div class='col-auto'>
-                                                    <small class='text-normal'>Commandement</small>
-                                                    <span class='text-white'>{{ ship.ship_leadership|intcomma }}</span>
-                                                </div>
-                                            {% endif %}
                                             <div class='col-auto'>
                                                 <small class='text-normal'>Armure</small>
-                                                <span class='text-white'>{{ ship.ship_hull|intcomma }}</span>
+                                                <span class='text-white'>{{ ship.hull|intcomma }}</span>
                                             </div>
-                                            {% if ship.ship_turrets > 0 %}
+                                            {% if ship.weapon_turrets > 0 %}
                                                 <div class='col-auto'>
                                                     <small class='text-normal'>Dommage</small>
-                                                    <span class='text-white'>{{ ship.ship_turrets|intcomma }} <small class='text-normal'>x</small> {{ ship.ship_power|intcomma }}</span>
+                                                    <span class='text-white'>{{ ship.weapon_turrets|intcomma }} <small class='text-normal'>x</small> {{ ship.weapon_power|intcomma }}</span>
                                                 </div>
                                                 <div class='col-auto'>
                                                     <small class='text-normal'>Ciblage</small>
-                                                    <span class='text-white'>{{ ship.ship_tracking_speed|intcomma }}</span>
+                                                    <span class='text-white'>{{ ship.weapon_tracking_speed|intcomma }}</span>
                                                 </div>
                                             {% endif %}
-                                            {% if ship.ship_shield > 0 %}
+                                            {% if ship.shield > 0 %}
                                                 <div class='col-auto'>
                                                     <small class='text-normal'>Bouclier</small>
-                                                    <span class='text-white'>{{ ship.ship_shield|intcomma }}</span>
+                                                    <span class='text-white'>{{ ship.shield|intcomma }}</span>
                                                 </div>
                                             {% endif %}
-                                            {% if ship.ship_recycler_output > 0 %}
+                                            {% if ship.recycler_output > 0 %}
                                                 <div class='col-auto'>
                                                     <small class='text-normal'>Recyclage</small>
-                                                    <span class='text-white'>{{ ship.ship_recycler_output|intcomma }}</span>
+                                                    <span class='text-white'>{{ ship.recycler_output|intcomma }}</span>
                                                 </div>
                                             {% endif %}
                                             {% if ship.ship_long_distance_capacity > 0 %}
@@ -1403,10 +1388,10 @@
                                                     <span class='text-white'>{{ ship.ship_long_distance_capacity|intcomma }}</span>
                                                 </div>
                                             {% endif %}
-                                            {% if ship.ship_droppods > 0 %}
+                                            {% if ship.droppods > 0 %}
                                                 <div class='col-auto'>
                                                     <small class='text-normal'>Invasion</small>
-                                                    <span class='text-white'>{{ ship.ship_droppods|intcomma }}</span>
+                                                    <span class='text-white'>{{ ship.droppods|intcomma }}</span>
                                                 </div>
                                             {% endif %}
                                         </div>
@@ -1415,13 +1400,13 @@
                                 <div class="col">
                                     <a href="/s03/help/?cat=ships#{{ ship.id }}"
                                        data-bs-toggle="tooltip"
-                                       data-bs-title="Voir aide">{{ ship.name }}</a>
+                                       data-bs-title="Voir aide">{{ ship.label }}</a>
                                     <small class="mx-1 text-normal">x</small>
                                     {{ ship.quantity|intcomma }}
                                 </div>
-                                {% if ship.install %}
+                                {% if can_install_building and ship.buildingid and ship.can_build %}
                                     <div class="col-auto">
-                                        <a href="?id={{ fleetid }}&action=install&s={{ ship.id }}">Déployer</a>
+                                        <a href="?id={{ fleet.id }}&action=install&s={{ ship.id }}">Déployer</a>
                                     </div>
                                 {% endif %}
                             </div>
@@ -1437,10 +1422,10 @@
                     </div>
                     <div class="card-body">
                     <div class="row gy-2 flex-column">
-                        {% for fleet in fleets %}
+                        {% for orbittingfleet in fleets %}
                             <div class="col-12">
                                 <div class="row gx-3">
-                                    {% if fleet.playerfleet %}
+                                    {% if orbittingfleet.relation == 2 %}
                                         <div class="col-auto pe-0">
                                             <span class="text-normal"><i class="fa-fw fas fa-question-circle" data-bs-toggle="tooltip" data-bs-html="true" data-bs-title="
                                                 <div class='row g-1 flex-column'>
@@ -1450,7 +1435,7 @@
                                                                 <span class='text-normal'>Signature</span>
                                                             </div>
                                                             <div class='col-auto'>
-                                                                <span>{{ fleet.signature|intcomma }}</span>
+                                                                <span>{{ orbittingfleet.signature|intcomma }}</span>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -1460,7 +1445,7 @@
                                                                 <span class='text-normal'>Vitesse</span>
                                                             </div>
                                                             <div class='col-auto'>
-                                                                <span>{{ fleet.speed|intcomma }}</span>
+                                                                <span>{{ orbittingfleet.speed|intcomma }}</span>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -1470,7 +1455,7 @@
                                                                 <span class='text-normal'>Cargo</span>
                                                             </div>
                                                             <div class='col-auto'>
-                                                                <span>{{ fleet.cargo_load|intcomma }}</span> <small class='text-normal'>/{{ fleet.cargo_capacity|intcomma }}</small>
+                                                                <span>{{ orbittingfleet.cargo_load|intcomma }}</span> <small class='text-normal'>/{{ orbittingfleet.cargo_capacity|intcomma }}</small>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -1478,24 +1463,24 @@
                                             "></i></span>
                                         </div>
                                         <div class="col">
-                                            <a href="?id={{ fleet.id }}" class="text-info" data-bs-toggle="tooltip" data-bs-html="true" data-bs-title="Voir flotte">{{ fleet.name }}</a>
-                                            <small class="ms-2">{{ fleet.signature|intcomma }}</small>
+                                            <a href="?id={{ orbittingfleet.id }}" class="text-info" data-bs-toggle="tooltip" data-bs-html="true" data-bs-title="Voir flotte">{{ orbittingfleet.name }}</a>
+                                            <small class="ms-2">{{ orbittingfleet.signature|intcomma }}</small>
                                         </div>
-                                        {% if fleet.merge %}
+                                        {% if orbittingfleet.action == 0 and fleet.action == 0 %}
                                             <div class="col-auto">
-                                                <a href="?id={{ fleetid }}&action=merge&with={{ fleet.id }}">Absorber</a>
+                                                <a href="?id={{ fleet.id }}&action=merge&with={{ orbittingfleet.id }}">Absorber</a>
                                             </div>
                                         {% endif %}
                                     {% else %}
                                         <div class="col">
-                                            <a href="/s03/mails/?subject=À propos de la flotte {{ fleet.name }}&to={{ fleet.owner }}"
+                                            <a href="/s03/mails/?subject=À propos de la flotte {{ orbittingfleet.name }}&to={{ orbittingfleet.owner }}"
                                                data-bs-toggle="tooltip"
-                                               data-bs-title="Contacter {{ fleet.owner }}"
-                                               class="{% if fleet.ally %}text-success{% endif %}{% if fleet.friend %}text-friend{% endif %}{% if fleet.enemy %}text-danger{% endif %}">
-                                                {% if fleet.alliance %}[{{ fleet.tag }}]{% endif %}
-                                                {{ fleet.name }}
+                                               data-bs-title="Contacter {{ orbittingfleet.owner }}"
+                                               class="{% if orbittingfleet.relation == 1 %}text-success{% elif orbittingfleet.relation == 0 %}text-friend{% else %}text-danger{% endif %}">
+                                                {% if orbittingfleet.alliance %}[{{ orbittingfleet.tag }}]{% endif %}
+                                                {{ orbittingfleet.name }}
                                             </a>
-                                            <small class="ms-2">{{ fleet.signature|intcomma }}</small>
+                                            <small class="ms-2">{{ orbittingfleet.signature|intcomma }}</small>
                                         </div>
                                     {% endif %}
                                 </div>

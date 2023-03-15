@@ -49,7 +49,7 @@
                                 </div>
                                 {% if commander.can_be_fired %}
                                 <div class="col-auto">
-                                    <a href="?a=fire&id={{ commander.id }}" onclick="return confirmFireCommander('{{ commander.cmd_name }}')">Renvoyer</a>
+                                    <a href="?a=fire&id={{ commander.cmd_id }}" onclick="return confirmFireCommander('{{ commander.cmd_name }}')">Renvoyer</a>
                                 </div>
                                 {% endif %}
                                 <div class="col-12"></div>
@@ -257,7 +257,7 @@
 </script>
 <form action="?" method="post">
     {% csrf_token %}
-    <input type="hidden" name="id" value="{{ commander.id }}" />
+    <input type="hidden" name="id" value="{{ commander.cmd_id }}" />
     <div class="card">
         <div class="card-header">
             <a href="/s03/commanders/" class="me-2"><i class="fa-fw fas fa-long-arrow-alt-left"></i> Retour</a>
