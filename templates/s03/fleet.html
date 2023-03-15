@@ -271,7 +271,7 @@
                                 <div class="col-auto">
                                     <span class="text-normal">soldats</span>
                                 </div>
-                                {% if can_take_planet %}
+                                {% if fleet.can_take_planet %}
                                     <div class="col-auto">
                                         <div class="form-check">
                                             <input class="form-check-input" type="checkbox" id="take" name="take">
@@ -280,14 +280,16 @@
                                             </label>
                                         </div>
                                     </div>
-                                    <div class="col-auto">
-                                        <img src="{{ PATH_IMAGES }}img/interface/prestige.gif"
-                                             title="Prestige"
-                                             class="res"
-                                             width="16px"
-                                             height="16px">
-                                        {{ prestige_cost }}
-                                    </div>
+                                    {% if fleet.prestige_cost > 0 %}
+                                        <div class="col-auto">
+                                            <img src="{{ PATH_IMAGES }}img/interface/prestige.gif"
+                                                 title="Prestige"
+                                                 class="res"
+                                                 width="16px"
+                                                 height="16px">
+                                            {{ fleet.prestige_cost }}
+                                        </div>
+                                    {% endif %}
                                 {% endif %}
                                 <div class="col-auto">
                                     <input type="submit" class="btn btn-primary" value='OK'>
