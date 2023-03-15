@@ -236,7 +236,7 @@ class View(GlobalView):
             
             if fleet['warp_to']: content.Parse("can_warp")
 
-            if fleet['recycler_output'] != 0 and (fleet['orbit_ore'] or fleet['orbit_hydrocarbon'] or fleet['spawn_ore'] or fleet['spawn_hydrocarbon']): content.Parse("can_recycle")
+            if fleet['recycler_output'] > 0 and (fleet['orbit_ore'] or fleet['orbit_hydrocarbon'] or fleet['spawn_ore'] or fleet['spawn_hydrocarbon']): content.Parse("can_recycle")
 
             if ((fleet['planet_ownerid'] == None) or (fleet['planet_owner_relation'] >= rHostile)) and (fleet['warp_to'] == None): content.Parse("can_install_building")
             
@@ -253,11 +253,9 @@ class View(GlobalView):
                 planet = dbRow(query)
                 content.setValue("planet", planet)
                 
-            if fleet['size'] > 1 and self.fleetOwnerId == self.userId:
-            
-                content.Parse("can_split")
+            if fleet['planet_ownerid'] == self.userId: content.Parse("can_manage")
                 
-                if fleet['planet_ownerid'] == self.userId: content.Parse("can_manage")
+            if fleet['size'] > 1 and self.fleetOwnerId == self.userId: content.Parse("can_split")                
 
             if fleet['planet_ownerid'] and fleet['planet_owner_relation'] < rFriend and fleet['droppods'] > 0:
 
