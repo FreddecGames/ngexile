@@ -145,7 +145,8 @@ class View(GlobalView):
         #---
 
         if (self.allianceId):
-            chatid = dbExecute("SELECT chatid FROM alliances WHERE id=" + str(self.allianceId))
+            chatid = dbExecute("SELECT chatid FROM alliances WHERE id=" + str(self.allianceId))            
+            dbQuery('INSERT INTO chat_onlineusers(chatid, userid) VALUES(' + str(chatid) + ',' + str(self.userId) + ')')
             self.request.session["lastchatmsg_" + str(chatid)] = ""
             content.Parse("alliance")
 
@@ -160,6 +161,9 @@ class View(GlobalView):
         content.setValue("joins", joins)
         
         for join in joins:
+            
+            dbQuery('INSERT INTO chat_onlineusers(chatid, userid) VALUES(' + str(join['id']) + ',' + str(self.userId) + ')')
+            
             self.request.session["lastchatmsg_" + str(join['id'])] = ""
 
         return self.display(content)
