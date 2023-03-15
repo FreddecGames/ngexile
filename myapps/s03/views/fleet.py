@@ -172,7 +172,7 @@ class View(GlobalView):
         
             shipid = ToInt(self.request.GET.get("s"), 0)
             
-            result = oConnExecute("SELECT sp_start_ship_building_installation(" + str(self.fleetOwnerId) + "," + str(self.fleetId) + "," + str(shipid) + ")")
+            result = dbExecute("SELECT sp_start_ship_building_installation(" + str(self.fleetOwnerId) + "," + str(self.fleetId) + "," + str(shipid) + ")")
             if result >= 0: self.currentPlanetId = result
             elif result == -7: messages.error(request, 'error_max_planets_reached')
             elif result == -8: messages.error(request, 'error_deploy_enemy_ships')
@@ -364,6 +364,10 @@ class View(GlobalView):
                 " ORDER BY db_ships.category, db_ships.label"
         ships = dbRows(query)
         content.setValue("ships", ships)
+        
+        #---
+        
+        if fleet['action'] == 0 and fleet['planet_owner_relation'] == rSelf: self.showHeader = True
         
         #---
         
