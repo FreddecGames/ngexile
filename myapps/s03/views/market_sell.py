@@ -94,7 +94,8 @@ class View(GlobalView):
         if planet_query != "":
             self.showHeader = True
             self.selectedMenu = "planet"
-
+            self.headerUrl = '/s03/market-sell/'
+        
             content.Parse("planetid")
         else:
             content.setValue("total", total)

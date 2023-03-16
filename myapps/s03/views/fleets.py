@@ -1,5 +1,6 @@
-from myapps.s03.views._global import *
+# -*- coding: utf-8 -*-
 
+from myapps.s03.views._global import *
 
 class View(GlobalView):
 

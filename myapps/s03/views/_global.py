@@ -13,6 +13,7 @@ class GlobalView(ExileMixin, View):
     showHeader = False
     selectedMenu = ""
     urlExtraParams = ""
+    headerUrl = "/s03/planet/"
     
     def pre_dispatch(self, request, *args, **kwargs):
         
@@ -157,8 +158,8 @@ class GlobalView(ExileMixin, View):
             
             #---
             
-            if self.urlExtraParams != "": tpl.setValue("url", "?" + self.urlExtraParams + "&planet=")
-            else: tpl.setValue("url", "?planet=")
+            if self.urlExtraParams != "": tpl.setValue("url", self.headerUrl + "?" + self.urlExtraParams + "&planet=")
+            else: tpl.setValue("url", self.headerUrl + "?planet=")
 
             #---
             

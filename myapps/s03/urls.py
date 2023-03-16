@@ -23,7 +23,6 @@ from .views import buildings
 from .views import chat
 from .views import commanders
 from .views import fleet
-from .views import fleet_trade
 from .views import fleet_ships
 from .views import fleet_split
 from .views import fleets
@@ -86,7 +85,6 @@ urlpatterns = [
     path('commanders/', commanders.View.as_view()),
     path('fleet-ships/', fleet_ships.View.as_view()),
     path('fleet-split/', fleet_split.View.as_view()),
-    path('fleet-trade/', fleet_trade.View.as_view()),
     path('fleet/', fleet.View.as_view()),
     path('fleets_handler/', fleets_handler.View.as_view()),
     path('fleets-orbiting/', fleets_orbiting.View.as_view()),

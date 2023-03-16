@@ -12,7 +12,8 @@ class View(GlobalView):
         self.selectedMenu = "planet"
 
         self.showHeader = True
-
+        self.headerUrl = '/s03/production/'
+        
         return self.displayPage(True)
 
     # display bonus given by a commander (typ=0), building (typ=1) or a research (typ=2)

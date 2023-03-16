@@ -104,6 +104,20 @@ class View(GlobalView):
             
             return HttpResponseRedirect('/s03/fleet/?id=' + str(self.fleetId))
             
+        #---
+        
+        elif action == 'transfer':
+        
+            ore = ToInt(request.POST.get("load_ore"), 0) - ToInt(request.POST.get("unload_ore"), 0)
+            hydrocarbon = ToInt(request.POST.get("load_hydrocarbon"), 0) - ToInt(request.POST.get("unload_hydrocarbon"), 0)
+            scientists = ToInt(request.POST.get("load_scientists"), 0) - ToInt(request.POST.get("unload_scientists"), 0)
+            soldiers = ToInt(request.POST.get("load_soldiers"), 0) - ToInt(request.POST.get("unload_soldiers"), 0)
+            workers = ToInt(request.POST.get("load_workers"), 0) - ToInt(request.POST.get("unload_workers"), 0)
+        
+            if ore != 0 or hydrocarbon != 0 or scientists != 0 or soldiers != 0 or workers != 0:
+                oRs = oConnExecute("SELECT sp_transfer_resources_with_planet(" + str(self.fleetOwnerId) + "," + str(self.fleetId) + "," + str(ore) + "," + str(hydrocarbon) + "," + str(scientists) + "," + str(soldiers) + "," + str(workers) + ")")
+                return HttpResponseRedirect("/s03/fleet/?id=" + str(self.fleetId))
+            
         return HttpResponseRedirect('/s03/fleets/')
     
     def get(self, request, *args, **kwargs):
@@ -170,7 +184,7 @@ class View(GlobalView):
             
         elif action == "install":
         
-            shipid = ToInt(self.request.GET.get("s"), 0)
+            shipid = ToInt(request.GET.get("s"), 0)
             
             result = dbExecute("SELECT sp_start_ship_building_installation(" + str(self.fleetOwnerId) + "," + str(self.fleetId) + "," + str(shipid) + ")")
             if result >= 0: self.currentPlanetId = result
@@ -191,7 +205,9 @@ class View(GlobalView):
         content = getTemplate(self.request, "s03/fleet")
         
         self.selectedMenu = "fleets"
-
+        
+        self.headerUrl = '/s03/orbit/'
+        
         #---
         
         query = "SELECT id, name, attackonsight, engaged, size, signature, speed, remaining_time, commanderid, commandername," + \

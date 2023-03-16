@@ -48,7 +48,7 @@
                     </div>
                 </div>
                 <div class="card-body">
-                <div class="row g-2 flex-column">
+                <div class="row g-2 flex-column">                
                     <div class="col-12">
                         <div class="row gx-3 align-items-center">
                             <div class="col-3">
@@ -406,53 +406,29 @@
                             </div>
                         </div>
                     {% endif %}
-                    {% if error_trade %}
-                        <div class="list-group-item text-center">
-                            <span class="text-danger">
-                                Impossible de marchander avec cette planète, ils n'ont pas les crédits pour acheter nos ressources.
-                            </span>
+                    {% for message in messages %}
+                        <div class="col-12">
+                            <div class="alert alert-{{ message.tags }} text-center">
+                                {% if message.message == 'error_soldiers' %}Nombre de soldat incorrect !{% endif %}
+                                {% if message.message == 'error_fleet' %}La flotte n'est pas prête pour une invasion !{% endif %}
+                                {% if message.message == 'error_planet' %}Impossible d'envahir une planète inoccupée, alliée ou dans une alliance qui n'est pas en guerre contre nous !{% endif %}
+                                {% if message.message == 'error_invade_enemy_ships' %}Impossible d'envahir tant que des vaisseaux militaires ennemis sont proches de la planète !{% endif %}
+                                {% if message.message == 'error_name' %}mmm{% endif %}
+                                {% if message.message == 'bad_destination' %}Destination non valide{% endif %}
+                                {% if message.message == 'new_player_protection' %}Planète temporairement protégée{% endif %}
+                                {% if message.message == 'long_travel_impossible' %}Saut impossible{% endif %}
+                                {% if message.message == 'not_enough_credits' %}Pas assez de crédits{% endif %}
+                                {% if message.message == 'error_jump_from_require_empty_location' %}Impossible de sauter d'ici. Déplacez la flotte à proximité d'un vortex avant de sauter.{% endif %}
+                                {% if message.message == 'error_jump_protected_galaxy' %}Galaxie protégée{% endif %}
+                                {% if message.message == 'error_jump_to_require_empty_location' %}Impossible de sauter vers cette destination. Choisissez un vortex comme point d'arrivé.{% endif %}
+                                {% if message.message == 'error_jump_to_same_point_limit_reached' %}Trop de flottes sautent vers la même destination, utilisez des vortex avec stabilité suffisante.{% endif %}
+                                {% if message.message == 'error_recycling' %}Une de nos flottes est déjà en train de recycler dans les parages !{% endif %}
+                                {% if message.message == 'error_max_planets_reached' %}Nombre maximal de colonisations atteint !{% endif %}
+                                {% if message.message == 'error_deploy_enemy_ships' %}Impossible de coloniser tant que des vaisseaux militaires ennemis sont proches de la planète !{% endif %}
+                                {% if message.message == 'error_deploy_too_many_safe_planets' %}Impossible de coloniser plus de planètes dans des galaxies protégées !{% endif %}
+                            </div>
                         </div>
-                    {% endif %}
-                    {% if error_recycling %}
-                        <div class="text-danger text-center">
-                            Une de nos flottes est déjà en train de recycler dans les parages !
-                        </div>
-                    {% endif %}
-                    {% if error_soldiers %}
-                        <div class="text-danger text-center">
-                            Nombre de soldat incorrect !
-                        </div>
-                    {% endif %}
-                    {% if error_fleet %}
-                        <div class="text-danger text-center">
-                            La flotte n'est pas prête pour une invasion !
-                        </div>
-                    {% endif %}
-                    {% if error_planet %}
-                        <div class="text-danger text-center">
-                            Impossible d'envahir une planète inoccupée, alliée ou dans une alliance qui n'est pas en guerre contre nous !
-                        </div>
-                    {% endif %}
-                    {% if error_max_planets_reached %}
-                        <div class="text-danger text-center">
-                            Nombre maximal de colonisations atteint !
-                        </div>
-                    {% endif %}
-                    {% if error_invade_enemy_ships %}
-                        <div class="text-danger text-center">
-                            Impossible d'envahir tant que des vaisseaux militaires ennemis sont proches de la planète !
-                        </div>
-                    {% endif %}
-                    {% if error_deploy_enemy_ships %}
-                        <div class="text-danger text-center">
-                            Impossible de coloniser tant que des vaisseaux militaires ennemis sont proches de la planète !
-                        </div>
-                    {% endif %}
-                    {% if error_deploy_safe_planets %}
-                        <div class="text-danger text-center">
-                            Impossible de coloniser plus de planètes dans des galaxies protégées !
-                        </div>
-                    {% endif %}
+                    {% endfor %}
                 </div>
             </div>
             </div>
@@ -679,27 +655,6 @@
                                         </div>
                                     </div>
                                 </div>
-                                {% if result %}
-                                    <div class="col-12">
-                                        <span class="text-danger">
-                                            {% if ok %}Flotte envoyée{% endif %}
-                                            {% if bad_destination %}Destination non valide{% endif %}
-                                            {% if new_player_protection %}Planète temporairement protégée{% endif %}
-                                            {% if long_travel_impossible %}Saut impossible{% endif %}
-                                            {% if not_enough_credits %}Pas assez de crédits{% endif %}
-                                            {% if error_jump_from_require_empty_location %}
-                                                Impossible de sauter d'ici. Déplacez la flotte à proximité d'un vortex avant de sauter.
-                                            {% endif %}
-                                            {% if error_jump_protected_galaxy %}Galaxie protégée{% endif %}
-                                            {% if error_jump_to_require_empty_location %}
-                                                Impossible de sauter vers cette destination. Choisissez un vortex comme point d'arrivé.
-                                            {% endif %}
-                                            {% if error_jump_to_same_point_limit_reached %}
-                                                Trop de flottes sautent vers la même destination, utilisez des vortex avec stabilité suffisante.
-                                            {% endif %}
-                                        </span>
-                                    </div>
-                                {% endif %}
                             </div>
                         </div>
                     </div>
@@ -735,8 +690,9 @@
                 {% endif %}
                     </script>
                     {% if can_load_cargo %}
-                        <form method="post" action="/s03/fleet-trade/?id={{ fleet.id }}">
+                        <form method="post" action="/s03/fleet/?id={{ fleet.id }}">
                             {% csrf_token %}
+                            <input type="hidden" name="action" value="transfer">
                             <div class="card">
                                 <div class="card-header">
                                     <span class="fs-6">Cargaison</span>
@@ -985,7 +941,8 @@
                             </div>
                         </form>
                     {% elif can_unload_cargo %}
-                        <form method="post" action="/s03/fleet-trade/?id={{ fleet.id }}">
+                        <form method="post" action="/s03/fleet/?id={{ fleet.id }}">
+                            <input type="hidden" name="action" value="transfer">
                             {% csrf_token %}
                             <div class="card">
                                 <div class="card-header">

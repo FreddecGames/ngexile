@@ -39,7 +39,8 @@ class View(GlobalView):
         #---
         
         self.showHeader = True
-        self.selectedMenu = 'planet'
+        self.selectedMenu = 'planet'        
+        self.headerUrl = '/s03/buildings/'
         
         content = getTemplate(self.request, 's03/buildings')
                 

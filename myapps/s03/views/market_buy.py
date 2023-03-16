@@ -118,7 +118,8 @@ class View(GlobalView):
         if get_planet != "":
             self.showHeader = True
             self.selectedMenu = "planet"
-
+            self.headerUrl = '/s03/market-buy/'
+            
             content.setValue("get_planet", self.request.GET.get("planet", ""))
         else:
             content.setValue("total", int(total))

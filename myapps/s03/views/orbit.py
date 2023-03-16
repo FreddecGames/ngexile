@@ -14,7 +14,8 @@ class View(GlobalView):
         self.selectedMenu = "planet"
 
         self.showHeader = True
-
+        self.headerUrl = '/s03/orbit/'
+        
         self.e_no_error = 0
         self.e_bad_name = 1
         self.e_already_exists = 2

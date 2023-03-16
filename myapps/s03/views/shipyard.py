@@ -10,7 +10,7 @@ class View(GlobalView):
         if response: return response
         
         self.selectedMenu = "planet"
-
+        self.headerUrl = '/s03/shipyard/'
         self.showHeader = True
 
         Action = request.GET.get("a", "").lower()

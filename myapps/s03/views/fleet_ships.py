@@ -8,131 +8,78 @@ class View(GlobalView):
 
         response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
+        
+        #---
+        
+        self.fleetId = ToInt(request.GET.get("id"), 0)
+        if self.fleetId == 0: return HttpResponseRedirect("/s03/fleets/")
+        
+        #---
+        
+        return super().dispatch(request, *args, **kwargs)
 
-        self.selectedMenu = "fleets"
+    def post(self, request, *args, **kwargs):
+        
+        action = request.POST.get("action")
+        
+        #---
+        
+        if action == 'transfer_ships':
 
-        self.e_no_error = 0
-        self.e_bad_destination = 1
+            shipIds = dbRows("SELECT id FROM db_ships")
+            planetId = dbExecute("SELECT planetid FROM fleets WHERE id=" + str(self.fleetId))
 
-        self.fleet_error = self.e_no_error
-        self.fleet_planet = 0
+            for shipId in shipIds:
+                quantity = ToInt(request.POST.get("addship" + str(shipId['id'])), 0)
+                if quantity > 0:
+                    dbExecute("SELECT sp_transfer_ships_to_fleet(" + str(self.userId) + "," + str(self.fleetId) + "," + str(shipId['id']) + "," + str(quantity) + ")")
 
-        fleetid = request.GET.get("id", "")
 
-        if fleetid == None or fleetid == "":
-            return HttpResponseRedirect("/s03/fleets/")
+            for shipId in shipIds:
+                quantity = ToInt(self.request.POST.get("removeship" + str(shipId['id'])), 0)
+                if quantity > 0:
+                    dbExecute("SELECT sp_transfer_ships_to_planet(" + str(self.userId) + "," + str(self.fleetId) + "," + str(shipId['id']) + "," + str(quantity) + ")")
 
-        fleetid = int(fleetid)
-
-        response = self.ExecuteOrder(fleetid)
-        if response: return response
-
-        return self.DisplayFleet(fleetid)
-
-    # display fleet info
-    def DisplayFleet(self, fleetid):
+            result = dbExecute("SELECT id FROM fleets WHERE id=" + str(self.fleetId))
+            if result == None:
+                return HttpResponseRedirect("/s03/orbit/?planet=" + str(planetId))
+            
+            return HttpResponseRedirect('/s03/fleet/?id=' + str(self.fleetId))
+        
+        #---
+        
+        return HttpResponseRedirect('/s03/fleets/')
+    
+    def get(self, request, *args, **kwargs):
 
         content = getTemplate(self.request, "s03/fleet-ships")
 
-        # retrieve fleet name, size, position, destination
+        self.selectedMenu = "fleets"
+
+        #---
+        
         query = "SELECT id, name, attackonsight, engaged, size, signature, speed, remaining_time, commanderid, commandername," + \
                 " planetid, planet_name, planet_galaxy, planet_sector, planet_planet, planet_ownerid, planet_owner_name, planet_owner_relation," + \
-                " cargo_capacity, cargo_ore, cargo_hydrocarbon, cargo_scientists, cargo_soldiers, cargo_workers" + \
-                " FROM vw_fleets WHERE ownerid=" + str(self.userId)+" AND id=" + str(fleetid)
+                " cargo_capacity, cargo_load, cargo_ore, cargo_hydrocarbon, cargo_scientists, cargo_soldiers, cargo_workers" + \
+                " FROM vw_fleets WHERE planet_owner_relation = 2 AND engaged = False AND remaining_time IS NULL AND ownerid=" + str(self.userId)+" AND id=" + str(self.fleetId)
+        fleet = dbRow(query)
+        if fleet == None: return HttpResponseRedirect("/s03/fleets/")
+        content.setValue("fleet", fleet)
 
-        oRs = oConnExecute(query)
+        #---
 
-        # if fleet doesn't exist, redirect to the list of fleets
-        if oRs == None:
-            return HttpResponseRedirect("/s03/fleets/")
-
-        # if fleet is moving or engaged, go back to the fleets
-        if oRs[7] or oRs[3]:
-            return HttpResponseRedirect("/s03/fleet/?id=" + str(fleetid))
-
-        content.setValue("fleetid", fleetid)
-        content.setValue("fleetname", oRs[1])
-        content.setValue("size", oRs[4])
-        content.setValue("speed", oRs[6])
-
-        content.setValue("fleet_capacity", oRs[18])
-        content.setValue("fleet_load", oRs[19] + oRs[20] + oRs[21] + oRs[22] + oRs[23])
-
-        shipCount = 0
-
-        if oRs[17] == rSelf:
-            # retrieve the list of ships in the fleet
-            query = "SELECT db_ships.id, db_ships.capacity," + \
-                    "COALESCE((SELECT quantity FROM fleets_ships WHERE fleetid=" + str(fleetid) + " AND shipid = db_ships.id), 0)," + \
-                    "COALESCE((SELECT quantity FROM planet_ships WHERE planetid=(SELECT planetid FROM fleets WHERE id=" + str(fleetid) + ") AND shipid = db_ships.id), 0)" + \
-                    " FROM db_ships" + \
-                    " ORDER BY db_ships.category, db_ships.label"
-
-            oRss = oConnExecuteAll(query)
-
-            list = []
-            content.setValue("shiplist", list)
-            for oRs in oRss:
-                if oRs[2] > 0 or oRs[3] > 0:
-                    item = {}
-                    list.append(item)
-            
-                    shipCount = shipCount + 1
-
-                    item["id"] = oRs[0]
-                    item["name"] = getShipLabel(oRs[0])
-                    item["cargo_capacity"] = oRs[1]
-                    item["quantity"] = oRs[2]
-                    item["available"] = oRs[3]
-
-            content.Parse("can_manage")
-
+        query = "SELECT db_ships.id, db_ships.capacity, db_ships.label, db_ships.capacity," + \
+                " COALESCE((SELECT quantity FROM fleets_ships WHERE fleetId=" + str(self.fleetId) + " AND shipId = db_ships.id), 0) AS fleet_count," + \
+                " COALESCE((SELECT quantity FROM planet_ships WHERE planetid=(SELECT planetid FROM fleets WHERE id=" + str(self.fleetId) + ") AND shipId = db_ships.id), 0) AS planet_count" + \
+                " FROM db_ships" + \
+                " ORDER BY db_ships.category, db_ships.label"
+        results = dbRows(query)
+        
+        ships = []
+        content.setValue("ships", ships)
+        
+        for result in results:
+            if result['fleet_count'] > 0 or result['planet_count'] > 0:
+                ships.append(result)
+        
         return self.display(content)
-
-    # Transfer ships between the planet and the fleet
-    def TransferShips(self, fleetid):
-
-        ShipsRemoved = 0
-
-        # if units are removed, the fleet may be destroyed so retrieve the planetid where the fleet is
-        if self.fleet_planet == 0:
-            oRs = oConnExecute("SELECT planetid FROM fleets WHERE id=" + str(fleetid))
-
-            if oRs == None:
-                self.fleet_planet = -1
-            else:
-                self.fleet_planet = oRs[0]
-
-        # retrieve the list of all existing ships
-        shipsArray = oConnExecute("SELECT id FROM db_ships")
-
-        # for each ship id, check if the player wants to add ships of this kind
-        for i in shipsArray:
-            shipid = i[0]
-
-            quantity = ToInt(self.request.POST.get("addship" + str(shipid)), 0)
-
-            if quantity > 0:
-                oConnExecute("SELECT sp_transfer_ships_to_fleet(" + str(self.userId) + "," + str(fleetid) + "," + str(shipid) + "," + str(quantity) + ")")
-
-        # for each ship id, check if the player wants to remove ships of this kind
-        for i in shipsArray:
-            shipid = i[0]
-
-            quantity = ToInt(self.request.POST.get("removeship" + str(shipid)), 0)
-            if quantity > 0:
-                ShipsRemoved = ShipsRemoved + quantity
-                oConnExecute("SELECT sp_transfer_ships_to_planet(" + str(self.userId) + "," + str(fleetid) + "," + str(shipid) + "," + str(quantity) + ")")
-
-        if ShipsRemoved > 0:
-            oRs = oConnExecute("SELECT id FROM fleets WHERE id=" + str(fleetid))
-
-            if oRs == None:
-                if self.fleet_planet > 0:
-                    return HttpResponseRedirect("/s03/orbit/?planet=" + str(self.fleet_planet))
-                else:
-                    return HttpResponseRedirect("/s03/fleets/")
-
-    def ExecuteOrder(self, fleetid):
-        if ToInt(self.request.POST.get("transfer_ships"), 0) == 1:
-            return self.TransferShips(fleetid)

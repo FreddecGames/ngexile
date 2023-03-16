@@ -12,7 +12,8 @@ class View(GlobalView):
         self.selectedMenu = "planet"
 
         self.showHeader = True
-
+        self.headerUrl = '/s03/training/'
+        
         self.train_error = 0
 
         Action = request.GET.get("a", "").lower()
