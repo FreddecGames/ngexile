@@ -75,6 +75,17 @@ def isValidAllianceTag(myTag):
         p = re.compile("^[a-zA-Z0-9]+$")
         return p.match(myTag)
 
+def isValidCategoryName(myName):
+    
+    myName = myName.strip()
+    
+    if myName == "" or len(myName) < 2 or len(myName) > 32:
+        return False
+    else:
+    
+        p = re.compile("^[a-zA-Z0-9\- ]+$")
+        return p.match(myName)
+
 #--- cast functions
 
 def ToInt(s, defaultValue):

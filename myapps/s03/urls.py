@@ -26,7 +26,6 @@ from .views import fleet
 from .views import fleet_ships
 from .views import fleet_split
 from .views import fleets
-from .views import fleets_handler
 from .views import fleets_orbiting
 from .views import fleets_ships_stats
 from .views import fleets_standby
@@ -86,7 +85,6 @@ urlpatterns = [
     path('fleet-ships/', fleet_ships.View.as_view()),
     path('fleet-split/', fleet_split.View.as_view()),
     path('fleet/', fleet.View.as_view()),
-    path('fleets_handler/', fleets_handler.View.as_view()),
     path('fleets-orbiting/', fleets_orbiting.View.as_view()),
     path('fleets-ships-stats/', fleets_ships_stats.View.as_view()),
     path('fleets-standby/', fleets_standby.View.as_view()),
