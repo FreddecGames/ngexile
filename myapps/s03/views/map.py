@@ -14,7 +14,8 @@ class View(GlobalView):
         self.selectedMenu = "map"
 
         self.showHeader = True
-
+        self.headerUrl = '/s03/map/'
+        
         # Retrieve galaxy/sector to display
         galaxy = request.GET.get("g", "")
         sector = request.GET.get("s", "")

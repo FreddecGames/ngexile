@@ -114,7 +114,7 @@ class View(GlobalView):
                 
         #---
         
-        self.selectedMenu = "fleets"
+        self.selectedMenu = "fleets.fleets"
 
         content = getTemplate(self.request, "s03/fleets")
         
