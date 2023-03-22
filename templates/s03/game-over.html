@@ -16,33 +16,30 @@
        <script type="text/javascript" src="/static/s03/scripts/common.js"></script>
        <script type="text/javascript">
        
-            function alertAbandon(){ window.alert("Attention ! En validant vous supprimerez définitivement votre compte."); }
+            function alertAbandon() { return confirm("Attention ! En validant vous supprimerez définitivement votre compte."); }
             
-            {% if galaxies %}
+            var rec = [];
+            {% for galaxy in galaxies %}rec[{{galaxy.id}}] = {{galaxy.recommended}};{% endfor %}
             
-                var rec = [];
-                {% for galaxy in galaxies %}rec[{{galaxy.id}}] = {{galaxy.recommendation}};{% endfor %}
+            function showRecommendation(obj) {
+            
+                var r = rec[obj.options[obj.selectedIndex].value];
+                if (r == 2) {
                 
-                function showRecommendation(obj) {
-                
-                    var r = rec[obj.options[obj.selectedIndex].value];
-                    if (r == 2) {
-                    
-                        $("recommendation").innerHTML = 'Galaxie recommandée';
-                        $("recommendation").className = 'text-success';
-                    }
-                    else if (r == 1) {
-                    
-                        $("recommendation").innerHTML = '';
-                        $("recommendation").className = '';
-                    }
-                    else {
-                    
-                        $("recommendation").innerHTML = 'Galaxie non recommandée';
-                        $("recommendation").className = 'text-danger';
-                    }
+                    $("recommendation").innerHTML = 'Galaxie recommandée';
+                    $("recommendation").className = 'text-success';
                 }
-            {% endif %}
+                else if (r == 1) {
+                
+                    $("recommendation").innerHTML = '';
+                    $("recommendation").className = '';
+                }
+                else {
+                
+                    $("recommendation").innerHTML = 'Galaxie non recommandée';
+                    $("recommendation").className = 'text-danger';
+                }
+            }
         </script>
     </head>
     <body>
@@ -55,91 +52,80 @@
                     <span class="text-normal">Commandant</span>
                 </div>
                 <div class="mb-3">
-                    <span class="fs-5 text-info">{{ login }}</span>
+                    <span class="fs-5 text-info">{{ profile.username }}</span>
                 </div>
                 <div class="mb-3">
-                    {% if gameover %}
-                        Malgré tous vos efforts pour développer votre Nation, vous n'avez pu faire face aux puissants ennemis qui vous ont mené à la destruction.
-                    {% endif %}
-                    {% if bankrupt %}
+                    {% if profile.credits_bankruptcy <= 0 %}
                         Malgré tous vos efforts pour développer votre Nation, vous n'avez su gérer correctement le budget de celui-ci ce qui a amené votre peuple à choisir un autre dirigeant.
                         Vous finissez votre vie dans une des prisons coloniales comme un vulgaire voleur.
+                    {% else %}
+                        Malgré tous vos efforts pour développer votre Nation, vous n'avez pu faire face aux puissants ennemis qui vous ont mené à la destruction.
                     {% endif %}
                 </div>
-                {% if choice %}
-                    <div class="mb-3">
-                        L'univers d'Exile est grand, et si vous le décidez, une chance supplémentaire vous sera donnée de montrer au monde votre courage et votre sagacité.
-                        En choisissant de Rejouer, une nouvelle planète libre vous sera allouée. Vos Rapports et Messages seront conservés ainsi que certaines de vos Recherches. Vous aurez la possibilité de changer de nom à la page suivante.
-                    </div>
-                    <form method="post" action="?">
-                        {% csrf_token %}
-                        <div class="row gx-3 align-items-center justify-content-center">
-                            <div class="col-auto">
-                                <div class="form-check">
-                                    <input type="radio" class="form-check-input" name="action" id="abandon" value="abandon" onclick="alertAbandon()">
-                                    <label class="form-check-label" for="abandon">Supprimer le compte</label>
-                                </div>
-                            </div>
-                            <div class="col-auto">
-                                <div class="form-check">
-                                    <input type="radio" class="form-check-input" name="action" id="continue" value="continue" checked>
-                                    <label class="form-check-label" for="continue">Rejouer</label>
-                                </div>
-                            </div>
-                            <div class="col-auto">
-                                <input type="submit" class="btn btn-primary" value="Valider">
-                            </div>
-                        </div>
-                    </form>
-                {% endif %}
-                {% if changename %}
-                    <div class="mb-3">
+                <div class="mb-3 text-normal">
+                    L'univers NG Exile est grand, et si vous le décidez, une chance supplémentaire vous sera donnée de montrer au monde votre courage et votre sagacité.
+                    En choisissant de rejouer, une nouvelle planète libre vous sera allouée. Vos rapports et messages seront conservés ainsi que certaines de vos recherches.
+                </div>
+                <form method="post" action="?" class="mb-3">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="retry">
+                    <div class="mb-3 text-normal">
                         Si vous le souhaitez, vous pouvez changer de nom. Ceci peut vous aider à prendre un nouveau départ de manière anonyme.
                         L'ancien nom deviendra alors disponible aux nouveaux joueurs ou aux joueurs souhaitant modifier leur nom suite à un game over.
                     </div>
-                    {% if error %}
-                        <div class="text-center text-danger">
-                            {% if check_username %}Le nom d'utilisateur doit être composé de 2 à 12 lettres, chiffres ou tiret, vérifiez votre entrée.{% endif %}
-                            {% if username_exists %}Cet utilisateur existe déjà, choisissez un nouveau nom.{% endif %}
+                    <div class="mb-2">
+                        <div class="row gx-3 align-items-center">
+                            <div class="col-6 text-end"><span>Nouveau nom</span></div>
+                            <div class="col-auto"><input type="text" class="form-control" name="name" value="{{ profile.username }}"/></div>
                         </div>
-                    {% endif %}
-                    <form method="post" action="?">
-                        {% csrf_token %}
-                        <input type="hidden" name="action" value="retry">
-                        <div class="row gy-1 gx-3 align-items-center justify-content-center">
-                            <div class="col-6">
-                                Nouveau nom
+                    </div>
+                    {% if galaxies %}
+                    <div class="mb-3">
+                        <div class="row gx-3 align-items-center">
+                            <div class="col-6 text-end"><span>Galaxie de départ</span></div>
+                            <div class="col-auto">
+                                <select name="galaxy" class="form-control" id="galaxies" onchange="showRecommendation(this)">
+                                    {% for galaxy in galaxies %}
+                                        <option value="{{ galaxy.id }}"{% if galaxy.selected %} selected{% endif %}>
+                                            {{ galaxy.id }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
                             </div>
                             <div class="col-auto">
-                                <input type="text" class="form-control" name="login" value="{{ login }}" maxlength="12">
-                            </div>
-                            {% if galaxies %}
-                                <div class="col-6">
-                                    Galaxie de départ
-                                </div>
-                                <div class="col-auto">
-                                    <select class="form-control" name="galaxy" id="galaxies" onchange="showRecommendation(this)">
-                                        {% for galaxy in galaxies %}
-                                            <option value="{{ galaxy.id }}" {% if galaxy.selected %}selected{% endif %}>
-                                                {{ galaxy.id }}
-                                            </option>
-                                        {% endfor %}
-                                    </select>
-                                </div>
-                                <div class="col-auto">
-                                    <span id="recommendation"></span>
-                                </div>
-                            {% endif %}
-                            <div class="col-auto">
-                                <input type="submit" class="btn btn-primary" value="Valider">
+                                <span id="recommendation"></span>
                             </div>
                         </div>
-                    </form>
+                    </div>
+                    {% endif %}                    
+                    <div class="row gy-1 gx-3 align-items-center justify-content-center">
+                        <div class="col-auto">
+                            <input type="submit" class="btn btn-primary" value="Rejouer">
+                        </div>
+                    </div>
                     {% if galaxies %}<script>showRecommendation($("galaxies"));</script>{% endif %}
-                {% endif %}
-                {% if no_free_planet %}
-                    <div class="text-center text-danger">Aucune planète n'est disponible dans la galaxie choisie.</div>
-                {% endif %}
+                    {% for message in messages %}
+                        <div class="mt-2 alert alert-{{ message.tags }}">
+                            {% if message.message == 'name_invalid' %}Ce nom de joueur est invalide
+                            {% elif message.message == 'name_already_used' %}Ce nom de joueur est déjà utilisé
+                            {% elif message.message == 'error_-2' %}Désolé, aucune planète ne peut actuellement vous accueillir
+                            {% else %}{{ message }}
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                </form>
+                <form method="post" action="?" class="mb-3">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="abandon">
+                    <div class="mb-2 text-normal">
+                        Vous pouvez decider de quitter l'aventure et de supprimer définitivement votre compte.
+                    </div>
+                    <div class="row gx-3 align-items-center justify-content-center">
+                        <div class="col-auto">
+                            <input type="submit" class="btn btn-danger" value="Supprimer le compte" onclick="return alertAbandon()">
+                        </div>
+                    </div>
+                </form>
             </div>
         </div>
         <script async src="https://www.googletagmanager.com/gtag/js?id=G-212X2QX8W5"></script>

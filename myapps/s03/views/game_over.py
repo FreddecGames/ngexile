@@ -12,116 +12,79 @@ class View(ExileMixin, View):
 
         response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
+        
+        #---
+    
+        if not request.user.is_authenticated:
+            return HttpResponseRedirect('/')
+        
+        self.userId = request.user.id
+        
+        #---
+        
+        result = oConnExecute("SELECT int4(count(1)) FROM nav_planet WHERE ownerid=" + str(self.userId))
+        if result == None: return HttpResponseRedirect("/")
+        
+        #---
+        
+        return super().dispatch(request, *args, **kwargs)
 
-        reset_error = 0
-
-        self.userId = ToInt(self.request.session.get("user"), "")
-
-        if self.userId == "":
-            return HttpResponseRedirect("/")
-
-        # check that the player has no more planets
-        oRs = oConnExecute("SELECT int4(count(1)) FROM nav_planet WHERE ownerid=" + str(self.userId))
-        if oRs == None:
-            return HttpResponseRedirect("/")
-
-        planets = oRs[0]
-
-        # retreive player username and number of resets
-
-        query = "SELECT username, resets, credits_bankruptcy, int4(score_research) FROM users WHERE id=" + str(self.userId)
-        oRs = oConnExecute(query)
-
-        username = oRs[0]
-        resets = oRs[1]
-        bankruptcy = oRs[2]
-        research_done = oRs[3]
-
-        # still have planets
-        if planets > 0 and bankruptcy > 0:
-            return HttpResponseRedirect("/")
-
-        if resets == 0:
-            return HttpResponseRedirect("/s03/start/")
-
-        changeNameError = ""
+    def post(self, request, *args, **kwargs):
 
         action = request.POST.get("action")
 
+        #---
+
         if action == "retry":
-            # check if user wants to change name
-            if request.POST.get("username") != username:
-
-                # check that the login is not banned
-                oRs = oConnExecute("SELECT 1 FROM banned_logins WHERE " + dosql(username) + " ~* login LIMIT 1;")
-                if oRs == None:
-
-                    # check that the username is correct
-                    if not isValidName(request.POST.get("username")):
-                        changeNameError = "check_username"
-                    else:
-                        # try to rename user and catch any error
-                        oConnDoQuery("UPDATE users SET alliance_id=NULL WHERE id=" + str(self.userId))
-
-                        oConnDoQuery("UPDATE users SET username=" + dosql(request.POST.get("username")) + " WHERE id=" + str(self.userId))
-
-                        if err.Number != 0:
-                            changeNameError = "username_exists"
-                        else:
-                            # update the commander name
-                            oConnDoQuery("UPDATE commanders SET name=" + dosql(request.POST.get("login")) + " WHERE name=" + dosql(username) + " AND ownerid=" + str(self.userId))
-
-            if changeNameError == "":
-                oRs = oConnExecute("SELECT sp_reset_account(" + str(self.userId) + "," + str(ToInt(request.POST.get("galaxy"), 1)) + ")")
-                if oRs[0] == 0:
-                    return HttpResponseRedirect("/s03/overview/")
-
-                else:
-                    reset_error = oRs[0]
-
-        elif action == "abandon":
-            oConnDoQuery("UPDATE users SET deletion_date=now()/*+INTERVAL '2 days'*/ WHERE id=" + str(self.userId))
-            return HttpResponseRedirect("/")
-
-        # display Game Over page
-        content = getTemplate(self.request, "s03/game-over")
-        content.setValue("login", username)
-
-        if changeNameError != "": action = "continue"
-
-        if action == "continue":
-            oRss = oConnExecuteAll("SELECT id, recommended FROM sp_get_galaxy_info(" + str(self.userId) + ")")
-
-            list = []
-            for oRs in oRss:
-                item = {}
-                list.append(item)
+            
+            username = request.POST.get("username")
+            if not isValidName(username):
+                messages.error(request, 'name_invalid')
+                return HttpResponseRedirect('/s03/game-over/')
                 
-                item["id"] = oRs[0]
-                item["recommendation"] = oRs[1]
+            try:
+                dbQuery("UPDATE users SET alliance_id=NULL, username=" + dosql(username) + " WHERE id=" + str(self.userId))
+            except:
+                messages.error(request, 'name_already_used')
+                return HttpResponseRedirect('/s03/game-over/')
 
-            content.setValue("galaxies", list)
+            result = dbExecute("SELECT sp_reset_account(" + str(self.userId) + "," + str(ToInt(request.POST.get("galaxy"), 1)) + ")")
+            if result == 0:
+                return HttpResponseRedirect("/s03/overview/")
 
-            if changeNameError != "":
-                content.Parse(changeNameError)
-                content.Parse("error")
+            messages.error(request, 'error_' + result)
+            return HttpResponseRedirect('/s03/game-over/')
 
-            content.Parse("changename")
-        else:
-            content.Parse("retry")
-            content.Parse("choice")
+        #---
+        
+        elif action == "abandon":
+        
+            dbQuery("UPDATE users SET deletion_date=now()/*+INTERVAL '2 days'*/ WHERE id=" + str(self.userId))
+            return HttpResponseRedirect("/")
+        
+        #---
+        
+        return HttpResponseRedirect('/s03/game-over/')
+        
+    def get(self, request, *args, **kwargs):
 
-            if bankruptcy > 0:
-                content.Parse("gameover")
-            else:
-                content.Parse("bankrupt")
+        tpl = getTemplate(self.request, 's03/game-over')
+        
+        #---
+        
+        query = "SELECT username, resets, credits_bankruptcy FROM users WHERE id=" + str(self.userId)
+        profile = dbRow(query)
+        tpl.setValue("profile", profile)
 
-        if reset_error != 0:
-            if reset_error == 4:
-                content.Parse("no_free_planet")
-            else:
-                content.setValue("userid", self.userId)
-                content.setValue("reset_error", reset_error)
-                content.Parse("reset_error")
+        #---
+        
+        if profile['resets'] == 0: return HttpResponseRedirect("/s03/start/")
 
-        return render(self.request, content.template, content.data)
+        #---
+
+        galaxies = dbRows('SELECT id, recommended FROM sp_get_galaxy_info(' + str(self.userId) + ')')
+        tpl.setValue('galaxies', galaxies)
+
+        #---
+
+        return render(self.request, tpl.template, tpl.data)
