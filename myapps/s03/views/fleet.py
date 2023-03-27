@@ -383,8 +383,11 @@ class View(GlobalView):
         
         #---
         
-        if fleet['action'] == 0 and fleet['planet_owner_relation'] == rSelf: self.showHeader = True
+        if fleet['action'] == 0 and fleet['planet_owner_relation'] == rSelf:
         
+            self.showHeader = True
+            self.currentPlanetId = fleet['planetid']
+            
         #---
         
         return self.display(content)

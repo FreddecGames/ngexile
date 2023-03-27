@@ -604,7 +604,7 @@
                                                         {% if planetgroup %}
                                                             <optgroup label="Planètes">
                                                                 {% for location in planetgroup %}
-                                                                    <option>
+                                                                    <option {% if location.id == fleet.planetid %}selected{% endif %}>
                                                                         {{ location.name }} ({{ location.galaxy }}.{{ location.sector }}.{{ location.planet }})
                                                                     </option>
                                                                 {% endfor %}
@@ -613,8 +613,8 @@
                                                         {% if fleetgroup %}
                                                             <optgroup label="Vers Flottes">
                                                                 {% for location in fleetgroup %}
-                                                                    <option>
-                                                                        {{ location.fleet_name }} ({{ location.planet_galaxy }}.{{ location.planet_sector }}.{{ location.planet_planet }})
+                                                                    <option {% if location.id == fleet.planetid %}selected{% endif %}>
+                                                                        {{ location.name }} ({{ location.planet_galaxy }}.{{ location.planet_sector }}.{{ location.planet_planet }})
                                                                     </option>
                                                                 {% endfor %}
                                                             </optgroup>
@@ -622,7 +622,7 @@
                                                         {% if merchantplanetsgroup %}
                                                             <optgroup label="Planètes marchandes">
                                                                 {% for location in merchantplanetsgroup %}
-                                                                    <option>
+                                                                    <option {% if location.id == fleet.planetid %}selected{% endif %}>
                                                                         Marchand ({{ location.galaxy }}.{{ location.sector }}.{{ location.planet }})
                                                                     </option>
                                                                 {% endfor %}

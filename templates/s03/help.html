@@ -194,13 +194,13 @@
                 <div class="h-100 card">
                 <div class="card-header">
                     <a name="{{ building.id }}"></a>
-                    <span class="fs-6">{{ building.name }}</span>
+                    <span class="fs-6">{{ building.label }}</span>
                 </div>
                 <div class="card-body">
                     <div class="clearfix">
                         <img src="{{ PATH_IMAGES }}img/buildings/{{ building.id }}.jpg"
                              class="rounded me-2" style="float:left;"
-                             title="{{ building.name }}"
+                             title="{{ building.label }}"
                              width="52"
                              height="52">
                         <span class="text-normal">{{ building.description|safe }}</span>
@@ -259,19 +259,19 @@
                         </div>
                         {% endif %}
                     </div>
-                    {% if building.ore_production != 0 or building.hydrocarbon_production != 0 or building.energy_production != 0 %}
+                    {% if building.production_ore != 0 or building.production_hydrocarbon != 0 or building.energy_production != 0 %}
                     <div class="mb-1 mt-3"><span class="fs-6">Production</span></div>
                     <div class="row gx-3">
-                        {% if building.ore_production != 0 %}
+                        {% if building.production_ore != 0 %}
                         <div class="col-auto">
                             <img src="{{ PATH_IMAGES }}img/interface/ore.gif" data-bs-toggle="tooltip" data-bs-title="Minerai" class="res" width="16px" height="16px">
-                            <span class="text-normal">{{ building.ore_production|intcomma }}</span>
+                            <span class="text-normal">{{ building.production_ore|intcomma }}</span>
                         </div>
                         {% endif %}
-                        {% if building.hydrocarbon_production != 0 %}
+                        {% if building.production_hydrocarbon != 0 %}
                         <div class="col-auto">
                             <img src="{{ PATH_IMAGES }}img/interface/hydrocarbon.gif" data-bs-toggle="tooltip" data-bs-title="Hydrocarbure" class="res" width="16px" height="16px">
-                            <span class="text-normal">{{ building.hydrocarbon_production|intcomma }}</span>
+                            <span class="text-normal">{{ building.production_hydrocarbon|intcomma }}</span>
                         </div>
                         {% endif %}
                         {% if building.energy_production != 0 %}
@@ -282,25 +282,25 @@
                         {% endif %}
                     </div>
                     {% endif %}
-                    {% if building.ore_storage != 0 or building.hydrocarbon_storage != 0 or building.energy_storage != 0 %}
+                    {% if building.storage_ore != 0 or building.storage_hydrocarbon != 0 or building.storage_energy != 0 %}
                     <div class="mb-1 mt-3"><span class="fs-6">Stockage</span></div>
                     <div class="row gx-3">
-                        {% if building.ore_storage != 0 %}
+                        {% if building.storage_ore != 0 %}
                         <div class="col-auto">
                             <img src="{{ PATH_IMAGES }}img/interface/ore.gif" data-bs-toggle="tooltip" data-bs-title="Minerai" class="res" width="16px" height="16px">
-                            <span class="text-normal">{{ building.ore_storage|intcomma }}</span>
+                            <span class="text-normal">{{ building.storage_ore|intcomma }}</span>
                         </div>
                         {% endif %}
-                        {% if building.hydrocarbon_storage != 0 %}
+                        {% if building.storage_hydrocarbon != 0 %}
                         <div class="col-auto">
                             <img src="{{ PATH_IMAGES }}img/interface/hydrocarbon.gif" data-bs-toggle="tooltip" data-bs-title="Hydrocarbure" class="res" width="16px" height="16px">
-                            <span class="text-normal">{{ building.hydrocarbon_storage|intcomma }}</span>
+                            <span class="text-normal">{{ building.storage_hydrocarbon|intcomma }}</span>
                         </div>
                         {% endif %}
-                        {% if building.energy_storage != 0 %}
+                        {% if building.storage_energy != 0 %}
                         <div class="col-auto">
                             <img src="{{ PATH_IMAGES }}img/interface/energy.gif" data-bs-toggle="tooltip" data-bs-title="Energie" class="res" width="16px" height="16px">
-                            <span class="text-normal">{{ building.energy_storage|intcomma }}</span>
+                            <span class="text-normal">{{ building.storage_energy|intcomma }}</span>
                         </div>
                         {% endif %}
                     </div>
@@ -334,18 +334,18 @@
                 <div class="h-100 card">
                     <div class="card-header">
                         <a name="{{ research.id }}"></a>
-                        <span class="fs-6">{{ research.name }}</span>
+                        <span class="fs-6">{{ research.label }}</span>
                     </div>
                     <div class="card-body">
                         <div class="mb-3">
                             <span class="text-normal">{{ research.description|safe }}</span>
                         </div>
-                        {% if research.cost_credits %}
+                        {% if research.total_cost %}
                         <div class="mb-1"><span class="fs-6">Coût</span></div>
                         <div class="row gx-3">
                             <div class="col-auto">
                                 <img src="{{ PATH_IMAGES }}img/interface/credits.gif" data-bs-toggle="tooltip" data-bs-title="Crédits" class="res" width="16px" height="16px">
-                                <span class="text-normal">{{ research.cost_credits|intcomma }}</span>
+                                <span class="text-normal">{{ research.total_cost|intcomma }}</span>
                             </div>
                         </div>
                         {% endif %}
@@ -380,7 +380,7 @@
                 <div class="h-100 card">
                     <div class="card-header">
                         <a name="{{ ship.id }}"></a>
-                        <span class="fs-6">{{ ship.name }}</span>
+                        <span class="fs-6">{{ ship.label }}</span>
                     </div>
                     <div class="card-body">
                         <div class="mb-3">
@@ -397,88 +397,98 @@
                             <div class="col-auto">
                                 <small class="text-normal">Entretien</small>
                                 <img src="{{ PATH_IMAGES }}img/interface/credits.gif" data-bs-toggle="tooltip" data-bs-title="Crédits" class="res" width="16px" height="16px">
-                                <span>{{ ship.ship_upkeep|intcomma }}</span>
+                                <span>{{ ship.upkeep|intcomma }}</span>
                             </div>
                             <div class="col-auto">
                                 <small class="text-normal">Signature</small>
-                                <span>{{ ship.ship_signature|intcomma }}</span>
+                                <span>{{ ship.signature|intcomma }}</span>
                             </div>
-                            {% if ship.ship_cargo %}
+                            {% if ship.capacity %}
                             <div class="col-auto">
                                 <small class="text-normal">Cargo</small>
-                                <span>{{ ship.ship_cargo|intcomma }}</span>
+                                <span>{{ ship.capacity|intcomma }}</span>
                             </div>
                             {% endif %}
                             <div class="col-auto">
                                 <small class="text-normal">Vitesse</small>
-                                <span>{{ ship.ship_speed|intcomma }}</span>
+                                <span>{{ ship.speed|intcomma }}</span>
                             </div>
                             <div class="col-auto">
                                 <small class="text-normal">Manœuvrabilité</small>
-                                <span>{{ ship.ship_handling|intcomma }}</span>
+                                <span>{{ ship.handling|intcomma }}</span>
                             </div>
                             <div class="col-auto">
                                 <small class="text-normal">Stabilité</small>
-                                <span>{{ ship.ship_required_vortex_strength|intcomma }}</span>
+                                <span>{{ ship.required_vortex_strength|intcomma }}</span>
                             </div>
-                            {% if ship.ship_leadership %}
+                            {% if ship.leadership %}
                             <div class="col-auto">
                                 <small class="text-normal">Commandement</small>
-                                <span>{{ ship.ship_leadership|intcomma }}</span>
+                                <span>{{ ship.leadership|intcomma }}</span>
                             </div>
                             {% endif %}
-                            {% if ship.ship_turrets > 0 %}
+                            {% if ship.weapon_turrets > 0 %}
                                 <div class="col-auto">
                                     <small class="text-normal">Puissance d'attaque</small>
-                                    <span>{{ ship.ship_turrets|intcomma }} <small class="text-normal">x</small> {{ ship.ship_power }}</span>
+                                    <span>{{ ship.weapon_turrets|intcomma }} <small class="text-normal">x</small> {{ ship.weapon_power }}</span>
                                 </div>
                                 <div class="col-auto">
                                     <small class="text-normal">Ciblage</small>
-                                    <span>{{ ship.ship_tracking_speed|intcomma }}</span>
+                                    <span>{{ ship.weapon_tracking_speed|intcomma }}</span>
                                 </div>
                             {% endif %}
                             <div class="col-auto">
                                 <small class="text-normal">Armure</small>
-                                <span>{{ ship.ship_hull|intcomma }}</span>
+                                <span>{{ ship.hull|intcomma }}</span>
                             </div>
                             {% if ship.shield %}
                                 <div class="col-auto">
                                     <small class="text-normal">Bouclier</small>
-                                    <span>{{ ship.ship_shield|intcomma }}</span>
+                                    <span>{{ ship.shield|intcomma }}</span>
                                 </div>
                             {% endif %}
                             {% if ship.recycler_output %}
                                 <div class="col-auto">
                                     <small class="text-normal">Capacité de recyclage</small>
-                                    <span>{{ ship.ship_recycler_output|intcomma }}</span>
+                                    <span>{{ ship.recycler_output|intcomma }}</span>
                                 </div>
                             {% endif %}
                             {% if ship.long_distance_capacity %}
                                 <div class="col-auto">
                                     <small class="text-normal">Capacité de saut intergalactique</small>
-                                    <span>{{ ship.ship_long_distance_capacity|intcomma }}</span>
+                                    <span>{{ ship.long_distance_capacity|intcomma }}</span>
                                 </div>
                             {% endif %}
                             {% if ship.droppods %}
                                 <div class="col-auto">
                                     <small class="text-normal">Capacité d'invasion</small>
-                                    <span>{{ ship.ship_droppods|intcomma }}</span>
+                                    <span>{{ ship.droppods|intcomma }}</span>
                                 </div>
                             {% endif %}
                         </div>
+                        {% if ship.buildings %}
+                        <div class="mb-1"><span class="fs-6">Bâtiment requis</span></div>
+                        <div class="mb-3 row gx-3 gy-1">
+                            {% for building in ship.buildings %}
+                            <div class="col-auto">
+                                <span class="text-normal">{{ building }}</span>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
                         <div class="mb-1"><span class="fs-6">Coût de construction</span></div>
                         <div class="row gx-3 gy-1">
                             <div class="col-auto">
                                 <img src="{{ PATH_IMAGES }}img/interface/ore.gif" data-bs-toggle="tooltip" data-bs-title="Minerai" class="res" width="16px" height="16px">
-                                <span class="text-normal">{{ ship.ore|intcomma }}</span>
+                                <span class="text-normal">{{ ship.cost_ore|intcomma }}</span>
                             </div>
                             <div class="col-auto">
                                 <img src="{{ PATH_IMAGES }}img/interface/hydrocarbon.gif" data-bs-toggle="tooltip" data-bs-title="Hydrocarbure" class="res" width="16px" height="16px">
-                                <span class="text-normal">{{ ship.hydrocarbon|intcomma }}</span>
+                                <span class="text-normal">{{ ship.cost_hydrocarbon|intcomma }}</span>
                             </div>
                             <div class="col-auto">
                                 <img src="{{ PATH_IMAGES }}img/interface/energy.gif" data-bs-toggle="tooltip" data-bs-title="Energie" class="res" width="16px" height="16px">
-                                <span class="text-normal">{{ ship.energy|intcomma }}</span>
+                                <span class="text-normal">{{ ship.cost_energy|intcomma }}</span>
                             </div>
                             {% if ship.crew %}
                             <div class="col-auto">

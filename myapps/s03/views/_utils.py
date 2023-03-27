@@ -163,6 +163,12 @@ def dbExecute(query):
     if len(results) > 0: return results[0][0]
     return None
 
+def dbResults(query):
+
+    cursor.execute(query)
+    results = cursor.fetchall()
+    return results
+
 def dosql(ch):
 
     ret = ch.replace('\\', '\\\\') 

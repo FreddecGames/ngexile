@@ -8,12 +8,14 @@ class View(GlobalView):
 
         response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
+        
+        #---
+        
+        return super().dispatch(request, *args, **kwargs)
+        
+    def get(self, request, *args, **kwargs):
 
         self.selectedMenu = "upkeep"
-
-        return self.displayUpkeep()
-
-    def displayUpkeep(self):
 
         content = getTemplate(self.request, "s03/upkeep")
 

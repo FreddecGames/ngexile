@@ -21,7 +21,7 @@
 </div>
 <div class="scroll-content" style="height:calc(100% - 52px);">
 <div class="page-content">
-{% if nav %}
+{% if pages|length > 1 %}
     <div class="card card-body mb-3">
         <div class="row gx-3">
             <div class="col-auto">
@@ -32,52 +32,53 @@
             </div>
             <div class="col-auto">
                 <span class="text-normal">Aller à la page</span>
-                {% for p in ps %}
-                    {% if p.link %}<a href="?start={{ p.page_link }}" class="ms-2" data-bs-toggle="tooltip" data-bs-title="Voir page">{{ p.page_id }}</a>{% endif %}
-                    {% if p.selected %}<span class="ms-2">{{ p.page_id }}</span>{% endif %}
+                {% for p in pages %}
+                    {% if p.link %}<a href="?a=sent&start={{ p.link }}" class="ms-2" data-bs-toggle="tooltip" data-bs-title="Voir page">{{ p.id }}</a>{% endif %}
+                    {% if p.selected %}<span class="ms-2">{{ p.id }}</span>{% endif %}
                 {% endfor %}
             </div>
         </div>
     </div>
 {% endif %}
-{% if nomails %}
+{% if mails|length < 1 %}
     <div class="text-center">
         <span class="text-normal">Aucun message</span>
     </div>
 {% else %}
     <div class="row gy-3">
-        {% for mail in list %}
+        {% for mail in mails %}
         <div class="col-12">
             <div class="card card-body">
                 <div class="row g-2 flex-column">
                     <div class="col-12">
                         <div class="row gx-3 align-items-center">
                             <div class="col-auto">
-                                {% if mail.avatar %}<img src="{{ mail.avatar_url }}" width="48" height="48" class="rounded">
+                                {% if mail.avatar_url %}<img src="{{ mail.avatar_url }}" width="48" height="48" class="rounded">
                                 {% else %}<img src="{{ PATH_IMAGES }}img/interface/noavatar.gif" width="48" height="48" class="rounded">
                                 {% endif %}
                             </div>
                             <div class="col">
                                 <div class="mb-1">
-                                    {% if mail.alliancetag %}<a href="/s03/alliance/?tag={{ mail.alliancetag }}" class="me-2" data-bs-toggle="tooltip" data-bs-title="Voir alliance">[{{ mail.alliancetag }}]</a>{% endif %}
-                                    {% if mail.sent_to %}<a href="/s03/nation/?name={{ mail.sent_to }}" class="me-2" data-bs-toggle="tooltip" data-bs-title="Voir profil">{{ mail.sent_to }}</a>{% endif %}
-                                    <span class="text-normal me-2">{{ mail.date|timezone:"Europe/Paris" }}</span>
-                                    {% if mail.to_alliance %}<span class="ms-2">À l'alliance</span>{% endif %}
+                                    {% if mail.tag %}<a href="/s03/alliance/?tag={{ mail.tag }}" class="me-2" data-bs-toggle="tooltip" data-bs-title="Voir alliance">[{{ mail.tag }}]</a>{% endif %}
+                                    {% if mail.owner and mail.owner != ':alliance' %}<a href="/s03/nation/?name={{ mail.owner }}" class="me-2" data-bs-toggle="tooltip" data-bs-title="Voir profil">{{ mail.owner }}</a>{% endif %}
+                                    <span class="text-normal me-2">{{ mail.datetime|timezone:"Europe/Paris" }}</span>
+                                    {% if mail.owner == ':alliance' %}<span class="ms-2">À l'alliance</span>{% endif %}
                                 </div>
                                 <div>
                                     <span class="fs-6">{{ mail.subject }}</span>
-                                    {% if mail.moneyamount > 0 %}
+                                    {% if mail.credits > 0 %}
                                         <span class="ms-3 text-normal">Crédits envoyés</span>
                                         <img src="{{ PATH_IMAGES }}img/interface/credits.gif" title="Crédits" class="res" width="16px" height="16px">
-                                        {{ mail.moneyamount|intcomma }}
+                                        {{ mail.credits|intcomma }}
                                     {% endif %}
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="col-12">
-                        {% if mail.html %}{{ mail.body|safe }}{% endif %}
-                        {% if mail.bbcode %}{{ mail.bodybb|bbcode }}{% endif %}
+                        {% if mail.bbcode %}{{ mail.body|bbcode }}
+                        {% else %}{{ mail.body|safe }}
+                        {% endif %}
                     </div>
                 </div>
             </div>
