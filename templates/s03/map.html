@@ -69,16 +69,16 @@
         </div>
     </form>
 </div>
-{% if nav_universe %}
+{% if galaxies %}
     <div class="row gx-1 align-items-center justify-content-center">
         {% for galaxy in galaxies %}
             <div class="col-auto">
                 <a href="#"
-                   onmouseover="setLocGalaxy({{ galaxy.galaxyid }})"
-                   onclick="openGalaxy({{ galaxy.galaxyid }})"
+                   onmouseover="setLocGalaxy({{ galaxy.id }})"
+                   onclick="openGalaxy({{ galaxy.id }})"
                    data-bs-toggle="tooltip"
                    data-bs-title="Voir la galaxie"
-                   class="d-block bg-black rounded border {% if galaxy.hasplanet %}border-info{% elif galaxy.hasally %}border-success{% elif galaxy.hasfriend %}border-success{% elif galaxy.hasenemy %}border-danger{% endif %}">
+                   class="d-block bg-black rounded border {% if galaxy.hasplanet %}border-info{% elif galaxy.hasally %}border-success{% elif galaxy.hasfriend %}border-success{% endif %}">
                     <div>
                         <img src="{{ PATH_IMAGES }}img/galaxies/01.jpg"
                              width="64px"
@@ -86,13 +86,13 @@
                              class="rounded">
                     </div>
                     <div class="text-center">
-                        <span>{{ galaxy.galaxyid }}</span>
+                        <span>{{ galaxy.id }}</span>
                     </div>
                 </a>
             </div>
         {% endfor %}
     </div>
-{% elif nav_galaxy %}
+{% elif mapgalaxy %}
     <div class="mb-3">
         <div class="row gx-3 align-items-center">
             <div class="col-4">
@@ -111,7 +111,7 @@
                                          class="res"
                                          width="16px"
                                          height="16px">
-                                    <span>{{ price_ore }}</span>
+                                    <span>{{ price.sell_ore }}</span>
                                 </div>
                                 <div class="col-auto">
                                     <small class="text-normal me-2">Hydrocarbure</small>
@@ -121,7 +121,7 @@
                                          class="res"
                                          width="16px"
                                          height="16px">
-                                    <span>{{ price_hydrocarbon }}</span>
+                                    <span>{{ price.sell_hydrocarbon }}</span>
                                 </div>
                             </div>
                         </div>
@@ -136,34 +136,18 @@
                         </div>
                         <div class="col-12">
                             <div class="row gx-3 align-items-center justify-content-center">
-                                {% if not sov_tag_1 %}
+                                {% for s in sov %}
+                                    <div class="col-auto">
+                                        <a href="/s03/alliance/?tag={{ s.tag }}"
+                                           data-bs-toggle="tooltip"
+                                           data-bs-title="Voir l'alliance">[{{ s.tag }}]</a>
+                                        <span class="ms-1">{{ s.percent }}%</span>
+                                    </div>
+                                {% empty %}
                                     <div class="col-auto">
                                         <span class="text-normal">Aucune alliance n'a la souveraineté</span>
                                     </div>
-                                {% else %}
-                                    <div class="col-auto">
-                                        <a href="/s03/alliance/?tag={{ sov_tag_1 }}"
-                                           data-bs-toggle="tooltip"
-                                           data-bs-title="Voir l'alliance">[{{ sov_tag_1 }}]</a>
-                                        <span class="ms-1">{{ sov_perc_1 }}%</span>
-                                    </div>
-                                {% endif %}
-                                {% if sov_tag_2 %}
-                                    <div class="col-auto">
-                                        <a href="/s03/alliance/?tag={{ sov_tag_2 }}"
-                                           data-bs-toggle="tooltip"
-                                           data-bs-title="Voir l'alliance">[{{ sov_tag_2 }}]</a>
-                                        <span class="ms-1">{{ sov_perc_2 }}%</span>
-                                    </div>
-                                {% endif %}
-                                {% if sov_tag_3 %}
-                                    <div class="col-auto">
-                                        <a href="/s03/alliance/?tag={{ sov_tag_3 }}"
-                                           data-bs-toggle="tooltip"
-                                           data-bs-title="Voir l'alliance">[{{ sov_tag_3 }}]</a>
-                                        <span class="ms-1">{{ sov_perc_3 }}%</span>
-                                    </div>
-                                {% endif %}
+                                {% endfor %}
                             </div>
                         </div>
                     </div>
@@ -343,7 +327,7 @@
             </div>
         </div>
     </div>
-{% elif nav_sector %}
+{% else %}
     <script>
         function get_left(obj) {
         
@@ -781,9 +765,9 @@
                         <script>
                             displaySector(new Array(0
                                 {% for planet in locations %}
-                                    ,new Array('{% if planet.planet %}{{planet.planet_img}}{% endif %}{% if planet.vortex %}vortex{% endif %}{% if planet.asteroids %}asteroids{% endif %}{% if planet.clouds %}clouds{% endif %}', '{{planet.alliancetag}}','{{planet.planetid}}','{{planet.ownername}}','{{planet.planetname}}',{{planet.relation}},{{planet.radarstrength}},{{planet.radarjamming}},'{{planet.ore|intcomma}}','{{planet.hydrocarbon|intcomma}}','{{planet.floor}}','{{planet.space}}', '{{planet.a_ore}}','{{planet.a_hydrocarbon}}','{{planet.vortex_strength}}',{% if planet.frozen %}true{% endif %}{% if planet.active %}false{% endif %},{{planet.parked}}
-                                    ,new Array({% if planet.orbit %}0{% for fleet in planet.fleets %},new Array({{fleet.fleetid}},'{{fleet.fleetname}}','{{fleet.alliancetag}}','{{fleet.fleetowner}}',{{fleet.relation}},{{fleet.signature}},0{% if fleet.fleeing %}1{% endif %}){% endfor %}{% endif %})
-                                    ,new Array({% if planet.elements %}0{% for element in planet.elements %},'{{element.element}}'{% endfor %}{% endif %})
+                                    ,new Array('{% if planet.planet_img %}{{planet.planet_img}}{% elif planet.vortex %}vortex{% elif planet.spawn_ore %}asteroids{% elif planet.spawn_hydrocarbon %}clouds{% endif %}', '{{planet.tag}}','{{planet.id}}','{{planet.ownername}}','{{planet.planetname}}',{{planet.relation}},{{planet.radarstrength}},{{planet.radarjamming}},'{{planet.ore|intcomma}}','{{planet.hydrocarbon|intcomma}}','{{planet.floor}}','{{planet.space}}', '{{planet.planet_pct_ore}}','{{planet.planet_pct_hydrocarbon}}','{{planet.vortex_strength}}',{% if planet.production_frozen %}true{% else %}false{% endif %},{{planet.parked}}
+                                    ,new Array({% if planet.orbit %}0{% for fleet in planet.fleets %},new Array({{fleet.fleetid}},'{{fleet.name}}','{{fleet.tag}}','{{fleet.username}}',{{fleet.relation}},{{fleet.signature}},0{% if fleet.fleeing %}1{% endif %}){% endfor %}{% endif %})
+                                    ,new Array({% if planet.elements %}0{% for element in planet.elements %},'{{element.label}}'{% endfor %}{% endif %})
                                     ,'{{planet.buy_ore|intcomma}}','{{planet.buy_hydrocarbon|intcomma}}'
                                 ){% endfor %}
                             ));                            
