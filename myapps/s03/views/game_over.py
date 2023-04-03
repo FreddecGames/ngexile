@@ -36,7 +36,7 @@ class View(ExileMixin, View):
 
         if action == "retry":
             
-            username = request.POST.get("username")
+            username = request.POST.get("name", "")
             if not isValidName(username):
                 messages.error(request, 'name_invalid')
                 return HttpResponseRedirect('/s03/game-over/')

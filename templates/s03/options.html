@@ -216,9 +216,11 @@
                 <div class="card-body">
                     <div class="row gx-3 align-items-center">
                         <div class="col-3"></div>
+                        {% if can_enable %}
                         <div class="col-auto">
                             <input type="submit" class="btn btn-primary" name="submit" id="submit" value="Envoyer" onclick="return checkCheckBox()">
                         </div>
+                        {% endif %}
                         {% if changes %}
                             <div class="col-auto">
                                 {% if done %}<span class="text-success">Changements effectués</span>{% endif %}

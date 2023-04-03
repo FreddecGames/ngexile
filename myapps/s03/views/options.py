@@ -16,7 +16,7 @@ class View(GlobalView):
         if request.GET.get("frame") == "1":
             oConnDoQuery("UPDATE users SET inframe=True WHERE id=" + str(self.userId))
 
-        holidays_breaktime = 7*24*60*60 # time before being able to set the holidays again
+        self.holidays_breaktime = 7*24*60*60 # time before being able to set the holidays again
 
         self.changes_status = ""
         self.showSubmit = True
@@ -89,7 +89,7 @@ class View(GlobalView):
                 if request.POST.get("holidays"):
                     oRs = oConnExecute("SELECT COALESCE(int4(date_part('epoch', now()-last_holidays)), 10000000) AS holidays_cooldown, (SELECT 1 FROM users_holidays WHERE userid=users.id) FROM users WHERE id=" + str(self.userId))
 
-                    if oRs[0] > holidays_breaktime and oRs[1] == None:
+                    if oRs[0] > self.holidays_breaktime and oRs[1] == None:
                         query = "INSERT INTO users_holidays(userid, start_time, min_end_time, end_time) VALUES(" + str(self.userId)+",now()+INTERVAL '24 hours', now()+INTERVAL '72 hours', now()+INTERVAL '22 days')"
                         oConnDoQuery(query)
 
@@ -190,8 +190,8 @@ class View(GlobalView):
             # holidays can be activated only if never took any holidays or it was at least 7 days ago
             oRs = oConnExecute("SELECT int4(date_part('epoch', now()-last_holidays)) FROM users WHERE id=" + str(self.userId))
 
-            if (oRs[0]) and oRs[0] < holidays_breaktime:
-                content.setValue("remaining_time", holidays_breaktime-oRs[0])
+            if (oRs[0]) and oRs[0] < self.holidays_breaktime:
+                content.setValue("remaining_time", self.holidays_breaktime-oRs[0])
                 content.Parse("cant_enable")
                 self.showSubmit = False
             else:

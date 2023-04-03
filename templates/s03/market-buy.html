@@ -1,7 +1,7 @@
 {% extends "s03/layout.html" %}
 {% load humanize %}
 {% block content %}
-{% if get_planet %}
+{% if header %}
     <div class="page-content">
         <ul class="nav nav-tabs mt-0 mb-3">
             <li class="nav-item">
@@ -56,7 +56,7 @@
         <div class="page-content">
 {% endif %}
 <script>
-	var planets = new Array(0{% for planet in m_planets %}{% if planet.can_buy %},new Array({{planet.planet_id}},{{planet.ore_max}},{{planet.hydrocarbon_max}},{{planet.price_ore}},{{planet.price_hydrocarbon}}){% endif %}{% endfor %});
+	var planets = new Array(0{% for planet in m_planets %}{% if planet.can_buy %},new Array({{planet.id}},{{planet.ore_max}},{{planet.hydrocarbon_max}},{{planet.price_ore}},{{planet.price_hydrocarbon}}){% endif %}{% endfor %});
 
 	function updateprice(id) {
     
@@ -79,11 +79,11 @@
 		if ((obj != null) && (obj.innerHTML != price)) {
 
             obj.innerHTML = formatnumber(price);
-            {% if totalprice %}computetotal();{% endif %}
+            {% if not showHeader %}computetotal();{% endif %}
 		}
 	}
     
-    {% if totalprice %}
+    {% if not showHeader %}
         function computetotal() {
         
             var total={{total}};
@@ -100,7 +100,7 @@
         }
     {% endif %}
 </script>
-<form method="post" action="?a=buy{% if get_planet %}&planet={{ get_planet }}{% endif %}">
+<form method="post" action="?a=buy{% if header %}&planet={{ cur_planetid }}{% endif %}">
     {% csrf_token %}
     <input type="hidden" name="rel" value="1">
     <div class="card">
@@ -112,25 +112,25 @@
                 <div class="list-group-item {% if planet.highlight %}bg-success{% endif %}">
                     <div class="row gx-3 align-items-center">
                         <div class="col-auto">
-                            <img src="{{ PATH_IMAGES }}img/planets/p{{ planet.planet_img }}.gif" class="rounded" width="48px" height="48px">                        
+                            <img src="{{ PATH_IMAGES }}img/planets/p{{ planet.img }}.gif" class="rounded" width="48px" height="48px">                        
                         </div>
                         <div class="col-4">
                             <div class="row g-1 flex-column">
                                 <div class="col-12">
-                                    <a href="/s03/map/?g={{ planet.g }}&s={{ planet.s }}&p={{ planet.p }}" class="me-2" data-bs-toggle="tooltip" data-bs-title="Carte spatiale">{{ planet.g }}.{{ planet.s }}.{{ planet.p }}</a>
-                                    <a href="/s03/planet/?planet={{ planet.planet_id }}" data-bs-toggle="tooltip" data-bs-title="Voir planète">{{ planet.planet_name }}</a>
+                                    <a href="/s03/map/?g={{ planet.galaxy }}&s={{ planet.sector }}&p={{ planet.planet }}" class="me-2" data-bs-toggle="tooltip" data-bs-title="Carte spatiale">{{ planet.galaxy }}.{{ planet.sector }}.{{ planet.planet }}</a>
+                                    <a href="/s03/planet/?planet={{ planet.id }}" data-bs-toggle="tooltip" data-bs-title="Voir planète">{{ planet.name }}</a>
                                 </div>
                                 <div class="col-12">
                                     <img src="{{ PATH_IMAGES }}img/interface/ore.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Minerai">
-                                    <span class="{% if planet.high_ore_capacity %}text-danger{% endif %}">{{ planet.planet_ore|intcomma }}</span>
-                                    <small class="text-normal">/{{ planet.planet_ore_capacity|intcomma }}</small>
-                                    <small class="ms-2 text-success">+{{ planet.planet_ore_production|intcomma }}</small>
+                                    <span class="{% if planet.high_ore_capacity %}text-danger{% endif %}">{{ planet.ore|intcomma }}</span>
+                                    <small class="text-normal">/{{ planet.ore_capacity|intcomma }}</small>
+                                    <small class="ms-2 text-success">+{{ planet.ore_production|intcomma }}</small>
                                 </div>
                                 <div class="col-12">
                                     <img src="{{ PATH_IMAGES }}img/interface/hydrocarbon.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Hydrocarbure">
-                                    <span class="{% if planet.high_hydrocarbon_capacity %}text-danger{% endif %}">{{ planet.planet_hydrocarbon|intcomma }}</span>
-                                    <small class="text-normal">/{{ planet.planet_hydrocarbon_capacity|intcomma }}</small>
-                                    <small class="ms-2 text-success">+{{ planet.planet_hydrocarbon_production|intcomma }}</small>
+                                    <span class="{% if planet.high_hydrocarbon_capacity %}text-danger{% endif %}">{{ planet.hydrocarbon|intcomma }}</span>
+                                    <small class="text-normal">/{{ planet.hydrocarbon_capacity|intcomma }}</small>
+                                    <small class="ms-2 text-success">+{{ planet.hydrocarbon_production|intcomma }}</small>
                                 </div>
                             </div>
                         </div>
@@ -139,11 +139,11 @@
                                 <div class="row g-1 flex-column">
                                     <div class="col-12">
                                         <img src="{{ PATH_IMAGES }}img/interface/ore.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Minerai">
-                                        {{ planet.buying_ore|intcomma }}
+                                        {{ planet.ore_bought|intcomma }}
                                     </div>
                                     <div class="col-12">
                                         <img src="{{ PATH_IMAGES }}img/interface/hydrocarbon.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Hydrocarbure">
-                                        {{ planet.buying_hydrocarbon|intcomma }}
+                                        {{ planet.hydrocarbon_bought|intcomma }}
                                     </div>
                                 </div>
                             {% elif planet.cant_buy_enemy %}
@@ -156,32 +156,32 @@
                                 <div class="row g-1 flex-column">
                                     <div class="col-12 d-flex align-items-center">
                                         <img src="{{ PATH_IMAGES }}img/interface/ore.gif" width="16px" height="16px" class="res me-2" data-bs-toggle="tooltip" data-bs-title="Minerai">
-                                        <input type="number" class="form-control" min="0" id="o{{ planet.planet_id }}" name="o{{ planet.planet_id }}" value="{% if planet.ore %}{{ planet.ore }}{% else %}0{% endif %}" onkeyup="updateprice({{ planet.index }})" size="3" maxlength="4">
+                                        <input type="number" class="form-control" min="0" id="o{{ planet.id }}" name="o{{ planet.id }}" value="" onkeyup="updateprice({{ forloop.counter }})" size="3" maxlength="4">
                                         <span class="mx-2 text-normal">x{{ 1000|intcomma }}</span>
                                         <img src="{{ PATH_IMAGES }}img/interface/credits.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Crédits">
                                         <span class="me-2">{{ planet.price_ore|floatformat:2 }}</span>
-                                        <a href="javascript:setval('o{{ planet.planet_id }}', {{ planet.ore_max }}); updateprice({{ planet.index }})">max</a>
+                                        <a href="javascript:setval('o{{ planet.id }}', {{ planet.ore_max }}); updateprice({{ forloop.counter }})">max</a>
                                     </div>
                                     <div class="col-12 d-flex align-items-center">
                                         <img src="{{ PATH_IMAGES }}img/interface/hydrocarbon.gif" width="16px" height="16px" class="res me-2" data-bs-toggle="tooltip" data-bs-title="Hydrocarbure">
-                                        <input type="number" class="form-control" min="0" id="h{{ planet.planet_id }}" name="h{{ planet.planet_id }}" value="{% if planet.hydrocarbon %}{{ planet.hydrocarbon }}{% else %}0{% endif %}" onkeyup="updateprice({{ planet.index }})" size="3" maxlength="4">
+                                        <input type="number" class="form-control" min="0" id="h{{ planet.id }}" name="h{{ planet.id }}" value="" onkeyup="updateprice({{ forloop.counter }})" size="3" maxlength="4">
                                         <span class="mx-2 text-normal">x{{ 1000|intcomma }}</span>
                                         <img src="{{ PATH_IMAGES }}img/interface/credits.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Crédits">
                                         <span class="me-2">{{ planet.price_hydrocarbon|floatformat:2 }}</span>
-                                        <a href="javascript:setval('h{{ planet.planet_id }}', {{ planet.hydrocarbon_max }}); updateprice({{ planet.index }})">max</a>
+                                        <a href="javascript:setval('h{{ planet.id }}', {{ planet.hydrocarbon_max }}); updateprice({{ forloop.counter }})">max</a>
                                     </div>
                                 </div>
                             {% endif %}
                         </div>
                         <div class="col-auto">
-                            {% if planet.buy %}<a href="javascript:setval('o{{ planet.planet_id }}', 0); setval('h{{ planet.planet_id }}', 0); updateprice({{ planet.index }})">Rien</a>{% endif %}
+                            {% if planet.buy %}<a href="javascript:setval('o{{ planet.id }}', 0); setval('h{{ planet.id }}', 0); updateprice({{ forloop.counter }})">Rien</a>{% endif %}
                         </div>
                         <div class="col-auto">
-                            {% if planet.buy %}<a href="javascript:setval('o{{ planet.planet_id }}', {{ planet.ore_max }}); setval('h{{ planet.planet_id }}', {{ planet.hydrocarbon_max }}); updateprice({{ planet.index }})">Tout</a>{% endif %}
+                            {% if planet.buy %}<a href="javascript:setval('o{{ planet.id }}', {{ planet.ore_max }}); setval('h{{ planet.id }}', {{ planet.hydrocarbon_max }}); updateprice({{ forloop.counter }})">Tout</a>{% endif %}
                         </div>
                         <div class="col text-end">
                             <img src="{{ PATH_IMAGES }}img/interface/credits.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Crédits">
-                            <span id="totalprice{{ planet.planet_id }}">{{ planet.buying_price|intcomma }}</span>
+                            <span id="totalprice{{ planet.id }}">{{ planet.buying_price|intcomma }}</span>
                         </div>
                     </div>
                 </div>
@@ -203,7 +203,7 @@
         </div>
     </div>
 </form>
-{% if totalprice %}<script>computetotal();</script>{% endif %}
+{% if not showHeader %}<script>computetotal();</script>{% endif %}
 </div>
-{% if get_planet %}</div>{% endif %}
+{% if header %}</div>{% endif %}
 {% endblock %}

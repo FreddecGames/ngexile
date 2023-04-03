@@ -8,29 +8,46 @@ class View(GlobalView):
 
         response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
+        
+        #---
+        
+        return super().dispatch(request, *args, **kwargs)
+        
+    def post(self, request, *args, **kwargs):
 
-        self.selectedMenu = "merchants"
+        query = "SELECT id FROM nav_planet WHERE ownerid=" + str(self.userId)
+        planets = dbRows(query)
 
-        self.ExecuteOrder()
+        for planet in planets:
+            
+            planetId = planet['id']
+            
+            ore = ToInt(self.request.POST.get("o" + str(planetId)), 0)
+            hydrocarbon = ToInt(self.request.POST.get("h" + str(planetId)), 0)
 
-        return self.DisplayMarket()
+            if ore > 0 or hydrocarbon > 0:
 
-    # display market for current player's planets
-    def DisplayMarket(self):
-        # get market template
-
+                query = "SELECT * FROM sp_buy_resources(" + str(self.userId) + "," + str(planetId) + "," + str(ore * 1000) + "," + str(hydrocarbon * 1000) + ")"
+                dbQuery(query)
+        
+        return HttpResponseRedirect(request.POST[request.body.url])
+        
+    def get(self, request, *args, **kwargs):
+                
         content = getTemplate(self.request, "s03/market-buy")
-
+        
+        #---
+        
         get_planet = self.request.GET.get("planet", "").strip()
         if get_planet != "": get_planet = " AND v.id=" + dosql(get_planet)
 
-        # retrieve ore, hydrocarbon, sales quantities on the planet
+        #---
 
         query = "SELECT v.id, v.name, v.galaxy, v.sector, v.planet, v.ore, v.hydrocarbon, v.ore_capacity, v.hydrocarbon_capacity, v.planet_floor," + \
                 " v.ore_production, v.hydrocarbon_production," + \
-                " m.ore, m.hydrocarbon, m.ore_price, m.hydrocarbon_price," + \
+                " m.ore AS ore_bought, m.hydrocarbon AS hydrocarbon_bought, m.ore_price, m.hydrocarbon_price," + \
                 " int4(date_part('epoch', m.delivery_time-now()))," + \
-                " sp_get_planet_blocus_strength(v.id) >= v.space," + \
+                " sp_get_planet_blocus_strength(v.id) >= v.space AS blocus," + \
                 " workers, workers_for_maintenance," + \
                 " (SELECT has_merchants FROM nav_galaxies WHERE id=v.galaxy) as has_merchants," + \
                 " (sp_get_resource_price(" + str(self.userId) + ", v.galaxy)).buy_ore::real AS p_ore," + \
@@ -39,113 +56,71 @@ class View(GlobalView):
                 "    LEFT JOIN market_purchases AS m ON (m.planetid=v.id)" + \
                 " WHERE floor > 0 AND v.ownerid=" + str(self.userId) + get_planet + \
                 " ORDER BY v.id"
-        oRss = oConnExecuteAll(query)
-
+        planets = dbRows(query)
+        content.setValue("m_planets", planets)
+        
         total = 0
         count = 0
-        i = 1
-        list = []
-        content.setValue("m_planets", list)
-        for oRs in oRss:
-            item = {}
-            list.append(item)
+
+        for planet in planets:
             
-            p_img = 1+(oRs[9] + oRs[0]) % 21
-            if p_img < 10: p_img = "0" + str(p_img)
+            img = 1 + (planet['planet_floor'] + planet['id']) % 21
+            if img < 10: img = "0" + str(img)
+            planet["img"] = img
 
-            item["index"] = i
+            if planet['ore'] > planet['ore_capacity'] - 4 * planet['ore_production']: planet["high_ore_capacity"] = True
+            if planet['hydrocarbon'] > planet['hydrocarbon_capacity'] - 4 * planet['hydrocarbon_production']: planet["high_hydrocarbon_capacity"] = True
 
-            item["planet_img"] = p_img
+            planet["ore_max"] = int((planet['ore_capacity'] - planet['ore']) / 1000)
+            planet["hydrocarbon_max"] = int((planet['hydrocarbon_capacity'] - planet['hydrocarbon']) / 1000)
 
-            item["planet_id"] = oRs[0]
-            item["planet_name"] =  oRs[1]
-            item["g"] = oRs[2]
-            item["s"] = oRs[3]
-            item["p"] = oRs[4]
+            planet["price_ore"] = str(planet['p_ore']).replace(",", ".")
+            planet["price_hydrocarbon"] = str(planet['p_hydrocarbon']).replace(",", ".")
 
-            item["planet_ore"] = oRs[5]
-            item["planet_hydrocarbon"] = oRs[6]
-
-            item["planet_ore_capacity"] = oRs[7]
-            item["planet_hydrocarbon_capacity"] = oRs[8]
-
-            item["planet_ore_production"] = oRs[10]
-            item["planet_hydrocarbon_production"] = oRs[11]
-
-            # if ore/hydrocarbon quantity reach their capacity in less than 4 hours
-            if oRs[5] > oRs[7]-4*oRs[10]: item["high_ore_capacity"] = True
-            if oRs[6] > oRs[8]-4*oRs[11]: item["high_hydrocarbon_capacity"] = True
-
-            item["ore_max"] = int((oRs[7]-oRs[5])/1000)
-            item["hydrocarbon_max"] = int((oRs[8]-oRs[6])/1000)
-
-            item["price_ore"] = str(oRs[21]).replace(",", ".")
-            item["price_hydrocarbon"] = str(oRs[22]).replace(",", ".")
-
-            if oRs[12] or oRs[13]:
-                item["buying_ore"] = oRs[12]
-                item["buying_hydrocarbon"] = oRs[13]
-
-                subtotal = oRs[12]/1000*oRs[14] + oRs[13]/1000*oRs[15]
+            if planet['ore_bought'] or planet['hydrocarbon_bought']:
+            
+                subtotal = planet['ore_bought'] / 1000 * planet['ore_price'] + planet['hydrocarbon_bought'] / 1000 * planet['hydrocarbon_price']
                 total = total + subtotal
 
-                item["buying_price"] = int(subtotal)
+                planet["buying_price"] = int(subtotal)
 
-                item["buying"] = True
-                item["can_buy"] = True
+                planet["buying"] = True
+                planet["can_buy"] = True
+                
             else:
-                item["ore"] = self.request.POST.get("o" + str(oRs[0]))
-                item["hydrocarbon"] = self.request.POST.get("h" + str(oRs[0]))
 
-                item["buying_price"] = 0
+                planet["buying_price"] = 0
 
-                if not oRs[20]:
-                    item["cant_buy_merchants"] = True
-                elif oRs[18] < oRs[19] / 2:
-                    item["cant_buy_workers"] = True
-                elif oRs[17]:
-                    item["cant_buy_enemy"] = True
+                if not planet['has_merchants']: planet["cant_buy_merchants"] = True
+                elif planet['workers'] < planet['workers_for_maintenance'] / 2: planet["cant_buy_workers"] = True
+                elif planet['blocus']: planet["cant_buy_enemy"] = True
                 else:
-                    item["buy"] = True
-                    item["can_buy"] = True
+                
+                    planet["buy"] = True
+                    planet["can_buy"] = True
 
                     count = count + 1
 
-            if oRs[0] == self.currentPlanetId: item["highlight"] = True
-
-            i = i + 1
-
+            if planet['id'] == self.currentPlanetId: planet["highlight"] = True
+        
+        #---
+        
         if get_planet != "":
+        
             self.showHeader = True
             self.selectedMenu = "planet"
             self.headerUrl = '/s03/market-buy/'
             
-            content.setValue("get_planet", self.request.GET.get("planet", ""))
         else:
+        
+            self.selectedMenu = "merchants"
+        
             content.setValue("total", int(total))
-            content.Parse("totalprice")
-
+        
+        #---
+        
         if count > 0: content.Parse("buy")
-
+        
+        #---
+        
         return self.display(content)
-
-    # execute buy orders
-    def ExecuteOrder(self):
-
-        if self.request.GET.get("a", "") != "buy": return
-
-        # for each planet owned, check what the player buys
-        query = "SELECT id FROM nav_planet WHERE ownerid=" + str(self.userId)
-        planetsArray = oConnExecuteAll(query)
-
-        for i in planetsArray:
-            planetid = i[0]
-
-            # retrieve ore + hydrocarbon quantities
-            ore = ToInt(self.request.POST.get("o" + str(planetid)), 0)
-            hydrocarbon = ToInt(self.request.POST.get("h" + str(planetid)), 0)
-
-            if ore > 0 or hydrocarbon > 0:
-
-                query = "SELECT * FROM sp_buy_resources(" + str(self.userId) + "," + str(planetid) + "," + str(ore*1000) + "," + str(hydrocarbon*1000) + ")"
-                oConnDoQuery(query)
