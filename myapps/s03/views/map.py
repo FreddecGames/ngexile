@@ -217,7 +217,7 @@ class View(GlobalView):
                                 allyfleetcount = allyfleetcount + 1
                                 friendfleetcount = friendfleetcount + 1
     
-                                if self.hasRight("can_order_other_fleets") and i[9]:
+                                if self.hasRight("can_order_other_fleets") and fleet['shared']:
                                     fleet["fleetid"] = fleet["id"]
     
                             elif fleet['relation'] == rFriend: friendfleetcount = friendfleetcount + 1
