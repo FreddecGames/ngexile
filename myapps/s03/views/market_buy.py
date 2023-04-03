@@ -30,7 +30,7 @@ class View(GlobalView):
                 query = "SELECT * FROM sp_buy_resources(" + str(self.userId) + "," + str(planetId) + "," + str(ore * 1000) + "," + str(hydrocarbon * 1000) + ")"
                 dbQuery(query)
         
-        return HttpResponseRedirect(request.POST[request.body.url])
+        return HttpResponseRedirect(request.build_absolute_uri())
         
     def get(self, request, *args, **kwargs):
                 
@@ -110,6 +110,8 @@ class View(GlobalView):
             self.showHeader = True
             self.selectedMenu = "planet"
             self.headerUrl = '/s03/market-buy/'
+            
+            content.setValue("showHeader", self.showHeader)
             
         else:
         
