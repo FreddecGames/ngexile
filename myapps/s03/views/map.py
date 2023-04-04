@@ -303,7 +303,7 @@ class View(GlobalView):
                         else:
                         
                             planet["relation"] = -1
-                            planet["alliancetag"] = ""
+                            planet["tag"] = ""
                             planet["ownerid"] = ""
                             planet["ownername"] = ""
                             planet["planetname"] = ""
