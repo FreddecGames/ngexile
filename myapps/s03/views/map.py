@@ -195,7 +195,7 @@ class View(GlobalView):
                 planet['fleets'] = []
                 for fleet in fleetsArray:
                     if fleet['planetid'] == planet['id']:
-                        if (self.hasRight("can_use_alliance_radars") and (rel >= rAlliance or fleet['allied'])) or radarstrength > planet['radar_strength'] or fleet['owned']:
+                        if (self.hasRight("can_use_alliance_radars") and (rel >= rAlliance or fleet['allied'])) or radarstrength > planet['radar_jamming'] or fleet['owned']:
     
                             planet['fleets'].append(fleet)
                             
