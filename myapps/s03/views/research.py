@@ -44,7 +44,7 @@ class View(GlobalView):
                 " (SELECT looping FROM researches_pending WHERE researchid = t.researchid AND userid=" + str(self.userId) + ") AS looping," + \
                 " expiration_time IS NOT NULL" + \
                 " FROM sp_list_researches(" + str(self.userId) + ") AS t" + \
-                " WHERE level > 0 OR (researchable AND planet_elements_requirements_met)"
+                " WHERE level > 0 OR (researchable AND planet_elements_requirements_met AND buildings_requirements_met)"
         oRss = oConnExecute(query)
         
         content = getTemplate(self.request, "s03/research")

@@ -203,7 +203,7 @@ class View(GlobalView):
                             
                             if fleet["tag"] == None: fleet["tag"] = ''
                             
-                            if (planet['relation'] > rFriend) or (fleet['relation'] > rFriend) or (radarstrength > planet['radar_strength']) or (fleet['allied'] and planet['radar_strength'] == 0): fleet["signature"] = fleet['signature']
+                            if (planet['relation'] > rFriend) or (fleet['relation'] > rFriend) or (radarstrength > planet['radar_jamming']) or (fleet['allied'] and planet['radar_strength'] == 0): fleet["signature"] = fleet['signature']
                             else: fleet["signature"] = -1
     
                             if fleet['relation'] == rSelf:
