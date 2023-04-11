@@ -36,7 +36,7 @@
                         <div class="col">
                             <span class="fs-6">{{ fleet.name }}</span>
                         </div>
-                        {% if fleet.action == 0 %}
+                        {% if fleet.action == 0 and not fleet.engaged %}
                             <div class="col-auto">
                                 <a href="#" onclick="return show('renameref','renamebox')">Renommer</a>
                             </div>
@@ -121,7 +121,7 @@
                                             </ul>
                                         {% endif %}
                                     </div>
-                                    {% if fleet.can_warp %}
+                                    {% if fleet.can_warp and not fleet.engaged %}
                                         <div class="col-auto">
                                             <a href="?id={{ fleet.id }}&action=warp">Emprunter le vortex</a>
                                         </div>
@@ -162,7 +162,7 @@
                                         {% endif %}
                                     </div>
                                     <div class="col-auto">
-                                        {% if fleet.firepower > 0 %}
+                                        {% if fleet.firepower > 0 and not fleet.engaged %}
                                             <a href="?id={{ fleet.id }}&action={% if fleet.attackonsight %}defend{% else %}attack{% endif %}">
                                                 {% if fleet.attackonsight %}Riposter
                                                 {% else %}Attaquer
@@ -218,7 +218,7 @@
                                     <div class="col">
                                         {% if fleet.commanderid %}<i class="fa-fw fas fa-user-astronaut text-normal"></i> {{ fleet.commandername }}{% endif %}
                                     </div>
-                                    {% if fleet.action == 0 %}
+                                    {% if fleet.action == 0 and not fleet.engaged %}
                                     <div class="col-auto">
                                         <a href="#" onclick="return show('cmdref','commandersbox')">Changer</a>
                                     </div>
@@ -239,7 +239,7 @@
                                             {{ fleet.recycler_output|intcomma }} <span class="text-normal">unités /heure</span>
                                         </div>
                                         <div class="col-auto">
-                                            {% if can_recycle %}<a href="?id={{ fleet.id }}&action=recycle">Recycler</a>{% endif %}
+                                            {% if can_recycle and not fleet.engaged %}<a href="?id={{ fleet.id }}&action=recycle">Recycler</a>{% endif %}
                                             {% if fleet.action == 2 %}<a href="?id={{ fleet.id }}&action=stoprecycling">Stopper</a>{% endif %}
                                         </div>
                                     </div>
@@ -385,10 +385,10 @@
                             <div class="col-9">
                                 <div class="row gx-3 align-items-center">
                                     <div class="col">
-                                        Flotte partagée à l'alliance
-                                        <a href="?id={{ fleet.id }}&action=share">
+                                        <span class="text-normal">Flotte partagée à l'alliance</span>
+                                        {% if not fleet.engaged %}<a href="?id={{ fleet.id }}&action=share">{% endif %}
                                             {% if shared %}Oui{% else %}Non{% endif %}
-                                        </a>
+                                        {% if not fleet.engaged %}</a>{% endif %}
                                     </div>
                                 </div>
                             </div>

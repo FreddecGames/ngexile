@@ -151,6 +151,8 @@ class View(GlobalView):
 
         for fleet in fleets:
         
+            if fleet['engaged']: fleet['action'] = 'x'
+            
             if fleet['attackonsight']: fleet['attackonsight'] = 1
             else: fleet['attackonsight'] = 0
             
