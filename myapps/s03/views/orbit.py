@@ -2,8 +2,6 @@
 
 from myapps.s03.views._global import *
 
-from myapps.s03.views._utils import *
-
 class View(GlobalView):
     
     def dispatch(self, request, *args, **kwargs):

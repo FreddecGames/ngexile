@@ -10,7 +10,7 @@
                 <div class="row gx-3 gy-2 justify-content-center">
                     {% for nation in nations %}
                         <div class="col-auto">
-                            <a href="?name={{ nation.nation }}" data-bs-toggle="tooltip" data-bs-title="Voir profil">{{ nation.nation }}</a>
+                            <a href="?name={{ nation.username }}" data-bs-toggle="tooltip" data-bs-title="Voir profil">{{ nation.username }}</a>
                         </div>
                     {% empty %}
                         <div class="col-auto"><span class="text-normal">Aucun résultat</span></div>

@@ -2,257 +2,111 @@
 
 from myapps.s03.views._global import *
 
-from myapps.s03.views._utils import *
-
 class View(GlobalView):
 
     def dispatch(self, request, *args, **kwargs):
 
         response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
-
-        self.selectedMenu = "options"
-
-        if request.GET.get("frame") == "1":
-            oConnDoQuery("UPDATE users SET inframe=True WHERE id=" + str(self.userId))
-
-        self.holidays_breaktime = 7*24*60*60 # time before being able to set the holidays again
-
-        self.changes_status = ""
-        self.showSubmit = True
-
-        avatar = request.POST.get("avatar", "").strip()
-        description = request.POST.get("description", "").strip()
-
-        timers_enabled = ToInt(request.POST.get("timers_enabled"), 0)
-        if timers_enabled == 1: timers_enabled = True
-        else: timers_enabled = False
-
-        display_alliance_planet_name = ToInt(request.POST.get("display_alliance_planet_name"), 0)
-        if display_alliance_planet_name == 1: display_alliance_planet_name = True
-        else: display_alliance_planet_name = False
         
-        score_visibility = ToInt(request.POST.get("score_visibility"), 0)
-        if score_visibility < 0 or score_visibility > 2: score_visibility = 0
+        #---
+        
+        return super().dispatch(request, *args, **kwargs)
 
-        skin = ToInt(request.POST.get("skin"), 0)
-
-        deletingaccount = request.POST.get("deleting")
-        deleteaccount = request.POST.get("delete")
-
-        autosignature = request.POST.get("autosignature")
-
-        self.optionCat = ToInt(request.GET.get("cat"), 1)
-
-        DoRedirect = False
-
-        if self.optionCat < 1 or self.optionCat > 6:
-            self.optionCat = 1
-
+    def post(self, request, *args, **kwargs):
+    
         if request.POST.get("submit", "") != "":
-
-            self.changes_status = "done"
-            query = ""
-
-            if self.optionCat == 1:
-                if avatar != "" and not isValidURL(avatar):
-                    #avatar is invalid
-                    self.changes_status = "check_avatar"
+            
+            optionCat = ToInt(request.GET.get("cat"), 1)
+            if optionCat == 1:
+                
+                avatar = request.POST.get("avatar", "").strip()
+                description = request.POST.get("description", "").strip()
+            
+                if avatar != "" and not isValidURL(avatar): messages.error(request, 'check_avatar')
                 else:
-                    # save updated information
+                    
                     query = "UPDATE users SET" + \
                             " avatar_url=" + dosql(avatar) + ", description=" + dosql(description) + \
                             " WHERE id=" + str(self.userId)
+                    dbQuery(query)
 
-            elif self.optionCat == 2:
+            elif optionCat == 2:
+            
+                score_visibility = ToInt(request.POST.get("score_visibility"), 0)
+                if score_visibility < 0 or score_visibility > 2: score_visibility = 0
 
-                query = "UPDATE users SET" + \
-                        " timers_enabled=" + str(timers_enabled) + \
-                        " ,display_alliance_planet_name=" + str(display_alliance_planet_name) + \
-                        " ,score_visibility=" + str(score_visibility)
+                deletingaccount = request.POST.get("deleting")
+                deleteaccount = request.POST.get("delete")
 
-                if skin == 0:
-                    skin = "s_default"
-                else:
-                    skin = "s_transparent"
-
-                query = query + ", skin=" + dosql(skin)
-
-                if deletingaccount and not deleteaccount:
-                    query = query + ", deletion_date=NULL"
-
-                if not deletingaccount and deleteaccount:
-                    query = query + ", deletion_date=now() + INTERVAL '2 days'"
-
+                query = "UPDATE users SET score_visibility=" + str(score_visibility)
+                if deletingaccount and not deleteaccount: query = query + ", deletion_date=NULL"
+                if not deletingaccount and deleteaccount: query = query + ", deletion_date=now() + INTERVAL '2 days'"
                 query = query + " WHERE id=" + str(self.userId)
-            elif self.optionCat == 3:
-                if request.POST.get("holidays"):
-                    oRs = oConnExecute("SELECT COALESCE(int4(date_part('epoch', now()-last_holidays)), 10000000) AS holidays_cooldown, (SELECT 1 FROM users_holidays WHERE userid=users.id) FROM users WHERE id=" + str(self.userId))
+                dbQuery(query)
+                
+            elif optionCat == 3 and request.POST.get("holidays"):
+            
+                result = dbRow("SELECT COALESCE(int4(date_part('epoch', now()-last_holidays)), 10000000) AS cooldown, (SELECT 1 FROM users_holidays WHERE userid=users.id) AS holidays FROM users WHERE id=" + str(self.userId))
+                if result['cooldown'] > (7 * 24 * 60 * 60) and result['holidays'] == None:
+                
+                    query = "INSERT INTO users_holidays(userid, start_time, min_end_time, end_time) VALUES(" + str(self.userId)+",now()+INTERVAL '24 hours', now()+INTERVAL '72 hours', now()+INTERVAL '22 days')"
+                    dbQuery(query)
+            
+        #---
+        
+        return HttpResponseRedirect(request.build_absolute_uri())
+            
 
-                    if oRs[0] > self.holidays_breaktime and oRs[1] == None:
-                        query = "INSERT INTO users_holidays(userid, start_time, min_end_time, end_time) VALUES(" + str(self.userId)+",now()+INTERVAL '24 hours', now()+INTERVAL '72 hours', now()+INTERVAL '22 days')"
-                        oConnDoQuery(query)
-
-                        return HttpResponseRedirect("?cat=3")
-
-            elif self.optionCat == 4:
-
-                oConnDoQuery("DELETE FROM users_reports WHERE userid=" + str(self.userId))
-
-                for x in request.POST.getlist("r"):
-                    typ = int(x / 100)
-                    subtyp = x % 100
-                    oConnExecute("INSERT INTO users_reports(userid, type, subtype) VALUES(" + str(self.userId)+"," +dosql(typ)+"," +dosql(subtyp)+")")
-
-            elif self.optionCat == 5:
-                if autosignature != "":
-                    query = "UPDATE users SET" + \
-                            " autosignature=" + dosql(autosignature) + \
-                            " WHERE id=" + str(self.userId)
-
-                    oConnDoQuery(query)
-
-            if query != "": oConnDoQuery(query)
-            DoRedirect = True
-
-        if DoRedirect:
-            return HttpResponseRedirect("/s03/options/?cat=" + str(self.optionCat))
-        else:
-            return self.displayPage()
-
-    def display_general(self, content):
-
-        query = "SELECT avatar_url, regdate, users.description, 0," + \
-                " alliance_id, a.tag, a.name, r.label" + \
-                " FROM users" + \
-                " LEFT JOIN alliances AS a ON (users.alliance_id = a.id)" + \
-                " LEFT JOIN alliances_ranks AS r ON (users.alliance_id = r.allianceid AND users.alliance_rank = r.rankid) " + \
-                " WHERE users.id = " + str(self.userId)
-        oRs = oConnExecute(query)
-
-        content.setValue("regdate", oRs[1])
-        content.setValue("description", oRs[2])
-        content.setValue("ip", self.request.META.get("remote_addr"))
-
-        if oRs[0] == None or oRs[0] == "":
-            content.Parse("noavatar")
-        else:
-            content.setValue("avatar_url", oRs[0])
-            content.Parse("avatar")
-
-        if oRs[4]:
-            content.setValue("alliancename", oRs[6])
-            content.setValue("alliancetag", oRs[5])
-            content.setValue("rank_label", oRs[7])
-
-            content.Parse("alliance")
-        else:
-            content.Parse("noalliance")
-
-        content.Parse("general")
-
-    def display_options(self, content):
-
-        oRs = oConnExecute("SELECT int4(date_part('epoch', deletion_date-now())), timers_enabled, display_alliance_planet_name, email, score_visibility, skin FROM users WHERE id=" + str(self.userId))
-
-        if oRs[0] == None:
-            content.Parse("delete_account")
-        else:
-            content.setValue("remainingtime", oRs[0])
-            content.Parse("account_deleting")
-
-        if oRs[1]: content.Parse("timers_enabled")
-        if oRs[2]: content.Parse("display_alliance_planet_name")
-        content.Parse("score_visibility_" + str(oRs[4]))
-
-        content.Parse("skin_" + str(oRs[5]))
-
-        content.setValue("email", str(oRs[3]))
-
-        content.Parse("options")
-
-    def display_holidays(self, content):
-
-        # check if holidays will be activated soon
-        oRs = oConnExecute("SELECT int4(date_part('epoch', start_time-now())) FROM users_holidays WHERE userid=" + str(self.userId))
-
-        if oRs:
-            remainingtime = oRs[0]
-        else:
-            remainingtime = 0
-
-        if remainingtime > 0:
-            content.setValue("remaining_time", remainingtime)
-            content.Parse("start_in")
-            self.showSubmit = False
-        else:
-
-            # holidays can be activated only if never took any holidays or it was at least 7 days ago
-            oRs = oConnExecute("SELECT int4(date_part('epoch', now()-last_holidays)) FROM users WHERE id=" + str(self.userId))
-
-            if (oRs[0]) and oRs[0] < self.holidays_breaktime:
-                content.setValue("remaining_time", self.holidays_breaktime-oRs[0])
-                content.Parse("cant_enable")
-                self.showSubmit = False
-            else:
-                content.Parse("can_enable")
-
-        content.Parse("holidays")
-
-    def display_reports(self, content):
-
-        oRss = oConnExecuteAll("SELECT type*100+subtype FROM users_reports WHERE userid=" + str(self.userId))
-        for oRs in oRss:
-            content.Parse("c" + str(oRs[0]))
-
-        content.Parse("reports")
-
-    def display_mail(self, content):
-
-        oRs = oConnExecute("SELECT autosignature FROM users WHERE id=" + str(self.userId))
-        if oRs:
-            content.setValue("autosignature", oRs[0])
-        else:
-            content.setValue("autosignature", "")
-
-        content.Parse("mail")
-
-    def display_signature(self, content):
-
-        content.Parse("signature")
-        self.showSubmit = False
-
-    def displayPage(self):
+    def get(self, request, *args, **kwargs):
+    
         content = getTemplate(self.request, "s03/options")
+        
+        self.selectedMenu = "options"
 
-        content.setValue("cat", self.optionCat)
-        content.setValue("name", self.profile["username"])
+        #---
 
-        if self.optionCat == 2:
-            self.display_options(content)
-        elif self.optionCat == 3:
-            self.display_holidays(content)
-        elif self.optionCat == 4:
-            self.display_reports(content)
-        elif self.optionCat == 5:
-            self.display_mail(content)
-        elif self.optionCat == 6:
-            self.display_signature(content)
-        else:
-            self.display_general(content)
+        optionCat = ToInt(request.GET.get("cat"), 1)
+        if optionCat < 1 or optionCat > 3: optionCat = 1
+        content.setValue("cat", optionCat)
 
-        if self.changes_status != "":
-            content.Parse(self.changes_status)
-            content.Parse("changes")
+        #---
+        
+        if optionCat == 1:
+        
+            query = "SELECT avatar_url, regdate, users.description, 0," + \
+                    " alliance_id, a.tag, a.name, r.label" + \
+                    " FROM users" + \
+                    " LEFT JOIN alliances AS a ON (users.alliance_id = a.id)" + \
+                    " LEFT JOIN alliances_ranks AS r ON (users.alliance_id = r.allianceid AND users.alliance_rank = r.rankid) " + \
+                    " WHERE users.id = " + str(self.userId)
+            row = dbRow(query)
+            content.setValue("profile", row)
 
-        content.Parse("cat" + str(self.optionCat)+"_selected")
-        content.Parse("cat1")
-        content.Parse("cat2")
-        content.Parse("cat3")
-        content.Parse("cat5")
-        content.Parse("cat6")
-        content.Parse("nav")
+        #---
+        
+        elif optionCat == 2:
+        
+            row = dbRow("SELECT int4(date_part('epoch', deletion_date-now())) AS remainingtime, score_visibility FROM users WHERE id=" + str(self.userId))
+            content.setValue("data", row)
 
-        if self.showSubmit: content.Parse("submit")
+        #---
+        
+        elif optionCat == 3:
+        
+            result = dbExecute("SELECT int4(date_part('epoch', start_time-now())) AS remainingtime FROM users_holidays WHERE userid=" + str(self.userId))
+            content.setValue("start_in", result)
 
+            if not result or result <= 0:
+            
+                result = dbExecute("SELECT int4(date_part('epoch', now()-last_holidays)) FROM users WHERE id=" + str(self.userId))
+                if result and result < (7 * 24 * 60 * 60):
+                
+                    content.setValue("remaining_time", (7 * 24 * 60 * 60) - result)
+                    content.Parse("cant_enable")
+                    
+                else: content.Parse("can_enable")
+                
+        #---
+        
         return self.display(content)
