@@ -75,6 +75,7 @@ class View(GlobalView):
             
             query = "SELECT sp_get_galaxy_planets(" + str(galaxy) + "," + str(self.userId) + ")"
             mapgalaxy = dbExecute(query)
+            if mapgalaxy == None: return HttpResponseRedirect('/s03/map')
             content.setValue("mapgalaxy", mapgalaxy)
 
             #---
@@ -518,7 +519,8 @@ class View(GlobalView):
                         
                         fleet["relation"] = relation
                         
-                        fleet["alliancetag"] = result['tag']
+                        if result['tag']: fleet["alliancetag"] = result['tag']
+                        else: fleet["alliancetag"] = ''
 
                 #---
                 
