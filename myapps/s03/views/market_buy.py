@@ -50,7 +50,7 @@ class View(GlobalView):
                 " sp_get_planet_blocus_strength(v.id) >= v.space AS blocus," + \
                 " workers, workers_for_maintenance," + \
                 " (SELECT has_merchants FROM nav_galaxies WHERE id=v.galaxy) as has_merchants," + \
-                " (sp_get_resource_price(" + str(self.userId) + ", v.galaxy)).buy_ore::real AS p_ore," + \
+                " (sp_get_resource_price(" + str(self.userId) + ", v.galaxy)).buy_ore AS p_ore," + \
                 " (sp_get_resource_price(" + str(self.userId) + ", v.galaxy)).buy_hydrocarbon AS p_hydrocarbon" + \
                 " FROM vw_planets AS v" + \
                 "    LEFT JOIN market_purchases AS m ON (m.planetid=v.id)" + \

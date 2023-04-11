@@ -189,11 +189,13 @@
             {% if buy %}
                 <div class="list-group-item">
                     <div class="row gx-3 align-items-center justify-content-end">
-                        <div class="col-auto">
-                            <span class="text-normal me-2">Total</span>
-                            <img src="{{ PATH_IMAGES }}img/interface/credits.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Crédits">
-                            <span id="total">0</span>
-                        </div>
+                        {% if not showHeader %}
+                            <div class="col-auto">
+                                <span class="text-normal me-2">Total</span>
+                                <img src="{{ PATH_IMAGES }}img/interface/credits.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Crédits">
+                                <span id="total">0</span>
+                            </div>
+                        {% endif %}
                         <div class="col-auto">
                             <input type="submit" class="btn btn-primary" value="Acheter">
                         </div>

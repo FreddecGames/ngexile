@@ -8,119 +8,95 @@ class View(GlobalView):
 
         response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
+        
+        #---
+        
+        return super().dispatch(request, *args, **kwargs)
+        
+    def post(self, request, *args, **kwargs):
+    
+        query = "SELECT id FROM nav_planet WHERE ownerid=" + str(self.userId)
+        planets = dbRows(query)
 
-        self.selectedMenu = "merchants"
+        for planet in planets:
+            
+            planetId = planet['id']
+            
+            ore = ToInt(self.request.POST.get("o" + str(planetId)), 0)
+            hydrocarbon = ToInt(self.request.POST.get("h" + str(planetId)), 0)
 
-        self.ExecuteOrder()
-
-        return self.DisplayMarket()
-
-    # display market for current player's planets
-    def DisplayMarket(self):
-
-        # get market template
+            if ore > 0 or hydrocarbon > 0:
+            
+                query = "SELECT sp_market_sell(" + str(self.userId) + "," + str(planetId) + "," + str(ore * 1000) + "," + str(hydrocarbon * 1000) + ")"
+                dbQuery(query)
+        
+        return HttpResponseRedirect(request.build_absolute_uri())
+        
+    def get(self, request, *args, **kwargs):
 
         content = getTemplate(self.request, "s03/market-sell")
+        
+        #---
+        
+        get_planet = self.request.GET.get("planet", "").strip()
+        if get_planet != "": get_planet = " AND v.id=" + dosql(get_planet)
 
-        planet = ToInt(self.request.GET.get("planet", "").strip(), 0)
-        if planet != 0:
-            planet_query = " AND v.id=" + str(planet)
-            content.setValue("get_planet", planet)
-        else: planet_query = ""
-
-        # retrieve ore, hydrocarbon, sales quantities on the planet
+        #---
 
         query = "SELECT id, name, galaxy, sector, planet, ore, hydrocarbon, ore_capacity, hydrocarbon_capacity, planet_floor," + \
                 " ore_production, hydrocarbon_production," + \
-                " (sp_market_price((sp_get_resource_price(0, galaxy)).sell_ore, planet_stock_ore))," + \
-                " (sp_market_price((sp_get_resource_price(0, galaxy)).sell_hydrocarbon, planet_stock_hydrocarbon))" + \
+                " (sp_market_price((sp_get_resource_price(0, galaxy)).sell_ore, planet_stock_ore)) AS p_ore," + \
+                " (sp_market_price((sp_get_resource_price(0, galaxy)).sell_hydrocarbon, planet_stock_hydrocarbon))AS p_hydrocarbon" + \
                 " FROM vw_planets AS v" + \
-                " WHERE floor > 0 AND v.ownerid=" + str(self.userId) + planet_query + \
+                " WHERE floor > 0 AND v.ownerid=" + str(self.userId) + get_planet + \
                 " ORDER BY v.id"
-        oRss = oConnExecuteAll(query)
-
+        planets = dbRows(query)
+        content.setValue("m_planets", planets)
+        
         total = 0
         count = 0
-        i = 1
-        list = []
-        content.setValue("m_planets", list)
-        for oRs in oRss:
-            item = {}
-            list.append(item)
-            
-            p_img = 1+(oRs[9] + oRs[0]) % 21
-            if p_img < 10: p_img = "0" + str(p_img)
 
-            item["index"] = i
+        for planet in planets:
+        
+            img = 1 + (planet['planet_floor'] + planet['id']) % 21
+            if img < 10: img = "0" + str(img)
+            planet["img"] = img
 
-            item["planet_img"] = p_img
+            planet["ore_price2"] = str(planet['p_ore']).replace( ",", ".")
+            planet["hydrocarbon_price2"] = str(planet['p_hydrocarbon']).replace(",", ".")
 
-            item["planet_id"] = oRs[0]
-            item["planet_name"] = oRs[1]
-            item["g"] = oRs[2]
-            item["s"] = oRs[3]
-            item["p"] = oRs[4]
+            if planet['ore'] > planet['ore_capacity'] - 4 * planet['ore_production']: planet["high_ore_capacity"] = True
+            if planet['hydrocarbon'] > planet['hydrocarbon_capacity'] - 4 * planet['hydrocarbon_production']: planet["high_hydrocarbon_capacity"] = True
 
-            item["planet_ore"] = oRs[5]
-            item["planet_hydrocarbon"] = oRs[6]
+            planet["ore_max"] = min(10000, int(planet['ore'] / 1000))
+            planet["hydrocarbon_max"] = min(10000, int(planet['hydrocarbon'] / 1000))
 
-            item["planet_ore_capacity"] = oRs[7]
-            item["planet_hydrocarbon_capacity"] = oRs[8]
-
-            item["planet_ore_production"] = oRs[10]
-            item["planet_hydrocarbon_production"] = oRs[11]
-
-            item["ore_price"] = oRs[12]
-            item["hydrocarbon_price"] = oRs[13]
-
-            item["ore_price2"] = str(oRs[12]).replace( ",", ".")
-            item["hydrocarbon_price2"] = str(oRs[13]).replace(",", ".")
-
-            # if ore/hydrocarbon quantity reach their capacity in less than 4 hours
-            if oRs[5] > oRs[7]-4*oRs[10]: item["high_ore_capacity"] = True
-            if oRs[6] > oRs[8]-4*oRs[11]: item["high_hydrocarbon_capacity"] = True
-
-            item["ore_max"] = min(10000, int(oRs[5]/1000))
-            item["hydrocarbon_max"] = min(10000, int(oRs[6]/1000))
-
-            item["selling_price"] = 0
+            planet["selling_price"] = 0
 
             count = count + 1
 
-            if oRs[0] == self.currentPlanetId: item["highlight"] = True
-
-            i = i + 1
-
-        if planet_query != "":
+            if planet['id'] == self.currentPlanetId: planet["highlight"] = True
+        
+        #---
+        
+        if get_planet != "":
+        
             self.showHeader = True
             self.selectedMenu = "planet"
             self.headerUrl = '/s03/market-sell/'
-        
-            content.Parse("planetid")
+            
+            content.setValue("showHeader", self.showHeader)
+            
         else:
-            content.setValue("total", total)
-            content.Parse("totalprice")
-
+        
+            self.selectedMenu = "merchants"
+        
+            content.setValue("total", int(total))
+        
+        #---
+        
         if count > 0: content.Parse("sell")
+        
+        #---
 
         return self.display(content)
-
-    # execute sell orders
-    def ExecuteOrder(self):
-
-        if self.request.GET.get("a") != "sell": return
-
-        # for each planet owned, check what the player sells
-        query = "SELECT id FROM nav_planet WHERE ownerid=" + str(self.userId)
-        planetsArray = oConnExecuteAll(query)
-
-        for i in planetsArray:
-            planetid = i[0]
-
-            # retrieve ore + hydrocarbon quantities
-            ore = ToInt(self.request.POST.get("o" + str(planetid)), 0)
-            hydrocarbon = ToInt(self.request.POST.get("h" + str(planetid)), 0)
-
-            if ore > 0 or hydrocarbon > 0:
-                query = "SELECT sp_market_sell(" + str(self.userId) + "," + str(planetid) + "," + str(ore*1000) + "," + str(hydrocarbon*1000) + ")"
-                oRs = oConnExecute(query)
