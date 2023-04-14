@@ -73,21 +73,21 @@ class View(GlobalView):
                 cost = self.nation_cost_lvl_0
                 spyingTime = 25
                 
-            elif self.level == 1:
+            elif level == 1:
             
                 planet_limit = 15
                 spottedChance = 0.3
                 cost = self.nation_cost_lvl_1
                 spyingTime = 30
                 
-            elif self.level == 2:
+            elif level == 2:
             
                 planet_limit = 0
                 spottedChance = 0.15
                 cost = self.nation_cost_lvl_2
                 spyingTime = round(60 + random() * 30)
                 
-            elif self.level == 3:
+            elif level == 3:
             
                 planet_limit = 0
                 spottedChance = 0
@@ -288,7 +288,7 @@ class View(GlobalView):
                         qty = int((rndmax - rndmin + 1) * random() + rndmin)
 
                     query = " INSERT INTO spy_building(spy_id, planet_id, building_id, quantity) " + \
-                            " VALUES(" + str(reportId) + ", " + str(planet['id']) + ", " + str(row['id']) + ", " + row(qty) + " )"
+                            " VALUES(" + str(reportId) + ", " + str(planet['id']) + ", " + str(row['id']) + ", " + str(qty) + " )"
                     dbQuery(query)
                     
                     i += 1
