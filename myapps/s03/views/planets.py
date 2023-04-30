@@ -52,8 +52,8 @@ class View(GlobalView):
         query = "SELECT t.id, name, galaxy, sector, planet," + \
                 "ore, ore_production, ore_capacity," + \
                 "hydrocarbon, hydrocarbon_production, hydrocarbon_capacity," + \
-                "workers-workers_busy, workers_capacity," + \
-                "energy_production - energy_consumption, energy_capacity," + \
+                "(workers-workers_busy) AS workers_idle, workers_capacity," + \
+                "(energy_production - energy_consumption) AS energy_production, energy_capacity," + \
                 "floor, floor_occupied," + \
                 "space, space_occupied," + \
                 "commanderid, (SELECT name FROM commanders WHERE id = t.commanderid) AS commandername," + \
@@ -66,7 +66,7 @@ class View(GlobalView):
                 " FROM vw_planets AS t" + \
                 " WHERE planet_floor > 0 AND planet_space > 0 AND ownerid=" + str(self.userId)+ \
                 " ORDER BY " +orderby
-        planets = oConnExecuteAll(query)
+        planets = dbRows(query)
         content.setValue("planets", planets)
         
         for planet in planets:
@@ -76,7 +76,7 @@ class View(GlobalView):
             planet["ore_level"] = self.getPercent(planet['ore'], planet['ore_capacity'], 10)
             planet["hydrocarbon_level"] = self.getPercent(planet['hydrocarbon'], planet['hydrocarbon_capacity'], 10)
 
-            if planet['workers'] < planet[28]: planet["workers_low"] = True
+            if planet['workers'] < planet['workers_for_maintenance']: planet["workers_low"] = True
 
             if planet['soldiers'] * 250 < planet['workers'] + planet['scientists']: planet["soldiers_low"] = True
 
