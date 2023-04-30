@@ -4,32 +4,32 @@
 {% load bbcode_tags %}
 {% block content %}
 <div class="page-content">
-<script>
-    function sig(signature) {
-    
-        if (signature > 0) document.write('<small>' + formatnumber(signature) + '</small>');
-        else document.write('???');
-    }
-</script>
-{% if announce %}
-    <div class="card mb-3">
-        <div class="card-header" data-bs-toggle="collapse" data-bs-target="#motd_content">
-            <span class="fs-6">
-                Annonce de l'alliance -
-                {% if defcon_5 %}DEFCON 5: Préparation normale en temps de paix{% endif %}
-                {% if defcon_4 %}DEFCON 4: Préparation normale, mais renseignement accru et mesures de sécurité renforcées{% endif %}
-                {% if defcon_3 %}DEFCON 3: Accroissement de la préparation des forces au-dessus de la préparation normale{% endif %}
-                {% if defcon_2 %}DEFCON 2: Accroissement supplémentaire dans la préparation des forces{% endif %}
-                {% if defcon_1 %}DEFCON 1: Préparation maximale des forces (état de guerre){% endif %}
-            </span>
-        </div>
-        <div id="motd_content" class="collapse show">
-            <div class="card-body">
-                {{ motd|safe|bbcode }}
+    <script>
+        function sig(signature) {
+            if (signature > 0) document.write('<small>' + formatnumber(signature) + '</small>');
+            else document.write('???');
+        }
+    </script>
+    {% if alliance %}
+        <div class="card mb-3">
+            <div class="card-header" data-bs-toggle="collapse" data-bs-target="#motd_content">
+                <span class="fs-6">
+                    Annonce de l'alliance -
+                    {% if alliance.defcon == 5 %}DEFCON 5: Préparation normale en temps de paix
+                    {% elif alliance.defcon == 4 %}DEFCON 4: Préparation normale, mais renseignement accru et mesures de sécurité renforcées
+                    {% elif alliance.defcon == 3 %}DEFCON 3: Accroissement de la préparation des forces au-dessus de la préparation normale
+                    {% elif alliance.defcon == 2 %}DEFCON 2: Accroissement supplémentaire dans la préparation des forces
+                    {% elif alliance.defcon == 1 %}DEFCON 1: Préparation maximale des forces (état de guerre)
+                    {% endif %}
+                </span>
+            </div>
+            <div id="motd_content" class="collapse show">
+                <div class="card-body">
+                    {{ alliance.announce|safe|bbcode }}
+                </div>
             </div>
         </div>
-    </div>
-{% endif %}
+    {% endif %}
 <div class="card mb-3">
     <div class="card-header" data-bs-toggle="collapse" data-bs-target="#stats_content">
         <span class="fs-6">Statistiques de votre empire - {{ date|timezone:"Europe/Paris"|date:"d M Y H:i:s" }}</span>
@@ -42,15 +42,16 @@
                         <div class="col-12">
                             <span class="text-normal me-2">Nation</span>
                             <span class="me-2">
-                                {% if orientation1 %}Marchand{% endif %}
-                                {% if orientation2 %}Militaire{% endif %}
-                                {% if orientation3 %}Scientifique{% endif %}
+                                {% if orientation == 1 %}Marchand
+                                {% elif orientation == 2 %}Militaire
+                                {% elif orientation == 3 %}Scientifique
+                                {% endif %}
                             </span>
                             <span class="text-info me-2">{{ nation }}</span>
                         </div>
                         <div class="col-12">
                             <span class="text-normal me-2">Grade</span>
-                            {% if alliance %}{{ alliance_rank_label }}<a href="/s03/alliance/?tag={{ alliance_tag }}" class="ms-2" data-bs-toggle="tooltip" data-bs-title="Voir alliance">[{{ alliance_tag }}] {{ alliance_name }}</a>
+                            {% if alliance %}{{ alliance_rank_label }}<a href="/s03/alliance/?tag={{ alliance.tag }}" class="ms-2" data-bs-toggle="tooltip" data-bs-title="Voir alliance">[{{ alliance.tag }}] {{ alliance.name }}</a>
                             {% else %}<span class="text-normal">Indépendant</span>
                             {% endif %}
                         </div>
@@ -127,8 +128,8 @@
             <div class="list-group-item">
                 <div class="row gx-3">
                     <div class="col">
-                        {% if fleet.owned %}
-                            {% if fleet.attack %}
+                        {% if fleet.owner_relation == 2 %}
+                            {% if fleet.attackonsight %}
                                 <img src="{{ PATH_IMAGES }}img/interface/stance_attack.gif"
                                      class="stance"
                                      data-bs-toggle="tooltip" data-bs-title="Mode attaque"
@@ -141,18 +142,18 @@
                                      width="10"
                                      height="10">
                             {% endif %}
-                            <a href="/s03/fleet/?id={{ fleet.id }}" class="text-info" data-bs-toggle="tooltip" data-bs-title="Voir flotte">{{ fleet.name }}</a>
+                            <a href="/s03/fleet/?id={{ fleet.id }}" class="text-info" data-bs-toggle="tooltip" data-bs-title="Voir flotte">{{ fleet.owner_name }}</a>
                         {% elif fleet.ally %}
-                            <a href="/s03/mails/?to={{ fleet.name }}" class="text-success" data-bs-toggle="tooltip" data-bs-title="Contacter propriétaire">{{ fleet.name }}</a>
+                            <a href="/s03/mails/?to={{ fleet.name }}" class="text-success" data-bs-toggle="tooltip" data-bs-title="Contacter propriétaire">{{ fleet.owner_name }}</a>
                         {% elif fleet.friend %}
-                            <a href="/s03/mails/?to={{ fleet.name }}" class="text-friend" data-bs-toggle="tooltip" data-bs-title="Contacter propriétaire">{{ fleet.name }}</a>
+                            <a href="/s03/mails/?to={{ fleet.name }}" class="text-friend" data-bs-toggle="tooltip" data-bs-title="Contacter propriétaire">{{ fleet.owner_name }}</a>
                         {% elif fleet.hostile %}
-                            <a href="/s03/nation/?name={{ fleet.name }}" class="text-danger" data-bs-toggle="tooltip" data-bs-title="Voir profil">{{ fleet.name }}</a>
+                            <a href="/s03/nation/?name={{ fleet.owner_name }}" class="text-danger" data-bs-toggle="tooltip" data-bs-title="Voir profil">{{ fleet.owner_name }}</a>
                         {% endif %}
                         <span class="ms-2"><script>sig({{ fleet.signature }})</script></span>
                     </div>
                     <div class="col-auto">
-                        {% if fleet.movingfrom %}<script>putplanet("{{fleet.f_planetid}}","{{fleet.f_planetname}}","{{fleet.f_g}}","{{fleet.f_s}}","{{fleet.f_p}}",{{fleet.f_relation}});</script>
+                        {% if fleet.f_planetname %}<script>putplanet("{{fleet.f_planetid}}","{{fleet.f_planetname}}","{{fleet.f_g}}","{{fleet.f_s}}","{{fleet.f_p}}",{{fleet.f_relation}});</script>
                         {% else %}<span class="text-normal">???</span>{% endif %}
                         <i class="fa-fw fas fa-long-arrow-alt-right mx-2 text-normal"></i>
                         <script>putplanet("{{fleet.t_planetid }}","{{fleet.t_planetname}}","{{fleet.t_g}}","{{fleet.t_s}}","{{fleet.t_p}}",{{fleet.t_relation}});</script>
@@ -176,8 +177,8 @@
     <div class="card-body">
         {% if research %}
             <div class="row gx-3">
-                <div class="col"><a href="/s03/research/#{{ researchid }}" data-bs-toggle="tooltip" data-bs-title="Voir laboratoire">{{ researchlabel }}</a></div>
-                <div class="col-auto"><span class="text-yellow"><script>putcountdown1({{ researchtime }}, "Terminé", "/s03/research/");</script></span></div>
+                <div class="col"><a href="/s03/research/#{{ research.researchid }}" data-bs-toggle="tooltip" data-bs-title="Voir laboratoire">{{ research.label }}</a></div>
+                <div class="col-auto"><span class="text-yellow"><script>putcountdown1({{ research.time }}, "Terminé", "/s03/research/");</script></span></div>
             </div>
         {% else %}
             <a href="/s03/research/" data-bs-toggle="tooltip" data-bs-title="Voir laboratoire">Aucune recherche en cours</a>
@@ -239,15 +240,15 @@
                                 <a href="/s03/shipyard/?planet={{ item.planetid }}" data-bs-toggle="tooltip" data-bs-title="Voir vaisseaux">{{ item.planetname }}</a>
                             </div>
                             <div class="col-auto">
-                                {% if item.ship %}
+                                {% if item.waiting_resources %}
+                                    <div class="row gx-3 justify-content-end">
+                                        <div class="col">{{ item.waiting_label }}</div>
+                                        <div class="col-auto"><span class="text-danger">En attente de ressources</span></div>
+                                    </div>
+                                {% elif item.shipid %}
                                     <div class="row gx-3 justify-content-end">                                        
                                         <div class="col"><span class="{% if item.recycle %}text-danger{% endif %}">{{ item.shiplabel }}</span></div>
                                         <div class="col-auto text-end" style="width:65px;"><span class="text-yellow"><script>putcountdown1({{item.time}}, "Terminé", "/s03/shipyard/?planet={{item.planetid}}#{{item.shipid}}");</script></span></div>
-                                    </div>
-                                {% elif item.waiting_resources %}
-                                    <div class="row gx-3 justify-content-end">
-                                        <div class="col">{{ item.waiting_ship }}</div>
-                                        <div class="col-auto"><span class="text-danger">En attente de ressources</span></div>
                                     </div>
                                 {% else %}
                                     <span class="text-normal">Aucun vaisseau en cours</span>

@@ -57,7 +57,6 @@ class View(GlobalView):
         
         return HttpResponseRedirect(request.build_absolute_uri())
             
-
     def get(self, request, *args, **kwargs):
     
         content = getTemplate(self.request, "s03/options")

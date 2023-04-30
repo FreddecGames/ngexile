@@ -50,10 +50,11 @@
                 <div class="list-group-item">
                     <div class="row gx-3">
                         <div class="col">
-                            {% if fleet.owner %}<a href="/s03/fleet/?id={{fleet.id}}" data-bs-toggle="tooltip" data-bs-title="Voir flotte" class="text-info">{{fleet.name}}</a>{% endif %}
-                            {% if fleet.friend %}<span class="text-friend">{{fleet.name}}</span>{% endif %}
-                            {% if fleet.ally %}<span class="text-success">{{fleet.name}}</span>{% endif %}
-                            {% if fleet.enemy %}<span class="text-danger">{{fleet.name}}</span>{% endif %}
+                            {% if fleet.planet_owner_relation == 2 %}<a href="/s03/fleet/?id={{fleet.id}}" data-bs-toggle="tooltip" data-bs-title="Voir flotte" class="text-info">{{fleet.name}}</a>
+                            {% elif fleet.planet_owner_relation == 1 %}<span class="text-success">{{fleet.planet_owner_name}}</span>
+                            {% elif fleet.planet_owner_relation == 0 %}<span class="text-friend">{{fleet.planet_owner_name}}</span>
+                            {% else %}<span class="text-danger">{{fleet.planet_owner_name}}</span>
+                            {% endif %}
                             <small class="ms-2">{{ fleet.signature|intcomma }}</small>
                         </div>
                         <div class="col-auto">
@@ -67,9 +68,10 @@
                             {% endif %}
                         </div>
                         <div class="col-auto text-end" style="width:100px;">
-                            {% if fleet.recycling %}<span class="text-success">En recyclage</span>{% endif %}
-                            {% if fleet.fighting %}<span class="text-danger">En combat</span>{% endif %}
-                            {% if fleet.patrolling %}<span class="text-normal">En patrouille</span>{% endif %}
+                            {% if fleet.engaged %}<span class="text-danger">En combat</span>
+                            {% elif fleet.action == 2 %}<span class="text-success">En recyclage</span>
+                            {% elif fleet.patrolling %}<span class="text-normal">En patrouille</span>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
@@ -81,11 +83,11 @@
         </div>
     </div>
 </div>
-<form method="post" action="?a=new&planet={{planetid}}" class="card">
+<form method="post" action="?a=new&planet={{cur_planetid}}" class="card">
     <div class="card-header">
         <span class="fs-6">Nouvelle flotte</span>
     </div>
-    {% if new %}
+    {% if ships|length > 0 %}
         <div class="list-group list-group-flush">
             {% for ship in ships %}
                 <div class="list-group-item">
@@ -98,74 +100,74 @@
                                 <div class='row gx-3 gy-1'>
                                     <div class='col-auto'>
                                         <small class='text-normal me-1'>Signature</small>
-                                        <span>{{ship.ship_signature|intcomma}}</span>
+                                        <span>{{ship.signature|intcomma}}</span>
                                     </div>
-                                    {% if ship.ship_cargo %}
+                                    {% if ship.capacity %}
                                         <div class='col-auto'>
                                             <small class='text-normal me-1'>Cargo</small>
-                                            <span>{{ship.ship_cargo|intcomma}}</span>
+                                            <span>{{ship.capacity|intcomma}}</span>
                                         </div>
                                     {% endif %}
                                     <div class='col-auto'>
                                         <small class='text-normal me-1'>Vitesse</small>
-                                        <span>{{ship.ship_speed|intcomma}}</span>
+                                        <span>{{ship.speed|intcomma}}</span>
                                     </div>
                                     <div class='col-auto'>
                                         <small class='text-normal me-1'>Manœuvrabilité</small>
-                                        <span>{{ship.ship_handling|intcomma}}</span>
+                                        <span>{{ship.handling|intcomma}}</span>
                                     </div>
-                                    {% if ship.attack %}
+                                    {% if ship.weapon_power %}
                                         <div class='col-auto'>
                                             <small class='text-normal me-1'>Domage</small>
-                                            <span>{{ship.ship_turrets}} <small class='text-normal'>x</small> {{ship.ship_power}}</span>
+                                            <span>{{ship.ship_turrets}} <small class='text-normal'>x</small> {{ship.weapon_power}}</span>
                                         </div>
                                         <div class='col-auto'>
                                             <small class='text-normal me-1'>Ciblage</small>
-                                            <span>{{ship.ship_tracking_speed|intcomma}}</span>
+                                            <span>{{ship.weapon_tracking_speed|intcomma}}</span>
                                         </div>
                                     {% endif %}
                                     <div class='col-auto'>
                                         <small class='text-normal me-1'>Armure</small>
-                                        <span>{{ship.ship_hull|intcomma}}</span>
+                                        <span>{{ship.hull|intcomma}}</span>
                                     </div>
                                     {% if ship.shield %}
                                         <div class='col-auto'>
                                             <small class='text-normal me-1'>Bouclier</small>
-                                            <span>{{ship.ship_shield|intcomma}}</span>
+                                            <span>{{ship.shield|intcomma}}</span>
                                         </div>
                                     {% endif %}
                                     {% if ship.recycler_output %}
                                         <div class='col-auto'>
                                             <small class='text-normal me-1'>Recyclage</small>
-                                            <span>{{ship.ship_recycler_output|intcomma}}</span>
+                                            <span>{{ship.recycler_output|intcomma}}</span>
                                          </div>
                                     {% endif %}
                                     {% if ship.long_distance_capacity %}
                                         <div class='col-auto'>
                                             <small class='text-normal me-1'>Saut</small>
-                                            <span>{{ship.ship_long_distance_capacity|intcomma}}</span>
+                                            <span>{{ship.long_distance_capacity|intcomma}}</span>
                                          </div>
                                     {% endif %}
                                     {% if ship.droppods %}
                                         <div class='col-auto'>
                                             <small class='text-normal me-1'>Invasion</small>
-                                            <span>{{ship.ship_droppods|intcomma}}</span>
+                                            <span>{{ship.droppods|intcomma}}</span>
                                          </div>
                                     {% endif %}                                    
                                 </div>
                             "></i>
-                            <a href="/s03/help/?cat=ships#{{ship.id}}" data-bs-toggle="tooltip" data-bs-title="Voir aide">{{ship.name}}</a>
+                            <a href="/s03/help/?cat=ships#{{ship.shipid}}" data-bs-toggle="tooltip" data-bs-title="Voir aide">{{ship.label}}</a>
                         </div>
                         <div class="col-auto"><small class="text-normal">x</small> {{ship.quantity|intcomma}}</div>
-                        <div class="col-auto"><input type="number" class="form-control" min="0" value="{{ship.ship_quantity}}" id="s{{ship.id}}" name="s{{ship.id}}"></div>
-                        <div class="col-auto"><a href="#" onclick="setval('s{{ship.id}}', {{ship.quantity}}); return false;">max</a></div>
+                        <div class="col-auto"><input type="number" class="form-control" min="0" value="{{ship.quantity}}" id="s{{ship.shipid}}" name="s{{ship.shipid}}"></div>
+                        <div class="col-auto"><a href="#" onclick="setval('s{{ship.shipid}}', {{ship.quantity}}); return false;">max</a></div>
                     </div>
                 </div>
             {% endfor %}
             <div class="list-group-item">
                 <div class="row gx-3 align-items-center justify-content-end">
                     <div class="col-auto"><span class="text-normal">Nom de flotte</span></div>
-                    <div class="col-auto"><input type="text" class="form-control" name="name" value="{{fleetname}}" maxlength="16"></div>
+                    <div class="col-auto"><input type="text" class="form-control" name="name" maxlength="16"></div>
                     <div class="col-auto"><input type="submit" class="btn btn-primary" value="Former la flotte"></div>
                 </div>
             </div>
