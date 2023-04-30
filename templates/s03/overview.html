@@ -143,11 +143,11 @@
                                      height="10">
                             {% endif %}
                             <a href="/s03/fleet/?id={{ fleet.id }}" class="text-info" data-bs-toggle="tooltip" data-bs-title="Voir flotte">{{ fleet.owner_name }}</a>
-                        {% elif fleet.ally %}
+                        {% elif fleet.owner_relation == 1 %}
                             <a href="/s03/mails/?to={{ fleet.name }}" class="text-success" data-bs-toggle="tooltip" data-bs-title="Contacter propriétaire">{{ fleet.owner_name }}</a>
-                        {% elif fleet.friend %}
+                        {% elif fleet.owner_relation == 0 %}
                             <a href="/s03/mails/?to={{ fleet.name }}" class="text-friend" data-bs-toggle="tooltip" data-bs-title="Contacter propriétaire">{{ fleet.owner_name }}</a>
-                        {% elif fleet.hostile %}
+                        {% else %}
                             <a href="/s03/nation/?name={{ fleet.owner_name }}" class="text-danger" data-bs-toggle="tooltip" data-bs-title="Voir profil">{{ fleet.owner_name }}</a>
                         {% endif %}
                         <span class="ms-2"><script>sig({{ fleet.signature }})</script></span>
@@ -206,7 +206,7 @@
                                     {% for building in item.buildings %}
                                         <div class="col-12">
                                             <div class="row gx-3 justify-content-end">
-                                                <div class="col text-end"><span class="{% if building.destroy %}text-danger{% endif %}">{{ building.building }}</span></div>
+                                                <div class="col text-end"><span class="{% if building.destroying %}text-danger{% endif %}">{{ building.building }}</span></div>
                                                 <div class="col-auto text-end" style="width:75px;"><span class="text-yellow"><script>putcountdown1({{building.time}}, "Terminé", "/s03/buildings/?planet={{item.planetid}}#{{building.buildingid}}");</script></span></div>
                                             </div>
                                         </div>

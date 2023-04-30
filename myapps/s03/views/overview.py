@@ -94,7 +94,7 @@ class View(GlobalView):
                 "attackonsight" +\
                 " FROM users, vw_fleets f " +\
                 " WHERE users.id=" + str(self.userId)+" AND (action = 1 OR action = -1) AND (ownerid=" + str(self.userId)+" OR (destplanetid IS NOT NULL AND destplanetid IN (SELECT id FROM nav_planet WHERE ownerid=" + str(self.userId)+")))" +\
-                " ORDER BY ownerid, COALESCE(remaining_time, 0)"
+                " ORDER BY COALESCE(remaining_time, 0), ownerid"
         rows = dbRows(query)
         
         fleets = []
