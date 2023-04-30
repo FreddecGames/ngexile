@@ -109,7 +109,7 @@ class View(GlobalView):
                         " FROM planet_ships " + \
                         " LEFT JOIN db_ships ON (planet_ships.shipid = db_ships.id) " + \
                         " WHERE planet_ships.planetid=vw_planets.id),0) AS ground" + \
-                    " FROM vw_planets " + \
+                    " FROM vw_planets" + \
                     " WHERE ownerid=" + str(userId) + \
                     " ORDER BY random() "
             planets = dbRows(query)

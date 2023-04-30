@@ -26,7 +26,7 @@
                 <div class="d-flex justify-content-center">
                     <div class="row gx-3">
                         <div class="col-auto">
-                            {% if profile.avatar_url %}<img src="{{ avatar_url }}" width="64" height="64" class="rounded">
+                            {% if profile.avatar_url %}<img src="{{ profile.avatar_url }}" width="64" height="64" class="rounded">
                             {% else %}<img src="{{ PATH_IMAGES }}img/interface/noavatar.gif" width="64" height="64" class="rounded">
                             {% endif %}
                         </div>
