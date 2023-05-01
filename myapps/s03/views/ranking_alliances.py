@@ -34,7 +34,7 @@ class View(GlobalView):
             orderby = "upper(alliances.name)"
             reversed = False
         elif col == 2:
-            orderby = "alliance_score"
+            orderby = "score"
             reversed = True
         elif col == 3:
             orderby = "members"
@@ -126,5 +126,7 @@ class View(GlobalView):
             if self.allianceId and row['id'] == self.allianceId: row["playeralliance"] = True
 
             i = i + 1
-
+        
+        #---
+        
         return self.display(content)
