@@ -40,7 +40,7 @@
 </div>
 <div class="scroll-content" style="height:calc(100% - 158px);">
 <div class="page-content">
-{% if cat1_selected %}
+{% if cat == 1 %}
 <div class="card mb-3">
     <div class="card-header">
         <span class="fs-6">Production</span>
@@ -52,11 +52,11 @@
                 <div class="col-6">
                     <span class="me-3">
                         <img src="{{ PATH_IMAGES }}img/interface/ore.gif" data-bs-toggle="tooltip" data-bs-title="Minerai" class="res" width="16px" height="16px">
-                        <span>{{ a_ore }}%</span>
+                        <span>{{ planet.pct_ore }}%</span>
                     </span>
                     <span class="me-3">
                         <img src="{{ PATH_IMAGES }}img/interface/hydrocarbon.gif" data-bs-toggle="tooltip" data-bs-title="Hydrocarbure" class="res" width="16px" height="16px">
-                        <span>{{ a_hydrocarbon }}%</span>
+                        <span>{{ planet.pct_hydrocarbon }}%</span>
                     </span>
                 </div>
             </div>
@@ -65,9 +65,9 @@
             <div class="row gx-3">
                 <div class="col-6"><span class="text-normal">Effectifs</span></div>
                 <div class="col-6">
-                    <span class="me-3">{{ workers|intcomma }}</span>
-                    <small class="me-3 text-normal">{{ workers_required|intcomma }} requis</small>
-                    <span class="me-3">{{ production_percent }}%</span>
+                    <span class="me-3">{{ planet.workers|intcomma }}</span>
+                    <small class="me-3 text-normal">{{ planet.workers_for_maintenance|intcomma }} requis</small>
+                    <span class="me-3">{{ planet.production_percent }}%</span>
                 </div>
             </div>
         </div>
@@ -75,13 +75,15 @@
             <div class="row gx-3">
                 <div class="col-6"><span class="text-normal">Condition des installations</span></div>
                 <div class="col-6">
-                    {% if condition_excellent %}<span class="me-3">Excellente</span>{% endif %}
-                    {% if condition_good %}<span class="me-3">Bonne</span>{% endif %}
-                    {% if condition_fair %}<span class="me-3">Passable</span>{% endif %}
-                    {% if condition_bad %}<span class="me-3">Mauvaise</span>{% endif %}
-                    {% if condition_catastrophic %}<span class="me-3">Catastrophique</span>{% endif %}
-                    {% if repairing %}<small class="me-3 text-normal">réparation en cours</small>{% endif %}
-                    {% if decaying %}<small class="me-3 text-normal">en détérioration</small>{% endif %}
+                    {% if planet.condition <= 1 %}<span class="me-3">Excellente</span>
+                    {% elif planet.condition < 20 %}<span class="me-3">Bonne</span>
+                    {% elif planet.condition < 45 %}<span class="me-3">Passable</span>
+                    {% elif planet.condition < 80 %}<span class="me-3">Mauvaise</span>
+                    {% else %}<span class="me-3">Catastrophique</span>
+                    {% endif %}
+                    {% if planet.workers >= planet.workers_for_maintenance %}<small class="me-3 text-normal">réparation en cours</small>
+                    {% else %}<small class="me-3 text-normal">en détérioration</small>
+                    {% endif %}
                 </div>
             </div>
         </div>
@@ -89,7 +91,7 @@
             <div class="row gx-3">
                 <div class="col-6"><span class="text-normal">Estimation de la production</span></div>
                 <div class="col-6">
-                    <span class="me-3">{{ final_production }}%</span>
+                    <span class="me-3">{{ planet.final_production }}%</span>
                 </div>
             </div>
         </div>
@@ -110,11 +112,11 @@
                     "></i>                    
                 </div>
                 <div class="col-auto pe-0">
-                    <a href="/s03/help/?cat=buildings#{{ building.id }}" data-bs-toggle="tooltip" data-bs-title="Voir aide">{{ building.name }}</a>
+                    <a href="/s03/help/?cat=buildings#{{ building.id }}" data-bs-toggle="tooltip" data-bs-title="Voir aide">{{ building.label }}</a>
                 </div>
                 <div class="col">
                     <small class="text-normal">x</small>
-                    <span>{{ building.quantity }}</span>
+                    <span>{{ building.working_quantity }}</span>
                 </div>
                 <div class="col-2">
                     {% if building.production_ore %}
@@ -271,7 +273,7 @@
         </div>
     </div>
 </div>
-{% elif cat2_selected %}
+{% elif cat == 2 %}
 <form method="post" action="?cat={{ cat }}&a=submit">
     {% csrf_token %}
     <div class="card">
@@ -341,7 +343,7 @@
         </div>
     </div>
 </form>
-{% elif cat3_selected %}
+{% elif cat == 3 %}
 <div class="card mb-3">
     <div class="card-header d-flex">
         <span class="fs-6 me-auto">Energie reçue</span>
