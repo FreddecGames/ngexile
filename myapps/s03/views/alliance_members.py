@@ -48,7 +48,7 @@ class View(GlobalView):
         
         #---
         
-        content = getTemplate(self.request, 's03/alliance-members')
+        content = getTemplate(request, 's03/alliance-members')
         
         self.selectedMenu = 'alliance.members'
         
@@ -63,7 +63,7 @@ class View(GlobalView):
         
         #---
 
-        col = ToInt(self.request.GET.get('col'), 1)
+        col = ToInt(request.GET.get('col'), 1)
         if col < 1 or col > 7: col = 1
 
         if col == 1:
@@ -92,7 +92,7 @@ class View(GlobalView):
         
         #---
         
-        if self.request.GET.get('r', '') != '': reversed = not reversed
+        if request.GET.get('r', '') != '': reversed = not reversed
         else: content.Parse('r' + str(col))
 
         #---
@@ -154,4 +154,4 @@ class View(GlobalView):
         content.setValue('total_score', totalScore)
         content.setValue('total_score_delta', totalScoreDelta)
 
-        return self.display(content)
+        return self.display(content, request)

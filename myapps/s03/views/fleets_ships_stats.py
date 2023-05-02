@@ -17,7 +17,7 @@ class View(GlobalView):
 
         self.selectedMenu = "fleets_ships_stats"
 
-        content = getTemplate(self.request, "s03/fleets-ships-stats")
+        content = getTemplate(request, "s03/fleets-ships-stats")
         
         #---
         
@@ -52,4 +52,4 @@ class View(GlobalView):
         content.setValue("kills", kills)
         content.setValue("losses", losses)
 
-        return self.display(content)
+        return self.display(content, request)

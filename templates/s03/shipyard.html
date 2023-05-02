@@ -316,10 +316,10 @@
                                     <script>document.write(formattime({{ship.construction_time }}))</script>
                                 </div>
                                 <div class="col-auto text-end" style="width:110px;">
-                                    {% if not ship.notenoughresources %}
-                                        <input type="number" class="form-control" style="max-width:100%;" min="0" name="s{{ ship.id }}" onkeyup="updateNeeds()" size="3" maxlength="5" />
-                                    {% elif not ship.buildings_requirements_met %}
+                                    {% if not ship.buildings_requirements_met %}
                                         <span class="text-danger">Bâtiments requis</span>
+                                    {% elif not ship.notenoughresources %}
+                                        <input type="number" class="form-control" style="max-width:100%;" min="0" name="s{{ ship.id }}" onkeyup="updateNeeds()" size="3" maxlength="5" />
                                     {% endif %}
                                 </div>
                             </div>

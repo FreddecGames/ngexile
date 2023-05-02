@@ -17,7 +17,7 @@ class View(GlobalView):
 
         self.selectedMenu = "fleets.standby"
 
-        content = getTemplate(self.request, "s03/fleets-standby")
+        content = getTemplate(request, "s03/fleets-standby")
         
         #---
         
@@ -45,4 +45,4 @@ class View(GlobalView):
                 
             planet["ships"].append(result)
 
-        return self.display(content)
+        return self.display(content, request)

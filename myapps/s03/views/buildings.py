@@ -42,7 +42,7 @@ class View(GlobalView):
         self.selectedMenu = 'planet'        
         self.headerUrl = '/s03/buildings/'
         
-        content = getTemplate(self.request, 's03/buildings')
+        content = getTemplate(request, 's03/buildings')
                 
         #---
         
@@ -180,4 +180,4 @@ class View(GlobalView):
                 
         #---
         
-        return self.display(content)
+        return self.display(content, request)

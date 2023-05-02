@@ -67,7 +67,7 @@ class View(ExileMixin, View):
         
     def get(self, request, *args, **kwargs):
 
-        tpl = getTemplate(self.request, 's03/game-over')
+        tpl = getTemplate(request, 's03/game-over')
         
         #---
         
@@ -86,4 +86,4 @@ class View(ExileMixin, View):
 
         #---
 
-        return render(self.request, tpl.template, tpl.data)
+        return render(request, tpl.template, tpl.data)

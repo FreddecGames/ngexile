@@ -22,8 +22,8 @@ class View(GlobalView):
             
             planetId = planet['id']
             
-            ore = ToInt(self.request.POST.get("o" + str(planetId)), 0)
-            hydrocarbon = ToInt(self.request.POST.get("h" + str(planetId)), 0)
+            ore = ToInt(request.POST.get("o" + str(planetId)), 0)
+            hydrocarbon = ToInt(request.POST.get("h" + str(planetId)), 0)
 
             if ore > 0 or hydrocarbon > 0:
             
@@ -34,11 +34,11 @@ class View(GlobalView):
         
     def get(self, request, *args, **kwargs):
 
-        content = getTemplate(self.request, "s03/market-sell")
+        content = getTemplate(request, "s03/market-sell")
         
         #---
         
-        get_planet = self.request.GET.get("planet", "").strip()
+        get_planet = request.GET.get("planet", "").strip()
         if get_planet != "": get_planet = " AND v.id=" + dosql(get_planet)
 
         #---
@@ -99,4 +99,4 @@ class View(GlobalView):
         
         #---
 
-        return self.display(content)
+        return self.display(content, request)

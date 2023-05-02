@@ -42,7 +42,7 @@ class View(GlobalView):
         
         #---
 
-        content = getTemplate(self.request, 's03/alliance-invitations')
+        content = getTemplate(request, 's03/alliance-invitations')
         
         if self.allianceId == None: self.selectedMenu = 'noalliance.invitations'
         else: self.selectedMenu = 'alliance.invitations'
@@ -67,4 +67,4 @@ class View(GlobalView):
 
         if self.allianceId and self.profile['can_join_alliance']: content.Parse('can_leave')
 
-        return self.display(content)
+        return self.display(content, request)

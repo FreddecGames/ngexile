@@ -21,7 +21,7 @@ class View(GlobalView):
         
         self.selectedMenu = "reports"
         
-        content = getTemplate(self.request, "s03/reports")
+        content = getTemplate(request, "s03/reports")
 
         #---
 
@@ -97,4 +97,4 @@ class View(GlobalView):
 
         #---
 
-        return self.display(content)
+        return self.display(content, request)

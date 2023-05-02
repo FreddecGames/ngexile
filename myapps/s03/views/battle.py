@@ -57,9 +57,10 @@ class View(GlobalView):
         
         #---
         
-        query = 'SELECT fleet_id, shipid, destroyed_shipid, sum(count) AS count' + \
+        query = 'SELECT fleet_id, shipid, destroyed_shipid, sum(count) AS count, label' + \
                 ' FROM battles_fleets' + \
                 '  INNER JOIN battles_fleets_ships_kills ON (battles_fleets.id=fleetid)' + \
+                '  INNER JOIN db_ships ON (db_ships.id=destroyed_shipid)' + \
                 ' WHERE battleid=' + str(battleId) + \
                 ' GROUP BY fleet_id, shipid, destroyed_shipid' + \
                 ' ORDER BY sum(count) DESC'
@@ -125,7 +126,7 @@ class View(GlobalView):
                 
                 for kill in kills:
                     if kill['fleet_id'] == battleShip['fleet_id'] and kill['shipid'] == battleShip['shipid']: 
-                        ship['kills'].append({ 'name':getShipLabel(kill['destroyed_shipid']), 'count':kill['count'] })
+                        ship['kills'].append({ 'name':kill['label'], 'count':kill['count'] })
                     
         #---
         
@@ -133,4 +134,4 @@ class View(GlobalView):
         
         #---
         
-        return self.display(content)
+        return self.display(content, request)

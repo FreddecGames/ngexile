@@ -38,10 +38,10 @@ class View(GlobalView):
 
     def get(self, request, *args, **kwargs):
 
-        tpl = getTemplate(self.request, 's03/alliance-create')
+        tpl = getTemplate(request, 's03/alliance-create')
 
         self.selectedMenu = 'noalliance.create'
 
         tpl.setValue('can_join_alliance', self.profile['can_join_alliance'])
 
-        return self.display(tpl)
+        return self.display(tpl, request)

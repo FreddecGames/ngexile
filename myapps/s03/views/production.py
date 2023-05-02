@@ -119,7 +119,7 @@ class View(GlobalView):
         self.showHeader = True
         self.headerUrl = '/s03/production/'
 
-        content = getTemplate(self.request, "s03/production")
+        content = getTemplate(request, "s03/production")
 
         #---
         
@@ -339,7 +339,7 @@ class View(GlobalView):
         
         #---
 
-        return self.display(content)
+        return self.display(content, request)
 
     def displayBonuses(self, rows, type):
     

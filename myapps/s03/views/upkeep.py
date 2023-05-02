@@ -17,7 +17,7 @@ class View(GlobalView):
 
         self.selectedMenu = "upkeep"
 
-        content = getTemplate(self.request, "s03/upkeep")
+        content = getTemplate(request, "s03/upkeep")
 
         hours = 24 - timezone.now().hour
 
@@ -62,4 +62,4 @@ class View(GlobalView):
 
         content.setValue("total_estimation", int(oRs[12] + oRs[13] + oRs[14] + oRs[15] + oRs[16] + oRs[17] + oRs[21]))
 
-        return self.display(content)
+        return self.display(content, request)

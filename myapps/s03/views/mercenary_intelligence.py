@@ -382,7 +382,7 @@ class View(GlobalView):
 
     def get(self, request, *args, **kwargs):
     
-        content = getTemplate(self.request, "s03/mercenary-intelligence")
+        content = getTemplate(request, "s03/mercenary-intelligence")
 
         self.selectedMenu = "intelligence"
         
@@ -400,4 +400,4 @@ class View(GlobalView):
         
         #---
 
-        return self.display(content)
+        return self.display(content, request)

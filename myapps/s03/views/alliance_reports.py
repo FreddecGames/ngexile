@@ -16,7 +16,7 @@ class View(GlobalView):
         
     def get(self, request, *args, **kwargs):
 
-        content = getTemplate(self.request, "s03/alliance-reports")
+        content = getTemplate(request, "s03/alliance-reports")
         
         self.selectedMenu = "alliance.reports"
         
@@ -37,4 +37,4 @@ class View(GlobalView):
         for report in reports:
             report['type'] = report['type'] * 100 + report['subtype']
 
-        return self.display(content)
+        return self.display(content, request)

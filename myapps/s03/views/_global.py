@@ -3,10 +3,10 @@
 from django.contrib import messages
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
+from django.utils import timezone
 from django.views import View
 
 from myapps.s03.views._utils import *
-from myapps.s03.views.cache import *
 
 class GlobalView(ExileMixin, View):
 
@@ -68,21 +68,21 @@ class GlobalView(ExileMixin, View):
         
         #---
 
-        if not self.request.user.is_impersonate:
+        if not request.user.is_impersonate:
         
-            oConnDoQuery("SELECT sp_log_activity(" + str(self.userId) + "," + dosql(self.request.META.get("REMOTE_ADDR")) + ", 0)")
+            oConnDoQuery("SELECT sp_log_activity(" + str(self.userId) + "," + dosql(request.META.get("REMOTE_ADDR")) + ", 0)")
             oConnDoQuery("UPDATE users SET lastlogin=now() WHERE id=" + str(self.userId))
         
         #---
         
-        response = self.manageCurrentPlanet()
+        response = self.manageCurrentPlanet(request)
         if response: return response
 
-    def manageCurrentPlanet(self):
+    def manageCurrentPlanet(self, request):
         
         #---
         
-        planetId = int(self.request.GET.get("planet", 0))        
+        planetId = int(request.GET.get("planet", 0))        
         if planetId != 0 and planetId != self.profile['lastplanetid']:
             planet = dbRow("SELECT galaxy, sector FROM nav_planet WHERE planet_floor > 0 AND planet_space > 0 AND id=" + str(planetId) + " and ownerid=" + str(self.userId))
             if planet:
@@ -91,7 +91,7 @@ class GlobalView(ExileMixin, View):
                 self.currentPlanetGalaxy = planet['galaxy']
                 self.currentPlanetSector = planet['sector']
                 
-                if not self.request.user.is_impersonate:
+                if not request.user.is_impersonate:
                     oConnDoQuery("UPDATE users SET lastplanetid=" + str(planetId) + " WHERE id=" + str(self.userId))
                 
                 return
@@ -118,10 +118,10 @@ class GlobalView(ExileMixin, View):
         self.currentPlanetGalaxy = planet['galaxy']
         self.currentPlanetSector = planet['sector']
     
-        if not self.request.user.is_impersonate:
+        if not request.user.is_impersonate:
             oConnDoQuery("UPDATE users SET lastplanetid=" + str(self.currentPlanetId) + " WHERE id=" + str(self.userId))
 
-    def display(self, tpl):
+    def display(self, tpl, request):
         
         tpl.setValue("profile_credits", self.profile["credits"])
         tpl.setValue("profile_prestige_points", self.profile["prestige_points"])
@@ -228,14 +228,14 @@ class GlobalView(ExileMixin, View):
         
         #---
         
-        if self.request.user.is_impersonate:
+        if request.user.is_impersonate:
         
             tpl.setValue("username", self.profile["username"])
             tpl.Parse("impersonating")
         
         #---
         
-        return render(self.request, tpl.template, tpl.data)
+        return render(request, tpl.template, tpl.data)
         
     def hasRight(self, right):
     

@@ -202,7 +202,7 @@ class View(GlobalView):
         
         #---
         
-        content = getTemplate(self.request, "s03/fleet")
+        content = getTemplate(request, "s03/fleet")
         
         self.selectedMenu = "fleets"
         
@@ -390,4 +390,4 @@ class View(GlobalView):
             
         #---
         
-        return self.display(content)
+        return self.display(content, request)

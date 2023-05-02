@@ -22,7 +22,7 @@ class View(GlobalView):
         
         self.selectedMenu = "invasion"
 
-        content = getTemplate(self.request, "s03/invasion")
+        content = getTemplate(request, "s03/invasion")
         
         #---
         
@@ -76,4 +76,4 @@ class View(GlobalView):
             content.setValue("def_scientists_alive", report['def_scientists_total'] - report['def_scientists_lost'])
             content.Parse("scientists")
 
-        return self.display(content)
+        return self.display(content, request)

@@ -62,7 +62,7 @@ class View(GlobalView):
         
         #---
         
-        content = getTemplate(self.request, 's03/alliance-naps')
+        content = getTemplate(request, 's03/alliance-naps')
         
         self.selectedMenu = 'alliance.naps'
 
@@ -105,4 +105,4 @@ class View(GlobalView):
         requests = dbRows(query)
         content.setValue('requests', requests)
 
-        return self.display(content)
+        return self.display(content, request)

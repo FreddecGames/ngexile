@@ -24,7 +24,7 @@ class View(GlobalView):
 
         self.selectedMenu = "nation"
 
-        content = getTemplate(self.request, "s03/nation")
+        content = getTemplate(request, "s03/nation")
             
         #---
 
@@ -45,7 +45,7 @@ class View(GlobalView):
                 
                 self.selectedMenu = "nation"
                 
-                content = getTemplate(self.request, "s03/nation-search")
+                content = getTemplate(request, "s03/nation-search")
                 
                 query = "SELECT username" + \
                         " FROM users" + \
@@ -56,7 +56,7 @@ class View(GlobalView):
                 
                 #---
                 
-                return self.display(content)
+                return self.display(content, request)
             
             else: return HttpResponseRedirect("/s03/nation/")
 
@@ -104,4 +104,4 @@ class View(GlobalView):
 
         #---
 
-        return self.display(content)
+        return self.display(content, request)

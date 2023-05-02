@@ -86,13 +86,13 @@ class View(GlobalView):
             
             self.selectedMenu = "mails"
 
-            content = getTemplate(self.request, "s03/mail-ignorelist")
+            content = getTemplate(request, "s03/mail-ignorelist")
 
             #---
             ignorednations = dbRows("SELECT ignored_userid AS userid, sp_get_user(ignored_userid) AS name, added, blocked FROM messages_ignore_list WHERE userid=" + str(self.userId))
             content.setValue("ignorednations", ignorednations)
 
-            return self.display(content)
+            return self.display(content, request)
             
         #---
         
@@ -102,7 +102,7 @@ class View(GlobalView):
             
             self.selectedMenu = "mails"
             
-            content = getTemplate(self.request, "s03/mail-sent")
+            content = getTemplate(request, "s03/mail-sent")
             
             #---
             
@@ -116,7 +116,7 @@ class View(GlobalView):
             
             #---
             
-            offset = ToInt(self.request.GET.get("start"), 0)
+            offset = ToInt(request.GET.get("start"), 0)
             if offset > 50: offset = 50
             if offset < 0: offset = 0
             if offset >= nb_pages: offset = nb_pages - 1
@@ -160,7 +160,7 @@ class View(GlobalView):
             
             #---
             
-            return self.display(content)
+            return self.display(content, request)
             
         #---
         
@@ -203,7 +203,7 @@ class View(GlobalView):
             
             self.selectedMenu = "mails"
             
-            content = getTemplate(self.request, "s03/mail-compose")
+            content = getTemplate(request, "s03/mail-compose")
 
             #---
             
@@ -232,7 +232,7 @@ class View(GlobalView):
             
             #---
 
-            return self.display(content)
+            return self.display(content, request)
             
         #---
         
@@ -242,7 +242,7 @@ class View(GlobalView):
             
             self.selectedMenu = "mails"
             
-            content = getTemplate(self.request, "s03/mail-list")
+            content = getTemplate(request, "s03/mail-list")
             
             #---
             
@@ -256,7 +256,7 @@ class View(GlobalView):
             
             #---
             
-            offset = ToInt(self.request.GET.get("start"), 0)
+            offset = ToInt(request.GET.get("start"), 0)
             if offset > 50: offset = 50
             if offset < 0: offset = 0
             if offset >= nb_pages: offset = nb_pages - 1
@@ -308,4 +308,4 @@ class View(GlobalView):
 
             #---
             
-            return self.display(content)
+            return self.display(content, request)

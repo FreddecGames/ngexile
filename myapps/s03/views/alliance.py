@@ -20,7 +20,7 @@ class View(GlobalView):
         
         #---
 
-        tpl = getTemplate(self.request, 's03/alliance')
+        tpl = getTemplate(request, 's03/alliance')
 
         self.selectedMenu = 'alliance'
         
@@ -88,4 +88,4 @@ class View(GlobalView):
         wars = dbRows(query)
         tpl.setValue('wars', wars)
         
-        return self.display(tpl)
+        return self.display(tpl, request)

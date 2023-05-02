@@ -78,7 +78,7 @@ class View(GlobalView):
             
             #---
             
-            content = getTemplate(self.request, "s03/shipyard-recycle")
+            content = getTemplate(request, "s03/shipyard-recycle")
             
             #---
             
@@ -111,7 +111,7 @@ class View(GlobalView):
             
             #---
             
-            content = getTemplate(self.request, "s03/shipyard")
+            content = getTemplate(request, "s03/shipyard")
 
             #---
             
@@ -188,4 +188,4 @@ class View(GlobalView):
         
         #---
         
-        return self.display(content)
+        return self.display(content, request)

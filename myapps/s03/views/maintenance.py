@@ -15,8 +15,8 @@ class View(View):
         
         #---
 
-        content = getTemplate(self.request, "s03/maintenance")
+        content = getTemplate(request, "s03/maintenance")
         
         #---
 
-        return render(self.request, content.template, content.data)
+        return render(request, content.template, content.data)

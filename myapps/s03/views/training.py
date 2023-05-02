@@ -50,7 +50,7 @@ class View(GlobalView):
         self.showHeader = True
         self.headerUrl = '/s03/training/'
 
-        content = getTemplate(self.request, "s03/training")
+        content = getTemplate(request, "s03/training")
 
         #---
         
@@ -96,4 +96,4 @@ class View(GlobalView):
 
         #---
         
-        return self.display(content)
+        return self.display(content, request)

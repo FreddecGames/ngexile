@@ -36,7 +36,7 @@ class View(GlobalView):
 
 
             for shipId in shipIds:
-                quantity = ToInt(self.request.POST.get("removeship" + str(shipId['id'])), 0)
+                quantity = ToInt(request.POST.get("removeship" + str(shipId['id'])), 0)
                 if quantity > 0:
                     dbExecute("SELECT sp_transfer_ships_to_planet(" + str(self.userId) + "," + str(self.fleetId) + "," + str(shipId['id']) + "," + str(quantity) + ")")
 
@@ -52,7 +52,7 @@ class View(GlobalView):
     
     def get(self, request, *args, **kwargs):
 
-        content = getTemplate(self.request, "s03/fleet-ships")
+        content = getTemplate(request, "s03/fleet-ships")
 
         self.selectedMenu = "fleets"
 
@@ -82,4 +82,4 @@ class View(GlobalView):
             if result['fleet_count'] > 0 or result['planet_count'] > 0:
                 ships.append(result)
         
-        return self.display(content)
+        return self.display(content, request)

@@ -28,7 +28,7 @@ class View(GlobalView):
             result = dbExecute("SELECT sp_fleets_set_category(" + str(self.userId) + "," + str(fleetId) + "," + str(oldCat) + "," + str(newCat) + ")")
             if result:
             
-                content = getTemplate(self.request, "s03/fleets-handler")
+                content = getTemplate(request, "s03/fleets-handler")
 
                 content.setValue("id", fleetId)
                 content.setValue("old", oldCat)
@@ -36,7 +36,7 @@ class View(GlobalView):
                 
                 content.Parse("fleet_category_changed")
 
-                return render(self.request, content.template, content.data)
+                return render(request, content.template, content.data)
 
             return HttpResponseRedirect("/s03/fleets/")
             
@@ -51,21 +51,21 @@ class View(GlobalView):
                 result = dbExecute("SELECT sp_fleets_categories_add(" + str(self.userId) + "," + dosql(name) + ")")                
                 if result:
                     
-                    content = getTemplate(self.request, "s03/fleets-handler")
+                    content = getTemplate(request, "s03/fleets-handler")
                     
                     content.setValue("id", result)
                     content.setValue("label", name)
                     content.Parse("category")
 
-                    return render(self.request, content.template, content.data)
+                    return render(request, content.template, content.data)
 
             else:
             
-                content = getTemplate(self.request, "s03/fleets-handler")
+                content = getTemplate(request, "s03/fleets-handler")
                 
                 content.Parse("category_name_invalid")
 
-                return render(self.request, content.template, content.data)
+                return render(request, content.template, content.data)
 
             return HttpResponseRedirect("/s03/fleets/")
                 
@@ -81,34 +81,34 @@ class View(GlobalView):
                 result = dbExecute("SELECT sp_fleets_categories_delete(" + str(self.userId) + "," + str(catid) + ")")
                 if result:
 
-                    content = getTemplate(self.request, "s03/fleets-handler")
+                    content = getTemplate(request, "s03/fleets-handler")
                     
                     content.setValue("id", catid)
                     content.setValue("label", name)
                     content.Parse("category")
 
-                    return render(self.request, content.template, content.data)
+                    return render(request, content.template, content.data)
 
             elif isValidCategoryName(name):
             
                 result = dbExecute("SELECT sp_fleets_categories_rename(" + str(self.userId) + "," + str(catid) + "," + dosql(name) + ")")
                 if result:
                     
-                    content = getTemplate(self.request, "s03/fleets-handler")
+                    content = getTemplate(request, "s03/fleets-handler")
                     
                     content.setValue("id", catid)
                     content.setValue("label", name)
                     content.Parse("category")
 
-                    return render(self.request, content.template, content.data)
+                    return render(request, content.template, content.data)
 
             else:
                 
-                content = getTemplate(self.request, "s03/fleets-handler")
+                content = getTemplate(request, "s03/fleets-handler")
                 
                 content.Parse("category_name_invalid")
 
-                return render(self.request, content.template, content.data)
+                return render(request, content.template, content.data)
 
             return HttpResponseRedirect("/s03/fleets/")
                 
@@ -116,7 +116,7 @@ class View(GlobalView):
         
         self.selectedMenu = "fleets.fleets"
 
-        content = getTemplate(self.request, "s03/fleets")
+        content = getTemplate(request, "s03/fleets")
         
         #---
 
@@ -165,4 +165,4 @@ class View(GlobalView):
                 if ship['fleetid'] == fleet['id']:
                     fleet['ships'].append(ship)
 
-        return self.display(content)
+        return self.display(content, request)

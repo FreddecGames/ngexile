@@ -21,7 +21,7 @@ class View(GlobalView):
     
         self.selectedMenu = "map"
         
-        content = getTemplate(self.request, "s03/map")
+        content = getTemplate(request, "s03/map")
         
         #---
 
@@ -65,7 +65,7 @@ class View(GlobalView):
                             
             #---
             
-            return self.display(content)
+            return self.display(content, request)
 
         #---
 
@@ -104,7 +104,7 @@ class View(GlobalView):
             
             #---
 
-            return self.display(content)
+            return self.display(content, request)
 
         #---
 
@@ -534,7 +534,7 @@ class View(GlobalView):
                 
             #---
             
-            return self.display(content)
+            return self.display(content, request)
 
     def getSector(self, sector, shiftX, shiftY):
 

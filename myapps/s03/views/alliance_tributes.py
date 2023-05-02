@@ -43,7 +43,7 @@ class View(GlobalView):
         
         #---
         
-        content = getTemplate(self.request, 's03/alliance-tributes')
+        content = getTemplate(request, 's03/alliance-tributes')
         
         self.selectedMenu = 'alliance.tributes'
 
@@ -74,4 +74,4 @@ class View(GlobalView):
         
         #---
         
-        return self.display(content)
+        return self.display(content, request)

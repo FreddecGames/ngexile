@@ -131,7 +131,7 @@ class View(GlobalView):
     
     def get(self, request, *args, **kwargs):
 
-        content = getTemplate(self.request, "s03/fleet-split")
+        content = getTemplate(request, "s03/fleet-split")
 
         self.selectedMenu = "fleets"
 
@@ -160,4 +160,4 @@ class View(GlobalView):
         
         #---
          
-        return self.display(content)
+        return self.display(content, request)

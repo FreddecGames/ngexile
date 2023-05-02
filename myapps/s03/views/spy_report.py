@@ -31,7 +31,7 @@ class View(GlobalView):
         
         #---
         
-        tpl = getTemplate(self.request, "s03/spy-report")
+        tpl = getTemplate(request, "s03/spy-report")
         
         self.selectedMenu = "intelligence"
         
@@ -118,4 +118,4 @@ class View(GlobalView):
             pendings = dbRows(query)
             tpl.setValue('pendings', pendings)
             
-        return self.display(tpl)
+        return self.display(tpl, request)

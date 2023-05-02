@@ -21,7 +21,7 @@ class View(GlobalView):
         
         self.selectedMenu = "ranking"
 
-        content = getTemplate(self.request, "s03/ranking-alliances")
+        content = getTemplate(request, "s03/ranking-alliances")
 
         #---
 
@@ -53,7 +53,7 @@ class View(GlobalView):
         
         #---
         
-        if self.request.GET.get('r', '') != '': reversed = not reversed
+        if request.GET.get('r', '') != '': reversed = not reversed
         else: content.Parse('r' + str(col))
         
         #---
@@ -129,4 +129,4 @@ class View(GlobalView):
         
         #---
         
-        return self.display(content)
+        return self.display(content, request)

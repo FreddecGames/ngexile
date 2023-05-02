@@ -135,7 +135,7 @@ class View(GlobalView):
         
         self.selectedMenu = "chat"
 
-        content = getTemplate(self.request, "s03/chat")
+        content = getTemplate(request, "s03/chat")
         
         #---
         
@@ -147,7 +147,7 @@ class View(GlobalView):
         if (self.allianceId):
             chatid = dbExecute("SELECT chatid FROM alliances WHERE id=" + str(self.allianceId))            
             dbQuery('INSERT INTO chat_onlineusers(chatid, userid) VALUES(' + str(chatid) + ',' + str(self.userId) + ')')
-            self.request.session["lastchatmsg_" + str(chatid)] = ""
+            request.session["lastchatmsg_" + str(chatid)] = ""
             content.Parse("alliance")
 
         #---
@@ -164,6 +164,6 @@ class View(GlobalView):
             
             dbQuery('INSERT INTO chat_onlineusers(chatid, userid) VALUES(' + str(join['id']) + ',' + str(self.userId) + ')')
             
-            self.request.session["lastchatmsg_" + str(join['id'])] = ""
+            request.session["lastchatmsg_" + str(join['id'])] = ""
 
-        return self.display(content)
+        return self.display(content, request)

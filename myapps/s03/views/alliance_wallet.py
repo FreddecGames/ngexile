@@ -60,7 +60,7 @@ class View(GlobalView):
         
         #---
         
-        tpl = getTemplate(self.request, "s03/alliance-wallet")
+        tpl = getTemplate(request, "s03/alliance-wallet")
 
         self.selectedMenu = "alliance.wallet"
         
@@ -85,12 +85,12 @@ class View(GlobalView):
 
         #---
         
-        if self.request.GET.get("refresh", "") != "":
+        if request.GET.get("refresh", "") != "":
         
-            displayGiftsRequests = ToInt(self.request.GET.get("gifts"), 0) == 1
-            displaySetTax = ToInt(self.request.GET.get("settax"), 0) == 1
-            displayTaxes = ToInt(self.request.GET.get("taxes"), 0) == 1
-            displayKicksBreaks = ToInt(self.request.GET.get("kicksbreaks"), 0) == 1
+            displayGiftsRequests = ToInt(request.GET.get("gifts"), 0) == 1
+            displaySetTax = ToInt(request.GET.get("settax"), 0) == 1
+            displayTaxes = ToInt(request.GET.get("taxes"), 0) == 1
+            displayKicksBreaks = ToInt(request.GET.get("kicksbreaks"), 0) == 1
 
             query = "UPDATE users SET" + \
                     " wallet_display[1]=" + str(displayGiftsRequests) + \
@@ -180,7 +180,7 @@ class View(GlobalView):
             item["tax"] =  i * 0.5
             item["taxrates"] = i * 5
             
-        return self.display(tpl)
+        return self.display(tpl, request)
 
     def can_give_money(self):
 

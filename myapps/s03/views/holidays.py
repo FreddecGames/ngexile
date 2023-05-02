@@ -35,7 +35,7 @@ class View(ExileMixin, View):
         
     def get(self, request, *args, **kwargs):
 
-        tpl = getTemplate(self.request, 's03/holidays')
+        tpl = getTemplate(request, 's03/holidays')
 
         query = "SELECT username," + \
                 " (SELECT int4(date_part('epoch', min_end_time-now())) FROM users_holidays WHERE userid=id) AS min_time," + \
@@ -48,4 +48,4 @@ class View(ExileMixin, View):
         
         tpl.setValue('user', user)
         
-        return render(self.request, tpl.template, tpl.data)
+        return render(request, tpl.template, tpl.data)

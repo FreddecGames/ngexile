@@ -31,7 +31,7 @@ class View(GlobalView):
         
     def get(self, request, *args, **kwargs):
         
-        content = getTemplate(self.request, 's03/alliance-recruitment')
+        content = getTemplate(request, 's03/alliance-recruitment')
 
         self.selectedMenu = 'alliance.recruitment'
         
@@ -50,4 +50,4 @@ class View(GlobalView):
         invitations = dbRows(query)
         content.setValue('invitations', invitations)
         
-        return self.display(content)
+        return self.display(content, request)

@@ -11,14 +11,11 @@ registration = { "enabled":True, "until":None }
 
 maintenance = False
 
-rUninhabited = -3
 rWar = -2
 rHostile = -1
 rFriend = 0
 rAlliance = 1
 rSelf = 2
-
-sPrivilege = "Privilege"
 
 #--- string check functions
 

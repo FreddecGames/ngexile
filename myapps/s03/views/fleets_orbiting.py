@@ -17,7 +17,7 @@ class View(GlobalView):
 
         self.selectedMenu = "fleets.orbiting"
 
-        content = getTemplate(self.request, "s03/fleets-orbiting")
+        content = getTemplate(request, "s03/fleets-orbiting")
         
         #---
 
@@ -47,4 +47,4 @@ class View(GlobalView):
                 
             planet["fleets"].append(result)
 
-        return self.display(content)
+        return self.display(content, request)

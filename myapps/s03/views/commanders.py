@@ -129,7 +129,7 @@ class View(GlobalView):
             commander["mod_construction_speed_buildings"] = str(commander['mod_construction_speed_buildings']).replace(",", ".")
             commander["mod_construction_speed_ships"] = str(commander['mod_construction_speed_ships']).replace(",", ".")
             
-            return self.display(tpl)
+            return self.display(tpl, request)
             
         #---
         
@@ -209,4 +209,4 @@ class View(GlobalView):
                 commander["mod_construction_speed_buildings"] = round((commander['mod_construction_speed_buildings'] - 1.0) * 100)
                 commander["mod_construction_speed_ships"] = round((commander['mod_construction_speed_ships'] - 1.0) * 100)
             
-            return self.display(tpl)
+            return self.display(tpl, request)

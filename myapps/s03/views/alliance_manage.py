@@ -65,5 +65,5 @@ class View(GlobalView):
 
         content.setValue('alliance', alliance)
         
-        return self.display(content)
+        return self.display(content, request)
         

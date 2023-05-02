@@ -53,7 +53,7 @@ class View(GlobalView):
         
         #---
         
-        content = getTemplate(self.request, 's03/alliance-wars')
+        content = getTemplate(request, 's03/alliance-wars')
 
         self.selectedMenu = 'alliance.wars'
 
@@ -95,4 +95,4 @@ class View(GlobalView):
                 content.setValue('newwar', war)
                 content.Parse('newwar_confirm')
 
-        return self.display(content)
+        return self.display(content, request)

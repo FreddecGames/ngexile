@@ -25,9 +25,7 @@ class View(ExileMixin, View):
         useragent = request.META.get('HTTP_USER_AGENT', '')
         forwardedfor = request.META.get('HTTP_X_FORWARDED_FOR', '')
             
-        account = dbRow('SELECT lastplanetid, privilege, resets FROM sp_account_connect(' + str(self.userId) + ', 1036,' + dosql(ipaddress) + ',' + dosql(forwardedfor) + ',' + dosql(useragent) + ', 0)');
-
-        request.session[sPrivilege] = account['privilege']
+        account = dbRow('SELECT lastplanetid, privilege, resets FROM sp_account_connect(' + str(self.userId) + ', 1036,' + dosql(ipaddress) + ',' + dosql(forwardedfor) + ',' + dosql(useragent) + ', 0)')
         
         if (account['privilege'] == -3 and account['resets'] == 0): return HttpResponseRedirect('/s03/start/')
         elif (account['privilege'] == -3): return HttpResponseRedirect('/s03/wait/')

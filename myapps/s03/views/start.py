@@ -83,14 +83,14 @@ class View(ExileMixin, View):
     def get(self, request, *args, **kwargs):
 
         if not registration['enabled'] or (registration['until'] != None and timezone.now() > registration['until']):
-            tpl = getTemplate(self.request, 's03/start-closed')
-            return render(self.request, tpl.template, tpl.data)
+            tpl = getTemplate(request, 's03/start-closed')
+            return render(request, tpl.template, tpl.data)
         
         #---
 
-        tpl = getTemplate(self.request, 's03/start')
+        tpl = getTemplate(request, 's03/start')
 
         galaxies = dbRows('SELECT id, recommended FROM sp_get_galaxy_info(' + str(self.userId) + ')')
         tpl.setValue('galaxies', galaxies)
         
-        return render(self.request, tpl.template, tpl.data)
+        return render(request, tpl.template, tpl.data)
