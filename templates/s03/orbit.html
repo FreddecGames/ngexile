@@ -159,7 +159,7 @@
                             <a href="/s03/help/?cat=ships#{{ship.shipid}}" data-bs-toggle="tooltip" data-bs-title="Voir aide">{{ship.label}}</a>
                         </div>
                         <div class="col-auto"><small class="text-normal">x</small> {{ship.quantity|intcomma}}</div>
-                        <div class="col-auto"><input type="number" class="form-control" min="0" value="{{ship.quantity}}" id="s{{ship.shipid}}" name="s{{ship.shipid}}"></div>
+                        <div class="col-auto"><input type="number" class="form-control" min="0" id="s{{ship.shipid}}" name="s{{ship.shipid}}"></div>
                         <div class="col-auto"><a href="#" onclick="setval('s{{ship.shipid}}', {{ship.quantity}}); return false;">max</a></div>
                     </div>
                 </div>
