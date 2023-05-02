@@ -44,7 +44,7 @@
     var ships = new Array();
     {% for category in categories %}
         {% for ship in category.ships %}
-            {% if ship.build %}ships.push({ id:{{ ship.id }}, ore:{{ ship.ore }}, hydro:{{ ship.hydrocarbon }}, energy:{{ ship.energy }}, worker:{{ ship.crew }}, time:{{ ship.time }} });{% endif %}
+            ships.push({ id:{{ ship.id }}, ore:{{ ship.cost_ore }}, hydro:{{ ship.cost_hydrocarbon }}, energy:{{ ship.cost_energy }}, worker:{{ ship.crew }}, time:{{ ship.construction_time }} });
         {% endfor %}
     {% endfor %}
 
@@ -74,7 +74,7 @@
         $("totaltime").innerHTML = formattime(totaltime);
     }
 </script>
-{% if no_shipyard %}
+{% if categories|length <= 0 %}
     <div class="text-center">
         <span class="text-danger">Aucun vaisseau n'est constructible</span>
     </div>
@@ -89,14 +89,14 @@
                     <div class="list-group-item bg-success">
                         <div class="row gx-3 align-items-center">
                             <div class="col">
-                                <a href="/s03/help/?cat=ships#{{ ship.id }}" class="{% if ship.recycle %}text-danger{% endif %}" data-bs-toggle="tooltip" data-bs-title="Voir aide">{{ ship.name }}</a>
+                                <a href="/s03/help/?cat=ships#{{ ship.shipid }}" class="{% if ship.recycle %}text-danger{% endif %}" data-bs-toggle="tooltip" data-bs-title="Voir aide">{{ ship.label }}</a>
                             </div>
                             <div class="col-auto">
-                                <span class="text-yellow"><script>putcountdown1({{ ship.remainingtime }}, "");</script></span>
+                                <span class="text-yellow"><script>putcountdown1({{ ship.remaining_time }}, "");</script></span>
                             </div>
                             {% if not ship.recycle %}
                             <div class="col-auto">
-                                <script>putcountdown2({{ ship.remainingtime }}, "<a href='?f={{filter}}&planet={{planetid}}&a=cancel&q={{ship.queueid}}' class='text-danger' data-bs-toggle='tooltip' data-bs-title='Annuler'><i class='fa-fw fas fa-times'></i></a>", "<a href='/s03/shipyard/?planet={{planetid}}&f={{filter}}'>Terminé</a>");</script>
+                                <script>putcountdown2({{ ship.remaining_time }}, "<a href='?planet={{cur_planetid}}&a=cancel&q={{ship.id}}' class='text-danger' data-bs-toggle='tooltip' data-bs-title='Annuler'><i class='fa-fw fas fa-times'></i></a>", "<a href='/s03/shipyard/?planet={{cur_planetid}}'>Terminé</a>");</script>
                             </div>
                             {% endif %}
                         </div>
@@ -108,52 +108,53 @@
                             <div class="col">
                                 <div class="row gx-1 align-items-center">
                                     <div class="col-auto">
-                                        <a href="/s03/help/?cat=ships#{{ ship.id }}" class="{% if ship.recycle %}text-danger{% endif %}" data-bs-toggle="tooltip" data-bs-title="Voir aide">{{ ship.name }}</a>
+                                        <a href="/s03/help/?cat=ships#{{ ship.shipid }}" class="{% if ship.recycle %}text-danger{% endif %}" data-bs-toggle="tooltip" data-bs-title="Voir aide">{{ ship.label }}</a>
                                     </div>
-                                    {% if ship.required_ship_name %}
+                                    {% if ship.r_label %}
                                         <div class="col-auto ps-3">
-                                            <small class="text-normal">Upgrade {{ ship.required_ship_name }}</small>
+                                            <small class="text-normal">Upgrade {{ ship.r_label }}</small>
                                         </div>
                                     {% endif %}
                                 </div>
                             </div>
-                            {% if ship.pp > 0 %}
                             <div class="col-auto">
-                                <img src="{{ PATH_IMAGES }}img/interface/prestige.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Prestige" />
-                                <span class="{% if ship.required_pp_not_enough %}text-danger{% endif %}">{{ ship.pp|intcomma }}</span>
+                                <small class="text-normal">x</small>
+                                {{ ship.quantity|intcomma }}
                             </div>
-                            {% endif %}
-                            <div class="col-auto">
-                                {% if ship.quantity > 0 %}
-                                    <small class="text-normal">x</small>
-                                    {{ ship.quantity|intcomma }}
-                                {% endif %}
-                            </div>
-                            <div class="col-auto" style="width:100px;">
-                                <img src="{{ PATH_IMAGES }}img/interface/ore.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Minerai" />
-                                <span class="{% if ship.not_enough_ore %}text-danger{% endif %}">{{ ship.ore|intcomma }}</span>
-                            </div>
-                            <div class="col-auto" style="width:100px;">
-                                <img src="{{ PATH_IMAGES }}img/interface/hydrocarbon.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Hydrocarbure" />
-                                <span class="{% if ship.not_enough_hydrocarbon %}text-danger{% endif %}">{{ ship.hydrocarbon|intcomma }}</span>
-                            </div>
-                            <div class="col-auto" style="width:100px;">
-                                {% if ship.energy > 0 %}
+                            {% if ship.recycle %}
+                                <div class="col-auto" style="width:100px;">
+                                    <img src="{{ PATH_IMAGES }}img/interface/ore.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Minerai" />
+                                    {{ ship.r_cost_ore|intcomma }}
+                                </div>
+                                <div class="col-auto" style="width:100px;">
+                                    <img src="{{ PATH_IMAGES }}img/interface/hydrocarbon.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Hydrocarbure" />
+                                    {{ ship.r_cost_hydrocarbon|intcomma }}
+                                </div>
+                            {% else %}
+                                <div class="col-auto" style="width:100px;">
+                                    <img src="{{ PATH_IMAGES }}img/interface/ore.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Minerai" />
+                                    {{ ship.cost_ore|intcomma }}
+                                </div>
+                                <div class="col-auto" style="width:100px;">
+                                    <img src="{{ PATH_IMAGES }}img/interface/hydrocarbon.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Hydrocarbure" />
+                                    {{ ship.cost_hydrocarbon|intcomma }}
+                                </div>
+                                <div class="col-auto" style="width:100px;">
                                     <img src="{{ PATH_IMAGES }}img/interface/energy.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Energie" />
-                                    <span class="{% if ship.not_enough_energy %}text-danger{% endif %}">{{ ship.energy|intcomma }}</span>
-                                {% endif %}
-                            </div>
-                            <div class="col-auto" style="width:85px;">
-                                {% if ship.crew > 0 %}
-                                    <img src="{{ PATH_IMAGES }}img/interface/workers.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Travailleur" />
-                                    <span class="{% if ship.not_enough_crew %}text-danger{% endif %}">{{ ship.crew|intcomma }}</span>
-                                {% endif %}
-                            </div>
+                                    {{ ship.cost_energy|intcomma }}
+                                </div>
+                                <div class="col-auto" style="width:85px;">
+                                    {% if ship.crew > 0 %}
+                                        <img src="{{ PATH_IMAGES }}img/interface/workers.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Travailleur" />
+                                        {{ ship.crew|intcomma }}
+                                    {% endif %}
+                                </div>
+                            {% endif %}
                             <div class="col-auto text-end" style="width:140px;">
-                                <script>document.write(formattime({{ship.remainingtime }}))</script>
+                                <script>document.write(formattime({{ship.remaining_time }}))</script>
                             </div>
                             <div class="col-auto text-end">
-                                <a href="?f={{ filter }}&planet={{ planetid }}&a=cancel&q={{ ship.queueid }}" class="text-danger" data-bs-toggle="tooltip" data-bs-title="Annuler"><i class="fa-fw fas fa-times"></i></a>
+                                <a href="?planet={{ cur_planetid }}&a=cancel&q={{ ship.id }}" class="text-danger" data-bs-toggle="tooltip" data-bs-title="Annuler"><i class="fa-fw fas fa-times"></i></a>
                             </div>
                         </div>
                     </div>
@@ -161,7 +162,7 @@
             </div>
         </div>
     {% endif %}
-    <form method="post" action="?f={{ filter }}&planet={{ planetid }}&a=bui1d">
+    <form method="post" action="?planet={{ cur_planetid }}&a=build">
         {% csrf_token %}
         {% for category in categories %}
             <div class="card mb-3">
@@ -183,7 +184,7 @@
                             <div class="row gx-3 align-items-center">
                                 <div class="col">
                                     <div class="row gx-1 align-items-center">
-                                        {% if not ship.required_ship_name %}
+                                        {% if not ship.r_label %}
                                             <div class="col-auto">
                                                 <span class="text-normal"><i class="fa-fw fas fa-question-circle" data-bs-toggle="tooltip" data-bs-html="true" data-bs-title="
                                                     <div class='mb-1'><span class='fs-6'>Description</span></div>
@@ -203,68 +204,68 @@
                                                         </div>
                                                         <div class='col-auto'>
                                                             <small class='text-normal'>Signature</small>
-                                                            <span class='text-white'>{{ ship.ship_signature|intcomma }}</span>
+                                                            <span class='text-white'>{{ ship.signature|intcomma }}</span>
                                                         </div>
-                                                        {% if ship.ship_cargo > 0 %}
+                                                        {% if ship.cargo > 0 %}
                                                             <div class='col-auto'>
                                                                 <small class='text-normal'>Cargo</small>
-                                                                <span class='text-white'>{{ ship.ship_cargo|intcomma }}</span>
+                                                                <span class='text-white'>{{ ship.cargo|intcomma }}</span>
                                                             </div>
                                                         {% endif %}
                                                         <div class='col-auto'>
                                                             <small class='text-normal'>Vitesse</small>
-                                                            <span class='text-white'>{{ ship.ship_speed|intcomma }}</span>
+                                                            <span class='text-white'>{{ ship.speed|intcomma }}</span>
                                                         </div>
                                                         <div class='col-auto'>
                                                             <small class='text-normal'>Manœuvrabilité</small>
-                                                            <span class='text-white'>{{ ship.ship_handling|intcomma }}</span>
+                                                            <span class='text-white'>{{ ship.handling|intcomma }}</span>
                                                         </div>
                                                         <div class='col-auto'>
                                                             <small class='text-normal'>Stabilité</small>
-                                                            <span class='text-white'>{{ ship.ship_required_vortex_strength|intcomma }}</span>
+                                                            <span class='text-white'>{{ ship.required_vortex_strength|intcomma }}</span>
                                                         </div>
-                                                        {% if ship.ship_leadership > 0 %}
+                                                        {% if ship.leadership > 0 %}
                                                             <div class='col-auto'>
                                                                 <small class='text-normal'>Commandement</small>
-                                                                <span class='text-white'>{{ ship.ship_leadership|intcomma }}</span>
+                                                                <span class='text-white'>{{ ship.leadership|intcomma }}</span>
                                                             </div>
                                                         {% endif %}
                                                         <div class='col-auto'>
                                                             <small class='text-normal'>Armure</small>
-                                                            <span class='text-white'>{{ ship.ship_hull|intcomma }}</span>
+                                                            <span class='text-white'>{{ ship.hull|intcomma }}</span>
                                                         </div>
-                                                        {% if ship.ship_turrets > 0 %}
+                                                        {% if ship.turrets > 0 %}
                                                             <div class='col-auto'>
                                                                 <small class='text-normal'>Dommage</small>
-                                                                <span class='text-white'>{{ ship.ship_turrets|intcomma }} <small class='text-normal'>x</small> {{ ship.ship_power|intcomma }}</span>
+                                                                <span class='text-white'>{{ ship.turrets|intcomma }} <small class='text-normal'>x</small> {{ ship.power|intcomma }}</span>
                                                             </div>
                                                             <div class='col-auto'>
                                                                 <small class='text-normal'>Ciblage</small>
-                                                                <span class='text-white'>{{ ship.ship_tracking_speed|intcomma }}</span>
+                                                                <span class='text-white'>{{ ship.tracking_speed|intcomma }}</span>
                                                             </div>
                                                         {% endif %}
-                                                        {% if ship.ship_shield > 0 %}
+                                                        {% if ship.shield > 0 %}
                                                             <div class='col-auto'>
                                                                 <small class='text-normal'>Bouclier</small>
-                                                                <span class='text-white'>{{ ship.ship_shield|intcomma }}</span>
+                                                                <span class='text-white'>{{ ship.shield|intcomma }}</span>
                                                             </div>
                                                         {% endif %}
-                                                        {% if ship.ship_recycler_output > 0 %}
+                                                        {% if ship.recycler_output > 0 %}
                                                             <div class='col-auto'>
                                                                 <small class='text-normal'>Recyclage</small>
-                                                                <span class='text-white'>{{ ship.ship_recycler_output|intcomma }}</span>
+                                                                <span class='text-white'>{{ ship.recycler_output|intcomma }}</span>
                                                             </div>
                                                         {% endif %}
-                                                        {% if ship.ship_long_distance_capacity > 0 %}
+                                                        {% if ship.long_distance_capacity > 0 %}
                                                             <div class='col-auto'>
                                                                 <small class='text-normal'>Saut</small>
-                                                                <span class='text-white'>{{ ship.ship_long_distance_capacity|intcomma }}</span>
+                                                                <span class='text-white'>{{ ship.long_distance_capacity|intcomma }}</span>
                                                             </div>
                                                         {% endif %}
-                                                        {% if ship.ship_droppods > 0 %}
+                                                        {% if ship.droppods > 0 %}
                                                             <div class='col-auto'>
                                                                 <small class='text-normal'>Invasion</small>
-                                                                <span class='text-white'>{{ ship.ship_droppods|intcomma }}</span>
+                                                                <span class='text-white'>{{ ship.droppods|intcomma }}</span>
                                                             </div>
                                                         {% endif %}
                                                     </div>
@@ -272,11 +273,11 @@
                                             </div>
                                         {% endif %}
                                         <div class="col-auto">
-                                            <a href="/s03/help/?cat=ships#{{ ship.id }}" data-bs-toggle="tooltip" data-bs-title="Voir aide">{{ ship.name }}</a>
+                                            <a href="/s03/help/?cat=ships#{{ ship.id }}" data-bs-toggle="tooltip" data-bs-title="Voir aide">{{ ship.label }}</a>
                                         </div>
-                                        {% if ship.required_ship_name %}
+                                        {% if ship.r_label %}
                                             <div class="col-auto ps-3">
-                                                <small class="text-normal">Upgrade {{ ship.required_ship_name }}</small>
+                                                <small class="text-normal">Upgrade {{ ship.r_label }}</small>
                                             </div>
                                         {% endif %}
                                         <div class="col-auto">
@@ -287,23 +288,23 @@
                                         </div>
                                     </div>
                                 </div>
-                                {% if ship.pp > 0 %}
+                                {% if ship.cost_prestige > 0 %}
                                 <div class="col-auto">
                                     <img src="{{ PATH_IMAGES }}img/interface/prestige.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Prestige" />
-                                    <span class="{% if ship.required_pp_not_enough %}text-danger{% endif %}">{{ ship.required_pp|intcomma }}</span>
+                                    <span class="{% if ship.required_pp_not_enough %}text-danger{% endif %}">{{ ship.cost_prestige|intcomma }}</span>
                                 </div>
                                 {% endif %}
                                 <div class="col-auto" style="width:100px;">
                                     <img src="{{ PATH_IMAGES }}img/interface/ore.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Minerai" />
-                                    <span class="{% if ship.not_enough_ore %}text-danger{% endif %}">{{ ship.ore|intcomma }}</span>
+                                    <span class="{% if ship.not_enough_ore %}text-danger{% endif %}">{{ ship.cost_ore|intcomma }}</span>
                                 </div>
                                 <div class="col-auto" style="width:100px;">
                                     <img src="{{ PATH_IMAGES }}img/interface/hydrocarbon.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Hydrocarbure" />
-                                    <span class="{% if ship.not_enough_hydrocarbon %}text-danger{% endif %}">{{ ship.hydrocarbon|intcomma }}</span>
+                                    <span class="{% if ship.not_enough_hydrocarbon %}text-danger{% endif %}">{{ ship.cost_hydrocarbon|intcomma }}</span>
                                 </div>
                                 <div class="col-auto" style="width:100px;">
                                     <img src="{{ PATH_IMAGES }}img/interface/energy.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Energie" />
-                                    <span class="{% if ship.not_enough_energy %}text-danger{% endif %}">{{ ship.energy|intcomma }}</span>
+                                    <span class="{% if ship.not_enough_energy %}text-danger{% endif %}">{{ ship.cost_energy|intcomma }}</span>
                                 </div>
                                 <div class="col-auto" style="width:75px;">
                                     {% if ship.crew > 0 %}
@@ -312,12 +313,12 @@
                                     {% endif %}
                                 </div>
                                 <div class="col-auto text-end" style="width:80px;">
-                                    <script>document.write(formattime({{ship.time }}))</script>
+                                    <script>document.write(formattime({{ship.construction_time }}))</script>
                                 </div>
                                 <div class="col-auto text-end" style="width:110px;">
-                                    {% if ship.build %}
+                                    {% if not ship.notenoughresources %}
                                         <input type="number" class="form-control" style="max-width:100%;" min="0" name="s{{ ship.id }}" onkeyup="updateNeeds()" size="3" maxlength="5" />
-                                    {% elif ship.buildings_required %}
+                                    {% elif not ship.buildings_requirements_met %}
                                         <span class="text-danger">Bâtiments requis</span>
                                     {% endif %}
                                 </div>
@@ -327,7 +328,7 @@
                 </div>
             </div>
         {% endfor %}
-        {% if build %}
+        {% if categories|length > 0 %}
             <div class="card card-body">
                 <div class="row gx-3 align-items-center justify-content-end">
                     <div class="col-auto">

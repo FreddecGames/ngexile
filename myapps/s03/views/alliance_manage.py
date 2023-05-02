@@ -16,36 +16,34 @@ class View(GlobalView):
 
     def post(self, request, *args, **kwargs):
         
-        if request.POST.get('submit', '') != '':
-        
-            #---
-        
-            if self.allianceRights['can_manage_description']:
-                
-                logo = self.request.POST.get('logo', '').strip()
+        #---
+        if self.allianceRights['can_manage_description']:
+            
+            logo = request.POST.get('logo', '').strip()
+            if logo != '':
                 if not isValidURL(logo):
                     messages.error(request, 'logo_invalid')
                     return HttpResponseRedirect('/s03/alliance-manage/')
-                
-                description = self.request.POST.get('description', '').strip()
-                
-                dbQuery('UPDATE alliances SET logo_url=' + dosql(logo) + ', description=' + dosql(description) + ' WHERE id = ' + str(self.allianceId))
-        
-            #---
-        
-            if self.allianceRights['can_manage_announce']:
             
-                motd = self.request.POST.get('motd').strip()
-                defcon = int(self.request.POST.get('defcon', 5))
-                
-                dbQuery('UPDATE alliances SET defcon=' + str(defcon) + ', announce=' + dosql(motd) + ' WHERE id = ' + str(self.allianceId))
+            description = request.POST.get('description', '').strip()
+            
+            dbQuery('UPDATE alliances SET logo_url=' + dosql(logo) + ', description=' + dosql(description) + ' WHERE id = ' + str(self.allianceId))
+    
+        #---
+    
+        if self.allianceRights['can_manage_announce']:
+        
+            motd = request.POST.get('motd').strip()
+            defcon = int(request.POST.get('defcon', 5))
+    
+            dbQuery('UPDATE alliances SET defcon=' + str(defcon) + ', announce=' + dosql(motd) + ' WHERE id = ' + str(self.allianceId))
 
         return HttpResponseRedirect('/s03/alliance-manage/')
                 
 
     def get(self, request, *args, **kwargs):
         
-        content = getTemplate(self.request, 's03/alliance-manage')
+        content = getTemplate(request, 's03/alliance-manage')
         
         self.selectedMenu = 'alliance.manage'
         
