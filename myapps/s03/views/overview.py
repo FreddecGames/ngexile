@@ -102,42 +102,40 @@ class View(GlobalView):
 
         for row in rows:
 
-            if row['planetid']:
+            extRadarStrength = row['from_radarstrength']
+            incRadarStrength = row['to_radarstrength']
+            
+            if row['owner_relation'] < rAlliance and (row['time'] > sqrt(incRadarStrength) * 6 * 1000 / row['speed'] * 3600) and (extRadarStrength == 0 or incRadarStrength == 0):
+                continue
+            else:
+                    
+                fleet = {}
+                fleets.append(fleet)
 
-                extRadarStrength = row['from_radarstrength']
-                incRadarStrength = row['to_radarstrength']
+                fleet["id"] = row['id']
+                fleet["name"] = row['name']
+                fleet["time"] = row['time']
+                fleet["signature"] = row['signature']
+                fleet["attackonsight"] = row['attackonsight']
                 
-                if row['owner_relation'] < rAlliance and (row['time'] > sqrt(incRadarStrength) * 6 * 1000 / row['speed'] * 3600) and (extRadarStrength == 0 or incRadarStrength == 0):
-                    continue
-                else:
-                        
-                    fleet = {}
-                    fleets.append(fleet)
+                fleet["owner_name"] = row['owner_name']
+                fleet["owner_relation"] = row['owner_relation']
 
-                    fleet["id"] = row['id']
-                    fleet["name"] = row['name']
-                    fleet["time"] = row['time']
-                    fleet["signature"] = row['signature']
-                    fleet["attackonsight"] = row['attackonsight']
-                    
-                    fleet["owner_name"] = row['owner_name']
-                    fleet["owner_relation"] = row['owner_relation']
+                fleet["t_planetname"] = self.getPlanetName(row['destplanet_owner_relation'], row['to_radarstrength'], row['destplanet_owner_name'], row['destplanet_name'])
+                fleet["t_planetid"] = row['destplanetid']
+                fleet["t_g"] = row['destplanet_galaxy']
+                fleet["t_s"] = row['destplanet_sector']
+                fleet["t_p"] = row['destplanet_planet']
+                fleet["t_relation"] = row['destplanet_owner_relation']
 
-                    fleet["t_planetname"] = self.getPlanetName(row['destplanet_owner_relation'], row['to_radarstrength'], row['destplanet_owner_name'], row['destplanet_name'])
-                    fleet["t_planetid"] = row['destplanetid']
-                    fleet["t_g"] = row['destplanet_galaxy']
-                    fleet["t_s"] = row['destplanet_sector']
-                    fleet["t_p"] = row['destplanet_planet']
-                    fleet["t_relation"] = row['destplanet_owner_relation']
-
-                    if extRadarStrength > 0 or row['owner_relation'] >= rAlliance or row['planet_owner_relation'] >= rFriend:
-                    
-                        fleet["f_planetname"] = self.getPlanetName(row['planet_owner_relation'], row['from_radarstrength'], row['planet_owner_name'], row['planet_name'])
-                        fleet["f_planetid"] = row['planetid']
-                        fleet["f_g"] = row['planet_galaxy']
-                        fleet["f_s"] = row['planet_sector']
-                        fleet["f_p"] = row['planet_planet']
-                        fleet["f_relation"] = row['planet_owner_relation']
+                if extRadarStrength > 0 or row['owner_relation'] >= rAlliance or row['planet_owner_relation'] >= rFriend:
+                
+                    fleet["f_planetname"] = self.getPlanetName(row['planet_owner_relation'], row['from_radarstrength'], row['planet_owner_name'], row['planet_name'])
+                    fleet["f_planetid"] = row['planetid']
+                    fleet["f_g"] = row['planet_galaxy']
+                    fleet["f_s"] = row['planet_sector']
+                    fleet["f_p"] = row['planet_planet']
+                    fleet["f_relation"] = row['planet_owner_relation']
 
 
         #---

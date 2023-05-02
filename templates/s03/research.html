@@ -31,7 +31,7 @@
                 </div>
                 <div class="list-group list-group-flush">
                     {% for research in category.researches %}
-                        <div class="list-group-item {% if research.researching %}bg-success{% endif %}">
+                        <div class="list-group-item {% if research.status > 0 %}bg-success{% endif %}">
                             <div class="row gx-3 align-items-center">
                                 <div class="col">
                                     <div class="row gx-2">
@@ -42,31 +42,32 @@
                                             "></i></span>
                                         </div>
                                         <div class="col-auto">
-                                            <a href="/s03/help/?cat=research#{{ research.id }}" data-bs-toggle="tooltip" data-bs-title="Voir aide">{{ research.name }}</a>
+                                            <a href="/s03/help/?cat=research#{{ research.id }}" data-bs-toggle="tooltip" data-bs-title="Voir aide">{{ research.label }}</a>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-2 text-center">
-                                    <script>putlevel({{research.level}},{{research.levels}},0{% if research.leveling %}1{% endif %});</script>
+                                    <script>putlevel({{research.level}},{{research.levels}},0{% if research.status > 0 %}1{% endif %});</script>
                                 </div>
                                 <div class="col-2">
-                                    {% if research.cost and not research.researching %}
+                                    {% if research.total_cost and not research.status %}
                                         <img src="{{ PATH_IMAGES }}img/interface/credits.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Crédit" />
-                                        <span class="{% if research.notenoughmoney %}text-danger{% endif %}">{{ research.credits|intcomma }}</span>
+                                        <span class="{% if research.notenoughmoney %}text-danger{% endif %}">{{ research.total_cost|intcomma }}</span>
                                     {% endif %}
                                 </div>
                                 <div class="col-2 text-end">
-                                    {% if research.researching %}<span class="text-yellow"><script>putcountdown1({{research.remainingtime }},"");</script></span>
-                                    {% elif research.researchtime %}<script>document.write(formattime({{research.time }}));</script>
+                                    {% if research.status > 0 %}<span class="text-yellow"><script>putcountdown1({{research.status }},"");</script></span>
+                                    {% elif research.total_time %}<script>document.write(formattime({{research.total_time }}));</script>
                                     {% endif %}
                                 </div>
                                 <div class="col-2 text-end">
-                                    {% if research.notenoughmoney %}<span class="text-danger">Crédit insuffisant</span>
-                                    {% elif research.research %}<a href="?a=research&r={{ research.id }}" class="btn btn-primary">Rechercher</a>
-                                    {% elif research.researching %}
-                                        {% if research.auto %}<a href='/s03/research/?a=stop&r={{ research.id }}' class="me-2">Automatique</a>{% endif %}
-                                        {% if research.manual %}<a href='/s03/research/?a=continue&r={{ research.id }}' class="me-2">Manuel</a>{% endif %}
-                                        <script>putcountdown2({{research.remainingtime}}, "<a href='?a=cancel&r={{research.id}}' onclick='return cancelresearch()' class='text-danger' data-bs-toggle='tooltip' data-bs-title='Annuler'><i class='fa-fw fas fa-times'></i></a>", "<a href='/s03/research/'>Terminée</a>");</script>
+                                    {% if research.status > 0 %}
+                                        {% if research.looping %}<a href='/s03/research/?a=stop&r={{ research.id }}' class="me-2">Automatique</a>
+                                        {% else %}<a href='/s03/research/?a=continue&r={{ research.id }}' class="me-2">Manuel</a>
+                                        {% endif %}
+                                        <script>putcountdown2({{research.status}}, "<a href='?a=cancel&r={{research.id}}' onclick='return cancelresearch()' class='text-danger' data-bs-toggle='tooltip' data-bs-title='Annuler'><i class='fa-fw fas fa-times'></i></a>", "<a href='/s03/research/'>Terminée</a>");</script>
+                                    {% elif research.notenoughmoney %}<span class="text-danger">Crédit insuffisant</span>
+                                    {% elif research.level < research.levels and research.can_research %}<a href="?a=research&r={{ research.id }}" class="btn btn-primary">Rechercher</a>
                                     {% endif %}
                                 </div>
                             </div>

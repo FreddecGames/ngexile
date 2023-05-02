@@ -17,6 +17,7 @@ class View(GlobalView):
     def post(self, request, *args, **kwargs):
         
         action = request.POST.get('a', '')
+        print(action)
 
         if action == 'give' and self.can_give_money():
             
@@ -124,9 +125,13 @@ class View(GlobalView):
                 " GROUP BY userid, description, source, destination, type, groupid" + \
                 " ORDER BY Max(datetime) DESC" + \
                 " LIMIT 500"
-        entries = dbRows(query)
-        tpl.setValue("entries", entries)
-
+        rows = dbRows(query)
+        tpl.setValue("entries", rows)
+        
+        for row in rows:
+            if row['type'] == 4:
+                row['description'] = int(row['description']) / 10
+        
         #---
         
         user = dbRow("SELECT credits FROM users WHERE id=" + str(self.userId))

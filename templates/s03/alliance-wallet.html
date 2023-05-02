@@ -168,8 +168,9 @@
                                     {% endif %}
                                     {% if entry.description %}
                                     <div class="col-auto">
-                                        {% if entry.entry.type == 4 %}Nouvelle taxe{% endif %}
-                                        {{ entry.description }}
+                                        {% if entry.type == 4 %}Nouvelle taxe: {{ entry.description }}%
+                                        {% else %}{{ entry.description }}
+                                        {% endif %}
                                     </div>
                                     {% endif %}
                                 </div>
@@ -380,6 +381,7 @@
             <div class="tab-pane fade" id="tax-pane" role="tabpanel" tabindex="0">
                 <form action="?" method="post">
                     {% csrf_token %}
+                    <input type="hidden" name="a" value="settax" />
                     <div class="card">
                         <div class="card-header">
                             <span class="fs-6">Taxes</span>
