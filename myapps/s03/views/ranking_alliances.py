@@ -25,7 +25,7 @@ class View(GlobalView):
 
         #---
 
-        col = ToInt(request.GET.get("col"), 1)
+        col = ToInt(request.GET.get("col"), 2)
         if col < 1 or col > 7: col = 1
 
         if col == 5: col = 1
