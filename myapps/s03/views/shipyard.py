@@ -56,8 +56,7 @@ class View(GlobalView):
         if action == "cancel":
         
             queueId = ToInt(request.GET.get("q"), 0)
-            if queueId != 0:
-            
+            if queueId != 0:            
                 dbQuery("SELECT sp_cancel_ship(" + str(self.currentPlanetId) + ", " + str(queueId) + ")")                
             
         #---

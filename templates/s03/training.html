@@ -46,9 +46,9 @@
         var sc = getval('scientists');
         var so = getval('soldiers');
 
-        var ore = sc * {{scientist_ore}} + so * {{soldier_ore}};
-        var hydro = sc * {{scientist_hydrocarbon}} + so * {{soldier_hydrocarbon}};
-        var credits = sc * {{scientist_credits}} + so * {{soldier_credits}};
+        var ore = sc * {{prices.scientist_ore}} + so * {{prices.soldier_ore}};
+        var hydro = sc * {{prices.scientist_hydrocarbon}} + so * {{prices.soldier_hydrocarbon}};
+        var credits = sc * {{prices.scientist_credits}} + so * {{prices.soldier_credits}};
 
         $('totalore').innerHTML = formatnumber(ore);
         $('totalhydrocarbon').innerHTML = formatnumber(hydro);
@@ -76,13 +76,14 @@
                     </div>
                     <div class="col-auto">
                         <small class="text-normal">x</small>
-                        {{ item.quantity|intcomma }}
+                        {% if item.scientists %}{{ item.scientists|intcomma }}{% endif %}
+                        {% if item.soldiers %}{{ item.soldiers|intcomma }}{% endif %}
                     </div>
                     <div class="col-auto">
                         <span class="text-yellow"><script>putcountdown1({{ item.remainingtime }}, "");</script></span>
                     </div>
                     <div class="col-auto">
-                        <script>putcountdown2({{ item.remainingtime }}, "<a href='?planet={{planetid}}&a=cancel&q={{item.queueid}}' class='text-danger' data-bs-toggle='tooltip' data-bs-title='Annuler'><i class='fa-fw fas fa-times'></i></a>", "<a href='/s03/training/'>Terminé</a>");</script>
+                        <script>putcountdown2({{ item.remainingtime }}, "<a href='?planet={{cur_planetid}}&a=cancel&q={{item.id}}' class='text-danger' data-bs-toggle='tooltip' data-bs-title='Annuler'><i class='fa-fw fas fa-times'></i></a>", "<a href='/s03/training/'>Terminé</a>");</script>
                     </div>
                 </div>
             </div>
@@ -102,13 +103,15 @@
                     </div>
                     <div class="col-auto">
                         <small class="text-normal">x</small>
-                        {{ item.quantity|intcomma }}
+                        {% if item.scientists %}{{ item.scientists|intcomma }}{% endif %}
+                        {% if item.soldiers %}{{ item.soldiers|intcomma }}{% endif %}
                     </div>
                     <div class="col-auto">
-                        <script>document.write(formattime({{item.remainingtime }}))</script>
+                        {% if item.scientists %}<script>document.write(formattime({{item.scientists_remainingtime }}))</script>{% endif %}
+                        {% if item.soldiers %}<script>document.write(formattime({{item.soldiers_remainingtime }}))</script>{% endif %}
                     </div>
                     <div class="col-auto">
-                        <a href="?planet={{ planetid }}&a=cancel&q={{ item.queueid }}" class="text-danger" data-bs-toggle="tooltip" data-bs-title="Annuler"><i class="fa-fw fas fa-times"></i></a>
+                        <a href="?planet={{ cur_planetid }}&a=cancel&q={{ item.id }}" class="text-danger" data-bs-toggle="tooltip" data-bs-title="Annuler"><i class="fa-fw fas fa-times"></i></a>
                     </div>
                 </div>
             </div>
@@ -130,25 +133,25 @@
                         <a href="/s03/help/#scientists" data-bs-toggle="tooltip" data-bs-title="Voir aide">Scientifiques</a>
                     </div>
                     <div class="col-auto" style="width:200px;">
-                        {{ scientists|intcomma }}
-                        <small class="text-normal">/{{ scientists_capacity|intcomma }}</small>
+                        {{ planet.scientists|intcomma }}
+                        <small class="text-normal">/{{ planet.scientists_capacity|intcomma }}</small>
                     </div>
                     <div class="col-auto" style="width:100px;">
                         <img src="{{ PATH_IMAGES }}img/interface/ore.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Minerai" />
-                        <span>{{ scientist_ore|intcomma }}</span>
+                        <span>{{ prices.scientist_ore|intcomma }}</span>
                     </div>
                     <div class="col-auto" style="width:100px;">
                         <img src="{{ PATH_IMAGES }}img/interface/hydrocarbon.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Hydrocarbure" />
-                        <span>{{ scientist_hydrocarbon|intcomma }}</span>
+                        <span>{{ prices.scientist_hydrocarbon|intcomma }}</span>
                     </div>
                     <div class="col-auto" style="width:100px;">
                         <img src="{{ PATH_IMAGES }}img/interface/credits.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Crédit" />
-                        <span>{{ scientist_credits|intcomma }}</span>
+                        <span>{{ prices.scientist_credits|intcomma }}</span>
                     </div>
                     <div class="col-auto text-end" style="width:110px;">
-                        {% if input_scientists %}
+                        {% if planet.scientists < planet.scientists_capacity %}
                             <input type="number" class="form-control" style="max-width:100%;" min="0" name="scientists" onkeyup="updateNeeds()" size="5" maxlength="5" />
-                        {% elif max_scientists %}
+                        {% else %}
                             <span class="text-danger">Maximum atteint</span>
                         {% endif %}
                     </div>
@@ -161,25 +164,25 @@
                         <a href="/s03/help/#soldiers" data-bs-toggle="tooltip" data-bs-title="Voir aide">Soldats</a>
                     </div>
                     <div class="col-auto" style="width:200px;">
-                        {{ soldiers|intcomma }}
-                        <small class="text-normal">/{{ soldiers_capacity|intcomma }}</small>
+                        {{ planet.soldiers|intcomma }}
+                        <small class="text-normal">/{{ planet.soldiers_capacity|intcomma }}</small>
                     </div>
                     <div class="col-auto" style="width:100px;">
                         <img src="{{ PATH_IMAGES }}img/interface/ore.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Minerai" />
-                        <span>{{ soldier_ore|intcomma }}</span>
+                        <span>{{ prices.soldier_ore|intcomma }}</span>
                     </div>
                     <div class="col-auto" style="width:100px;">
                         <img src="{{ PATH_IMAGES }}img/interface/hydrocarbon.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Hydrocarbure" />
-                        <span>{{ soldier_hydrocarbon|intcomma }}</span>
+                        <span>{{ prices.soldier_hydrocarbon|intcomma }}</span>
                     </div>
                     <div class="col-auto" style="width:100px;">
                         <img src="{{ PATH_IMAGES }}img/interface/credits.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Credit" />
-                        <span>{{ soldier_credits|intcomma }}</span>
+                        <span>{{ prices.soldier_credits|intcomma }}</span>
                     </div>
                     <div class="col-auto text-end" style="width:110px;">
-                        {% if input_soldiers %}
+                        {% if planet.soldiers < planet.soldiers_capacity %}
                             <input type="number" class="form-control" style="max-width:100%;" min="0" name="soldiers" onkeyup="updateNeeds()" size="5" maxlength="5" />
-                        {% elif max_soldiers %}
+                        {% else %}
                             <span class="text-danger">Maximum atteint</span>
                         {% endif %}
                     </div>
