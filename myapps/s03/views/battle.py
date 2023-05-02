@@ -62,7 +62,7 @@ class View(GlobalView):
                 '  INNER JOIN battles_fleets_ships_kills ON (battles_fleets.id=fleetid)' + \
                 '  INNER JOIN db_ships ON (db_ships.id=destroyed_shipid)' + \
                 ' WHERE battleid=' + str(battleId) + \
-                ' GROUP BY fleet_id, shipid, destroyed_shipid' + \
+                ' GROUP BY fleet_id, shipid, destroyed_shipid, label' + \
                 ' ORDER BY sum(count) DESC'
         kills = dbRows(query)
         
