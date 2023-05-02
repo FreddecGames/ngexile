@@ -224,42 +224,33 @@ class View(GlobalView):
             
             #---
         
-            query = "SELECT buildingid, quantity - CASE WHEN destroy_datetime IS NULL THEN 0 ELSE 1 END, disabled, energy_consumption, int4(workers*maintenance_factor/100.0), upkeep" + \
+            query = "SELECT buildingid, (quantity - CASE WHEN destroy_datetime IS NULL THEN 0 ELSE 1 END) AS quantity, disabled, energy_consumption, int4(workers*maintenance_factor/100.0) AS maintenance, upkeep," + \
+                    " label" + \
                     " FROM planet_buildings" + \
                     "    INNER JOIN db_buildings ON (planet_buildings.buildingid=db_buildings.id)" + \
-                    " WHERE can_be_disabled AND planetid=" + str(self.currentPlanetId) + \
+                    " WHERE can_be_disabled AND quantity > 0 AND planetid=" + str(self.currentPlanetId) + \
                     " ORDER BY buildingid"
-            oRss = oConnExecuteAll(query)
+            rows = dbRows(query)
 
-            list = []
-            content.setValue("buildings", list)
-            for oRs in oRss:
-                if oRs[1] > 0:
-                    item = {}
-                    list.append(item)
+            content.setValue("buildings", rows)
+            
+            for row in rows:
+                
+                enabled = row['quantity'] - row['disabled']
+
+                row["energy_total"] = round(enabled * row['energy_consumption'])
+                row["upkeep_total"] = round(enabled * row['upkeep'])
+                row["maintenance_total"] = round(enabled * row['maintenance'])
+
+                row["counts"] = []
+                for i in range(0, row['quantity'] + 1):
+                
+                    data = {}
+                    data["count"] = i
                     
-                    enabled = oRs[1] - oRs[2]
-                    quantity = oRs[1] - oRs[2]*0.95
-
-                    item["id"] = oRs[0]
-                    item["building"] = getBuildingLabel(oRs[0])
-                    item["quantity"] = oRs[1]
-                    item["energy"] = oRs[3]
-                    item["maintenance"] = oRs[4]
-                    item["upkeep"] = oRs[5]
-                    item["energy_total"] = round(quantity * oRs[3])
-                    item["maintenance_total"] = round(quantity * oRs[4])
-                    item["upkeep_total"] = round(quantity * oRs[5])
-
-                    if oRs[2] > 0: item["not_all_enabled"] = True
-
-                    item["counts"] = []
-                    for i in range(0, oRs[1] + 1):
-                        data = {}
-                        data["count"] = i
-                        if i == enabled: data["selected"] = True
-                        item["enable"] = True
-                        item["counts"].append(data)
+                    if i == enabled: data["selected"] = True
+                    
+                    row["counts"].append(data)
 
         #---
         

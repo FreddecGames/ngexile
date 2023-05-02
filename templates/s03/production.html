@@ -282,13 +282,13 @@
         </div>
         <div class="list-group list-group-flush">
             {% for building in buildings %}
-            <div class="list-group-item {% if building.not_all_enabled %}bg-danger{% endif %}">
+            <div class="list-group-item {% if building.disabled > 0 %}bg-danger{% endif %}">
                 <div class="row gx-3 align-items-center">
                     <div class="col-auto">
-                        <img src="{{ PATH_IMAGES }}img/buildings/{{ building.id }}.jpg" class="rounded" width="24" height="24">
+                        <img src="{{ PATH_IMAGES }}img/buildings/{{ building.buildingid }}.jpg" class="rounded" width="24" height="24">
                     </div>
                     <div class="col">
-                        <span class="text-normal">{{ building.building }}</span>
+                        <span class="text-normal">{{ building.label }}</span>
                     </div>
                     <div class="col-3">
                         <div class="row gx-3">
@@ -298,7 +298,7 @@
                             </div>
                             <div class="col-auto">
                                 <img src="{{ PATH_IMAGES }}img/interface/energy.gif" data-bs-toggle="tooltip" data-bs-title="Energie" class="res" width="16px" height="16px">
-                                <span>{{ building.energy|intcomma }}</span>
+                                <span>{{ building.energy_consumption|intcomma }}</span>
                             </div>
                             <div class="col-auto">
                                 <img src="{{ PATH_IMAGES }}img/interface/workers.gif" data-bs-toggle="tooltip" data-bs-title="Travailleurs" class="res" width="16px" height="16px">
@@ -307,7 +307,7 @@
                         </div>
                     </div>
                     <div class="col-1 pe-0">
-                        <select name="enabled{{ building.id }}" class="form-control">
+                        <select name="enabled{{ building.buildingid }}" class="form-control">
                             {% for count in building.counts %}
                                 <option value="{{ count.count }}"{% if count.selected %} selected{% endif %}>
                                     {{ count.count }}
