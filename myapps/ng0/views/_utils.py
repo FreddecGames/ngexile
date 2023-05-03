@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import re
 import math
 
@@ -8,7 +10,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.views import View
 
-#--- SQL functions
+#---
 
 def strSql(str):
     ret = str.replace('\\', '\\\\') 
@@ -45,13 +47,13 @@ def dbRows(query):
     cursor.execute(query)
     return dictFetchAll(cursor)
 
-#--- Template functions
+#---
 
 class TemplaceContext():
     
     def __init__(self):
     
-        self.template = ''
+        self.name = ''
         self.data = {}
 
     def setValue(self, key, value):
@@ -62,18 +64,8 @@ def getTemplate(request, name):
 
     result = TemplaceContext()
     
-    result.template = 'ng0/' + name + '.html'
+    result.name = 'ng0/' + name + '.html'
     
     result.setValue('STATIC_PATH', '/static/ng0/')
     
     return result
-
-#--- Check functions
-
-def isValidUsername(username):
-
-    if username == '' or len(username) < 4 or len(username) > 16:
-        return False
-    else:
-        p = re.compile('^[a-zA-Z0-9]+([ ]?[\-]?[ ]?[a-zA-Z0-9]+)*$')
-        return p.match(username)

@@ -1,5 +1,6 @@
 {% load i18n %}
 {% load humanize %}
+
 <!doctype html>
 <html>
     <head>
@@ -15,9 +16,11 @@
               type="text/css"
               rel="stylesheet"
               media="all"/>
+        <script type="text/javascript"
+                src="{{ STATIC_PATH }}js/vendor-fontawesome.js"></script>
     </head>
     <body>
-        {% block body %} {% endblock body %}
+        {% block body %}{% endblock body %}
         <script async src="https://www.googletagmanager.com/gtag/js?id=G-212X2QX8W5"></script>
         <script>
             window.dataLayer = window.dataLayer || []

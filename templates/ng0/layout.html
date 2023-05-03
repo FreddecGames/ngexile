@@ -1,9 +1,112 @@
 {% extends "ng0/base.html" %}
+
 {% load i18n %}
 {% load humanize %}
+
 {% block body %}
-<div class="w-100 h-100 d-flex align-items-center justify-content-center">
-    {% block content %}
-    {% endblock content %}
-</div>
+    <div id="main" class="">
+        <div id="menu" onclick="document.getElementById('menu').classList.remove('open')">
+            <div id="menu-content">
+                <div class="nav flex-column">
+                    <div class="nav-item">
+                        <a class="nav-link active" href="#">
+                            <i class="fas fa-fw fa-map"></i>
+                            <span class="">Empire</span>
+                        </a>
+                    </div>
+                    <div class="nav-item">
+                        <a class="nav-link active" href="#">
+                            <i class="fas fa-fw fa-map"></i>
+                            <span class="">Coût d'entretien</span>
+                        </a>
+                    </div>
+                    <div class="nav-item">
+                        <a class="nav-link active" href="#">
+                            <i class="fas fa-fw fa-map"></i>
+                            <span class="">Commerce</span>
+                        </a>
+                    </div>
+                    <div class="nav-item">
+                        <a class="nav-link active" href="#">
+                            <i class="fas fa-fw fa-map"></i>
+                            <span class="">Alliance</span>
+                        </a>
+                    </div>
+                    <div class="nav-item">
+                        <a class="nav-link active" href="#">
+                            <i class="fas fa-fw fa-map"></i>
+                            <span class="">Classement</span>
+                        </a>
+                    </div>
+                    <div class="nav-item">
+                        <a class="nav-link active" href="#">
+                            <i class="fas fa-fw fa-map"></i>
+                            <span class="">Profile</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="top" class="px-2">
+            <div class="flex-fill row gx-2 align-items-center">
+                <div class="col">
+                    <div class="row gx-2">
+                        <div class="col-auto">
+                            <div class="row gx-2 align-items-center">
+                                <div class="col-auto">
+                                    <img src="/static/img/logo.png" width="42px" class="rounded">
+                                </div>
+                                <div class="col-auto lh-1">
+                                    <div class="fs-5 text-white mb-1">NG Exile</div>
+                                    <div class="small">ng0</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-auto">
+                    <button type="button" class="btn" onclick="document.getElementById('menu').classList.add('open')">
+                        <i class="fas fa-fw fa-bars"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div id="content" class="">
+            {% block content %}{% endblock content %}
+        </div>
+        <div id="bottom">
+            <div class="flex-fill nav">
+                <div class="col nav-item">
+                    <a class="nav-link lh-1 text-center active" aria-current="page" href="#">
+                        <div class="fs-5 mb-1"><i class="fas fa-fw fa-map"></i></div>
+                        <div class="small">Carte</div>
+                    </a>
+                </div>
+                <div class="col nav-item">
+                    <a class="nav-link lh-1 text-center" href="#">
+                        <div class="fs-5 mb-1"><i class="fas fa-fw fa-space-shuttle"></i></div>
+                        <div class="small">Flottes</div>
+                    </a>
+                </div>
+                <div class="col nav-item">
+                    <a class="nav-link lh-1 text-center" href="#">
+                        <div class="fs-5 mb-1"><i class="fas fa-fw fa-globe"></i></div>
+                        <div class="small">Planètes</div>
+                    </a>
+                </div>
+                <div class="col nav-item">
+                    <a class="nav-link lh-1 text-center" href="#">
+                        <div class="fs-5 mb-1"><i class="fas fa-fw fa-star"></i></div>
+                        <div class="small">Pilotes</div>
+                    </a>
+                </div>
+                <div class="col nav-item">
+                    <a class="nav-link lh-1 text-center" href="#">
+                        <div class="fs-5 mb-1"><i class="fas fa-fw fa-flask"></i></div>
+                        <div class="small">Techs</div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock body %}
