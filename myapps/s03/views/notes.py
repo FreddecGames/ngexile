@@ -20,7 +20,7 @@ class View(GlobalView):
             notes = request.POST.get("notes", "").strip()
             if len(notes) <= 5100:
             
-                oConnDoQuery("UPDATE users SET notes=" + dosql(notes) + " WHERE id = " + str(self.userId))
+                dbQuery("UPDATE users SET notes=" + dosql(notes) + " WHERE id = " + str(self.userId))
                 messages.success(request, 'done')
                 
             else: messages.error(request, 'toolong')

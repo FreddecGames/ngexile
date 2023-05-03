@@ -16,11 +16,11 @@ class Command(BaseCommand):
         connectDB()
         start = timezone.now()
         while timezone.now() - start < timedelta(seconds=55):
-            oRss = oConnExecuteAll("SELECT id, COALESCE(sp_get_user(ownerid), ''), galaxy, sector, planet FROM nav_planet WHERE next_battle <= now() LIMIT 1;")
-            if oRss:
-                for oRs in oRss:
-                    planetid = oRs[0]
-                    data = "planet:{owner:\"" + str(oRs[1]) + "\",g:" + str(oRs[2]) + ",s:" + str(oRs[3]) + ",p:" + str(oRs[4]) + "}"
+            rows = dbRows("SELECT id, COALESCE(sp_get_user(ownerid), '') AS username, galaxy, sector, planet FROM nav_planet WHERE next_battle <= now() LIMIT 1;")
+            if rows:
+                for row in rows:
+                    planetid = row['id']
+                    data = "planet:{owner:\"" + str(row['username']) + "\",g:" + str(row['galaxy']) + ",s:" + str(row['sector']) + ",p:" + str(row['planet']) + "}"
                     Rounds = 25
                     
                     # retrieve opponents relationships
@@ -85,7 +85,7 @@ class Command(BaseCommand):
                             p2 = friend[1]
                         
                         query = "INSERT INTO battles_relations VALUES(" + str(BattleId) + "," + str(p1) + "," + str(p2) + "," + str(friend[2]) + ")"
-                        oConnDoQuery(query)
+                        dbQuery(query)
                     
                     # write battle result
                     shipsDestroyed = 0
@@ -98,7 +98,7 @@ class Command(BaseCommand):
                         # create an entry for each shipid with before/after
                         query = "INSERT INTO battles_ships(battleid, owner_id, owner_name, fleet_id, fleet_name, shipid, before, after, killed, won, damages, attacked, hull, shield, handling, damage, tracking)" +\
                                 " VALUES(" + str(BattleId) + "," + str(grp.FOwner.FId) + ", (SELECT username FROM users WHERE id=" + str(grp.FOwner.FId) + " LIMIT 1), " + str(grp.FFleetid) + ", (SELECT name FROM fleets WHERE id=" + str(grp.FFleetid) + " LIMIT 1)," + str(grp.FId) + "," + str(grp.FBefore) + "," + str(grp.FBefore - grp.FShipLoss) + "," + str(grp.FKilled) + "," + str(grp.FOwner.FIsWinner) + "," + str(grp.FDamages) + "," + "(SELECT attackonsight FROM fleets WHERE id=" + str(grp.FFleetid) + " LIMIT 1)," + str(grp.FHull) + "," + str(grp.FShield) + "," + str(grp.FHandling) + "," + str(grp.FWeaponDamages) + "," + str(grp.FWeapon_tracking_speed) + ")"
-                        oConnDoQuery(query)
+                        dbQuery(query)
                         
                         # new way of saving battle
                         
@@ -112,29 +112,29 @@ class Command(BaseCommand):
                         
                         query = "INSERT INTO battles_fleets_ships(fleetid, shipid, before, after, killed, damages)" +\
                                 " VALUES(" + str(lastBattleFleetId) + "," + str(grp.FId) + "," + str(grp.FBefore) + "," + str(grp.FBefore - grp.FShipLoss) + "," + str(grp.FKilled) + "," + str(grp.FDamages) + ")"
-                        oConnDoQuery(query)
+                        dbQuery(query)
                         
                         for kill in grp.FKillList:
                             query = "INSERT INTO battles_fleets_ships_kills(fleetid, shipid, destroyed_shipid, count)" +\
                                     " VALUES(" + str(lastBattleFleetId) + "," + str(grp.FId) + "," + str(kill["DestroyedGroup"].FId) + "," + str(kill["Count"]) + ")"
-                            oConnDoQuery(query)
+                            dbQuery(query)
                             
                             # count number of ships killed
                             if kill["Count"] > 0:
                                 query = "INSERT INTO users_ships_kills(userid, shipid, killed)" +\
                                         " VALUES(" + str(grp.FOwner.FId) + "," + str(kill["DestroyedGroup"].FId) + "," + str(kill["Count"]) + ")"
-                                oConnDoQuery(query)
+                                dbQuery(query)
                                 
                         shipsDestroyed = shipsDestroyed + grp.FShipLoss
                         
                         # count number of ships the owner lost
                         if grp.FShipLoss > 0:
                             query = "SELECT sp_destroy_ships(" + str(grp.FFleetid) + "," + str(grp.FId) + "," + str(grp.FShipLoss) + ")"
-                            oConnDoQuery(query)
+                            dbQuery(query)
                             
                             query = "INSERT INTO users_ships_kills(userid, shipid, lost)" +\
                                     " VALUES(" + str(grp.FOwner.FId) + "," + str(grp.FId) + "," + str(grp.FShipLoss) + ")"
-                            oConnDoQuery(query)
+                            dbQuery(query)
                         
                         if lastOwner != grp.FOwner.FId:
                             if grp.FOwner.FIsWinner:
@@ -147,22 +147,22 @@ class Command(BaseCommand):
                             if reportRs == None:
                                 query = "INSERT INTO reports(ownerid, type, subtype, battleid, planetid, data)" +\
                                         " VALUES(" + str(grp.FOwner.FId) + ",2," + str(battlesubtype) + "," + str(BattleId) + "," + str(planetid) + ",'{" + str(data) + ",battleid:" + str(BattleId) + ",ownerid:" + str(grp.FOwner.FId) + "}'" + ")"
-                                oConnDoQuery(query)
+                                dbQuery(query)
                             
                             lastOwner = grp.FOwner.FId
                     
                     query = "UPDATE nav_planet SET next_battle = null WHERE id=" + str(planetid)
-                    oConnDoQuery(query)
+                    dbQuery(query)
                     
                     query = "UPDATE fleets SET engaged=false WHERE engaged AND action <> 0 AND planetid=" + str(planetid)
-                    oConnDoQuery(query)
+                    dbQuery(query)
                     
                     if shipsDestroyed > 0:
-                        oConnDoQuery("SELECT sp_check_battle(" + str(planetid) + ")")
+                        dbQuery("SELECT sp_check_battle(" + str(planetid) + ")")
                     else:
                         query = "UPDATE fleets SET engaged=false, action=4, action_end_time=now()"
                         if Rounds > 5: query = query + ", idle_since=now()"
                         query = query + " WHERE engaged AND action=0 AND planetid=" + str(planetid)
-                        oConnDoQuery(query)
+                        dbQuery(query)
                         
             time.sleep(0.5)

@@ -135,10 +135,6 @@ def oConnExecuteAll(query):
     cursor.execute(query)
     return cursor.fetchall()
     
-def oConnDoQuery(query):
-
-    cursor.execute(query)
-    
 def dbQuery(query):
 
     cursor.execute(query)
@@ -177,28 +173,6 @@ def sqlValue(val):
 
     if val == None or val == "": return "Null"
     else: return str(val)
-
-def connExecuteRetry(query):
-
-    i = 0
-    while i < 5:
-        try:
-            i = 10
-            rs = oConnExecute(query)
-            return rs
-        except:
-            i = i + 1
-    return None
-    
-def connExecuteRetryNoRecords(query):
-
-    i = 0
-    while i < 5:
-        try:
-            i = 10
-            oConnExecute(query)
-        except:
-            i = i + 1
 
 #--- template functions
 

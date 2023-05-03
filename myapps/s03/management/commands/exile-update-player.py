@@ -12,8 +12,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         h = timezone.now().hour
         connectDB()
-        oRss = oConnExecuteAll("SELECT id FROM users WHERE privilege >= 0 AND planets > 0 AND credits_bankruptcy > 0 AND lastlogin IS NOT NULL ORDER BY id")
-        if oRss:
-            for oRs in oRss:
-                oConnExecute("SELECT sp_update_player(" + str(oRs[0]) + "," + str(h) + ");")
-                time.sleep(20)
+        rows = dbRows("SELECT id FROM users WHERE privilege >= 0 AND planets > 0 AND credits_bankruptcy > 0 AND lastlogin IS NOT NULL ORDER BY id")
+        for row in rows:
+            dbExecute("SELECT sp_update_player(" + str(row['id']) + "," + str(h) + ");")
+            time.sleep(20)

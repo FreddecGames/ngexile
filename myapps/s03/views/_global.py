@@ -70,8 +70,8 @@ class GlobalView(ExileMixin, View):
 
         if not request.user.is_impersonate:
         
-            oConnDoQuery("SELECT sp_log_activity(" + str(self.userId) + "," + dosql(request.META.get("REMOTE_ADDR")) + ", 0)")
-            oConnDoQuery("UPDATE users SET lastlogin=now() WHERE id=" + str(self.userId))
+            dbQuery("SELECT sp_log_activity(" + str(self.userId) + "," + dosql(request.META.get("REMOTE_ADDR")) + ", 0)")
+            dbQuery("UPDATE users SET lastlogin=now() WHERE id=" + str(self.userId))
         
         #---
         
@@ -92,7 +92,7 @@ class GlobalView(ExileMixin, View):
                 self.currentPlanetSector = planet['sector']
                 
                 if not request.user.is_impersonate:
-                    oConnDoQuery("UPDATE users SET lastplanetid=" + str(planetId) + " WHERE id=" + str(self.userId))
+                    dbQuery("UPDATE users SET lastplanetid=" + str(planetId) + " WHERE id=" + str(self.userId))
                 
                 return
                 
@@ -119,7 +119,7 @@ class GlobalView(ExileMixin, View):
         self.currentPlanetSector = planet['sector']
     
         if not request.user.is_impersonate:
-            oConnDoQuery("UPDATE users SET lastplanetid=" + str(self.currentPlanetId) + " WHERE id=" + str(self.userId))
+            dbQuery("UPDATE users SET lastplanetid=" + str(self.currentPlanetId) + " WHERE id=" + str(self.userId))
 
     def display(self, tpl, request):
         
