@@ -21,7 +21,7 @@ class View(ExileMixin, View):
         
         #---
         
-        result = oConnExecute("SELECT int4(count(1)) FROM nav_planet WHERE ownerid=" + str(self.userId))
+        result = dbExecute("SELECT int4(count(1)) FROM nav_planet WHERE ownerid=" + str(self.userId))
         if result == None: return HttpResponseRedirect("/")
         
         #---

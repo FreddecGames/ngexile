@@ -115,7 +115,7 @@ class View(GlobalView):
             workers = ToInt(request.POST.get("load_workers"), 0) - ToInt(request.POST.get("unload_workers"), 0)
         
             if ore != 0 or hydrocarbon != 0 or scientists != 0 or soldiers != 0 or workers != 0:
-                oRs = oConnExecute("SELECT sp_transfer_resources_with_planet(" + str(self.fleetOwnerId) + "," + str(self.fleetId) + "," + str(ore) + "," + str(hydrocarbon) + "," + str(scientists) + "," + str(soldiers) + "," + str(workers) + ")")
+                dbQuery("SELECT sp_transfer_resources_with_planet(" + str(self.fleetOwnerId) + "," + str(self.fleetId) + "," + str(ore) + "," + str(hydrocarbon) + "," + str(scientists) + "," + str(soldiers) + "," + str(workers) + ")")
                 return HttpResponseRedirect("/s03/fleet/?id=" + str(self.fleetId))
             
         return HttpResponseRedirect('/s03/fleets/')

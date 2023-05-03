@@ -52,18 +52,18 @@ class View(GlobalView):
         reports = []
         content.setValue("reports", reports)
         
-        for oRs in rows:
+        for row in rows:
 
-            reportType = oRs['type'] * 100 + oRs['subtype']
+            reportType = row['type'] * 100 + row['subtype']
             if reportType != 140 and reportType != 141 and reportType != 142 and reportType != 133:
             
-                report = oRs
+                report = row
                 reports.append(report)
 
                 report["type"] = reportType
 
-                if oRs['planet_relation'] in [rHostile, rWar, rFriend]: report["planetname"] = oRs['planet_ownername']
-                elif oRs['planet_relation'] in [rAlliance, rSelf]: report["planetname"] = oRs['planet_name']
+                if row['planet_relation'] in [rHostile, rWar, rFriend]: report["planetname"] = row['planet_ownername']
+                elif row['planet_relation'] in [rAlliance, rSelf]: report["planetname"] = row['planet_name']
                 else: report["planetname"] = ""
                     
         #---

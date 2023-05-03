@@ -263,23 +263,22 @@ class View(GlobalView):
             
             content.setValue("planet", planet)
             
-            max_receive = oRs[0]
-            max_send = oRs[1]
+            max_receive = planet['energy_receive_antennas']
+            max_send = planet['energy_send_antennas']
             
             #---
             
-            query = "SELECT t.planetid, sp_get_planet_name(" + str(self.userId) + ", n1.id), sp_relation(n1.ownerid," + str(self.userId) + "), n1.galaxy, n1.sector, n1.planet, " + \
-                    "        t.target_planetid, sp_get_planet_name(" + str(self.userId) + ", n2.id), sp_relation(n2.ownerid," + str(self.userId) + "), n2.galaxy, n2.sector, n2.planet, " + \
+            query = "SELECT t.planetid, sp_get_planet_name(" + str(self.userId) + ", n1.id) AS planetname, sp_relation(n1.ownerid," + str(self.userId) + ") AS relation, n1.galaxy, n1.sector, n1.planet, " + \
+                    "        t.target_planetid, sp_get_planet_name(" + str(self.userId) + ", n2.id) AS target_planetname, sp_relation(n2.ownerid," + str(self.userId) + ") AS target_relation, n2.galaxy AS target_galaxy, n2.sector AS target_sector, n2.planet AS target_planet, " + \
                     "        t.energy, t.effective_energy, enabled" + \
                     " FROM planet_energy_transfer t" + \
                     "    INNER JOIN nav_planet n1 ON (t.planetid=n1.id)" + \
                     "    INNER JOIN nav_planet n2 ON (t.target_planetid=n2.id)" + \
                     " WHERE planetid=" + str(self.currentPlanetId) + " OR target_planetid=" + str(self.currentPlanetId) + \
                     " ORDER BY not enabled, planetid, target_planetid"
-            oRss = oConnExecuteAll(query)
+            rows = dbRows(query)
 
             receiving = 0
-            sending = 0
             sending_enabled = 0
 
             sents = []
@@ -288,33 +287,41 @@ class View(GlobalView):
             receiveds = []
             content.setValue("receiveds", receiveds)
             
-            for oRs in oRss:
+            for row in rows:
+            
                 item = {}
                 
-                item["energy"] = oRs[12]
-                item["effective_energy"] = oRs[13]
-                item["loss"] = self.getPercent(oRs[12]-oRs[13], oRs[12], 1)
+                item["energy"] = row['energy']
+                item["effective_energy"] = row['effective_energy']
+                
+                item["loss"] = self.getPercent(row['energy'] - row['effective_energy'], row['energy'], 1)
 
-                if oRs[0] == self.currentPlanetId:
-                    sending = sending + 1
-                    if oRs[14]: sending_enabled = sending_enabled + 1
-                    item["planetid"] = oRs[6]
-                    item["name"] = oRs[7]
-                    item["rel"] = oRs[8]
-                    item["g"] = oRs[9]
-                    item["s"] = oRs[10]
-                    item["p"] = oRs[11]
-                    if oRs[14]: item["enabled"] = True
+                if row['planetid'] == self.currentPlanetId:
+                
+                    if row['enabled']:
+                        sending_enabled = sending_enabled + 1
+                        item["enabled"] = True
+                        
+                    item["planetid"] = row['target_planetid']
+                    item["name"] = row['target_planetname']
+                    item["rel"] = row['target_relation']
+                    item["g"] = row['target_galaxy']
+                    item["s"] = row['target_sector']
+                    item["p"] = row['target_planet']
+
                     sents.append(item)
                     
-                elif oRs[14]: # if receiving and enabled, display it
+                elif row['enabled']:
+
                     receiving = receiving + 1
-                    item["planetid"] = oRs[0]
-                    item["name"] = oRs[1]
-                    item["rel"] = oRs[2]
-                    item["g"] = oRs[3]
-                    item["s"] = oRs[4]
-                    item["p"] = oRs[5]
+
+                    item["planetid"] = row['planetid']
+                    item["name"] = row['planetname']
+                    item["rel"] = row['relation']
+                    item["g"] = row['galaxy']
+                    item["s"] = row['sector']
+                    item["p"] = row['planet']
+
                     receiveds.append(item)
 
             content.setValue("antennas_receive_used", receiving)

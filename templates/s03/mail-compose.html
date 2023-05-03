@@ -115,7 +115,7 @@
                                             <select class="form-control" onchange="return setaddressee(this, to)">
                                                 <option>Derniers contacts</option>
                                                 {% for to in addressees %}
-                                                    <option>{{ to }}</option>
+                                                    <option>{{ to.username }}</option>
                                                 {% endfor %}
                                             </select>
                                         </div>

@@ -121,19 +121,6 @@ def connectDB():
 
     global cursor
     cursor = connection.cursor()
-
-def oConnExecute(query):
-
-    cursor.execute(query)
-    results = cursor.fetchall()
-    if len(results) > 1: return results
-    elif results: return results[0]
-    return None
-
-def oConnExecuteAll(query):
-
-    cursor.execute(query)
-    return cursor.fetchall()
     
 def dbQuery(query):
 
@@ -155,12 +142,6 @@ def dbExecute(query):
     results = cursor.fetchall()
     if len(results) > 0: return results[0][0]
     return None
-
-def dbResults(query):
-
-    cursor.execute(query)
-    results = cursor.fetchall()
-    return results
 
 def dosql(ch):
 

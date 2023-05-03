@@ -10,9 +10,22 @@ from myapps.s03.views._utils import *
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
+
+        #---
+
         h = timezone.now().hour
+
         connectDB()
+
+        #---
+
         rows = dbRows("SELECT id FROM users WHERE privilege >= 0 AND planets > 0 AND credits_bankruptcy > 0 AND lastlogin IS NOT NULL ORDER BY id")
         for row in rows:
-            dbExecute("SELECT sp_update_player(" + str(row['id']) + "," + str(h) + ");")
+
+            #---
+            
+            dbQuery("SELECT sp_update_player(" + str(row['id']) + "," + str(h) + ")")
+            
+            #---
+            
             time.sleep(20)

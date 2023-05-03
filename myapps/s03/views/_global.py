@@ -185,12 +185,12 @@ class GlobalView(ExileMixin, View):
         
         #---
         
-        query = "SELECT (SELECT int4(COUNT(*)) FROM messages WHERE ownerid=" + str(self.userId) + " AND read_date is NULL)," + \
-                "(SELECT int4(COUNT(*)) FROM reports WHERE ownerid=" + str(self.userId) + " AND read_date is NULL AND datetime <= now());"
-        oRs = oConnExecute(query)
+        query = "SELECT (SELECT int4(COUNT(*)) FROM messages WHERE ownerid=" + str(self.userId) + " AND read_date is NULL) AS new_mail," + \
+                "(SELECT int4(COUNT(*)) FROM reports WHERE ownerid=" + str(self.userId) + " AND read_date is NULL AND datetime <= now()) AS new_report"
+        row = dbRow(query)
         
-        tpl.setValue("new_mail", oRs[0])
-        tpl.setValue("new_report", oRs[1])
+        tpl.setValue("new_mail", row['new_mail'])
+        tpl.setValue("new_report", row['new_report'])
         
         #---
         

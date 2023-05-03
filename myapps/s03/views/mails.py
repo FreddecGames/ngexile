@@ -212,14 +212,14 @@ class View(GlobalView):
             content.setValue("message", mailbody)
 
             #---
-
-            results = dbResults("SELECT * FROM sp_get_addressee_list(" + str(self.userId) + ")")
             
-            addressees = []
-            content.setValue("addressees", addressees)
+            query = 'SELECT username' + \
+                    ' FROM messages_addressee_history INNER JOIN users ON messages_addressee_history.addresseeid = users.id' + \
+                    ' WHERE ownerid=' + str(self.userId) + \
+                    ' ORDER BY upper(username)'
+            results = dbRows(query)
             
-            for result in results:
-                addressees.append(result[0])
+            content.setValue("addressees", results)
 
             #---
             
