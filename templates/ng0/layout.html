@@ -16,7 +16,7 @@
                                 </div>
                                 <div class="col-auto lh-1">
                                     <div class="fs-5 mb-1">NG Exile</div>
-                                    <div class="small">ng0</div>
+                                    <div class="small text-muted">ng0</div>
                                 </div>
                             </div>
                         </div>
@@ -25,9 +25,32 @@
                 <div class="col-auto">
                     <div class="dropdown">
                         <button type="button" class="btn" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="fas fa-fw fa-bars"></i>
+                            <i class="position-relative fas fa-fw fa-bars">
+                                <span class="position-absolute top-0 start-100 translate-middle p-1 bg-success rounded-circle"></span>
+                            </i>
                         </button>
-                        <div class="dropdown-menu">
+                        <div class="dropdown-menu" style="width:15rem;">
+                            <div class="py-1 px-3">
+                                <div class="row gx-2 align-items-center">
+                                    <div class="col-auto">
+                                        <img src="{{ STATIC_PATH }}img/interface/noavatar.gif" width="42px" class="rounded">
+                                    </div>
+                                    <div class="col">
+                                        <div class="text-self">Player name</div>
+                                        <div class="row gx-3 align-items-center">
+                                            <div class="col-auto">
+                                                <img src="{{ STATIC_PATH }}img/interface/credit.png" width="14px">
+                                                <span>999.99 M</span>
+                                            </div>
+                                            <div class="col-auto">
+                                                <img src="{{ STATIC_PATH }}img/interface/prestige.png" width="14px">
+                                                <span>999.99 M</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr class="dropdown-divider">
                             <a class="dropdown-item">
                                 <div class="row gx-2 align-items-center">
                                     <div class="col-auto">
@@ -77,7 +100,7 @@
                                         <span class="">Alliance</span>
                                     </div>
                                     <div class="col-auto">
-                                        <span id="mailscount" class="badge text-bg-secondary">TAG</span>
+                                        <span id="mailscount" class="badge text-bg-light">TAG</span>
                                     </div>
                                 </div>
                             </a>
@@ -90,20 +113,60 @@
                                         <span class="">Classement</span>
                                     </div>
                                     <div class="col-auto">
-                                        <span id="mailscount" class="badge text-bg-secondary">999</span>
+                                        <span id="mailscount" class="badge text-bg-light">999</span>
                                     </div>
                                 </div>
                             </a>
                             <a class="dropdown-item">
                                 <div class="row gx-2 align-items-center">
                                     <div class="col-auto">
-                                        <i class="position-relative fas fa-fw fa-user"></i>
+                                        <i class="position-relative fas fa-fw fa-cog"></i>
                                     </div>
                                     <div class="col">
-                                        <span class="">Profile</span>
+                                        <span class="">Options</span>
                                     </div>
                                 </div>
                             </a>
+                            <a class="dropdown-item">
+                                <div class="row gx-2 align-items-center">
+                                    <div class="col-auto">
+                                        <i class="position-relative fas fa-fw fa-question-circle"></i>
+                                    </div>
+                                    <div class="col">
+                                        <span class="">Aide</span>
+                                    </div>
+                                </div>
+                            </a>
+                            <hr class="dropdown-divider">
+                            <div class="py-1 px-3">
+                                <div class="mb-2 text-muted text-center small">
+                                    <span>Ce jeu est codé et maintenu avec tout l'amour du monde par Freddec ! Vous pouvez aider le dev en cliquant ci-dessous ;)</span>
+                                </div>
+                                <div class="row gx-3 align-items-center justify-content-around">
+                                    <form class="col-auto" action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_blank">
+                                        <input type="hidden" name="cmd" value="_s-xclick">
+                                        <input type="hidden" name="hosted_button_id" value="7XYD7SJFKQ8M4">
+                                        <button type="submit" class="p-0 border-0 bg-transparent">
+                                            <img src="/static/img/paypal.png" width="22px">
+                                        </button>
+                                    </form>
+                                    <div class="col-auto">
+                                        <a href="https://ko-fi.com/freddecgames" target="_blank">
+                                            <img src="/static/img/kofi.png" width="22px">
+                                        </a>
+                                    </div>
+                                    <div class="col-auto">
+                                        <a href="https://www.patreon.com/bePatron?u=61283131" target="_blank">
+                                            <img src="/static/img/patreon.png" width="22px">
+                                        </a>
+                                    </div>
+                                    <div class="col-auto">
+                                        <a href="https://discord.gg/3UkgeeT9CV" target="_blank">
+                                            <img src="/static/img/discord.png" width="22px">
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -113,9 +176,15 @@
             {% block content %}{% endblock content %}
         </div>
         <div id="bottom">
-            <div class="flex-fill nav">
+            <div class="flex-fill nav nav-pills">
                 <div class="col nav-item">
-                    <a class="nav-link lh-1 text-center active" aria-current="page" href="#">
+                    <a class="nav-link lh-1 text-center active" href="#">
+                        <div class="fs-5 mb-1"><i class="fas fa-fw fa-eye"></i></div>
+                        <div class="small">Apercu</div>
+                    </a>
+                </div>
+                <div class="col nav-item">
+                    <a class="nav-link lh-1 text-center" href="#">
                         <div class="fs-5 mb-1"><i class="fas fa-fw fa-map"></i></div>
                         <div class="small">Carte</div>
                     </a>
