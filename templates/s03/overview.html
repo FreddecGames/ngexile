@@ -153,7 +153,7 @@
                         <span class="ms-2"><script>sig({{ fleet.signature }})</script></span>
                     </div>
                     <div class="col-auto">
-                        {% if fleet.f_planetname %}<script>putplanet("{{fleet.f_planetid}}","{{fleet.f_planetname}}","{{fleet.f_g}}","{{fleet.f_s}}","{{fleet.f_p}}",{{fleet.f_relation}});</script>
+                        {% if fleet.f_planetid %}<script>putplanet("{{fleet.f_planetid}}","{{fleet.f_planetname}}","{{fleet.f_g}}","{{fleet.f_s}}","{{fleet.f_p}}",{{fleet.f_relation}});</script>
                         {% else %}<span class="text-normal">???</span>{% endif %}
                         <i class="fa-fw fas fa-long-arrow-alt-right mx-2 text-normal"></i>
                         <script>putplanet("{{fleet.t_planetid }}","{{fleet.t_planetname}}","{{fleet.t_g}}","{{fleet.t_s}}","{{fleet.t_p}}",{{fleet.t_relation}});</script>

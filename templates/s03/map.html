@@ -396,8 +396,9 @@
             
             if (tag != '') s += '<a href="/s03/alliance/?tag=' + tag + '" title="Voir l\'alliance" class="me-1 ' + c + '">[' + tag + ']</a>';
 
-            if (rel == 2 || id != 0) s += '<a href="/s03/fleet/?id=' + id + '" class="text-info">' + name + '</a>';
-            else s += '<a href="/s03/mails/?subject=À propos de la flotte ' + name + '&to=' + owner + '" title="Contacter ' + owner + '" class="' + c + '">' + name + '</a>';
+            if (rel == 2) s += '<a href="/s03/fleet/?id=' + id + '" class="text-info">' + name + '</a>';
+            else if (rel == 1) s += '<a href="/s03/fleet/?id=' + id + '" class="' + c + '">' + owner + '</a>';
+            else s += '<a href="/s03/mails/?subject=À propos de la flotte ' + name + '&to=' + owner + '" title="Contacter ' + owner + '" class="' + c + '">' + owner + '</a>';
 
             if (signature > 0) s += '<small class="ms-2">' + formatnumber(signature) + '</small>';
             else s += '<small class="ms-2">???</small>';

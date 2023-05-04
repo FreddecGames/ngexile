@@ -5,48 +5,6 @@
 
 {% block body %}
     <div id="main" class="">
-        <div id="menu" onclick="document.getElementById('menu').classList.remove('open')">
-            <div id="menu-content">
-                <div class="nav flex-column">
-                    <div class="nav-item">
-                        <a class="nav-link active" href="#">
-                            <i class="fas fa-fw fa-map"></i>
-                            <span class="">Empire</span>
-                        </a>
-                    </div>
-                    <div class="nav-item">
-                        <a class="nav-link active" href="#">
-                            <i class="fas fa-fw fa-map"></i>
-                            <span class="">Coût d'entretien</span>
-                        </a>
-                    </div>
-                    <div class="nav-item">
-                        <a class="nav-link active" href="#">
-                            <i class="fas fa-fw fa-map"></i>
-                            <span class="">Commerce</span>
-                        </a>
-                    </div>
-                    <div class="nav-item">
-                        <a class="nav-link active" href="#">
-                            <i class="fas fa-fw fa-map"></i>
-                            <span class="">Alliance</span>
-                        </a>
-                    </div>
-                    <div class="nav-item">
-                        <a class="nav-link active" href="#">
-                            <i class="fas fa-fw fa-map"></i>
-                            <span class="">Classement</span>
-                        </a>
-                    </div>
-                    <div class="nav-item">
-                        <a class="nav-link active" href="#">
-                            <i class="fas fa-fw fa-map"></i>
-                            <span class="">Profile</span>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
         <div id="top" class="px-2">
             <div class="flex-fill row gx-2 align-items-center">
                 <div class="col">
@@ -57,7 +15,7 @@
                                     <img src="/static/img/logo.png" width="42px" class="rounded">
                                 </div>
                                 <div class="col-auto lh-1">
-                                    <div class="fs-5 text-white mb-1">NG Exile</div>
+                                    <div class="fs-5 mb-1">NG Exile</div>
                                     <div class="small">ng0</div>
                                 </div>
                             </div>
@@ -65,9 +23,89 @@
                     </div>
                 </div>
                 <div class="col-auto">
-                    <button type="button" class="btn" onclick="document.getElementById('menu').classList.add('open')">
-                        <i class="fas fa-fw fa-bars"></i>
-                    </button>
+                    <div class="dropdown">
+                        <button type="button" class="btn" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-fw fa-bars"></i>
+                        </button>
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item">
+                                <div class="row gx-2 align-items-center">
+                                    <div class="col-auto">
+                                        <i class="position-relative fas fa-fw fa-bell"></i>
+                                    </div>
+                                    <div class="col">
+                                        <span class="">Rapports</span>
+                                    </div>
+                                    <div class="col-auto">
+                                        <span id="mailscount" class="badge text-bg-success">99</span>
+                                    </div>
+                                </div>
+                            </a>
+                            <a class="dropdown-item">
+                                <div class="row gx-2 align-items-center">
+                                    <div class="col-auto">
+                                        <i class="position-relative fas fa-fw fa-comments"></i>
+                                    </div>
+                                    <div class="col">
+                                        <span class="">Salons</span>
+                                    </div>
+                                    <div class="col-auto">
+                                        <span id="mailscount" class="badge text-bg-success">99</span>
+                                    </div>
+                                </div>
+                            </a>
+                            <a class="dropdown-item">
+                                <div class="row gx-2 align-items-center">
+                                    <div class="col-auto">
+                                        <i class="position-relative fas fa-fw fa-envelope"></i>
+                                    </div>
+                                    <div class="col">
+                                        <span class="">Messagerie</span>
+                                    </div>
+                                    <div class="col-auto">
+                                        <span id="mailscount" class="badge text-bg-success">99</span>
+                                    </div>
+                                </div>
+                            </a>
+                            <hr class="dropdown-divider">
+                            <a class="dropdown-item">
+                                <div class="row gx-2 align-items-center">
+                                    <div class="col-auto">
+                                        <i class="position-relative fas fa-fw fa-users"></i>
+                                    </div>
+                                    <div class="col">
+                                        <span class="">Alliance</span>
+                                    </div>
+                                    <div class="col-auto">
+                                        <span id="mailscount" class="badge text-bg-secondary">TAG</span>
+                                    </div>
+                                </div>
+                            </a>
+                            <a class="dropdown-item">
+                                <div class="row gx-2 align-items-center">
+                                    <div class="col-auto">
+                                        <i class="position-relative fas fa-fw fa-signal"></i>
+                                    </div>
+                                    <div class="col">
+                                        <span class="">Classement</span>
+                                    </div>
+                                    <div class="col-auto">
+                                        <span id="mailscount" class="badge text-bg-secondary">999</span>
+                                    </div>
+                                </div>
+                            </a>
+                            <a class="dropdown-item">
+                                <div class="row gx-2 align-items-center">
+                                    <div class="col-auto">
+                                        <i class="position-relative fas fa-fw fa-user"></i>
+                                    </div>
+                                    <div class="col">
+                                        <span class="">Profile</span>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
