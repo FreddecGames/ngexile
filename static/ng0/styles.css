@@ -28,7 +28,10 @@
 
 html, body { height:100%; width:100%; }
 
-body { background: url('/static/ng0/img/interface/bk.jpg') repeat #000; }
+body {
+    background: url('/static/ng0/img/interface/bk.jpg') repeat #000;
+    display: flex; align-items: center; justify-content: center;
+}
 
 .fs-5 { font-size: 1rem!important; }
 
@@ -64,7 +67,7 @@ body { background: url('/static/ng0/img/interface/bk.jpg') repeat #000; }
 
 .nav {
     --bs-nav-link-padding-x: .5rem;
-    --bs-nav-link-padding-y: .25rem;
+    --bs-nav-link-padding-y: .5rem;
     --bs-nav-link-color: var(--bs-body-color);
     --bs-nav-link-hover-color: var(--bs-link-hover-color);
 }
@@ -72,6 +75,16 @@ body { background: url('/static/ng0/img/interface/bk.jpg') repeat #000; }
 .nav-pills {
     --bs-nav-pills-link-active-color: var(--bs-primary);
     --bs-nav-pills-link-active-bg: transparent;
+}
+
+.nav-tabs {
+    --bs-nav-tabs-border-color: var(--bs-dark);
+
+    --bs-nav-tabs-link-hover-border-color: transparent;
+
+    --bs-nav-tabs-link-active-color: var(--bs-primary);
+    --bs-nav-tabs-link-active-bg: transparent;
+    --bs-nav-tabs-link-active-border-color: transparent transparent var(--bs-primary);
 }
 
 .dropdown-menu {
@@ -106,6 +119,14 @@ body { background: url('/static/ng0/img/interface/bk.jpg') repeat #000; }
 #main {
     position: absolute; top: 0; bottom: 0; left: 0; right: 0;
     width: 100%; height: 100%;
+}
+
+@media (min-width: 1200px) {
+    #main {
+        position: relative;
+        border: 1px solid var(--bs-dark);
+        max-width: 1024px; max-height: 576px;
+    }
 }
 
 #top {
