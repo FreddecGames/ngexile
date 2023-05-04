@@ -85,6 +85,8 @@ body {
     --bs-nav-tabs-link-active-color: var(--bs-primary);
     --bs-nav-tabs-link-active-bg: transparent;
     --bs-nav-tabs-link-active-border-color: transparent transparent var(--bs-primary);
+    
+    flex-wrap: nowrap; overflow-x: auto; overflow-y: hidden;
 }
 
 .dropdown-menu {

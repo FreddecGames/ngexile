@@ -4,9 +4,9 @@ from myapps.ng0.views._base import *
 
 class View(GetView):
     
-    template_name = 'empire_view'
+    template_name = 'empire_sales'
     
     def display(self, request):
 
         self.tpl.setValue('menu_selected', 'empire')
-        self.tpl.setValue('tab_selected', 'view')
+        self.tpl.setValue('tab_selected', 'sales')

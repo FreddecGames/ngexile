@@ -51,7 +51,7 @@
                                 </div>
                             </div>
                             <hr class="dropdown-divider">
-                            <a class="dropdown-item" href="/ng0/report-list/">
+                            <a class="dropdown-item {% if menu_selected == 'reports' %}active{% endif %}" href="/ng0/report-list/">
                                 <div class="row gx-2 align-items-center">
                                     <div class="col-auto">
                                         <i class="position-relative fas fa-fw fa-bell"></i>
@@ -64,47 +64,7 @@
                                     </div>
                                 </div>
                             </a>
-                            <a class="dropdown-item" href="/ng0/chat-list/">
-                                <div class="row gx-2 align-items-center">
-                                    <div class="col-auto">
-                                        <i class="position-relative fas fa-fw fa-comments"></i>
-                                    </div>
-                                    <div class="col">
-                                        <span class="">{% translate "Salons" %}</span>
-                                    </div>
-                                    <div class="col-auto">
-                                        <span class="badge text-bg-success">99</span>
-                                    </div>
-                                </div>
-                            </a>
-                            <a class="dropdown-item" href="/ng0/mail-inbox/">
-                                <div class="row gx-2 align-items-center">
-                                    <div class="col-auto">
-                                        <i class="position-relative fas fa-fw fa-envelope"></i>
-                                    </div>
-                                    <div class="col">
-                                        <span class="">{% translate "Messagerie" %}</span>
-                                    </div>
-                                    <div class="col-auto">
-                                        <span class="badge text-bg-success">99</span>
-                                    </div>
-                                </div>
-                            </a>
-                            <hr class="dropdown-divider">
-                            <a class="dropdown-item" href="/ng0/alliance-view/">
-                                <div class="row gx-2 align-items-center">
-                                    <div class="col-auto">
-                                        <i class="position-relative fas fa-fw fa-users"></i>
-                                    </div>
-                                    <div class="col">
-                                        <span class="">{% translate "Alliance" %}</span>
-                                    </div>
-                                    <div class="col-auto">
-                                        <span id="mailscount" class="badge text-bg-light">TAG</span>
-                                    </div>
-                                </div>
-                            </a>
-                            <a class="dropdown-item" href="/ng0/ranking-player/">
+                            <a class="dropdown-item {% if menu_selected == 'ranking' %}active{% endif %}" href="/ng0/ranking-player/">
                                 <div class="row gx-2 align-items-center">
                                     <div class="col-auto">
                                         <i class="position-relative fas fa-fw fa-signal"></i>
@@ -114,26 +74,6 @@
                                     </div>
                                     <div class="col-auto">
                                         <span id="mailscount" class="badge text-bg-light">999</span>
-                                    </div>
-                                </div>
-                            </a>
-                            <a class="dropdown-item" href="/ng0/profile-view/">
-                                <div class="row gx-2 align-items-center">
-                                    <div class="col-auto">
-                                        <i class="position-relative fas fa-fw fa-cog"></i>
-                                    </div>
-                                    <div class="col">
-                                        <span class="">{% translate "Options" %}</span>
-                                    </div>
-                                </div>
-                            </a>
-                            <a class="dropdown-item" href="/ng0/help-home/">
-                                <div class="row gx-2 align-items-center">
-                                    <div class="col-auto">
-                                        <i class="position-relative fas fa-fw fa-question-circle"></i>
-                                    </div>
-                                    <div class="col">
-                                        <span class="">{% translate "Aide" %}</span>
                                     </div>
                                 </div>
                             </a>
@@ -178,37 +118,31 @@
         <div id="bottom">
             <div class="flex-fill nav nav-pills">
                 <div class="col nav-item">
-                    <a class="nav-link lh-1 text-center active" href="/ng0/empire-view/">
-                        <div class="fs-5 mb-1"><i class="fas fa-fw fa-eye"></i></div>
-                        <div class="small">{% translate "Apercu" %}</div>
+                    <a class="nav-link lh-1 text-center {% if menu_selected == 'empire' %}active{% endif %}" href="/ng0/empire-view/">
+                        <div class="fs-5 mb-1"><i class="fas fa-fw fa-th-list"></i></div>
+                        <div class="small">{% translate "Empire" %}</div>
                     </a>
                 </div>
                 <div class="col nav-item">
-                    <a class="nav-link lh-1 text-center" href="/ng0/map-sector/">
+                    <a class="nav-link lh-1 text-center {% if menu_selected == 'map' %}active{% endif %}" href="/ng0/map-sector/">
                         <div class="fs-5 mb-1"><i class="fas fa-fw fa-map"></i></div>
                         <div class="small">{% translate "Carte" %}</div>
                     </a>
                 </div>
                 <div class="col nav-item">
-                    <a class="nav-link lh-1 text-center" href="/ng0/fleet-list/">
+                    <a class="nav-link lh-1 text-center {% if menu_selected == 'fleet' %}active{% endif %}" href="/ng0/fleet-list/">
                         <div class="fs-5 mb-1"><i class="fas fa-fw fa-space-shuttle"></i></div>
                         <div class="small">{% translate "Flottes" %}</div>
                     </a>
                 </div>
                 <div class="col nav-item">
-                    <a class="nav-link lh-1 text-center" href="/ng0/planet-list/">
+                    <a class="nav-link lh-1 text-center {% if menu_selected == 'planet' %}active{% endif %}" href="/ng0/planet-view/">
                         <div class="fs-5 mb-1"><i class="fas fa-fw fa-globe"></i></div>
-                        <div class="small">{% translate "Planètes" %}</div>
+                        <div class="small">9.99.99</div>
                     </a>
                 </div>
                 <div class="col nav-item">
-                    <a class="nav-link lh-1 text-center" href="/ng0/commander-list/">
-                        <div class="fs-5 mb-1"><i class="fas fa-fw fa-star"></i></div>
-                        <div class="small">{% translate "Pilotes" %}</div>
-                    </a>
-                </div>
-                <div class="col nav-item">
-                    <a class="nav-link lh-1 text-center" href="/ng0/tech-list/">
+                    <a class="nav-link lh-1 text-center {% if menu_selected == 'tech' %}active{% endif %}" href="/ng0/tech-list/">
                         <div class="fs-5 mb-1"><i class="fas fa-fw fa-flask"></i></div>
                         <div class="small">{% translate "Techs" %}</div>
                     </a>

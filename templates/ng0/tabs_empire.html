@@ -1,0 +1,16 @@
+{% load i18n %}
+
+<div class="nav nav-tabs mt-1">
+    <div class="nav-item">
+        <a class="nav-link {% if tab_selected == 'view' %}active{% endif %}" href="/ng0/empire-view/">{% translate "Aperçu" %}</a>
+    </div>
+    <div class="nav-item">
+        <a class="nav-link {% if tab_selected == 'planets' %}active{% endif %}" href="/ng0/empire-planets/">{% translate "Planètes" %}</a>
+    </div>
+    <div class="nav-item">
+        <a class="nav-link {% if tab_selected == 'sales' %}active{% endif %}" href="/ng0/empire-sales/">{% translate "Ventes" %}</a>
+    </div>
+    <div class="nav-item">
+        <a class="nav-link {% if tab_selected == 'purchases' %}active{% endif %}" href="/ng0/empire-purchases/">{% translate "Achats" %}</a>
+    </div>
+</div>

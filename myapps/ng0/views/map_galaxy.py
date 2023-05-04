@@ -8,4 +8,5 @@ class View(GetView):
     
     def display(self, request):
 
+        self.tpl.setValue('menu_selected', 'map')
         self.tpl.setValue('tab_selected', 'galaxy')
