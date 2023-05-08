@@ -15,7 +15,7 @@ class Command(BaseCommand):
 
         h = timezone.now().hour
 
-        connectDB()
+        dbConnect()
 
         #---
 

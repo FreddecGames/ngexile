@@ -16,7 +16,7 @@ class Command(BaseCommand):
         
         #---
         
-        connectDB()
+        dbConnect()
         
         #---
         
