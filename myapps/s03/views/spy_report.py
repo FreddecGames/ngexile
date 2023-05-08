@@ -6,8 +6,12 @@ class View(GlobalView):
 
     def dispatch(self, request, *args, **kwargs):
 
+        #---
+
         response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
+
+        #---
         
         return super().dispatch(request, *args, **kwargs)
 

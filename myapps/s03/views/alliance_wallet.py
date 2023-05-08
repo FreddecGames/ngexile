@@ -6,18 +6,23 @@ class View(GlobalView):
 
     def dispatch(self, request, *args, **kwargs):
 
+        #---
+
         response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
         
+        #---
+
         if not self.allianceId:
             return HttpResponseRedirect('/s03/alliance/')
         
+        #---
+
         return super().dispatch(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
         
         action = request.POST.get('a', '')
-        print(action)
 
         if action == 'give' and self.can_give_money():
             
@@ -162,7 +167,7 @@ class View(GlobalView):
             
             query = "SELECT datetime, credits, source, description" + \
                     " FROM alliances_wallet_journal" + \
-                    " WHERE allianceid=" + str(self.allianceId)+" AND type=0 AND datetime >= now()-INTERVAL '1 week'" + \
+                    " WHERE allianceid=" + str(self.allianceId) + " AND type=0 AND datetime >= now()-INTERVAL '1 week'" + \
                     " ORDER BY datetime DESC"
             gifts = dbRows(query)
             tpl.setValue("gifts", gifts)

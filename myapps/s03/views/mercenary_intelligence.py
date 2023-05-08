@@ -8,6 +8,8 @@ class View(GlobalView):
 
     def dispatch(self, request, *args, **kwargs):
 
+        #---
+
         response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
         
@@ -354,7 +356,7 @@ class View(GlobalView):
             #---
         
             query = " INSERT INTO reports(ownerid, type, subtype, datetime, spyid, planetid) " + \
-                    " VALUES(" + str(self.userId) + ", 8, 30, now()+" + str(spyingTime) + "*interval '1 minute', " + str(reportId) + ", " + str(planet['id']) + ") "
+                    " VALUES(" + str(self.userId) + ", 8, 30, now() + " + str(spyingTime) + "*interval '1 minute', " + str(reportId) + ", " + str(planet['id']) + ") "
             dbQuery(query)
         
             #---
@@ -368,7 +370,7 @@ class View(GlobalView):
                 dbQuery(query)
                 
                 query = " INSERT INTO reports(ownerid, type, subtype, datetime, spyid, planetid, description) " + \
-                        " VALUES(" + str(userId) + ", 8, 3, now()+" + str(spyingTime) + "*interval '40 seconds'," + str(reportId) + "," + str(planet['id']) + ", sp_get_user(" + str(self.userId) + "))"
+                        " VALUES(" + str(userId) + ", 8, 3, now() + " + str(spyingTime) + "*interval '40 seconds'," + str(reportId) + "," + str(planet['id']) + ", sp_get_user(" + str(self.userId) + "))"
                 dbQuery(query)
                 
             #---

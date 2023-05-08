@@ -29,7 +29,7 @@ class View(GlobalView):
         if col < 1 or col > 4: col = 3
 
         if col == 1:
-            orderby = "CASE WHEN score_visibility=2 OR v.id=" + str(self.userId)+"THEN upper(username) ELSE '' END, upper(username)"
+            orderby = "CASE WHEN score_visibility=2 OR v.id=" + str(self.userId) + "THEN upper(username) ELSE '' END, upper(username)"
             reversed = False
         elif col == 2:
             orderby = "upper(alliances.name)"
@@ -107,10 +107,10 @@ class View(GlobalView):
         
         query = "SELECT username, v.score, v.score_prestige," + \
                 " COALESCE(date_part('day', now() - lastactivity), 15) AS lastactivity, alliances.name AS alliancename, alliances.tag AS alliancetag, v.id, avatar_url, v.alliance_id, v.score-v.previous_score AS score_delta," + \
-                " (v.score >= " + str(TenthUserScore) + " OR score_visibility = 2 OR (score_visibility = 1 AND alliance_id IS NOT NULL AND alliance_id=" + str(sqlValue(self.allianceId))+") OR v.id=" + str(self.userId) + ") AS visible" + \
+                " (v.score >= " + str(TenthUserScore) + " OR score_visibility = 2 OR (score_visibility = 1 AND alliance_id IS NOT NULL AND alliance_id=" + str(sqlValue(self.allianceId)) + ") OR v.id=" + str(self.userId) + ") AS visible" + \
                 " FROM vw_players v" + \
-                "    LEFT JOIN alliances ON ((v.score >= " + str(TenthUserScore) + " OR score_visibility = 2 OR v.id=" + str(self.userId)+" OR (score_visibility = 1 AND alliance_id IS NOT NULL AND alliance_id=" + str(sqlValue(self.allianceId))+")) AND alliances.id=v.alliance_id)" + \
-                " ORDER BY " +orderby+" OFFSET " + str(offset*displayed)+" LIMIT " + str(displayed)
+                "    LEFT JOIN alliances ON ((v.score >= " + str(TenthUserScore) + " OR score_visibility = 2 OR v.id=" + str(self.userId) + " OR (score_visibility = 1 AND alliance_id IS NOT NULL AND alliance_id=" + str(sqlValue(self.allianceId)) + ")) AND alliances.id=v.alliance_id)" + \
+                " ORDER BY " +orderby+" OFFSET " + str(offset*displayed) + " LIMIT " + str(displayed)
         rows = dbRows(query)
 
         content.setValue("players", rows)

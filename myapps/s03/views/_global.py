@@ -1,14 +1,8 @@
 # -*- coding: utf-8 -*-
 
-from django.contrib import messages
-from django.http import HttpResponseRedirect
-from django.shortcuts import render
-from django.utils import timezone
-from django.views import View
-
 from myapps.s03.views._utils import *
 
-class GlobalView(ExileMixin, View):
+class GlobalView(BaseView):
 
     showHeader = False
     selectedMenu = ""
@@ -21,13 +15,14 @@ class GlobalView(ExileMixin, View):
         
         response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
-    
+        
         #---
         
-        if not request.user.is_authenticated:
-            return HttpResponseRedirect('/')
-
-        self.userId = request.user.id
+        ipaddress = request.META.get('REMOTE_ADDR', '')
+        useragent = request.META.get('HTTP_USER_AGENT', '')
+        forwardedfor = request.META.get('HTTP_X_FORWARDED_FOR', '')
+        
+        dbQuery('SELECT * FROM sp_account_connect(' + str(self.userId) + ', 1036,' + dosql(ipaddress) + ',' + dosql(forwardedfor) + ',' + dosql(useragent) + ', 0)')
         
         #---
         
@@ -72,13 +67,6 @@ class GlobalView(ExileMixin, View):
         
             dbQuery("SELECT sp_log_activity(" + str(self.userId) + "," + dosql(request.META.get("REMOTE_ADDR")) + ", 0)")
             dbQuery("UPDATE users SET lastlogin=now() WHERE id=" + str(self.userId))
-        
-        #---
-        
-        response = self.manageCurrentPlanet(request)
-        if response: return response
-
-    def manageCurrentPlanet(self, request):
         
         #---
         

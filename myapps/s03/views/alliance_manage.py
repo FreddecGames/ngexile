@@ -6,12 +6,18 @@ class View(GlobalView):
 
     def dispatch(self, request, *args, **kwargs):
 
+        #---
+
         response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
         
+        #---
+
         if not self.allianceId or not (self.allianceRights['leader'] or self.allianceRights['can_manage_description'] or self.allianceRights['can_manage_announce']):
             return HttpResponseRedirect('/s03/alliance/')
         
+        #---
+
         return super().dispatch(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
@@ -39,7 +45,6 @@ class View(GlobalView):
             dbQuery('UPDATE alliances SET defcon=' + str(defcon) + ', announce=' + dosql(motd) + ' WHERE id = ' + str(self.allianceId))
 
         return HttpResponseRedirect('/s03/alliance-manage/')
-                
 
     def get(self, request, *args, **kwargs):
         

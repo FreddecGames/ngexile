@@ -6,12 +6,18 @@ class View(GlobalView):
 
     def dispatch(self, request, *args, **kwargs):
 
+        #---
+
         response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
         
+        #---
+
         if not self.allianceId or not (self.allianceRights['leader'] or self.allianceRights['can_see_members_info']):
             return HttpResponseRedirect('/s03/alliance/')
         
+        #---
+
         return super().dispatch(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):

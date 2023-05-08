@@ -5,4 +5,133 @@
 
 {% block content %}
     {% include "ng0/tabs_empire.html" %}
+    <div class="content-body">
+        <div class="content-title">
+            <small class="text-muted">{% translate "Radar" %}</small>
+        </div>
+        <div class="content-block">
+            <div class="row g-1">
+                {% for fleet in fleets %}
+                    <div class="col-12 col-md-4">
+                        <div class="card card-body">
+                            <div class="row gx-3">
+                                <div class="col text-truncate">
+                                    {% if fleet.owner_relation == 2 %}<a class="text-self" href="/ng0/fleet-view/?id={{ fleet.id }}">{{ fleet.name }}</a>
+                                    {% elif fleet.owner_relation == 1 %}<span class="text-ally">{{ fleet.owner_name }}</span>
+                                    {% elif fleet.owner_relation == 0 %}<span class="text-friend">{{ fleet.owner_name }}</span>
+                                    {% else %}<span class="text-enemy">{{ fleet.owner_name }}</span>
+                                    {% endif %}
+                                    <div class="text-white"><script>formatNumber({{ fleet.signature }})</script></div>
+                                </div>
+                                <div class="col-auto text-end">
+                                    {% if fleet.planetid %}<script>formatPlanet({{ fleet.planet_galaxy }}, {{ fleet.planet_sector }}, {{ fleet.planet_planet }}, {{ fleet.planet_relation }})</script>
+                                    {% else %}<span class="text-normal">???</span>
+                                    {% endif %}
+                                    <i class="small fa-fw fas fa-long-arrow-alt-right mx-1"></i>
+                                    <script>formatPlanet({{ fleet.destplanet_galaxy }}, {{ fleet.destplanet_sector }}, {{ fleet.destplanet_planet }}, {{ fleet.destplanet_relation }})</script>
+                                    <div><script>countdown({{ fleet.remaining_time }}, '{% translate "Arrivé" %}', '/ng0/empire-view/')</script></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% empty %}
+                    <div class="col-12">
+                        <span class="text-normal">{% translate "Aucune flotte détectée" %}</span>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="content-title">
+            <small class="text-muted">{% translate "Lab" %}</small>
+        </div>
+        <div class="content-block">
+            <div class="row g-1">
+                {% if research %}
+                    <div class="col-12 col-md-4">
+                        <div class="card card-body">
+                            <div class="row gx-3">
+                                <div class="col text-truncate">
+                                    <a href="/ng0/tech-list/#{{ research.id }}">{% translate research.label %}</a>
+                                </div>
+                                <div class="col-auto text-end">
+                                    <script>countdown({{ research.remaining_time }}, '{% translate "Terminé" %}', '/ng0/tech-list/')</script>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="col-12">
+                        <span class="text-normal">{% translate "Aucune recherche en cours" %}</span>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        <div class="content-title">
+            <small class="text-muted">{% translate "Bâtiments" %}</small>
+        </div>
+        <div class="content-block">
+            <div class="row g-1">
+                {% for planet in planet_buildings %}
+                    <div class="col-12 col-md-4">
+                        <div class="card card-body">
+                            <div class="row gx-3">
+                                <div class="col text-truncate">
+                                    <a class="text-self" href="/ng0/planet-buildings/?id={{ planet.id }}">{{ planet.name }}</a>
+                                    <div><script>formatPlanet({{ planet.galaxy }}, {{ planet.sector }}, {{ planet.planet }}, 'self')</script></div>
+                                </div>
+                                <div class="col-auto text-end">
+                                    {% for building in planet.buildings %}
+                                        <div>
+                                            {% if building.destroying %}<span class="text-danger">{% translate building.name %}</span>
+                                            {% else %}<span class="text-white">{% translate building.name %}</span>
+                                            {% endif %}
+                                            <span class="ms-2"><script>countdown({{ building.remaining_time }}, '{% translate "Terminé" %}', '/ng0/planet-buildings/?id={{ planet.id }}')</script></span>
+                                        </div>
+                                    {% empty %}
+                                        <span class="text-normal">{% translate "Aucun bâtiment en cours" %}</span>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="content-title">
+            <small class="text-muted">{% translate "Vaisseaux" %}</small>
+        </div>
+        <div class="content-block">
+            <div class="row g-1">
+                {% for planet in planet_ships %}
+                    <div class="col-12 col-md-4">
+                        <div class="card card-body">
+                            <div class="row gx-3 align-items-center">
+                                <div class="col text-truncate">
+                                    <a class="text-self" href="/ng0/planet-buildings/?id={{ planet.id }}">{{ planet.name }}</a>
+                                    <div><script>formatPlanet({{ planet.galaxy }}, {{ planet.sector }}, {{ planet.planet }}, 'self')</script></div>
+                                </div>
+                                <div class="col-auto text-end">
+                                    {% if planet.shipid %}
+                                        {% if planet.recycle %}<span class="text-danger">{% translate planet.label %}</span>
+                                        {% else %}<span class="text-white">{% translate planet.label %}</span>
+                                        {% endif %}
+                                        <div><script>countdown({{ planet.remaining_time }}, '{% translate "Terminé" %}', '/ng0/planet-ships/?id={{ planet.id }}')</script></div>
+                                    {% elif planet.waiting %}
+                                        <span class="text-white">{% translate planet.waiting_label %}</span>
+                                        <div class="text-danger">{% translate "Ressources" %}</div>
+                                    {% else %}
+                                        <span class="text-normal">{% translate "Aucun vaisseau en cours" %}</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% empty %}
+                    <div class="col-12">
+                        <span class="text-normal">{% translate "Aucune planète ne peut construire de vaisseau" %}</span>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
 {% endblock content %}

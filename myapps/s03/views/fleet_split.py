@@ -6,6 +6,8 @@ class View(GlobalView):
 
     def dispatch(self, request, *args, **kwargs):
 
+        #---
+
         response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
         
@@ -36,7 +38,7 @@ class View(GlobalView):
             query = "SELECT id, planetid, action, cargo_ore, cargo_hydrocarbon," + \
                     " cargo_scientists, cargo_soldiers, cargo_workers" + \
                     " FROM vw_fleets" + \
-                    " WHERE action=0 AND ownerid=" + str(self.userId)+" AND id=" + str(self.fleetId)
+                    " WHERE action=0 AND ownerid=" + str(self.userId) + " AND id=" + str(self.fleetId)
             fleet = dbRow(query)
             
             if fleet == None:
@@ -142,7 +144,7 @@ class View(GlobalView):
                 " cargo_capacity, cargo_load, cargo_ore, cargo_hydrocarbon, cargo_scientists, cargo_soldiers, cargo_workers," + \
                 " action " + \
                 " FROM vw_fleets" + \
-                " WHERE action=0 AND ownerid=" + str(self.userId)+" AND id=" + str(self.fleetId)
+                " WHERE action=0 AND ownerid=" + str(self.userId) + " AND id=" + str(self.fleetId)
         fleet = dbRow(query)
         if fleet == None: return HttpResponseRedirect("/s03/fleets/")
         content.setValue("fleet", fleet)

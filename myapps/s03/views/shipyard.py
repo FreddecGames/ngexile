@@ -30,6 +30,7 @@ class View(GlobalView):
             
                 quantity = ToInt(request.POST.get("s" + str(row['id'])), 0)
                 if quantity > 0:
+                    if quantity > 2000000000: quantity = 2000000000
                     dbQuery("SELECT sp_start_ship(" + str(self.currentPlanetId) + "," + str(row['id']) + "," + str(quantity) + ", false)")
         
         elif action == "recycle":

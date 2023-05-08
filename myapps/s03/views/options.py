@@ -6,6 +6,8 @@ class View(GlobalView):
 
     def dispatch(self, request, *args, **kwargs):
 
+        #---
+
         response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
         
@@ -50,7 +52,7 @@ class View(GlobalView):
                 result = dbRow("SELECT COALESCE(int4(date_part('epoch', now()-last_holidays)), 10000000) AS cooldown, (SELECT 1 FROM users_holidays WHERE userid=users.id) AS holidays FROM users WHERE id=" + str(self.userId))
                 if result['cooldown'] > (7 * 24 * 60 * 60) and result['holidays'] == None:
                 
-                    query = "INSERT INTO users_holidays(userid, start_time, min_end_time, end_time) VALUES(" + str(self.userId)+",now()+INTERVAL '24 hours', now()+INTERVAL '72 hours', now()+INTERVAL '22 days')"
+                    query = "INSERT INTO users_holidays(userid, start_time, min_end_time, end_time) VALUES(" + str(self.userId) + ",now()+INTERVAL '24 hours', now()+INTERVAL '72 hours', now()+INTERVAL '22 days')"
                     dbQuery(query)
             
         #---

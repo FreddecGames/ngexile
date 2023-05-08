@@ -55,7 +55,7 @@ class View(GlobalView):
 
         #---
 
-        query = "SELECT (SELECT score_prestige AS stat_score_battle FROM users WHERE id=" + str(self.userId)+"), (SELECT int4(count(1)) AS stat_rank_battle FROM vw_players WHERE score_prestige >= (SELECT score_prestige FROM users WHERE id=" + str(self.userId) + "))"
+        query = "SELECT (SELECT score_prestige AS stat_score_battle FROM users WHERE id=" + str(self.userId) + "), (SELECT int4(count(1)) AS stat_rank_battle FROM vw_players WHERE score_prestige >= (SELECT score_prestige FROM users WHERE id=" + str(self.userId) + "))"
         row = dbRow(query)
 
         content.setValue("stat_score_battle", row["stat_score_battle"])
@@ -83,17 +83,17 @@ class View(GlobalView):
 
         #---
 
-        query =	"SELECT f.id, f.name, f.signature, f.ownerid, " +\
-                "COALESCE((( SELECT vw_relations.relation FROM vw_relations WHERE vw_relations.user1 = users.id AND vw_relations.user2 = f.ownerid)), -3) AS owner_relation, f.owner_name," +\
-                "f.planetid, f.planet_name, COALESCE((( SELECT vw_relations.relation FROM vw_relations WHERE vw_relations.user1 = users.id AND vw_relations.user2 = f.planet_ownerid)), -3) AS planet_owner_relation, f.planet_galaxy, f.planet_sector, f.planet_planet, " +\
-                "f.destplanetid, f.destplanet_name, COALESCE((( SELECT vw_relations.relation FROM vw_relations WHERE vw_relations.user1 = users.id AND vw_relations.user2 = f.destplanet_ownerid)), -3) AS destplanet_owner_relation, f.destplanet_galaxy, f.destplanet_sector, f.destplanet_planet, " +\
-                "f.planet_owner_name, f.destplanet_owner_name, f.speed," +\
-                "COALESCE(f.remaining_time, 0) AS time, COALESCE(f.total_time-f.remaining_time, 0), " +\
-                "( SELECT int4(COALESCE(max(nav_planet.radar_strength), 0)) FROM nav_planet WHERE nav_planet.galaxy = f.planet_galaxy AND nav_planet.sector = f.planet_sector AND nav_planet.ownerid IS NOT NULL AND EXISTS ( SELECT 1 FROM vw_friends_radars WHERE vw_friends_radars.friend = nav_planet.ownerid AND vw_friends_radars.userid = users.id)) AS from_radarstrength, " +\
-                "( SELECT int4(COALESCE(max(nav_planet.radar_strength), 0)) FROM nav_planet WHERE nav_planet.galaxy = f.destplanet_galaxy AND nav_planet.sector = f.destplanet_sector AND nav_planet.ownerid IS NOT NULL AND EXISTS ( SELECT 1 FROM vw_friends_radars WHERE vw_friends_radars.friend = nav_planet.ownerid AND vw_friends_radars.userid = users.id)) AS to_radarstrength, " +\
-                "attackonsight" +\
-                " FROM users, vw_fleets f " +\
-                " WHERE users.id=" + str(self.userId)+" AND (action = 1 OR action = -1) AND (ownerid=" + str(self.userId)+" OR (destplanetid IS NOT NULL AND destplanetid IN (SELECT id FROM nav_planet WHERE ownerid=" + str(self.userId)+")))" +\
+        query =	"SELECT f.id, f.name, f.signature, f.ownerid," + \
+                "COALESCE((( SELECT vw_relations.relation FROM vw_relations WHERE vw_relations.user1 = users.id AND vw_relations.user2 = f.ownerid)), -3) AS owner_relation, f.owner_name," + \
+                "f.planetid, f.planet_name, COALESCE((( SELECT vw_relations.relation FROM vw_relations WHERE vw_relations.user1 = users.id AND vw_relations.user2 = f.planet_ownerid)), -3) AS planet_owner_relation, f.planet_galaxy, f.planet_sector, f.planet_planet," + \
+                "f.destplanetid, f.destplanet_name, COALESCE((( SELECT vw_relations.relation FROM vw_relations WHERE vw_relations.user1 = users.id AND vw_relations.user2 = f.destplanet_ownerid)), -3) AS destplanet_owner_relation, f.destplanet_galaxy, f.destplanet_sector, f.destplanet_planet," + \
+                "f.planet_owner_name, f.destplanet_owner_name, f.speed," + \
+                "COALESCE(f.remaining_time, 0) AS time, COALESCE(f.total_time-f.remaining_time, 0)," + \
+                "( SELECT int4(COALESCE(max(nav_planet.radar_strength), 0)) FROM nav_planet WHERE nav_planet.galaxy = f.planet_galaxy AND nav_planet.sector = f.planet_sector AND nav_planet.ownerid IS NOT NULL AND EXISTS ( SELECT 1 FROM vw_friends_radars WHERE vw_friends_radars.friend = nav_planet.ownerid AND vw_friends_radars.userid = users.id)) AS from_radarstrength," + \
+                "( SELECT int4(COALESCE(max(nav_planet.radar_strength), 0)) FROM nav_planet WHERE nav_planet.galaxy = f.destplanet_galaxy AND nav_planet.sector = f.destplanet_sector AND nav_planet.ownerid IS NOT NULL AND EXISTS ( SELECT 1 FROM vw_friends_radars WHERE vw_friends_radars.friend = nav_planet.ownerid AND vw_friends_radars.userid = users.id)) AS to_radarstrength," + \
+                "attackonsight" + \
+                " FROM users, vw_fleets f " + \
+                " WHERE users.id=" + str(self.userId) + " AND (action = 1 OR action = -1) AND (ownerid=" + str(self.userId) + " OR (destplanetid IS NOT NULL AND destplanetid IN (SELECT id FROM nav_planet WHERE ownerid=" + str(self.userId) + ")))" + \
                 " ORDER BY COALESCE(remaining_time, 0), ownerid"
         rows = dbRows(query)
         
@@ -140,8 +140,8 @@ class View(GlobalView):
 
         #---
         
-        query = "SELECT researchid, int4(date_part('epoch', end_time-now())) AS time, label" +\
-                " FROM researches_pending" +\
+        query = "SELECT researchid, int4(date_part('epoch', end_time-now())) AS time, label" + \
+                " FROM researches_pending" + \
                 "    LEFT JOIN db_research ON (researchid = db_research.id)" + \
                 " WHERE userid=" + str(self.userId) + " LIMIT 1"
         row = dbRow(query)
@@ -149,9 +149,9 @@ class View(GlobalView):
 
         #---
         
-        query = "SELECT p.id, p.name, p.galaxy, p.sector, p.planet, b.buildingid, b.remaining_time, destroying, label" +\
-                " FROM nav_planet AS p" +\
-                "	 LEFT JOIN vw_buildings_under_construction2 AS b ON (p.id=b.planetid)" +\
+        query = "SELECT p.id, p.name, p.galaxy, p.sector, p.planet, b.buildingid, b.remaining_time, destroying, label" + \
+                " FROM nav_planet AS p" + \
+                "	 LEFT JOIN vw_buildings_under_construction2 AS b ON (p.id=b.planetid)" + \
                 "    LEFT JOIN db_buildings ON (b.buildingid = db_buildings.id)" + \
                 " WHERE p.ownerid=" + str(self.userId)+\
                 " ORDER BY p.id, destroying, remaining_time DESC"
@@ -189,10 +189,10 @@ class View(GlobalView):
 
         #---
         
-        query = "SELECT p.id, p.name, p.galaxy, p.sector, p.planet, s.shipid, s.remaining_time, s.recycle, (p.shipyard_next_continue IS NOT NULL) AS waiting_resources, label," +\
-                " (SELECT label FROM planet_ships_pending LEFT JOIN db_ships ON (planet_ships_pending.shipid = db_ships.id) WHERE planetid=p.id ORDER BY start_time LIMIT 1) AS waiting_label" +\
-                " FROM nav_planet AS p" +\
-                "	LEFT JOIN vw_ships_under_construction AS s ON (p.id=s.planetid AND p.ownerid=s.ownerid AND s.end_time IS NOT NULL)" +\
+        query = "SELECT p.id, p.name, p.galaxy, p.sector, p.planet, s.shipid, s.remaining_time, s.recycle, (p.shipyard_next_continue IS NOT NULL) AS waiting_resources, label," + \
+                " (SELECT label FROM planet_ships_pending LEFT JOIN db_ships ON (planet_ships_pending.shipid = db_ships.id) WHERE planetid=p.id ORDER BY start_time LIMIT 1) AS waiting_label" + \
+                " FROM nav_planet AS p" + \
+                "	LEFT JOIN vw_ships_under_construction AS s ON (p.id=s.planetid AND p.ownerid=s.ownerid AND s.end_time IS NOT NULL)" + \
                 "   LEFT JOIN db_ships ON (s.shipid = db_ships.id)" + \
                 " WHERE (s.recycle OR EXISTS(SELECT 1 FROM planet_buildings WHERE (buildingid = 105 OR buildingid = 205) AND planetid=p.id)) AND p.ownerid=" + str(self.userId) +\
                 " ORDER BY p.id, s.remaining_time DESC"

@@ -6,12 +6,18 @@ class View(GlobalView):
 
     def dispatch(self, request, *args, **kwargs):
 
+        #---
+
         response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
         
+        #---
+
         if not self.allianceId:
             return HttpResponseRedirect('/s03/alliance/')
         
+        #---
+
         return super().dispatch(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
@@ -19,7 +25,7 @@ class View(GlobalView):
         if self.allianceRights['can_create_nap']:
         
             tag = request.POST.get('tag', '').strip()
-            hours = int(request.POST.get('hours', 0))
+            hours = ToInt(request.POST.get('hours'), 0)
 
             result = dbExecute('SELECT sp_alliance_nap_request(' + str(self.userId) + ',' + dosql(tag) + ',' + str(hours) + ')')
             

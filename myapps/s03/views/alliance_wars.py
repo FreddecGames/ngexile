@@ -6,12 +6,18 @@ class View(GlobalView):
 
     def dispatch(self, request, *args, **kwargs):
 
+        #---
+
         response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
         
+        #---
+
         if not self.allianceId:
             return HttpResponseRedirect('/s03/alliance/')
         
+        #---
+
         return super().dispatch(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):

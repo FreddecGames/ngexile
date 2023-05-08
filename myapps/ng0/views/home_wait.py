@@ -1,17 +1,22 @@
 # -*- coding: utf-8 -*-
 
-from myapps.s03.views._utils import *
+from myapps.ng0.views._base import *
 
 class View(BaseView):
 
     def dispatch(self, request, *args, **kwargs):
 
-        #---
-
         response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
         
         #---
+        
+        if not request.user.is_authenticated:
+            return HttpResponseRedirect('/')
+        
+        #---
+        
+        self.userId = request.user.id
         
         return super().dispatch(request, *args, **kwargs)
 
@@ -20,13 +25,13 @@ class View(BaseView):
         action = request.POST.get('action', '')
         if action == 'unlock':
             dbQuery('UPDATE users SET privilege=0 WHERE id=' + str(self.userId))
-            return HttpResponseRedirect('/s03/overview/')
+            return HttpResponseRedirect('/ng0/overview/')
         
-        return HttpResponseRedirect('/s03/wait/')
+        return HttpResponseRedirect('/ng0/wait/')
         
     def get(self, request, *args, **kwargs):
 
-        tpl = getTemplate(request, 's03/wait')
+        tpl = getTemplate(request, 'ng0/wait')
 
         profile = dbRow('SELECT username FROM users WHERE id=' + str(self.userId))
         tpl.setValue('profile', profile)

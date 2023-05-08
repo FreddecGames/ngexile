@@ -1,25 +1,17 @@
 # -*- coding: utf-8 -*-
 
-from django.shortcuts import render
-from django.views import View
-
 from myapps.s03.views._utils import *
 
-class View(ExileMixin, View):
+class View(BaseView):
 
     def dispatch(self, request, *args, **kwargs):
+
+        #---
 
         response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
         
         #---
-        
-        if not request.user.is_authenticated:
-            return HttpResponseRedirect('/')
-        
-        #---
-        
-        self.userId = request.user.id
         
         return super().dispatch(request, *args, **kwargs)
 

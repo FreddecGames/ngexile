@@ -39,11 +39,11 @@
                                         <div class="text-self">Player name</div>
                                         <div class="row gx-3 align-items-center">
                                             <div class="col-auto">
-                                                <img src="{{ STATIC_PATH }}img/interface/credit.png" width="14px">
+                                                <img src="{{ STATIC_PATH }}img/interface/credit.png" class="img-icon">
                                                 <span>999.99 M</span>
                                             </div>
                                             <div class="col-auto">
-                                                <img src="{{ STATIC_PATH }}img/interface/prestige.png" width="14px">
+                                                <img src="{{ STATIC_PATH }}img/interface/prestige.png" class="img-icon">
                                                 <span>999.99 M</span>
                                             </div>
                                         </div>
@@ -82,7 +82,7 @@
                                 <div class="mb-2 text-muted text-center small">
                                     <span>{% translate "Ce jeu est codé et maintenu avec tout l'amour du monde par <span class='text-white'>Freddec</span> ! Vous pouvez aider le dev en cliquant ci-dessous ;)" %}</span>
                                 </div>
-                                <div class="row gx-3 align-items-center justify-content-around">
+                                <div class="row gx-3 align-items-center justify-self.tpl-around">
                                     <form class="col-auto" action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_blank">
                                         <input type="hidden" name="cmd" value="_s-xclick">
                                         <input type="hidden" name="hosted_button_id" value="7XYD7SJFKQ8M4">
@@ -144,7 +144,7 @@
                 <div class="col nav-item">
                     <a class="nav-link lh-1 text-center {% if menu_selected == 'tech' %}active{% endif %}" href="/ng0/tech-list/">
                         <div class="fs-5 mb-1"><i class="fas fa-fw fa-flask"></i></div>
-                        <div class="small">{% translate "Techs" %}</div>
+                        <div class="small">{% translate "Lab" %}</div>
                     </a>
                 </div>
             </div>

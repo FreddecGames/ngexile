@@ -1,13 +1,16 @@
 # -*- coding: utf-8 -*-
 
-from django.shortcuts import render
-from django.views import View
-
 from myapps.s03.views._utils import *
 
-class View(View):
+class View(LoginRequiredMixin, View):
 
     def dispatch(self, request, *args, **kwargs):
+
+        #---
+        
+        if not maintenance: return HttpResponseRedirect('/')
+        
+        #---
         
         return super().dispatch(request, *args, **kwargs)
         
@@ -15,7 +18,7 @@ class View(View):
         
         #---
 
-        content = getTemplate(request, "s03/maintenance")
+        content = getTemplate(request, 's03/maintenance')
         
         #---
 

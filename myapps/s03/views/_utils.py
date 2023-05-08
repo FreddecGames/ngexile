@@ -1,11 +1,16 @@
 # -*- coding: utf-8 -*-
 
+import math
 import re
 import time
 
+from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import connection
 from django.http import HttpResponse, HttpResponseRedirect
+from django.shortcuts import render
+from django.utils import timezone
+from django.views import View
 
 registration = { "enabled":True, "until":None }
 
@@ -117,7 +122,7 @@ def dict_fetchone(cursor):
 
 cursor = None
 
-def connectDB():
+def dbConnect():
 
     global cursor
     cursor = connection.cursor()
@@ -182,9 +187,16 @@ def getTemplate(request, name):
 
 #--- mixin
 
-class ExileMixin(LoginRequiredMixin):
+class BaseView(LoginRequiredMixin, View):
 
     def pre_dispatch(self, request, *args, **kwargs):
+        
+        #--- 
+        
+        if not request.user.is_authenticated:
+            return HttpResponseRedirect('/')
+
+        self.userId = request.user.id
         
         #---
         
@@ -192,4 +204,4 @@ class ExileMixin(LoginRequiredMixin):
         
         #---
         
-        connectDB()
+        dbConnect()

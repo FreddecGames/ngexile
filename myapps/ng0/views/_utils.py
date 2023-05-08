@@ -12,6 +12,10 @@ from django.views import View
 
 #---
 
+maintenance = False
+
+#---
+
 def strSql(str):
     ret = str.replace('\\', '\\\\') 
     ret = ret.replace('\'', '\'\'')
@@ -36,8 +40,14 @@ def dbConnect():
     global cursor
     cursor = connection.cursor()
     
+def dbQuery(query):
+    cursor.execute(query)
+
 def dbExecute(query):
     cursor.execute(query)
+    results = cursor.fetchall()
+    if len(results) > 0: return results[0][0]
+    return None
 
 def dbRow(query):
     cursor.execute(query)
@@ -49,7 +59,7 @@ def dbRows(query):
 
 #---
 
-class TemplaceContext():
+class Template():
     
     def __init__(self):
     
@@ -62,7 +72,7 @@ class TemplaceContext():
 
 def getTemplate(request, name):
 
-    result = TemplaceContext()
+    result = Template()
     
     result.name = 'ng0/' + name + '.html'
     

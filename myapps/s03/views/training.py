@@ -75,7 +75,7 @@ class View(GlobalView):
         #---
         
         query = "SELECT id, scientists, soldiers, int4(date_part('epoch', end_time-now())) AS remainingtime" + \
-                " FROM planet_training_pending WHERE planetid=" + str(self.currentPlanetId)+" AND end_time IS NOT NULL" + \
+                " FROM planet_training_pending WHERE planetid=" + str(self.currentPlanetId) + " AND end_time IS NOT NULL" + \
                 " ORDER BY start_time"
         rows = dbRows(query)
 
@@ -88,7 +88,7 @@ class View(GlobalView):
                 "    int4(ceiling(1.0*planet_training_pending.soldiers/GREATEST(1, training_soldiers)) * date_part('epoch', INTERVAL '1 hour')) AS soldiers_remainingtime" + \
                 " FROM planet_training_pending" + \
                 "    JOIN nav_planet ON (nav_planet.id=planet_training_pending.planetid)" + \
-                " WHERE planetid=" + str(self.currentPlanetId)+" AND end_time IS NULL" + \
+                " WHERE planetid=" + str(self.currentPlanetId) + " AND end_time IS NULL" + \
                 " ORDER BY start_time"
         rows = dbRows(query)
 

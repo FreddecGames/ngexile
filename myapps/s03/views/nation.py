@@ -6,6 +6,8 @@ class View(GlobalView):
 
     def dispatch(self, request, *args, **kwargs):
 
+        #---
+
         response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
         
@@ -28,7 +30,7 @@ class View(GlobalView):
             
         #---
 
-        query = "SELECT u.username, u.avatar_url, u.description, sp_relation(u.id, " + str(self.userId)+") AS relation, " + \
+        query = "SELECT u.username, u.avatar_url, u.description, sp_relation(u.id, " + str(self.userId) + ") AS relation, " + \
                 " u.alliance_id, a.tag, a.name, u.id, GREATEST(u.regdate, u.game_started) AS regdate, r.label," + \
                 " COALESCE(u.alliance_joined, u.regdate), u.alliance_taxes_paid, u.alliance_credits_given, u.alliance_credits_taken," + \
                 " u.id" + \

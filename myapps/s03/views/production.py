@@ -61,7 +61,9 @@ class View(GlobalView):
             #---
             
             elif action == "submit":
-
+                
+                update_planet = False
+                
                 query = "SELECT target_planetid, energy, enabled" + \
                         " FROM planet_energy_transfer" + \
                         " WHERE planetid=" + str(self.currentPlanetId)

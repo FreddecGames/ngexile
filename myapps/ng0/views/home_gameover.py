@@ -1,24 +1,15 @@
 # -*- coding: utf-8 -*-
 
-from myapps.s03.views._utils import *
+from myapps.ng0.views._base import *
 
 class View(BaseView):
 
-    def dispatch(self, request, *args, **kwargs):
-
-        #---
-
-        response = super().pre_dispatch(request, *args, **kwargs)
-        if response: return response
+    def pre_dispatch(self, request, *args, **kwargs):
         
         #---
         
         result = dbExecute("SELECT int4(count(1)) FROM nav_planet WHERE ownerid=" + str(self.userId))
-        if result == None: return HttpResponseRedirect("/")
-        
-        #---
-        
-        return super().dispatch(request, *args, **kwargs)
+        if result == None: return HttpResponseRedirect("/")        
 
     def post(self, request, *args, **kwargs):
 
@@ -31,20 +22,20 @@ class View(BaseView):
             username = request.POST.get("name", "")
             if not isValidName(username):
                 messages.error(request, 'name_invalid')
-                return HttpResponseRedirect('/s03/game-over/')
+                return HttpResponseRedirect('/ng0/game-over/')
                 
             try:
                 dbQuery("UPDATE users SET alliance_id=NULL, username=" + dosql(username) + " WHERE id=" + str(self.userId))
             except:
                 messages.error(request, 'name_already_used')
-                return HttpResponseRedirect('/s03/game-over/')
+                return HttpResponseRedirect('/ng0/game-over/')
 
             result = dbExecute("SELECT sp_reset_account(" + str(self.userId) + "," + str(ToInt(request.POST.get("galaxy"), 1)) + ")")
             if result == 0:
-                return HttpResponseRedirect("/s03/overview/")
+                return HttpResponseRedirect("/ng0/overview/")
 
             messages.error(request, 'error_' + result)
-            return HttpResponseRedirect('/s03/game-over/')
+            return HttpResponseRedirect('/ng0/game-over/')
 
         #---
         
@@ -55,11 +46,11 @@ class View(BaseView):
         
         #---
         
-        return HttpResponseRedirect('/s03/game-over/')
+        return HttpResponseRedirect('/ng0/game-over/')
         
     def get(self, request, *args, **kwargs):
 
-        tpl = getTemplate(request, 's03/game-over')
+        tpl = getTemplate(request, 'ng0/game-over')
         
         #---
         
@@ -69,7 +60,7 @@ class View(BaseView):
 
         #---
         
-        if profile['resets'] == 0: return HttpResponseRedirect("/s03/start/")
+        if profile['resets'] == 0: return HttpResponseRedirect("/ng0/start/")
 
         #---
 

@@ -6,6 +6,8 @@ class View(GlobalView):
     
     def dispatch(self, request, *args, **kwargs):
 
+        #---
+
         response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
         
@@ -216,8 +218,8 @@ class View(GlobalView):
                 " cargo_capacity, cargo_load, cargo_ore, cargo_hydrocarbon, cargo_scientists, cargo_soldiers, cargo_workers," + \
                 " recycler_output, orbit_ore, orbit_hydrocarbon, action, total_time, idle_time, date_part('epoch', const_interval_before_invasion()) AS before_invasion," + \
                 " long_distance_capacity, droppods, warp_to," + \
-                "( SELECT int4(COALESCE(max(nav_planet.radar_strength), 0)) FROM nav_planet WHERE nav_planet.galaxy = f.planet_galaxy AND nav_planet.sector = f.planet_sector AND nav_planet.ownerid IS NOT NULL AND EXISTS ( SELECT 1 FROM vw_friends_radars WHERE vw_friends_radars.friend = nav_planet.ownerid AND vw_friends_radars.userid = " + str(self.userId)+")) AS from_radarstrength, " + \
-                "( SELECT int4(COALESCE(max(nav_planet.radar_strength), 0)) FROM nav_planet WHERE nav_planet.galaxy = f.destplanet_galaxy AND nav_planet.sector = f.destplanet_sector AND nav_planet.ownerid IS NOT NULL AND EXISTS ( SELECT 1 FROM vw_friends_radars WHERE vw_friends_radars.friend = nav_planet.ownerid AND vw_friends_radars.userid = " + str(self.userId)+")) AS to_radarstrength," + \
+                "( SELECT int4(COALESCE(max(nav_planet.radar_strength), 0)) FROM nav_planet WHERE nav_planet.galaxy = f.planet_galaxy AND nav_planet.sector = f.planet_sector AND nav_planet.ownerid IS NOT NULL AND EXISTS ( SELECT 1 FROM vw_friends_radars WHERE vw_friends_radars.friend = nav_planet.ownerid AND vw_friends_radars.userid = " + str(self.userId) + ")) AS from_radarstrength, " + \
+                "( SELECT int4(COALESCE(max(nav_planet.radar_strength), 0)) FROM nav_planet WHERE nav_planet.galaxy = f.destplanet_galaxy AND nav_planet.sector = f.destplanet_sector AND nav_planet.ownerid IS NOT NULL AND EXISTS ( SELECT 1 FROM vw_friends_radars WHERE vw_friends_radars.friend = nav_planet.ownerid AND vw_friends_radars.userid = " + str(self.userId) + ")) AS to_radarstrength," + \
                 "firepower, next_waypointid, (SELECT routeid FROM routes_waypoints WHERE id=f.next_waypointid) AS routeid, now(), spawn_ore, spawn_hydrocarbon," + \
                 "radar_jamming, planet_floor, real_signature, required_vortex_strength, upkeep, CASE WHEN planet_owner_relation IN (-1,-2) THEN const_upkeep_ships_in_position() ELSE const_upkeep_ships() END AS upkeep_multiplicator," + \
                 " ((sp_commander_fleet_bonus_efficiency(size::bigint - leadership, 2.0)-1.0)*100)::integer AS commander_efficiency, leadership, ownerid, shared," + \
@@ -292,7 +294,7 @@ class View(GlobalView):
             query = " SELECT DISTINCT ON (f.planetid) f.name, f.planetid, f.planet_galaxy, f.planet_sector, f.planet_planet" + \
                     " FROM vw_fleets AS f" + \
                     "  LEFT JOIN nav_planet AS p ON (f.planetid=p.id)" + \
-                    " WHERE f.ownerid=" + str(self.userId)+" AND p.ownerid IS DISTINCT FROM " + str(self.userId) + \
+                    " WHERE f.ownerid=" + str(self.userId) + " AND p.ownerid IS DISTINCT FROM " + str(self.userId) + \
                     " ORDER BY f.planetid" + \
                     " LIMIT 200"
             fleetgroup = dbRows(query)
@@ -312,7 +314,7 @@ class View(GlobalView):
 
         if fleet['routeid']:
 
-            query = "SELECT routes_waypoints.id, ""action"", p.id, p.galaxy, p.sector, p.planet, p.name, sp_get_user(p.ownerid), sp_relation(p.ownerid," + str(self.userId)+") AS relation," + \
+            query = "SELECT routes_waypoints.id, ""action"", p.id, p.galaxy, p.sector, p.planet, p.name, sp_get_user(p.ownerid), sp_relation(p.ownerid," + str(self.userId) + ") AS relation," + \
                     " routes_waypoints.ore, routes_waypoints.hydrocarbon" + \
                     " FROM routes_waypoints" + \
                     "    LEFT JOIN nav_planet AS p ON (routes_waypoints.planetid=p.id)" + \
@@ -358,10 +360,10 @@ class View(GlobalView):
         
         if fleet['action'] != -1 and fleet['planetid']:
         
-            query = "SELECT vw_fleets.id, vw_fleets.name, size, signature, speed, cargo_load, cargo_capacity, action, ownerid, owner_name, alliances.tag, sp_relation(" + str(self.userId)+",ownerid) AS relation" + \
+            query = "SELECT vw_fleets.id, vw_fleets.name, size, signature, speed, cargo_load, cargo_capacity, action, ownerid, owner_name, alliances.tag, sp_relation(" + str(self.userId) + ",ownerid) AS relation" + \
                     " FROM vw_fleets" + \
                     "    LEFT JOIN alliances ON alliances.id=owner_alliance_id" + \
-                    " WHERE planetid=" + str(fleet['planetid'])+" AND vw_fleets.id != " + str(fleet['id'])+" AND NOT engaged AND action != 1 AND action != -1" + \
+                    " WHERE planetid=" + str(fleet['planetid']) + " AND vw_fleets.id != " + str(fleet['id']) + " AND NOT engaged AND action != 1 AND action != -1" + \
                     " ORDER BY upper(vw_fleets.name)"
             fleets = dbRows(query)
             content.setValue("fleets", fleets)

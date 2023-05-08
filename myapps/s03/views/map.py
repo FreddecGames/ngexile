@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 
-from math import sqrt
-
 from myapps.s03.views._global import *
 
 class View(GlobalView):
     
     def dispatch(self, request, *args, **kwargs):
+
+        #---
 
         response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
@@ -55,9 +55,9 @@ class View(GlobalView):
             
             query = "SELECT n.id, " + \
                     " n.colonies > 0," + \
-                    " False AND EXISTS(SELECT 1 FROM nav_planet WHERE galaxy=n.id AND ownerid IN (SELECT friend FROM vw_friends WHERE vw_friends.userid=" + str(self.userId)+") LIMIT 1) AS hasfriend," + \
-                    " EXISTS(SELECT 1 FROM nav_planet WHERE galaxy=n.id AND ownerid IN (SELECT ally FROM vw_allies WHERE vw_allies.userid=" + str(self.userId)+") LIMIT 1) AS hasally," + \
-                    " EXISTS(SELECT 1 FROM nav_planet WHERE galaxy=n.id AND ownerid = " + str(self.userId)+" LIMIT 1) AS hasplanet" + \
+                    " False AND EXISTS(SELECT 1 FROM nav_planet WHERE galaxy=n.id AND ownerid IN (SELECT friend FROM vw_friends WHERE vw_friends.userid=" + str(self.userId) + ") LIMIT 1) AS hasfriend," + \
+                    " EXISTS(SELECT 1 FROM nav_planet WHERE galaxy=n.id AND ownerid IN (SELECT ally FROM vw_allies WHERE vw_allies.userid=" + str(self.userId) + ") LIMIT 1) AS hasally," + \
+                    " EXISTS(SELECT 1 FROM nav_planet WHERE galaxy=n.id AND ownerid = " + str(self.userId) + " LIMIT 1) AS hasplanet" + \
                     " FROM nav_galaxies AS n" + \
                     " ORDER BY n.id;"
             galaxies = dbRows(query)
@@ -123,14 +123,14 @@ class View(GlobalView):
 
             #---
             
-            query = "SELECT f.planetid, f.id, f.name, sp_relation(f.ownerid, " + str(self.userId)+") AS relation, f.signature," + \
-                    "    EXISTS(SELECT 1 FROM fleets AS fl WHERE fl.planetid=f.planetid and fl.action != 1 and fl.action != -1 and fl.ownerid IN (SELECT ally FROM vw_allies WHERE userid=" + str(self.userId)+") LIMIT 1) AS allied," + \
+            query = "SELECT f.planetid, f.id, f.name, sp_relation(f.ownerid, " + str(self.userId) + ") AS relation, f.signature," + \
+                    "    EXISTS(SELECT 1 FROM fleets AS fl WHERE fl.planetid=f.planetid and fl.action != 1 and fl.action != -1 and fl.ownerid IN (SELECT ally FROM vw_allies WHERE userid=" + str(self.userId) + ") LIMIT 1) AS allied," + \
                     " (action=1 OR action=-1) AS fleeing, (SELECT tag FROM alliances WHERE id=users.alliance_id) AS tag, username, shared," + \
-                    "    EXISTS(SELECT 1 FROM fleets AS fl WHERE fl.planetid=f.planetid and fl.action != 1 and fl.action != -1 and fl.ownerid =" + str(self.userId)+" LIMIT 1) AS owned" + \
+                    "    EXISTS(SELECT 1 FROM fleets AS fl WHERE fl.planetid=f.planetid and fl.action != 1 and fl.action != -1 and fl.ownerid =" + str(self.userId) + " LIMIT 1) AS owned" + \
                     " FROM fleets as f" + \
                     "    INNER JOIN users ON (f.ownerid=users.id)" + \
                     " WHERE ((action != 1 AND action != -1) OR engaged) AND" + \
-                    "    planetid >= sp_first_planet(" + str(galaxy)+"," + str(sector)+") AND planetid <= sp_last_planet(" + str(galaxy)+"," + str(sector)+")" + \
+                    "    planetid >= sp_first_planet(" + str(galaxy) + "," + str(sector) + ") AND planetid <= sp_last_planet(" + str(galaxy) + "," + str(sector) + ")" + \
                     " ORDER BY f.planetid, upper(f.name)"
             fleetsArray = dbRows(query)
 
@@ -139,13 +139,13 @@ class View(GlobalView):
             query = "SELECT planetid, label, description" + \
                     " FROM planet_buildings" + \
                     "    INNER JOIN db_buildings ON db_buildings.id=buildingid" + \
-                    " WHERE planetid >= sp_first_planet(" + str(galaxy)+"," + str(sector)+") AND planetid <= sp_last_planet(" + str(galaxy)+"," + str(sector)+") AND is_planet_element" + \
+                    " WHERE planetid >= sp_first_planet(" + str(galaxy) + "," + str(sector) + ") AND planetid <= sp_last_planet(" + str(galaxy) + "," + str(sector) + ") AND is_planet_element" + \
                     " ORDER BY planetid, upper(label)"
             elementsArray = dbRows(query)
 
             #---
 
-            query = "SELECT * FROM sp_get_user_rs(" + str(self.userId)+"," + str(galaxy)+"," + str(sector)+")"
+            query = "SELECT * FROM sp_get_user_rs(" + str(self.userId) + "," + str(galaxy) + "," + str(sector) + ")"
             radarstrength = dbExecute(query)
 
             #---
@@ -400,9 +400,9 @@ class View(GlobalView):
                         " from_radarstrength, to_radarstrength, alliances.tag, radar_jamming, destplanet_radar_jamming" + \
                         " FROM vw_fleets_moving v" + \
                         "    LEFT JOIN alliances ON alliances.id = owner_alliance_id" + \
-                        " WHERE userid=" + str(self.userId)+" AND (" + \
-                        "    (planetid >= sp_first_planet(" + str(galaxy)+"," + str(sector)+") AND planetid <= sp_last_planet(" + str(galaxy)+"," + str(sector)+")) OR" + \
-                        "    (destplanetid >= sp_first_planet(" + str(galaxy)+"," + str(sector)+") AND destplanetid <= sp_last_planet(" + str(galaxy)+"," + str(sector)+")))" + \
+                        " WHERE userid=" + str(self.userId) + " AND (" + \
+                        "    (planetid >= sp_first_planet(" + str(galaxy) + "," + str(sector) + ") AND planetid <= sp_last_planet(" + str(galaxy) + "," + str(sector) + ")) OR" + \
+                        "    (destplanetid >= sp_first_planet(" + str(galaxy) + "," + str(sector) + ") AND destplanetid <= sp_last_planet(" + str(galaxy) + "," + str(sector) + ")))" + \
                         " ORDER BY remaining_time"
                 results = dbRows(query)
                 
@@ -428,7 +428,7 @@ class View(GlobalView):
                     
                     if relation <= rFriend:
 
-                        radarSpotting = sqrt(radarstrength) * 6 * 1000 / result['speed'] * 3600
+                        radarSpotting = math.sqrt(radarstrength) * 6 * 1000 / result['speed'] * 3600
 
                         if result['from_radarstrength'] == 0:
                         

@@ -4,8 +4,6 @@ from django.urls import path
 from django.views.generic import TemplateView
 from django.views.generic.base import RedirectView
 
-from .views import connect
-
 from .views import alliance
 from .views import alliance_create
 from .views import alliance_invitations
@@ -63,8 +61,7 @@ from .views import wait
 ################################################################################
 urlpatterns = [
 	#---------------------------------------------------------------------------
-	path('', RedirectView.as_view(url='/s03/connect/')),
-    path('connect/', connect.View.as_view()),
+	path('', RedirectView.as_view(url='/s03/overview/')),
 	#---------------------------------------------------------------------------
     path('alliance-create/', alliance_create.View.as_view()),
     path('alliance-invitations/', alliance_invitations.View.as_view()),
