@@ -56,12 +56,12 @@ class View(GlobalView):
         if action == "accept" and self.allianceRights["can_accept_money_requests"]:
         
             id = ToInt(request.GET.get("id"), 0)
-            dbExecute("SELECT sp_alliance_money_accept(" + str(self.userId) + "," + str(id) + ")")
+            dbQuery("SELECT sp_alliance_money_accept(" + str(self.userId) + "," + str(id) + ")")
             
         elif action == "deny" and self.allianceRights["can_accept_money_requests"]:
         
             id = ToInt(request.GET.get("id"), 0)
-            dbExecute("SELECT sp_alliance_money_deny(" + str(self.userId) + "," + str(id) + ")")
+            dbQuery("SELECT sp_alliance_money_deny(" + str(self.userId) + "," + str(id) + ")")
         
         #---
         

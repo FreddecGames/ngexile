@@ -34,13 +34,13 @@ class View(GlobalView):
             for shipId in shipIds:
                 quantity = ToInt(request.POST.get("addship" + str(shipId['id'])), 0)
                 if quantity > 0:
-                    dbExecute("SELECT sp_transfer_ships_to_fleet(" + str(self.userId) + "," + str(self.fleetId) + "," + str(shipId['id']) + "," + str(quantity) + ")")
+                    dbQuery("SELECT sp_transfer_ships_to_fleet(" + str(self.userId) + "," + str(self.fleetId) + "," + str(shipId['id']) + "," + str(quantity) + ")")
 
 
             for shipId in shipIds:
                 quantity = ToInt(request.POST.get("removeship" + str(shipId['id'])), 0)
                 if quantity > 0:
-                    dbExecute("SELECT sp_transfer_ships_to_planet(" + str(self.userId) + "," + str(self.fleetId) + "," + str(shipId['id']) + "," + str(quantity) + ")")
+                    dbQuery("SELECT sp_transfer_ships_to_planet(" + str(self.userId) + "," + str(self.fleetId) + "," + str(shipId['id']) + "," + str(quantity) + ")")
 
             result = dbExecute("SELECT id FROM fleets WHERE id=" + str(self.fleetId))
             if result == None:

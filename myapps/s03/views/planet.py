@@ -136,8 +136,10 @@ class View(GlobalView):
                 ' FROM vw_planets WHERE id=' + str(self.currentPlanetId)
         planet = dbRow(query)
         content.setValue('planet', planet)
-        
-        planet['img'] = self.planetImg(planet['id'], planet['planet_floor'])
+
+        img = 1 + (planet['planet_floor'] + planet['id']) % 21
+        if img < 10: img = "0" + str(img)
+        planet['img'] = str(img)
         
         if planet['commanderid']:
             commander = dbRow('SELECT id, name FROM commanders WHERE ownerid=' + str(self.userId) + ' AND id=' + str(planet['commanderid']))

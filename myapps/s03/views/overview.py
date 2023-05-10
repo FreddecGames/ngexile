@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 
-from math import sqrt
-
 from myapps.s03.views._global import *
 
 class View(GlobalView):
@@ -105,7 +103,7 @@ class View(GlobalView):
             extRadarStrength = row['from_radarstrength']
             incRadarStrength = row['to_radarstrength']
             
-            if row['owner_relation'] < rAlliance and (row['time'] > sqrt(incRadarStrength) * 6 * 1000 / row['speed'] * 3600) and (extRadarStrength == 0 or incRadarStrength == 0):
+            if row['owner_relation'] < rAlliance and (row['time'] > math.sqrt(incRadarStrength) * 6 * 1000 / row['speed'] * 3600) and (extRadarStrength == 0 or incRadarStrength == 0):
                 continue
             else:
                     

@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 
-from random import *
-
 from myapps.s03.views._global import *
 
 class View(GlobalView):

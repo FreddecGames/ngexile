@@ -4,6 +4,8 @@ import math
 import re
 import time
 
+from random import *
+
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import connection
@@ -22,7 +24,7 @@ rFriend = 0
 rAlliance = 1
 rSelf = 2
 
-#--- string check functions
+#---
 
 def isValidName(myName):
 
@@ -88,7 +90,7 @@ def isValidCategoryName(myName):
         p = re.compile("^[a-zA-Z0-9\- ]+$")
         return p.match(myName)
 
-#--- cast functions
+#---
 
 def ToInt(s, defaultValue):
  
@@ -104,7 +106,7 @@ def ToBool(s, defaultValue):
     if i == 0: return defaultValue
     return True
 
-#--- SQL functions
+#---
 
 def dict_fetchall(cursor):
 
@@ -160,9 +162,16 @@ def sqlValue(val):
     if val == None or val == "": return "Null"
     else: return str(val)
 
-#--- template functions
+#---
 
-class TemplaceContext():
+def getPercent(current, max, slice):
+
+    if current >= max or max == 0: return 100
+    else: return slice * int(100 * current / max / slice)
+
+#---
+
+class TemplateContext():
     
     def __init__(self):
 
@@ -170,14 +179,16 @@ class TemplaceContext():
         self.data = {}
 
     def setValue(self, key, value):
+    
         self.data[key] = value
     
     def Parse(self, key):
+    
         self.data[key] = True
         
 def getTemplate(request, name):
 
-    result = TemplaceContext()
+    result = TemplateContext()
 
     result.template = name + ".html"
 
@@ -185,7 +196,7 @@ def getTemplate(request, name):
 
     return result
 
-#--- mixin
+#---
 
 class BaseView(LoginRequiredMixin, View):
 

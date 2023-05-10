@@ -69,10 +69,10 @@ class View(GlobalView):
         
             newcommanderid = ToInt(request.POST.get("commander"), 0)
             
-            if newcommanderid != 0: dbExecute("SELECT sp_commanders_assign(" + str(self.userId) + "," + str(newcommanderid) + ",NULL," + str(self.fleetId) + ")")
+            if newcommanderid != 0: dbQuery("SELECT sp_commanders_assign(" + str(self.userId) + "," + str(newcommanderid) + ",NULL," + str(self.fleetId) + ")")
             else: dbQuery("UPDATE fleets SET commanderid=null WHERE ownerid=" + str(self.userId) + " AND id=" + str(self.fleetId))
             
-            dbExecute("SELECT sp_update_fleet_bonus(" + str(self.fleetId) + ")")
+            dbQuery("SELECT sp_update_fleet_bonus(" + str(self.fleetId) + ")")
             
             return HttpResponseRedirect('/s03/fleet/?id=' + str(self.fleetId))
             
@@ -135,7 +135,7 @@ class View(GlobalView):
         #---
         
         elif action == 'abandon':
-            dbExecute("SELECT sp_abandon_fleet(" + str(self.userId) + "," + str(self.fleetId) + ")")
+            dbQuery("SELECT sp_abandon_fleet(" + str(self.userId) + "," + str(self.fleetId) + ")")
             return HttpResponseRedirect('/s03/fleet/?id=' + str(self.fleetId))
         
         #---
@@ -160,26 +160,26 @@ class View(GlobalView):
         #---
         
         elif action == "stoprecycling":
-            dbExecute("SELECT sp_cancel_recycling(" + str(self.fleetOwnerId) + "," + str(self.fleetId) + ")")
+            dbQuery("SELECT sp_cancel_recycling(" + str(self.fleetOwnerId) + "," + str(self.fleetId) + ")")
             return HttpResponseRedirect('/s03/fleet/?id=' + str(self.fleetId))
         
         #---
             
         elif action == "stopwaiting":
-            dbExecute("SELECT sp_cancel_waiting(" + str(self.fleetOwnerId) + "," + str(self.fleetId) + ")")
+            dbQuery("SELECT sp_cancel_waiting(" + str(self.fleetOwnerId) + "," + str(self.fleetId) + ")")
             return HttpResponseRedirect('/s03/fleet/?id=' + str(self.fleetId))
         
         #---
             
         elif action == "merge":
             destfleetid = ToInt(request.GET.get("with"), 0)
-            dbExecute("SELECT sp_merge_fleets(" + str(self.userId) + "," + str(self.fleetId) + "," + str(destfleetid) +")")
+            dbQuery("SELECT sp_merge_fleets(" + str(self.userId) + "," + str(self.fleetId) + "," + str(destfleetid) +")")
             return HttpResponseRedirect('/s03/fleet/?id=' + str(self.fleetId))
         
         #---
             
         elif action == "return":
-            dbExecute("SELECT sp_cancel_move(" + str(self.fleetOwnerId) + "," + str(self.fleetId) + ")")
+            dbQuery("SELECT sp_cancel_move(" + str(self.fleetOwnerId) + "," + str(self.fleetId) + ")")
             return HttpResponseRedirect('/s03/fleet/?id=' + str(self.fleetId))
         
         #---
@@ -199,7 +199,7 @@ class View(GlobalView):
         #---
             
         elif action == "warp":
-            dbExecute("SELECT sp_warp_fleet(" + str(self.fleetOwnerId) + "," + str(self.fleetId) + ")")
+            dbQuery("SELECT sp_warp_fleet(" + str(self.fleetOwnerId) + "," + str(self.fleetId) + ")")
             return HttpResponseRedirect('/s03/fleet/?id=' + str(self.fleetId))
         
         #---

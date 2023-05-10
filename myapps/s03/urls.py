@@ -47,22 +47,28 @@ from .views import planets
 from .views import production
 from .views import ranking_alliances
 from .views import ranking_players
+from .views import recycling
 from .views import reports
 from .views import research
 from .views import shipyard
 from .views import spy_report
 from .views import training
+from .views import transferts
 from .views import upkeep
 from .views import start
 from .views import wait
-
-
+from .views import working
 
 ################################################################################
+
 urlpatterns = [
-	#---------------------------------------------------------------------------
+
+	#---
+
 	path('', RedirectView.as_view(url='/s03/overview/')),
-	#---------------------------------------------------------------------------
+    
+	#---
+    
     path('alliance-create/', alliance_create.View.as_view()),
     path('alliance-invitations/', alliance_invitations.View.as_view()),
     path('alliance-manage/', alliance_manage.View.as_view()),
@@ -106,14 +112,15 @@ urlpatterns = [
     path('production/', production.View.as_view()),
     path('ranking-alliances/', ranking_alliances.View.as_view()),
     path('ranking-players/', ranking_players.View.as_view()),
+    path('recycling/', recycling.View.as_view()),
     path('reports/', reports.View.as_view()),
     path('research/', research.View.as_view()),
     path('shipyard/', shipyard.View.as_view()),
     path('spy-report/', spy_report.View.as_view()),
     path('start/', start.View.as_view()),
     path('training/', training.View.as_view()),
+    path('transferts/', transferts.View.as_view()),
     path('upkeep/', upkeep.View.as_view()),
     path('wait/', wait.View.as_view()),
-	#---------------------------------------------------------------------------
+    path('working/', working.View.as_view()),
 ]
-################################################################################

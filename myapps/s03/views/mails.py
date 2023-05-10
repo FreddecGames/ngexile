@@ -70,7 +70,7 @@ class View(GlobalView):
 
         if request.GET.get("a", "") == "ignore":
         
-            dbExecute("SELECT sp_ignore_sender(" + str(self.userId) + "," + dosql(request.GET.get("user")) + ")")
+            dbQuery("SELECT sp_ignore_sender(" + str(self.userId) + "," + dosql(request.GET.get("user")) + ")")
             return HttpResponseRedirect('/s03/mails/')
             
         #---
@@ -229,7 +229,7 @@ class View(GlobalView):
             
             #---
             
-            player = dbRow("SELECT credits, (now() - game_started > INTERVAL '2 weeks' AND security_level >= 3) AS can_sendcredit FROM users WHERE id=" + str(self.userId))
+            player = dbRow("SELECT credits, (now() - game_started > INTERVAL '2 weeks') AS can_sendcredit FROM users WHERE id=" + str(self.userId))
             content.setValue("player", player)
             
             #---

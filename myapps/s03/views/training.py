@@ -19,30 +19,34 @@ class View(GlobalView):
     
         #---
         
-        trainSoldiers = ToInt(request.POST.get("soldiers"), 0)
-        trainScientists = ToInt(request.POST.get("scientists"), 0)
-
-        result = dbExecute("SELECT * FROM sp_start_training(" + str(self.userId) + "," + str(self.currentPlanetId) + "," + str(trainScientists) + "," + str(trainSoldiers) + ")")
-
-        if result == 5: messages.error(request, 'cant_train_now')
-        elif result > 0: messages.error(request, 'not_enough_workers')
+        action = request.POST.get('action', '')
         
+        #---
+        
+        if action == 'train':
+        
+            trainSoldiers = ToInt(request.POST.get("soldiers"), 0)
+            trainScientists = ToInt(request.POST.get("scientists"), 0)
+
+            result = dbExecute("SELECT * FROM sp_start_training(" + str(self.userId) + "," + str(self.currentPlanetId) + "," + str(trainScientists) + "," + str(trainSoldiers) + ")")
+
+            if result == 5: messages.error(request, 'cant_train_now')
+            elif result > 0: messages.error(request, 'not_enough_workers')
+        
+        #---
+        
+        elif action == 'cancel':
+        
+            queueId = ToInt(request.POST.get("q"), 0)
+            if queueId != 0:
+                dbQuery("SELECT * FROM sp_cancel_training(" + str(self.currentPlanetId) + ", " + str(queueId) + ")")
+                
         #---
         
         return HttpResponseRedirect(request.build_absolute_uri())
 
     def get(self, request, *args, **kwargs):
     
-        #---
-        
-        action = request.GET.get("a", "").lower()
-
-        if action == "cancel":
-        
-            queueId = ToInt(request.GET.get("q"), 0)
-            if queueId != 0:
-                dbQuery("SELECT * FROM sp_cancel_training(" + str(self.currentPlanetId) + ", " + str(queueId) + ")")
-
         #---
 
         self.selectedMenu = "planet"

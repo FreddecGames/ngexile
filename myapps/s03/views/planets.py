@@ -71,10 +71,13 @@ class View(GlobalView):
         
         for planet in planets:
             
-            planet["img"] = self.planetImg(planet['id'], planet['floor'])
+            img = 1 + (planet['floor'] + planet['id']) % 21
+            if img < 10: img = "0" + str(img)
+            planet['img'] = str(img)
+            
             planet["credits"] = int((planet['credits_production'] + (planet['credits_random_production'] / 2)) * 24)
-            planet["ore_level"] = self.getPercent(planet['ore'], planet['ore_capacity'], 10)
-            planet["hydrocarbon_level"] = self.getPercent(planet['hydrocarbon'], planet['hydrocarbon_capacity'], 10)
+            planet["ore_level"] = getPercent(planet['ore'], planet['ore_capacity'], 10)
+            planet["hydrocarbon_level"] = getPercent(planet['hydrocarbon'], planet['hydrocarbon_capacity'], 10)
 
             if planet['workers'] < planet['workers_for_maintenance']: planet["workers_low"] = True
 

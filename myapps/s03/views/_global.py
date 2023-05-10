@@ -4,10 +4,10 @@ from myapps.s03.views._utils import *
 
 class GlobalView(BaseView):
 
+    headerUrl = "/s03/planet/"
     showHeader = False
     selectedMenu = ""
     urlExtraParams = ""
-    headerUrl = "/s03/planet/"
     
     def pre_dispatch(self, request, *args, **kwargs):
         
@@ -26,31 +26,23 @@ class GlobalView(BaseView):
         
         #---
         
-        query = "SELECT username, privilege, lastlogin, credits, lastplanetid, deletion_date, score, planets, previous_score," + \
+        query = "SELECT username, privilege, resets, credits, lastplanetid, deletion_date, planets, score, previous_score, mod_planets, mod_commanders," + \
                 " alliance_id, alliance_rank, leave_alliance_datetime IS NULL AND (alliance_left IS NULL OR alliance_left < now()) AS can_join_alliance," + \
-                " credits_bankruptcy, mod_planets, mod_commanders," + \
-                " orientation, prestige_points," + \
-                " lcid, security_level" + \
+                " credits_bankruptcy, orientation, prestige_points" + \
                 " FROM users" + \
                 " WHERE id=" + str(self.userId)
         self.profile = dbRow(query)
         
-        if self.profile == None:
-            return HttpResponseRedirect("/")
-        
+        if self.profile["privilege"] == -3 and self.profile["resets"] == 0: return HttpResponseRedirect("/s03/start/")
+        elif self.profile["privilege"] == -3: return HttpResponseRedirect("/s03/wait/")
+        elif self.profile["privilege"] == -2: return HttpResponseRedirect("/s03/holidays/")        
+        elif self.profile["planets"] <= 0 or self.profile["credits_bankruptcy"] <= 0: return HttpResponseRedirect("/s03/game-over/")
+
         #---
         
-        if self.profile["privilege"] == -1: return HttpResponseRedirect("/s03/locked/")
-        if self.profile["privilege"] == -2: return HttpResponseRedirect("/s03/holidays/")
-        if self.profile["privilege"] == -3: return HttpResponseRedirect("/s03/wait/")
-        
-        if self.profile["credits_bankruptcy"] <= 0: return HttpResponseRedirect("/s03/game-over/")
-
         self.allianceId = self.profile["alliance_id"]
         self.allianceRankId = self.profile["alliance_rank"]
-        
-        #---
-    
+            
         self.allianceRights = None
         
         if self.allianceId:
@@ -60,13 +52,6 @@ class GlobalView(BaseView):
                     " FROM alliances_ranks" + \
                     " WHERE allianceid=" + str(self.allianceId) + " AND rankid=" + str(self.allianceRankId)
             self.allianceRights = dbRow(query)
-        
-        #---
-
-        if not request.user.is_impersonate:
-        
-            dbQuery("SELECT sp_log_activity(" + str(self.userId) + "," + dosql(request.META.get("REMOTE_ADDR")) + ", 0)")
-            dbQuery("UPDATE users SET lastlogin=now() WHERE id=" + str(self.userId))
         
         #---
         
@@ -99,9 +84,7 @@ class GlobalView(BaseView):
         #---
         
         planet = dbRow("SELECT id, galaxy, sector FROM nav_planet WHERE planet_floor > 0 AND planet_space > 0 AND ownerid=" + str(self.userId) + " LIMIT 1")    
-        if planet == None:
-            return HttpResponseRedirect("/s03/game-over/")
-    
+        
         self.currentPlanetId = planet['id']
         self.currentPlanetGalaxy = planet['galaxy']
         self.currentPlanetSector = planet['sector']
@@ -131,10 +114,10 @@ class GlobalView(BaseView):
             currentPlanet = dbRow(query)
             tpl.setValue("currentPlanet", currentPlanet)
         
-            currentPlanet['ore_level'] = self.getPercent(currentPlanet['ore'], currentPlanet['ore_capacity'], 10)
+            currentPlanet['ore_level'] = getPercent(currentPlanet['ore'], currentPlanet['ore_capacity'], 10)
             if currentPlanet['mod_production_ore'] < 0 or currentPlanet['workers'] < currentPlanet['workers_for_maintenance']: tpl.Parse("medium_ore_production")
             
-            currentPlanet['hydrocarbon_level'] = self.getPercent(currentPlanet['hydrocarbon'], currentPlanet['hydrocarbon_capacity'], 10)
+            currentPlanet['hydrocarbon_level'] = getPercent(currentPlanet['hydrocarbon'], currentPlanet['hydrocarbon_capacity'], 10)
             if currentPlanet['mod_production_hydrocarbon'] < 0 or currentPlanet['workers'] < currentPlanet['workers_for_maintenance']: tpl.Parse("medium_hydrocarbon_production")
             
             currentPlanet['workers_idle'] = currentPlanet['workers'] - currentPlanet['workers_busy']  
@@ -179,15 +162,6 @@ class GlobalView(BaseView):
         
         tpl.setValue("new_mail", row['new_mail'])
         tpl.setValue("new_report", row['new_report'])
-        
-        #---
-        
-        if self.allianceRights:
-        
-            if self.allianceRights["leader"] or self.allianceRights["can_manage_description"] or self.allianceRights["can_manage_announce"]: tpl.Parse("show_management")
-            if self.allianceRights["leader"]: tpl.Parse("show_ranks")
-            if self.allianceRights["leader"] or self.allianceRights["can_see_reports"]: tpl.Parse("show_reports")
-            if self.allianceRights["leader"] or self.allianceRights["can_see_members_info"]: tpl.Parse("show_members")
         
         #---
         
@@ -238,14 +212,3 @@ class GlobalView(BaseView):
         else:
             if radar_strength > 0: return ownerName if ownerName else ""
             else: return ""
-
-    def planetImg(self, id, floor):
-    
-        img = 1 + (floor + id) % 21
-        if img < 10: img = "0" + str(img)
-        return str(img)
-
-    def getPercent(self, current, max, slice):
-    
-        if (current >= max) or (max == 0): return 100
-        else: return slice * int(100 * current / max / slice)

@@ -6,11 +6,11 @@
         <li class="nav-item">
             <a href="/s03/planet/?planet={{ cur_planetid }}" class="nav-link">Aperçu</a>
         </li>
-        <li class="nav-item {% if cat1_selected %}active{% endif %}">
+        <li class="nav-item active">
             <a href="/s03/production/?planet={{ cur_planetid }}" class="nav-link">Production</a>
         </li>
-        <li class="nav-item {% if cat2_selected %}active{% endif %}">
-            <a href="/s03/production/?planet={{ cur_planetid }}&cat=2" class="nav-link">Fonctionnement</a>
+        <li class="nav-item">
+            <a href="/s03/working/?planet={{ cur_planetid }}" class="nav-link">Fonctionnement</a>
         </li>
         <li class="nav-item">
             <a href="/s03/buildings/?planet={{ cur_planetid }}" class="nav-link">Bâtiments</a>
@@ -19,7 +19,7 @@
             <a href="/s03/shipyard/?planet={{ cur_planetid }}" class="nav-link">Vaisseaux</a>
         </li>
         <li class="nav-item">
-            <a href="/s03/shipyard/?planet={{ cur_planetid }}&recycle=1" class="nav-link">Recyclage</a>
+            <a href="/s03/recycling/?planet={{ cur_planetid }}" class="nav-link">Recyclage</a>
         </li>
         <li class="nav-item">
             <a href="/s03/training/?planet={{ cur_planetid }}" class="nav-link">Entraînements</a>
@@ -33,14 +33,13 @@
         <li class="nav-item">
             <a href="/s03/market-buy/?planet={{ cur_planetid }}" class="nav-link">Achat</a>
         </li>
-        <li class="nav-item {% if cat3_selected %}active{% endif %}">
-            <a href="/s03/production/?planet={{ cur_planetid }}&cat=3" class="nav-link">Transferts</a>
+        <li class="nav-item">
+            <a href="/s03/transferts/?planet={{ cur_planetid }}" class="nav-link">Transferts</a>
         </li>
     </ul>
 </div>
 <div class="scroll-content" style="height:calc(100% - 158px);">
 <div class="page-content">
-{% if cat == 1 %}
 <div class="card mb-3">
     <div class="card-header">
         <span class="fs-6">Production</span>
@@ -273,198 +272,6 @@
         </div>
     </div>
 </div>
-{% elif cat == 2 %}
-<form method="post" action="?cat={{ cat }}&a=submit">
-    {% csrf_token %}
-    <div class="card">
-        <div class="card-header">
-            <span class="fs-6">Coût de fonctionnement</span>
-        </div>
-        <div class="list-group list-group-flush">
-            {% for building in buildings %}
-            <div class="list-group-item {% if building.disabled > 0 %}bg-danger{% endif %}">
-                <div class="row gx-3 align-items-center">
-                    <div class="col-auto">
-                        <img src="{{ PATH_IMAGES }}img/buildings/{{ building.buildingid }}.jpg" class="rounded" width="24" height="24">
-                    </div>
-                    <div class="col">
-                        <span class="text-normal">{{ building.label }}</span>
-                    </div>
-                    <div class="col-3">
-                        <div class="row gx-3">
-                            <div class="col-auto">
-                                <img src="{{ PATH_IMAGES }}img/interface/credits.gif" data-bs-toggle="tooltip" data-bs-title="Crédit" class="res" width="16px" height="16px">
-                                <span>{{ building.upkeep|intcomma }}</span>
-                            </div>
-                            <div class="col-auto">
-                                <img src="{{ PATH_IMAGES }}img/interface/energy.gif" data-bs-toggle="tooltip" data-bs-title="Energie" class="res" width="16px" height="16px">
-                                <span>{{ building.energy_consumption|intcomma }}</span>
-                            </div>
-                            <div class="col-auto">
-                                <img src="{{ PATH_IMAGES }}img/interface/workers.gif" data-bs-toggle="tooltip" data-bs-title="Travailleurs" class="res" width="16px" height="16px">
-                                <span>{{ building.maintenance|intcomma }}</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-1 pe-0">
-                        <select name="enabled{{ building.buildingid }}" class="form-control">
-                            {% for count in building.counts %}
-                                <option value="{{ count.count }}"{% if count.selected %} selected{% endif %}>
-                                    {{ count.count }}
-                                </option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <div class="col-1">
-                        <small class="text-normal">/{{ building.quantity|intcomma }}</small>
-                    </div>
-                    <div class="col-3">
-                        <div class="row gx-3">
-                            <div class="col-auto">
-                                <img src="{{ PATH_IMAGES }}img/interface/credits.gif" data-bs-toggle="tooltip" data-bs-title="Crédit" class="res" width="16px" height="16px">
-                                <span>{{ building.upkeep_total|intcomma }}</span>
-                            </div>
-                            <div class="col-auto">
-                                <img src="{{ PATH_IMAGES }}img/interface/energy.gif" data-bs-toggle="tooltip" data-bs-title="Energie" class="res" width="16px" height="16px">
-                                <span>{{ building.energy_total|intcomma }}</span>
-                            </div>
-                            <div class="col-auto">
-                                <img src="{{ PATH_IMAGES }}img/interface/workers.gif" data-bs-toggle="tooltip" data-bs-title="Travailleurs" class="res" width="16px" height="16px">
-                                <span>{{ building.maintenance_total|intcomma }}</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            {% endfor %}
-            <div class="list-group-item text-center">
-                <input type="submit" class="btn btn-primary" value="Valider changements">
-            </div>
-        </div>
-    </div>
-</form>
-{% elif cat == 3 %}
-<div class="card mb-3">
-    <div class="card-header d-flex">
-        <span class="fs-6 me-auto">Energie reçue</span>
-        <span>{{ antennas_receive_used }} <small class="text-normal">/{{ planet.energy_receive_antennas }}</small></span>
-    </div>
-    <div class="list-group list-group-flush">
-        {% if receiving_none %}
-            <div class="list-group-item text-center">
-                <span class="text-normal">Aucun lien énergétique établi</span>
-            </div>
-        {% elif receive_no_antenna %}
-            <div class="list-group-item text-center">
-                <span class="text-normal">Aucun récepteur d'énergie construit sur la planète</span>
-            </div>
-        {% elif cant_receive_when_sending %}
-            <div class="list-group-item text-center">
-                <span class="text-danger">Impossible de recevoir quand de l'énergie est envoyée</span>
-            </div>
-        {% else %}
-            {% for received in receiveds %}
-                <div class="list-group-item">
-                    <div class="row gx-3 align-items-center">
-                        <div class="col">
-                            <script>putplanet({{received.planetid}},'{{received.name}}',{{received.g}},{{received.s}},{{received.p}},{{received.rel}});</script>
-                        </div>
-                        <div class="col-2">
-                            <span>{{ received.energy|intcomma }}</span>
-                        </div>
-                        <div class="col-2">
-                            <span>{{ received.effective_energy|intcomma }}</span>
-                        </div>
-                        <div class="col-1">
-                            <small class="text-normal">perte</small>
-                            <span>{{ received.loss }}%</span>
-                        </div>
-                        <div class="col-1 text-end">
-                            <a href="?cat={{ cat }}&a=cancel&from={{ received.planetid }}" class="btn btn-danger">Rompre</a>
-                        </div>
-                    </div>
-                </div>
-            {% endfor %}
-        {% endif %}
-    </div>
-</div>
-<form method="post" action="?cat={{ cat }}&a=submit">
-    {% csrf_token %}
-    <div class="card">
-        <div class="card-header d-flex">
-            <span class="fs-6 me-auto">Energie envoyée</span>
-            <span>{{ antennas_send_used }} <small class="text-normal">/{{ planet.energy_send_antennas }}</small></span>
-        </div>
-        <div class="list-group list-group-flush">
-            {% if send_no_antenna %}
-                <div class="list-group-item text-center">
-                    <span class="text-normal">Aucun émetteur d'énergie construit sur la planète</span>
-                </div>
-            {% elif cant_send_when_receiving %}
-                <div class="list-group-item text-center">
-                    <span class="text-danger">Impossible d'envoyer quand de l'énergie est reçue</span>
-                </div>
-            {% else %}
-                {% for sent in sents %}
-                    <div class="list-group-item">
-                        <div class="row gx-3 align-items-center">
-                            <div class="col-auto">
-                                <div class="form-check">
-                                    <input type="checkbox" class="form-check-input" name="enabled_{{ sent.planetid }}" value="1" {% if sent.enabled %}checked{% endif %}>
-                                </div>
-                            </div>
-                            <div class="col">
-                                <script>putplanet({{sent.planetid}},'{{sent.name}}',{{sent.g}},{{sent.s}},{{sent.p}},{{sent.rel}});</script>
-                            </div>
-                            <div class="col-auto">
-                                <input type="number" class="form-control" min="0" name="energy_{{ sent.planetid }}" value="{{ sent.energy }}" maxlength="6" size="6">
-                            </div>
-                            <div class="col-2">
-                                <span>{{ sent.effective_energy|intcomma }}</span>
-                            </div>
-                            <div class="col-1">
-                                <small class="text-normal">perte</small>
-                                <span>{{ sent.loss }}%</span>
-                            </div>
-                            <div class="col-1 text-end">
-                                <a href="?cat={{ cat }}&a=cancel&to={{ sent.planetid }}" class="btn btn-danger">Retirer</a>
-                            </div>
-                        </div>
-                    </div>
-                {% endfor %}
-            {% endif %}
-            {% if send %}
-            <div class="list-group-item">
-                <div class="row gx-3 align-items-center">
-                    <div class="col-auto">
-                        <input type="number" class="form-control" min="0" name="to_g" maxlength="2" size="2" value="{{ send_g }}">
-                    </div>
-                    <div class="col-auto">
-                        <input type="number" class="form-control" min="0" name="to_s" maxlength="2" size="2" value="{{ send_s }}">
-                    </div>
-                    <div class="col-auto">
-                        <input type="number" class="form-control" min="0" name="to_p" maxlength="2" size="2" value="{{ send_p }}">
-                    </div>
-                    <div class="col-auto">
-                        <input type="number" class="form-control" min="0" name="energy" maxlength="6" size="6" value="0">
-                    </div>
-                    <div class="col-auto">
-                        {{ send_effective_energy|intcomma }}
-                    </div>
-                    <div class="col-auto">
-                        <small class="text-normal">perte</small>
-                        {{ send_loss }}%
-                    </div>
-                    <div class="col-auto">
-                        <input type="submit" class="btn btn-primary" name="submit" value="Valider">
-                    </div>
-                </div>
-            </div>
-            {% endif %}
-        </div>
-    </div>
-</form>
-{% endif %}
 </div>
 </div>
 {% endblock %}

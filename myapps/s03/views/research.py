@@ -26,7 +26,7 @@ class View(GlobalView):
             #---
             
             researchId = ToInt(request.GET.get("r"), 0)
-            dbExecute("SELECT * FROM sp_start_research(" + str(self.userId) + ", " + str(researchId) + ", false)")
+            dbQuery("SELECT * FROM sp_start_research(" + str(self.userId) + ", " + str(researchId) + ", false)")
             
             return HttpResponseRedirect('/s03/research/')
             
@@ -35,7 +35,7 @@ class View(GlobalView):
             #---
             
             researchId = ToInt(request.GET.get("r"), 0)
-            dbExecute("SELECT * FROM sp_cancel_research(" + str(self.userId) + ", " + str(researchId) + ")")
+            dbQuery("SELECT * FROM sp_cancel_research(" + str(self.userId) + ", " + str(researchId) + ")")
             
             return HttpResponseRedirect('/s03/research/')
         

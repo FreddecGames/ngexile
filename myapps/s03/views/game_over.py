@@ -4,6 +4,8 @@ from myapps.s03.views._utils import *
 
 class View(BaseView):
 
+    ################################################################################
+
     def dispatch(self, request, *args, **kwargs):
 
         #---
@@ -13,15 +15,23 @@ class View(BaseView):
         
         #---
         
-        result = dbExecute("SELECT int4(count(1)) FROM nav_planet WHERE ownerid=" + str(self.userId))
-        if result == None: return HttpResponseRedirect("/")
+        query = 'SELECT planets, credits_bankruptcy' + \
+                'FROM users' + \
+                'WHERE id=' + str(self.userId)
+        row = dbRow(query)
+        
+        if not row or (row['planets'] > 0 and row['credits_bankruptcy'] > 0): return HttpResponseRedirect('/s03/')
         
         #---
         
         return super().dispatch(request, *args, **kwargs)
 
+    ################################################################################
+
     def post(self, request, *args, **kwargs):
 
+        #---
+        
         action = request.POST.get("action")
 
         #---
@@ -31,20 +41,20 @@ class View(BaseView):
             username = request.POST.get("name", "")
             if not isValidName(username):
                 messages.error(request, 'name_invalid')
-                return HttpResponseRedirect('/s03/game-over/')
+                return HttpResponseRedirect(request.build_absolute_uri())
                 
             try:
                 dbQuery("UPDATE users SET alliance_id=NULL, username=" + dosql(username) + " WHERE id=" + str(self.userId))
             except:
                 messages.error(request, 'name_already_used')
-                return HttpResponseRedirect('/s03/game-over/')
+                return HttpResponseRedirect(request.build_absolute_uri())
 
             result = dbExecute("SELECT sp_reset_account(" + str(self.userId) + "," + str(ToInt(request.POST.get("galaxy"), 1)) + ")")
             if result == 0:
                 return HttpResponseRedirect("/s03/overview/")
 
             messages.error(request, 'error_' + result)
-            return HttpResponseRedirect('/s03/game-over/')
+            return HttpResponseRedirect(request.build_absolute_uri())
 
         #---
         
@@ -56,25 +66,31 @@ class View(BaseView):
         #---
         
         return HttpResponseRedirect('/s03/game-over/')
+
+    ################################################################################
         
     def get(self, request, *args, **kwargs):
 
+        #---
+        
         tpl = getTemplate(request, 's03/game-over')
         
         #---
         
-        query = "SELECT username, resets, credits_bankruptcy FROM users WHERE id=" + str(self.userId)
-        profile = dbRow(query)
-        tpl.setValue("profile", profile)
-
-        #---
+        query = 'SELECT username, planets, credits_bankruptcy' + \
+                'FROM users' + \
+                'WHERE id=' + str(self.userId)
+        row = dbRow(query)
         
-        if profile['resets'] == 0: return HttpResponseRedirect("/s03/start/")
+        tpl.setValue('profile', row)
 
         #---
 
-        galaxies = dbRows('SELECT id, recommended FROM sp_get_galaxy_info(' + str(self.userId) + ')')
-        tpl.setValue('galaxies', galaxies)
+        query = 'SELECT id, recommended' + \
+                'FROM sp_get_galaxy_info(' + str(self.userId) + ')'
+        rows = dbRows(query)
+        
+        tpl.setValue('galaxies', rows)
 
         #---
 

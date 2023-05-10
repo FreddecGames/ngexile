@@ -10,7 +10,7 @@
             <a href="/s03/production/?planet={{ cur_planetid }}" class="nav-link">Production</a>
         </li>
         <li class="nav-item">
-            <a href="/s03/production/?planet={{ cur_planetid }}&cat=2" class="nav-link">Fonctionnement</a>
+            <a href="/s03/working/?planet={{ cur_planetid }}" class="nav-link">Fonctionnement</a>
         </li>
         <li class="nav-item">
             <a href="/s03/buildings/?planet={{ cur_planetid }}" class="nav-link">Bâtiments</a>
@@ -19,7 +19,7 @@
             <a href="/s03/shipyard/?planet={{ cur_planetid }}" class="nav-link">Vaisseaux</a>
         </li>
         <li class="nav-item active">
-            <a href="/s03/shipyard/?planet={{ cur_planetid }}&recycle=1" class="nav-link">Recyclage</a>
+            <a href="/s03/recycling/?planet={{ cur_planetid }}" class="nav-link">Recyclage</a>
         </li>
         <li class="nav-item">
             <a href="/s03/training/?planet={{ cur_planetid }}" class="nav-link">Entraînements</a>
@@ -34,7 +34,7 @@
             <a href="/s03/market-buy/?planet={{ cur_planetid }}" class="nav-link">Achat</a>
         </li>
         <li class="nav-item">
-            <a href="/s03/production/?planet={{ cur_planetid }}&cat=3" class="nav-link">Transferts</a>
+            <a href="/s03/transferts/?planet={{ cur_planetid }}" class="nav-link">Transferts</a>
         </li>
     </ul>
 </div>
@@ -90,7 +90,16 @@
                             </div>
                             {% if not ship.recycle %}
                             <div class="col-auto">
-                                <script>putcountdown2({{ ship.remaining_time }}, "<a href='?planet={{cur_planetid}}&a=cancel&q={{ship.id}}' class='text-danger' data-bs-toggle='tooltip' data-bs-title='Annuler'><i class='fa-fw fas fa-times'></i></a>", "<a href='/s03/shipyard/?planet={{cur_planetid}}'>Terminé</a>");</script>
+                                <script>
+                                    let html = ''
+                                    html += '<form method="post" action="">'
+                                        html += '{% csrf_token %}'
+                                        html += '<input type="hidden" name="action" value="cancel" />'
+                                        html += '<input type="hidden" name="q" value="{{ ship.id }}" />'
+                                        html += '<button type="submit" class="btn btn-link text-danger p-0" data-bs-toggle="tooltip" data-bs-title="Annuler"><i class="fa-fw fas fa-times"></i></button>'
+                                    html += '</form>'
+                                    putcountdown2({{ ship.remaining_time }}, html, "<a href='/s03/shipyard/?planet={{cur_planetid}}'>Terminé</a>");
+                                </script>
                             </div>
                             {% endif %}
                         </div>
@@ -148,7 +157,12 @@
                                 <script>document.write(formattime({{ship.remaining_time }}))</script>
                             </div>
                             <div class="col-auto text-end">
-                                <a href="?planet={{ cur_planetid }}&a=cancel&q={{ ship.id }}" class="text-danger" data-bs-toggle="tooltip" data-bs-title="Annuler"><i class="fa-fw fas fa-times"></i></a>
+                                <form method="post" action="">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="action" value="cancel" />
+                                    <input type="hidden" name="q" value="{{ ship.id }}" />
+                                    <button type="submit" class="btn btn-link text-danger p-0" data-bs-toggle="tooltip" data-bs-title="Annuler"><i class="fa-fw fas fa-times"></i></button>
+                                </form>
                             </div>
                         </div>
                     </div>
@@ -156,8 +170,9 @@
             </div>
         </div>
     {% endif %}
-    <form method="post" action="?planet={{ cur_planetid }}&a=recycle">
+    <form method="post" action="">
         {% csrf_token %}
+        <input type="hidden" name="action" value="recycle" />
         {% for category in categories %}
             <div class="card mb-3">
                 <div class="card-header">

@@ -21,7 +21,7 @@ class View(GlobalView):
         
         action = request.POST.get("action", "")
     
-        if action == "build":
+        if action == "recycle":
         
             #---
             
@@ -30,8 +30,7 @@ class View(GlobalView):
             
                 quantity = ToInt(request.POST.get("s" + str(row['id'])), 0)
                 if quantity > 0:
-                    if quantity > 2000000000: quantity = 2000000000
-                    dbQuery("SELECT sp_start_ship(" + str(self.currentPlanetId) + "," + str(row['id']) + "," + str(quantity) + ", false)")
+                    dbQuery("SELECT sp_start_ship_recycling(" + str(self.currentPlanetId) + "," + str(row['id']) + "," + str(quantity) + ")")
         
         elif action == "cancel":
         
@@ -49,7 +48,7 @@ class View(GlobalView):
         
         self.selectedMenu = "planet"
         
-        self.headerUrl = '/s03/shipyard/'
+        self.headerUrl = '/s03/recycling/'
         self.showHeader = True
 
         #---
@@ -60,19 +59,18 @@ class View(GlobalView):
         
         #---
         
-        content = getTemplate(request, "s03/shipyard")
-
+        content = getTemplate(request, "s03/recycling")
+        
         #---
         
-        query = "SELECT v.id, v.category, v.label, v.cost_ore, v.cost_hydrocarbon, v.cost_energy, v.workers, v.crew, v.capacity, v.description," + \
-                " v.construction_time, v.hull, v.shield, v.weapon_power, v.weapon_ammo, v.weapon_tracking_speed, v.weapon_turrets, v.signature, v.speed," + \
-                " v.handling, v.buildingid, v.recycler_output, v.droppods, v.long_distance_capacity, v.quantity, v.buildings_requirements_met, v.research_requirements_met," + \
-                " v.required_shipid, v.required_ship_count, COALESCE(v.new_shipid, v.id) AS shipid, v.cost_prestige, v.upkeep, v.required_vortex_strength, v.mod_leadership, r.label AS r_label" + \
+        query = "SELECT v.id, v.category, v.label, v.description, int4(v.cost_ore * const_recycle_ore(planet_ownerid)) AS cost_ore, int4(v.cost_hydrocarbon * const_recycle_hydrocarbon(planet_ownerid)) AS cost_hydrocarbon, v.cost_credits, v.workers, v.crew, v.capacity," + \
+                " int4(const_ship_recycling_multiplier() * v.construction_time) as construction_time, v.hull, v.shield, v.weapon_power, v.weapon_ammo, v.weapon_tracking_speed, v.weapon_turrets, v.signature, v.speed," + \
+                " v.handling, v.buildingid, v.recycler_output, v.droppods, v.long_distance_capacity, v.quantity, true, true," + \
+                " NULL, 0, COALESCE(v.new_shipid, v.id) AS shipid" + \
                 " FROM vw_ships AS v" + \
                 "   INNER JOIN db_ships AS db ON db.id = v.id" + \
                 "   LEFT JOIN db_ships AS r ON r.id = v.required_shipid" + \
-                " WHERE planetid=" + str(self.currentPlanetId) + \
-                " ORDER BY category, id"
+                " WHERE quantity > 0 AND planetid=" + str(self.currentPlanetId)
         rows = dbRows(query)
         
         categories = []
@@ -80,38 +78,15 @@ class View(GlobalView):
         
         lastCategory = -1        
         for row in rows:
-            if (row["quantity"] > 0) or row["research_requirements_met"]:
             
-                catId = row['category']
-                if catId != lastCategory:
-                    lastCategory = catId
-                
-                    category = { 'id':catId, 'ships':[] }
-                    categories.append(category)
+            catId = row['category']
+            if catId != lastCategory:
+                lastCategory = catId
+            
+                category = { 'id':catId, 'ships':[] }
+                categories.append(category)
 
-                category['ships'].append(row)
-                
-                row['notenoughresources'] = False
-                
-                if row["cost_prestige"] > self.profile["prestige_points"]:
-                    row["required_pp_not_enough"] = True
-                    row['notenoughresources'] = True
-                
-                if row["cost_ore"] > planet['ore_capacity']:
-                    row["not_enough_ore"] = True
-                    row['notenoughresources'] = True
-                
-                if row["cost_hydrocarbon"] > planet['hydrocarbon_capacity']:
-                    row["not_enough_hydrocarbon"] = True
-                    row['notenoughresources'] = True
-                
-                if row["cost_energy"] > planet['energy_capacity']:
-                    row["not_enough_energy"] = True
-                    row['notenoughresources'] = True
-                
-                if row["crew"] > planet['workers_capacity']:
-                    row["not_enough_crew"] = True
-                    row['notenoughresources'] = True
+            category['ships'].append(row)
             
         #---
         
