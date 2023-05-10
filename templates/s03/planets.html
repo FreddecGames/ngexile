@@ -22,7 +22,7 @@
                         <div class="row g-1 flex-column">
                             <div class="col-12">
                                 <a href="/s03/map/?g={{ planet.galaxy }}&s={{ planet.sector }}&p={{ planet.planet }}" class="me-2" data-bs-toggle="tooltip" data-bs-title="Carte spatiale">{{ planet.galaxy }}.{{ planet.sector }}.{{ planet.planet }}</a>
-                                <a href="/s03/planet/?planet={{ planet.id }}" data-bs-toggle="tooltip" data-bs-title="Voir planète">{{ planet.name }}</a>
+                                <a href="/s03/planet-view/?planet={{ planet.id }}" data-bs-toggle="tooltip" data-bs-title="Voir planète">{{ planet.name }}</a>
                             </div>
                             {% if planet.commandername %}
                                 <div class="col-12">
@@ -30,14 +30,14 @@
                                 </div>
                             {% endif %}
                             <div class="col-12">
-                                <a href="/s03/buildings/?planet={{ planet.id }}" data-bs-toggle="tooltip" data-bs-title="Voir bâtiments">Bâtiments</a>
+                                <a href="/s03/planet-buildings/?planet={{ planet.id }}" data-bs-toggle="tooltip" data-bs-title="Voir bâtiments">Bâtiments</a>
                                 <span class="ms-2">
                                     <img src="/static/s03/img/interface/workers_idle.gif" data-bs-toggle="tooltip" data-bs-title="Oisifs" width="12" height="12" class="idleworkers">
                                     <span class="text-success">{{ planet.workers_idle|intcomma }}</span>
                                 </span>
                             </div>
                             <div class="col-12">
-                                <a href="/s03/shipyard/?planet={{ planet.id }}" data-bs-toggle="tooltip" data-bs-title="Voir vaisseaux">Vaisseaux</a>
+                                <a href="/s03/planet-ships/?planet={{ planet.id }}" data-bs-toggle="tooltip" data-bs-title="Voir vaisseaux">Vaisseaux</a>
                             </div>
                         </div>
                     </div>
@@ -82,18 +82,18 @@
                     <div class="col-2">
                         <div class="row g-1 flex-column">
                             <div class="col-12">
-                                <a href="/s03/production/?planet={{ planet.id }}"><img src="{{ PATH_IMAGES }}img/interface/workers.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Travailleurs"></a>
+                                <a href="/s03/planet-production/?planet={{ planet.id }}"><img src="{{ PATH_IMAGES }}img/interface/workers.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Travailleurs"></a>
                                 <span>{{ planet.workers|intcomma }}</span>
                                 <small class="text-normal">/{{ planet.workers_capacity|intcomma }}</small>
                             </div>
                             <div class="col-12">
-                                <a href="/s03/training/?planet={{ planet.id }}"><img src="{{ PATH_IMAGES }}img/interface/scientists.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Scientifiques"></a>
+                                <a href="/s03/planet-trainings/?planet={{ planet.id }}"><img src="{{ PATH_IMAGES }}img/interface/scientists.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Scientifiques"></a>
                                 <span>{{ planet.scientists|intcomma }}</span>
                                 <small class="text-normal">/{{ planet.scientists_capacity|intcomma }}</small>
                                 {% if planet.scientists_training %}<small class="text-success">+{{ planet.scientists_training|intcomma }}</small>{% endif %}
                             </div>
                             <div class="col-12">
-                                <a href="/s03/training/?planet={{ planet.id }}"><img src="{{ PATH_IMAGES }}img/interface/soldiers.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Soldats"></a>
+                                <a href="/s03/planet-trainings/?planet={{ planet.id }}"><img src="{{ PATH_IMAGES }}img/interface/soldiers.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Soldats"></a>
                                 <span class="{% if planet.soldiers_low %}text-danger{% endif %}">{{ planet.soldiers|intcomma }}</span>
                                 <small class="text-normal">/{{ planet.soldiers_capacity|intcomma }}</small>
                                 {% if planet.soldiers_training %}<small class="text-success">+{{ planet.soldiers_training|intcomma }}</small>{% endif %}
@@ -103,15 +103,15 @@
                     <div class="col">
                         <div class="row g-1 flex-column">
                             <div class="col-12">
-                                <a href="/s03/production/?planet={{ planet.id }}"><img src="{{ PATH_IMAGES }}img/interface/workers.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Travailleurs"></a>
+                                <a href="/s03/planet-production/?planet={{ planet.id }}"><img src="{{ PATH_IMAGES }}img/interface/workers.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Travailleurs"></a>
                                 <span class="{% if planet.workers_low %}text-danger{% endif %}">{{ planet.workers_for_maintenance|intcomma }}</span>
                             </div>
                             <div class="col-12">
-                                <a href="/s03/production/?planet={{ planet.id }}"><img src="{{ PATH_IMAGES }}img/interface/credits.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Crédits"></a>
+                                <a href="/s03/planet-production/?planet={{ planet.id }}"><img src="{{ PATH_IMAGES }}img/interface/credits.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Crédits"></a>
                                 <span>{{ planet.upkeep|intcomma }}</span>
                             </div>
                             <div class="col-12">
-                                <a href="/s03/training/?planet={{ planet.id }}"><img src="{{ PATH_IMAGES }}img/interface/soldiers.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Soldats"></a>
+                                <a href="/s03/planet-trainings/?planet={{ planet.id }}"><img src="{{ PATH_IMAGES }}img/interface/soldiers.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Soldats"></a>
                                 <span>{{ planet.upkeep_soldiers|intcomma }}</span>
                             </div>
                         </div>

@@ -50,7 +50,7 @@ class View(GlobalView):
             elif result == -3: messages.error(request, 'error_planet')
             elif result == -5: messages.error(request, 'error_invade_enemy_ships')
             
-            return HttpResponseRedirect('/s03/fleet/?id=' + str(self.fleetId))
+            return HttpResponseRedirect('/s03/fleet-view/?id=' + str(self.fleetId))
             
         #---
         
@@ -61,7 +61,7 @@ class View(GlobalView):
             if isValidObjectName(newname): dbQuery("UPDATE fleets SET name=" + dosql(newname) +" WHERE action=0 AND not engaged AND ownerid=" + str(self.userId) + " AND id=" + str(self.fleetId))
             else: messages.error(request, 'error_name')
             
-            return HttpResponseRedirect('/s03/fleet/?id=' + str(self.fleetId))
+            return HttpResponseRedirect('/s03/fleet-view/?id=' + str(self.fleetId))
             
         #---
         
@@ -74,7 +74,7 @@ class View(GlobalView):
             
             dbQuery("SELECT sp_update_fleet_bonus(" + str(self.fleetId) + ")")
             
-            return HttpResponseRedirect('/s03/fleet/?id=' + str(self.fleetId))
+            return HttpResponseRedirect('/s03/fleet-view/?id=' + str(self.fleetId))
             
         #---
         
@@ -86,7 +86,7 @@ class View(GlobalView):
             
             if g == -1 or s == -1 or p == -1:
                 messages.error(request, 'bad_destination')
-                return HttpResponseRedirect('/s03/fleet/?id=' + str(self.fleetId))
+                return HttpResponseRedirect('/s03/fleet-view/?id=' + str(self.fleetId))
             
             result = dbExecute("SELECT sp_move_fleet(" + str(self.fleetOwnerId) + "," + str(self.fleetId) + "," + str(g) + "," + str(s) + "," + str(p) + ")")
             if result == 0:
@@ -104,7 +104,7 @@ class View(GlobalView):
             elif result == -9: messages.error(request, 'error_jump_to_require_empty_location')
             elif result == -10: messages.error(request, 'error_jump_to_same_point_limit_reached')
             
-            return HttpResponseRedirect('/s03/fleet/?id=' + str(self.fleetId))
+            return HttpResponseRedirect('/s03/fleet-view/?id=' + str(self.fleetId))
             
         #---
         
@@ -118,7 +118,7 @@ class View(GlobalView):
         
             if ore != 0 or hydrocarbon != 0 or scientists != 0 or soldiers != 0 or workers != 0:
                 dbQuery("SELECT sp_transfer_resources_with_planet(" + str(self.fleetOwnerId) + "," + str(self.fleetId) + "," + str(ore) + "," + str(hydrocarbon) + "," + str(scientists) + "," + str(soldiers) + "," + str(workers) + ")")
-                return HttpResponseRedirect("/s03/fleet/?id=" + str(self.fleetId))
+                return HttpResponseRedirect("/s03/fleet-view/?id=" + str(self.fleetId))
             
         return HttpResponseRedirect('/s03/fleets/')
     
@@ -130,57 +130,57 @@ class View(GlobalView):
         
         if action == 'share':
             dbQuery("UPDATE fleets SET shared=not shared WHERE ownerid=" + str(self.fleetOwnerId) + " AND id=" + str(self.fleetId))
-            return HttpResponseRedirect('/s03/fleet/?id=' + str(self.fleetId))
+            return HttpResponseRedirect('/s03/fleet-view/?id=' + str(self.fleetId))
         
         #---
         
         elif action == 'abandon':
             dbQuery("SELECT sp_abandon_fleet(" + str(self.userId) + "," + str(self.fleetId) + ")")
-            return HttpResponseRedirect('/s03/fleet/?id=' + str(self.fleetId))
+            return HttpResponseRedirect('/s03/fleet-view/?id=' + str(self.fleetId))
         
         #---
         
         elif action == 'attack':
             dbQuery("UPDATE fleets SET attackonsight=firepower > 0 WHERE ownerid=" + str(self.fleetOwnerId) + " AND id=" + str(self.fleetId))
-            return HttpResponseRedirect('/s03/fleet/?id=' + str(self.fleetId))
+            return HttpResponseRedirect('/s03/fleet-view/?id=' + str(self.fleetId))
         
         #---
         
         elif action == 'defend':
             dbQuery("UPDATE fleets SET attackonsight=False WHERE ownerid=" + str(self.fleetOwnerId) + " AND id=" + str(self.fleetId))
-            return HttpResponseRedirect('/s03/fleet/?id=' + str(self.fleetId))
+            return HttpResponseRedirect('/s03/fleet-view/?id=' + str(self.fleetId))
         
         #---
         
         elif action == 'recycle':
             result = dbExecute("SELECT sp_start_recycling(" + str(self.fleetOwnerId) + "," + str(self.fleetId) + ")")
             if result == -2: messages.error(request, 'error_recycling')
-            return HttpResponseRedirect('/s03/fleet/?id=' + str(self.fleetId))
+            return HttpResponseRedirect('/s03/fleet-view/?id=' + str(self.fleetId))
         
         #---
         
         elif action == "stoprecycling":
             dbQuery("SELECT sp_cancel_recycling(" + str(self.fleetOwnerId) + "," + str(self.fleetId) + ")")
-            return HttpResponseRedirect('/s03/fleet/?id=' + str(self.fleetId))
+            return HttpResponseRedirect('/s03/fleet-view/?id=' + str(self.fleetId))
         
         #---
             
         elif action == "stopwaiting":
             dbQuery("SELECT sp_cancel_waiting(" + str(self.fleetOwnerId) + "," + str(self.fleetId) + ")")
-            return HttpResponseRedirect('/s03/fleet/?id=' + str(self.fleetId))
+            return HttpResponseRedirect('/s03/fleet-view/?id=' + str(self.fleetId))
         
         #---
             
         elif action == "merge":
             destfleetid = ToInt(request.GET.get("with"), 0)
             dbQuery("SELECT sp_merge_fleets(" + str(self.userId) + "," + str(self.fleetId) + "," + str(destfleetid) +")")
-            return HttpResponseRedirect('/s03/fleet/?id=' + str(self.fleetId))
+            return HttpResponseRedirect('/s03/fleet-view/?id=' + str(self.fleetId))
         
         #---
             
         elif action == "return":
             dbQuery("SELECT sp_cancel_move(" + str(self.fleetOwnerId) + "," + str(self.fleetId) + ")")
-            return HttpResponseRedirect('/s03/fleet/?id=' + str(self.fleetId))
+            return HttpResponseRedirect('/s03/fleet-view/?id=' + str(self.fleetId))
         
         #---
             
@@ -194,13 +194,13 @@ class View(GlobalView):
             elif result == -8: messages.error(request, 'error_deploy_enemy_ships')
             elif result == -11: messages.error(request, 'error_deploy_too_many_safe_planets')
 
-            return HttpResponseRedirect('/s03/fleet/?id=' + str(self.fleetId))
+            return HttpResponseRedirect('/s03/fleet-view/?id=' + str(self.fleetId))
         
         #---
             
         elif action == "warp":
             dbQuery("SELECT sp_warp_fleet(" + str(self.fleetOwnerId) + "," + str(self.fleetId) + ")")
-            return HttpResponseRedirect('/s03/fleet/?id=' + str(self.fleetId))
+            return HttpResponseRedirect('/s03/fleet-view/?id=' + str(self.fleetId))
         
         #---
         
@@ -208,7 +208,7 @@ class View(GlobalView):
         
         self.selectedMenu = "fleets"
         
-        self.headerUrl = '/s03/orbit/'
+        self.headerUrl = '/s03/planet-orbit/'
         
         #---
         

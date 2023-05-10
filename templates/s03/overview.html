@@ -199,7 +199,7 @@
                                 <small class="text-normal">{{ item.galaxy }}.{{ item.sector }}.{{ item.planet }}</small>
                             </div>
                             <div class="col">
-                                <a href="/s03/buildings/?planet={{ item.planetid }}" data-bs-toggle="tooltip" data-bs-title="Voir bâtiments">{{ item.planetname }}</a>
+                                <a href="/s03/planet-buildings/?planet={{ item.planetid }}" data-bs-toggle="tooltip" data-bs-title="Voir bâtiments">{{ item.planetname }}</a>
                             </div>
                             <div class="col-auto">
                                 <div class="row g-1 flex-column">
@@ -207,7 +207,7 @@
                                         <div class="col-12">
                                             <div class="row gx-3 justify-content-end">
                                                 <div class="col text-end"><span class="{% if building.destroying %}text-danger{% endif %}">{{ building.building }}</span></div>
-                                                <div class="col-auto text-end" style="width:75px;"><span class="text-yellow"><script>putcountdown1({{building.time}}, "Terminé", "/s03/buildings/?planet={{item.planetid}}#{{building.buildingid}}");</script></span></div>
+                                                <div class="col-auto text-end" style="width:75px;"><span class="text-yellow"><script>putcountdown1({{building.time}}, "Terminé", "/s03/planet-buildings/?planet={{item.planetid}}#{{building.buildingid}}");</script></span></div>
                                             </div>
                                         </div>
                                     {% empty %}
@@ -237,7 +237,7 @@
                                 <small class="text-normal">{{ item.galaxy }}.{{ item.sector }}.{{ item.planet }}</small>
                             </div>
                             <div class="col">
-                                <a href="/s03/shipyard/?planet={{ item.planetid }}" data-bs-toggle="tooltip" data-bs-title="Voir vaisseaux">{{ item.planetname }}</a>
+                                <a href="/s03/planet-ships/?planet={{ item.planetid }}" data-bs-toggle="tooltip" data-bs-title="Voir vaisseaux">{{ item.planetname }}</a>
                             </div>
                             <div class="col-auto">
                                 {% if item.waiting_resources %}
@@ -248,7 +248,7 @@
                                 {% elif item.shipid %}
                                     <div class="row gx-3 justify-content-end">                                        
                                         <div class="col"><span class="{% if item.recycle %}text-danger{% endif %}">{{ item.shiplabel }}</span></div>
-                                        <div class="col-auto text-end" style="width:65px;"><span class="text-yellow"><script>putcountdown1({{item.time}}, "Terminé", "/s03/shipyard/?planet={{item.planetid}}#{{item.shipid}}");</script></span></div>
+                                        <div class="col-auto text-end" style="width:65px;"><span class="text-yellow"><script>putcountdown1({{item.time}}, "Terminé", "/s03/planet-ships/?planet={{item.planetid}}#{{item.shipid}}");</script></span></div>
                                     </div>
                                 {% else %}
                                     <span class="text-normal">Aucun vaisseau en cours</span>

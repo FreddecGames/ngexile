@@ -4,7 +4,7 @@ from myapps.s03.views._utils import *
 
 class GlobalView(BaseView):
 
-    headerUrl = "/s03/planet/"
+    headerUrl = "/s03/planet-view/"
     showHeader = False
     selectedMenu = ""
     urlExtraParams = ""

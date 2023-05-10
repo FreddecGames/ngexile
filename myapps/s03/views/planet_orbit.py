@@ -64,7 +64,7 @@ class View(GlobalView):
         self.selectedMenu = "planet"
 
         self.showHeader = True
-        self.headerUrl = '/s03/orbit/'
+        self.headerUrl = '/s03/planet-orbit/'
         
         content = getTemplate(request, "s03/orbit")
         

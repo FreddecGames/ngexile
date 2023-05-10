@@ -12,7 +12,7 @@ class View(BaseView):
 
         response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
-            
+        
         #---
         
         query = 'SELECT privilege' + \
@@ -20,47 +20,48 @@ class View(BaseView):
                 'WHERE id=' + str(self.userId)
         row = dbRow(query)
         
-        if not row or row['privilege'] != -3: return HttpResponseRedirect('/s03/')
+        if not row or row['privilege'] != -2: return HttpResponseRedirect('/s03/')
         
         #---
         
         return super().dispatch(request, *args, **kwargs)
 
     ################################################################################
-    
+
     def post(self, request, *args, **kwargs):
         
         #---
         
-        action = request.POST.get('action', '')
+        action = request.POST.get('unlock', '')
         
         #---
         
-        if action == 'unlock':
+        if action != '':
         
-            dbQuery('UPDATE users SET privilege=0 WHERE id=' + str(self.userId))
-            return HttpResponseRedirect('/s03/overview/')
+            dbQuery('SELECT sp_stop_holidays(' + str(self.userId) + ')')
+            return HttpResponseRedirect('/s03/empire-view/')
         
         #---
         
         return HttpResponseRedirect(request.build_absolute_uri())
-        
+
     ################################################################################
-    
+        
     def get(self, request, *args, **kwargs):
 
         #---
 
-        tpl = getTemplate(request, 's03/wait')
+        tpl = getTemplate(request, 's03/holidays')
 
         #---
 
-        query = 'SELECT username' + \
-                'FROM users' + \
-                'WHERE id=' + str(self.userId)
+        query = 'SELECT username,' + \
+                '       (SELECT int4(date_part(\'epoch\', min_end_time - now())) FROM users_holidays WHERE userid = id) AS min_time,' + \
+                '       (SELECT int4(date_part(\'epoch\', end_time - now())) FROM users_holidays WHERE userid = id) AS remaining_time' + \
+                'FROM users WHERE privilege = -2 AND id=' + str(self.userId)
         row = dbRow(query)
-
-        tpl.setValue('profile', row)
+        
+        tpl.setValue('user', row)
         
         #---
         

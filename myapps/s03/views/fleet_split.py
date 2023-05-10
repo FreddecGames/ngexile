@@ -43,7 +43,7 @@ class View(GlobalView):
             
             if fleet == None:
                 messages.error(request, 'error_occupied')
-                return HttpResponseRedirect('/s03/fleet/?id=' + str(self.fleetId))
+                return HttpResponseRedirect('/s03/fleet-view/?id=' + str(self.fleetId))
                 
             #---
 
@@ -125,7 +125,7 @@ class View(GlobalView):
             query = "DELETE FROM fleets WHERE ownerid=" + str(self.userId) + " AND size=0"
             dbQuery(query)
 
-            return HttpResponseRedirect("/s03/fleet/?id=" + str(newfleetid))
+            return HttpResponseRedirect("/s03/fleet-view/?id=" + str(newfleetid))
         
         #---
         

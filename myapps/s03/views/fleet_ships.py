@@ -46,7 +46,7 @@ class View(GlobalView):
             if result == None:
                 return HttpResponseRedirect("/s03/orbit/?planet=" + str(planetId))
             
-            return HttpResponseRedirect('/s03/fleet/?id=' + str(self.fleetId))
+            return HttpResponseRedirect('/s03/fleet-view/?id=' + str(self.fleetId))
         
         #---
         

@@ -18,7 +18,7 @@ class View(GlobalView):
     def get(self, request, *args, **kwargs):
 
         invasionId = ToInt(request.GET.get("id"), 0)
-        if invasionId == 0: return HttpResponseRedirect("/s03/overview/")
+        if invasionId == 0: return HttpResponseRedirect("/s03/empire-view/")
         
         #---
         
@@ -34,7 +34,7 @@ class View(GlobalView):
                 " i.def_workers_lost, galaxy, sector, planet" + \
                 " FROM invasions AS i INNER JOIN nav_planet ON nav_planet.id = i.planet_id WHERE i.id = " + str(invasionId)
         report = dbRow(query)
-        if report == None: return HttpResponseRedirect("/s03/overview/")
+        if report == None: return HttpResponseRedirect("/s03/empire-view/")
         content.setValue("report", report)
         
         viewername = self.profile['username']
@@ -45,10 +45,10 @@ class View(GlobalView):
                         " FROM users" + \
                         " WHERE (username=" + dosql(report['attacker_name']) + " OR username=" + dosql(report['defender_name']) + ") AND alliance_id=" + str(self.allianceId) + " AND alliance_joined <= (SELECT time FROM invasions WHERE id=" + str(invasionId) + ")"
                 result = dbExecute(query)
-                if result == None: return HttpResponseRedirect("/s03/overview/")            
+                if result == None: return HttpResponseRedirect("/s03/empire-view/")            
                 viewername = result
                 
-            else: return HttpResponseRedirect("/s03/overview/")
+            else: return HttpResponseRedirect("/s03/empire-view/")
         
         content.setValue("soldiers_alive", report['soldiers_total'] - report['soldiers_lost'])
         content.setValue("def_soldiers_alive", report['def_soldiers_total'] - report['def_soldiers_lost'])

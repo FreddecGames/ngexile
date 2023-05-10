@@ -425,7 +425,7 @@
             if (parked > 0) {
             
                 s += "<div class='col-12'>"
-                if (rel == 2) s += '<a href="/s03/orbit/?planet=' + planetid + '" class="' + getRelationClass(rel) + '">Au sol</a><small class="ms-2">' + formatnumber(parked) + '</small>';
+                if (rel == 2) s += '<a href="/s03/planet-orbit/?planet=' + planetid + '" class="' + getRelationClass(rel) + '">Au sol</a><small class="ms-2">' + formatnumber(parked) + '</small>';
                 else s += '<span class="me-2 ' + getRelationClass(rel) + '">Au sol</span><small>' + formatnumber(parked) + '</small>';
                 s += "</div>"
             }
@@ -696,7 +696,7 @@
                         s += '<td colspan="3" align="center">'
                             if (alliancetag != '') s += '<a href="/s03/alliance/?tag=' + alliancetag + '" class="me-1 ' + c + '" data-bs-toggle="tooltip" data-bs-custom-class="tooltip-light" data-bs-title="Voir alliance">[' + alliancetag + ']</a>'
                             if (rel == 2) {
-                                if (floor > 0 && space > 0) s += '<a href="/s03/planet/?planet=' + id + '" class="' + c + '" data-bs-toggle="tooltip" data-bs-custom-class="tooltip-light" data-bs-title="Voir planète">' + name + '</a>'
+                                if (floor > 0 && space > 0) s += '<a href="/s03/planet-view/?planet=' + id + '" class="' + c + '" data-bs-toggle="tooltip" data-bs-custom-class="tooltip-light" data-bs-title="Voir planète">' + name + '</a>'
                                 else s += '<span class="' + c + '">' + name + '</span>'
                             }
                             else if (rel==-3 && isNaN(parseInt(img))) s += ''

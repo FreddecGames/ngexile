@@ -51,7 +51,7 @@ class View(BaseView):
 
             result = dbExecute("SELECT sp_reset_account(" + str(self.userId) + "," + str(ToInt(request.POST.get("galaxy"), 1)) + ")")
             if result == 0:
-                return HttpResponseRedirect("/s03/overview/")
+                return HttpResponseRedirect("/s03/empire-view/")
 
             messages.error(request, 'error_' + result)
             return HttpResponseRedirect(request.build_absolute_uri())

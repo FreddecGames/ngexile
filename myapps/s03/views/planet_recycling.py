@@ -48,7 +48,7 @@ class View(GlobalView):
         
         self.selectedMenu = "planet"
         
-        self.headerUrl = '/s03/recycling/'
+        self.headerUrl = '/s03/planet-recycling/'
         self.showHeader = True
 
         #---

@@ -18,10 +18,10 @@ class View(GlobalView):
     def get(self, request, *args, **kwargs):
 
         reportId = ToInt(request.GET.get("id"), 0)
-        if reportId == 0: return HttpResponseRedirect("/s03/reports/")
+        if reportId == 0: return HttpResponseRedirect("/s03/report-list/")
 
         key = request.GET.get("key", "")
-        if key == "": return HttpResponseRedirect("/s03/reports/")
+        if key == "": return HttpResponseRedirect("/s03/report-list/")
         
         #---
 
@@ -30,8 +30,8 @@ class View(GlobalView):
                 " WHERE id=" + str(reportId)+ " AND key=" + dosql(key)
         report = dbRow(query)
         
-        if report == None: return HttpResponseRedirect("/s03/reports/")
-        if report['type'] != 1 and report['type'] != 3: return HttpResponseRedirect("/s03/reports/")
+        if report == None: return HttpResponseRedirect("/s03/report-list/")
+        if report['type'] != 1 and report['type'] != 3: return HttpResponseRedirect("/s03/report-list/")
         
         #---
         

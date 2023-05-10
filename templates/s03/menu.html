@@ -117,30 +117,30 @@
         </div>
     </div>
     <script>        
-        putMenu("/s03/overview/", "empire", "Empire", 1);
-            putMenu("/s03/overview/", "overview", "Vue d'ensemble", 2);
-            putMenu("/s03/upkeep/", "upkeep", "Coût d'entretien", 2);
+        putMenu("/s03/empire-view/", "empire", "Empire", 1);
+            putMenu("/s03/empire-view/", "overview", "Vue d'ensemble", 2);
+            putMenu("/s03/empire-upkeep/", "upkeep", "Coût d'entretien", 2);
             putMenu("/s03/commanders/", "commanders", "Commandants", 2);
-            putMenu("/s03/fleets/", "fleets", "Flottes", 2);
-                putMenu("/s03/fleets/", "fleets_fleets", "Flottes", 3);
-                putMenu("/s03/fleets-orbiting/", "fleets_orbiting", "Flottes en orbite", 3);
-                putMenu("/s03/fleets-standby/", "fleets_standby", "Vaisseaux au sol", 3);
-                putMenu("/s03/fleets-ships-stats/", "fleets_ships_stats", "Détruits / perdus", 3);
-            putMenu("/s03/planets/", "planets", "Planètes", 2);
+            putMenu("/s03/empire-fleets/", "fleets", "Flottes", 2);
+                putMenu("/s03/empire-fleets/", "fleets_fleets", "Flottes", 3);
+                putMenu("/s03/empire-orbiting/", "fleets_orbiting", "Flottes en orbite", 3);
+                putMenu("/s03/empire-standby/", "fleets_standby", "Vaisseaux au sol", 3);
+                putMenu("/s03/empire-stats/", "fleets_ships_stats", "Détruits / perdus", 3);
+            putMenu("/s03/empire-planets/", "planets", "Planètes", 2);
             putMenu("/s03/market-sell/", "merchants", "Commerce", 2);
-            putMenu("/s03/research/", "research", "Recherches", 2);
-            {% if profile_alliance_id %}putMenu("/s03/alliance/", "alliance", "Alliance", 2);
+            putMenu("/s03/tech-list/", "research", "Recherches", 2);
+            {% if profile_alliance_id %}putMenu("/s03/alliance-view/", "alliance", "Alliance", 2);
             {% else %}putMenu("/s03/alliance-invitations/", "noalliance_invitations", "Alliance", 2);
             {% endif %}
         putMenu("/s03/map/", "map", "Galaxie", 1);
             putMenu("/s03/map/?g={{ cur_g }}&s={{ cur_s }}", "map", "Carte spatiale", 2);
             putMenu("/s03/ranking-players/", "ranking", "Classement", 2);
-            putMenu("/s03/mercenary-intelligence/", "intelligence", "Espionnage", 2);
-            putMenu("/s03/planet/?planet={{ cur_planetid }}", "planet", "<div class='d-inline-flex flex-grow-1'>Planète <span class='ms-auto'>{{ cur_g }}.{{ cur_s }}.{{ cur_p }}</span></div>", 2);
-        putMenu("/s03/options/", "options", "Compte", 1);
-            putMenu("/s03/nation/", "nation", "Infos nations", 2);
-            putMenu("/s03/options/", "options", "Options", 2);
-            putMenu("/s03/notes/", "notes", "Notes", 2);
+            putMenu("/s03/mercenary/", "intelligence", "Espionnage", 2);
+            putMenu("/s03/planet-view/?planet={{ cur_planetid }}", "planet", "<div class='d-inline-flex flex-grow-1'>Planète <span class='ms-auto'>{{ cur_g }}.{{ cur_s }}.{{ cur_p }}</span></div>", 2);
+        putMenu("/s03/profile-options/", "options", "Compte", 1);
+            putMenu("/s03/profile-view/", "nation", "Infos nations", 2);
+            putMenu("/s03/profile-options/", "options", "Options", 2);
+            putMenu("/s03/profile-notes/", "notes", "Notes", 2);
             putMenu("/accounts/logout/", "logout", "Déconnexion", 2);
 
         {% if new_mail %}setMailsCount({{ new_mail }});{% endif %}

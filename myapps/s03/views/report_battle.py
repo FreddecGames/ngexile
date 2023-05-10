@@ -18,10 +18,10 @@ class View(GlobalView):
     def get(self, request, *args, **kwargs):
 
         battleId = ToInt(request.GET.get('id'), 0)
-        if battleId == 0: return HttpResponseRedirect('/s03/reports/')
+        if battleId == 0: return HttpResponseRedirect('/s03/report-list/')
         
         fromview = ToInt(request.GET.get('v'), 0)
-        if fromview == 0: return HttpResponseRedirect('/s03/reports/')
+        if fromview == 0: return HttpResponseRedirect('/s03/report-list/')
         
         #---
         
@@ -34,11 +34,11 @@ class View(GlobalView):
         
         if not display:
             key = request.GET.get("key", "")
-            if key == "": return HttpResponseRedirect("/s03/reports/")
+            if key == "": return HttpResponseRedirect("/s03/report-list/")
             result = dbExecute("SELECT 1 FROM battles WHERE id=" + str(battleId) + " AND key=" + dosql(key))
             display = result != None
             
-        if not display: return HttpResponseRedirect("/s03/reports/")            
+        if not display: return HttpResponseRedirect("/s03/report-list/")            
             
         #---
         

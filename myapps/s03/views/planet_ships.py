@@ -49,7 +49,7 @@ class View(GlobalView):
         
         self.selectedMenu = "planet"
         
-        self.headerUrl = '/s03/shipyard/'
+        self.headerUrl = '/s03/planet-ships/'
         self.showHeader = True
 
         #---

@@ -55,7 +55,7 @@ class View(GlobalView):
         
         elif action == 'abandon':
             dbQuery('SELECT sp_abandon_planet(' + str(self.userId) + ',' + str(self.currentPlanetId) + ')')
-            return HttpResponseRedirect('/s03/overview/')
+            return HttpResponseRedirect('/s03/empire-view/')
         
         #---
         
@@ -66,7 +66,7 @@ class View(GlobalView):
                     ' WHERE ownerid=' + str(self.userId) + ' AND id=' + str(self.currentPlanetId)
             dbQuery(query)
             
-        return HttpResponseRedirect('/s03/planet/')
+        return HttpResponseRedirect('/s03/planet-view/')
     
     def get(self, request, *args, **kwargs):
         
@@ -77,21 +77,21 @@ class View(GlobalView):
         if action == 'suspend':
             dbQuery('SELECT sp_update_planet_production(' + str(self.currentPlanetId) + ')')
             dbQuery('UPDATE nav_planet SET mod_production_workers=0, recruit_workers=False WHERE ownerid=' + str(self.userId) + ' AND id=' + str(self.currentPlanetId))
-            return HttpResponseRedirect('/s03/planet/')
+            return HttpResponseRedirect('/s03/planet-view/')
             
         #---
         
         elif action == 'resume':
             dbQuery('UPDATE nav_planet SET recruit_workers=True WHERE ownerid=' + str(self.userId) + ' AND id=' + str(self.currentPlanetId) )
             dbQuery('SELECT sp_update_planet(' + str(self.currentPlanetId) + ')')
-            return HttpResponseRedirect('/s03/planet/')
+            return HttpResponseRedirect('/s03/planet-view/')
         
         #---
 
         self.showHeader = True
         self.selectedMenu = 'planet'
 
-        content = getTemplate(request, 's03/planet')
+        content = getTemplate(request, 's03/planet-view')
         
         #---
         
