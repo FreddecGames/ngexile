@@ -67,7 +67,7 @@
                                         <script>putplanet("{{commander.planet_id}}","{{commander.planet_name}}","{{commander.galaxy}}","{{commander.sector}}","{{commander.planet}}", 2);</script>
                                     {% elif commander.fleet_id %}
                                         <img src="{{ PATH_IMAGES }}img/interface/fleets.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Flotte">
-                                        <a href="/s03/fleet/?id={{ commander.fleet_id }}" data-bs-toggle="tooltip" data-bs-title="Voir flotte">{{ commander.fleet_name }}</a>
+                                        <a href="/s03/fleet-view/?id={{ commander.fleet_id }}" data-bs-toggle="tooltip" data-bs-title="Voir flotte">{{ commander.fleet_name }}</a>
                                     {% else %}
                                         <span class="text-normal">Aucune</span>
                                     {% endif %}

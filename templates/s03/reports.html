@@ -3,7 +3,7 @@
 {% load humanize %}
 {% block content %}
 <div class="page-content">
-    <script>function LinkFleet(id, name){ if (id != "None") document.write('<a href="/s03/fleet/?id=' + id + '" data-bs-toggle="tooltip" data-bs-title="Voir flotte">' + name + '</a>'); else document.write('<span class="text-white">' + name + '</span>'); }</script>
+    <script>function LinkFleet(id, name){ if (id != "None") document.write('<a href="/s03/fleet-view/?id=' + id + '" data-bs-toggle="tooltip" data-bs-title="Voir flotte">' + name + '</a>'); else document.write('<span class="text-white">' + name + '</span>'); }</script>
     <ul class="nav nav-tabs mt-0 mb-3">
         <li class="nav-item {% if cat == 0 %}active{% endif %}">
             <a href="?cat=0" class="nav-link">

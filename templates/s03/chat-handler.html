@@ -21,9 +21,3 @@
     {% endif %}
     }
 {% endif %}
-
-{% if chats %}
-    displayPublicChats([0
-    {% for chat in chats %},['{{ chat.name }}','{{ chat.topic }}',{{ chat.online }}]{% endfor %}
-    ]);
-{% endif %}

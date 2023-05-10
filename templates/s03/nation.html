@@ -108,7 +108,7 @@
                     <div class="list-group-item">
                         <div class="row gx-3">
                             <div class="col-3">
-                                {% if nation.relation == 2 %}<a href="/s03/fleet/?id={{ fleet.id }}" data-bs-toggle="tooltip" data-bs-title="Voir flotte">{{ fleet.name }}</a>
+                                {% if nation.relation == 2 %}<a href="/s03/fleet-view/?id={{ fleet.id }}" data-bs-toggle="tooltip" data-bs-title="Voir flotte">{{ fleet.name }}</a>
                                 {% elif nation.relation == 1 %}<span class="text-success">{{ fleet.name }}</span>
                                 {% endif %}
                                 <small class="ms-2">{{ fleet.signature|intcomma }}</small>

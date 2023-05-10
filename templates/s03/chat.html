@@ -534,8 +534,6 @@ function showJoinChatForm()
 	obj.style.display = "block";
 
 	$("chatname").focus();
-
-	openURL(pageLocation + "?a=chatlist", joinChatResponse);
 }
 
         function displayPublicChats(list) {
@@ -624,6 +622,10 @@ function showJoinChatForm()
         {% for join in joins %}
             addChat({{ join.id }}, '{{ join.name }}', '{{ join.topic }}', true, true)
         {% endfor %}
+
+        displayPublicChats([0
+        {% for chat in chats %},['{{ chat.name }}','{{ chat.topic }}',{{ chat.online }}]{% endfor %}
+        ]);
 
         if (chatlist.length == 0) showJoinChatForm()
     </script>

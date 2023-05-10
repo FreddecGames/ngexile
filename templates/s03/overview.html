@@ -142,7 +142,7 @@
                                      width="10"
                                      height="10">
                             {% endif %}
-                            <a href="/s03/fleet/?id={{ fleet.id }}" class="text-info" data-bs-toggle="tooltip" data-bs-title="Voir flotte">{{ fleet.name }}</a>
+                            <a href="/s03/fleet-view/?id={{ fleet.id }}" class="text-info" data-bs-toggle="tooltip" data-bs-title="Voir flotte">{{ fleet.name }}</a>
                         {% elif fleet.owner_relation == 1 %}
                             <a href="/s03/mails/?to={{ fleet.name }}" class="text-success" data-bs-toggle="tooltip" data-bs-title="Contacter propriétaire">{{ fleet.owner_name }}</a>
                         {% elif fleet.owner_relation == 0 %}

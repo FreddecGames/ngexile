@@ -283,15 +283,15 @@
                                         s += '<span class="text-normal">En patrouille</span>'
                                     break
                                     case '1':
-                                        var c = startCountdown('fleetcountdown' + fleet.id, fleet.remainingTime(), null, '<a href="/s03/fleets/?id=' + fleet.id + '">Arrivé</a>')
+                                        var c = startCountdown('fleetcountdown' + fleet.id, fleet.remainingTime(), null, '<a href="/s03/empire-fleets/?id=' + fleet.id + '">Arrivé</a>')
                                         s += '<span class="text-success">En transit</span><i class="fa-fw fas fa-long-arrow-alt-right mx-2 text-normal"></i>' + fleet.destination + '<span class="ms-3 text-yellow">' + c + '</span>'
                                     break
                                     case '2':
-                                        var c = startCountdown('fleetcountdown' + fleet.id, fleet.remainingTime(), null, '<a href="/s03/fleets/?id=' + fleet.id + '">Cycle terminé</a>')
+                                        var c = startCountdown('fleetcountdown' + fleet.id, fleet.remainingTime(), null, '<a href="/s03/empire-fleets/?id=' + fleet.id + '">Cycle terminé</a>')
                                         s += '<span class="text-success">En recyclage</span>' + '<span class="ms-3 text-yellow">' + c + '</span>'
                                     break;
                                     case '4':
-                                        var c = startCountdown('fleetcountdown' + fleet.id, fleet.remainingTime(), null, '<a href="/s03/fleets/?id=' + fleet.id + '">Terminé</a>')
+                                        var c = startCountdown('fleetcountdown' + fleet.id, fleet.remainingTime(), null, '<a href="/s03/empire-fleets/?id=' + fleet.id + '">Terminé</a>')
                                         s += '<span class="text-normal">En attente</span>' + '<span class="ms-3 text-yellow">' + c + '</span>'
                                     break;
                                     case 'x':
@@ -419,7 +419,7 @@
     
         if (dragObject != null && dropCategory != null) {
         
-            var url = "/s03/fleets/?a=setcat&id=" + dragObject.id + "&old=" + dragObject.category + "&new=" + dropCategory;
+            var url = "/s03/empire-fleets/?a=setcat&id=" + dragObject.id + "&old=" + dragObject.category + "&new=" + dropCategory;
             openURL(url, evalResponse);
         }
         
@@ -518,7 +518,7 @@
     function createCategory() {
     
         var name = $('categoryname').value;
-        var url = "/s03/fleets/?a=newcat&name=" + encodeURIComponent(name);
+        var url = "/s03/empire-fleets/?a=newcat&name=" + encodeURIComponent(name);
 
         for (var x in categories)
             if (categories[x] && categories[x].id != null && (categories[x].name.toLowerCase() == name.toLowerCase())) {
@@ -534,7 +534,7 @@
     function renameCategory(id) {
     
         var name = $('editcat' + id).value;
-        var url = '/s03/fleets/?a=rencat&id=' + id + '&name=' + encodeURIComponent(name);
+        var url = '/s03/empire-fleets/?a=rencat&id=' + id + '&name=' + encodeURIComponent(name);
 
         for (var x in categories)
             if (categories[x] && x != id && categories[x].id != null && (categories[x].name.toLowerCase() == name.toLowerCase())) {

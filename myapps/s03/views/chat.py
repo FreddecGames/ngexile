@@ -123,23 +123,6 @@ class View(GlobalView):
             return HttpResponse("")
             
         #---
-            
-        elif action == "chatlist":
-            
-            tpl = getTemplate(request, "s03/chat-handler")
-            
-            query = "SELECT name, topic, count(chat_onlineusers.userid) AS online" + \
-                    " FROM chat" + \
-                    "    LEFT JOIN chat_onlineusers ON (chat_onlineusers.chatid = chat.id AND chat_onlineusers.lastactivity > now()-INTERVAL '10 minutes')" + \
-                    " WHERE name IS NOT NULL AND password = \'\' AND public" + \
-                    " GROUP BY name, topic" + \
-                    " ORDER BY length(name), name"
-            chats = dbRows(query)
-            tpl.setValue("chats", chats)
-        
-            return render(request, tpl.template, tpl.data)
-            
-        #---
         
         self.selectedMenu = "chat"
 
@@ -173,5 +156,19 @@ class View(GlobalView):
             dbQuery('INSERT INTO chat_onlineusers(chatid, userid) VALUES(' + str(join['id']) + ',' + str(self.userId) + ')')
             
             request.session["lastchatmsg_" + str(join['id'])] = ""
+
+        #---
+        
+        query = "SELECT name, topic, count(chat_onlineusers.userid) AS online" + \
+                " FROM chat" + \
+                "    LEFT JOIN chat_onlineusers ON (chat_onlineusers.chatid = chat.id AND chat_onlineusers.lastactivity > now()-INTERVAL '10 minutes')" + \
+                " WHERE name IS NOT NULL AND password = \'\' AND public" + \
+                " GROUP BY name, topic" + \
+                " ORDER BY length(name), name"
+        chats = dbRows(query)
+        
+        content.setValue("chats", chats)
+
+        #---
 
         return self.display(content, request)

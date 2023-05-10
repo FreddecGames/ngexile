@@ -690,7 +690,7 @@
                 {% endif %}
                     </script>
                     {% if can_load_cargo %}
-                        <form method="post" action="/s03/fleet/?id={{ fleet.id }}">
+                        <form method="post" action="/s03/fleet-view/?id={{ fleet.id }}">
                             {% csrf_token %}
                             <input type="hidden" name="action" value="transfer">
                             <div class="card">
@@ -941,7 +941,7 @@
                             </div>
                         </form>
                     {% elif can_unload_cargo %}
-                        <form method="post" action="/s03/fleet/?id={{ fleet.id }}">
+                        <form method="post" action="/s03/fleet-view/?id={{ fleet.id }}">
                             <input type="hidden" name="action" value="transfer">
                             {% csrf_token %}
                             <div class="card">
