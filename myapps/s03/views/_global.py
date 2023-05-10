@@ -100,6 +100,14 @@ class GlobalView(BaseView):
         
         #---
         
+        if self.allianceRights:
+        
+            if self.hasRight("can_manage_description") or self.oAllianceRights["can_manage_announce"]: tpl.Parse("show_management")
+            if self.hasRight("can_see_reports"): tpl.Parse("show_reports")
+            if self.hasRight("can_see_members_info"): tpl.Parse("show_members")
+            
+        #---
+        
         if self.showHeader == True:
             
             query = "SELECT ore, ore_production, ore_capacity, mod_production_ore," + \
