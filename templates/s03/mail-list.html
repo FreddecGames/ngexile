@@ -86,8 +86,8 @@
                                             </div>
                                             <div class="col">
                                                 <div class="mb-1">
-                                                    {% if mail.tag %}<a href="/s03/alliance/?tag={{ mail.tag }}" class="me-2" data-bs-toggle="tooltip" data-bs-title="Voir alliance">[{{ mail.tag }}]</a>{% endif %}
-                                                    {% if mail.sender %}<a href="/s03/nation/?name={{ mail.sender }}" class="me-2" data-bs-toggle="tooltip" data-bs-title="Voir profil">{{ mail.sender }}</a>{% endif %}
+                                                    {% if mail.tag %}<a href="/s03/alliance-view/?tag={{ mail.tag }}" class="me-2" data-bs-toggle="tooltip" data-bs-title="Voir alliance">[{{ mail.tag }}]</a>{% endif %}
+                                                    {% if mail.sender %}<a href="/s03/profile-view/?name={{ mail.sender }}" class="me-2" data-bs-toggle="tooltip" data-bs-title="Voir profil">{{ mail.sender }}</a>{% endif %}
                                                     <span class="text-normal me-2">{{ mail.datetime|timezone:"Europe/Paris" }}</span>
                                                     {% if mail.owner == ':alliance' %}<span class="ms-2">À l'alliance</span>{% endif %}
                                                     {% if mail.added %}<a href="#" class="me-2" onclick="return unignore('{{ mail.sender }}')"><span class="text-danger">Bloqué</span></a>

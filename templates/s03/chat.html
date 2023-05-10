@@ -307,7 +307,7 @@ Chat.prototype = {
 
 		if(!this.showTag) tag = '';
 
-		this.lines.push((datetime==null?'<b>':'')+formatTime(datetime) + (tag!=''?'<a href="/s03/alliance/?tag='+tag+'" target="_blank">['+tag+']</a> ':'') + '<a href="#" onclick="chatlist['+this.id+'].tell(\''+author+'\'); return false;" class="author me-2">' + author + '</a>' + line + (datetime==null?'</b>':''));
+		this.lines.push((datetime==null?'<b>':'')+formatTime(datetime) + (tag!=''?'<a href="/s03/alliance-view/?tag='+tag+'" target="_blank">['+tag+']</a> ':'') + '<a href="#" onclick="chatlist['+this.id+'].tell(\''+author+'\'); return false;" class="author me-2">' + author + '</a>' + line + (datetime==null?'</b>':''));
 
 		// limit chatbox to 250 messages
 		while(this.lines.length > 250) this.lines.shift();
@@ -355,7 +355,7 @@ Chat.prototype = {
 		for(var i=0; i<this.users.length; i++) {
 			var user = this.users[i];
 			if(user.idleSince > d)
-				s += (s!=''?', ':'') + (user.tag!='None'?' <a href="/s03/alliance/?tag='+user.tag+'" target="_blank">['+user.tag+']</a>':'') + ' <a href="#" onclick="chatlist[' + this.id + '].tell(\'' + user.name + '\'); return false;">' + user.name + '</a>';
+				s += (s!=''?', ':'') + (user.tag!='None'?' <a href="/s03/alliance-view/?tag='+user.tag+'" target="_blank">['+user.tag+']</a>':'') + ' <a href="#" onclick="chatlist[' + this.id + '].tell(\'' + user.name + '\'); return false;">' + user.name + '</a>';
 		}
 
 		$('onlineusers').innerHTML = s;

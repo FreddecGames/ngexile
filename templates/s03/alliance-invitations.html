@@ -5,7 +5,7 @@
     <ul class="nav nav-tabs mt-0 mb-3">
         {% if can_leave %}
         <li class="nav-item">
-            <a href="/s03/alliance/" class="nav-link">Aperçu</a>
+            <a href="/s03/alliance-view/" class="nav-link">Aperçu</a>
         </li>
         {% if show_management %}
             <li class="nav-item">
@@ -67,7 +67,7 @@
         {% for invitation in invitations %}
             <div class="list-group-item">
                 <div class="row gx-3 align-items-center">
-                    <div class="col"><a href="/s03/alliance/?tag={{ invitation.tag }}" data-bs-toggle="tooltip" data-bs-title="Voir alliance">[{{ invitation.tag }}] {{ invitation.name }}</a></div>
+                    <div class="col"><a href="/s03/alliance-view/?tag={{ invitation.tag }}" data-bs-toggle="tooltip" data-bs-title="Voir alliance">[{{ invitation.tag }}] {{ invitation.name }}</a></div>
                     <div class="col-auto">{{ invitation.username }}</div>
                     <div class="col-auto">{{ invitation.created }}</div>
                     <div class="col-2 text-end">

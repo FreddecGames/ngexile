@@ -25,7 +25,7 @@ class View(GlobalView):
         
         if action == 'accept' and self.profile['can_join_alliance'] and not self.allianceId:
         
-            alliance_tag = request.GET.get('tag', '').strip()
+            alliance_tag = request.POST.get('tag', '').strip()
             result = dbExecute('SELECT sp_alliance_accept_invitation(' + str(self.userId) + ',' + dosql(alliance_tag) + ')')
             if result == 0: return HttpResponseRedirect('/s03/alliance/')
 
@@ -38,12 +38,12 @@ class View(GlobalView):
             
         elif action == 'decline':
         
-            alliance_tag = request.GET.get('tag', '').strip()
+            alliance_tag = request.POST.get('tag', '').strip()
             dbQuery('SELECT sp_alliance_decline_invitation(' + str(self.userId) + ',' + dosql(alliance_tag) + ')')
             
         #---
         
-        elif action == 'leave' and self.allianceId and self.profile['can_join_alliance'] and int(request.POST.get('leave', 0)) == 1:
+        elif action == 'leave' and self.allianceId and self.profile['can_join_alliance']:
         
             dbQuery('SELECT sp_alliance_leave(' + str(self.userId) + ', 0)')
             return HttpResponseRedirect('/s03/alliance-view/')

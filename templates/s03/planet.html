@@ -290,7 +290,7 @@
                                             {% if fleet.relation == 2 %}<a href="/s03/fleet-view/?id={{ fleet.id }}" class="text-info" data-bs-toggle="tooltip" data-bs-title="Voir flotte">{{ fleet.name }}</a>
                                             {% elif fleet.relation == 1 %}<a href="/s03/mails/?to={{ fleet.ownername }}" class="text-success" data-bs-toggle="tooltip" data-bs-title="Contacter propriétaire">{{ fleet.ownername }}</a>
                                             {% elif fleet.relation == 0 %}<a href="/s03/mails/?to={{ fleet.ownername }}" class="text-friend" data-bs-toggle="tooltip" data-bs-title="Contacter propriétaire">{{ fleet.ownername }}</a>
-                                            {% else %}<a href="/s03/nation/?name={{ fleet.ownername }}" class="text-danger" data-bs-toggle="tooltip" data-bs-title="Voir profil">{{ fleet.ownername }}</a>
+                                            {% else %}<a href="/s03/profile-view/?name={{ fleet.ownername }}" class="text-danger" data-bs-toggle="tooltip" data-bs-title="Voir profil">{{ fleet.ownername }}</a>
                                             {% endif %}
                                         </div>
                                         <div class="ps-0 col">

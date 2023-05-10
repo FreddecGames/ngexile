@@ -6,7 +6,7 @@
 <div class="page-content">
     <ul class="nav nav-tabs mt-0 mb-3">
         <li class="nav-item active">
-            <a href="/s03/alliance/" class="nav-link">Aperçu</a>
+            <a href="/s03/alliance-view/" class="nav-link">Aperçu</a>
         </li>
         {% if show_management %}
             <li class="nav-item">
@@ -98,7 +98,7 @@
                             </div>
                             <div class="row g-1 justify-content-center">
                                 {% for nap in naps %}
-                                    <div class="col-12 text-center"><a href="/s03/alliance/?tag={{ nap.tag }}" data-bs-toggle="tooltip" data-bs-title="Voir alliance">[{{ nap.tag }}] {{ nap.name }}</a></div>
+                                    <div class="col-12 text-center"><a href="/s03/alliance-view/?tag={{ nap.tag }}" data-bs-toggle="tooltip" data-bs-title="Voir alliance">[{{ nap.tag }}] {{ nap.name }}</a></div>
                                 {% empty %}
                                     <div class="col-12 text-center"><span class="text-normal">Aucun</span></div>
                                 {% endfor %}
@@ -110,7 +110,7 @@
                             </div>
                             <div class="row g-1 justify-content-center">
                                 {% for war in wars %}
-                                    <div class="col-12 text-centero"><a href="/s03/alliance/?tag={{ war.tag }}" data-bs-toggle="tooltip" data-bs-title="Voir alliance">[{{ war.tag }}] {{ war.name }}</a></div>
+                                    <div class="col-12 text-centero"><a href="/s03/alliance-view/?tag={{ war.tag }}" data-bs-toggle="tooltip" data-bs-title="Voir alliance">[{{ war.tag }}] {{ war.name }}</a></div>
                                 {% empty %}
                                     <div class="col-12 text-center"><span class="text-normal">Aucune</span></div>
                                 {% endfor %}

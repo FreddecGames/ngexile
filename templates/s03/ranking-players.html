@@ -52,7 +52,7 @@
                     {% if player.visible %}
                         {% if player.score >= TenthUserScore %}
                             <div class="col-auto">
-                                <a href="/s03/nation/?name={{ player.username }}" data-bs-toggle="tooltip" data-bs-title="Voir profil">
+                                <a href="/s03/profile-view/?name={{ player.username }}" data-bs-toggle="tooltip" data-bs-title="Voir profil">
                                     {% if player.avatar_url %}<img src="{{ player.avatar_url }}" width="48" height="48" class="rounded">
                                     {% else %}<img src="{{ PATH_IMAGES }}img/interface/noavatar.gif" width="48" height="48" class="rounded">
                                     {% endif %}
@@ -60,11 +60,11 @@
                             </div>
                         {% endif %}
                         <div class="col">
-                            <a href="/s03/nation/?name={{ player.username }}" data-bs-toggle="tooltip" data-bs-title="Voir profil">{{ player.username }}</a>
+                            <a href="/s03/profile-view/?name={{ player.username }}" data-bs-toggle="tooltip" data-bs-title="Voir profil">{{ player.username }}</a>
                         </div>
                         <div class="col-4">
                             {% if player.alliancetag %}
-                                <a href="/s03/alliance/?tag={{ player.alliancetag }}" data-bs-toggle="tooltip" data-bs-title="Voir alliance">[{{ player.alliancetag }}] {{ player.alliancename }}</a>
+                                <a href="/s03/alliance-view/?tag={{ player.alliancetag }}" data-bs-toggle="tooltip" data-bs-title="Voir alliance">[{{ player.alliancetag }}] {{ player.alliancename }}</a>
                             {% endif %}
                         </div>
                         <div class="col-2">

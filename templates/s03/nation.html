@@ -4,7 +4,7 @@
 {% load bbcode_tags %}
 {% block content %}
 <div class="page-content">
-<form method="get" action="/s03/nation/">
+<form method="get" action="/s03/profile-view/">
     {% csrf_token %}
     <div class="card mb-3">
         <div class="card-body">
@@ -29,7 +29,7 @@
                 </div>
                 <div class="col-auto">
                     <div class="mb-1">
-                        {% if nation.alliance_id %}<a href="/s03/alliance/?tag={{ nation.tag }}" class="{% if nation.relation == 2 %}text-info{% elif nation.relation == 1 %}text-success{% elif nation.relation == 0 %}text-friend{% else %}text-danger{% endif %}" data-bs-toggle="tooltip" data-bs-title="Voir alliance">[{{ nation.tag }}]</a>{% endif %}
+                        {% if nation.alliance_id %}<a href="/s03/alliance-view/?tag={{ nation.tag }}" class="{% if nation.relation == 2 %}text-info{% elif nation.relation == 1 %}text-success{% elif nation.relation == 0 %}text-friend{% else %}text-danger{% endif %}" data-bs-toggle="tooltip" data-bs-title="Voir alliance">[{{ nation.tag }}]</a>{% endif %}
                         <span class="{% if nation.relation == 2 %}text-info{% elif nation.relation == 1 %}text-success{% elif nation.relation == 0 %}text-friend{% else %}text-danger{% endif %}">{{ nation.username }}</span>
                     </div>
                     <div class="mb-1">
@@ -118,8 +118,8 @@
                             </div>
                             <div class="col-5">
                                 {% if fleet.engaged %}En combat
-                                {% elif fleet.action == 2 %}Recyclage - (<script>putcountdown1({{fleet.remaining_time}}, 'Cycle terminé', '/s03/nation/?')</script>)
-                                {% elif fleet.action == 1 %}En transit vers <script>putplanet("{{fleet.destplanetid}}","{{fleet.destplanet_name}}","{{fleet.destplanet_galaxy}}","{{fleet.destplanet_sector}}","{{fleet.destplanet_planet}}",{{fleet.destplanet_relation}});</script> - (<script>putcountdown1({{fleet.remaining_time}}, 'Arrivé', '/s03/nation/')</script>)
+                                {% elif fleet.action == 2 %}Recyclage - (<script>putcountdown1({{fleet.remaining_time}}, 'Cycle terminé', '/s03/profile-view/?')</script>)
+                                {% elif fleet.action == 1 %}En transit vers <script>putplanet("{{fleet.destplanetid}}","{{fleet.destplanet_name}}","{{fleet.destplanet_galaxy}}","{{fleet.destplanet_sector}}","{{fleet.destplanet_planet}}",{{fleet.destplanet_relation}});</script> - (<script>putcountdown1({{fleet.remaining_time}}, 'Arrivé', '/s03/profile-view/')</script>)
                                 {% elif fleet.action == 0 %}En patrouille
                                 {% endif %}
                             </div>

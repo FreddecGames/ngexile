@@ -22,7 +22,13 @@ class View(GlobalView):
 
     def post(self, request, *args, **kwargs):
         
-        if self.allianceRights['leader'] and request.POST.get('submit', '') != '':
+        #---
+        
+        action = request.POST.get('action')
+        
+        #---
+        
+        if action == 'save' and self.allianceRights['leader'] and request.POST.get('submit', '') != '':
         
             query = 'SELECT id' + \
                     ' FROM users' + \
@@ -41,17 +47,19 @@ class View(GlobalView):
             if int(request.POST.get('member' + str(self.userId), 100)) > 0:
                 return HttpResponseRedirect('/s03/alliance/')
                 
+        #---
+        
+        elif action == 'kick' and self.allianceRights['can_kick_player']:
+        
+            self.username = request.GET.get('name').strip()
+            dbQuery('SELECT sp_alliance_kick_member(' + str(self.userId) + ',' + dosql(self.username) + ')')
+            
+        #---
+        
         return HttpResponseRedirect('/s03/alliance-members/')
         
     def get(self, request, *args, **kwargs):
 
-        action = request.GET.get('a', '').strip()
-
-        if action == 'kick' and self.allianceRights['can_kick_player']:
-        
-            self.username = request.GET.get('name').strip()
-            dbQuery('SELECT sp_alliance_kick_member(' + str(self.userId) + ',' + dosql(self.username) + ')')
-        
         #---
         
         content = getTemplate(request, 's03/alliance-members')

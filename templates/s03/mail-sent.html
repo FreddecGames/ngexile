@@ -59,8 +59,8 @@
                             </div>
                             <div class="col">
                                 <div class="mb-1">
-                                    {% if mail.tag %}<a href="/s03/alliance/?tag={{ mail.tag }}" class="me-2" data-bs-toggle="tooltip" data-bs-title="Voir alliance">[{{ mail.tag }}]</a>{% endif %}
-                                    {% if mail.owner and mail.owner != ':alliance' %}<a href="/s03/nation/?name={{ mail.owner }}" class="me-2" data-bs-toggle="tooltip" data-bs-title="Voir profil">{{ mail.owner }}</a>{% endif %}
+                                    {% if mail.tag %}<a href="/s03/alliance-view/?tag={{ mail.tag }}" class="me-2" data-bs-toggle="tooltip" data-bs-title="Voir alliance">[{{ mail.tag }}]</a>{% endif %}
+                                    {% if mail.owner and mail.owner != ':alliance' %}<a href="/s03/profile-view/?name={{ mail.owner }}" class="me-2" data-bs-toggle="tooltip" data-bs-title="Voir profil">{{ mail.owner }}</a>{% endif %}
                                     <span class="text-normal me-2">{{ mail.datetime|timezone:"Europe/Paris" }}</span>
                                     {% if mail.owner == ':alliance' %}<span class="ms-2">À l'alliance</span>{% endif %}
                                 </div>

@@ -4,7 +4,7 @@
 <div class="page-content">
     <ul class="nav nav-tabs mt-0 mb-3">
         <li class="nav-item">
-            <a href="/s03/alliance/" class="nav-link">Aperçu</a>
+            <a href="/s03/alliance-view/" class="nav-link">Aperçu</a>
         </li>
         {% if show_management %}
             <li class="nav-item">
@@ -63,7 +63,7 @@
                             <span class="text-normal">.</span>
                         </div>
                         <div class="col">
-                            <a href="/s03/alliance/?tag={{ item.tag }}" data-bs-toggle="tooltip" data-bs-title="Voir alliance">[{{ item.tag }}] {{ item.name }}</a>
+                            <a href="/s03/alliance-view/?tag={{ item.tag }}" data-bs-toggle="tooltip" data-bs-title="Voir alliance">[{{ item.tag }}] {{ item.name }}</a>
                         </div>
                         <div class="col-auto">
                             <span class="text-normal">{{ item.created }}</span>
@@ -107,7 +107,7 @@
                             <span class="text-normal">.</span>
                         </div>
                         <div class="col">
-                            <a href="/s03/alliance/?tag={{ item.tag }}" data-bs-toggle="tooltip" data-bs-title="Voir alliance">[{{ item.tag }}] {{ item.name }}</a>
+                            <a href="/s03/alliance-view/?tag={{ item.tag }}" data-bs-toggle="tooltip" data-bs-title="Voir alliance">[{{ item.tag }}] {{ item.name }}</a>
                         </div>
                         <div class="col-auto">
                             <span class="text-normal">{{ item.created }}</span>

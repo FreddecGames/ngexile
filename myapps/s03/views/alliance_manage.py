@@ -23,6 +23,7 @@ class View(GlobalView):
     def post(self, request, *args, **kwargs):
         
         #---
+        
         if self.allianceRights['can_manage_description']:
             
             logo = request.POST.get('logo', '').strip()

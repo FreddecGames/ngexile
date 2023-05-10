@@ -138,7 +138,7 @@
                             <div class="row gx-3 align-items-center justify-content-center">
                                 {% for s in sov %}
                                     <div class="col-auto">
-                                        <a href="/s03/alliance/?tag={{ s.tag }}"
+                                        <a href="/s03/alliance-view/?tag={{ s.tag }}"
                                            data-bs-toggle="tooltip"
                                            data-bs-title="Voir l'alliance">[{{ s.tag }}]</a>
                                         <span class="ms-1">{{ s.percent }}%</span>
@@ -394,7 +394,7 @@
                 
             s = ""
             
-            if (tag != '') s += '<a href="/s03/alliance/?tag=' + tag + '" title="Voir l\'alliance" class="me-1 ' + c + '">[' + tag + ']</a>';
+            if (tag != '') s += '<a href="/s03/alliance-view/?tag=' + tag + '" title="Voir l\'alliance" class="me-1 ' + c + '">[' + tag + ']</a>';
 
             if (rel == 2) s += '<a href="/s03/fleet-view/?id=' + id + '" class="text-info">' + name + '</a>';
             else if (rel == 1) s += '<a href="/s03/fleet-view/?id=' + id + '" class="' + c + '">' + owner + '</a>';
@@ -694,7 +694,7 @@
                     s += '<tr>'
 
                         s += '<td colspan="3" align="center">'
-                            if (alliancetag != '') s += '<a href="/s03/alliance/?tag=' + alliancetag + '" class="me-1 ' + c + '" data-bs-toggle="tooltip" data-bs-custom-class="tooltip-light" data-bs-title="Voir alliance">[' + alliancetag + ']</a>'
+                            if (alliancetag != '') s += '<a href="/s03/alliance-view/?tag=' + alliancetag + '" class="me-1 ' + c + '" data-bs-toggle="tooltip" data-bs-custom-class="tooltip-light" data-bs-title="Voir alliance">[' + alliancetag + ']</a>'
                             if (rel == 2) {
                                 if (floor > 0 && space > 0) s += '<a href="/s03/planet-view/?planet=' + id + '" class="' + c + '" data-bs-toggle="tooltip" data-bs-custom-class="tooltip-light" data-bs-title="Voir planète">' + name + '</a>'
                                 else s += '<span class="' + c + '">' + name + '</span>'
@@ -703,7 +703,7 @@
                             else if (rel==-3) s += '<small class="text-muted">Inhabitée</small>'
                             else {
                                 if (owner == '') s += '<span class="' + c + '" title="Planète occupée">Occupée</span>';
-                                else s += '<a href="/s03/nation/?name=' + owner + '" class="' + c + '" data-bs-toggle="tooltip" data-bs-custom-class="tooltip-light" data-bs-title="Voir profil">' + owner + '</a>'
+                                else s += '<a href="/s03/profile-view/?name=' + owner + '" class="' + c + '" data-bs-toggle="tooltip" data-bs-custom-class="tooltip-light" data-bs-title="Voir profil">' + owner + '</a>'
                             }                            
                         s += '</td>'
                 
@@ -815,7 +815,7 @@
                     html += '<div class="row gx-3">'
                         html += '<div class="col">'
                             if (tag != '') {
-                                html += '<a href="/s03/alliance/?tag=' + tag + '" class="me-1 ' + classname + '" data-bs-toggle="tooltip" data-bs-title="Voir alliance">[' + tag + ']</a>'
+                                html += '<a href="/s03/alliance-view/?tag=' + tag + '" class="me-1 ' + classname + '" data-bs-toggle="tooltip" data-bs-title="Voir alliance">[' + tag + ']</a>'
                             }
                             if (rel == 2) {
                                 html += '<a href="/s03/fleet-view/?id=' + fleetid + '" class="text-info" data-bs-toggle="tooltip" data-bs-title="Voir flotte">' + fleet + '</a>'

@@ -51,7 +51,7 @@
                         </div>
                         <div class="col-12">
                             <span class="text-normal me-2">Grade</span>
-                            {% if alliance %}{{ alliance_rank_label }}<a href="/s03/alliance/?tag={{ alliance.tag }}" class="ms-2" data-bs-toggle="tooltip" data-bs-title="Voir alliance">[{{ alliance.tag }}] {{ alliance.name }}</a>
+                            {% if alliance %}{{ alliance_rank_label }}<a href="/s03/alliance-view/?tag={{ alliance.tag }}" class="ms-2" data-bs-toggle="tooltip" data-bs-title="Voir alliance">[{{ alliance.tag }}] {{ alliance.name }}</a>
                             {% else %}<span class="text-normal">Indépendant</span>
                             {% endif %}
                         </div>
@@ -148,7 +148,7 @@
                         {% elif fleet.owner_relation == 0 %}
                             <a href="/s03/mails/?to={{ fleet.name }}" class="text-friend" data-bs-toggle="tooltip" data-bs-title="Contacter propriétaire">{{ fleet.owner_name }}</a>
                         {% else %}
-                            <a href="/s03/nation/?name={{ fleet.owner_name }}" class="text-danger" data-bs-toggle="tooltip" data-bs-title="Voir profil">{{ fleet.owner_name }}</a>
+                            <a href="/s03/profile-view/?name={{ fleet.owner_name }}" class="text-danger" data-bs-toggle="tooltip" data-bs-title="Voir profil">{{ fleet.owner_name }}</a>
                         {% endif %}
                         <span class="ms-2"><script>sig({{ fleet.signature }})</script></span>
                     </div>
