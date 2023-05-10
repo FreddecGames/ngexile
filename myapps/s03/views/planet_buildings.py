@@ -24,21 +24,21 @@ class View(GlobalView):
         if action == 'build':
             buildingId = ToInt(request.GET.get('b'), '')
             dbQuery('SELECT sp_start_building(' + str(self.userId) + ',' + str(self.currentPlanetId) + ', ' + str(buildingId) + ', false)')
-            return HttpResponseRedirect('/s03/planet_buildings/')
+            return HttpResponseRedirect('/s03/planet-buildings/')
         
         #---
         
         elif action== 'cancel':
             buildingId = ToInt(request.GET.get('b'), '')
             dbQuery('SELECT sp_cancel_building(' + str(self.userId) + ',' + str(self.currentPlanetId) + ', ' + str(buildingId) + ')')
-            return HttpResponseRedirect('/s03/planet_buildings/')
+            return HttpResponseRedirect('/s03/planet-buildings/')
         
         #---
         
         elif action== 'destroy':
             buildingId = ToInt(request.GET.get('b'), '')
             dbQuery('SELECT sp_destroy_building(' + str(self.userId) + ',' + str(self.currentPlanetId) + ',' + str(buildingId) + ')')
-            return HttpResponseRedirect('/s03/planet_buildings/')
+            return HttpResponseRedirect('/s03/planet-buildings/')
         
         #---
         

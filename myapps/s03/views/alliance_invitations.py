@@ -17,15 +17,12 @@ class View(GlobalView):
 
     def post(self, request, *args, **kwargs):
         
-        if self.allianceId and self.profile['can_join_alliance'] and int(request.POST.get('leave', 0)) == 1:
-            dbQuery('SELECT sp_alliance_leave(' + str(self.userId) + ', 0)')
-            return HttpResponseRedirect('/s03/alliance/')
+        #---
         
-        return HttpResponseRedirect('/s03/alliance-invitations/')
-
-    def get(self, request, *args, **kwargs):
-    
-        action = request.GET.get('a', '').strip()
+        action = request.POST.get('action')
+        
+        #---
+        
         if action == 'accept' and self.profile['can_join_alliance'] and not self.allianceId:
         
             alliance_tag = request.GET.get('tag', '').strip()
@@ -36,14 +33,27 @@ class View(GlobalView):
             elif result == 6: messages.error(request, 'cant_rejoin_previous_alliance')
             
             return HttpResponseRedirect('/s03/alliance-invitations/')
-        
+            
         #---
             
         elif action == 'decline':
         
             alliance_tag = request.GET.get('tag', '').strip()
             dbQuery('SELECT sp_alliance_decline_invitation(' + str(self.userId) + ',' + dosql(alliance_tag) + ')')
+            
+        #---
         
+        elif action == 'leave' and self.allianceId and self.profile['can_join_alliance'] and int(request.POST.get('leave', 0)) == 1:
+        
+            dbQuery('SELECT sp_alliance_leave(' + str(self.userId) + ', 0)')
+            return HttpResponseRedirect('/s03/alliance-view/')
+        
+        #---
+        
+        return HttpResponseRedirect('/s03/alliance-invitations/')
+
+    def get(self, request, *args, **kwargs):
+    
         #---
 
         content = getTemplate(request, 's03/alliance-invitations')

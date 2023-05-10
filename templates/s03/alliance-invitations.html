@@ -73,11 +73,22 @@
                     <div class="col-2 text-end">
                         {% if cant_accept %}<span class="text-danger">Déjà dans une alliance</span>
                         {% elif cant_join %}<span class="text-danger">Impossible de rejoindre</span>
-                        {% else %}<a href="?a=accept&tag={{ invitation.tag }}" class="btn btn-primary">Accepter</a>
+                        {% else %}
+                            <form method="post" action="">
+                                {% csrf_token %}
+                                <input type="hidden" name="action" value="accept" />
+                                <input type="hidden" name="tag" value="{{ invitation.tag }}" />
+                                <button type="submit" class="btn btn-primary">Accepter</button>
+                            </form>
                         {% endif %}
                     </div>
                     <div class="col-auto">
-                        <a href="?a=decline&tag={{ invitation.tag }}" class="btn btn-danger">Refuser</a>
+                        <form method="post" action="">
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="decline" />
+                            <input type="hidden" name="tag" value="{{ invitation.tag }}" />
+                            <button type="submit" class="btn btn-danger">Refuser</button>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -94,8 +105,9 @@
     </div>
 </div>
 {% if can_leave %}
-    <form method="post" action="?">
+    <form method="post" action="">
         {% csrf_token %}
+        <input type="hidden" name="action" value="leave" />
         <div class="mt-3 card">
             <div class="card-header">
                 <span class="fs-6">Quitter l'alliance</span>
@@ -112,7 +124,7 @@
                         <span class="text-danger">Attention, vous ne pourrez pas créer ou rejoindre d'alliance pendant 24 heures.</span>
                     </div>
                     <div class="col-12 text-center">
-                        <input type="submit" class="btn btn-primary" name="submit" value="Valider">
+                        <input type="submit" class="btn btn-primary" value="Valider">
                     </div>
                 </div>
             </div>
