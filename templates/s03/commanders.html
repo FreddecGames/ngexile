@@ -34,7 +34,7 @@
                         <div class="col-4">
                             <div class="row gy-1 gx-3">
                                 <div id="renamebox{{ commander.cmd_id }}" class="hidden">
-                                    <form action='?' method='get' class="row gx-2">
+                                    <form action='?' method='post' class="row gx-2">
                                         <input type='hidden' name='a' value='rename'>
                                         <input type='hidden' name='id' value='{{ commander.cmd_id }}'>
                                         <div class="col"><input type='text' class="form-control" name='name' size="28" maxlength="32" value='{{ commander.cmd_name }}'></div>
@@ -49,7 +49,12 @@
                                 </div>
                                 {% if commander.can_be_fired %}
                                 <div class="col-auto">
-                                    <a href="?a=fire&id={{ commander.cmd_id }}" onclick="return confirmFireCommander('{{ commander.cmd_name }}')">Renvoyer</a>
+                                    <form method="post" action="" onsubmit="return confirmFireCommander('{{ commander.cmd_name }}')">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="a" value="fire" />
+                                        <input type="hidden" name="id" value="{{ commander.cmd_id }}" />
+                                        <button type="submit" class="btn btn-link p-0">Renvoyer</button>
+                                    </form>
                                 </div>
                                 {% endif %}
                                 <div class="col-12"></div>
@@ -90,16 +95,21 @@
                                 {% if commander.mod_fleet_signature %}<div class="col-12"><span class="text-success">{{ commander.mod_fleet_signature }}% Flotte - Réduction signature</span></div>{% endif %}
                                 {% if commander.points %}
                                     <div class="col-12">
-                                        <a href="?a=skills&id={{ commander.cmd_id }}">Répartir les {{ commander.points }} points de compétences restants</a>
+                                        <a href="/s03/commander-edit/?id={{ commander.cmd_id }}">Répartir les {{ commander.points }} points de compétences restants</a>
                                     </div>
                                 {% endif %}
                                 {% if commander.can_train %}
                                     <div class="col-12">
-                                        <a href="?a=train&id={{ commander.cmd_id }}" onclick="return confirmTrain('{{ commander.train_cost|intcomma }}')">
-                                            Entrainement intensif pour
-                                            <img src="{{ PATH_IMAGES }}img/interface/prestige.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Prestige">
-                                            {{ commander.train_cost|intcomma }}
-                                        </a>
+                                        <form method="post" action="" onsubmit="return confirmTrain('{{ commander.train_cost|intcomma }}')">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="a" value="train" />
+                                            <input type="hidden" name="id" value="{{ commander.cmd_id }}" />
+                                            <button type="submit" class="btn btn-link p-0">
+                                                Entrainement intensif pour
+                                                <img src="{{ PATH_IMAGES }}img/interface/prestige.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Prestige">
+                                                {{ commander.train_cost|intcomma }}
+                                            </button>
+                                        </form>
                                     </div>
                                 {% else %}
                                     <div class="col-12">
@@ -140,7 +150,12 @@
                                 </div>
                                 {% if can_engage %}
                                 <div class="col-auto">
-                                    <a href="?a=engage&id={{ commander.cmd_id }}" onclick="return confirmEngageCommander('{{ commander.cmd_name }}')">Engager</a>
+                                    <form method="post" action="" onsubmit="return confirmEngageCommander('{{ commander.cmd_name }}')">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="a" value="engage" />
+                                        <input type="hidden" name="id" value="{{ commander.cmd_id }}" />
+                                        <button type="submit" class="btn btn-link p-0">Engager</button>
+                                    </form>
                                 </div>
                                 {% endif %}
                                 <div class="col-12"></div>
@@ -255,12 +270,11 @@
         count++;
     }
 </script>
-<form action="?" method="post">
+<form action="" method="post">
     {% csrf_token %}
-    <input type="hidden" name="id" value="{{ commander.id }}" />
     <div class="card">
         <div class="card-header">
-            <a href="/s03/commanders/" class="me-2"><i class="fa-fw fas fa-long-arrow-alt-left"></i> Retour</a>
+            <a href="/s03/commander-list/" class="me-2"><i class="fa-fw fas fa-long-arrow-alt-left"></i> Retour</a>
             <span class="fs-6"><span class="text-normal"><i class="fa-fw fas fa-user-astronaut"></i></span> {{ commander.name }}</span>
         </div>
         <div class="card-body">

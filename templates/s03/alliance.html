@@ -77,7 +77,7 @@
                                 <div class="row gx-3">
                                     <div class="col-6 text-end"><span class="text-normal">{{ rank.label }}</span></div>
                                     {% for member in rank.members %}
-                                        <div class="col-auto"><a href="/s03/mails/?to={{ member.username }}" data-bs-toggle="tooltip" data-bs-title="Envoyer message">{{ member.username }}</a></div>
+                                        <div class="col-auto"><a href="/s03/mail-new/?to={{ member.username }}" data-bs-toggle="tooltip" data-bs-title="Envoyer message">{{ member.username }}</a></div>
                                     {% endfor %}
                                 </div>
                             </div>

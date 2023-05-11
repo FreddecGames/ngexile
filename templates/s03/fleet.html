@@ -1432,7 +1432,7 @@
                                         {% endif %}
                                     {% else %}
                                         <div class="col">
-                                            <a href="/s03/mails/?subject=À propos de la flotte {{ orbittingfleet.name }}&to={{ orbittingfleet.owner }}"
+                                            <a href="/s03/mail-new/?subject=À propos de la flotte {{ orbittingfleet.name }}&to={{ orbittingfleet.owner }}"
                                                data-bs-toggle="tooltip"
                                                data-bs-title="Contacter {{ orbittingfleet.owner }}"
                                                class="{% if orbittingfleet.relation == 1 %}text-success{% elif orbittingfleet.relation == 0 %}text-friend{% else %}text-danger{% endif %}">

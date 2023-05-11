@@ -98,7 +98,7 @@
     <div class="pt-3 pb-2">
         <div class="row gx-3 align-items-center justify-content-around">
             <div class="col-auto">
-                <a href="/s03/mails/" class="link-normal p-1 position-relative {% if selectedmenu == 'mails' %}text-warning{% endif %}" data-bs-toggle="tooltip" data-bs-title="Messagerie">
+                <a href="/s03/mail-inbox/" class="link-normal p-1 position-relative {% if selectedmenu == 'mails' %}text-warning{% endif %}" data-bs-toggle="tooltip" data-bs-title="Messagerie">
                     <i class="fs-5 fas fa-envelope" aria-hidden="true"></i>
                     <span id="mailscount" class="position-absolute top-0 start-100 translate-middle badge text-bg-success"></span>
                 </a>
@@ -120,7 +120,7 @@
         putMenu("/s03/empire-view/", "empire", "Empire", 1);
             putMenu("/s03/empire-view/", "overview", "Vue d'ensemble", 2);
             putMenu("/s03/empire-upkeep/", "upkeep", "Coût d'entretien", 2);
-            putMenu("/s03/commanders/", "commanders", "Commandants", 2);
+            putMenu("/s03/commander-list/", "commanders", "Commandants", 2);
             putMenu("/s03/empire-fleets/", "fleets", "Flottes", 2);
                 putMenu("/s03/empire-fleets/", "fleets_fleets", "Flottes", 3);
                 putMenu("/s03/empire-orbiting/", "fleets_orbiting", "Flottes en orbite", 3);

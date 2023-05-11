@@ -19,7 +19,8 @@ from .views import alliance_wars
 
 from .views import chat
 
-from .views import commanders
+from .views import commander_edit
+from .views import commander_list
 
 from .views import empire_fleets
 from .views import empire_orbiting
@@ -40,7 +41,10 @@ from .views import home_holidays
 from .views import home_start
 from .views import home_wait
 
-from .views import mails
+from .views import mail_blacklist
+from .views import mail_inbox
+from .views import mail_new
+from .views import mail_outbox
 
 from .views import maintenance
 
@@ -96,7 +100,8 @@ urlpatterns = [
     
     path('chat/', chat.View.as_view()),
     
-    path('commanders/', commanders.View.as_view()),
+    path('commander-edit/', commander_edit.View.as_view()),
+    path('commander-list/', commander_list.View.as_view()),
     
     path('empire-fleets/', empire_fleets.View.as_view()),
     path('empire-orbiting/', empire_orbiting.View.as_view()),
@@ -117,7 +122,10 @@ urlpatterns = [
     path('home-start/', home_start.View.as_view()),
     path('home-wait/', home_wait.View.as_view()),
     
-    path('mails/', mails.View.as_view()),
+    path('mail-blacklist/', mail_blacklist.View.as_view()),
+    path('mail-inbox/', mail_inbox.View.as_view()),
+    path('mail-new/', mail_new.View.as_view()),
+    path('mail-outbox/', mail_outbox.View.as_view()),
     
     path('maintenance/', maintenance.View.as_view()),
 

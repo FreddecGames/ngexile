@@ -28,7 +28,7 @@ class View(GlobalView):
             researchId = ToInt(request.GET.get("r"), 0)
             dbQuery("SELECT * FROM sp_start_research(" + str(self.userId) + ", " + str(researchId) + ", false)")
             
-            return HttpResponseRedirect('/s03/research/')
+            return HttpResponseRedirect('/s03/tech-list/')
             
         elif action == "cancel":
         
@@ -37,7 +37,7 @@ class View(GlobalView):
             researchId = ToInt(request.GET.get("r"), 0)
             dbQuery("SELECT * FROM sp_cancel_research(" + str(self.userId) + ", " + str(researchId) + ")")
             
-            return HttpResponseRedirect('/s03/research/')
+            return HttpResponseRedirect('/s03/tech-list/')
         
         elif action == "continue":
         
@@ -46,7 +46,7 @@ class View(GlobalView):
             researchId = ToInt(request.GET.get("r"), 0)
             dbQuery("UPDATE researches_pending SET looping=true WHERE userid=" + str(self.userId) + " AND researchid=" + str(researchId))
             
-            return HttpResponseRedirect('/s03/research/')
+            return HttpResponseRedirect('/s03/tech-list/')
         
         elif action == "stop":
         
@@ -55,7 +55,7 @@ class View(GlobalView):
             researchId = ToInt(request.GET.get("r"), 0)
             dbQuery("UPDATE researches_pending SET looping=false WHERE userid=" + str(self.userId) + " AND researchid=" + str(researchId))
             
-            return HttpResponseRedirect('/s03/research/')
+            return HttpResponseRedirect('/s03/tech-list/')
                 
         #---
         

@@ -18,7 +18,7 @@
                             <div class="col-12">
                                 <div class="row gx-2">
                                     <div class="col-auto">
-                                        <a href="/s03/mails/?subject=À propos de la flotte {{ fleet.name }}&to={{ fleet.username }}" class="{% if fleet.relation == 1 %}text-success{% elif fleet.relation == 0 %}text-friend{% elif fleet.relation < 0 %}text-danger{% endif %}" data-bs-toggle="tooltip" data-bs-title="Contacter {{ fleet.username }}">
+                                        <a href="/s03/mail-new/?subject=À propos de la flotte {{ fleet.name }}&to={{ fleet.username }}" class="{% if fleet.relation == 1 %}text-success{% elif fleet.relation == 0 %}text-friend{% elif fleet.relation < 0 %}text-danger{% endif %}" data-bs-toggle="tooltip" data-bs-title="Contacter {{ fleet.username }}">
                                             {% if fleet.tag %}[{{ fleet.tag }}]{% endif %}
                                             {{ fleet.name }}
                                         </a>
