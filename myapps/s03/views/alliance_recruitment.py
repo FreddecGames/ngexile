@@ -4,6 +4,8 @@ from myapps.s03.views._global import *
 
 class View(GlobalView):
 
+    ################################################################################
+
     def dispatch(self, request, *args, **kwargs):
 
         #---
@@ -13,16 +15,24 @@ class View(GlobalView):
         
         #---
 
-        if not self.allianceId or not (self.allianceRights['leader'] or self.allianceRights['can_see_members_info']):
-            return HttpResponseRedirect('/s03/alliance/')
+        if not self.allianceId or not self.hasRight('can_see_members_info'):
+            return HttpResponseRedirect('/s03/')
         
         #---
 
         return super().dispatch(request, *args, **kwargs)
 
+    ################################################################################
+    
     def post(self, request, *args, **kwargs):
+    
+        #---
         
-        if self.allianceRights['can_invite_player']:
+        action = request.POST.get('action')
+        
+        #---
+        
+        if action == 'invite' and self.hasRight('can_invite_player'):
         
             name = request.POST.get('name', '').strip()
             result = dbExecute('SELECT sp_alliance_invite(' + str(self.userId) + ',' + dosql(name) + ')')
@@ -33,17 +43,23 @@ class View(GlobalView):
             elif result == 5: messages.error(request, 'already_invited')
             elif result == 6: messages.error(request, 'impossible')
         
-        return HttpResponseRedirect('/s03/alliance-recruitment/')
+        #---
         
+        return HttpResponseRedirect(request.build_absolute_uri())
+        
+    ################################################################################
+    
     def get(self, request, *args, **kwargs):
+
+        #---
         
         content = getTemplate(request, 's03/alliance-recruitment')
 
-        self.selectedMenu = 'alliance.recruitment'
+        self.selectedMenu = 'alliance'
         
         #---
         
-        content.setValue('can_invite', self.allianceRights['can_invite_player'])
+        content.setValue('can_invite', self.hasRight('can_invite_player'))
         
         #---
         
@@ -55,5 +71,7 @@ class View(GlobalView):
                 ' ORDER BY created DESC'
         invitations = dbRows(query)
         content.setValue('invitations', invitations)
+        
+        #---
         
         return self.display(content, request)

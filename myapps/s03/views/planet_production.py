@@ -4,6 +4,8 @@ from myapps.s03.views._global import *
 
 class View(GlobalView):
 
+    ################################################################################
+    
     def dispatch(self, request, *args, **kwargs):
 
         #---
@@ -15,16 +17,18 @@ class View(GlobalView):
         
         return super().dispatch(request, *args, **kwargs)
 
+    ################################################################################
+    
     def get(self, request, *args, **kwargs):
 
         #---
+
+        content = getTemplate(request, "s03/production")
         
         self.selectedMenu = "planet"
 
         self.showHeader = True
         self.headerUrl = '/s03/planet-production/'
-
-        content = getTemplate(request, "s03/production")
 
         #---
         

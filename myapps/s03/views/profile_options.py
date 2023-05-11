@@ -4,6 +4,8 @@ from myapps.s03.views._global import *
 
 class View(GlobalView):
 
+    ################################################################################
+    
     def dispatch(self, request, *args, **kwargs):
 
         #---
@@ -15,9 +17,17 @@ class View(GlobalView):
         
         return super().dispatch(request, *args, **kwargs)
 
+    ################################################################################
+    
     def post(self, request, *args, **kwargs):
     
-        if request.POST.get("submit", "") != "":
+        #---
+        
+        action = request.POST.get('action')
+        
+        #---
+        
+        if action == "save":
             
             optionCat = ToInt(request.GET.get("cat"), 1)
             if optionCat == 1:
@@ -59,8 +69,12 @@ class View(GlobalView):
         
         return HttpResponseRedirect(request.build_absolute_uri())
             
+    ################################################################################
+    
     def get(self, request, *args, **kwargs):
     
+        #---
+        
         content = getTemplate(request, "s03/options")
         
         self.selectedMenu = "options"

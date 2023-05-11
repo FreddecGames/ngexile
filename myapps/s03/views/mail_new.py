@@ -4,6 +4,8 @@ from myapps.s03.views._global import *
 
 class View(GlobalView):
 
+    ################################################################################
+    
     def dispatch(self, request, *args, **kwargs):
 
         #---
@@ -15,11 +17,17 @@ class View(GlobalView):
         
         return super().dispatch(request, *args, **kwargs)
         
+    ################################################################################
+    
     def post(self, request, *args, **kwargs):
         
         #---
         
-        if request.POST.get("sendmail", "") != "" and not request.user.is_impersonate:
+        action = request.POST.get('action')
+        
+        #---
+        
+        if action == 'sendmail' and not request.user.is_impersonate:
             
             mailto = request.POST.get("to", "").strip()
             if request.POST.get("type") == "alliance": mailto = ":alliance"
@@ -35,7 +43,7 @@ class View(GlobalView):
             mailsubject = request.POST.get("subject", "").strip()
 
             if ToInt(request.POST.get("sendcredits"), 0) == 1: moneyamount = ToInt(request.POST.get("amount"), 0)
-            else: moneyamount = 0
+            else: moneyamount = 0            
             if request.POST.get("type") == "alliance": moneyamount = 0
 
             bbcode = request.POST.get("self.bbcode") == 1
@@ -46,21 +54,27 @@ class View(GlobalView):
             elif result == 2: messages.error(request, 'mail_unknown_to')
             elif result == 3: messages.error(request, 'mail_same')
             elif result == 4: messages.error(request, 'not_enough_credits')
-            elif result == 9: messages.error(request, 'blocked')
-            
-            return HttpResponseRedirect('/s03/mail-new/')       
+            elif result == 9: messages.error(request, 'blocked')       
         
         #---
             
-        return HttpResponseRedirect('/s03/mails/')
+        return HttpResponseRedirect(request.build_absolute_uri())
         
+    ################################################################################
+    
     def get(self, request, *args, **kwargs):
+        
+        #---
+        
+        content = getTemplate(request, "s03/mail-compose")
+        
+        self.selectedMenu = "mails"
             
         #---
         
-        mailto = None
-        mailbody = None
-        mailsubject = None
+        mailto = ''
+        mailbody = ''
+        mailsubject = ''
         
         if request.GET.get("to", "") != "":
         
@@ -90,14 +104,6 @@ class View(GlobalView):
                 body = "> " + mail['body'] + "\n"
                 body.replace("\n", "\n" + "> ") + "\n\n"
                 mailbody = body
-        
-        #---
-        
-        self.selectedMenu = "mails"
-        
-        content = getTemplate(request, "s03/mail-compose")
-
-        #---
         
         content.setValue("mailto", mailto)
         content.setValue("subject", mailsubject)

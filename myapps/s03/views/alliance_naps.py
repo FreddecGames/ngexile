@@ -4,6 +4,8 @@ from myapps.s03.views._global import *
 
 class View(GlobalView):
 
+    ################################################################################
+
     def dispatch(self, request, *args, **kwargs):
 
         #---
@@ -14,15 +16,23 @@ class View(GlobalView):
         #---
 
         if not self.allianceId:
-            return HttpResponseRedirect('/s03/alliance/')
+            return HttpResponseRedirect('/s03/')
         
         #---
 
         return super().dispatch(request, *args, **kwargs)
 
+    ################################################################################
+    
     def post(self, request, *args, **kwargs):
+    
+        #---
         
-        if self.allianceRights['can_create_nap']:
+        action = request.POST.get('action')
+        
+        #---
+                
+        if action == 'request' and self.hasRight('can_create_nap'):
         
             tag = request.POST.get('tag', '').strip()
             hours = ToInt(request.POST.get('hours'), 0)
@@ -34,48 +44,72 @@ class View(GlobalView):
             elif result == 3: messages.error(request, 'already_naped')
             elif result == 4: messages.error(request, 'request_waiting')
             elif result == 6: messages.error(request, 'already_requested')
-            
-        return HttpResponseRedirect('/s03/alliance-naps/')
         
-    def get(self, request, *args, **kwargs):
-    
-        action = request.GET.get('a', '')
-        targetalliancetag = request.GET.get('tag', '').strip()
+        #---
         
-        if self.allianceRights['can_create_nap'] and action == 'accept':        
+        elif action == 'accept' and self.hasRight('can_create_nap'):
+        
+            targetalliancetag = request.POST.get('tag', '').strip()
             dbQuery('SELECT sp_alliance_nap_accept(' + str(self.userId) + ',' + dosql(targetalliancetag) + ')')
 
-        elif self.allianceRights['can_create_nap'] and action == 'decline':
+        #---
+
+        elif action == 'decline' and self.hasRight('can_create_nap'):
+
+            targetalliancetag = request.POST.get('tag', '').strip()
             dbQuery('SELECT sp_alliance_nap_decline(' + str(self.userId) + ',' + dosql(targetalliancetag) + ')')
             
-        elif self.allianceRights['can_create_nap'] and action == 'cancel':
+        #---
+
+        elif action == 'cancel' and self.hasRight('can_create_nap'):
+
+            targetalliancetag = request.POST.get('tag', '').strip()
             dbQuery('SELECT sp_alliance_nap_cancel(' + str(self.userId) + ',' + dosql(targetalliancetag) + ')')
             
-        elif self.allianceRights['can_create_nap'] and action == 'sharelocs':
+        #---
+
+        elif action == 'sharelocs' and self.hasRight('can_create_nap'):
+
+            targetalliancetag = request.POST.get('tag', '').strip()
             dbQuery('SELECT sp_alliance_nap_toggle_share_locs(' + str(self.userId) + ',' + dosql(targetalliancetag) + ')')
             
-        elif self.allianceRights['can_create_nap'] and action == 'shareradars':
+        #---
+
+        elif action == 'shareradars' and self.hasRight('can_create_nap'):
+
+            targetalliancetag = request.POST.get('tag', '').strip()
             dbQuery('SELECT sp_alliance_nap_toggle_share_radars(' + str(self.userId) + ',' + dosql(targetalliancetag) + ')')
             
-        elif self.allianceRights['can_break_nap'] and action == 'break':
+        #---
+
+        elif action == 'break' and self.hasRight('can_break_nap'):
         
+            targetalliancetag = request.POST.get('tag', '').strip()
             result = dbExecute('SELECT sp_alliance_nap_break(' + str(self.userId) + ',' + dosql(targetalliancetag) + ')')
 
             if result == 1: messages.error(request, 'norights')
             elif result == 2: messages.error(request, 'unknown')
             elif result == 3: messages.error(request, 'nap_not_found')
             elif result == 4: messages.error(request, 'not_enough_credits')
+            
+        #---
+        
+        return HttpResponseRedirect(request.build_absolute_uri())
+        
+    ################################################################################
+    
+    def get(self, request, *args, **kwargs):
         
         #---
         
         content = getTemplate(request, 's03/alliance-naps')
         
-        self.selectedMenu = 'alliance.naps'
+        self.selectedMenu = 'alliance'
 
         #---
         
-        if self.allianceRights['can_create_nap']: content.Parse('can_create')
-        if self.allianceRights['can_break_nap']: content.Parse('can_break')
+        if self.hasRight('can_create_nap'): content.Parse('can_create')
+        if self.hasRight('can_break_nap'): content.Parse('can_break')
 
         #---
         
@@ -111,4 +145,6 @@ class View(GlobalView):
         requests = dbRows(query)
         content.setValue('requests', requests)
 
+        #---
+        
         return self.display(content, request)

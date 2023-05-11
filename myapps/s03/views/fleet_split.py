@@ -4,6 +4,8 @@ from myapps.s03.views._global import *
 
 class View(GlobalView):
 
+    ################################################################################
+
     def dispatch(self, request, *args, **kwargs):
 
         #---
@@ -14,13 +16,18 @@ class View(GlobalView):
         #---
         
         self.fleetId = ToInt(request.GET.get("id"), 0)
-        if self.fleetId == 0: return HttpResponseRedirect("/s03/fleets/")
+        if self.fleetId == 0:
+            return HttpResponseRedirect("/s03/")
         
         #---
         
         return super().dispatch(request, *args, **kwargs)
 
+    ################################################################################
+    
     def post(self, request, *args, **kwargs):
+        
+        #---
         
         action = request.POST.get("action")
         
@@ -129,10 +136,14 @@ class View(GlobalView):
         
         #---
         
-        return HttpResponseRedirect('/s03/fleets/')
+        return HttpResponseRedirect(request.build_absolute_uri())
+    
+    ################################################################################
     
     def get(self, request, *args, **kwargs):
 
+        #---
+        
         content = getTemplate(request, "s03/fleet-split")
 
         self.selectedMenu = "fleets"

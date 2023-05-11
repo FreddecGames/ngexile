@@ -4,68 +4,72 @@ from myapps.s03.views._global import *
 
 class View(GlobalView):
     
+    ################################################################################
+    
     def dispatch(self, request, *args, **kwargs):
 
         #---
 
         response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
+        
+        #---
+        
+        dbQuery("SELECT sp_update_researches(" + str(self.userId) + ")")
 
         #---
         
         return super().dispatch(request, *args, **kwargs)
 
-    def get(self, request, *args, **kwargs):
+    ################################################################################
+    
+    def post(self, request, *args, **kwargs):
         
         #---
         
-        action = request.GET.get("a", "").lower()
+        action = request.POST.get("action")
+        
+        #---
         
         if action == "research":
             
-            #---
-            
-            researchId = ToInt(request.GET.get("r"), 0)
+            researchId = ToInt(request.POST.get("r"), 0)
             dbQuery("SELECT * FROM sp_start_research(" + str(self.userId) + ", " + str(researchId) + ", false)")
             
-            return HttpResponseRedirect('/s03/tech-list/')
-            
-        elif action == "cancel":
+        #---
         
-            #---
+        elif action == "cancel":
             
-            researchId = ToInt(request.GET.get("r"), 0)
+            researchId = ToInt(request.POST.get("r"), 0)
             dbQuery("SELECT * FROM sp_cancel_research(" + str(self.userId) + ", " + str(researchId) + ")")
-            
-            return HttpResponseRedirect('/s03/tech-list/')
+        
+        #---
         
         elif action == "continue":
-        
-            #---
             
-            researchId = ToInt(request.GET.get("r"), 0)
+            researchId = ToInt(request.POST.get("r"), 0)
             dbQuery("UPDATE researches_pending SET looping=true WHERE userid=" + str(self.userId) + " AND researchid=" + str(researchId))
-            
-            return HttpResponseRedirect('/s03/tech-list/')
+        
+        #---
         
         elif action == "stop":
-        
-            #---
             
-            researchId = ToInt(request.GET.get("r"), 0)
+            researchId = ToInt(request.POST.get("r"), 0)
             dbQuery("UPDATE researches_pending SET looping=false WHERE userid=" + str(self.userId) + " AND researchid=" + str(researchId))
-            
-            return HttpResponseRedirect('/s03/tech-list/')
-                
-        #---
-        
-        dbQuery("SELECT sp_update_researches(" + str(self.userId) + ")")
         
         #---
         
-        self.selectedMenu = "research"
+        return HttpResponseRedirect(request.build_absolute_uri())
+
+    ################################################################################
+    
+    def get(self, request, *args, **kwargs):
+        
+        #---
 
         content = getTemplate(request, "s03/research")
+        
+        self.selectedMenu = "research"
 
         #---
         

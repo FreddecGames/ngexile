@@ -241,6 +241,10 @@ a:hover, a:focus { text-decoration: none; }
     --bs-btn-disabled-border-color: #cc8400;
 }
 
+.btn-link {
+    text-decoration: none;
+}
+
 .nav {
     --bs-nav-link-padding-x: 1rem;
     --bs-nav-link-padding-y: .5rem;

@@ -4,6 +4,8 @@ from myapps.s03.views._global import *
 
 class View(GlobalView):
 
+    ################################################################################
+    
     def dispatch(self, request, *args, **kwargs):
 
         #---
@@ -14,13 +16,18 @@ class View(GlobalView):
         #---
         
         self.fleetId = ToInt(request.GET.get("id"), 0)
-        if self.fleetId == 0: return HttpResponseRedirect("/s03/fleets/")
+        if self.fleetId == 0:
+            return HttpResponseRedirect("/s03/")
         
         #---
         
         return super().dispatch(request, *args, **kwargs)
 
+    ################################################################################
+    
     def post(self, request, *args, **kwargs):
+        
+        #---
         
         action = request.POST.get("action")
         
@@ -45,15 +52,17 @@ class View(GlobalView):
             result = dbExecute("SELECT id FROM fleets WHERE id=" + str(self.fleetId))
             if result == None:
                 return HttpResponseRedirect("/s03/orbit/?planet=" + str(planetId))
-            
-            return HttpResponseRedirect('/s03/fleet-view/?id=' + str(self.fleetId))
         
         #---
         
-        return HttpResponseRedirect('/s03/fleets/')
+        return HttpResponseRedirect(request.build_absolute_uri())
+    
+    ################################################################################
     
     def get(self, request, *args, **kwargs):
 
+        #---
+        
         content = getTemplate(request, "s03/fleet-ships")
 
         self.selectedMenu = "fleets"
@@ -83,5 +92,7 @@ class View(GlobalView):
         for result in results:
             if result['fleet_count'] > 0 or result['planet_count'] > 0:
                 ships.append(result)
+        
+        #---
         
         return self.display(content, request)

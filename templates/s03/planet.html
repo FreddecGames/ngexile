@@ -187,8 +187,18 @@
                             <div class="col-3 text-end"><span class="text-normal">Formation</span></div>
                             <div class="col-9 d-flex">
                                 <span>{{ planet.growth|floatformat:1 }}% <small class="text-normal">par heure</small></span>
-                                {% if planet.recruit_workers %}<a href="?a=suspend" class="ms-auto" data-bs-toggle="tooltip" data-bs-title="Suspendre le recrutement de nouveaux travailleurs">Suspendre</a>
-                                {% else %}<a href="?a=resume" class="ms-auto" data-bs-toggle="tooltip" data-bs-title="Reprendre le recrutement de nouveaux travailleurs">Reprendre</a>
+                                {% if planet.recruit_workers %}
+                                    <form method="post" action="" class="ms-auto">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="action" value="suspend" />
+                                        <button type="submit" class="btn btn-link p-0" data-bs-toggle="tooltip" data-bs-title="Suspendre le recrutement de nouveaux travailleurs">Suspendre</button>
+                                    </form>
+                                {% else %}
+                                    <form method="post" action="" class="ms-auto">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="action" value="resume" />
+                                        <button type="submit" class="btn btn-link p-0" data-bs-toggle="tooltip" data-bs-title="Reprendre le recrutement de nouveaux travailleurs">Reprendre</button>
+                                    </form>
                                 {% endif %}
                             </div>
                         </div>

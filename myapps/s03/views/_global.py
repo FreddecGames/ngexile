@@ -4,10 +4,12 @@ from myapps.s03.views._utils import *
 
 class GlobalView(BaseView):
 
+    selectedMenu = ""
+    
     headerUrl = "/s03/planet-view/"
     showHeader = False
-    selectedMenu = ""
-    urlExtraParams = ""
+    
+    ################################################################################
     
     def pre_dispatch(self, request, *args, **kwargs):
         
@@ -92,6 +94,8 @@ class GlobalView(BaseView):
         if not request.user.is_impersonate:
             dbQuery("UPDATE users SET lastplanetid=" + str(self.currentPlanetId) + " WHERE id=" + str(self.userId))
 
+    ################################################################################
+    
     def display(self, tpl, request):
         
         tpl.setValue("profile_credits", self.profile["credits"])
@@ -137,8 +141,7 @@ class GlobalView(BaseView):
             
             #---
             
-            if self.urlExtraParams != "": tpl.setValue("url", self.headerUrl + "?" + self.urlExtraParams + "&planet=")
-            else: tpl.setValue("url", self.headerUrl + "?planet=")
+            tpl.setValue("url", self.headerUrl + "?planet=")
 
             #---
             
@@ -207,6 +210,8 @@ class GlobalView(BaseView):
         
         return render(request, tpl.template, tpl.data)
         
+    ################################################################################
+    
     def hasRight(self, right):
     
         if self.allianceRights == None: return True
@@ -217,6 +222,5 @@ class GlobalView(BaseView):
         if relation == rSelf: return planetName if planetName else ""
         elif relation == rAlliance: return ownerName if ownerName else ""
         elif relation == rFriend: return ownerName if ownerName else ""
-        else:
-            if radar_strength > 0: return ownerName if ownerName else ""
-            else: return ""
+        elif radar_strength > 0: return ownerName if ownerName else ""
+        else: return ""

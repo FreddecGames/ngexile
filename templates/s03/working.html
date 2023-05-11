@@ -40,8 +40,9 @@
 </div>
 <div class="scroll-content" style="height:calc(100% - 158px);">
 <div class="page-content">
-<form method="post" action="?cat={{ cat }}&a=submit">
+<form method="post" action="">
     {% csrf_token %}
+    <input type="hidden" name="action" value="save">
     <div class="card">
         <div class="card-header">
             <span class="fs-6">Coût de fonctionnement</span>

@@ -4,6 +4,8 @@ from myapps.s03.views._global import *
 
 class View(GlobalView):
 
+    ################################################################################
+    
     def dispatch(self, request, *args, **kwargs):
 
         #---
@@ -15,13 +17,18 @@ class View(GlobalView):
 
         return super().dispatch(request, *args, **kwargs)
 
+    ################################################################################
+    
     def post(self, request, *args, **kwargs):
+        
+        #---
         
         action = request.POST.get('action')
         
         #---
         
         if action == 'assigncommander':
+        
             commander = ToInt(request.POST.get('commander'), 0)
             if ToInt(request.POST.get('commander'), 0) != 0: dbQuery('SELECT * FROM sp_commanders_assign(' + str(self.userId) + ',' + str(commander) + ',' + str(self.currentPlanetId) + ' ,null)')
             else: dbQuery('UPDATE nav_planet SET commanderid=null WHERE ownerid=' + str(self.userId) + ' AND id=' + str(self.currentPlanetId))
@@ -29,6 +36,7 @@ class View(GlobalView):
         #---
         
         elif action == 'rename':
+        
             name = request.POST.get('name')
             if not isValidObjectName(name): messages.error(request, 'name_invalid')
             else: dbQuery('UPDATE nav_planet SET name=' + dosql(name) + ' WHERE ownerid=' + str(self.userId) + ' AND id=' + str(self.currentPlanetId))
@@ -36,62 +44,71 @@ class View(GlobalView):
         #---
         
         elif action == 'firescientists':
+        
             amount = ToInt(request.POST.get('amount'), 0)
             dbQuery('SELECT sp_dismiss_staff(' + str(self.userId) + ',' + str(self.currentPlanetId) + ',' + str(amount) + ',0,0)')
         
         #---
         
         elif action == 'firesoldiers':
+        
             amount = ToInt(request.POST.get('amount'), 0)
             dbQuery('SELECT sp_dismiss_staff(' + str(self.userId) + ',' + str(self.currentPlanetId) + ',' + '0,' + str(amount) + ',0)')
         
         #---
         
         elif action == 'fireworkers':
+        
             amount = ToInt(request.POST.get('amount'), 0)
             dbQuery('SELECT sp_dismiss_staff(' + str(self.userId) + ',' + str(self.currentPlanetId) + ',' + '0,0,' + str(amount) + ')')
         
         #---
         
         elif action == 'abandon':
+        
             dbQuery('SELECT sp_abandon_planet(' + str(self.userId) + ',' + str(self.currentPlanetId) + ')')
             return HttpResponseRedirect('/s03/empire-view/')
         
         #---
         
         elif action == 'resources_price':
+        
             query = 'UPDATE nav_planet SET' + \
                     ' buy_ore = GREATEST(0, LEAST(1000, ' + str(ToInt(request.POST.get('buy_ore'), 0)) + '))' + \
                     ' ,buy_hydrocarbon = GREATEST(0, LEAST(1000, ' + str(ToInt(request.POST.get('buy_hydrocarbon'), 0)) + '))' + \
                     ' WHERE ownerid=' + str(self.userId) + ' AND id=' + str(self.currentPlanetId)
             dbQuery(query)
             
-        return HttpResponseRedirect('/s03/planet-view/')
-    
-    def get(self, request, *args, **kwargs):
-        
-        action = request.GET.get('a', '').lower()
-        
         #---
 
-        if action == 'suspend':
+        elif action == 'suspend':
+        
             dbQuery('SELECT sp_update_planet_production(' + str(self.currentPlanetId) + ')')
             dbQuery('UPDATE nav_planet SET mod_production_workers=0, recruit_workers=False WHERE ownerid=' + str(self.userId) + ' AND id=' + str(self.currentPlanetId))
-            return HttpResponseRedirect('/s03/planet-view/')
             
         #---
         
         elif action == 'resume':
+        
             dbQuery('UPDATE nav_planet SET recruit_workers=True WHERE ownerid=' + str(self.userId) + ' AND id=' + str(self.currentPlanetId) )
             dbQuery('SELECT sp_update_planet(' + str(self.currentPlanetId) + ')')
-            return HttpResponseRedirect('/s03/planet-view/')
+            
+        #---
+        
+        return HttpResponseRedirect(request.build_absolute_uri())
+    
+    ################################################################################
+    
+    def get(self, request, *args, **kwargs):
         
         #---
 
-        self.showHeader = True
-        self.selectedMenu = 'planet'
-
         content = getTemplate(request, 's03/planet')
+
+        self.selectedMenu = 'planet'
+        
+        self.showHeader = True
+        self.headerUrl = '/s03/planet-view/'
         
         #---
         

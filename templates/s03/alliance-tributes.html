@@ -74,7 +74,12 @@
                         </div>
                         {% if can_break %}
                             <div class="col-auto">
-                                <a href="?a=cancel&tag={{ item.tag }}" class="btn btn-danger">Annuler</a>
+                                <form method="post" action="">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="action" value="cancel" />
+                                    <input type="hidden" name="tag" value="{{ item.tag }}" />
+                                    <button type="submit" class="btn btn-danger">Annuler</button>
+                                </form>
                             </div>
                         {% endif %}
                     </div>
@@ -131,6 +136,7 @@
     {% if can_create %}
     <form action="?" method="post">
         {% csrf_token %}
+        <input type="hidden" name="action" value="create">
         <div class="card mt-3">
             <div class="card-header">
                 <span class="fs-6">Créer un virement automatique</span>

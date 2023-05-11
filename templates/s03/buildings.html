@@ -191,7 +191,18 @@
                                                 {% if building.isbuilding %}
                                                     <div class="row g-1 flex-column">
                                                         <div class="col-12"><span class="text-yellow"><script>putcountdown1({{ building.remainingtime }}, '')</script></span></div>
-                                                        <div class="col-12"><script>putcountdown2({{ building.remainingtime }}, '<a href="?planet={{ cur_planetid }}&a=cancel&b={{ building.id }}" class="btn btn-danger">Annuler</a>', '<a href="?planet={{ cur_planetid }}">Terminé</a>')</script></div>
+                                                        <div class="col-12">
+                                                            <script>
+                                                                let html = ''
+                                                                html += '<form method="post" action="">'
+                                                                    html += '{% csrf_token %}'
+                                                                    html += '<input type="hidden" name="action" value="cancel" />'
+                                                                    html += '<input type="hidden" name="b" value="{{ building.id }}" />'
+                                                                    html += '<button type="submit" class="btn btn-danger">Annuler</button>'
+                                                                html += '</form>'
+                                                                putcountdown2({{ building.remainingtime }}, html, '<a href="?planet={{ cur_planetid }}">Terminé</a>')
+                                                            </script>
+                                                        </div>
                                                     </div>
                                                 {% elif building.buildings_required %}
                                                     <div><span class="text-danger">Bâtiment(s) requis</span></div>
@@ -202,7 +213,14 @@
                                                 {% elif building.build %}
                                                     <div class="row g-1 flex-column">
                                                         <div class="col-12"><script>document.write(formattime({{ building.construction_time }}));</script></div>
-                                                        <div class="col-12"><a href="?planet={{ cur_planetid }}&a=build&c=0&b={{ building.id }}" class="btn btn-primary" data-bs-toggle="tooltip" data-bs-title="Lancer la construction">Construire</a></div>
+                                                        <div class="col-12">
+                                                            <form method="post" action="">
+                                                                {% csrf_token %}
+                                                                <input type="hidden" name="action" value="build" />
+                                                                <input type="hidden" name="b" value="{{ building.id }}" />
+                                                                <button type="submit" class="btn btn-primary" data-bs-toggle="tooltip" data-bs-title="Lancer la construction">Construire</button>
+                                                            </form>
+                                                        </div>
                                                     </div>
                                                 {% else %}
                                                     <div class="row g-1 flex-column">
@@ -229,7 +247,14 @@
                                                 {% elif building.destroy %}
                                                     <div>
                                                         <span id="destroy{{ building.id }}"><a href="?" data-bs-toggle="tooltip" data-bs-title="Détruire le bâtiment" onclick="javascript:return showDestroy({{ building.id }});">Démolir</a></span>
-                                                        <span id="destroyConfirm{{ building.id }}" style="display:none;"><a href="?planet={{ cur_planetid }}&a=destroy&b={{ building.id }}" class="btn btn-primary" data-bs-toggle="tooltip" data-bs-title="Confirmer la destruction">Confirmer</a></span>
+                                                        <span id="destroyConfirm{{ building.id }}" style="display:none;">
+                                                            <form method="post" action="">
+                                                                {% csrf_token %}
+                                                                <input type="hidden" name="action" value="destroy" />
+                                                                <input type="hidden" name="b" value="{{ building.id }}" />
+                                                                <button type="submit" class="btn btn-primary" data-bs-toggle="tooltip" data-bs-title="Confirmer la destruction">Confirmer</button>
+                                                            </form>
+                                                        </span>
                                                     </div>
                                                 {% endif %}
                                             {% endif %}

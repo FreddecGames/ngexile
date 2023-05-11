@@ -4,6 +4,8 @@ from myapps.s03.views._global import *
 
 class View(GlobalView):
 
+    ################################################################################
+    
     def dispatch(self, request, *args, **kwargs):
 
         #---
@@ -15,43 +17,47 @@ class View(GlobalView):
         
         return super().dispatch(request, *args, **kwargs)
         
+    ################################################################################
+    
     def post(self, request, *args, **kwargs):
         
         #---
         
-        if request.POST.get("action", "") == "delete":
+        action = request.POST.get('action')
+        
+        #---
+        
+        if action == "delete":
             
             mailId = ToInt(request.POST.get("mailId"), 0)            
             if mailId != 0:
                 dbQuery("UPDATE messages SET deleted=TRUE WHERE id=" + str(mailId) + " AND ownerid = " + str(self.userId))
             
-            return HttpResponseRedirect('/s03/mails/')
+        #---
+
+        elif action == "ignore":
+        
+            dbQuery("SELECT sp_ignore_sender(" + str(self.userId) + "," + dosql(request.POST.get("user")) + ")")
+            
+        #---
+
+        elif action == "unignore":
+        
+            dbQuery("DELETE FROM messages_ignore_list WHERE userid=" + str(self.userId) + " AND ignored_userid=(SELECT id FROM users WHERE lower(username)=lower(" + dosql(request.POST.get("user")) + "))")
             
         #---
             
-        return HttpResponseRedirect('/s03/mails/')
+        return HttpResponseRedirect(request.build_absolute_uri())
         
+    ################################################################################
+    
     def get(self, request, *args, **kwargs):
             
         #---
-
-        if request.GET.get("a", "") == "ignore":
-        
-            dbQuery("SELECT sp_ignore_sender(" + str(self.userId) + "," + dosql(request.GET.get("user")) + ")")
-            return HttpResponseRedirect('/s03/mails/')
-            
-        #---
-
-        elif request.GET.get("a", "") == "unignore":
-        
-            dbQuery("DELETE FROM messages_ignore_list WHERE userid=" + str(self.userId) + " AND ignored_userid=(SELECT id FROM users WHERE lower(username)=lower(" + dosql(request.GET.get("user")) + "))")
-            return HttpResponseRedirect('/s03/mails/')
-            
-        #---
-        
-        self.selectedMenu = "mails"
         
         content = getTemplate(request, "s03/mail-list")
+        
+        self.selectedMenu = "mails"
         
         #---
         

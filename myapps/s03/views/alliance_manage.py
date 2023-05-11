@@ -4,6 +4,8 @@ from myapps.s03.views._global import *
 
 class View(GlobalView):
 
+    ################################################################################
+
     def dispatch(self, request, *args, **kwargs):
 
         #---
@@ -13,18 +15,24 @@ class View(GlobalView):
         
         #---
 
-        if not self.allianceId or not (self.allianceRights['leader'] or self.allianceRights['can_manage_description'] or self.allianceRights['can_manage_announce']):
-            return HttpResponseRedirect('/s03/alliance/')
+        if not self.allianceId or not (self.hasRight('can_manage_description') or self.hasRight('can_manage_announce')):
+            return HttpResponseRedirect('/s03/')
         
         #---
 
         return super().dispatch(request, *args, **kwargs)
 
+    ################################################################################
+
     def post(self, request, *args, **kwargs):
         
         #---
         
-        if self.allianceRights['can_manage_description']:
+        action = request.POST.get('action')
+        
+        #---
+        
+        if action == 'save' and (self.hasRight('can_manage_description') or self.hasRight('can_manage_announce')):
             
             logo = request.POST.get('logo', '').strip()
             if logo != '':
@@ -33,25 +41,25 @@ class View(GlobalView):
                     return HttpResponseRedirect('/s03/alliance-manage/')
             
             description = request.POST.get('description', '').strip()
-            
-            dbQuery('UPDATE alliances SET logo_url=' + dosql(logo) + ', description=' + dosql(description) + ' WHERE id = ' + str(self.allianceId))
-    
-        #---
-    
-        if self.allianceRights['can_manage_announce']:
         
             motd = request.POST.get('motd').strip()
             defcon = int(request.POST.get('defcon', 5))
     
-            dbQuery('UPDATE alliances SET defcon=' + str(defcon) + ', announce=' + dosql(motd) + ' WHERE id = ' + str(self.allianceId))
+            dbQuery('UPDATE alliances SET logo_url=' + dosql(logo) + ', description=' + dosql(description) + ', defcon=' + str(defcon) + ', announce=' + dosql(motd) + ' WHERE id = ' + str(self.allianceId))
 
-        return HttpResponseRedirect('/s03/alliance-manage/')
+        #---
+        
+        return HttpResponseRedirect(request.build_absolute_uri())
 
+    ################################################################################
+    
     def get(self, request, *args, **kwargs):
+        
+        #---
         
         content = getTemplate(request, 's03/alliance-manage')
         
-        self.selectedMenu = 'alliance.manage'
+        self.selectedMenu = 'alliance'
         
         #---
 
@@ -60,16 +68,14 @@ class View(GlobalView):
         
         #---
         
-        query = 'SELECT description, logo_url,' + \
-                ' max_members' + \
+        query = ' SELECT description, logo_url, max_members, announce, defcon' + \
                 ' FROM alliances' + \
                 ' WHERE id=' + str(self.allianceId)
         alliance = dbRow(query)
 
-        query = 'SELECT announce, defcon FROM alliances WHERE id=' + str(self.allianceId)
-        alliance |= dbRow(query)
-
         content.setValue('alliance', alliance)
+        
+        #---
         
         return self.display(content, request)
         

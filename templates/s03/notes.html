@@ -10,6 +10,7 @@
     </script>
     <form method="post" action="/s03/notes/" name="note">
         {% csrf_token %}
+        <input type="hidden" name="action" value="save">
         <div class="card">
             <div class="card-header d-flex">
                 <span class="fs-6 me-auto">Notes personnelles</span>

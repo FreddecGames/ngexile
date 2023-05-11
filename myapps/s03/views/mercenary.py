@@ -4,6 +4,8 @@ from myapps.s03.views._global import *
 
 class View(GlobalView):
 
+    ################################################################################
+    
     def dispatch(self, request, *args, **kwargs):
 
         #---
@@ -27,16 +29,23 @@ class View(GlobalView):
         
         return super().dispatch(request, *args, **kwargs)
         
+    ################################################################################
+    
     def post(self, request, *args, **kwargs):
 
-        level = ToInt(request.POST.get("level"), -1)
+        #---
+        
         action = request.POST.get("spy")
-        spotted = False
-        category = 8
         
         #---
         
         if action == "nation":
+            
+            #---
+            
+            level = ToInt(request.POST.get("level"), -1)
+            spotted = False
+            category = 8
             
             #---
             
@@ -167,6 +176,12 @@ class View(GlobalView):
         #---
         
         elif action == "planet":
+            
+            #---
+            
+            level = ToInt(request.POST.get("level"), -1)
+            spotted = False
+            category = 8
             
             #---
             
@@ -382,6 +397,8 @@ class View(GlobalView):
 
     def get(self, request, *args, **kwargs):
     
+        #---
+        
         content = getTemplate(request, "s03/mercenary-intelligence")
 
         self.selectedMenu = "intelligence"

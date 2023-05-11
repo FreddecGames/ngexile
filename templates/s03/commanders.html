@@ -35,7 +35,8 @@
                             <div class="row gy-1 gx-3">
                                 <div id="renamebox{{ commander.cmd_id }}" class="hidden">
                                     <form action='?' method='post' class="row gx-2">
-                                        <input type='hidden' name='a' value='rename'>
+                                        {% csrf_token %}
+                                        <input type='hidden' name='action' value='rename'>
                                         <input type='hidden' name='id' value='{{ commander.cmd_id }}'>
                                         <div class="col"><input type='text' class="form-control" name='name' size="28" maxlength="32" value='{{ commander.cmd_name }}'></div>
                                         <div class="col-auto"><input type='submit' value='OK' class="btn btn-primary"></div>
@@ -51,7 +52,7 @@
                                 <div class="col-auto">
                                     <form method="post" action="" onsubmit="return confirmFireCommander('{{ commander.cmd_name }}')">
                                         {% csrf_token %}
-                                        <input type="hidden" name="a" value="fire" />
+                                        <input type="hidden" name="action" value="fire" />
                                         <input type="hidden" name="id" value="{{ commander.cmd_id }}" />
                                         <button type="submit" class="btn btn-link p-0">Renvoyer</button>
                                     </form>
@@ -102,7 +103,7 @@
                                     <div class="col-12">
                                         <form method="post" action="" onsubmit="return confirmTrain('{{ commander.train_cost|intcomma }}')">
                                             {% csrf_token %}
-                                            <input type="hidden" name="a" value="train" />
+                                            <input type="hidden" name="action" value="train" />
                                             <input type="hidden" name="id" value="{{ commander.cmd_id }}" />
                                             <button type="submit" class="btn btn-link p-0">
                                                 Entrainement intensif pour
@@ -152,7 +153,7 @@
                                 <div class="col-auto">
                                     <form method="post" action="" onsubmit="return confirmEngageCommander('{{ commander.cmd_name }}')">
                                         {% csrf_token %}
-                                        <input type="hidden" name="a" value="engage" />
+                                        <input type="hidden" name="action" value="engage" />
                                         <input type="hidden" name="id" value="{{ commander.cmd_id }}" />
                                         <button type="submit" class="btn btn-link p-0">Engager</button>
                                     </form>
@@ -272,6 +273,7 @@
 </script>
 <form action="" method="post">
     {% csrf_token %}
+    <input type="hidden" name="action" value="save">
     <div class="card">
         <div class="card-header">
             <a href="/s03/commander-list/" class="me-2"><i class="fa-fw fas fa-long-arrow-alt-left"></i> Retour</a>

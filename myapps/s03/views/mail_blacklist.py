@@ -4,6 +4,8 @@ from myapps.s03.views._global import *
 
 class View(GlobalView):
 
+    ################################################################################
+    
     def dispatch(self, request, *args, **kwargs):
 
         #---
@@ -15,28 +17,39 @@ class View(GlobalView):
         
         return super().dispatch(request, *args, **kwargs)
         
+    ################################################################################
+    
     def post(self, request, *args, **kwargs):
         
         #---
+        
+        action = request.POST.get('action')
+        
+        #---
                     
-        if request.POST.get("a", "") == "unignore":
+        if action == "unignore":
         
             dbQuery("DELETE FROM messages_ignore_list WHERE userid=" + str(self.userId) + " AND ignored_userid=(SELECT id FROM users WHERE lower(username)=lower(" + dosql(request.POST.get("user")) + "))")
             
         #---
             
-        return HttpResponseRedirect('/s03/mail-blacklist/')
+        return HttpResponseRedirect(request.build_absolute_uri())
         
+    ################################################################################
+    
     def get(self, request, *args, **kwargs):
             
         #---
+
+        content = getTemplate(request, "s03/mail-ignorelist")
                 
         self.selectedMenu = "mails"
 
-        content = getTemplate(request, "s03/mail-ignorelist")
-
         #---
+        
         ignorednations = dbRows("SELECT ignored_userid AS userid, sp_get_user(ignored_userid) AS name, added, blocked FROM messages_ignore_list WHERE userid=" + str(self.userId))
         content.setValue("ignorednations", ignorednations)
 
+        #---
+        
         return self.display(content, request)

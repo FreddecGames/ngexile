@@ -4,6 +4,8 @@ from myapps.s03.views._global import *
 
 class View(GlobalView):
 
+    ################################################################################
+
     def dispatch(self, request, *args, **kwargs):
 
         #---
@@ -14,48 +16,61 @@ class View(GlobalView):
         #---
 
         if not self.allianceId:
-            return HttpResponseRedirect('/s03/alliance/')
+            return HttpResponseRedirect('/s03/')
         
         #---
 
         return super().dispatch(request, *args, **kwargs)
 
+    ################################################################################
+    
     def post(self, request, *args, **kwargs):
+                
+        #---
+
+        action = request.POST.get('action')
         
-        if self.allianceRights['can_create_nap']:
+        #---
+        
+        if action == 'declare' and self.hasRight('can_create_nap'):
         
             tag = request.POST.get('tag', '').strip()
-
             result = dbExecute('SELECT sp_alliance_war_declare(' + str(self.userId) + ',' + dosql(tag) + ')')
             
             if result == 1: messages.error(request, 'new_norights')
             elif result == 2: messages.error(request, 'new_unknown')
             elif result == 3: messages.error(request, 'new_already_at_war')
             elif result == 9: messages.error(request, 'new_not_enough_credits')
-            
-        return HttpResponseRedirect('/s03/alliance-tributes/')
         
-    def get(self, request, *args, **kwargs):
-
-        action = request.GET.get('a', '')
+        #---
         
-        if action == 'pay' and self.allianceRights['can_create_nap']:
+        elif action == 'pay' and self.hasRight('can_create_nap'):
         
-            tag = request.GET.get('tag', '').strip()
+            tag = request.POST.get('tag', '').strip()
             result = dbExecute('SELECT sp_alliance_war_pay_bill(' + str(self.userId) + ',' + dosql(tag) + ')')
 
             if result == 1: messages.error(request, 'norights')
             elif result == 2: messages.error(request, 'unknown')        
             elif result == 3: messages.error(request, 'war_not_found')
 
-        elif action == 'stop' and self.allianceRights['can_break_nap']:
+        #---
+        
+        elif action == 'stop' and self.hasRight('can_break_nap'):
 
-            tag = request.GET.get('tag', '').strip()
+            tag = request.POST.get('tag', '').strip()
             result = dbExecute('SELECT sp_alliance_war_stop(' + str(self.userId) + ',' + dosql(tag) + ')')
 
             if result == 1: messages.error(request, 'norights')
             elif result == 2: messages.error(request, 'unknown')        
             elif result == 3: messages.error(request, 'war_not_found')
+            
+        #---
+        
+        return HttpResponseRedirect(request.build_absolute_uri())
+        
+    ################################################################################
+    
+    def get(self, request, *args, **kwargs):
         
         #---
         
@@ -65,8 +80,8 @@ class View(GlobalView):
 
         #---
         
-        if self.allianceRights['can_create_nap']: content.Parse('can_create')
-        if self.allianceRights['can_break_nap']: content.Parse('can_break')
+        if self.hasRight('can_create_nap'): content.Parse('can_create')
+        if self.hasRight('can_break_nap'): content.Parse('can_break')
 
         #---
 
@@ -100,5 +115,7 @@ class View(GlobalView):
             
                 content.setValue('newwar', war)
                 content.Parse('newwar_confirm')
+
+        #---
 
         return self.display(content, request)

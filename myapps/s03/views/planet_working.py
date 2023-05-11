@@ -4,6 +4,8 @@ from myapps.s03.views._global import *
 
 class View(GlobalView):
 
+    ################################################################################
+    
     def dispatch(self, request, *args, **kwargs):
 
         #---
@@ -15,39 +17,49 @@ class View(GlobalView):
         
         return super().dispatch(request, *args, **kwargs)
 
+    ################################################################################
+    
     def post(self, request, *args, **kwargs):
         
         #---
         
-        query = "SELECT buildingid, (quantity - CASE WHEN destroy_datetime IS NULL THEN 0 ELSE 1 END) AS quantity, disabled" + \
-                " FROM planet_buildings" + \
-                "    INNER JOIN db_buildings ON (planet_buildings.buildingid=db_buildings.id)" + \
-                " WHERE can_be_disabled AND planetid=" + str(self.currentPlanetId)
-        rows = dbRows(query)
+        action = request.POST.get('action')
         
-        for row in rows:
+        #---
 
-            quantity = row['quantity'] - ToInt(request.POST.get("enabled" + str(row['buildingid'])), 0)
+        if action == 'save':
+        
+            query = "SELECT buildingid, (quantity - CASE WHEN destroy_datetime IS NULL THEN 0 ELSE 1 END) AS quantity, disabled" + \
+                    " FROM planet_buildings" + \
+                    "    INNER JOIN db_buildings ON (planet_buildings.buildingid=db_buildings.id)" + \
+                    " WHERE can_be_disabled AND planetid=" + str(self.currentPlanetId)
+            rows = dbRows(query)
+            
+            for row in rows:
 
-            query = "UPDATE planet_buildings SET" + \
-                    " disabled=LEAST(quantity - CASE WHEN destroy_datetime IS NULL THEN 0 ELSE 1 END, " + str(quantity) + ")" + \
-                    "WHERE planetid=" + str(self.currentPlanetId) + " AND buildingid =" + str(row['buildingid'])
-            dbQuery(query)
+                quantity = row['quantity'] - ToInt(request.POST.get("enabled" + str(row['buildingid'])), 0)
+
+                query = "UPDATE planet_buildings SET" + \
+                        " disabled=LEAST(quantity - CASE WHEN destroy_datetime IS NULL THEN 0 ELSE 1 END, " + str(quantity) + ")" + \
+                        "WHERE planetid=" + str(self.currentPlanetId) + " AND buildingid =" + str(row['buildingid'])
+                dbQuery(query)
             
         #---
         
         return HttpResponseRedirect(request.build_absolute_uri())
     
+    ################################################################################
+    
     def get(self, request, *args, **kwargs):
 
         #---
+
+        content = getTemplate(request, "s03/working")
         
         self.selectedMenu = "planet"
 
         self.showHeader = True
         self.headerUrl = '/s03/planet-working/'
-
-        content = getTemplate(request, "s03/working")
             
         #---
     

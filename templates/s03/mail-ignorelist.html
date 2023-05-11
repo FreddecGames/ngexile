@@ -19,8 +19,9 @@
 </div>
 <div class="scroll-content" style="height:calc(100% - 52px);">
 <div class="page-content">
-<form method="post" action="?a=unignorelist">
+<form method="post" action="">
     {% csrf_token %}
+    <input type="hidden" name="action" value="unignore">
     <div class="card">
         <div class="list-group list-group-flush">
             {% for ignorednation in ignorednations %}

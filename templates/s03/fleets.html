@@ -419,7 +419,7 @@
     
         if (dragObject != null && dropCategory != null) {
         
-            var url = "/s03/empire-fleets/?a=setcat&id=" + dragObject.id + "&old=" + dragObject.category + "&new=" + dropCategory;
+            var url = "/s03/empire-fleets/?action=setcat&id=" + dragObject.id + "&old=" + dragObject.category + "&new=" + dropCategory;
             openURL(url, evalResponse);
         }
         
@@ -518,7 +518,7 @@
     function createCategory() {
     
         var name = $('categoryname').value;
-        var url = "/s03/empire-fleets/?a=newcat&name=" + encodeURIComponent(name);
+        var url = "/s03/empire-fleets/?action=newcat&name=" + encodeURIComponent(name);
 
         for (var x in categories)
             if (categories[x] && categories[x].id != null && (categories[x].name.toLowerCase() == name.toLowerCase())) {
@@ -534,7 +534,7 @@
     function renameCategory(id) {
     
         var name = $('editcat' + id).value;
-        var url = '/s03/empire-fleets/?a=rencat&id=' + id + '&name=' + encodeURIComponent(name);
+        var url = '/s03/empire-fleets/?action=rencat&id=' + id + '&name=' + encodeURIComponent(name);
 
         for (var x in categories)
             if (categories[x] && x != id && categories[x].id != null && (categories[x].name.toLowerCase() == name.toLowerCase())) {

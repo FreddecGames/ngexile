@@ -4,6 +4,8 @@ from myapps.s03.views._global import *
 
 class View(GlobalView):
 
+    ################################################################################
+
     def dispatch(self, request, *args, **kwargs):
 
         #---
@@ -14,6 +16,8 @@ class View(GlobalView):
         #---
 
         return super().dispatch(request, *args, **kwargs)
+
+    ################################################################################
 
     def get(self, request, *args, **kwargs):
     
@@ -124,9 +128,9 @@ class View(GlobalView):
             
         #---
         
-        self.selectedMenu = "chat"
-
         content = getTemplate(request, "s03/chat")
+
+        self.selectedMenu = "chat"
         
         #---
         

@@ -57,6 +57,7 @@
         </div>
         <form method="post" action="?cat={{ cat }}">
             {% csrf_token %}
+            <input type="hidden" name="action" value="save">
             <div class="card">
                 <div class="card-header">
                     <span class="fs-6">Configuration</span>
@@ -102,6 +103,7 @@
         {% elif cat == 2 %}
         <form method="post" action="?cat={{ cat }}">
             {% csrf_token %}
+            <input type="hidden" name="action" value="save">
             <div class="card">
                 <div class="card-body">
                     <div class="row gx-3 align-items-center">
@@ -165,6 +167,7 @@
         </script>
         <form method="post" action="?cat={{ cat }}">
             {% csrf_token %}
+            <input type="hidden" name="action" value="save">
             <div class="card">
                 <div class="card-body">
                     <div class="row gx-3">

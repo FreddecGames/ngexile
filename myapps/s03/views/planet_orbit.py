@@ -4,6 +4,8 @@ from myapps.s03.views._global import *
 
 class View(GlobalView):
     
+    ################################################################################
+    
     def dispatch(self, request, *args, **kwargs):
         
         #---
@@ -15,58 +17,64 @@ class View(GlobalView):
         
         return super().dispatch(request, *args, **kwargs)
 
+    ################################################################################
+    
     def post(self, request, *args, **kwargs):
-        
+    
         #---
-
-        fleetname = request.POST.get("name", "").strip()
-
-        if not isValidObjectName(fleetname):
-            messages.error(request, 'fleet_name_invalid')
-            return HttpResponseRedirect(request.build_absolute_uri())
+        
+        action = request.POST.get('action')
         
         #---
         
-        fleetid = dbExecute("SELECT sp_create_fleet(" + str(self.userId) + "," + str(self.currentPlanetId) + "," + dosql(fleetname) + ")")
+        if action == 'create':
 
-        if fleetid < 0:
-            if fleetid == -3: messages.error(request, 'fleet_too_many')
-            else: messages.error(request, 'fleet_name_already_used')            
-            return HttpResponseRedirect(request.build_absolute_uri())
-        
-        #---
-        
-        cant_use_ship = False
+            fleetname = request.POST.get("name", "").strip()
 
-        rows = dbRows("SELECT id FROM db_ships")
-        for row in rows:
-        
-            quantity = ToInt(request.POST.get("s" + str(row['id'])), 0)
-            if quantity > 0:
+            if not isValidObjectName(fleetname):
+                messages.error(request, 'fleet_name_invalid')
+                return HttpResponseRedirect(request.build_absolute_uri())
             
-                result = dbExecute("SELECT * FROM sp_transfer_ships_to_fleet(" + str(self.userId) + ", " + str(fleetid) + ", " + str(row['id']) + ", " + str(quantity) + ")")
-                cant_use_ship = cant_use_ship or result == 3
+            fleetid = dbExecute("SELECT sp_create_fleet(" + str(self.userId) + "," + str(self.currentPlanetId) + "," + dosql(fleetname) + ")")
 
-        #---
-        
-        dbQuery("DELETE FROM fleets WHERE size=0 AND id=" + str(fleetid) + " AND ownerid=" + str(self.userId))
+            if fleetid < 0:
+            
+                if fleetid == -3: messages.error(request, 'fleet_too_many')
+                else: messages.error(request, 'fleet_name_already_used') 
+                
+                return HttpResponseRedirect(request.build_absolute_uri())
+            
+            cant_use_ship = False
 
-        if cant_use_ship: messages.error(request, 'ship_cant_be_used')   
+            rows = dbRows("SELECT id FROM db_ships")
+            for row in rows:
+            
+                quantity = ToInt(request.POST.get("s" + str(row['id'])), 0)
+                if quantity > 0:
+                
+                    result = dbExecute("SELECT * FROM sp_transfer_ships_to_fleet(" + str(self.userId) + ", " + str(fleetid) + ", " + str(row['id']) + ", " + str(quantity) + ")")
+                    cant_use_ship = cant_use_ship or result == 3
+
+            dbQuery("DELETE FROM fleets WHERE size=0 AND id=" + str(fleetid) + " AND ownerid=" + str(self.userId))
+
+            if cant_use_ship: messages.error(request, 'ship_cant_be_used')   
         
         #---
         
         return HttpResponseRedirect(request.build_absolute_uri())
             
+    ################################################################################
+    
     def get(self, request, *args, **kwargs):
         
         #---
+        
+        content = getTemplate(request, "s03/orbit")
 
         self.selectedMenu = "planet"
 
         self.showHeader = True
         self.headerUrl = '/s03/planet-orbit/'
-        
-        content = getTemplate(request, "s03/orbit")
         
         #---
         

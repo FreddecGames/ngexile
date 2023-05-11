@@ -103,6 +103,7 @@
 <form method="post" action="?a=buy{% if header %}&planet={{ cur_planetid }}{% endif %}">
     {% csrf_token %}
     <input type="hidden" name="rel" value="1">
+    <input type="hidden" name="action" value="buy">
     <div class="card">
         <div class="card-header">
             <span class="fs-6">Achat de ressources</span>

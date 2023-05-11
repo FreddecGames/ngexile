@@ -83,7 +83,9 @@
         </div>
     </div>
 </div>
-<form method="post" action="?a=new&planet={{cur_planetid}}" class="card">
+<form method="post" action="" class="card">
+    {% csrf_token %}
+    <input type="hidden" name="action" value="create">
     <div class="card-header">
         <span class="fs-6">Nouvelle flotte</span>
     </div>
@@ -177,7 +179,6 @@
             <span class="text-normal">Aucun vaisseau n'est disponible</span>
         </div>
     {% endif %}
-    {% csrf_token %}
 </form>
 </div>
 </div>

@@ -4,6 +4,8 @@ from myapps.s03.views._global import *
 
 class View(GlobalView):
     
+    ################################################################################
+    
     def dispatch(self, request, *args, **kwargs):
 
         #---
@@ -15,22 +17,26 @@ class View(GlobalView):
         
         return super().dispatch(request, *args, **kwargs)
 
+    ################################################################################
+    
     def post(self, request, *args, **kwargs):
     
         #---
         
-        action = request.POST.get("action", "")
+        action = request.POST.get("action")
     
+        #---
+        
         if action == "recycle":
         
-            #---
-            
             rows = dbRows("SELECT id FROM db_ships")
             for row in rows:
             
                 quantity = ToInt(request.POST.get("s" + str(row['id'])), 0)
                 if quantity > 0:
                     dbQuery("SELECT sp_start_ship_recycling(" + str(self.currentPlanetId) + "," + str(row['id']) + "," + str(quantity) + ")")
+        
+        #---
         
         elif action == "cancel":
         
@@ -42,24 +48,18 @@ class View(GlobalView):
         
         return HttpResponseRedirect(request.build_absolute_uri())
 
+    ################################################################################
+    
     def get(self, request, *args, **kwargs):
     
         #---
+        
+        content = getTemplate(request, "s03/recycling")
         
         self.selectedMenu = "planet"
         
         self.headerUrl = '/s03/planet-recycling/'
         self.showHeader = True
-
-        #---
-        
-        query = "SELECT ore_capacity, hydrocarbon_capacity, energy_capacity, workers_capacity" + \
-                " FROM vw_planets WHERE id=" + str(self.currentPlanetId)
-        planet = dbRow(query)
-        
-        #---
-        
-        content = getTemplate(request, "s03/recycling")
         
         #---
         

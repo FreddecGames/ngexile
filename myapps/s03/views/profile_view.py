@@ -4,6 +4,8 @@ from myapps.s03.views._global import *
 
 class View(GlobalView):
 
+    ################################################################################
+    
     def dispatch(self, request, *args, **kwargs):
 
         #---
@@ -15,18 +17,23 @@ class View(GlobalView):
         
         return super().dispatch(request, *args, **kwargs)
 
+    ################################################################################
+    
     def get(self, request, *args, **kwargs):
                 
+        #---
+        
         nation = request.GET.get("name", "").strip()
         if nation == "": nation = self.profile["username"]
         
-        if not isValidName(nation): return HttpResponseRedirect("/s03/nation/")
+        if not isValidName(nation):
+            return HttpResponseRedirect("/s03/profile-view/")
             
         #---
 
-        self.selectedMenu = "nation"
-
         content = getTemplate(request, "s03/nation")
+        
+        self.selectedMenu = "nation"
             
         #---
 

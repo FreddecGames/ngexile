@@ -4,6 +4,8 @@ from myapps.s03.views._global import *
 
 class View(GlobalView):
 
+    ################################################################################
+
     def dispatch(self, request, *args, **kwargs):
 
         #---
@@ -15,9 +17,13 @@ class View(GlobalView):
         
         return super().dispatch(request, *args, **kwargs)
     
+    ################################################################################
+    
     def get(self, request, *args, **kwargs):
         
-        action = request.GET.get("a")
+        #---
+        
+        action = request.GET.get("action")
         
         #---
         
@@ -116,9 +122,9 @@ class View(GlobalView):
                 
         #---
         
-        self.selectedMenu = "fleets.fleets"
-
         content = getTemplate(request, "s03/fleets")
+        
+        self.selectedMenu = "fleets.fleets"
         
         #---
 
@@ -167,4 +173,6 @@ class View(GlobalView):
                 if ship['fleetid'] == fleet['id']:
                     fleet['ships'].append(ship)
 
+        #---
+        
         return self.display(content, request)

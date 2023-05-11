@@ -4,6 +4,8 @@ from myapps.s03.views._global import *
 
 class View(GlobalView):
 
+    ################################################################################
+    
     def dispatch(self, request, *args, **kwargs):
 
         #---
@@ -15,16 +17,20 @@ class View(GlobalView):
         
         return super().dispatch(request, *args, **kwargs)
         
+    ################################################################################
+    
     def get(self, request, *args, **kwargs):
 
+        #---
+        
         invasionId = ToInt(request.GET.get("id"), 0)
         if invasionId == 0: return HttpResponseRedirect("/s03/empire-view/")
         
         #---
-        
-        self.selectedMenu = "invasion"
 
         content = getTemplate(request, "s03/invasion")
+        
+        self.selectedMenu = "invasion"
         
         #---
         
@@ -78,4 +84,6 @@ class View(GlobalView):
             content.setValue("def_scientists_alive", report['def_scientists_total'] - report['def_scientists_lost'])
             content.Parse("scientists")
 
+        #---
+        
         return self.display(content, request)

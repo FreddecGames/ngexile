@@ -4,6 +4,8 @@ from myapps.s03.views._global import *
 
 class View(GlobalView):
 
+    ################################################################################
+    
     def dispatch(self, request, *args, **kwargs):
 
         #---
@@ -15,12 +17,18 @@ class View(GlobalView):
         
         return super().dispatch(request, *args, **kwargs)
         
+    ################################################################################
+    
     def get(self, request, *args, **kwargs):
+
+        #---
+        
+        content = getTemplate(request, "s03/upkeep")
 
         self.selectedMenu = "upkeep"
 
-        content = getTemplate(request, "s03/upkeep")
-
+        #---
+        
         hours = 24 - timezone.now().hour
 
         query = "SELECT scientists,soldiers,planets,ships_signature,ships_in_position_signature,ships_parked_signature," + \
@@ -39,4 +47,6 @@ class View(GlobalView):
         content.setValue("upkeep", row)
         content.setValue("total_estimation", int(row['upkeep_scientists'] + row['upkeep_soldiers'] + row['upkeep_planets'] + row['upkeep_ships'] + row['upkeep_ships_in_position'] + row['upkeep_ships_parked'] + row['upkeep_commanders']))
 
+        #---
+        
         return self.display(content, request)

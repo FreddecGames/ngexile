@@ -4,6 +4,8 @@ from myapps.s03.views._global import *
 
 class View(GlobalView):
     
+    ################################################################################
+    
     def dispatch(self, request, *args, **kwargs):
 
         #---
@@ -15,39 +17,52 @@ class View(GlobalView):
 
         return super().dispatch(request, *args, **kwargs)
 
-    def get(self, request, *args, **kwargs):
+    ################################################################################
+    
+    def post(self, request, *args, **kwargs):
+    
+        #---
         
-        action = request.GET.get('a', '').lower()
+        action = request.POST.get('action')
         
         #---
         
         if action == 'build':
-            buildingId = ToInt(request.GET.get('b'), '')
+        
+            buildingId = ToInt(request.POST.get('b'), '')
             dbQuery('SELECT sp_start_building(' + str(self.userId) + ',' + str(self.currentPlanetId) + ', ' + str(buildingId) + ', false)')
-            return HttpResponseRedirect('/s03/planet-buildings/')
         
         #---
         
         elif action== 'cancel':
-            buildingId = ToInt(request.GET.get('b'), '')
+        
+            buildingId = ToInt(request.POST.get('b'), '')
             dbQuery('SELECT sp_cancel_building(' + str(self.userId) + ',' + str(self.currentPlanetId) + ', ' + str(buildingId) + ')')
-            return HttpResponseRedirect('/s03/planet-buildings/')
         
         #---
         
         elif action== 'destroy':
-            buildingId = ToInt(request.GET.get('b'), '')
+        
+            buildingId = ToInt(request.POST.get('b'), '')
             dbQuery('SELECT sp_destroy_building(' + str(self.userId) + ',' + str(self.currentPlanetId) + ',' + str(buildingId) + ')')
-            return HttpResponseRedirect('/s03/planet-buildings/')
+            
+        #---
+        
+        return HttpResponseRedirect(request.build_absolute_uri())
+            
+    ################################################################################
+    
+    def get(self, request, *args, **kwargs):
         
         #---
         
-        self.showHeader = True
-        self.selectedMenu = 'planet'        
-        self.headerUrl = '/s03/planet-buildings/'
-        
         content = getTemplate(request, 's03/buildings')
-                
+        
+        self.selectedMenu = 'planet'        
+        
+        self.showHeader = True
+        self.headerUrl = '/s03/planet-buildings/'
+                        
         #---
         
         query = 'SELECT mod_production_ore, mod_production_hydrocarbon, mod_production_energy,' + \

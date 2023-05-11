@@ -4,6 +4,8 @@ from myapps.s03.views._global import *
 
 class View(GlobalView):
 
+    ################################################################################
+
     def dispatch(self, request, *args, **kwargs):
 
         #---
@@ -13,13 +15,15 @@ class View(GlobalView):
         
         #---
 
-        if not self.allianceId or not (self.allianceRights['leader'] or self.allianceRights['can_see_members_info']):
-            return HttpResponseRedirect('/s03/alliance/')
+        if not self.allianceId or not self.hasRight('can_see_members_info'):
+            return HttpResponseRedirect('/s03/')
         
         #---
 
         return super().dispatch(request, *args, **kwargs)
 
+    ################################################################################
+    
     def post(self, request, *args, **kwargs):
         
         #---
@@ -28,7 +32,7 @@ class View(GlobalView):
         
         #---
         
-        if action == 'save' and self.allianceRights['leader'] and request.POST.get('submit', '') != '':
+        if action == 'save' and self.allianceRights['leader']:
         
             query = 'SELECT id' + \
                     ' FROM users' + \
@@ -42,29 +46,27 @@ class View(GlobalView):
                 query = 'UPDATE users SET' + \
                         ' alliance_rank=' + str(rankId) + \
                         ' WHERE id=' + str(member['id']) + ' AND alliance_id=' + str(self.allianceId) + ' AND (alliance_rank > 0 OR id=' + str(self.userId) + ')'
-                dbQuery(query)
-
-            if int(request.POST.get('member' + str(self.userId), 100)) > 0:
-                return HttpResponseRedirect('/s03/alliance/')
-                
+                dbQuery(query)                
         #---
         
-        elif action == 'kick' and self.allianceRights['can_kick_player']:
+        elif action == 'kick' and self.hasRight('can_kick_player'):
         
             self.username = request.GET.get('name').strip()
             dbQuery('SELECT sp_alliance_kick_member(' + str(self.userId) + ',' + dosql(self.username) + ')')
             
         #---
         
-        return HttpResponseRedirect('/s03/alliance-members/')
+        return HttpResponseRedirect(request.build_absolute_uri())
         
+    ################################################################################
+    
     def get(self, request, *args, **kwargs):
 
         #---
         
         content = getTemplate(request, 's03/alliance-members')
         
-        self.selectedMenu = 'alliance.members'
+        self.selectedMenu = 'alliance'
         
         #---
         
@@ -167,5 +169,7 @@ class View(GlobalView):
         content.setValue('total_credits', totalCredits)
         content.setValue('total_score', totalScore)
         content.setValue('total_score_delta', totalScoreDelta)
+
+        #---
 
         return self.display(content, request)

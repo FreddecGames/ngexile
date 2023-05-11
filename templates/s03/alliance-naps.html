@@ -82,12 +82,24 @@
                         </div>
                         {% if not nap.breaking_time %}
                             <div class="col-2 text-end">
-                                {% if can_create %}<a href="?a=sharelocs&tag={{ nap.tag }}">{% if nap.share_locs %}Oui{% else %}Non{% endif %}</a>
+                                {% if can_create %}
+                                    <form method="post" action="">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="action" value="sharelocs" />
+                                        <input type="hidden" name="tag" value="{{ nap.tag }}" />
+                                        <button type="submit" class="btn btn-link p-0">{% if nap.share_locs %}Oui{% else %}Non{% endif %}</button>
+                                    </form>
                                 {% else %}{% if nap.share_locs %}Oui{% else %}Non{% endif %}
                                 {% endif %}
                             </div>
                             <div class="col-2 text-end">
-                                {% if can_create %}<a href="?a=shareradars&tag={{ nap.tag }}">{% if nap.share_radars %}Oui{% else %}Non{% endif %}</a>
+                                {% if can_create %}
+                                    <form method="post" action="">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="action" value="shareradars" />
+                                        <input type="hidden" name="tag" value="{{ nap.tag }}" />
+                                        <button type="submit" class="btn btn-link p-0">{% if nap.share_radars %}Oui{% else %}Non{% endif %}</button>
+                                    </form>
                                 {% else %}{% if nap.share_radars %}Oui{% else %}Non{% endif %}
                                 {% endif %}
                             </div>
@@ -97,7 +109,13 @@
                             {% elif nap.break_interval %}
                                 <small class="text-normal me-1">délai</small>
                                 <span class="me-3"><script>document.write(formattime({{nap.break_interval}}))</script></span>
-                                {% if can_break %}<a href="?a=break&tag={{ nap.tag }}" onclick="return confirmBreakPact('{{ nap.tag }}','{{ nap.name }}')">Rompre</a>
+                                {% if can_break %}
+                                    <form method="post" action="" class="d-inline" onsubmit="return confirmBreakPact('{{ nap.tag }}','{{ nap.name }}')">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="action" value="break" />
+                                        <input type="hidden" name="tag" value="{{ nap.tag }}" />
+                                        <button type="submit" class="btn btn-link p-0">Rompre</button>
+                                    </form>
                                 {% else %}Rompu
                                 {% endif %}
                             {% endif %}
@@ -142,10 +160,20 @@
                             <script>document.write(formattime({{proposition.break_interval}}))</script>
                         </div>
                         <div class="col-auto">
-                            <a href="?a=decline&tag={{ proposition.tag }}" class="btn btn-danger">Refuser</a>
+                            <form method="post" action="">
+                                {% csrf_token %}
+                                <input type="hidden" name="action" value="decline" />
+                                <input type="hidden" name="tag" value="{{ proposition.tag }}" />
+                                <button type="submit" class="btn btn-danger">Refuser</button>
+                            </form>
                         </div>
                         <div class="col-auto">
-                            <a href="?a=accept&tag={{ proposition.tag }}" class="btn btn-primary">Accepter</a>
+                            <form method="post" action="">
+                                {% csrf_token %}
+                                <input type="hidden" name="action" value="accept" />
+                                <input type="hidden" name="tag" value="{{ proposition.tag }}" />
+                                <button type="submit" class="btn btn-primary">Accepter</button>
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -159,6 +187,7 @@
     {% if can_create %}
     <form action="?" method="post">
         {% csrf_token %}
+        <input type="hidden" name="action" value="request">
         <div class="card mb-3">
             <div class="card-header">
                 <span class="fs-6">Établir un pacte de non-agression</span>
@@ -226,7 +255,12 @@
                             {% endif %}
                         </div>
                         <div class="col-auto">
-                            <a href="?a=cancel&tag={{ request.tag }}" class="btn btn-danger">Annuler</a>
+                            <form method="post" action="">
+                                {% csrf_token %}
+                                <input type="hidden" name="action" value="cancel" />
+                                <input type="hidden" name="tag" value="{{ request.tag }}" />
+                                <button type="submit" class="btn btn-danger">Annuler</button>
+                            </form>
                         </div>
                     </div>
                 </div>

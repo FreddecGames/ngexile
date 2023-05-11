@@ -4,6 +4,8 @@ from myapps.s03.views._global import *
 
 class View(GlobalView):
 
+    ################################################################################
+
     def dispatch(self, request, *args, **kwargs):
 
         #---
@@ -13,18 +15,22 @@ class View(GlobalView):
         
         #---
 
-        if not self.allianceId or not (self.allianceRights["leader"] or self.allianceRights["can_see_reports"]):
-            return HttpResponseRedirect('/s03/alliance/')
+        if not self.allianceId or not self.hasRight('can_see_reports'):
+            return HttpResponseRedirect('/s03/')
         
         #---
 
         return super().dispatch(request, *args, **kwargs)
         
+    ################################################################################
+    
     def get(self, request, *args, **kwargs):
+    
+        #---
 
         content = getTemplate(request, "s03/alliance-reports")
         
-        self.selectedMenu = "alliance.reports"
+        self.selectedMenu = "alliance"
         
         #---
 
@@ -43,4 +49,6 @@ class View(GlobalView):
         for report in reports:
             report['type'] = report['type'] * 100 + report['subtype']
 
+        #---
+        
         return self.display(content, request)

@@ -188,7 +188,7 @@
                     {% if user_request %}
                         <form action="?" method="post">
                             {% csrf_token %}
-                            <input type="hidden" name="a" value="cancel" />
+                            <input type="hidden" name="action" value="cancel" />
                             <div class="card">
                                 <div class="card-header">
                                     <span class="fs-6">Demande de financement</span>
@@ -230,7 +230,7 @@
                     {% else %}
                         <form action="?" method="post">
                             {% csrf_token %}
-                            <input type="hidden" name="a" value="request" />
+                            <input type="hidden" name="action" value="request" />
                             <div class="card">
                                 <div class="card-header">
                                     <span class="fs-6">Demande de financement</span>
@@ -289,10 +289,20 @@
                                             <span class="text-normal">{{ entry.description }}</span>
                                         </div>
                                         <div class="col-auto">
-                                            <a href="?a=deny&id={{ entry.id }}" class="btn btn-danger">Refuser</a>
+                                            <form method="post" action="">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="action" value="deny" />
+                                                <input type="hidden" name="id" value="{{ entry.id }}" />
+                                                <button type="submit" class="btn btn-danger">Refuser</button>
+                                            </form>
                                         </div>
                                         <div class="col-auto">
-                                            <a href="?a=accept&id={{ entry.id }}" class="btn btn-primary">Accepter</a>
+                                            <form method="post" action="">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="action" value="accept" />
+                                                <input type="hidden" name="id" value="{{ entry.id }}" />
+                                                <button type="submit" class="btn btn-danger">Accepter</button>
+                                            </form>
                                         </div>
                                     </div>
                                 </div>
@@ -308,7 +318,7 @@
             <div class="tab-pane fade" id="gift-pane" role="tabpanel" tabindex="0">
                 <form action="?" method="post">
                     {% csrf_token %}
-                    <input type="hidden" name="a" value="give" />
+                    <input type="hidden" name="action" value="give" />
                     <div class="card">
                         <div class="card-header">
                             <span class="fs-6">Don d'argent</span>
@@ -381,7 +391,7 @@
             <div class="tab-pane fade" id="tax-pane" role="tabpanel" tabindex="0">
                 <form action="?" method="post">
                     {% csrf_token %}
-                    <input type="hidden" name="a" value="settax" />
+                    <input type="hidden" name="action" value="settax" />
                     <div class="card">
                         <div class="card-header">
                             <span class="fs-6">Taxes</span>

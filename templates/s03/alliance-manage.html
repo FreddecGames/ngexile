@@ -53,6 +53,7 @@
 <div class="page-content">
     <form method="post" action="?">
         {% csrf_token %}
+        <input type="hidden" name="action" value="save">
         <div class="card">
             {% if cat1 %}
             <div class="card-body">

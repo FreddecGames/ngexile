@@ -4,6 +4,8 @@ from myapps.s03.views._global import *
 
 class View(GlobalView):
 
+    ################################################################################
+    
     def dispatch(self, request, *args, **kwargs):
 
         #---
@@ -15,9 +17,17 @@ class View(GlobalView):
         
         return super().dispatch(request, *args, **kwargs)
 
+    ################################################################################
+    
     def post(self, request, *args, **kwargs):
     
-        if request.POST.get("submit", "") != "":
+        #---
+        
+        action = request.POST.get('action')
+        
+        #---
+        
+        if action == "save":
         
             notes = request.POST.get("notes", "").strip()
             if len(notes) <= 5100:
@@ -31,11 +41,15 @@ class View(GlobalView):
         
         return HttpResponseRedirect(request.build_absolute_uri())
     
+    ################################################################################
+    
     def get(self, request, *args, **kwargs):
 
-        self.selectedMenu = "notes"
-
+        #---
+        
         content = getTemplate(request, "s03/notes")
+
+        self.selectedMenu = "notes"
 
         #---
 

@@ -4,6 +4,8 @@ from myapps.s03.views._global import *
 
 class View(GlobalView):
 
+    ################################################################################
+    
     def dispatch(self, request, *args, **kwargs):
 
         #---
@@ -15,6 +17,8 @@ class View(GlobalView):
 
         return super().dispatch(request, *args, **kwargs)
 
+    ################################################################################
+    
     def post(self, request, *args, **kwargs):
         
         #---
@@ -32,8 +36,6 @@ class View(GlobalView):
             if result == 4: messages.error(request, 'max_members_reached')
             elif result == 6: messages.error(request, 'cant_rejoin_previous_alliance')
             
-            return HttpResponseRedirect('/s03/alliance-invitations/')
-            
         #---
             
         elif action == 'decline':
@@ -43,23 +45,23 @@ class View(GlobalView):
             
         #---
         
-        elif action == 'leave' and self.allianceId and self.profile['can_join_alliance']:
+        elif action == 'leave' and self.allianceId:
         
             dbQuery('SELECT sp_alliance_leave(' + str(self.userId) + ', 0)')
-            return HttpResponseRedirect('/s03/alliance-view/')
         
         #---
         
-        return HttpResponseRedirect('/s03/alliance-invitations/')
+        return HttpResponseRedirect(request.build_absolute_uri())
 
+    ################################################################################
+    
     def get(self, request, *args, **kwargs):
     
         #---
 
         content = getTemplate(request, 's03/alliance-invitations')
         
-        if self.allianceId == None: self.selectedMenu = 'noalliance.invitations'
-        else: self.selectedMenu = 'alliance.invitations'
+        self.selectedMenu = 'alliance'
         
         #---
 
@@ -79,6 +81,8 @@ class View(GlobalView):
         
         #---
 
-        if self.allianceId and self.profile['can_join_alliance']: content.Parse('can_leave')
+        if self.allianceId: content.Parse('can_leave')
 
+        #---
+        
         return self.display(content, request)

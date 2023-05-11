@@ -4,6 +4,8 @@ from myapps.s03.views._global import *
 
 class View(GlobalView):
 
+    ################################################################################
+
     def dispatch(self, request, *args, **kwargs):
 
         #---
@@ -15,11 +17,15 @@ class View(GlobalView):
         
         return super().dispatch(request, *args, **kwargs)
     
+    ################################################################################
+    
     def get(self, request, *args, **kwargs):
 
-        self.selectedMenu = "fleets.orbiting"
+        #---
 
         content = getTemplate(request, "s03/fleets-orbiting")
+        
+        self.selectedMenu = "fleets.orbiting"
         
         #---
 
@@ -48,5 +54,7 @@ class View(GlobalView):
                 planets.append(planet)
                 
             planet["fleets"].append(result)
+        
+        #---
 
         return self.display(content, request)

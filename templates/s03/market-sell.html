@@ -115,9 +115,10 @@
         }
     {% endif %}
 </script>
-<form method="post" action="?a=sell{% if header %}&planet={{ cur_planetid }}{% endif %}">
+<form method="post" action="">
     {% csrf_token %}
     <input type="hidden" name="rel" value="1">
+    <input type="hidden" name="action" value="sell">
     <div class="card">
         <div class="card-header">
             <span class="fs-6">Vente de ressources</span>

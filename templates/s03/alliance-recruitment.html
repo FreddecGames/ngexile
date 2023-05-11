@@ -53,6 +53,7 @@
     {% if can_invite %}
     <form action="?" method="post">
         {% csrf_token %}
+        <input type="hidden" name="action" value="invite">
         <div class="card mb-3">
             <div class="card-header">
                 <span class="fs-6">Inviter une nation à rallier notre alliance</span>

@@ -4,6 +4,8 @@ from myapps.s03.views._global import *
 
 class View(GlobalView):
     
+    ################################################################################
+    
     def dispatch(self, request, *args, **kwargs):
 
         #---
@@ -15,16 +17,18 @@ class View(GlobalView):
         
         return super().dispatch(request, *args, **kwargs)
 
+    ################################################################################
+    
     def post(self, request, *args, **kwargs):
     
         #---
         
-        action = request.POST.get("action", "")
+        action = request.POST.get("action")
     
+        #---
+        
         if action == "build":
         
-            #---
-            
             rows = dbRows("SELECT id FROM db_ships")
             for row in rows:
             
@@ -32,6 +36,8 @@ class View(GlobalView):
                 if quantity > 0:
                     if quantity > 2000000000: quantity = 2000000000
                     dbQuery("SELECT sp_start_ship(" + str(self.currentPlanetId) + "," + str(row['id']) + "," + str(quantity) + ", false)")
+        
+        #---
         
         elif action == "cancel":
         
@@ -43,9 +49,13 @@ class View(GlobalView):
         
         return HttpResponseRedirect(request.build_absolute_uri())
 
+    ################################################################################
+    
     def get(self, request, *args, **kwargs):
     
         #---
+        
+        content = getTemplate(request, "s03/shipyard")
         
         self.selectedMenu = "planet"
         
@@ -57,12 +67,6 @@ class View(GlobalView):
         query = "SELECT ore_capacity, hydrocarbon_capacity, energy_capacity, workers_capacity" + \
                 " FROM vw_planets WHERE id=" + str(self.currentPlanetId)
         planet = dbRow(query)
-        
-        #---
-        
-        content = getTemplate(request, "s03/shipyard")
-
-        #---
         
         query = "SELECT v.id, v.category, v.label, v.cost_ore, v.cost_hydrocarbon, v.cost_energy, v.workers, v.crew, v.capacity, v.description," + \
                 " v.construction_time, v.hull, v.shield, v.weapon_power, v.weapon_ammo, v.weapon_tracking_speed, v.weapon_turrets, v.signature, v.speed," + \

@@ -197,7 +197,7 @@ Chat.prototype = {
 		}
 
 		// send leave command
-		var url = "/s03/chat/?a=leave&id="+this.id;
+		var url = "/s03/chat/?action=leave&id="+this.id;
 		openURL(url, leaveChatResponse);
 	},
 
@@ -211,7 +211,7 @@ Chat.prototype = {
 		this.sendingText = true;
 		this.lastTo = '';
 
-		var url = pageLocation + '?a=send&id=' + this.id + '&l=' + encodeURIComponent(line);
+		var url = pageLocation + '?action=send&id=' + this.id + '&l=' + encodeURIComponent(line);
 
 		var c = this;
 		var cb = function(req) {
@@ -367,7 +367,7 @@ Chat.prototype = {
 			return;
 		}
 
-		var url = "/s03/chat/?a=refresh&id=" + this.id;
+		var url = "/s03/chat/?action=refresh&id=" + this.id;
 
 		var c = this;
 		var cb = function(req) {
@@ -476,7 +476,7 @@ function joinChatResponse(req) {
 }
 
 function joinChat2(name,pass) {
-	var url = pageLocation + "?a=join&chat=" + encodeURIComponent(name) + "&pass=" + encodeURIComponent(pass);
+	var url = pageLocation + "?action=join&chat=" + encodeURIComponent(name) + "&pass=" + encodeURIComponent(pass);
 
 	for(var x in chatlist)
 		if(chatlist[x] && chatlist[x].id > 0 && (chatlist[x].name.toLowerCase() == name.toLowerCase())) {

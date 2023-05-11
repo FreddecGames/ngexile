@@ -65,6 +65,7 @@
     </script>
     <form method="post" action="?" onsubmit="return check()">
         {% csrf_token %}
+        <input type="hidden" name="action" value="save">
         {% for rank in ranks %}
             <div class="mb-3 card card-body">
                 <div class="list-group-item">

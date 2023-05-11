@@ -4,6 +4,8 @@ from myapps.s03.views._global import *
 
 class View(GlobalView):
 
+    ################################################################################
+
     def dispatch(self, request, *args, **kwargs):
 
         #---
@@ -14,15 +16,23 @@ class View(GlobalView):
         #---
 
         if not self.allianceId:
-            return HttpResponseRedirect('/s03/alliance/')
+            return HttpResponseRedirect('/s03/')
         
         #---
 
         return super().dispatch(request, *args, **kwargs)
 
+    ################################################################################
+    
     def post(self, request, *args, **kwargs):
         
-        if self.allianceRights['can_create_nap']:
+        #---
+        
+        action = request.POST.get('action')
+        
+        #---
+        
+        if action == 'create' and self.hasRight('can_create_nap'):
         
             tag = request.POST.get('tag', '').strip()
             credits = ToInt(request.POST.get('credits'), 0)
@@ -32,20 +42,24 @@ class View(GlobalView):
             if result == 1: messages.error(request, 'new_norights')
             elif result == 2: messages.error(request, 'new_unknown')
             elif result == 3: messages.error(request, 'new_already_exists')
-            
-        return HttpResponseRedirect('/s03/alliance-tributes/')
-        
-    def get(self, request, *args, **kwargs):
 
-        action = request.GET.get('a', '')
-
-        if action == 'cancel' and self.allianceRights['can_break_nap']:
+        #---
         
-            tag = request.GET.get('tag').strip()
+        elif action == 'cancel' and self.hasRight('can_break_nap'):
+        
+            tag = request.POST.get('tag').strip()
             result = dbExecute('SELECT sp_alliance_tribute_cancel(' + str(self.userId) + ',' + dosql(tag) + ')')
 
             if result == 1: messages.error(request, 'norights')
             elif result == 2: messages.error(request, 'unknown')
+            
+        #---
+        
+        return HttpResponseRedirect(request.build_absolute_uri())
+        
+    ################################################################################
+    
+    def get(self, request, *args, **kwargs):
         
         #---
         
@@ -55,8 +69,8 @@ class View(GlobalView):
 
         #---
         
-        if self.allianceRights['can_create_nap']: content.Parse('can_create')
-        if self.allianceRights['can_break_nap']: content.Parse('can_break')
+        if self.hasRight('can_create_nap'): content.Parse('can_create')
+        if self.hasRight('can_break_nap'): content.Parse('can_break')
         
         #---
         

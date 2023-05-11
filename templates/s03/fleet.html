@@ -41,8 +41,12 @@
                                 <a href="#" onclick="return show('renameref','renamebox')">Renommer</a>
                             </div>
                             <div class="col-auto">
-                                <a href="?planet={{ fleet.planetid }}&id={{ fleet.id }}&action=abandon"
-                                   onclick="return confirmAbandon()">Abandonner</a>
+                                <form method="post" action="" onsubmit="return confirmAbandon()">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="action" value="abandon" />
+                                    <input type="hidden" name="id" value="{{ fleet.id }}" />
+                                    <button type="submit" class="btn btn-link p-0">Abandonner</button>
+                                </form>
                             </div>
                         {% endif %}
                     </div>
@@ -123,12 +127,22 @@
                                     </div>
                                     {% if fleet.can_warp and not fleet.engaged %}
                                         <div class="col-auto">
-                                            <a href="?id={{ fleet.id }}&action=warp">Emprunter le vortex</a>
+                                            <form method="post" action="">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="action" value="warp" />
+                                                <input type="hidden" name="id" value="{{ fleet.id }}" />
+                                                <button type="submit" class="btn btn-link p-0">Emprunter le vortex</button>
+                                            </form>
                                         </div>
                                     {% endif %}
                                     {% if fleet.action == 4 %}
                                         <div class="col-auto">
-                                            <a href="?id={{ fleet.id }}&action=stopwaiting">Stopper</a>
+                                            <form method="post" action="">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="action" value="stopwaiting" />
+                                                <input type="hidden" name="id" value="{{ fleet.id }}" />
+                                                <button type="submit" class="btn btn-link p-0">Stopper</button>
+                                            </form>
                                         </div>
                                     {% endif %}
                                 </div>
@@ -163,11 +177,12 @@
                                     </div>
                                     <div class="col-auto">
                                         {% if fleet.firepower > 0 and not fleet.engaged %}
-                                            <a href="?id={{ fleet.id }}&action={% if fleet.attackonsight %}defend{% else %}attack{% endif %}">
-                                                {% if fleet.attackonsight %}Riposter
-                                                {% else %}Attaquer
-                                                {% endif %}
-                                            </a>
+                                            <form method="post" action="">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="action" value="{% if fleet.attackonsight %}defend{% else %}attack{% endif %}" />
+                                                <input type="hidden" name="id" value="{{ fleet.id }}" />
+                                                <button type="submit" class="btn btn-link p-0">{% if fleet.attackonsight %}Riposter{% else %}Attaquer{% endif %}</button>
+                                            </form>
                                         {% endif %}
                                     </div>
                                 </div>
@@ -239,8 +254,22 @@
                                             {{ fleet.recycler_output|intcomma }} <span class="text-normal">unités /heure</span>
                                         </div>
                                         <div class="col-auto">
-                                            {% if can_recycle and not fleet.engaged %}<a href="?id={{ fleet.id }}&action=recycle">Recycler</a>{% endif %}
-                                            {% if fleet.action == 2 %}<a href="?id={{ fleet.id }}&action=stoprecycling">Stopper</a>{% endif %}
+                                            {% if can_recycle and not fleet.engaged %}
+                                                <form method="post" action="">
+                                                    {% csrf_token %}
+                                                    <input type="hidden" name="action" value="recycle" />
+                                                    <input type="hidden" name="id" value="{{ fleet.id }}" />
+                                                    <button type="submit" class="btn btn-link p-0">Recycler</button>
+                                                </form>
+                                            {% endif %}
+                                            {% if fleet.action == 2 %}
+                                                <form method="post" action="">
+                                                    {% csrf_token %}
+                                                    <input type="hidden" name="action" value="stoprecycling" />
+                                                    <input type="hidden" name="id" value="{{ fleet.id }}" />
+                                                    <button type="submit" class="btn btn-link p-0">Stopper</button>
+                                                </form>
+                                            {% endif %}
                                         </div>
                                     </div>
                                 </div>
@@ -370,7 +399,18 @@
                                     </div>
                                     {% if can_cancel_moving %}
                                         <div class="col-auto">
-                                            <span class="text-normal">Perte du contact</span> <span class="text-yellow"><script>putcountdown1({{timelimit}},"Effective"," ");</script></span> <script>putcountdown2({{timelimit}},'<a href="?id={{fleet.id}}&action=return">Annuler</a>', '');</script>
+                                            <span class="text-normal">Perte du contact</span>
+                                            <span class="text-yellow"><script>putcountdown1({{timelimit}},"Effective"," ");</script></span>
+                                            <script>
+                                                let html = ''
+                                                html += '<form method="post" action="" class="d-inline">'
+                                                    html += '{% csrf_token %}'
+                                                    html += '<input type="hidden" name="action" value="return" />'
+                                                    html += '<input type="hidden" name="id" value="{{ fleet.id }}" />'
+                                                    html += '<button type="submit" class="btn btn-link p-0">Annuler</button>'
+                                                html += '</form>'
+                                                putcountdown2({{timelimit}}, html , '')
+                                            </script>
                                         </div>
                                     {% endif %}
                                 </div>
@@ -386,9 +426,16 @@
                                 <div class="row gx-3 align-items-center">
                                     <div class="col">
                                         <span class="text-normal">Flotte partagée à l'alliance</span>
-                                        {% if not fleet.engaged %}<a href="?id={{ fleet.id }}&action=share">{% endif %}
+                                        {% if not fleet.engaged %}
+                                            <form method="post" action="" class="d-inline">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="action" value="share" />
+                                                <input type="hidden" name="id" value="{{ fleet.id }}" />
+                                                <button type="submit" class="btn btn-link p-0">{% if shared %}Oui{% else %}Non{% endif %}</button>
+                                            </form>
+                                        {% else %}
                                             {% if shared %}Oui{% else %}Non{% endif %}
-                                        {% if not fleet.engaged %}</a>{% endif %}
+                                        {% endif %}
                                     </div>
                                 </div>
                             </div>
@@ -1365,7 +1412,13 @@
                                 </div>
                                 {% if can_install_building and ship.buildingid and ship.can_build %}
                                     <div class="col-auto">
-                                        <a href="?id={{ fleet.id }}&action=install&s={{ ship.id }}">Déployer</a>
+                                        <form method="post" action="">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="action" value="install" />
+                                            <input type="hidden" name="id" value="{{ fleet.id }}" />
+                                            <input type="hidden" name="s" value="{{ ship.id }}" />
+                                            <button type="submit" class="btn btn-link p-0">Déployer</button>
+                                        </form>
                                     </div>
                                 {% endif %}
                             </div>
@@ -1427,7 +1480,13 @@
                                         </div>
                                         {% if orbittingfleet.action == 0 and fleet.action == 0 %}
                                             <div class="col-auto">
-                                                <a href="?id={{ fleet.id }}&action=merge&with={{ orbittingfleet.id }}">Absorber</a>
+                                                <form method="post" action="">
+                                                    {% csrf_token %}
+                                                    <input type="hidden" name="action" value="merge" />
+                                                    <input type="hidden" name="id" value="{{ fleet.id }}" />
+                                                    <input type="hidden" name="with" value="{{ orbittingfleet.id }}" />
+                                                    <button type="submit" class="btn btn-link p-0">Absorber</button>
+                                                </form>
                                             </div>
                                         {% endif %}
                                     {% else %}

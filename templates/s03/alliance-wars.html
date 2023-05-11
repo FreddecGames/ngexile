@@ -81,20 +81,25 @@
                         </div>
                         {% if can_create %}
                         <div class="col-auto">
-                            <a href="?a=pay&tag={{ war.tag }}">Étendre la guerre d'une semaine</a>
+                            <form method="post" action="" class="d-inline">
+                                {% csrf_token %}
+                                <input type="hidden" name="action" value="pay" />
+                                <input type="hidden" name="tag" value="{{ war.tag }}" />
+                                <button type="submit" class="btn btn-link p-0">Étendre la guerre d'une semaine</button>
+                            </form>
                             <img src="{{ PATH_IMAGES }}img/interface/credits.gif" data-bs-toggle="tooltip" data-bs-title="Crédits" class="res" width="16px" height="16px">
                             {{ war.cost|intcomma }}
                         </div>
                         {% endif %}
                         <div class="col-auto">
                             {% if war.ceasing %}Fin de guerre demandée <span class="ms-2 text-yellow"><script>putcountdown1({{war.time }}, "Terminé", "?")</script></span>{% endif %}
-                            {% if can_break %}
-                                {% if war.cease_requested %}
-                                    <a href="?a=cease&tag={{ war.tag }}" class="btn btn-primary">Accepter la fin de la guerre <span class="ms-2 text-yellow"><script>putcountdown1({{war.time}}, "Terminé", "?")</script></span></a>
-                                {% endif %}
-                                {% if war.stop %}
-                                    <a href="?a=stop&tag={{ war.tag }}" class="btn btn-danger" onclick="return confirmStopWar('{{ war.tag }}')">Arrêter la guerre</a>
-                                {% endif %}
+                            {% if can_break and war.stop %}
+                                <form method="post" action="" class="d-inline" onsubmit="return confirmStopWar('{{ war.tag }}')">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="action" value="stop" />
+                                    <input type="hidden" name="tag" value="{{ war.tag }}" />
+                                    <button type="submit" class="btn btn-danger">Arrêter la guerre</button>
+                                </form>
                             {% endif %}
                         </div>
                     </div>
@@ -119,7 +124,7 @@
         {% if not newwar_confirm %}
             <form action="?" method="get">
                 {% csrf_token %}
-                <input type="hidden" name="a" value="new" />
+                <input type="hidden" name="action" value="new" />
                 <div class="card mt-3">
                     <div class="card-header">
                         <span class="fs-6">Déclarer la guerre</span>

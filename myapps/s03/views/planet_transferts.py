@@ -4,6 +4,8 @@ from myapps.s03.views._global import *
 
 class View(GlobalView):
 
+    ################################################################################
+    
     def dispatch(self, request, *args, **kwargs):
 
         #---
@@ -15,11 +17,13 @@ class View(GlobalView):
         
         return super().dispatch(request, *args, **kwargs)
 
+    ################################################################################
+    
     def post(self, request, *args, **kwargs):
         
         #---
         
-        action = request.POST.get("aaction")
+        action = request.POST.get("action")
         
         #---
         
@@ -86,16 +90,18 @@ class View(GlobalView):
         
         return HttpResponseRedirect(request.build_absolute_uri())
     
+    ################################################################################
+    
     def get(self, request, *args, **kwargs):
 
         #---
+
+        content = getTemplate(request, "s03/transferts")
         
         self.selectedMenu = "planet"
 
         self.showHeader = True
         self.headerUrl = '/s03/planet-transferts/'
-
-        content = getTemplate(request, "s03/transferts")
         
         #---
         

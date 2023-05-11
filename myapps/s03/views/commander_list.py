@@ -4,24 +4,35 @@ from myapps.s03.views._global import *
 
 class View(GlobalView):
 
+    ################################################################################
+
     def dispatch(self, request, *args, **kwargs):
 
         #---
 
         response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
+            
+        #---
+        
+        dbQuery("SELECT sp_commanders_check_new_commanders(" + str(self.userId) + ")")
 
         #---
         
         return super().dispatch(request, *args, **kwargs)
 
+    ################################################################################
+
     def post(self, request, *args, **kwargs):
         
-        action = request.POST.get('a', '').lower()
+        #---
+
+        action = request.POST.get('action')
         
         #---
         
-        if action == 'rename':        
+        if action == 'rename':
+        
             commanderId = ToInt(request.POST.get("id"), 0)
             newName = request.POST.get("name")            
             query = "SELECT sp_commanders_rename(" + str(self.userId) + "," + str(commanderId) + "," + dosql(newName) + ")"
@@ -30,6 +41,7 @@ class View(GlobalView):
         #---
         
         elif action == 'engage':
+        
             commanderId = ToInt(request.POST.get("id"), 0)
             query = "SELECT sp_commanders_engage(" + str(self.userId) + "," + str(commanderId) + ")"
             dbQuery(query)
@@ -37,6 +49,7 @@ class View(GlobalView):
         #---
         
         elif action == 'train':
+        
             commanderId = ToInt(request.POST.get("id"), 0)
             query = "SELECT sp_commanders_train(" + str(self.userId) + "," + str(commanderId) + ")"
             dbQuery(query)
@@ -44,19 +57,26 @@ class View(GlobalView):
         #---
         
         elif action == 'fire':
+        
             commanderId = ToInt(request.POST.get("id"), 0)
             query = "SELECT sp_commanders_fire(" + str(self.userId) + "," + str(commanderId) + ")"
             dbQuery(query)
 
-        return HttpResponseRedirect("/s03/commander-list/")
-        
-    def get(self, request, *args, **kwargs):
-            
         #---
         
-        dbQuery("SELECT sp_commanders_check_new_commanders(" + str(self.userId) + ")")
+        return HttpResponseRedirect(request.build_absolute_uri())
+
+    ################################################################################
+        
+    def get(self, request, *args, **kwargs):
+        
+        #---
         
         tpl = getTemplate(request, "s03/commanders")
+
+        self.selectedMenu = "commanders"
+        
+        #---
         
         result = dbExecute("SELECT int4(count(1)) FROM commanders WHERE recruited <= now() AND ownerid=" + str(self.userId))
         can_engage = result < self.profile["mod_commanders"]
@@ -127,5 +147,7 @@ class View(GlobalView):
 
             commander["mod_construction_speed_buildings"] = round((commander['mod_construction_speed_buildings'] - 1.0) * 100)
             commander["mod_construction_speed_ships"] = round((commander['mod_construction_speed_ships'] - 1.0) * 100)
+        
+        #---
         
         return self.display(tpl, request)

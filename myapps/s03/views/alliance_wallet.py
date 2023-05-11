@@ -4,6 +4,8 @@ from myapps.s03.views._global import *
 
 class View(GlobalView):
 
+    ################################################################################
+
     def dispatch(self, request, *args, **kwargs):
 
         #---
@@ -14,66 +16,84 @@ class View(GlobalView):
         #---
 
         if not self.allianceId:
-            return HttpResponseRedirect('/s03/alliance/')
+            return HttpResponseRedirect('/s03/')
         
         #---
 
         return super().dispatch(request, *args, **kwargs)
 
+    ################################################################################
+    
     def post(self, request, *args, **kwargs):
         
-        action = request.POST.get('a', '')
+        #---
+
+        action = request.POST.get('action')
+
+        #---
 
         if action == 'give' and self.can_give_money():
             
             credits = ToInt(request.POST.get("credits"), 0)
             description = request.POST.get("description", "").strip()
-            result = dbExecute("SELECT sp_alliance_transfer_money(" + str(self.userId) + "," + str(credits) + "," + dosql(description) + ",0)")
-            print(result)
+            result = dbExecute("SELECT sp_alliance_transfer_money(" + str(self.userId) + "," + str(credits) + "," + dosql(description) + ", 0)")
+            
             if result != 0: messages.error(request, 'not_enough_money')
 
-        elif action == 'request' and self.allianceRights["can_ask_money"]:
+        #---
+
+        elif action == 'request' and self.hasRight("can_ask_money"):
         
             credits = ToInt(request.POST.get("credits"), 0)
             description = request.POST.get("description", "").strip()
             dbQuery("SELECT sp_alliance_money_request(" + str(self.userId) + "," + str(credits) + "," + dosql(description) + ")")
 
+        #---
+
         elif action == 'cancel':
             
             dbQuery("SELECT sp_alliance_money_request(" + str(self.userId) + ", 0, NULL)")
 
-        elif action == 'settax' and self.allianceRights["can_change_tax_rate"]:
+        #---
+
+        elif action == 'settax' and self.hasRight("can_change_tax_rate"):
             
             taxrates = request.POST.get("taxrates", "")
             dbQuery("SELECT sp_alliance_set_tax(" + str(self.userId) + "," + dosql(taxrates) + ")")
-            
-        return HttpResponseRedirect('/s03/alliance-wallet/')
-        
-    def get(self, request, *args, **kwargs):
-            
-        action = request.GET.get("a", "")
 
-        if action == "accept" and self.allianceRights["can_accept_money_requests"]:
+        #---
+
+        elif action == "accept" and self.hasRight("can_accept_money_requests"):
         
-            id = ToInt(request.GET.get("id"), 0)
+            id = ToInt(request.POST.get("id"), 0)
             dbQuery("SELECT sp_alliance_money_accept(" + str(self.userId) + "," + str(id) + ")")
             
-        elif action == "deny" and self.allianceRights["can_accept_money_requests"]:
+        #---
+
+        elif action == "deny" and self.hasRight("can_accept_money_requests"):
         
-            id = ToInt(request.GET.get("id"), 0)
+            id = ToInt(request.POST.get("id"), 0)
             dbQuery("SELECT sp_alliance_money_deny(" + str(self.userId) + "," + str(id) + ")")
+            
+        #---
+        
+        return HttpResponseRedirect(request.build_absolute_uri())
+
+    ################################################################################
+        
+    def get(self, request, *args, **kwargs):
         
         #---
         
         tpl = getTemplate(request, "s03/alliance-wallet")
 
-        self.selectedMenu = "alliance.wallet"
+        self.selectedMenu = "alliance"
         
         #---
         
-        if self.allianceRights['can_ask_money']: tpl.Parse('can_ask')
-        if self.allianceRights['can_change_tax_rate']: tpl.Parse('can_settax')
-        if self.allianceRights['can_accept_money_requests']: tpl.Parse('can_accept')
+        if self.hasRight('can_ask_money'): tpl.Parse('can_ask')
+        if self.hasRight('can_change_tax_rate'): tpl.Parse('can_settax')
+        if self.hasRight('can_accept_money_requests'): tpl.Parse('can_accept')
         
         if self.can_give_money(): tpl.Parse('can_give')
         
@@ -185,6 +205,8 @@ class View(GlobalView):
             item["tax"] =  i * 0.5
             item["taxrates"] = i * 5
             
+        #---
+        
         return self.display(tpl, request)
 
     def can_give_money(self):

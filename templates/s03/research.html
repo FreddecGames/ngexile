@@ -62,12 +62,40 @@
                                 </div>
                                 <div class="col-2 text-end">
                                     {% if research.status > 0 %}
-                                        {% if research.looping %}<a href='/s03/tech-list/?a=stop&r={{ research.id }}' class="me-2">Automatique</a>
-                                        {% else %}<a href='/s03/tech-list/?a=continue&r={{ research.id }}' class="me-2">Manuel</a>
+                                        {% if research.looping %}
+                                            <form method="post" class="d-inline" action="">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="action" value="stop" />
+                                                <input type="hidden" name="r" value="{{ research.id }}" />
+                                                <button type="submit" class="btn btn-link p-0"">Automatique</button>
+                                            </form>
+                                        {% else %}
+                                            <form method="post" class="d-inline" action="">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="action" value="continue" />
+                                                <input type="hidden" name="r" value="{{ research.id }}" />
+                                                <button type="submit" class="btn btn-link p-0">Manuel</button>
+                                            </form>
                                         {% endif %}
-                                        <script>putcountdown2({{research.status}}, "<a href='?a=cancel&r={{research.id}}' onclick='return cancelresearch()' class='text-danger' data-bs-toggle='tooltip' data-bs-title='Annuler'><i class='fa-fw fas fa-times'></i></a>", "<a href='/s03/tech-list/'>Terminée</a>");</script>
-                                    {% elif research.notenoughmoney %}<span class="text-danger">Crédit insuffisant</span>
-                                    {% elif research.level < research.levels and research.can_research %}<a href="?a=research&r={{ research.id }}" class="btn btn-primary">Rechercher</a>
+                                        <script>
+                                            let html = ''
+                                            html += '<form method="post" class="d-inline" action="" onsubmit="return cancelresearch()">'
+                                                html += '{% csrf_token %}'
+                                                html += '<input type="hidden" name="action" value="cancel" />'
+                                                html += '<input type="hidden" name="r" value="{{ research.id }}" />'
+                                                html += '<button type="submit" class="btn btn-link text-danger p-0" data-bs-toggle="tooltip" data-bs-title="Annuler"><i class="fa-fw fas fa-times"></i></button>'
+                                            html += '</form>'
+                                            putcountdown2({{research.status}}, html, "<a href='/s03/tech-list/'>Terminée</a>");
+                                        </script>
+                                    {% elif research.notenoughmoney %}
+                                        <span class="text-danger">Crédit insuffisant</span>
+                                    {% elif research.level < research.levels and research.can_research %}
+                                        <form method="post" action="">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="action" value="research" />
+                                            <input type="hidden" name="r" value="{{ research.id }}" />
+                                            <button type="submit" class="btn btn-primary">Rechercher</button>
+                                        </form>
                                     {% endif %}
                                 </div>
                             </div>

@@ -77,8 +77,9 @@
                 }
             }
         </script>
-        <form method="post" name="newmail" action="?" onsubmit="return validateAmount();">
+        <form method="post" action="" onsubmit="return validateAmount();">
             {% csrf_token %}
+            <input type="hidden" name="action" value="sendmail">
             <div class="card">
                 <div class="card-body">
                     <div class="row g-2 flex-column">

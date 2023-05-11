@@ -4,6 +4,8 @@ from myapps.s03.views._global import *
 
 class View(GlobalView):
 
+    ################################################################################
+    
     def dispatch(self, request, *args, **kwargs):
 
         #---
@@ -15,8 +17,12 @@ class View(GlobalView):
         
         return super().dispatch(request, *args, **kwargs)
 
+    ################################################################################
+    
     def get(self, request, *args, **kwargs):
 
+        #---
+        
         reportId = ToInt(request.GET.get("id"), 0)
         if reportId == 0: return HttpResponseRedirect("/s03/report-list/")
 
@@ -122,4 +128,6 @@ class View(GlobalView):
             pendings = dbRows(query)
             tpl.setValue('pendings', pendings)
             
+        #---
+        
         return self.display(tpl, request)

@@ -4,6 +4,8 @@ from myapps.s03.views._global import *
 
 class View(GlobalView):
 
+    ################################################################################
+    
     def dispatch(self, request, *args, **kwargs):
 
         #---
@@ -15,27 +17,43 @@ class View(GlobalView):
         
         return super().dispatch(request, *args, **kwargs)
         
+    ################################################################################
+    
     def post(self, request, *args, **kwargs):
 
-        query = "SELECT id FROM nav_planet WHERE ownerid=" + str(self.userId)
-        planets = dbRows(query)
+        #---
+        
+        action = request.POST.get('action')
+        
+        #---
+        
+        if action == 'buy':
 
-        for planet in planets:
-            
-            planetId = planet['id']
-            
-            ore = ToInt(request.POST.get("o" + str(planetId)), 0)
-            hydrocarbon = ToInt(request.POST.get("h" + str(planetId)), 0)
+            query = "SELECT id FROM nav_planet WHERE ownerid=" + str(self.userId)
+            planets = dbRows(query)
 
-            if ore > 0 or hydrocarbon > 0:
+            for planet in planets:
+                
+                planetId = planet['id']
+                
+                ore = ToInt(request.POST.get("o" + str(planetId)), 0)
+                hydrocarbon = ToInt(request.POST.get("h" + str(planetId)), 0)
 
-                query = "SELECT * FROM sp_buy_resources(" + str(self.userId) + "," + str(planetId) + "," + str(ore * 1000) + "," + str(hydrocarbon * 1000) + ")"
-                dbQuery(query)
+                if ore > 0 or hydrocarbon > 0:
+
+                    query = "SELECT * FROM sp_buy_resources(" + str(self.userId) + "," + str(planetId) + "," + str(ore * 1000) + "," + str(hydrocarbon * 1000) + ")"
+                    dbQuery(query)
+        
+        #---
         
         return HttpResponseRedirect(request.build_absolute_uri())
         
+    ################################################################################
+    
     def get(self, request, *args, **kwargs):
                 
+        #---
+        
         content = getTemplate(request, "s03/market-buy")
         
         #---
@@ -109,8 +127,9 @@ class View(GlobalView):
         
         if get_planet != "":
         
-            self.showHeader = True
             self.selectedMenu = "planet"
+            
+            self.showHeader = True
             self.headerUrl = '/s03/market-buy/'
             
             content.setValue("showHeader", self.showHeader)
