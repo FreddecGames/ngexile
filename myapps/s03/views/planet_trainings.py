@@ -29,10 +29,10 @@ class View(GlobalView):
         
         if action == 'train':
         
-            trainSoldiers = ToInt(request.POST.get("soldiers"), 0)
-            trainScientists = ToInt(request.POST.get("scientists"), 0)
+            trainSoldiers = ToInt(request.POST.get('soldiers'), 0)
+            trainScientists = ToInt(request.POST.get('scientists'), 0)
 
-            result = dbExecute("SELECT * FROM sp_start_training(" + str(self.userId) + "," + str(self.currentPlanetId) + "," + str(trainScientists) + "," + str(trainSoldiers) + ")")
+            result = dbExecute('SELECT * FROM sp_start_training(' + str(self.userId) + ',' + str(self.currentPlanetId) + ',' + str(trainScientists) + ',' + str(trainSoldiers) + ')')
 
             if result == 5: messages.error(request, 'cant_train_now')
             elif result > 0: messages.error(request, 'not_enough_workers')
@@ -41,9 +41,9 @@ class View(GlobalView):
         
         elif action == 'cancel':
         
-            queueId = ToInt(request.POST.get("q"), 0)
+            queueId = ToInt(request.POST.get('q'), 0)
             if queueId != 0:
-                dbQuery("SELECT * FROM sp_cancel_training(" + str(self.currentPlanetId) + ", " + str(queueId) + ")")
+                dbQuery('SELECT * FROM sp_cancel_training(' + str(self.currentPlanetId) + ', ' + str(queueId) + ')')
                 
         #---
         
@@ -55,55 +55,55 @@ class View(GlobalView):
     
         #---
 
-        content = getTemplate(request, "s03/training")
+        tpl = getTemplate(request, 'planet-trainings')
 
-        self.selectedMenu = "planet"
+        self.selectedMenu = 'planet'
 
         self.showHeader = True
         self.headerUrl = '/s03/planet-trainings/'
 
         #---
         
-        content.setValue("planetid", str(self.currentPlanetId))
+        tpl.set('planetid', str(self.currentPlanetId))
 
         #---
         
-        query = "SELECT scientist_ore, scientist_hydrocarbon, scientist_credits," + \
-                " soldier_ore, soldier_hydrocarbon, soldier_credits" + \
-                " FROM sp_get_training_price(" + str(self.userId) + ")"
+        query = 'SELECT scientist_ore, scientist_hydrocarbon, scientist_credits,' + \
+                ' soldier_ore, soldier_hydrocarbon, soldier_credits' + \
+                ' FROM sp_get_training_price(' + str(self.userId) + ')'
         row = dbRow(query)
         
-        content.setValue("prices", row)
+        tpl.set('prices', row)
 
         #---
         
-        query = "SELECT scientists, scientists_capacity, soldiers, soldiers_capacity, workers FROM vw_planets WHERE id=" + str(self.currentPlanetId)
+        query = 'SELECT scientists, scientists_capacity, soldiers, soldiers_capacity, workers FROM vw_planets WHERE id=' + str(self.currentPlanetId)
         row = dbRow(query)
         
-        content.setValue("planet", row)
+        tpl.set('planet', row)
 
         #---
         
-        query = "SELECT id, scientists, soldiers, int4(date_part('epoch', end_time-now())) AS remainingtime" + \
-                " FROM planet_training_pending WHERE planetid=" + str(self.currentPlanetId) + " AND end_time IS NOT NULL" + \
-                " ORDER BY start_time"
+        query = 'SELECT id, scientists, soldiers, int4(date_part(\'epoch\', end_time-now())) AS remainingtime' + \
+                ' FROM planet_training_pending WHERE planetid=' + str(self.currentPlanetId) + ' AND end_time IS NOT NULL' + \
+                ' ORDER BY start_time'
         rows = dbRows(query)
 
-        content.setValue("trainings", rows)
+        tpl.set('trainings', rows)
 
         #---
 
-        query = "SELECT planet_training_pending.id, planet_training_pending.scientists, planet_training_pending.soldiers," + \
-                "    int4(ceiling(1.0*planet_training_pending.scientists/GREATEST(1, training_scientists)) * date_part('epoch', INTERVAL '1 hour')) AS scientists_remainingtime," + \
-                "    int4(ceiling(1.0*planet_training_pending.soldiers/GREATEST(1, training_soldiers)) * date_part('epoch', INTERVAL '1 hour')) AS soldiers_remainingtime" + \
-                " FROM planet_training_pending" + \
-                "    JOIN nav_planet ON (nav_planet.id=planet_training_pending.planetid)" + \
-                " WHERE planetid=" + str(self.currentPlanetId) + " AND end_time IS NULL" + \
-                " ORDER BY start_time"
+        query = 'SELECT planet_training_pending.id, planet_training_pending.scientists, planet_training_pending.soldiers,' + \
+                '    int4(ceiling(1.0*planet_training_pending.scientists/GREATEST(1, training_scientists)) * date_part(\'epoch\', INTERVAL \'1 hour\')) AS scientists_remainingtime,' + \
+                '    int4(ceiling(1.0*planet_training_pending.soldiers/GREATEST(1, training_soldiers)) * date_part(\'epoch\', INTERVAL \'1 hour\')) AS soldiers_remainingtime' + \
+                ' FROM planet_training_pending' + \
+                '    JOIN nav_planet ON (nav_planet.id=planet_training_pending.planetid)' + \
+                ' WHERE planetid=' + str(self.currentPlanetId) + ' AND end_time IS NULL' + \
+                ' ORDER BY start_time'
         rows = dbRows(query)
 
-        content.setValue("queues", rows)
+        tpl.set('queues', rows)
 
         #---
         
-        return self.display(content, request)
+        return self.display(tpl, request)

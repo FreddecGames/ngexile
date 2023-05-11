@@ -35,23 +35,23 @@ class View(GlobalView):
 
         #---
         
-        action = request.POST.get("spy")
+        action = request.POST.get('action')
         
         #---
         
-        if action == "nation":
+        if action == 'nation':
             
             #---
             
-            level = ToInt(request.POST.get("level"), -1)
+            level = ToInt(request.POST.get('level'), -1)
             spotted = False
             category = 8
             
             #---
             
-            nation = request.POST.get("nation_name", "")
+            nation = request.POST.get('nation_name', '')
             
-            userId = dbExecute("SELECT id FROM users WHERE (privilege=-2 OR privilege=0) AND upper(username) = upper(" + dosql(nation) + ")")
+            userId = dbExecute('SELECT id FROM users WHERE (privilege=-2 OR privilege=0) AND upper(username) = upper(' + dosql(nation) + ')')
             if userId == None:
                 
                 messages.error(request, 'player_not_exists')
@@ -64,14 +64,14 @@ class View(GlobalView):
             
             #---
             
-            reportId = dbExecute("SELECT sp_create_spy('" + str(self.userId) + "', int2(" + str(1) + "), int2(" + str(level) + ") )")
+            reportId = dbExecute('SELECT sp_create_spy('' + str(self.userId) + '', int2(' + str(1) + '), int2(' + str(level) + ') )')
             if reportId < 0:
                 messages.error(request, 'general_error')
                 return HttpResponseRedirect(request.build_absolute_uri())
             
             #---
             
-            dbQuery("UPDATE spy SET target_name=sp_get_user(" + str(userId) + ") WHERE id=" + str(reportId))
+            dbQuery('UPDATE spy SET target_name=sp_get_user(' + str(userId) + ') WHERE id=' + str(reportId))
 
             #---
             
@@ -105,7 +105,7 @@ class View(GlobalView):
 
             #---
             
-            if self.profile["prestige_points"] < cost:
+            if self.profile['prestige_points'] < cost:
                 messages.error(request, 'not_enough_money')
                 return HttpResponseRedirect(request.build_absolute_uri())
             
@@ -113,21 +113,21 @@ class View(GlobalView):
             
             nb_planet = 0
             
-            query = "SELECT id, name, floor, space, pct_ore, pct_hydrocarbon," + \
-                        " COALESCE((SELECT SUM(quantity*signature) " + \
-                        " FROM planet_ships " + \
-                        " LEFT JOIN db_ships ON (planet_ships.shipid = db_ships.id) " + \
-                        " WHERE planet_ships.planetid=vw_planets.id),0) AS ground" + \
-                    " FROM vw_planets" + \
-                    " WHERE ownerid=" + str(userId) + \
-                    " ORDER BY random() "
+            query = 'SELECT id, name, floor, space, pct_ore, pct_hydrocarbon,' + \
+                        ' COALESCE((SELECT SUM(quantity*signature) ' + \
+                        ' FROM planet_ships ' + \
+                        ' LEFT JOIN db_ships ON (planet_ships.shipid = db_ships.id) ' + \
+                        ' WHERE planet_ships.planetid=vw_planets.id),0) AS ground' + \
+                    ' FROM vw_planets' + \
+                    ' WHERE ownerid=' + str(userId) + \
+                    ' ORDER BY random() '
             planets = dbRows(query)
             
             for planet in planets:
                 if planet_limit == 0 or nb_planet < planet_limit:
 
-                    query = "INSERT INTO spy_planet(spy_id,  planet_id,  planet_name,  floor,  space, pct_ore, pct_hydrocarbon, ground) " + \
-                            " VALUES(" + str(reportId) +"," + str(planet['id']) +"," + dosql(planet['name']) +"," + str(planet['floor']) + "," + str(planet['space']) + "," + str(planet['pct_ore']) + "," + str(planet['pct_hydrocarbon']) + "," + str(planet['ground']) + ")"
+                    query = 'INSERT INTO spy_planet(spy_id,  planet_id,  planet_name,  floor,  space, pct_ore, pct_hydrocarbon, ground) ' + \
+                            ' VALUES(' + str(reportId) +',' + str(planet['id']) +',' + dosql(planet['name']) +',' + str(planet['floor']) + ',' + str(planet['space']) + ',' + str(planet['pct_ore']) + ',' + str(planet['pct_hydrocarbon']) + ',' + str(planet['ground']) + ')'
                     dbQuery(query)
 
                     nb_planet = nb_planet + 1
@@ -136,22 +136,22 @@ class View(GlobalView):
             
             if level >= 2:
             
-                query = " SELECT researchid, level " + \
-                        " FROM sp_list_researches(" + str(userId) + ") " + \
-                        " WHERE level > 0" + \
-                        " ORDER BY researchid "
+                query = ' SELECT researchid, level ' + \
+                        ' FROM sp_list_researches(' + str(userId) + ') ' + \
+                        ' WHERE level > 0' + \
+                        ' ORDER BY researchid '
                 researches = dbRows(query)
 
                 for research in researches:
 
-                    query = "INSERT INTO spy_research(spy_id, research_id, research_level)" + \
-                            " VALUES(" + str(reportId) +", " + str(research['researchid']) +", " + str(research['level']) +") "
+                    query = 'INSERT INTO spy_research(spy_id, research_id, research_level)' + \
+                            ' VALUES(' + str(reportId) +', ' + str(research['researchid']) +', ' + str(research['level']) +') '
                     dbQuery(query)
                     
             #---
             
-            query = " INSERT INTO reports(ownerid, type, subtype, datetime, spyid, description)" + \
-                    " VALUES(" + str(self.userId) + ", 8, 10, now() + " + str(spyingTime + nb_planet) + "*interval '1 minute', " + str(reportId) + ", sp_get_user(" + str(userId) + "))"
+            query = ' INSERT INTO reports(ownerid, type, subtype, datetime, spyid, description)' + \
+                    ' VALUES(' + str(self.userId) + ', 8, 10, now() + ' + str(spyingTime + nb_planet) + '*INTERVAL \'1 minute\', ' + str(reportId) + ', sp_get_user(' + str(userId) + '))'
             dbQuery(query)
         
             #---
@@ -159,37 +159,37 @@ class View(GlobalView):
             spotted = random() < spottedChance
             if spotted:
 
-                query = " UPDATE spy " + \
-                        " SET spotted=" + str(spotted) + \
-                        " WHERE id=" + str(reportId) + " AND userid=" + str(self.userId)
+                query = ' UPDATE spy ' + \
+                        ' SET spotted=' + str(spotted) + \
+                        ' WHERE id=' + str(reportId) + ' AND userid=' + str(self.userId)
                 dbQuery(query)
 
-                query = " INSERT INTO reports(ownerid, type, subtype, datetime, spyid, description) " + \
-                        " VALUES(" + str(userId) + ", 8, 1, now() + " + str(spyingTime + nb_planet) + "*interval '40 seconds', " + str(reportId) + ", sp_get_user(" + str(self.userId) + "))"
+                query = ' INSERT INTO reports(ownerid, type, subtype, datetime, spyid, description) ' + \
+                        ' VALUES(' + str(userId) + ', 8, 1, now() + ' + str(spyingTime + nb_planet) + '*INTERVAL \'40 seconds\', ' + str(reportId) + ', sp_get_user(' + str(self.userId) + '))'
                 dbQuery(query)
                 
             #---
             
-            query = "UPDATE users SET prestige_points=prestige_points - " + str(cost) + " WHERE id=" + str(self.userId)
+            query = 'UPDATE users SET prestige_points=prestige_points - ' + str(cost) + ' WHERE id=' + str(self.userId)
             dbQuery(query)
             
         #---
         
-        elif action == "planet":
+        elif action == 'planet':
             
             #---
             
-            level = ToInt(request.POST.get("level"), -1)
+            level = ToInt(request.POST.get('level'), -1)
             spotted = False
             category = 8
             
             #---
             
-            g = ToInt(request.POST.get("g"), 0)
-            s = ToInt(request.POST.get("s"), 0)
-            p = ToInt(request.POST.get("p"), 0)
+            g = ToInt(request.POST.get('g'), 0)
+            s = ToInt(request.POST.get('s'), 0)
+            p = ToInt(request.POST.get('p'), 0)
             
-            userId = dbExecute("SELECT ownerid FROM nav_planet WHERE galaxy=" + str(g) + " AND sector=" + str(s) + " AND planet=" + str(p))
+            userId = dbExecute('SELECT ownerid FROM nav_planet WHERE galaxy=' + str(g) + ' AND sector=' + str(s) + ' AND planet=' + str(p))
             if userId == None:
             
                 messages.error(request, 'planet_not_exists')
@@ -202,7 +202,7 @@ class View(GlobalView):
             
             #---
             
-            reportId = dbExecute("SELECT sp_create_spy('" + str(self.userId) + "', int2(" + str(3) + "), int2(" + str(level) + ") )")
+            reportId = dbExecute('SELECT sp_create_spy('' + str(self.userId) + '', int2(' + str(3) + '), int2(' + str(level) + ') )')
             if reportId < 0:
                 messages.error(request, 'general_error')
                 return HttpResponseRedirect(request.build_absolute_uri())
@@ -239,51 +239,51 @@ class View(GlobalView):
 
             #---
             
-            if self.profile["prestige_points"] < cost:
+            if self.profile['prestige_points'] < cost:
                 messages.error(request, 'not_enough_money')
                 return HttpResponseRedirect(request.build_absolute_uri())
         
             #---
             
-            query = " SELECT id, name, ownerid, sp_get_user(ownerid) AS owner_name, floor, space, floor_occupied, space_occupied,  " + \
-                        " COALESCE((SELECT SUM(quantity*signature) " + \
-                        " FROM planet_ships " + \
-                        " LEFT JOIN db_ships ON (planet_ships.shipid = db_ships.id) " + \
-                        " WHERE planet_ships.planetid=vw_planets.id),0) AS ground, " + \
-                    " ore, hydrocarbon, ore_capacity, hydrocarbon_capacity, ore_production, hydrocarbon_production, " + \
-                    " energy_consumption, energy_production, " + \
-                    " radar_strength, radar_jamming, colonization_datetime, orbit_ore, orbit_hydrocarbon, " + \
-                    " workers, workers_capacity, scientists, scientists_capacity, soldiers, soldiers_capacity, " + \
-                    " pct_ore, pct_hydrocarbon" + \
-                    " FROM vw_planets " + \
-                    " WHERE galaxy=" + str(g) + " AND sector=" + str(s) + " AND planet=" + str(p)
+            query = ' SELECT id, name, ownerid, sp_get_user(ownerid) AS owner_name, floor, space, floor_occupied, space_occupied,  ' + \
+                        ' COALESCE((SELECT SUM(quantity*signature) ' + \
+                        ' FROM planet_ships ' + \
+                        ' LEFT JOIN db_ships ON (planet_ships.shipid = db_ships.id) ' + \
+                        ' WHERE planet_ships.planetid=vw_planets.id),0) AS ground, ' + \
+                    ' ore, hydrocarbon, ore_capacity, hydrocarbon_capacity, ore_production, hydrocarbon_production, ' + \
+                    ' energy_consumption, energy_production, ' + \
+                    ' radar_strength, radar_jamming, colonization_datetime, orbit_ore, orbit_hydrocarbon, ' + \
+                    ' workers, workers_capacity, scientists, scientists_capacity, soldiers, soldiers_capacity, ' + \
+                    ' pct_ore, pct_hydrocarbon' + \
+                    ' FROM vw_planets ' + \
+                    ' WHERE galaxy=' + str(g) + ' AND sector=' + str(s) + ' AND planet=' + str(p)
             planet = dbRow(query)
             
             if planet['ownerid']:
                 
                 #---
                 
-                dbQuery("UPDATE spy SET target_name=sp_get_user(" + str(planet['ownerid']) + ") WHERE id=" + str(reportId))
+                dbQuery('UPDATE spy SET target_name=sp_get_user(' + str(planet['ownerid']) + ') WHERE id=' + str(reportId))
                 
                 #---
                 
-                query = "INSERT INTO spy_planet(spy_id, planet_id, planet_name, owner_name, floor, space, pct_ore, pct_hydrocarbon, ground)" + \
-                        " VALUES (" + str(reportId) +", " + str(planet['id']) + "," + dosql(planet['name']) +"," + dosql(planet['owner_name']) +"," + str(planet['floor']) + "," + str(planet['space']) + "," + str(planet['pct_ore']) + "," + str(planet['pct_hydrocarbon']) + "," + str(planet['ground']) + ")"
+                query = 'INSERT INTO spy_planet(spy_id, planet_id, planet_name, owner_name, floor, space, pct_ore, pct_hydrocarbon, ground)' + \
+                        ' VALUES (' + str(reportId) +', ' + str(planet['id']) + ',' + dosql(planet['name']) +',' + dosql(planet['owner_name']) +',' + str(planet['floor']) + ',' + str(planet['space']) + ',' + str(planet['pct_ore']) + ',' + str(planet['pct_hydrocarbon']) + ',' + str(planet['ground']) + ')'
                 dbQuery(query)
                 
                 #---
                 
-                query = " UPDATE spy_planet SET" + \
-                        " radar_strength=" + str(planet['radar_strength']) + ", radar_jamming=" + str(planet['radar_jamming']) + ", " + \
-                        " orbit_ore=" + str(planet['orbit_ore']) + ", orbit_hydrocarbon=" + str(planet['orbit_hydrocarbon']) + \
-                        " WHERE spy_id=" + str(reportId) + " AND planet_id=" + str(planet['id'])
+                query = ' UPDATE spy_planet SET' + \
+                        ' radar_strength=' + str(planet['radar_strength']) + ', radar_jamming=' + str(planet['radar_jamming']) + ', ' + \
+                        ' orbit_ore=' + str(planet['orbit_ore']) + ', orbit_hydrocarbon=' + str(planet['orbit_hydrocarbon']) + \
+                        ' WHERE spy_id=' + str(reportId) + ' AND planet_id=' + str(planet['id'])
                 dbQuery(query)
                 
                 #---
                 
-                query = "SELECT planetid, id, quantity, construction_maximum" + \
-                        " FROM vw_buildings" + \
-                        " WHERE planetid=" + str(planet['id']) + " AND quantity != 0 AND build_status IS NULL AND destruction_time IS NULL"
+                query = 'SELECT planetid, id, quantity, construction_maximum' + \
+                        ' FROM vw_buildings' + \
+                        ' WHERE planetid=' + str(planet['id']) + ' AND quantity != 0 AND build_status IS NULL AND destruction_time IS NULL'
                 rows = dbRows(query)
                 
                 i = 0
@@ -302,8 +302,8 @@ class View(GlobalView):
                         if rndmin < 1: rndmin = 1
                         qty = int((rndmax - rndmin + 1) * random() + rndmin)
 
-                    query = " INSERT INTO spy_building(spy_id, planet_id, building_id, quantity) " + \
-                            " VALUES(" + str(reportId) + ", " + str(planet['id']) + ", " + str(row['id']) + ", " + str(qty) + " )"
+                    query = ' INSERT INTO spy_building(spy_id, planet_id, building_id, quantity) ' + \
+                            ' VALUES(' + str(reportId) + ', ' + str(planet['id']) + ', ' + str(row['id']) + ', ' + str(qty) + ' )'
                     dbQuery(query)
                     
                     i += 1
@@ -312,28 +312,28 @@ class View(GlobalView):
                     
                 if level >= 1:
                 
-                    query = "UPDATE spy_planet SET" + \
-                            " ore=" + str(planet['ore']) + ", hydrocarbon=" + str(planet['hydrocarbon']) + \
-                            ", ore_capacity=" + str(planet['ore_capacity']) + ", hydrocarbon_capacity=" + str(planet['hydrocarbon_capacity']) + \
-                            ", ore_production=" + str(planet['ore_production']) + ", hydrocarbon_production=" + str(planet['hydrocarbon_production']) + \
-                            ", energy_consumption=" + str(planet['energy_consumption']) + ", energy_production=" + str(planet['energy_production']) + \
-                            " WHERE spy_id=" + str(reportId) + " AND planet_id=" + str(planet['id'])
+                    query = 'UPDATE spy_planet SET' + \
+                            ' ore=' + str(planet['ore']) + ', hydrocarbon=' + str(planet['hydrocarbon']) + \
+                            ', ore_capacity=' + str(planet['ore_capacity']) + ', hydrocarbon_capacity=' + str(planet['hydrocarbon_capacity']) + \
+                            ', ore_production=' + str(planet['ore_production']) + ', hydrocarbon_production=' + str(planet['hydrocarbon_production']) + \
+                            ', energy_consumption=' + str(planet['energy_consumption']) + ', energy_production=' + str(planet['energy_production']) + \
+                            ' WHERE spy_id=' + str(reportId) + ' AND planet_id=' + str(planet['id'])
                     dbQuery(query)
 
                 #---
                 
                 if level >= 2:
 
-                    query = "UPDATE spy_planet SET" + \
-                            " workers=" + str(planet['workers']) + ", workers_capacity=" + str(planet['workers_capacity']) + ", " + \
-                            " scientists=" + str(planet['scientists']) + ", scientists_capacity=" + str(planet['scientists_capacity']) + ", " + \
-                            " soldiers=" + str(planet['soldiers']) + ", soldiers_capacity=" + str(planet['soldiers_capacity']) + \
-                            " WHERE spy_id=" + str(reportId) + " AND planet_id=" + str(planet['id'])
+                    query = 'UPDATE spy_planet SET' + \
+                            ' workers=' + str(planet['workers']) + ', workers_capacity=' + str(planet['workers_capacity']) + ', ' + \
+                            ' scientists=' + str(planet['scientists']) + ', scientists_capacity=' + str(planet['scientists_capacity']) + ', ' + \
+                            ' soldiers=' + str(planet['soldiers']) + ', soldiers_capacity=' + str(planet['soldiers_capacity']) + \
+                            ' WHERE spy_id=' + str(reportId) + ' AND planet_id=' + str(planet['id'])
                     dbQuery(query)
 
-                    query = "SELECT planetid, id, build_status, quantity, construction_maximum " + \
-                            " FROM vw_buildings AS b " + \
-                            " WHERE planetid=" + str(planet['id']) + " AND build_status IS NOT NULL"
+                    query = 'SELECT planetid, id, build_status, quantity, construction_maximum ' + \
+                            ' FROM vw_buildings AS b ' + \
+                            ' WHERE planetid=' + str(planet['id']) + ' AND build_status IS NOT NULL'
                     rows = dbRows(query)
                     
                     i = 0
@@ -352,24 +352,24 @@ class View(GlobalView):
                             if rndmin < 1: rndmin = 1
                             qty = int((rndmax - rndmin + 1) * random() + rndmin)
 
-                        query = "INSERT INTO spy_building(spy_id, planet_id, building_id, endtime, quantity) " + \
-                                " VALUES (" + str(reportId) + ", " + str(planet['id']) + ", " + str(row['id']) + ", now() + " + str(row['build_status']) + "* interval '1 second', " + str(qty) + " )"
+                        query = 'INSERT INTO spy_building(spy_id, planet_id, building_id, endtime, quantity) ' + \
+                                ' VALUES (' + str(reportId) + ', ' + str(planet['id']) + ', ' + str(row['id']) + ', now() + ' + str(row['build_status']) + '* INTERVAL \'1 second\', ' + str(qty) + ' )'
                         dbQuery(query)
                         
                         i += 1
                 
             else:
             
-                query = " INSERT INTO spy_planet(spy_id, planet_id, floor, space) " + \
-                        " VALUES(" + str(reportId) +", " + str(planet['id']) +", " + str(planet['floor']) +", " + str(planet['space']) +") "
+                query = ' INSERT INTO spy_planet(spy_id, planet_id, floor, space) ' + \
+                        ' VALUES(' + str(reportId) +', ' + str(planet['id']) +', ' + str(planet['floor']) +', ' + str(planet['space']) +') '
                 dbQuery(query)
                 
                 return HttpResponseRedirect(request.build_absolute_uri())
                 
             #---
         
-            query = " INSERT INTO reports(ownerid, type, subtype, datetime, spyid, planetid) " + \
-                    " VALUES(" + str(self.userId) + ", 8, 30, now() + " + str(spyingTime) + "*interval '1 minute', " + str(reportId) + ", " + str(planet['id']) + ") "
+            query = ' INSERT INTO reports(ownerid, type, subtype, datetime, spyid, planetid) ' + \
+                    ' VALUES(' + str(self.userId) + ', 8, 30, now() + ' + str(spyingTime) + '*INTERVAL \'1 minute\', ' + str(reportId) + ', ' + str(planet['id']) + ') '
             dbQuery(query)
         
             #---
@@ -377,18 +377,18 @@ class View(GlobalView):
             spotted = random() < spottedChance
             if spotted:
 
-                query = " UPDATE spy " + \
-                        " SET spotted=" + str(spotted) + \
-                        " WHERE id=" + str(reportId) + " AND userid=" + str(self.userId)
+                query = ' UPDATE spy ' + \
+                        ' SET spotted=' + str(spotted) + \
+                        ' WHERE id=' + str(reportId) + ' AND userid=' + str(self.userId)
                 dbQuery(query)
                 
-                query = " INSERT INTO reports(ownerid, type, subtype, datetime, spyid, planetid, description) " + \
-                        " VALUES(" + str(userId) + ", 8, 3, now() + " + str(spyingTime) + "*interval '40 seconds'," + str(reportId) + "," + str(planet['id']) + ", sp_get_user(" + str(self.userId) + "))"
+                query = ' INSERT INTO reports(ownerid, type, subtype, datetime, spyid, planetid, description) ' + \
+                        ' VALUES(' + str(userId) + ', 8, 3, now() + ' + str(spyingTime) + '*INTERVAL \'40 seconds\',' + str(reportId) + ',' + str(planet['id']) + ', sp_get_user(' + str(self.userId) + '))'
                 dbQuery(query)
                 
             #---
             
-            query = "UPDATE users SET prestige_points=prestige_points - " + str(cost) + " WHERE id=" + str(self.userId)
+            query = 'UPDATE users SET prestige_points=prestige_points - ' + str(cost) + ' WHERE id=' + str(self.userId)
             dbQuery(query)
             
         #---
@@ -399,22 +399,22 @@ class View(GlobalView):
     
         #---
         
-        content = getTemplate(request, "s03/mercenary-intelligence")
+        tpl = getTemplate(request, 'mercenary')
 
-        self.selectedMenu = "intelligence"
+        self.selectedMenu = 'intelligence'
         
         #---
 
-        content.setValue("nation_cost_lvl_0", self.nation_cost_lvl_0)
-        content.setValue("nation_cost_lvl_1", self.nation_cost_lvl_1)
-        content.setValue("nation_cost_lvl_2", self.nation_cost_lvl_2)
-        content.setValue("nation_cost_lvl_3", self.nation_cost_lvl_3)
+        tpl.set('nation_cost_lvl_0', self.nation_cost_lvl_0)
+        tpl.set('nation_cost_lvl_1', self.nation_cost_lvl_1)
+        tpl.set('nation_cost_lvl_2', self.nation_cost_lvl_2)
+        tpl.set('nation_cost_lvl_3', self.nation_cost_lvl_3)
 
-        content.setValue("planet_cost_lvl_0", self.planet_cost_lvl_0)
-        content.setValue("planet_cost_lvl_1", self.planet_cost_lvl_1)
-        content.setValue("planet_cost_lvl_2", self.planet_cost_lvl_2)
-        content.setValue("planet_cost_lvl_3", self.planet_cost_lvl_3)
+        tpl.set('planet_cost_lvl_0', self.planet_cost_lvl_0)
+        tpl.set('planet_cost_lvl_1', self.planet_cost_lvl_1)
+        tpl.set('planet_cost_lvl_2', self.planet_cost_lvl_2)
+        tpl.set('planet_cost_lvl_3', self.planet_cost_lvl_3)
         
         #---
 
-        return self.display(content, request)
+        return self.display(tpl, request)

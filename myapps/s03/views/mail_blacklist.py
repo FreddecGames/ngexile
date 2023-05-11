@@ -27,9 +27,9 @@ class View(GlobalView):
         
         #---
                     
-        if action == "unignore":
+        if action == 'unignore':
         
-            dbQuery("DELETE FROM messages_ignore_list WHERE userid=" + str(self.userId) + " AND ignored_userid=(SELECT id FROM users WHERE lower(username)=lower(" + dosql(request.POST.get("user")) + "))")
+            dbQuery('DELETE FROM messages_ignore_list WHERE userid=' + str(self.userId) + ' AND ignored_userid=(SELECT id FROM users WHERE lower(username)=lower(' + dosql(request.POST.get('user')) + '))')
             
         #---
             
@@ -41,15 +41,15 @@ class View(GlobalView):
             
         #---
 
-        content = getTemplate(request, "s03/mail-ignorelist")
+        tpl = getTemplate(request, 'mail-blacklist')
                 
-        self.selectedMenu = "mails"
+        self.selectedMenu = 'mails'
 
         #---
         
-        ignorednations = dbRows("SELECT ignored_userid AS userid, sp_get_user(ignored_userid) AS name, added, blocked FROM messages_ignore_list WHERE userid=" + str(self.userId))
-        content.setValue("ignorednations", ignorednations)
+        ignorednations = dbRows('SELECT ignored_userid AS userid, sp_get_user(ignored_userid) AS name, added, blocked FROM messages_ignore_list WHERE userid=' + str(self.userId))
+        tpl.set('ignorednations', ignorednations)
 
         #---
         
-        return self.display(content, request)
+        return self.display(tpl, request)

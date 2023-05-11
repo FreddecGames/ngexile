@@ -14,7 +14,7 @@ from django.shortcuts import render
 from django.utils import timezone
 from django.views import View
 
-registration = { "enabled":True, "until":None }
+registration = { 'enabled':True, 'until':None }
 
 maintenance = False
 
@@ -30,11 +30,11 @@ def isValidName(myName):
 
     myName = myName.strip()
 
-    if myName == "" or len(myName) < 2 or len(myName) > 12:
+    if myName == '' or len(myName) < 2 or len(myName) > 12:
         return False
     else:
     
-        p = re.compile("^[a-zA-Z0-9]+([ ]?[\-]?[ ]?[a-zA-Z0-9]+)*$")
+        p = re.compile('^[a-zA-Z0-9]+([ ]?[\-]?[ ]?[a-zA-Z0-9]+)*$')
         return p.match(myName)
 
 
@@ -42,7 +42,7 @@ def isValidURL(myURL):
 
     myURL = myURL.strip()
 
-    p = re.compile("^(http|https|ftp)\://([a-zA-Z0-9\.\-]+(\:[a-zA-Z0-9\.&%\$\-]+)*@)?((25[0-5]|2[0-4][0-9]|[0-1]{1}[0-9]{2}|[1-9]{1}[0-9]{1}|[1-9])\.(25[0-5]|2[0-4][0-9]|[0-1]{1}[0-9]{2}|[1-9]{1}[0-9]{1}|[1-9]|0)\.(25[0-5]|2[0-4][0-9]|[0-1]{1}[0-9]{2}|[1-9]{1}[0-9]{1}|[1-9]|0)\.(25[0-5]|2[0-4][0-9]|[0-1]{1}[0-9]{2}|[1-9]{1}[0-9]{1}|[0-9])|([a-zA-Z0-9\-]+\.)*[a-zA-Z0-9\-]+\.[a-zA-Z]{2,4})(\:[0-9]+)?(/[^/][a-zA-Z0-9\.\,\?\'\\/\+&%\$#\=~_\-@]*)*$")
+    p = re.compile('^(http|https|ftp)\://([a-zA-Z0-9\.\-]+(\:[a-zA-Z0-9\.&%\$\-]+)*@)?((25[0-5]|2[0-4][0-9]|[0-1]{1}[0-9]{2}|[1-9]{1}[0-9]{1}|[1-9])\.(25[0-5]|2[0-4][0-9]|[0-1]{1}[0-9]{2}|[1-9]{1}[0-9]{1}|[1-9]|0)\.(25[0-5]|2[0-4][0-9]|[0-1]{1}[0-9]{2}|[1-9]{1}[0-9]{1}|[1-9]|0)\.(25[0-5]|2[0-4][0-9]|[0-1]{1}[0-9]{2}|[1-9]{1}[0-9]{1}|[0-9])|([a-zA-Z0-9\-]+\.)*[a-zA-Z0-9\-]+\.[a-zA-Z]{2,4})(\:[0-9]+)?(/[^/][a-zA-Z0-9\.\,\?\'\\/\+&%\$#\=~_\-@]*)*$')
     return p.match(myURL)
 
 
@@ -50,58 +50,58 @@ def isValidObjectName(myName):
 
     myName = myName.strip()
 
-    if myName == "" or len(myName) < 2 or len(myName) > 16:
+    if myName == '' or len(myName) < 2 or len(myName) > 16:
         return False
     else:
     
-        p = re.compile("^[a-zA-Z0-9\- ]+$")
+        p = re.compile('^[a-zA-Z0-9\- ]+$')
         return p.match(myName)
 
 def isValidAllianceName(myName):
     
     myName = myName.strip()
     
-    if myName == "" or len(myName) < 4 or len(myName) > 32:
+    if myName == '' or len(myName) < 4 or len(myName) > 32:
         return False
     else:
     
-        p = re.compile("^[a-zA-Z0-9]+([ ]?[.]?[\-]?[ ]?[a-zA-Z0-9]+)*$")
+        p = re.compile('^[a-zA-Z0-9]+([ ]?[.]?[\-]?[ ]?[a-zA-Z0-9]+)*$')
         return p.match(myName)
 
 def isValidAllianceTag(myTag):
     
     myTag = myTag.strip()
     
-    if myTag == "" or len(myTag) < 2 or len(myTag) > 4:
+    if myTag == '' or len(myTag) < 2 or len(myTag) > 4:
         return False
     else:
     
-        p = re.compile("^[a-zA-Z0-9]+$")
+        p = re.compile('^[a-zA-Z0-9]+$')
         return p.match(myTag)
 
 def isValidCategoryName(myName):
     
     myName = myName.strip()
     
-    if myName == "" or len(myName) < 2 or len(myName) > 32:
+    if myName == '' or len(myName) < 2 or len(myName) > 32:
         return False
     else:
     
-        p = re.compile("^[a-zA-Z0-9\- ]+$")
+        p = re.compile('^[a-zA-Z0-9\- ]+$')
         return p.match(myName)
 
 #---
 
 def ToInt(s, defaultValue):
  
-    if (s == "" or s == '' or s == None): return defaultValue
+    if (s == '' or s == '' or s == None): return defaultValue
     i = int(float(s))
     if i == None: return defaultValue
     return i
 
 def ToBool(s, defaultValue):
 
-    if (s == "" or s == '' or s == None): return defaultValue
+    if (s == '' or s == '' or s == None): return defaultValue
     i = int(float(s))
     if i == 0: return defaultValue
     return True
@@ -159,7 +159,7 @@ def dosql(ch):
 
 def sqlValue(val):
 
-    if val == None or val == "": return "Null"
+    if val == None or val == '': return 'Null'
     else: return str(val)
 
 #---
@@ -175,24 +175,20 @@ class TemplateContext():
     
     def __init__(self):
 
-        self.template = ""        
+        self.template = ''        
         self.data = {}
 
-    def setValue(self, key, value):
+    def set(self, key, value=True):
     
         self.data[key] = value
-    
-    def Parse(self, key):
-    
-        self.data[key] = True
         
 def getTemplate(request, name):
 
     result = TemplateContext()
 
-    result.template = name + ".html"
+    result.template = 's03/' + name + '.html'
 
-    result.setValue("PATH_IMAGES", "/static/s03/")
+    result.set('PATH_IMAGES', '/static/s03/')
 
     return result
 

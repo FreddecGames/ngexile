@@ -77,7 +77,7 @@ class View(GlobalView):
         
         #---
         
-        content = getTemplate(request, 's03/alliance-ranks')
+        tpl = getTemplate(request, 'alliance-ranks')
         
         self.selectedMenu = 'alliance'
         
@@ -90,7 +90,7 @@ class View(GlobalView):
                 ' WHERE allianceid=' + str(self.allianceId) + \
                 ' ORDER BY rankid'
         ranks = dbRows(query)
-        content.setValue('ranks', ranks)
+        tpl.set('ranks', ranks)
         
         for rank in ranks:
 
@@ -126,4 +126,4 @@ class View(GlobalView):
             
         #---
         
-        return self.display(content, request)
+        return self.display(tpl, request)

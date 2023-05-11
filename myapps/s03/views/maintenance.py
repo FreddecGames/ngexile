@@ -20,6 +20,6 @@ class View(LoginRequiredMixin, View):
         
         #---
 
-        tpl = getTemplate(request, 's03/maintenance')
+        tpl = getTemplate(request, 'maintenance')
 
         return render(request, tpl.template, tpl.data)

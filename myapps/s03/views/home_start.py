@@ -26,7 +26,7 @@ class View(BaseView):
         
         if not registration['enabled'] or (registration['until'] != None and timezone.now() > registration['until']):
         
-            tpl = getTemplate(request, 's03/start-closed')
+            tpl = getTemplate(request, 'home-closed')
             return render(request, tpl.template, tpl.data)
         
         #---
@@ -38,55 +38,59 @@ class View(BaseView):
     def post(self, request, *args, **kwargs):
         
         #---
+        
+        action = request.POST.get('action')
+        
+        #---
+        
+        if action == 'start':
+                        
+            name = request.POST.get('name', '').strip()
+            if not isValidName(name):
+                messages.error(request, 'name_invalid')
+                return HttpResponseRedirect(request.build_absolute_uri())
             
-        name = request.POST.get('name', '').strip()
-        if not isValidName(name):
-            messages.error(request, 'name_invalid')
-            return HttpResponseRedirect(request.build_absolute_uri())
-        
-        try:
-            dbQuery('UPDATE users SET username=' + dosql(name) + ' WHERE id=' + str(self.userId))
-        except:
-            messages.error(request, 'name_already_used')
-            return HttpResponseRedirect(request.build_absolute_uri())
-        
-        #---
+            try:
+                dbQuery('UPDATE users SET username=' + dosql(name) + ' WHERE id=' + str(self.userId))
+            except:
+                messages.error(request, 'name_already_used')
+                return HttpResponseRedirect(request.build_absolute_uri())
+                
+            orientation = ToInt(request.POST.get('orientation'), 0)
+            if orientation == 0:
+                messages.error(request, 'orientation_invalid')
+                return HttpResponseRedirect(request.build_absolute_uri())
             
-        orientation = ToInt(request.POST.get('orientation'), 0)
-        if orientation == 0:
-            messages.error(request, 'orientation_invalid')
-            return HttpResponseRedirect(request.build_absolute_uri())
-        
-        dbQuery('UPDATE users SET orientation=' + str(orientation) + ' WHERE id=' + str(self.userId))
-        
-        if orientation == 1:
-            dbQuery('INSERT INTO researches(userid, researchid, level) VALUES(' + str(self.userId) + ', 10, 1)')
-            dbQuery('INSERT INTO researches(userid, researchid, level) VALUES(' + str(self.userId) + ', 11, 1)')
-            dbQuery('INSERT INTO researches(userid, researchid, level) VALUES(' + str(self.userId) + ', 12, 1)')
+            dbQuery('UPDATE users SET orientation=' + str(orientation) + ' WHERE id=' + str(self.userId))
+            
+            if orientation == 1:
+                dbQuery('INSERT INTO researches(userid, researchid, level) VALUES(' + str(self.userId) + ', 10, 1)')
+                dbQuery('INSERT INTO researches(userid, researchid, level) VALUES(' + str(self.userId) + ', 11, 1)')
+                dbQuery('INSERT INTO researches(userid, researchid, level) VALUES(' + str(self.userId) + ', 12, 1)')
 
-        elif orientation == 2:
-            dbQuery('INSERT INTO researches(userid, researchid, level) VALUES(' + str(self.userId) + ', 20, 1)')
-            dbQuery('INSERT INTO researches(userid, researchid, level) VALUES(' + str(self.userId) + ', 21, 1)')
-            dbQuery('INSERT INTO researches(userid, researchid, level) VALUES(' + str(self.userId) + ', 22, 1)')
+            elif orientation == 2:
+                dbQuery('INSERT INTO researches(userid, researchid, level) VALUES(' + str(self.userId) + ', 20, 1)')
+                dbQuery('INSERT INTO researches(userid, researchid, level) VALUES(' + str(self.userId) + ', 21, 1)')
+                dbQuery('INSERT INTO researches(userid, researchid, level) VALUES(' + str(self.userId) + ', 22, 1)')
 
-        elif orientation == 3:
-            dbQuery('INSERT INTO researches(userid, researchid, level) VALUES(' + str(self.userId) + ', 30, 1)')
-            dbQuery('INSERT INTO researches(userid, researchid, level) VALUES(' + str(self.userId) + ', 31, 1)')
-            dbQuery('INSERT INTO researches(userid, researchid, level) VALUES(' + str(self.userId) + ', 32, 1)')
+            elif orientation == 3:
+                dbQuery('INSERT INTO researches(userid, researchid, level) VALUES(' + str(self.userId) + ', 30, 1)')
+                dbQuery('INSERT INTO researches(userid, researchid, level) VALUES(' + str(self.userId) + ', 31, 1)')
+                dbQuery('INSERT INTO researches(userid, researchid, level) VALUES(' + str(self.userId) + ', 32, 1)')
 
-        dbQuery('SELECT sp_update_researches(' + str(self.userId) + ')')
+            dbQuery('SELECT sp_update_researches(' + str(self.userId) + ')')
+            
+            galaxy = ToInt(request.POST.get('galaxy'), 0)
+            result = dbExecute('SELECT sp_reset_account(' + str(self.userId) + ',' + str(galaxy) + ')')
+            if result != 0:
+                messages.error(request, 'reset_error_' + result)
+                return HttpResponseRedirect(request.build_absolute_uri())
+
+            return HttpResponseRedirect('/s03/wait/')
         
         #---
         
-        galaxy = ToInt(request.POST.get('galaxy'), 0)
-        result = dbExecute('SELECT sp_reset_account(' + str(self.userId) + ',' + str(galaxy) + ')')
-        if result != 0:
-            messages.error(request, 'reset_error_' + result)
-            return HttpResponseRedirect(request.build_absolute_uri())
-        
-        #---
-
-        return HttpResponseRedirect('/s03/wait/')
+        return HttpResponseRedirect(request.build_absolute_uri())
         
     ################################################################################
     
@@ -94,7 +98,7 @@ class View(BaseView):
 
         #---
 
-        tpl = getTemplate(request, 's03/start')
+        tpl = getTemplate(request, 'home-start')
 
         #---
         
@@ -102,7 +106,7 @@ class View(BaseView):
                 'FROM sp_get_galaxy_info(' + str(self.userId) + ')'
         rows = dbRows(query)
         
-        tpl.setValue('galaxies', rows)
+        tpl.set('galaxies', rows)
         
         #---
         

@@ -63,14 +63,14 @@ class View(GlobalView):
         
         #---
         
-        content = getTemplate(request, 's03/alliance-tributes')
+        tpl = getTemplate(request, 'alliance-tributes')
         
         self.selectedMenu = 'alliance.tributes'
 
         #---
         
-        if self.hasRight('can_create_nap'): content.Parse('can_create')
-        if self.hasRight('can_break_nap'): content.Parse('can_break')
+        if self.hasRight('can_create_nap'): tpl.set('can_create')
+        if self.hasRight('can_break_nap'): tpl.set('can_break')
         
         #---
         
@@ -80,7 +80,7 @@ class View(GlobalView):
                 ' WHERE allianceid=' + str(self.allianceId) + \
                 ' ORDER BY tag'
         tributes = dbRows(query)
-        content.setValue('sent_tributes', tributes)
+        tpl.set('sent_tributes', tributes)
         
         #---
         
@@ -90,8 +90,8 @@ class View(GlobalView):
                 ' WHERE target_allianceid=' + str(self.allianceId) + \
                 ' ORDER BY tag'
         tributes = dbRows(query)
-        content.setValue('received_tributes', tributes)
+        tpl.set('received_tributes', tributes)
         
         #---
         
-        return self.display(content, request)
+        return self.display(tpl, request)

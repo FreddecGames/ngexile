@@ -1,0 +1,115 @@
+{% extends "s03/_layout.html" %}
+{% load humanize %}
+{% block content %}
+<div class="page-content">
+    <ul class="nav nav-tabs mt-0 mb-3">
+        <li class="nav-item">
+            <a href="/s03/planet-view/?planet={{ cur_planetid }}" class="nav-link">Aperçu</a>
+        </li>
+        <li class="nav-item">
+            <a href="/s03/planet-production/?planet={{ cur_planetid }}" class="nav-link">Production</a>
+        </li>
+        <li class="nav-item active">
+            <a href="/s03/planet-working/?planet={{ cur_planetid }}" class="nav-link">Fonctionnement</a>
+        </li>
+        <li class="nav-item">
+            <a href="/s03/planet-buildings/?planet={{ cur_planetid }}" class="nav-link">Bâtiments</a>
+        </li>
+        <li class="nav-item">
+            <a href="/s03/planet-ships/?planet={{ cur_planetid }}" class="nav-link">Vaisseaux</a>
+        </li>
+        <li class="nav-item">
+            <a href="/s03/planet-recycling/?planet={{ cur_planetid }}" class="nav-link">Recyclage</a>
+        </li>
+        <li class="nav-item">
+            <a href="/s03/planet-trainings/?planet={{ cur_planetid }}" class="nav-link">Entraînements</a>
+        </li>
+        <li class="nav-item">
+            <a href="/s03/planet-orbit/?planet={{ cur_planetid }}" class="nav-link">Orbite</a>
+        </li>
+        <li class="nav-item">
+            <a href="/s03/market-sell/?planet={{ cur_planetid }}" class="nav-link">Vente</a>
+        </li>
+        <li class="nav-item">
+            <a href="/s03/market-buy/?planet={{ cur_planetid }}" class="nav-link">Achat</a>
+        </li>
+        <li class="nav-item">
+            <a href="/s03/planet-transferts/?planet={{ cur_planetid }}" class="nav-link">Transferts</a>
+        </li>
+    </ul>
+</div>
+<div class="scroll-content" style="height:calc(100% - 158px);">
+<div class="page-content">
+<form method="post" action="">
+    {% csrf_token %}
+    <input type="hidden" name="action" value="save">
+    <div class="card">
+        <div class="card-header">
+            <span class="fs-6">Coût de fonctionnement</span>
+        </div>
+        <div class="list-group list-group-flush">
+            {% for building in buildings %}
+            <div class="list-group-item {% if building.disabled > 0 %}bg-danger{% endif %}">
+                <div class="row gx-3 align-items-center">
+                    <div class="col-auto">
+                        <img src="{{ PATH_IMAGES }}img/buildings/{{ building.buildingid }}.jpg" class="rounded" width="24" height="24">
+                    </div>
+                    <div class="col">
+                        <span class="text-normal">{{ building.label }}</span>
+                    </div>
+                    <div class="col-3">
+                        <div class="row gx-3">
+                            <div class="col-auto">
+                                <img src="{{ PATH_IMAGES }}img/interface/credits.gif" data-bs-toggle="tooltip" data-bs-title="Crédit" class="res" width="16px" height="16px">
+                                <span>{{ building.upkeep|intcomma }}</span>
+                            </div>
+                            <div class="col-auto">
+                                <img src="{{ PATH_IMAGES }}img/interface/energy.gif" data-bs-toggle="tooltip" data-bs-title="Energie" class="res" width="16px" height="16px">
+                                <span>{{ building.energy_consumption|intcomma }}</span>
+                            </div>
+                            <div class="col-auto">
+                                <img src="{{ PATH_IMAGES }}img/interface/workers.gif" data-bs-toggle="tooltip" data-bs-title="Travailleurs" class="res" width="16px" height="16px">
+                                <span>{{ building.maintenance|intcomma }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-1 pe-0">
+                        <select name="enabled{{ building.buildingid }}" class="form-control">
+                            {% for count in building.counts %}
+                                <option value="{{ count.count }}"{% if count.selected %} selected{% endif %}>
+                                    {{ count.count }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-1">
+                        <small class="text-normal">/{{ building.quantity|intcomma }}</small>
+                    </div>
+                    <div class="col-3">
+                        <div class="row gx-3">
+                            <div class="col-auto">
+                                <img src="{{ PATH_IMAGES }}img/interface/credits.gif" data-bs-toggle="tooltip" data-bs-title="Crédit" class="res" width="16px" height="16px">
+                                <span>{{ building.upkeep_total|intcomma }}</span>
+                            </div>
+                            <div class="col-auto">
+                                <img src="{{ PATH_IMAGES }}img/interface/energy.gif" data-bs-toggle="tooltip" data-bs-title="Energie" class="res" width="16px" height="16px">
+                                <span>{{ building.energy_total|intcomma }}</span>
+                            </div>
+                            <div class="col-auto">
+                                <img src="{{ PATH_IMAGES }}img/interface/workers.gif" data-bs-toggle="tooltip" data-bs-title="Travailleurs" class="res" width="16px" height="16px">
+                                <span>{{ building.maintenance_total|intcomma }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            <div class="list-group-item text-center">
+                <input type="submit" class="btn btn-primary" value="Valider changements">
+            </div>
+        </div>
+    </div>
+</form>
+</div>
+</div>
+{% endblock %}

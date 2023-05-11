@@ -64,7 +64,7 @@ class View(GlobalView):
 
         #---
         
-        content = getTemplate(request, 's03/alliance-members')
+        tpl = getTemplate(request, 'alliance-members')
         
         self.selectedMenu = 'alliance'
         
@@ -75,7 +75,7 @@ class View(GlobalView):
                 ' WHERE enabled AND allianceid=' + str(self.allianceId) + \
                 ' ORDER BY rankid'
         ranks = dbRows(query)
-        content.setValue('ranks', ranks)
+        tpl.set('ranks', ranks)
         
         #---
 
@@ -104,17 +104,17 @@ class View(GlobalView):
             orderby = 'alliance_rank'
             reversed = False
 
-        content.setValue('col', col)
+        tpl.set('col', col)
         
         #---
         
         if request.GET.get('r', '') != '': reversed = not reversed
-        else: content.Parse('r' + str(col))
+        else: tpl.set('r' + str(col))
 
         #---
 
         if self.allianceRights['can_kick_player']:
-            content.Parse('can_kick')
+            tpl.set('can_kick')
             
         #---
 
@@ -128,7 +128,7 @@ class View(GlobalView):
                 ' WHERE alliance_id=' + str(self.allianceId) + \
                 ' ORDER BY ' + orderby
         members = dbRows(query)
-        content.setValue('members', members)
+        tpl.set('members', members)
 
         totalColonies = 0
         totalCredits = 0
@@ -165,11 +165,11 @@ class View(GlobalView):
             
         #---
 
-        content.setValue('total_colonies', totalColonies)
-        content.setValue('total_credits', totalCredits)
-        content.setValue('total_score', totalScore)
-        content.setValue('total_score_delta', totalScoreDelta)
+        tpl.set('total_colonies', totalColonies)
+        tpl.set('total_credits', totalCredits)
+        tpl.set('total_score', totalScore)
+        tpl.set('total_score_delta', totalScoreDelta)
 
         #---
 
-        return self.display(content, request)
+        return self.display(tpl, request)

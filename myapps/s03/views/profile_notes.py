@@ -27,12 +27,12 @@ class View(GlobalView):
         
         #---
         
-        if action == "save":
+        if action == 'save':
         
-            notes = request.POST.get("notes", "").strip()
+            notes = request.POST.get('notes', '').strip()
             if len(notes) <= 5100:
             
-                dbQuery("UPDATE users SET notes=" + dosql(notes) + " WHERE id = " + str(self.userId))
+                dbQuery('UPDATE users SET notes=' + dosql(notes) + ' WHERE id = ' + str(self.userId))
                 messages.success(request, 'done')
                 
             else: messages.error(request, 'toolong')
@@ -47,19 +47,19 @@ class View(GlobalView):
 
         #---
         
-        content = getTemplate(request, "s03/notes")
+        tpl = getTemplate(request, 'profile-notes')
 
-        self.selectedMenu = "notes"
-
-        #---
-
-        content.setValue("maxlength", 5000)
+        self.selectedMenu = 'notes'
 
         #---
 
-        notes = dbExecute("SELECT notes FROM users WHERE id = " + str(self.userId) + " LIMIT 1" )
-        content.setValue("data_notes", notes)
+        tpl.set('maxlength', 5000)
+
+        #---
+
+        notes = dbExecute('SELECT notes FROM users WHERE id = ' + str(self.userId) + ' LIMIT 1' )
+        tpl.set('data_notes', notes)
 
         #---
         
-        return self.display(content, request)
+        return self.display(tpl, request)

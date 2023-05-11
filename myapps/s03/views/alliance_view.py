@@ -34,7 +34,7 @@ class View(GlobalView):
         
         #---
 
-        tpl = getTemplate(request, 's03/alliance')
+        tpl = getTemplate(request, 'alliance-view')
 
         if tag == '': self.selectedMenu = 'alliance'
         else: self.selectedMenu = 'ranking'
@@ -48,7 +48,7 @@ class View(GlobalView):
         else: query = query + ' WHERE tag=upper(' + dosql(tag) + ') LIMIT 1'
         
         alliance = dbRow(query)
-        tpl.setValue('alliance', alliance)
+        tpl.set('alliance', alliance)
         
         #---
         
@@ -58,7 +58,7 @@ class View(GlobalView):
                 ' ORDER BY rankid'
                 
         ranks = dbRows(query)
-        tpl.setValue('ranks', ranks)
+        tpl.set('ranks', ranks)
         
         #---
         
@@ -79,7 +79,7 @@ class View(GlobalView):
                 ' WHERE allianceid2=' + str(alliance['id'])
                 
         naps = dbRows(query)
-        tpl.setValue('naps', naps)
+        tpl.set('naps', naps)
         
         #---
 
@@ -94,7 +94,7 @@ class View(GlobalView):
                 ' WHERE allianceid2=' + str(alliance['id'])
             
         wars = dbRows(query)
-        tpl.setValue('wars', wars)
+        tpl.set('wars', wars)
         
         #---
         

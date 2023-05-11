@@ -1,0 +1,111 @@
+{% extends "s03/_layout.html" %}
+{% load humanize %}
+{% block content %}
+<div class="page-content">
+<div class="card mb-3">
+    <div class="card-header">
+        <span class="fs-6">Rapport d'invasion</span>
+    </div>
+    <div class="card-body">
+        <div class="row gy-1 gx-3">
+            <div class="col-3 text-end"><span class="text-normal">Localisation</span></div>
+            <div class="col-9"><script>putplanet("{{report.planet_id}}","{{report.planet_name}}","{{report.galaxy}}","{{report.sector}}","{{report.planet}}",{{relation}});</script></div>
+            <div class="col-3 text-end"><span class="text-normal">Envahisseur</span></div>
+            <div class="col-9">{{ report.attacker_name }}</div>
+            <div class="col-3 text-end"><span class="text-normal">Résultat</span></div>
+            <div class="col-9">
+                {% if report.attacker_succeeded %}Réussite
+                {% else %}Echec
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+<div class="card mb-3">
+    <div class="card-header">
+        <span class="fs-6">Force d'invasion</span>
+    </div>
+    <div class="card-body">
+        <div class="row gx-3 align-items-center">
+            <div class="col-3 text-end">
+                <img src="{{ PATH_IMAGES }}img/interface/soldiers.gif" data-bs-toggle="tooltip" data-bs-title="Soldats" class="res" width="16px" height="16px">
+                <span class="text-normal">Soldats</span>
+            </div>
+            <div class="col-3">
+                {{ report.soldiers_total|intcomma }}
+                <span class="mx-2 text-normal"><i class="fas fa-long-arrow-alt-right"></i></span>
+                {{ soldiers_alive|intcomma }}
+            </div>
+            <div class="col-auto">
+                <span class="me-1 text-normal"><i class="fas fa-skull"></i></span>
+                {{ report.soldiers_lost|intcomma }}
+            </div>
+        </div>
+    </div>
+</div>
+<div class="card">
+    <div class="card-header">
+        <span class="fs-6">Force de résistance</span>
+    </div>
+    <div class="card-body">
+        <div class="row g-1">
+            <div class="col-12">
+                <div class="row gx-3 align-items-center">
+                    <div class="col-3 text-end">
+                        <img src="{{ PATH_IMAGES }}img/interface/soldiers.gif" data-bs-toggle="tooltip" data-bs-title="Soldats" class="res" width="16px" height="16px">
+                        <span class="text-normal">Soldats</span>
+                    </div>
+                    <div class="col-3">
+                        {{ report.def_soldiers_total|intcomma }}
+                        <span class="mx-2 text-normal"><i class="fas fa-long-arrow-alt-right"></i></span>
+                        {{ def_soldiers_alive|intcomma }}
+                    </div>
+                    <div class="col-auto">
+                        <span class="me-1 text-normal"><i class="fas fa-skull"></i></span>
+                        {{ report.def_soldiers_lost|intcomma }}
+                    </div>
+                </div>
+            </div>
+            {% if workers %}
+            <div class="col-12">
+                <div class="row gx-3 align-items-center">
+                    <div class="col-3 text-end">
+                        <img src="{{ PATH_IMAGES }}img/interface/workers.gif" data-bs-toggle="tooltip" data-bs-title="Travailleurs" class="res" width="16px" height="16px">
+                        <span class="text-normal">Travailleurs</span>
+                    </div>
+                    <div class="col-3">
+                        {{ report.def_workers_total|intcomma }}
+                        <span class="mx-2 text-normal"><i class="fas fa-long-arrow-alt-right"></i></span>
+                        {{ def_workers_alive|intcomma }}
+                    </div>
+                    <div class="col-auto">
+                        <span class="me-1 text-normal"><i class="fas fa-skull"></i></span>
+                        {{ report.def_workers_lost|intcomma }}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+            {% if scientists %}
+            <div class="col-12">
+                <div class="row gx-3 align-items-center">
+                    <div class="col-3 text-end">
+                        <img src="{{ PATH_IMAGES }}img/interface/scientists.gif" data-bs-toggle="tooltip" data-bs-title="Scientifiques" class="res" width="16px" height="16px">
+                        <span class="text-normal">Scientifiques</span>
+                    </div>
+                    <div class="col-3">
+                        {{ report.def_scientists_total|intcomma }}
+                        <span class="mx-2 text-normal"><i class="fas fa-long-arrow-alt-right"></i></span>
+                        {{ def_scientists_alive|intcomma }}
+                    </div>
+                    <div class="col-auto">
+                        <span class="me-1 text-normal"><i class="fas fa-skull"></i></span>
+                        {{ report.def_scientists_lost|intcomma }}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+</div>
+{% endblock %}

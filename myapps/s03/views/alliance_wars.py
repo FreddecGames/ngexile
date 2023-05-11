@@ -74,14 +74,14 @@ class View(GlobalView):
         
         #---
         
-        content = getTemplate(request, 's03/alliance-wars')
+        tpl = getTemplate(request, 'alliance-wars')
 
         self.selectedMenu = 'alliance.wars'
 
         #---
         
-        if self.hasRight('can_create_nap'): content.Parse('can_create')
-        if self.hasRight('can_break_nap'): content.Parse('can_break')
+        if self.hasRight('can_create_nap'): tpl.set('can_create')
+        if self.hasRight('can_break_nap'): tpl.set('can_break')
 
         #---
 
@@ -96,7 +96,7 @@ class View(GlobalView):
                 ' WHERE allianceid2=' + str(self.allianceId) + \
                 ' ORDER BY tag'
         wars = dbRows(query)
-        content.setValue('wars', wars)
+        tpl.set('wars', wars)
 
         #---
 
@@ -108,14 +108,14 @@ class View(GlobalView):
             war = dbRow('SELECT id, tag, name, sp_alliance_war_cost(id) + (const_coef_score_to_war()*sp_alliance_value(' + str(self.allianceId) + '))::integer AS cost FROM alliances WHERE lower(tag)=lower(' + dosql(tag) + ')')
             if war == None:
             
-                content.setValue('tag', tag)
+                tpl.set('tag', tag)
                 messages.error(request, 'unknown')
                 
             else:
             
-                content.setValue('newwar', war)
-                content.Parse('newwar_confirm')
+                tpl.set('newwar', war)
+                tpl.set('newwar_confirm')
 
         #---
 
-        return self.display(content, request)
+        return self.display(tpl, request)

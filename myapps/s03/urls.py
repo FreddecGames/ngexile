@@ -22,7 +22,6 @@ from .views import chat
 from .views import commander_edit
 from .views import commander_list
 
-from .views import empire_fleets
 from .views import empire_orbiting
 from .views import empire_planets
 from .views import empire_standby
@@ -30,6 +29,7 @@ from .views import empire_stats
 from .views import empire_upkeep
 from .views import empire_view
 
+from .views import fleet_list
 from .views import fleet_ships
 from .views import fleet_split
 from .views import fleet_view
@@ -103,7 +103,6 @@ urlpatterns = [
     path('commander-edit/', commander_edit.View.as_view()),
     path('commander-list/', commander_list.View.as_view()),
     
-    path('empire-fleets/', empire_fleets.View.as_view()),
     path('empire-orbiting/', empire_orbiting.View.as_view()),
     path('empire-planets/', empire_planets.View.as_view()),
     path('empire-stats/', empire_stats.View.as_view()),
@@ -111,6 +110,7 @@ urlpatterns = [
     path('empire-upkeep/', empire_upkeep.View.as_view()),
     path('empire-view/', empire_view.View.as_view()),
     
+    path('fleet-list/', fleet_list.View.as_view()),
     path('fleet-ships/', fleet_ships.View.as_view()),
     path('fleet-split/', fleet_split.View.as_view()),
     path('fleet-view/', fleet_view.View.as_view()),

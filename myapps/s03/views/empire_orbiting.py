@@ -23,26 +23,26 @@ class View(GlobalView):
 
         #---
 
-        content = getTemplate(request, "s03/fleets-orbiting")
+        tpl = getTemplate(request, 'empire-orbiting')
         
-        self.selectedMenu = "fleets.orbiting"
+        self.selectedMenu = 'fleets.orbiting'
         
         #---
 
-        query = "SELECT nav_planet.id AS planet_id, nav_planet.name AS planet_name, nav_planet.galaxy, nav_planet.sector, nav_planet.planet," + \
-                " fleets.id, fleets.name, users.username, alliances.tag, sp_relation(fleets.ownerid, nav_planet.ownerid) AS relation, fleets.signature" + \
-                " FROM nav_planet" + \
-                "    INNER JOIN fleets ON fleets.planetid=nav_planet.id" + \
-                "    INNER JOIN users ON fleets.ownerid=users.id" + \
-                "    LEFT JOIN alliances ON users.alliance_id=alliances.id" + \
-                " WHERE nav_planet.ownerid=" + str(self.userId) + " AND fleets.ownerid != nav_planet.ownerid AND action != 1 AND action != -1" + \
-                " ORDER BY nav_planet.id, upper(alliances.tag), upper(fleets.name)"
+        query = 'SELECT nav_planet.id AS planet_id, nav_planet.name AS planet_name, nav_planet.galaxy, nav_planet.sector, nav_planet.planet,' + \
+                ' fleets.id, fleets.name, users.username, alliances.tag, sp_relation(fleets.ownerid, nav_planet.ownerid) AS relation, fleets.signature' + \
+                ' FROM nav_planet' + \
+                '    INNER JOIN fleets ON fleets.planetid=nav_planet.id' + \
+                '    INNER JOIN users ON fleets.ownerid=users.id' + \
+                '    LEFT JOIN alliances ON users.alliance_id=alliances.id' + \
+                ' WHERE nav_planet.ownerid=' + str(self.userId) + ' AND fleets.ownerid != nav_planet.ownerid AND action != 1 AND action != -1' + \
+                ' ORDER BY nav_planet.id, upper(alliances.tag), upper(fleets.name)'
         results = dbRows(query)
 
         lastplanetid = -1
 
         planets = []
-        content.setValue("planets", planets)
+        tpl.set('planets', planets)
         
         for result in results:
             
@@ -53,8 +53,8 @@ class View(GlobalView):
                 planet['fleets'] = []
                 planets.append(planet)
                 
-            planet["fleets"].append(result)
+            planet['fleets'].append(result)
         
         #---
 
-        return self.display(content, request)
+        return self.display(tpl, request)

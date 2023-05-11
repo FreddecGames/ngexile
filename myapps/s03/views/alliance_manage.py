@@ -57,14 +57,14 @@ class View(GlobalView):
         
         #---
         
-        content = getTemplate(request, 's03/alliance-manage')
+        tpl = getTemplate(request, 'alliance-manage')
         
         self.selectedMenu = 'alliance'
         
         #---
 
-        if self.allianceRights['leader'] or self.allianceRights['can_manage_description']: content.Parse('cat2')
-        if self.allianceRights['leader'] or self.allianceRights['can_manage_announce']: content.Parse('cat1')
+        if self.allianceRights['leader'] or self.allianceRights['can_manage_description']: tpl.set('cat2')
+        if self.allianceRights['leader'] or self.allianceRights['can_manage_announce']: tpl.set('cat1')
         
         #---
         
@@ -73,9 +73,9 @@ class View(GlobalView):
                 ' WHERE id=' + str(self.allianceId)
         alliance = dbRow(query)
 
-        content.setValue('alliance', alliance)
+        tpl.set('alliance', alliance)
         
         #---
         
-        return self.display(content, request)
+        return self.display(tpl, request)
         

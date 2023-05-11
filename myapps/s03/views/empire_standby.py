@@ -23,24 +23,24 @@ class View(GlobalView):
 
         #---
 
-        content = getTemplate(request, "s03/fleets-standby")
+        tpl = getTemplate(request, 'empire-standby')
         
-        self.selectedMenu = "fleets.standby"
+        self.selectedMenu = 'fleets.standby'
         
         #---
         
-        query = "SELECT nav_planet.id AS planet_id, nav_planet.name AS planet_name, nav_planet.galaxy, nav_planet.sector, nav_planet.planet, shipid, quantity, label" + \
-                " FROM planet_ships" + \
-                "    INNER JOIN nav_planet ON (planet_ships.planetid = nav_planet.id)" + \
-                "    INNER JOIN db_ships ON (db_ships.id = planet_ships.shipid)" + \
-                " WHERE nav_planet.ownerid =" + str(self.userId) + \
-                " ORDER BY nav_planet.id, shipid"
+        query = 'SELECT nav_planet.id AS planet_id, nav_planet.name AS planet_name, nav_planet.galaxy, nav_planet.sector, nav_planet.planet, shipid, quantity, label' + \
+                ' FROM planet_ships' + \
+                '    INNER JOIN nav_planet ON (planet_ships.planetid = nav_planet.id)' + \
+                '    INNER JOIN db_ships ON (db_ships.id = planet_ships.shipid)' + \
+                ' WHERE nav_planet.ownerid =' + str(self.userId) + \
+                ' ORDER BY nav_planet.id, shipid'
         results = dbRows(query)
 
         lastplanetid = -1
 
         planets = []
-        content.setValue("planets", planets)
+        tpl.set('planets', planets)
         
         for result in results:
             
@@ -51,8 +51,8 @@ class View(GlobalView):
                 planet['ships'] = []
                 planets.append(planet)
                 
-            planet["ships"].append(result)
+            planet['ships'].append(result)
         
         #---
 
-        return self.display(content, request)
+        return self.display(tpl, request)

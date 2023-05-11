@@ -102,14 +102,14 @@ class View(GlobalView):
         
         #---
         
-        content = getTemplate(request, 's03/alliance-naps')
+        tpl = getTemplate(request, 'alliance-naps')
         
         self.selectedMenu = 'alliance'
 
         #---
         
-        if self.hasRight('can_create_nap'): content.Parse('can_create')
-        if self.hasRight('can_break_nap'): content.Parse('can_break')
+        if self.hasRight('can_create_nap'): tpl.set('can_create')
+        if self.hasRight('can_break_nap'): tpl.set('can_break')
 
         #---
         
@@ -121,7 +121,7 @@ class View(GlobalView):
                 ' WHERE allianceid1=' + str(self.allianceId) + \
                 ' ORDER BY tag'
         naps = dbRows(query)
-        content.setValue('naps', naps)
+        tpl.set('naps', naps)
 
         #---
 
@@ -132,7 +132,7 @@ class View(GlobalView):
                 ' WHERE targetallianceid=' + str(self.allianceId) + ' AND NOT declined' + \
                 ' ORDER BY created DESC'
         propositions = dbRows(query)
-        content.setValue('propositions', propositions)
+        tpl.set('propositions', propositions)
 
         #---
         
@@ -143,8 +143,8 @@ class View(GlobalView):
                 ' WHERE allianceid=' + str(self.allianceId) + \
                 ' ORDER BY created DESC'
         requests = dbRows(query)
-        content.setValue('requests', requests)
+        tpl.set('requests', requests)
 
         #---
         
-        return self.display(content, request)
+        return self.display(tpl, request)

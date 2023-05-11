@@ -32,7 +32,7 @@ class View(BaseView):
         
         #---
         
-        action = request.POST.get('action', '')
+        action = request.POST.get('action')
         
         #---
         
@@ -51,7 +51,7 @@ class View(BaseView):
 
         #---
 
-        tpl = getTemplate(request, 's03/wait')
+        tpl = getTemplate(request, 'home-wait')
 
         #---
 
@@ -60,7 +60,7 @@ class View(BaseView):
                 'WHERE id=' + str(self.userId)
         row = dbRow(query)
 
-        tpl.setValue('profile', row)
+        tpl.set('profile', row)
         
         #---
         

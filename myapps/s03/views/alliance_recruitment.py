@@ -53,13 +53,13 @@ class View(GlobalView):
 
         #---
         
-        content = getTemplate(request, 's03/alliance-recruitment')
+        tpl = getTemplate(request, 'alliance-recruitment')
 
         self.selectedMenu = 'alliance'
         
         #---
         
-        content.setValue('can_invite', self.hasRight('can_invite_player'))
+        tpl.set('can_invite', self.hasRight('can_invite_player'))
         
         #---
         
@@ -70,8 +70,8 @@ class View(GlobalView):
                 ' WHERE allianceid=' + str(self.allianceId) + \
                 ' ORDER BY created DESC'
         invitations = dbRows(query)
-        content.setValue('invitations', invitations)
+        tpl.set('invitations', invitations)
         
         #---
         
-        return self.display(content, request)
+        return self.display(tpl, request)

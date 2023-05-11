@@ -56,7 +56,7 @@ class View(GlobalView):
         
         #---
         
-        content = getTemplate(request, 's03/buildings')
+        tpl = getTemplate(request, 'planet-buildings')
         
         self.selectedMenu = 'planet'        
         
@@ -109,7 +109,7 @@ class View(GlobalView):
         buildings = dbRows(query)
         
         categories = []
-        content.setValue('categories', categories)
+        tpl.set('categories', categories)
 
         lastCategory = -1
         
@@ -199,4 +199,4 @@ class View(GlobalView):
                 
         #---
         
-        return self.display(content, request)
+        return self.display(tpl, request)

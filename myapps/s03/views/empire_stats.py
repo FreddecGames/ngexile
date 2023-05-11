@@ -23,17 +23,17 @@ class View(GlobalView):
         
         #---
 
-        content = getTemplate(request, "s03/fleets-ships-stats")
+        tpl = getTemplate(request, 'empire-stats')
 
-        self.selectedMenu = "fleets_ships_stats"
+        self.selectedMenu = 'fleets_ships_stats'
         
         #---
         
-        query = "SELECT category, shipid, killed, lost, label" + \
-                " FROM users_ships_kills" + \
-                "    INNER JOIN db_ships ON (db_ships.id = users_ships_kills.shipid)" + \
-                " WHERE userid=" + str(self.userId) + \
-                " ORDER BY shipid"
+        query = 'SELECT category, shipid, killed, lost, label' + \
+                ' FROM users_ships_kills' + \
+                '    INNER JOIN db_ships ON (db_ships.id = users_ships_kills.shipid)' + \
+                ' WHERE userid=' + str(self.userId) + \
+                ' ORDER BY shipid'
         results = dbRows(query)
 
         kills = 0
@@ -42,24 +42,24 @@ class View(GlobalView):
         lastCategory = -1
 
         cats = []
-        content.setValue("cats", cats)
+        tpl.set('cats', cats)
         
         for result in results:
             
             if result['category'] != lastCategory:
                 lastCategory = result['category']
                 
-                cat = { "id":result['category'], "ships":[] }
+                cat = { 'id':result['category'], 'ships':[] }
                 cats.append(cat)
                 
-            cat["ships"].append(result)
+            cat['ships'].append(result)
 
             kills += result['killed']
             losses += result['lost']
         
-        content.setValue("kills", kills)
-        content.setValue("losses", losses)
+        tpl.set('kills', kills)
+        tpl.set('losses', losses)
         
         #---
 
-        return self.display(content, request)
+        return self.display(tpl, request)

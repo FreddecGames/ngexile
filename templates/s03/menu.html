@@ -121,8 +121,8 @@
             putMenu("/s03/empire-view/", "overview", "Vue d'ensemble", 2);
             putMenu("/s03/empire-upkeep/", "upkeep", "Coût d'entretien", 2);
             putMenu("/s03/commander-list/", "commanders", "Commandants", 2);
-            putMenu("/s03/empire-fleets/", "fleets", "Flottes", 2);
-                putMenu("/s03/empire-fleets/", "fleets_fleets", "Flottes", 3);
+            putMenu("/s03/fleet-list/", "fleets", "Flottes", 2);
+                putMenu("/s03/fleet-list/", "fleets_fleets", "Flottes", 3);
                 putMenu("/s03/empire-orbiting/", "fleets_orbiting", "Flottes en orbite", 3);
                 putMenu("/s03/empire-standby/", "fleets_standby", "Vaisseaux au sol", 3);
                 putMenu("/s03/empire-stats/", "fleets_ships_stats", "Détruits / perdus", 3);
@@ -138,10 +138,8 @@
             putMenu("/s03/mercenary/", "intelligence", "Espionnage", 2);
             putMenu("/s03/planet-view/?planet={{ cur_planetid }}", "planet", "<div class='d-inline-flex flex-grow-1'>Planète <span class='ms-auto'>{{ cur_g }}.{{ cur_s }}.{{ cur_p }}</span></div>", 2);
         putMenu("/s03/profile-options/", "options", "Compte", 1);
-            putMenu("/s03/profile-view/", "nation", "Infos nations", 2);
+            putMenu("/s03/profile-view/", "nation", "Profile", 2);
             putMenu("/s03/profile-options/", "options", "Options", 2);
-            putMenu("/s03/profile-notes/", "notes", "Notes", 2);
-            putMenu("/accounts/logout/", "logout", "Déconnexion", 2);
 
         {% if new_mail %}setMailsCount({{ new_mail }});{% endif %}
         {% if new_report %}setReportsCount({{ new_report }});{% endif %}

@@ -14,56 +14,55 @@ class View(GlobalView):
         if response: return response
         
         #---
+        
+        self.battleId = ToInt(request.GET.get('id'), 0)
+        if self.battleId == 0: return HttpResponseRedirect('/s03/')
+        
+        self.fromview = ToInt(request.GET.get('v'), 0)
+        if self.fromview == 0: return HttpResponseRedirect('/s03/')
+        
+        result = dbExecute('SELECT battleid FROM battles_ships WHERE battleid=' + str(self.battleId) + ' AND owner_id=' + str(self.fromview) + ' LIMIT 1')
+        display = result != None
+        
+        if not display and self.allianceId and self.hasRight('can_see_reports'):
+            result = dbExecute('SELECT owner_id FROM battles_ships WHERE battleid=' + str(self.battleId) + ' AND (SELECT alliance_id FROM users WHERE id=owner_id)=' + str(self.allianceId) + ' LIMIT 1')
+            display = result != None
+        
+        if not display:
+            key = request.GET.get('key', '')
+            if key == '': return HttpResponseRedirect('/s03/')
+            result = dbExecute('SELECT 1 FROM battles WHERE id=' + str(self.battleId) + ' AND key=' + dosql(key))
+            display = result != None
+            
+        if not display:
+            return HttpResponseRedirect('/s03/')            
+        
+        #---
 
         return super().dispatch(request, *args, **kwargs)
         
     ################################################################################
     
     def get(self, request, *args, **kwargs):
-
-        #---
-        
-        battleId = ToInt(request.GET.get('id'), 0)
-        if battleId == 0: return HttpResponseRedirect('/s03/report-list/')
-        
-        fromview = ToInt(request.GET.get('v'), 0)
-        if fromview == 0: return HttpResponseRedirect('/s03/report-list/')
-        
-        #---
-        
-        result = dbExecute('SELECT battleid FROM battles_ships WHERE battleid=' + str(battleId) + ' AND owner_id=' + str(fromview) + ' LIMIT 1')
-        display = result != None
-        
-        if not display and self.allianceId and self.allianceRights['can_see_reports']:
-            result = dbExecute("SELECT owner_id FROM battles_ships WHERE battleid=" + str(battleId) + " AND (SELECT alliance_id FROM users WHERE id=owner_id)=" + str(self.allianceId) + " LIMIT 1")
-            display = result != None
-        
-        if not display:
-            key = request.GET.get("key", "")
-            if key == "": return HttpResponseRedirect("/s03/report-list/")
-            result = dbExecute("SELECT 1 FROM battles WHERE id=" + str(battleId) + " AND key=" + dosql(key))
-            display = result != None
-            
-        if not display: return HttpResponseRedirect("/s03/report-list/")            
             
         #---
         
-        content = getTemplate(request, 's03/battle')
+        tpl = getTemplate(request, 'report-battle')
     
         self.selectedMenu = 'reports'
         
         #---
         
-        content.setValue('fromview', fromview)
+        tpl.set('fromview', self.fromview)
         
         #---
         
         query = 'SELECT battles.id, time, planetid, name, galaxy, sector, planet, rounds, key' + \
                 ' FROM battles' + \
                 '  INNER JOIN nav_planet ON planetid=nav_planet.id' + \
-                ' WHERE battles.id=' + str(battleId)
+                ' WHERE battles.id=' + str(self.battleId)
         battle = dbRow(query)
-        content.setValue('battle', battle)
+        tpl.set('battle', battle)
         
         #---
         
@@ -71,7 +70,7 @@ class View(GlobalView):
                 ' FROM battles_fleets' + \
                 '  INNER JOIN battles_fleets_ships_kills ON (battles_fleets.id=fleetid)' + \
                 '  INNER JOIN db_ships ON (db_ships.id=destroyed_shipid)' + \
-                ' WHERE battleid=' + str(battleId) + \
+                ' WHERE battleid=' + str(self.battleId) + \
                 ' GROUP BY fleet_id, shipid, destroyed_shipid, label' + \
                 ' ORDER BY sum(count) DESC'
         kills = dbRows(query)
@@ -79,11 +78,11 @@ class View(GlobalView):
         #---
         
         query = 'SELECT owner_name, fleet_name, shipid, shipcategory, shiplabel, count, lost, killed, won, relation1, owner_id , relation2, fleet_id, attacked, mod_shield, mod_handling, mod_tracking_speed, mod_damage, alliancetag' + \
-                ' FROM sp_get_battle_result(' + str(battleId) + ',' + str(fromview) + ',' + str(fromview) + ')'
+                ' FROM sp_get_battle_result(' + str(self.battleId) + ',' + str(self.fromview) + ',' + str(self.fromview) + ')'
         battleShips = dbRows(query)
         
         fleets = []
-        content.setValue('fleets', fleets)
+        tpl.set('fleets', fleets)
         
         lastFleetId = -1
         lastCategory = -1
@@ -140,8 +139,8 @@ class View(GlobalView):
                     
         #---
         
-        content.setValue('baseurl', request.META.get('HTTP_HOST'))
+        tpl.set('baseurl', request.META.get('HTTP_HOST'))
         
         #---
         
-        return self.display(content, request)
+        return self.display(tpl, request)

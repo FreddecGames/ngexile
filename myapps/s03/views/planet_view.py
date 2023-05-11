@@ -103,7 +103,7 @@ class View(GlobalView):
         
         #---
 
-        content = getTemplate(request, 's03/planet')
+        tpl = getTemplate(request, 'planet-view')
 
         self.selectedMenu = 'planet'
         
@@ -119,7 +119,7 @@ class View(GlobalView):
         commanders = dbRows(query)
 
         cmd_groups = []
-        content.setValue('optgroups', cmd_groups)
+        tpl.set('optgroups', cmd_groups)
         
         cmd_nones = { 'typ':'none', 'cmds':[] }
         cmd_fleets = { 'typ':'fleet', 'cmds':[] }
@@ -152,10 +152,10 @@ class View(GlobalView):
                 ' COALESCE(buy_ore, 0) AS buy_ore, COALESCE(buy_hydrocarbon, 0) AS buy_hydrocarbon' + \
                 ' FROM vw_planets WHERE id=' + str(self.currentPlanetId)
         planet = dbRow(query)
-        content.setValue('planet', planet)
+        tpl.set('planet', planet)
 
         img = 1 + (planet['planet_floor'] + planet['id']) % 21
-        if img < 10: img = "0" + str(img)
+        if img < 10: img = '0' + str(img)
         planet['img'] = str(img)
         
         if planet['commanderid']:
@@ -170,7 +170,7 @@ class View(GlobalView):
                 ' WHERE planetid=' + str(self.currentPlanetId) + \
                 ' ORDER BY remaining_time DESC'
         buildings = dbRows(query)
-        content.setValue('buildings', buildings)
+        tpl.set('buildings', buildings)
         
         #---
         
@@ -180,7 +180,7 @@ class View(GlobalView):
                 ' WHERE ownerid=' + str(self.userId) + ' AND planetid=' + str(self.currentPlanetId) + ' AND end_time IS NOT NULL' + \
                 ' ORDER BY remaining_time DESC'
         ships = dbRows(query)
-        content.setValue('ships', ships)
+        tpl.set('ships', ships)
         
         #---
         
@@ -190,8 +190,8 @@ class View(GlobalView):
                 ' WHERE action != -1 AND action != 1 AND planetid=' + str(self.currentPlanetId) + \
                 ' ORDER BY upper(name)'
         fleets = dbRows(query)
-        content.setValue('fleets', fleets)
+        tpl.set('fleets', fleets)
                 
         #---
         
-        return self.display(content, request)
+        return self.display(tpl, request)

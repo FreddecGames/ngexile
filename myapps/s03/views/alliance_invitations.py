@@ -31,7 +31,7 @@ class View(GlobalView):
         
             alliance_tag = request.POST.get('tag', '').strip()
             result = dbExecute('SELECT sp_alliance_accept_invitation(' + str(self.userId) + ',' + dosql(alliance_tag) + ')')
-            if result == 0: return HttpResponseRedirect('/s03/alliance/')
+            if result == 0: return HttpResponseRedirect('/s03/alliance-view/')
 
             if result == 4: messages.error(request, 'max_members_reached')
             elif result == 6: messages.error(request, 'cant_rejoin_previous_alliance')
@@ -59,7 +59,7 @@ class View(GlobalView):
     
         #---
 
-        content = getTemplate(request, 's03/alliance-invitations')
+        tpl = getTemplate(request, 'alliance-invitations')
         
         self.selectedMenu = 'alliance'
         
@@ -72,17 +72,17 @@ class View(GlobalView):
                 ' WHERE userid=' + str(self.userId) + ' AND NOT declined' + \
                 ' ORDER BY created DESC'
         invitations = dbRows(query)
-        content.setValue('invitations', invitations)
+        tpl.set('invitations', invitations)
         
         #---
 
-        if not self.profile['can_join_alliance']: content.Parse('cant_join')
-        elif self.allianceId: content.Parse('cant_accept')
+        if not self.profile['can_join_alliance']: tpl.set('cant_join')
+        elif self.allianceId: tpl.set('cant_accept')
         
         #---
 
-        if self.allianceId: content.Parse('can_leave')
+        if self.allianceId: tpl.set('can_leave')
 
         #---
         
-        return self.display(content, request)
+        return self.display(tpl, request)

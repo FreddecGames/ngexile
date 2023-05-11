@@ -32,40 +32,40 @@ class View(BaseView):
 
         #---
         
-        action = request.POST.get("action")
+        action = request.POST.get('action')
 
         #---
 
-        if action == "retry":
+        if action == 'retry':
             
-            username = request.POST.get("name", "")
+            username = request.POST.get('name', '')
             if not isValidName(username):
                 messages.error(request, 'name_invalid')
                 return HttpResponseRedirect(request.build_absolute_uri())
                 
             try:
-                dbQuery("UPDATE users SET alliance_id=NULL, username=" + dosql(username) + " WHERE id=" + str(self.userId))
+                dbQuery('UPDATE users SET alliance_id=NULL, username=' + dosql(username) + ' WHERE id=' + str(self.userId))
             except:
                 messages.error(request, 'name_already_used')
                 return HttpResponseRedirect(request.build_absolute_uri())
 
-            result = dbExecute("SELECT sp_reset_account(" + str(self.userId) + "," + str(ToInt(request.POST.get("galaxy"), 1)) + ")")
+            result = dbExecute('SELECT sp_reset_account(' + str(self.userId) + ',' + str(ToInt(request.POST.get('galaxy'), 1)) + ')')
             if result == 0:
-                return HttpResponseRedirect("/s03/empire-view/")
+                return HttpResponseRedirect('/s03/empire-view/')
 
             messages.error(request, 'error_' + result)
             return HttpResponseRedirect(request.build_absolute_uri())
 
         #---
         
-        elif action == "abandon":
+        elif action == 'abandon':
         
-            dbQuery("UPDATE users SET deletion_date=now()/*+INTERVAL '2 days'*/ WHERE id=" + str(self.userId))
-            return HttpResponseRedirect("/")
+            dbQuery('UPDATE users SET deletion_date=now() WHERE id=' + str(self.userId))
+            return HttpResponseRedirect('/')
         
         #---
         
-        return HttpResponseRedirect('/s03/game-over/')
+        return HttpResponseRedirect(request.build_absolute_uri())
 
     ################################################################################
         
@@ -73,7 +73,7 @@ class View(BaseView):
 
         #---
         
-        tpl = getTemplate(request, 's03/game-over')
+        tpl = getTemplate(request, 'home-gameover')
         
         #---
         
@@ -82,7 +82,7 @@ class View(BaseView):
                 'WHERE id=' + str(self.userId)
         row = dbRow(query)
         
-        tpl.setValue('profile', row)
+        tpl.set('profile', row)
 
         #---
 
@@ -90,7 +90,7 @@ class View(BaseView):
                 'FROM sp_get_galaxy_info(' + str(self.userId) + ')'
         rows = dbRows(query)
         
-        tpl.setValue('galaxies', rows)
+        tpl.set('galaxies', rows)
 
         #---
 

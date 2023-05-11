@@ -32,11 +32,11 @@ class View(BaseView):
         
         #---
         
-        action = request.POST.get('unlock', '')
+        action = request.POST.get('action')
         
         #---
         
-        if action != '':
+        if action == 'unlock':
         
             dbQuery('SELECT sp_stop_holidays(' + str(self.userId) + ')')
             return HttpResponseRedirect('/s03/empire-view/')
@@ -51,7 +51,7 @@ class View(BaseView):
 
         #---
 
-        tpl = getTemplate(request, 's03/holidays')
+        tpl = getTemplate(request, 'home-holidays')
 
         #---
 
@@ -61,7 +61,7 @@ class View(BaseView):
                 'FROM users WHERE privilege = -2 AND id=' + str(self.userId)
         row = dbRow(query)
         
-        tpl.setValue('user', row)
+        tpl.set('user', row)
         
         #---
         
