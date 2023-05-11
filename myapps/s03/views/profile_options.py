@@ -89,7 +89,7 @@ class View(GlobalView):
         
         if optionCat == 1:
         
-            query = 'SELECT avatar_url, regdate, users.description, 0,' + \
+            query = 'SELECT avatar_url, regdate, users.description, username,' + \
                     ' alliance_id, a.tag, a.name, r.label' + \
                     ' FROM users' + \
                     ' LEFT JOIN alliances AS a ON (users.alliance_id = a.id)' + \

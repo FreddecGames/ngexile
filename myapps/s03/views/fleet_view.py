@@ -154,12 +154,14 @@ class View(GlobalView):
         #---
             
         elif action == 'stopwaiting':
+        
             dbQuery('SELECT sp_cancel_waiting(' + str(self.fleetOwnerId) + ',' + str(self.fleetId) + ')')
         
         #---
             
         elif action == 'merge':
-            destfleetid = ToInt(request.GET.get('with'), 0)
+        
+            destfleetid = ToInt(request.POST.get('with'), 0)
             dbQuery('SELECT sp_merge_fleets(' + str(self.userId) + ',' + str(self.fleetId) + ',' + str(destfleetid) +')')
             
         #---
@@ -171,7 +173,7 @@ class View(GlobalView):
             
         elif action == 'install':
         
-            shipid = ToInt(request.GET.get('s'), 0)
+            shipid = ToInt(request.POST.get('s'), 0)
             
             result = dbExecute('SELECT sp_start_ship_building_installation(' + str(self.fleetOwnerId) + ',' + str(self.fleetId) + ',' + str(shipid) + ')')
             if result >= 0: self.currentPlanetId = result
