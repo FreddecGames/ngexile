@@ -49,7 +49,7 @@ class View(GlobalView):
         
         #---
         
-        tpl.set('report', report)
+        tpl.set('report', self.report)
         
         #---
         
