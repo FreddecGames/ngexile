@@ -1,46 +1,75 @@
 {% extends "s03/_layout.html" %}
+
 {% load humanize %}
+
 {% block content %}
-<div class="page-content">
-<div class="row g-3" data-masonry='{"percentPosition": true }'>
-    {% for planet in planets %}
-        <div class="col-4">
-            <div class="card">
-                <div class="card-header">
-                    <div class="row gx-3">
-                        <div class="col"><a href="/s03/planet-orbit/?planet={{ planet.planet_id }}" data-bs-toggle="tooltip" data-bs-title="Voir orbite">{{ planet.planet_name }}</a></div>
-                        <div class="col-auto"><a href="/s03/map/?g={{ planet.galaxy }}&s={{ planet.sector }}&p={{ planet.planet }}" data-bs-toggle="tooltip" data-bs-title="Carte spatiale">{{ planet.galaxy }}.{{ planet.sector }}.{{ planet.planet }}</a></div>
+
+    <div class="page-content">
+        <ul class="nav nav-tabs mt-0 mb-3">
+            <li class="nav-item">
+                <a href="/s03/empire-view/" class="nav-link">Aperçu</a>
+            </li>
+            <li class="nav-item">
+                <a href="/s03/empire-upkeep/" class="nav-link">Coût d'entretien</a>
+            </li>
+            <li class="nav-item">
+                <a href="/s03/empire-planets/" class="nav-link">Planètes</a>
+            </li>
+            <li class="nav-item">
+                <a href="/s03/empire-orbiting/" class="nav-link active">Flottes en orbite</a>
+            </li>
+            <li class="nav-item">
+                <a href="/s03/empire-standby/" class="nav-link">Au sol</a>
+            </li>
+            <li class="nav-item">
+                <a href="/s03/empire-stats/" class="nav-link">Stats</a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="scroll-content" style="height:calc(100% - 52px);">
+    <div class="page-content">
+    <div class="row g-3" data-masonry='{"percentPosition": true }'>
+        {% for planet in planets %}
+            <div class="col-4">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="row gx-3">
+                            <div class="col"><a href="/s03/planet-orbit/?planet={{ planet.planet_id }}" data-bs-toggle="tooltip" data-bs-title="Voir orbite">{{ planet.planet_name }}</a></div>
+                            <div class="col-auto"><a href="/s03/map/?g={{ planet.galaxy }}&s={{ planet.sector }}&p={{ planet.planet }}" data-bs-toggle="tooltip" data-bs-title="Carte spatiale">{{ planet.galaxy }}.{{ planet.sector }}.{{ planet.planet }}</a></div>
+                        </div>
                     </div>
-                </div>
-                <div class="card-body">
-                    <div class="row g-1 flex-column">
-                        {% for fleet in planet.fleets %}
-                            <div class="col-12">
-                                <div class="row gx-2">
-                                    <div class="col-auto">
-                                        <a href="/s03/mail-new/?subject=À propos de la flotte {{ fleet.name }}&to={{ fleet.username }}" class="{% if fleet.relation == 1 %}text-success{% elif fleet.relation == 0 %}text-friend{% elif fleet.relation < 0 %}text-danger{% endif %}" data-bs-toggle="tooltip" data-bs-title="Contacter {{ fleet.username }}">
-                                            {% if fleet.tag %}[{{ fleet.tag }}]{% endif %}
-                                            {{ fleet.name }}
-                                        </a>
-                                    </div>
-                                    <div class="col-auto">
-                                        <small>{{ fleet.signature|intcomma }}</small>
+                    <div class="card-body">
+                        <div class="row g-1 flex-column">
+                            {% for fleet in planet.fleets %}
+                                <div class="col-12">
+                                    <div class="row gx-2">
+                                        <div class="col-auto">
+                                            <a href="/s03/mail-new/?subject=À propos de la flotte {{ fleet.name }}&to={{ fleet.username }}" class="{% if fleet.relation == 1 %}text-success{% elif fleet.relation == 0 %}text-friend{% elif fleet.relation < 0 %}text-danger{% endif %}" data-bs-toggle="tooltip" data-bs-title="Contacter {{ fleet.username }}">
+                                                {% if fleet.tag %}[{{ fleet.tag }}]{% endif %}
+                                                {{ fleet.name }}
+                                            </a>
+                                        </div>
+                                        <div class="col-auto">
+                                            <small>{{ fleet.signature|intcomma }}</small>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        {% endfor %}
+                            {% endfor %}
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-    {% empty %}
-        <div class="col-12">
-            <div class="card card-body text-center">
-                <span class="text-normal">Aucune flotte étrangère en orbite de nos planètes</span>
+        {% empty %}
+            <div class="col-12">
+                <div class="card card-body text-center">
+                    <span class="text-normal">Aucune flotte étrangère en orbite de nos planètes</span>
+                </div>
             </div>
-        </div>
-    {% endfor %}
-</div>
-<script src="https://cdn.jsdelivr.net/npm/masonry-layout@4.2.2/dist/masonry.pkgd.min.js" integrity="sha384-GNFwBvfVxBkLMJpYMOABq3c+d3KnQxudP/mGPkzpZSTYykLBNsZEnG2D9G/X/+7D" crossorigin="anonymous" async></script>
-</div>
+        {% endfor %}
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/masonry-layout@4.2.2/dist/masonry.pkgd.min.js" integrity="sha384-GNFwBvfVxBkLMJpYMOABq3c+d3KnQxudP/mGPkzpZSTYykLBNsZEnG2D9G/X/+7D" crossorigin="anonymous" async></script>
+    </div>
+    </div>
+
 {% endblock %}

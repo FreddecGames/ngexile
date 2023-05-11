@@ -149,7 +149,7 @@ class View(GlobalView):
         
         query = 'SELECT chat.id, chat.name, chat.topic' + \
                 ' FROM users_chats' + \
-                '    INNER JOIN chat ON (chat.id=users_chats.chatid AND ((chat.password = '') OR (chat.password = users_chats.password)))' + \
+                '    INNER JOIN chat ON (chat.id=users_chats.chatid AND ((chat.password = \'\') OR (chat.password = users_chats.password)))' + \
                 ' WHERE userid = ' + str(self.userId) + \
                 ' ORDER BY users_chats.added'
         joins = dbRows(query)

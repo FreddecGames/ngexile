@@ -33,7 +33,7 @@ class View(GlobalView):
         if col < 1 or col > 4: col = 3
 
         if col == 1:
-            orderby = 'CASE WHEN score_visibility=2 OR v.id=' + str(self.userId) + 'THEN upper(username) ELSE '' END, upper(username)'
+            orderby = 'CASE WHEN score_visibility=2 OR v.id=' + str(self.userId) + ' THEN upper(username) ELSE \'\' END, upper(username)'
             reversed = False
         elif col == 2:
             orderby = 'upper(alliances.name)'
