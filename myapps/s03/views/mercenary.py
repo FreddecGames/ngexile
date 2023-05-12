@@ -64,7 +64,7 @@ class View(GlobalView):
             
             #---
             
-            reportId = dbExecute('SELECT sp_create_spy('' + str(self.userId) + '', int2(' + str(1) + '), int2(' + str(level) + ') )')
+            reportId = dbExecute('SELECT sp_create_spy(\'' + str(self.userId) + '\', int2(' + str(1) + '), int2(' + str(level) + ') )')
             if reportId < 0:
                 messages.error(request, 'general_error')
                 return HttpResponseRedirect(request.build_absolute_uri())
@@ -202,7 +202,7 @@ class View(GlobalView):
             
             #---
             
-            reportId = dbExecute('SELECT sp_create_spy('' + str(self.userId) + '', int2(' + str(3) + '), int2(' + str(level) + ') )')
+            reportId = dbExecute('SELECT sp_create_spy(\'' + str(self.userId) + '\', int2(' + str(3) + '), int2(' + str(level) + ') )')
             if reportId < 0:
                 messages.error(request, 'general_error')
                 return HttpResponseRedirect(request.build_absolute_uri())
