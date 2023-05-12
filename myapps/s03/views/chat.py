@@ -23,7 +23,7 @@ class View(GlobalView):
     
         #---
         
-        action = request.GET.get('a')
+        action = request.GET.get('action')
         
         #---
         
