@@ -56,6 +56,7 @@ class View(GlobalView):
         
         tpl = getTemplate(request, 'planet-recycling')
         
+        self.selectedTab = 'recycling'
         self.selectedMenu = 'planet'
         
         self.headerUrl = '/s03/planet-recycling/'

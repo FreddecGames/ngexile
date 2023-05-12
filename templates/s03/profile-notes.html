@@ -4,25 +4,7 @@
 
 {% block content %}
 
-    <div class="page-content">
-        <ul class="nav nav-tabs mt-0 mb-3">
-            <li class="nav-item">
-                <a href="/s03/profile-options/?cat=1" class="nav-link">Edition</a>
-            </li>
-            <li class="nav-item active">
-                <a href="/s03/profile-notes/" class="nav-link">Notes</a>
-            </li>
-            <li class="nav-item">
-                <a href="/s03/profile-options/?cat=2" class="nav-link">Options</a>
-            </li>
-            <li class="nav-item">
-                <a href="/s03/profile-options/?cat=3" class="nav-link">Vacances</a>
-            </li>
-            <li class="nav-item">
-                <a href="/accounts/logout/" class="nav-link">Déconnexion</a>
-            </li>
-        </ul>
-    </div>
+    {% include "s03/profile-tabs.html" %}
     
     <div class="scroll-content" style="height:calc(100% - 52px);">
         <div class="page-content">

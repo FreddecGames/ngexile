@@ -72,8 +72,7 @@ class View(GlobalView):
             for ship in ships:            
                 quantity = min(ToInt(request.POST.get('transfership' + str(ship['id'])), 0), ship['count'])
                 if quantity > 0:
-                    query = 'INSERT INTO fleets_ships(fleetId, shipid, quantity) VALUES(' + str(newfleetid) + ',' + str(ship['id']) +',' + str(quantity) + ')'
-                    dbQuery(query)
+                    dbQuery('INSERT INTO fleets_ships(fleetId, shipid, quantity) VALUES(' + str(newfleetid) + ',' + str(ship['id']) +',' + str(quantity) + ')')
 
             #---
                     
@@ -124,14 +123,14 @@ class View(GlobalView):
             for ship in ships:
                 quantity = min(ToInt(request.POST.get('transfership' + str(ship['id'])), 0), ship['count'])
                 if quantity > 0:
-                    query = ' UPDATE fleets_ships SET quantity=quantity-' + str(quantity) + ' WHERE fleetId=' + str(self.fleetId) + ' AND shipid=' + str(ship['id'])
-                    dbQuery(query)
+                    dbQuery('UPDATE fleets_ships SET quantity=quantity-' + str(quantity) + ' WHERE fleetId=' + str(self.fleetId) + ' AND shipid=' + str(ship['id']))
 
             #---
            
-            query = 'DELETE FROM fleets WHERE ownerid=' + str(self.userId) + ' AND size=0'
-            dbQuery(query)
+            dbQuery('DELETE FROM fleets WHERE ownerid=' + str(self.userId) + ' AND size=0')
 
+            #---
+            
             return HttpResponseRedirect('/s03/fleet-view/?id=' + str(newfleetid))
         
         #---
@@ -146,7 +145,7 @@ class View(GlobalView):
         
         tpl = getTemplate(request, 'fleet-split')
 
-        self.selectedMenu = 'fleets'
+        self.selectedMenu = 'fleet'
 
         #---
 

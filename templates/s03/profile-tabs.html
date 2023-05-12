@@ -1,0 +1,21 @@
+{% load humanize %}
+
+<div class="page-content">
+    <ul class="nav nav-tabs mt-0 mb-3">
+        <li class="nav-item {% if selectedtab == 'options' and cat == 1 %}active{% endif %}">
+            <a href="/s03/profile-options/?cat=1" class="nav-link">Edition</a>
+        </li>
+        <li class="nav-item {% if selectedtab == 'notes' %}active{% endif %}">
+            <a href="/s03/profile-notes/" class="nav-link">Notes</a>
+        </li>
+        <li class="nav-item {% if selectedtab == 'options' and cat == 2 %}active{% endif %}">
+            <a href="/s03/profile-options/?cat=2" class="nav-link">Options</a>
+        </li>
+        <li class="nav-item {% if selectedtab == 'options' and cat == 3 %}active{% endif %}">
+            <a href="/s03/profile-options/?cat=3" class="nav-link">Vacances</a>
+        </li>
+        <li class="nav-item">
+            <a href="/accounts/logout/" class="nav-link text-danger">Déconnexion</a>
+        </li>
+    </ul>
+</div>

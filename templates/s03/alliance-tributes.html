@@ -1,183 +1,146 @@
 {% extends "s03/_layout.html" %}
+
 {% load humanize %}
+
 {% block content %}
-<div class="page-content">
-    <ul class="nav nav-tabs mt-0 mb-3">
-        <li class="nav-item">
-            <a href="/s03/alliance-view/" class="nav-link">Aperçu</a>
-        </li>
-        {% if show_management %}
-            <li class="nav-item">
-                <a href="/s03/alliance-manage/" class="nav-link">Gestion</a>
-            </li>
-        {% endif %}
-        {% if show_ranks %}
-            <li class="nav-item">
-                <a href="/s03/alliance-ranks/" class="nav-link">Grades</a>
-            </li>
-        {% endif %}
-        {% if show_members %}
-            <li class="nav-item">
-                <a href="/s03/alliance-members/" class="nav-link">Membres</a>
-            </li>
-        {% endif %}
-        {% if show_members %}
-            <li class="nav-item">
-                <a href="/s03/alliance-recruitment/" class="nav-link">Recrutement</a>
-            </li>
-        {% endif %}
-        <li class="nav-item">
-            <a href="/s03/alliance-naps/" class="nav-link">PNA</a>
-        </li>
-        <li class="nav-item active">
-            <a href="/s03/alliance-tributes/" class="nav-link">Tributs</a>
-        </li>
-        <li class="nav-item">
-            <a href="/s03/alliance-wars/" class="nav-link">Guerres</a>
-        </li>
-        <li class="nav-item">
-            <a href="/s03/alliance-wallet/" class="nav-link">Portefeuille</a>
-        </li>
-        {% if show_reports %}
-            <li class="nav-item">
-                <a href="/s03/alliance-reports/" class="nav-link">Rapports</a>
-            </li>
-        {% endif %}
-        <li class="nav-item">
-            <a href="/s03/alliance-invitations/" class="nav-link">Invitations</a>
-        </li>
-    </ul>
-</div>
-<div class="scroll-content" style="height:calc(100% - 52px);">
-<div class="page-content">
-    <div class="card mb-3">
-        <div class="card-header">
-            <span class="fs-6">Nos tributs</span>
-        </div>
-        <div class="list-group list-group-flush">
-            {% for item in sent_tributes %}
-                <div class="list-group-item">
-                    <div class="row gx-3 align-items-center">
-                        <div class="col-auto">
-                            {{ forloop.counter }}
-                            <span class="text-normal">.</span>
-                        </div>
-                        <div class="col">
-                            <a href="/s03/alliance-view/?tag={{ item.tag }}" data-bs-toggle="tooltip" data-bs-title="Voir alliance">[{{ item.tag }}] {{ item.name }}</a>
-                        </div>
-                        <div class="col-auto">
-                            <span class="text-normal">{{ item.created }}</span>
-                        </div>
-                        <div class="col-auto">
-                            <img src="{{ PATH_IMAGES }}img/interface/credits.gif" data-bs-toggle="tooltip" data-bs-title="Crédits" class="res" width="16px" height="16px">
-                            {{ item.credits|intcomma }}
-                        </div>
-                        {% if can_break %}
-                            <div class="col-auto">
-                                <form method="post" action="">
-                                    {% csrf_token %}
-                                    <input type="hidden" name="action" value="cancel" />
-                                    <input type="hidden" name="tag" value="{{ item.tag }}" />
-                                    <button type="submit" class="btn btn-danger">Annuler</button>
-                                </form>
+
+    {% include "s03/alliance-tabs.html" %}
+    
+    <div class="scroll-content" style="height:calc(100% - 52px);">
+        <div class="page-content">
+        
+            <div class="card mb-3">
+                <div class="card-header">
+                    <span class="fs-6">Nos tributs</span>
+                </div>
+                <div class="list-group list-group-flush">
+                    {% for item in sent_tributes %}
+                        <div class="list-group-item">
+                            <div class="row gx-3 align-items-center">
+                                <div class="col-auto">
+                                    {{ forloop.counter }}
+                                    <span class="text-normal">.</span>
+                                </div>
+                                <div class="col">
+                                    <a href="/s03/alliance-view/?tag={{ item.tag }}" data-bs-toggle="tooltip" data-bs-title="Voir alliance">[{{ item.tag }}] {{ item.name }}</a>
+                                </div>
+                                <div class="col-auto">
+                                    <span class="text-normal">{{ item.created }}</span>
+                                </div>
+                                <div class="col-auto">
+                                    <img src="{{ PATH_IMAGES }}img/interface/credits.gif" data-bs-toggle="tooltip" data-bs-title="Crédits" class="res" width="16px" height="16px">
+                                    {{ item.credits|intcomma }}
+                                </div>
+                                {% if can_break %}
+                                    <div class="col-auto">
+                                        <form method="post" action="">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="action" value="cancel" />
+                                            <input type="hidden" name="tag" value="{{ item.tag }}" />
+                                            <button type="submit" class="btn btn-danger">Annuler</button>
+                                        </form>
+                                    </div>
+                                {% endif %}
                             </div>
-                        {% endif %}
+                        </div>
+                    {% empty %}
+                        <div class="list-group-item text-center">
+                            <span class="text-normal">Aucun</span>
+                        </div>
+                    {% endfor %}
+                    {% for message in messages %}
+                        <div class="list-group-item">
+                            <div class="alert alert-{{ message.tags }} text-center">
+                                {% if message.message == 'norights' %}Vous n'êtes pas en droit de faire une telle demande{% endif %}
+                                {% if message.message == 'unknown' %}Aucune alliance avec un tel tag n'a été trouvée{% endif %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <span class="fs-6">Nos tributs perçus</span>
+                </div>
+                <div class="list-group list-group-flush">
+                    {% for item in received_tributes %}
+                        <div class="list-group-item">
+                            <div class="row gx-3 align-items-center">
+                                <div class="col-auto">
+                                    {{ forloop.counter }}
+                                    <span class="text-normal">.</span>
+                                </div>
+                                <div class="col">
+                                    <a href="/s03/alliance-view/?tag={{ item.tag }}" data-bs-toggle="tooltip" data-bs-title="Voir alliance">[{{ item.tag }}] {{ item.name }}</a>
+                                </div>
+                                <div class="col-auto">
+                                    <span class="text-normal">{{ item.created }}</span>
+                                </div>
+                                <div class="col-auto">
+                                    <img src="{{ PATH_IMAGES }}img/interface/credits.gif" data-bs-toggle="tooltip" data-bs-title="Crédits" class="res" width="16px" height="16px">
+                                    {{ item.credits|intcomma }}
+                                </div>
+                                <div class="col-auto">
+                                    <span class="text-normal">{{ item.next_transfer }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    {% empty %}
+                        <div class="list-group-item text-center">
+                            <span class="text-normal">Aucun</span>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            {% if can_create %}
+                <form action="?" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="create">
+                    <div class="card mt-3">
+                        <div class="card-header">
+                            <span class="fs-6">Créer un virement automatique</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-2 text-center">
+                                <span class="text-normal">Veuillez indiquer le tag de l'alliance à laquelle envoyer les crédits chaque jour.</span>
+                            </div>
+                            <div class="row gx-2 align-items-center justify-content-center">
+                                <div class="col-auto">
+                                    <span>Alliance (tag)</span>
+                                </div>
+                                <div class="col-auto">
+                                    <input type="text" class="form-control" name="tag" value="{{ tag }}" maxlength="4" />
+                                </div>
+                                <div class="col-auto">
+                                    <span>Crédits</span>
+                                </div>
+                                <div class="col-auto">
+                                    <input type="number" class="form-control" name="credits" value="{{ credits }}" maxlength="10" />
+                                </div>
+                                <div class="col-auto">
+                                    <img src="{{ PATH_IMAGES }}img/interface/credits.gif" data-bs-toggle="tooltip" data-bs-title="Crédits" class="res" width="16px" height="16px">
+                                </div>
+                                <div class="col-auto">
+                                    <input type="submit" class="btn btn-primary" name="submit" value="Envoyer">
+                                </div>
+                            </div>
+                            {% for message in messages %}
+                                <div class="mt-2">
+                                    <div class="alert alert-{{ message.tags }} text-center">
+                                        {% if message.message == 'new_norights' %}Vous n'êtes pas en droit de faire une telle demande{% endif %}
+                                        {% if message.message == 'new_unknown' %}Aucune alliance avec un tel tag n'a été trouvée{% endif %}
+                                        {% if message.message == 'new_already_exists' %}Nous avons déjà un versement automatique avec cette alliance, annuler celui existant et recommencez{% endif %}
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
                     </div>
-                </div>
-            {% empty %}
-                <div class="list-group-item text-center">
-                    <span class="text-normal">Aucun</span>
-                </div>
-            {% endfor %}
-            {% for message in messages %}
-                <div class="list-group-item">
-                    <div class="alert alert-{{ message.tags }} text-center">
-                        {% if message.message == 'norights' %}Vous n'êtes pas en droit de faire une telle demande{% endif %}
-                        {% if message.message == 'unknown' %}Aucune alliance avec un tel tag n'a été trouvée{% endif %}
-                    </div>
-                </div>
-            {% endfor %}
+                </form>
+            {% endif %}
+        
         </div>
     </div>
-    <div class="card">
-        <div class="card-header">
-            <span class="fs-6">Nos tributs perçus</span>
-        </div>
-        <div class="list-group list-group-flush">
-            {% for item in received_tributes %}
-                <div class="list-group-item">
-                    <div class="row gx-3 align-items-center">
-                        <div class="col-auto">
-                            {{ forloop.counter }}
-                            <span class="text-normal">.</span>
-                        </div>
-                        <div class="col">
-                            <a href="/s03/alliance-view/?tag={{ item.tag }}" data-bs-toggle="tooltip" data-bs-title="Voir alliance">[{{ item.tag }}] {{ item.name }}</a>
-                        </div>
-                        <div class="col-auto">
-                            <span class="text-normal">{{ item.created }}</span>
-                        </div>
-                        <div class="col-auto">
-                            <img src="{{ PATH_IMAGES }}img/interface/credits.gif" data-bs-toggle="tooltip" data-bs-title="Crédits" class="res" width="16px" height="16px">
-                            {{ item.credits|intcomma }}
-                        </div>
-                        <div class="col-auto">
-                            <span class="text-normal">{{ item.next_transfer }}</span>
-                        </div>
-                    </div>
-                </div>
-            {% empty %}
-                <div class="list-group-item text-center">
-                    <span class="text-normal">Aucun</span>
-                </div>
-            {% endfor %}
-        </div>
-    </div>
-    {% if can_create %}
-    <form action="?" method="post">
-        {% csrf_token %}
-        <input type="hidden" name="action" value="create">
-        <div class="card mt-3">
-            <div class="card-header">
-                <span class="fs-6">Créer un virement automatique</span>
-            </div>
-            <div class="card-body">
-                <div class="mb-2 text-center">
-                    <span class="text-normal">Veuillez indiquer le tag de l'alliance à laquelle envoyer les crédits chaque jour.</span>
-                </div>
-                <div class="row gx-2 align-items-center justify-content-center">
-                    <div class="col-auto">
-                        <span>Alliance (tag)</span>
-                    </div>
-                    <div class="col-auto">
-                        <input type="text" class="form-control" name="tag" value="{{ tag }}" maxlength="4" />
-                    </div>
-                    <div class="col-auto">
-                        <span>Crédits</span>
-                    </div>
-                    <div class="col-auto">
-                        <input type="number" class="form-control" name="credits" value="{{ credits }}" maxlength="10" />
-                    </div>
-                    <div class="col-auto">
-                        <img src="{{ PATH_IMAGES }}img/interface/credits.gif" data-bs-toggle="tooltip" data-bs-title="Crédits" class="res" width="16px" height="16px">
-                    </div>
-                    <div class="col-auto">
-                        <input type="submit" class="btn btn-primary" name="submit" value="Envoyer">
-                    </div>
-                </div>
-                {% for message in messages %}
-                    <div class="mt-2">
-                        <div class="alert alert-{{ message.tags }} text-center">
-                            {% if message.message == 'new_norights' %}Vous n'êtes pas en droit de faire une telle demande{% endif %}
-                            {% if message.message == 'new_unknown' %}Aucune alliance avec un tel tag n'a été trouvée{% endif %}
-                            {% if message.message == 'new_already_exists' %}Nous avons déjà un versement automatique avec cette alliance, annuler celui existant et recommencez{% endif %}
-                        </div>
-                    </div>
-                {% endfor %}
-            </div>
-        </div>
-    </form>
-    {% endif %}
-</div>
-</div>
+
 {% endblock %}

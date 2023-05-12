@@ -68,6 +68,7 @@ class View(GlobalView):
         
         tpl = getTemplate(request, 'mail-new')
         
+        self.selectedTab = 'new'
         self.selectedMenu = 'mails'
             
         #---

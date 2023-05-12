@@ -46,21 +46,21 @@ class View(GlobalView):
         elif action == 'firescientists':
         
             amount = ToInt(request.POST.get('amount'), 0)
-            dbQuery('SELECT sp_dismiss_staff(' + str(self.userId) + ',' + str(self.currentPlanetId) + ',' + str(amount) + ',0,0)')
+            dbQuery('SELECT sp_dismiss_staff(' + str(self.userId) + ',' + str(self.currentPlanetId) + ',' + str(amount) + ', 0, 0)')
         
         #---
         
         elif action == 'firesoldiers':
         
             amount = ToInt(request.POST.get('amount'), 0)
-            dbQuery('SELECT sp_dismiss_staff(' + str(self.userId) + ',' + str(self.currentPlanetId) + ',' + '0,' + str(amount) + ',0)')
+            dbQuery('SELECT sp_dismiss_staff(' + str(self.userId) + ',' + str(self.currentPlanetId) + ', 0,' + str(amount) + ', 0)')
         
         #---
         
         elif action == 'fireworkers':
         
             amount = ToInt(request.POST.get('amount'), 0)
-            dbQuery('SELECT sp_dismiss_staff(' + str(self.userId) + ',' + str(self.currentPlanetId) + ',' + '0,0,' + str(amount) + ')')
+            dbQuery('SELECT sp_dismiss_staff(' + str(self.userId) + ',' + str(self.currentPlanetId) + ', 0, 0,' + str(amount) + ')')
         
         #---
         
@@ -73,11 +73,10 @@ class View(GlobalView):
         
         elif action == 'resources_price':
         
-            query = 'UPDATE nav_planet SET' + \
-                    ' buy_ore = GREATEST(0, LEAST(1000, ' + str(ToInt(request.POST.get('buy_ore'), 0)) + '))' + \
-                    ' ,buy_hydrocarbon = GREATEST(0, LEAST(1000, ' + str(ToInt(request.POST.get('buy_hydrocarbon'), 0)) + '))' + \
-                    ' WHERE ownerid=' + str(self.userId) + ' AND id=' + str(self.currentPlanetId)
-            dbQuery(query)
+            dbQuery('UPDATE nav_planet SET' + \
+                    ' buy_ore = GREATEST(0, LEAST(1000, ' + str(ToInt(request.POST.get('buy_ore'), 0)) + ')),' + \
+                    ' buy_hydrocarbon = GREATEST(0, LEAST(1000, ' + str(ToInt(request.POST.get('buy_hydrocarbon'), 0)) + '))' + \
+                    ' WHERE ownerid=' + str(self.userId) + ' AND id=' + str(self.currentPlanetId))
             
         #---
 
@@ -90,7 +89,7 @@ class View(GlobalView):
         
         elif action == 'resume':
         
-            dbQuery('UPDATE nav_planet SET recruit_workers=True WHERE ownerid=' + str(self.userId) + ' AND id=' + str(self.currentPlanetId) )
+            dbQuery('UPDATE nav_planet SET recruit_workers = True WHERE ownerid=' + str(self.userId) + ' AND id=' + str(self.currentPlanetId) )
             dbQuery('SELECT sp_update_planet(' + str(self.currentPlanetId) + ')')
             
         #---
@@ -105,6 +104,7 @@ class View(GlobalView):
 
         tpl = getTemplate(request, 'planet-view')
 
+        self.selectedTab = 'view'
         self.selectedMenu = 'planet'
         
         self.showHeader = True

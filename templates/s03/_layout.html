@@ -1,6 +1,7 @@
 {% load humanize %}
 
 <!doctype html>
+
 <html>
     <head>
 
@@ -156,7 +157,7 @@
                             </div>
                         </a>
                         
-                        <a href="/s03/fleet-list/" class="menu lvl2 {% if selectedmenu == 'fleets' %}text-warning{% endif %}">
+                        <a href="/s03/fleet-list/" class="menu lvl2 {% if selectedmenu == 'fleet' %}text-warning{% endif %}">
                             <span class="pe-3"><i class="fs-6 fas fa-fw fa-space-shuttle"></i></span>
                             Flottes
                         </a>
@@ -188,7 +189,7 @@
                             </a>
                         {% endif %}
                         
-                        <a href="/s03/ranking-players/" class="menu lvl2 {% if selectedmenu == 'map' %}text-warning{% endif %}">
+                        <a href="/s03/map/?g={{ cur_g }}&s={{ cur_s }}" class="menu lvl2 {% if selectedmenu == 'map' %}text-warning{% endif %}">
                             <span class="pe-3"><i class="fs-6 fas fa-fw fa-map"></i></span>
                             Carte spatiale
                         </a>
@@ -242,7 +243,7 @@
                         
                     </div>                    
                 </div>
-                <div id="content" class="scroll-content">
+                <div id="content">
                     <div id="page" class="scroll-content">
                     
                         {% if header %}

@@ -4,6 +4,7 @@
     var chat = addChat({{ chat.id }},'{{chat.name }}','{{ chat.topic }}',true,true);
     chat.setActive();
 {% endif %}
+
 {% if join_badpassword %}alert('Nom de salon ou mot de passe incorrect.');{% endif %}
 {% if join_error %}alert('Impossible de rejoindre ce salon.');{% endif %}
 

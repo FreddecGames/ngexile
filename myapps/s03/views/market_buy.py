@@ -40,9 +40,8 @@ class View(GlobalView):
                 hydrocarbon = ToInt(request.POST.get('h' + str(planetId)), 0)
 
                 if ore > 0 or hydrocarbon > 0:
-
-                    query = 'SELECT * FROM sp_buy_resources(' + str(self.userId) + ',' + str(planetId) + ',' + str(ore * 1000) + ',' + str(hydrocarbon * 1000) + ')'
-                    dbQuery(query)
+                
+                    dbQuery('SELECT * FROM sp_buy_resources(' + str(self.userId) + ',' + str(planetId) + ',' + str(ore * 1000) + ',' + str(hydrocarbon * 1000) + ')')
         
         #---
         
@@ -127,6 +126,7 @@ class View(GlobalView):
         
         if get_planet != '':
         
+            self.selectedTab = 'buy'
             self.selectedMenu = 'planet'
             
             self.showHeader = True
@@ -136,6 +136,7 @@ class View(GlobalView):
             
         else:
         
+            self.selectedTab = 'buy'
             self.selectedMenu = 'merchants'
         
             tpl.set('total', int(total))

@@ -25,6 +25,7 @@ class View(GlobalView):
 
         tpl = getTemplate(request, 'ranking-alliances')
         
+        self.selectedTab = 'alliances'
         self.selectedMenu = 'ranking'
 
         #---

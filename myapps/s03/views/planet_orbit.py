@@ -71,6 +71,7 @@ class View(GlobalView):
         
         tpl = getTemplate(request, 'planet-orbit')
 
+        self.selectedTab = 'orbit'
         self.selectedMenu = 'planet'
 
         self.showHeader = True

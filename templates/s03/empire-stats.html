@@ -4,84 +4,65 @@
 
 {% block content %}
 
-    <div class="page-content">
-        <ul class="nav nav-tabs mt-0 mb-3">
-            <li class="nav-item">
-                <a href="/s03/empire-view/" class="nav-link">Aperçu</a>
-            </li>
-            <li class="nav-item">
-                <a href="/s03/empire-upkeep/" class="nav-link">Coût d'entretien</a>
-            </li>
-            <li class="nav-item">
-                <a href="/s03/empire-planets/" class="nav-link">Planètes</a>
-            </li>
-            <li class="nav-item">
-                <a href="/s03/empire-orbiting/" class="nav-link">Flottes en orbite</a>
-            </li>
-            <li class="nav-item">
-                <a href="/s03/empire-standby/" class="nav-link">Au sol</a>
-            </li>
-            <li class="nav-item">
-                <a href="/s03/empire-stats/" class="nav-link active">Stats</a>
-            </li>
-        </ul>
-    </div>
+    {% include "s03/empire-tabs.html" %}
 
     <div class="scroll-content" style="height:calc(100% - 52px);">
-    <div class="page-content">
-    <div class="row g-3">
-        {% if no_ship %}
-            <div class="col-12 text-center">
-                <span class="text-normal">Vous n'avez détruit et/ou perdu aucun vaisseau</span>
-            </div>
-        {% else %}
-            {% for category in cats %}
-                <div class="col-12">
-                    <div class="card">
-                        <div class="card-header">
-                            <div class="row gx-3 align-items-baseline">
-                                <div class="col">
-                                    <span class="fs-6">
-                                        {% if category.id == 10 %}Vaisseaux utilitaires{% endif %}
-                                        {% if category.id == 11 %}Vaisseaux de déploiement{% endif %}
-                                        {% if category.id == 15 %}Vaisseaux tactiques{% endif %}
-                                        {% if category.id == 20 %}Vaisseaux légers{% endif %}
-                                        {% if category.id == 30 %}Corvettes{% endif %}
-                                        {% if category.id == 40 %}Frégates{% endif %}
-                                        {% if category.id == 50 %}Croiseurs{% endif %}
-                                        {% if category.id == 60 %}Dreadnought{% endif %}
-                                    </span>
-                                </div>
-                                <div class="col-2 text-end"><span class="text-normal">Détruits</span></div>
-                                <div class="col-2 text-end"><span class="text-normal">Perdus</span></div>
-                            </div>
-                        </div>
-                        <div class="list-group list-group-flush">
-                            {% for ship in category.ships %}
-                                <div class="list-group-item">
-                                    <div class="row gx-3">
-                                        <div class="col"><a href="/s03/help/?cat=ships#{{ ship.shipid }}" data-bs-toggle="tooltip" data-bs-title="Voir aide">{{ ship.label }}</a></div>
-                                        <div class="col-2 text-end">{% if ship.killed > 0 %}<span class="text-success">{{ ship.killed|intcomma }}</span>{% endif %}</div>
-                                        <div class="col-2 text-end">{% if ship.lost > 0 %}<span class="text-danger">{{ ship.lost|intcomma }}</span>{% endif %}</div>
+        <div class="page-content">
+        
+            <div class="row g-3">
+                {% if no_ship %}
+                    <div class="col-12 text-center">
+                        <span class="text-normal">Vous n'avez détruit et/ou perdu aucun vaisseau</span>
+                    </div>
+                {% else %}
+                    {% for category in cats %}
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <div class="row gx-3 align-items-baseline">
+                                        <div class="col">
+                                            <span class="fs-6">
+                                                {% if category.id == 10 %}Vaisseaux utilitaires{% endif %}
+                                                {% if category.id == 11 %}Vaisseaux de déploiement{% endif %}
+                                                {% if category.id == 15 %}Vaisseaux tactiques{% endif %}
+                                                {% if category.id == 20 %}Vaisseaux légers{% endif %}
+                                                {% if category.id == 30 %}Corvettes{% endif %}
+                                                {% if category.id == 40 %}Frégates{% endif %}
+                                                {% if category.id == 50 %}Croiseurs{% endif %}
+                                                {% if category.id == 60 %}Dreadnought{% endif %}
+                                            </span>
+                                        </div>
+                                        <div class="col-2 text-end"><span class="text-normal">Détruits</span></div>
+                                        <div class="col-2 text-end"><span class="text-normal">Perdus</span></div>
                                     </div>
                                 </div>
-                            {% endfor %}
+                                <div class="list-group list-group-flush">
+                                    {% for ship in category.ships %}
+                                        <div class="list-group-item">
+                                            <div class="row gx-3">
+                                                <div class="col"><a href="/s03/help/?cat=ships#{{ ship.shipid }}" data-bs-toggle="tooltip" data-bs-title="Voir aide">{{ ship.label }}</a></div>
+                                                <div class="col-2 text-end">{% if ship.killed > 0 %}<span class="text-success">{{ ship.killed|intcomma }}</span>{% endif %}</div>
+                                                <div class="col-2 text-end">{% if ship.lost > 0 %}<span class="text-danger">{{ ship.lost|intcomma }}</span>{% endif %}</div>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                    <div class="col-12">
+                        <div class="card card-body">
+                            <div class="row gx-3">
+                                <div class="col"><span class="text-normal">Total</span></div>
+                                <div class="col-2 text-end"><span class="text-success">{% if kills > 0 %}{{ kills|intcomma }}{% endif %}</span></div>
+                                <div class="col-2 text-end"><span class="text-danger">{% if losses > 0 %}{{ losses|intcomma }}{% endif %}</span></div>
+                            </div>
                         </div>
                     </div>
-                </div>
-            {% endfor %}
-            <div class="col-12">
-                <div class="card card-body">
-                    <div class="row gx-3">
-                        <div class="col"><span class="text-normal">Total</span></div>
-                        <div class="col-2 text-end"><span class="text-success">{% if kills > 0 %}{{ kills|intcomma }}{% endif %}</span></div>
-                        <div class="col-2 text-end"><span class="text-danger">{% if losses > 0 %}{{ losses|intcomma }}{% endif %}</span></div>
-                    </div>
-                </div>
+                {% endif %}
             </div>
-        {% endif %}
-    </div>
-    </div>
+        
+        </div>
     </div>
 
 {% endblock %}

@@ -31,7 +31,7 @@ class View(GlobalView):
 
         tpl = getTemplate(request, 'report-invasion')
         
-        self.selectedMenu = 'invasion'
+        self.selectedMenu = 'reports'
         
         #---
         

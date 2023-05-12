@@ -63,6 +63,7 @@ class View(GlobalView):
 
         tpl = getTemplate(request, 'alliance-create')
 
+        self.selectedTab = 'create'
         self.selectedMenu = 'alliance'
         
         #---

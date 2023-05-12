@@ -33,7 +33,7 @@ class View(GlobalView):
 
         tpl = getTemplate(request, 'profile-view')
         
-        self.selectedMenu = 'nation'
+        self.selectedMenu = 'profile'
             
         #---
 
@@ -51,8 +51,6 @@ class View(GlobalView):
         
         if row == None:
             if nation != '':
-                
-                self.selectedMenu = 'nation'
                 
                 tpl = getTemplate(request, 'profile-search')
                 

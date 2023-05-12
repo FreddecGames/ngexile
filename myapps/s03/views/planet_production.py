@@ -25,6 +25,7 @@ class View(GlobalView):
 
         tpl = getTemplate(request, 'planet-production')
         
+        self.selectedTab = 'production'
         self.selectedMenu = 'planet'
 
         self.showHeader = True

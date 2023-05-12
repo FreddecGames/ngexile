@@ -1,126 +1,132 @@
 {% extends "s03/_layout.html" %}
+
 {% load tz %}
 {% load humanize %}
+
 {% block content %}
-<div class="page-content">
-<script>
-    function confirmAssign() {
+
+    <div class="page-content">
     
-        var s = "";
-        var obj = document.getElementById('points');
-        if (obj.innerHTML != "0") s = "Note: Vous pourrez assigner les points restants plus tard.\r\n";
-        return confirm("Les compétences assignées à ce commandant seront définitives.\r\n" + s + "\r\nÊtes-vous sûr de votre choix ?");
-    }
-
-    var count = 0;
-    var skills = [];
-    var points = {{ commander.points }};
-
-    function sk(i,j) {
-    
-        var skill = skills[i];
-
-        var inp = $(skill.name);
-
-        if (points - j < 0) return false;
-
-        var pointsInSkill = parseInt(inp.value);
-
-        if (pointsInSkill + j >= 0 && points-j >= 0) {
-        
-            pointsInSkill += j;
-
-            var obj = $('span' + skill.name);
-
-            if ((skill.value + pointsInSkill * skill.inc).toFixed(2) > skill.max) {
+        <script>
+            function confirmAssign() {
             
-                alert('Limite atteinte pour cette compétence (' + ((skill.max - 1) * 100).toFixed(0) + ')');
+                var s = "";
+                var obj = document.getElementById('points');
+                if (obj.innerHTML != "0") s = "Note: Vous pourrez assigner les points restants plus tard.\r\n";
+                return confirm("Les compétences assignées à ce commandant seront définitives.\r\n" + s + "\r\nÊtes-vous sûr de votre choix ?");
+            }
+
+            var count = 0;
+            var skills = [];
+            var points = {{ commander.points }};
+
+            function sk(i,j) {
+            
+                var skill = skills[i];
+
+                var inp = $(skill.name);
+
+                if (points - j < 0) return false;
+
+                var pointsInSkill = parseInt(inp.value);
+
+                if (pointsInSkill + j >= 0 && points-j >= 0) {
+                
+                    pointsInSkill += j;
+
+                    var obj = $('span' + skill.name);
+
+                    if ((skill.value + pointsInSkill * skill.inc).toFixed(2) > skill.max) {
+                    
+                        alert('Limite atteinte pour cette compétence (' + ((skill.max - 1) * 100).toFixed(0) + ')');
+                        return false;
+                    }
+
+                    obj.innerHTML = Math.round((skill.value + pointsInSkill * skill.inc - 1) * 100);
+                    inp.value = pointsInSkill;
+                    
+                    var obj = $('div' + skill.name);
+                    obj.className = 'col-auto ' + ((skill.value + pointsInSkill * skill.inc) > 1 ? 'text-success' : 'text-normal')
+                    
+                    points -= j;
+                }
+
+                $('points').innerHTML = points;
+
                 return false;
             }
 
-            obj.innerHTML = Math.round((skill.value + pointsInSkill * skill.inc - 1) * 100);
-            inp.value = pointsInSkill;
+            function addskill(name, label, increase, value, max, salary) {
             
-            var obj = $('div' + skill.name);
-            obj.className = 'col-auto ' + ((skill.value + pointsInSkill * skill.inc) > 1 ? 'text-success' : 'text-normal')
-            
-            points -= j;
-        }
-
-        $('points').innerHTML = points;
-
-        return false;
-    }
-
-    function addskill(name, label, increase, value, max, salary) {
-    
-        skills[count] = { name:name, inc:increase, value:value, max:max };
-        document.write('<input type="hidden" id="' + name + '" name="' + name + '" value="0">');
-        document.write(
-            '<div class="col-12">' +
-                '<div class="row gx-3 align-items-center">' +
-                    '<div class="col-auto"><span class="text-normal"><i class="fas fa-info-circle" data-bs-toggle="tooltip" data-bs-html="true" data-bs-title="' +
-                        '<div><small class=\'text-normal me-3\'>max</small> ' + Math.round((max - 1) * 100) + '%</div>' +
-                        '<div><small class=\'text-normal me-3\'>salaire</small> <span class=\'text-success\'>+' + Math.round(increase * 100) + '%</span> <i class=\'fas fa-long-arrow-alt-right text-normal mx-2\'></i> <img src=\'{{ PATH_IMAGES }}img/interface/credits.gif\' class=\'res\' width=\'16px\' height=\'16px\'> +' + formatnumber(salary) + '</div>' +
-                    '"></i></span></div>' +
-                    '<div class="col"><span class="text-normal">' + label + '</span></div>' +
-                    '<div id="div' + name + '" class="col-auto ' + (value > 1 ? 'text-success' : 'text-normal') + '">+<span id="span' + name + '">' + Math.round((value - 1) * 100) + '</span>%</div>' +
-                    '<div class="col-auto"><a href="" onclick="return sk(' + count + ',1)" ondblclick="return sk(' + count + ',1)"><i class="fa-fw fas fa-plus-circle"></i></a></div>' +
-                    '<div class="col-auto"><a href="" onclick="return sk(' + count + ',-1)" ondblclick="return sk(' + count + ',-1)"><i class="fa-fw fas fa-minus-circle"></i></a></div>' +
-                '</div>' +
-            '</div>'
-        );
-        count++;
-    }
-</script>
-<form action="" method="post">
-    {% csrf_token %}
-    <input type="hidden" name="action" value="save">
-    <div class="card">
-        <div class="card-header">
-            <a href="/s03/commander-list/" class="me-2"><i class="fa-fw fas fa-long-arrow-alt-left"></i> Retour</a>
-            <span class="fs-6"><span class="text-normal"><i class="fa-fw fas fa-user-astronaut"></i></span> {{ commander.name }}</span>
-        </div>
-        <div class="card-body">
-            <div class="row gx-3 gy-3">
-                <div class="col-6">
-                    <div class="row g-1 flex-column">
-                        <script>
-                            addskill('fleet_speed', 'Flotte - Vitesse', 0.02, {{ commander.mod_fleet_speed }}, 1.3, 1000);
-                            addskill('fleet_shield', 'Flotte - Bouclier', 0.02, {{ commander.mod_fleet_shield }}, 1.4, 1000);
-                            addskill('fleet_handling', 'Flotte - Manœuvrabilité', 0.05, {{ commander.mod_fleet_handling }}, 1.75, 1000);
-                            addskill('fleet_targeting', 'Flotte - Ciblage', 0.05, {{ commander.mod_fleet_tracking_speed }}, 1.75, 1000);
-                            addskill('fleet_damages', 'Flotte - Dégats', 0.02, {{ commander.mod_fleet_damage }}, 1.3, 1000);
-                            addskill('fleet_signature', 'Flotte - Réduction signature', 0.02, {{ commander.mod_fleet_signature }}, 1.2, 400);
-                        </script>
-                    </div>
+                skills[count] = { name:name, inc:increase, value:value, max:max };
+                document.write('<input type="hidden" id="' + name + '" name="' + name + '" value="0">');
+                document.write(
+                    '<div class="col-12">' +
+                        '<div class="row gx-3 align-items-center">' +
+                            '<div class="col-auto"><span class="text-normal"><i class="fas fa-info-circle" data-bs-toggle="tooltip" data-bs-html="true" data-bs-title="' +
+                                '<div><small class=\'text-normal me-3\'>max</small> ' + Math.round((max - 1) * 100) + '%</div>' +
+                                '<div><small class=\'text-normal me-3\'>salaire</small> <span class=\'text-success\'>+' + Math.round(increase * 100) + '%</span> <i class=\'fas fa-long-arrow-alt-right text-normal mx-2\'></i> <img src=\'{{ PATH_IMAGES }}img/interface/credits.gif\' class=\'res\' width=\'16px\' height=\'16px\'> +' + formatnumber(salary) + '</div>' +
+                            '"></i></span></div>' +
+                            '<div class="col"><span class="text-normal">' + label + '</span></div>' +
+                            '<div id="div' + name + '" class="col-auto ' + (value > 1 ? 'text-success' : 'text-normal') + '">+<span id="span' + name + '">' + Math.round((value - 1) * 100) + '</span>%</div>' +
+                            '<div class="col-auto"><a href="" onclick="return sk(' + count + ',1)" ondblclick="return sk(' + count + ',1)"><i class="fa-fw fas fa-plus-circle"></i></a></div>' +
+                            '<div class="col-auto"><a href="" onclick="return sk(' + count + ',-1)" ondblclick="return sk(' + count + ',-1)"><i class="fa-fw fas fa-minus-circle"></i></a></div>' +
+                        '</div>' +
+                    '</div>'
+                );
+                count++;
+            }
+        </script>
+        
+        <form action="" method="post">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="save">
+            <div class="card">
+                <div class="card-header">
+                    <a href="/s03/commander-list/" class="me-2"><i class="fa-fw fas fa-long-arrow-alt-left"></i> Retour</a>
+                    <span class="fs-6"><span class="text-normal"><i class="fa-fw fas fa-user-astronaut"></i></span> {{ commander.name }}</span>
                 </div>
-                <div class="col-6">
-                    <div class="row g-1 flex-column">
-                        <script>
-                            addskill('ore', 'Planète - Production de minerai', 0.01, {{ commander.mod_production_ore }}, 2.0, 100);
-                            addskill('hydrocarbon', 'Planète - Production d\'hydrocarbure', 0.01, {{ commander.mod_production_hydrocarbon }}, 2.0, 100);
-                            addskill('energy', 'Planète - Production d\'énergie', 0.1, {{ commander.mod_production_energy }}, 2.0, 1000);
-                            addskill('workers', 'Planète - Formation des travailleurs', 0.1, {{ commander.mod_production_workers }}, 2.0, 1000);
-                            addskill('buildindspeed', 'Planète - Vitesse de construction des bâtiments', 0.05, {{ commander.mod_construction_speed_buildings }}, 3.0, 1000);
-                            addskill('shipconstructionspeed', 'Planète - Vitesse de construction des vaisseaux', 0.05, {{ commander.mod_construction_speed_ships }}, 3.0, 2500);
-                        </script>
-                    </div>
-                </div>
-                <div class="col-12">
-                    <div class="row gx-3 align-items-center justify-content-end">
-                        <div class="col-auto">
-                            <span class="text-normal">Points restant</span>
-                            <span id="points">{{ commander.points }}</span>
+                <div class="card-body">
+                    <div class="row gx-3 gy-3">
+                        <div class="col-6">
+                            <div class="row g-1 flex-column">
+                                <script>
+                                    addskill('fleet_speed', 'Flotte - Vitesse', 0.02, {{ commander.mod_fleet_speed }}, 1.3, 1000);
+                                    addskill('fleet_shield', 'Flotte - Bouclier', 0.02, {{ commander.mod_fleet_shield }}, 1.4, 1000);
+                                    addskill('fleet_handling', 'Flotte - Manœuvrabilité', 0.05, {{ commander.mod_fleet_handling }}, 1.75, 1000);
+                                    addskill('fleet_targeting', 'Flotte - Ciblage', 0.05, {{ commander.mod_fleet_tracking_speed }}, 1.75, 1000);
+                                    addskill('fleet_damages', 'Flotte - Dégats', 0.02, {{ commander.mod_fleet_damage }}, 1.3, 1000);
+                                    addskill('fleet_signature', 'Flotte - Réduction signature', 0.02, {{ commander.mod_fleet_signature }}, 1.2, 400);
+                                </script>
+                            </div>
                         </div>
-                        <div class="col-auto">
-                            <input type="submit" class="btn btn-primary" value="Valider" onclick="return confirmAssign()">
+                        <div class="col-6">
+                            <div class="row g-1 flex-column">
+                                <script>
+                                    addskill('ore', 'Planète - Production de minerai', 0.01, {{ commander.mod_production_ore }}, 2.0, 100);
+                                    addskill('hydrocarbon', 'Planète - Production d\'hydrocarbure', 0.01, {{ commander.mod_production_hydrocarbon }}, 2.0, 100);
+                                    addskill('energy', 'Planète - Production d\'énergie', 0.1, {{ commander.mod_production_energy }}, 2.0, 1000);
+                                    addskill('workers', 'Planète - Formation des travailleurs', 0.1, {{ commander.mod_production_workers }}, 2.0, 1000);
+                                    addskill('buildindspeed', 'Planète - Vitesse de construction des bâtiments', 0.05, {{ commander.mod_construction_speed_buildings }}, 3.0, 1000);
+                                    addskill('shipconstructionspeed', 'Planète - Vitesse de construction des vaisseaux', 0.05, {{ commander.mod_construction_speed_ships }}, 3.0, 2500);
+                                </script>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="row gx-3 align-items-center justify-content-end">
+                                <div class="col-auto">
+                                    <span class="text-normal">Points restant</span>
+                                    <span id="points">{{ commander.points }}</span>
+                                </div>
+                                <div class="col-auto">
+                                    <input type="submit" class="btn btn-primary" value="Valider" onclick="return confirmAssign()">
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </form>
+        
     </div>
-</form>
-</div>
 {% endblock %}

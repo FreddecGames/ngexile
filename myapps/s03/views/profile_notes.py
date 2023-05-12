@@ -49,7 +49,8 @@ class View(GlobalView):
         
         tpl = getTemplate(request, 'profile-notes')
 
-        self.selectedMenu = 'notes'
+        self.selectedTab = 'notes'
+        self.selectedMenu = 'options'
 
         #---
 

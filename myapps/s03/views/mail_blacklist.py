@@ -43,6 +43,7 @@ class View(GlobalView):
 
         tpl = getTemplate(request, 'mail-blacklist')
                 
+        self.selectedTab = 'blacklist'
         self.selectedMenu = 'mails'
 
         #---

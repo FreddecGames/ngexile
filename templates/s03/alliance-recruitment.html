@@ -1,113 +1,75 @@
 {% extends "s03/_layout.html" %}
+
 {% load humanize %}
+
 {% block content %}
-<div class="page-content">
-    <ul class="nav nav-tabs mt-0 mb-3">
-        <li class="nav-item">
-            <a href="/s03/alliance-view/" class="nav-link">Aperçu</a>
-        </li>
-        {% if show_management %}
-            <li class="nav-item">
-                <a href="/s03/alliance-manage/" class="nav-link">Gestion</a>
-            </li>
-        {% endif %}
-        {% if show_ranks %}
-            <li class="nav-item">
-                <a href="/s03/alliance-ranks/" class="nav-link">Grades</a>
-            </li>
-        {% endif %}
-        {% if show_members %}
-            <li class="nav-item">
-                <a href="/s03/alliance-members/" class="nav-link">Membres</a>
-            </li>
-        {% endif %}
-        {% if show_members %}
-            <li class="nav-item active">
-                <a href="/s03/alliance-recruitment/" class="nav-link">Recrutement</a>
-            </li>
-        {% endif %}
-        <li class="nav-item">
-            <a href="/s03/alliance-naps/" class="nav-link">PNA</a>
-        </li>
-        <li class="nav-item">
-            <a href="/s03/alliance-tributes/" class="nav-link">Tributs</a>
-        </li>
-        <li class="nav-item">
-            <a href="/s03/alliance-wars/" class="nav-link">Guerres</a>
-        </li>
-        <li class="nav-item">
-            <a href="/s03/alliance-wallet/" class="nav-link">Portefeuille</a>
-        </li>
-        {% if show_reports %}
-            <li class="nav-item">
-                <a href="/s03/alliance-reports/" class="nav-link">Rapports</a>
-            </li>
-        {% endif %}
-        <li class="nav-item">
-            <a href="/s03/alliance-invitations/" class="nav-link">Invitations</a>
-        </li>
-    </ul>
-</div>
-<div class="scroll-content" style="height:calc(100% - 52px);">
-<div class="page-content">
-    {% if can_invite %}
-    <form action="?" method="post">
-        {% csrf_token %}
-        <input type="hidden" name="action" value="invite">
-        <div class="card mb-3">
-            <div class="card-header">
-                <span class="fs-6">Inviter une nation à rallier notre alliance</span>
-            </div>
-            <div class="card-body">
-                <div class="row gx-2 align-items-center justify-content-center">
-                    <div class="col-auto"><span class="text-normal">Joueur</span></div>
-                    <div class="col-auto"><input type="text" class="form-control" name="name" value=""></div>
-                    <div class="col-auto"><input type="submit" class="btn btn-primary" name="submit" value="Inviter"></div>
-                </div>
-                {% for message in messages %}
-                    <div class="mt-2 alert alert-{{ message.tags }} text-center">
-                        {% if message.message == 'no_right' %}Vous n'êtes pas en droit de rallier de nouvelles nations
-                        {% elif message.message == 'name_unknown' %}Aucune nation répondant à ce nom n'a été trouvée
-                        {% elif message.message == 'already_member' %}Cette nation est déjà membre de notre alliance !
-                        {% elif message.message == 'already_invited-2' %}Cette nation a déjà été invitée récemment
-                        {% elif message.message == 'impossible-2' %}Cette nation ne peut être invitée
-                        {% else %}{{ message }}
-                        {% endif %}
-                    </div>
-                {% endfor %}
-            </div>
-        </div>
-    </form>
-    {% endif %}
-    <div class="card">
-        <div class="card-header">
-            <span class="fs-6">Invitations de ralliement en cours</span>
-        </div>
-        <div class="list-group list-group-flush">
-            {% for invitation in invits %}
-                <div class="list-group-item">
-                    <div class="row gx-3 align-items-center">
-                        <div class="col">
-                            {{ invitation.name }}
+
+    {% include "s03/alliance-tabs.html" %}
+    
+    <div class="scroll-content" style="height:calc(100% - 52px);">
+        <div class="page-content">
+        
+            {% if can_invite %}
+                <form action="?" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="invite">
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <span class="fs-6">Inviter une nation à rallier notre alliance</span>
                         </div>
-                        <div class="col-2">
-                            <span class="text-normal">{{ invitation.created }}</span>
-                        </div>
-                        <div class="col-2">
-                            <span class="text-normal">{{ invitation.recruiter }}</span>
-                        </div>
-                        <div class="col-1 text-end">
-                            <span class="text-success">En attente</span>
+                        <div class="card-body">
+                            <div class="row gx-2 align-items-center justify-content-center">
+                                <div class="col-auto"><span class="text-normal">Joueur</span></div>
+                                <div class="col-auto"><input type="text" class="form-control" name="name" value=""></div>
+                                <div class="col-auto"><input type="submit" class="btn btn-primary" name="submit" value="Inviter"></div>
+                            </div>
+                            {% for message in messages %}
+                                <div class="mt-2 alert alert-{{ message.tags }} text-center">
+                                    {% if message.message == 'no_right' %}Vous n'êtes pas en droit de rallier de nouvelles nations
+                                    {% elif message.message == 'name_unknown' %}Aucune nation répondant à ce nom n'a été trouvée
+                                    {% elif message.message == 'already_member' %}Cette nation est déjà membre de notre alliance !
+                                    {% elif message.message == 'already_invited-2' %}Cette nation a déjà été invitée récemment
+                                    {% elif message.message == 'impossible-2' %}Cette nation ne peut être invitée
+                                    {% else %}{{ message }}
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
                         </div>
                     </div>
+                </form>
+            {% endif %}
+            
+            <div class="card">
+                <div class="card-header">
+                    <span class="fs-6">Invitations de ralliement en cours</span>
                 </div>
-            {% empty %}
-                <div class="list-group-item text-center">
-                    <span class="text-normal">Aucune invitation</span>
+                <div class="list-group list-group-flush">
+                    {% for invitation in invits %}
+                        <div class="list-group-item">
+                            <div class="row gx-3 align-items-center">
+                                <div class="col">
+                                    {{ invitation.name }}
+                                </div>
+                                <div class="col-2">
+                                    <span class="text-normal">{{ invitation.created }}</span>
+                                </div>
+                                <div class="col-2">
+                                    <span class="text-normal">{{ invitation.recruiter }}</span>
+                                </div>
+                                <div class="col-1 text-end">
+                                    <span class="text-success">En attente</span>
+                                </div>
+                            </div>
+                        </div>
+                    {% empty %}
+                        <div class="list-group-item text-center">
+                            <span class="text-normal">Aucune invitation</span>
+                        </div>
+                    {% endfor %}
                 </div>
-            {% endfor %}
+            </div>
+        
         </div>
     </div>
-</div>
-</div>
+
 {% endblock %}

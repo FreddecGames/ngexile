@@ -4,165 +4,147 @@
 
 {% block content %}
 
-    <div class="page-content">
-        <ul class="nav nav-tabs mt-0 mb-3">
-            <li class="nav-item">
-                <a href="/s03/empire-view/" class="nav-link">Aperçu</a>
-            </li>
-            <li class="nav-item">
-                <a href="/s03/empire-upkeep/" class="nav-link">Coût d'entretien</a>
-            </li>
-            <li class="nav-item">
-                <a href="/s03/empire-planets/" class="nav-link active">Planètes</a>
-            </li>
-            <li class="nav-item">
-                <a href="/s03/empire-orbiting/" class="nav-link">Flottes en orbite</a>
-            </li>
-            <li class="nav-item">
-                <a href="/s03/empire-standby/" class="nav-link">Au sol</a>
-            </li>
-            <li class="nav-item">
-                <a href="/s03/empire-stats/" class="nav-link">Stats</a>
-            </li>
-        </ul>
-    </div>
+    {% include "s03/empire-tabs.html" %}
 
     <div class="scroll-content" style="height:calc(100% - 52px);">
-    <div class="page-content">
-    <div class="mb-3">
-        <div class="row gx-3 align-items-center">
-            <div class="col-auto"><span class="text-normal">Trié par</span></div>
-            <div class="col-auto"><a href="?col=0{% if r0 %}&r=1{% endif %}" class="{% if col == 0 %}badge text-bg-primary{% endif %}">Localisation{% if col == 0 %}<i class="ms-1 fa-fw fas {% if r0 %}fa-caret-down{% else %}fa-caret-up{% endif %}"></i>{% endif %}</a></div>
-            <div class="col-auto"><a href="?col=1{% if r1 %}&r=1{% endif %}" class="{% if col == 1 %}badge text-bg-primary{% endif %}">Nom{% if col == 1 %}<i class="ms-1 fa-fw fas {% if r1 %}fa-caret-down{% else %}fa-caret-up{% endif %}"></i>{% endif %}</a></div>
-            <div class="col-auto"><a href="?col=5{% if r5 %}&r=1{% endif %}" class="{% if col == 5 %}badge text-bg-primary{% endif %}">Contrôle{% if col == 5 %}<i class="ms-1 fa-fw fas {% if r5 %}fa-caret-down{% else %}fa-caret-up{% endif %}"></i>{% endif %}</a></div>
-        </div>
-    </div>
-    <div class="card">
-        <div class="list-group list-group-flush">
-            {% for planet in planets %}
-                <div class="list-group-item {% if planet.id == cur_planetid %}bg-success{% endif %}">
-                    <div class="row gx-3 align-items-center">
-                        <div class="col-auto">
-                            <img src="{{ PATH_IMAGES }}img/planets/p{{ planet.img }}.gif" class="rounded" width="48px" height="48px">                        
-                        </div>
-                        <div class="col-3">
-                            <div class="row g-1 flex-column">
-                                <div class="col-12">
-                                    <a href="/s03/map/?g={{ planet.galaxy }}&s={{ planet.sector }}&p={{ planet.planet }}" class="me-2" data-bs-toggle="tooltip" data-bs-title="Carte spatiale">{{ planet.galaxy }}.{{ planet.sector }}.{{ planet.planet }}</a>
-                                    <a href="/s03/planet-view/?planet={{ planet.id }}" data-bs-toggle="tooltip" data-bs-title="Voir planète">{{ planet.name }}</a>
-                                </div>
-                                {% if planet.commandername %}
-                                    <div class="col-12">
-                                        <a href="/s03/commander-list/#{{ planet.commandername }}" data-bs-toggle="tooltip" data-bs-title="Voir commandant"><i class="fa-fw fas fa-user-astronaut"></i> {{ planet.commandername }}</a>
-                                    </div>
-                                {% endif %}
-                                <div class="col-12">
-                                    <a href="/s03/planet-buildings/?planet={{ planet.id }}" data-bs-toggle="tooltip" data-bs-title="Voir bâtiments">Bâtiments</a>
-                                    <span class="ms-2">
-                                        <img src="/static/s03/img/interface/workers_idle.gif" data-bs-toggle="tooltip" data-bs-title="Oisifs" width="12" height="12" class="idleworkers">
-                                        <span class="text-success">{{ planet.workers_idle|intcomma }}</span>
-                                    </span>
-                                </div>
-                                <div class="col-12">
-                                    <a href="/s03/planet-ships/?planet={{ planet.id }}" data-bs-toggle="tooltip" data-bs-title="Voir vaisseaux">Vaisseaux</a>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-auto">
-                            <img src="{{ PATH_IMAGES }}img/interface/uv{{ planet.mood_level }}.gif" width="16px" height="35" data-bs-toggle="tooltip" data-bs-title="{{ planet.mood }}%">
-                            <div class="mt-1 text-center small {% if planet.mood_delta > 0 %}text-success{% else %}text-danger{% endif %}">{% if planet.mood_delta > 0 %}+{% endif %}{{ planet.mood_delta }}</div>
-                        </div>
-                        <div class="col-3">
-                            <div class="row g-1 flex-column">
-                                <div class="col-12">
-                                    <img src="{{ PATH_IMAGES }}img/interface/ore.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Minerai">
-                                    <span class="{% if planet.ore_level >= 90 %}text-danger{% elif planet.ore_level >= 70 %}text-warning{% endif %}">{{ planet.ore|intcomma }}</span>
-                                    <small class="text-normal">/{{ planet.ore_capacity|intcomma }}</small>
-                                    <small class="ms-2 {% if planet.energy_production <= 0 or planet.workers <= planet.workers_for_maintenance %}text-warning{% else %}text-success{% endif %}">+{{ planet.ore_production|intcomma }}</small>
-                                </div>
-                                <div class="col-12">
-                                    <img src="{{ PATH_IMAGES }}img/interface/hydrocarbon.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Hydrocarbure">
-                                    <span class="{% if planet.hydrocarbon_level >= 90 %}text-danger{% elif planet.hydrocarbon_level >= 70 %}text-warning{% endif %}">{{ planet.hydrocarbon|intcomma }}</span>
-                                    <small class="text-normal">/{{ planet.hydrocarbon_capacity|intcomma }}</small>
-                                    <small class="ms-2 {% if planet.energy_production <= 0 or planet.workers <= planet.workers_for_maintenance %}text-warning{% else %}text-success{% endif %}">+{{ planet.hydrocarbon_production|intcomma }}</small>
-                                </div>
-                                <div class="col-12">
-                                    <img src="{{ PATH_IMAGES }}img/interface/energy.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Énergie">
-                                    <span>{{ planet.energy|intcomma }}</span>
-                                    <small class="text-normal">/{{ planet.energy_capacity|intcomma }}</small>
-                                    <small class="ms-2 {% if planet.energy_production <= 0 %}text-danger{% else %}text-success{% endif %}">{% if planet.energy_production > 0 %}+{% endif %}{{ planet.energy_production|intcomma }}</small>
-                                </div>
-                                <div class="col-12">
-                                    <div class="row gx-3 align-items-center">
-                                        <div class="col-auto">
-                                            <img src="{{ PATH_IMAGES }}img/interface/credits.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Crédits">
-                                            <small class="{% if planet.credits > 0 %}text-success{% else %}text-danger{% endif %}">{% if planet.credits > 0 %}+{% endif %}{{ planet.credits|intcomma }}</small>
-                                        </div>
-                                        <div class="col-auto">
-                                            <img src="{{ PATH_IMAGES }}img/interface/prestige.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Prestige">
-                                            <small class="text-success">+{{ planet.production_prestige|intcomma }}</small>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-2">
-                            <div class="row g-1 flex-column">
-                                <div class="col-12">
-                                    <a href="/s03/planet-production/?planet={{ planet.id }}"><img src="{{ PATH_IMAGES }}img/interface/workers.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Travailleurs"></a>
-                                    <span>{{ planet.workers|intcomma }}</span>
-                                    <small class="text-normal">/{{ planet.workers_capacity|intcomma }}</small>
-                                </div>
-                                <div class="col-12">
-                                    <a href="/s03/planet-trainings/?planet={{ planet.id }}"><img src="{{ PATH_IMAGES }}img/interface/scientists.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Scientifiques"></a>
-                                    <span>{{ planet.scientists|intcomma }}</span>
-                                    <small class="text-normal">/{{ planet.scientists_capacity|intcomma }}</small>
-                                    {% if planet.scientists_training %}<small class="text-success">+{{ planet.scientists_training|intcomma }}</small>{% endif %}
-                                </div>
-                                <div class="col-12">
-                                    <a href="/s03/planet-trainings/?planet={{ planet.id }}"><img src="{{ PATH_IMAGES }}img/interface/soldiers.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Soldats"></a>
-                                    <span class="{% if planet.soldiers_low %}text-danger{% endif %}">{{ planet.soldiers|intcomma }}</span>
-                                    <small class="text-normal">/{{ planet.soldiers_capacity|intcomma }}</small>
-                                    {% if planet.soldiers_training %}<small class="text-success">+{{ planet.soldiers_training|intcomma }}</small>{% endif %}
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="row g-1 flex-column">
-                                <div class="col-12">
-                                    <a href="/s03/planet-production/?planet={{ planet.id }}"><img src="{{ PATH_IMAGES }}img/interface/workers.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Travailleurs"></a>
-                                    <span class="{% if planet.workers_low %}text-danger{% endif %}">{{ planet.workers_for_maintenance|intcomma }}</span>
-                                </div>
-                                <div class="col-12">
-                                    <a href="/s03/planet-production/?planet={{ planet.id }}"><img src="{{ PATH_IMAGES }}img/interface/credits.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Crédits"></a>
-                                    <span>{{ planet.upkeep|intcomma }}</span>
-                                </div>
-                                <div class="col-12">
-                                    <a href="/s03/planet-trainings/?planet={{ planet.id }}"><img src="{{ PATH_IMAGES }}img/interface/soldiers.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Soldats"></a>
-                                    <span>{{ planet.upkeep_soldiers|intcomma }}</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-auto" style="width:85px;">
-                            <div class="row g-1 flex-column">
-                                <div class="col-12">
-                                    <img src="{{ PATH_IMAGES }}img/interface/floor.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Terrain">
-                                    <span>{{ planet.floor_occupied|intcomma }}</span>
-                                    <small class="text-normal">/{{ planet.floor|intcomma }}</small>
-                                </div>
-                                <div class="col-12">
-                                    <img src="{{ PATH_IMAGES }}img/interface/space.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Espace">
-                                    <span>{{ planet.space_occupied|intcomma }}</span>
-                                    <small class="text-normal">/{{ planet.space|intcomma }}</small>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+        <div class="page-content">
+        
+            <div class="mb-3">
+                <div class="row gx-3 align-items-center">
+                    <div class="col-auto"><span class="text-normal">Trié par</span></div>
+                    <div class="col-auto"><a href="?col=0{% if r0 %}&r=1{% endif %}" class="{% if col == 0 %}badge text-bg-primary{% endif %}">Localisation{% if col == 0 %}<i class="ms-1 fa-fw fas {% if r0 %}fa-caret-down{% else %}fa-caret-up{% endif %}"></i>{% endif %}</a></div>
+                    <div class="col-auto"><a href="?col=1{% if r1 %}&r=1{% endif %}" class="{% if col == 1 %}badge text-bg-primary{% endif %}">Nom{% if col == 1 %}<i class="ms-1 fa-fw fas {% if r1 %}fa-caret-down{% else %}fa-caret-up{% endif %}"></i>{% endif %}</a></div>
+                    <div class="col-auto"><a href="?col=5{% if r5 %}&r=1{% endif %}" class="{% if col == 5 %}badge text-bg-primary{% endif %}">Contrôle{% if col == 5 %}<i class="ms-1 fa-fw fas {% if r5 %}fa-caret-down{% else %}fa-caret-up{% endif %}"></i>{% endif %}</a></div>
                 </div>
-            {% endfor %}
+            </div>
+            
+            <div class="card">
+                <div class="list-group list-group-flush">
+                    {% for planet in planets %}
+                        <div class="list-group-item {% if planet.id == cur_planetid %}bg-success{% endif %}">
+                            <div class="row gx-3 align-items-center">
+                                <div class="col-auto">
+                                    <img src="{{ PATH_IMAGES }}img/planets/p{{ planet.img }}.gif" class="rounded" width="48px" height="48px">                        
+                                </div>
+                                <div class="col-3">
+                                    <div class="row g-1 flex-column">
+                                        <div class="col-12">
+                                            <a href="/s03/map/?g={{ planet.galaxy }}&s={{ planet.sector }}&p={{ planet.planet }}" class="me-2" data-bs-toggle="tooltip" data-bs-title="Carte spatiale">{{ planet.galaxy }}.{{ planet.sector }}.{{ planet.planet }}</a>
+                                            <a href="/s03/planet-view/?planet={{ planet.id }}" data-bs-toggle="tooltip" data-bs-title="Voir planète">{{ planet.name }}</a>
+                                        </div>
+                                        {% if planet.commandername %}
+                                            <div class="col-12">
+                                                <a href="/s03/commander-list/#{{ planet.commandername }}" data-bs-toggle="tooltip" data-bs-title="Voir commandant"><i class="fa-fw fas fa-user-astronaut"></i> {{ planet.commandername }}</a>
+                                            </div>
+                                        {% endif %}
+                                        <div class="col-12">
+                                            <a href="/s03/planet-buildings/?planet={{ planet.id }}" data-bs-toggle="tooltip" data-bs-title="Voir bâtiments">Bâtiments</a>
+                                            <span class="ms-2">
+                                                <img src="/static/s03/img/interface/workers_idle.gif" data-bs-toggle="tooltip" data-bs-title="Oisifs" width="12" height="12" class="idleworkers">
+                                                <span class="text-success">{{ planet.workers_idle|intcomma }}</span>
+                                            </span>
+                                        </div>
+                                        <div class="col-12">
+                                            <a href="/s03/planet-ships/?planet={{ planet.id }}" data-bs-toggle="tooltip" data-bs-title="Voir vaisseaux">Vaisseaux</a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-auto">
+                                    <img src="{{ PATH_IMAGES }}img/interface/uv{{ planet.mood_level }}.gif" width="16px" height="35" data-bs-toggle="tooltip" data-bs-title="{{ planet.mood }}%">
+                                    <div class="mt-1 text-center small {% if planet.mood_delta > 0 %}text-success{% else %}text-danger{% endif %}">{% if planet.mood_delta > 0 %}+{% endif %}{{ planet.mood_delta }}</div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="row g-1 flex-column">
+                                        <div class="col-12">
+                                            <img src="{{ PATH_IMAGES }}img/interface/ore.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Minerai">
+                                            <span class="{% if planet.ore_level >= 90 %}text-danger{% elif planet.ore_level >= 70 %}text-warning{% endif %}">{{ planet.ore|intcomma }}</span>
+                                            <small class="text-normal">/{{ planet.ore_capacity|intcomma }}</small>
+                                            <small class="ms-2 {% if planet.energy_production <= 0 or planet.workers <= planet.workers_for_maintenance %}text-warning{% else %}text-success{% endif %}">+{{ planet.ore_production|intcomma }}</small>
+                                        </div>
+                                        <div class="col-12">
+                                            <img src="{{ PATH_IMAGES }}img/interface/hydrocarbon.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Hydrocarbure">
+                                            <span class="{% if planet.hydrocarbon_level >= 90 %}text-danger{% elif planet.hydrocarbon_level >= 70 %}text-warning{% endif %}">{{ planet.hydrocarbon|intcomma }}</span>
+                                            <small class="text-normal">/{{ planet.hydrocarbon_capacity|intcomma }}</small>
+                                            <small class="ms-2 {% if planet.energy_production <= 0 or planet.workers <= planet.workers_for_maintenance %}text-warning{% else %}text-success{% endif %}">+{{ planet.hydrocarbon_production|intcomma }}</small>
+                                        </div>
+                                        <div class="col-12">
+                                            <img src="{{ PATH_IMAGES }}img/interface/energy.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Énergie">
+                                            <span>{{ planet.energy|intcomma }}</span>
+                                            <small class="text-normal">/{{ planet.energy_capacity|intcomma }}</small>
+                                            <small class="ms-2 {% if planet.energy_production <= 0 %}text-danger{% else %}text-success{% endif %}">{% if planet.energy_production > 0 %}+{% endif %}{{ planet.energy_production|intcomma }}</small>
+                                        </div>
+                                        <div class="col-12">
+                                            <div class="row gx-3 align-items-center">
+                                                <div class="col-auto">
+                                                    <img src="{{ PATH_IMAGES }}img/interface/credits.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Crédits">
+                                                    <small class="{% if planet.credits > 0 %}text-success{% else %}text-danger{% endif %}">{% if planet.credits > 0 %}+{% endif %}{{ planet.credits|intcomma }}</small>
+                                                </div>
+                                                <div class="col-auto">
+                                                    <img src="{{ PATH_IMAGES }}img/interface/prestige.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Prestige">
+                                                    <small class="text-success">+{{ planet.production_prestige|intcomma }}</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-2">
+                                    <div class="row g-1 flex-column">
+                                        <div class="col-12">
+                                            <a href="/s03/planet-production/?planet={{ planet.id }}"><img src="{{ PATH_IMAGES }}img/interface/workers.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Travailleurs"></a>
+                                            <span>{{ planet.workers|intcomma }}</span>
+                                            <small class="text-normal">/{{ planet.workers_capacity|intcomma }}</small>
+                                        </div>
+                                        <div class="col-12">
+                                            <a href="/s03/planet-trainings/?planet={{ planet.id }}"><img src="{{ PATH_IMAGES }}img/interface/scientists.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Scientifiques"></a>
+                                            <span>{{ planet.scientists|intcomma }}</span>
+                                            <small class="text-normal">/{{ planet.scientists_capacity|intcomma }}</small>
+                                            {% if planet.scientists_training %}<small class="text-success">+{{ planet.scientists_training|intcomma }}</small>{% endif %}
+                                        </div>
+                                        <div class="col-12">
+                                            <a href="/s03/planet-trainings/?planet={{ planet.id }}"><img src="{{ PATH_IMAGES }}img/interface/soldiers.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Soldats"></a>
+                                            <span class="{% if planet.soldiers_low %}text-danger{% endif %}">{{ planet.soldiers|intcomma }}</span>
+                                            <small class="text-normal">/{{ planet.soldiers_capacity|intcomma }}</small>
+                                            {% if planet.soldiers_training %}<small class="text-success">+{{ planet.soldiers_training|intcomma }}</small>{% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="row g-1 flex-column">
+                                        <div class="col-12">
+                                            <a href="/s03/planet-production/?planet={{ planet.id }}"><img src="{{ PATH_IMAGES }}img/interface/workers.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Travailleurs"></a>
+                                            <span class="{% if planet.workers_low %}text-danger{% endif %}">{{ planet.workers_for_maintenance|intcomma }}</span>
+                                        </div>
+                                        <div class="col-12">
+                                            <a href="/s03/planet-production/?planet={{ planet.id }}"><img src="{{ PATH_IMAGES }}img/interface/credits.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Crédits"></a>
+                                            <span>{{ planet.upkeep|intcomma }}</span>
+                                        </div>
+                                        <div class="col-12">
+                                            <a href="/s03/planet-trainings/?planet={{ planet.id }}"><img src="{{ PATH_IMAGES }}img/interface/soldiers.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Soldats"></a>
+                                            <span>{{ planet.upkeep_soldiers|intcomma }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-auto" style="width:85px;">
+                                    <div class="row g-1 flex-column">
+                                        <div class="col-12">
+                                            <img src="{{ PATH_IMAGES }}img/interface/floor.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Terrain">
+                                            <span>{{ planet.floor_occupied|intcomma }}</span>
+                                            <small class="text-normal">/{{ planet.floor|intcomma }}</small>
+                                        </div>
+                                        <div class="col-12">
+                                            <img src="{{ PATH_IMAGES }}img/interface/space.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Espace">
+                                            <span>{{ planet.space_occupied|intcomma }}</span>
+                                            <small class="text-normal">/{{ planet.space|intcomma }}</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        
         </div>
-    </div>
-    </div>
     </div>
 
 {% endblock %}

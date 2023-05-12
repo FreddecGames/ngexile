@@ -87,6 +87,7 @@ class View(GlobalView):
         
         tpl = getTemplate(request, 'alliance-wallet')
 
+        self.selectedTab = 'wallet'
         self.selectedMenu = 'alliance'
         
         #---

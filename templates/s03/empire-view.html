@@ -6,37 +6,18 @@
 
 {% block content %}
 
-    <div class="page-content">
-        <ul class="nav nav-tabs mt-0 mb-3">
-            <li class="nav-item">
-                <a href="/s03/empire-view/" class="nav-link active">Aperçu</a>
-            </li>
-            <li class="nav-item">
-                <a href="/s03/empire-upkeep/" class="nav-link">Coût d'entretien</a>
-            </li>
-            <li class="nav-item">
-                <a href="/s03/empire-planets/" class="nav-link">Planètes</a>
-            </li>
-            <li class="nav-item">
-                <a href="/s03/empire-orbiting/" class="nav-link">Flottes en orbite</a>
-            </li>
-            <li class="nav-item">
-                <a href="/s03/empire-standby/" class="nav-link">Au sol</a>
-            </li>
-            <li class="nav-item">
-                <a href="/s03/empire-stats/" class="nav-link">Stats</a>
-            </li>
-        </ul>
-    </div>
+    {% include "s03/empire-tabs.html" %}
     
     <div class="scroll-content" style="height:calc(100% - 52px);">
         <div class="page-content">
+        
             <script>
                 function sig(signature) {
                     if (signature > 0) document.write('<small>' + formatnumber(signature) + '</small>');
                     else document.write('???');
                 }
             </script>
+            
             {% if alliance %}
                 <div class="card mb-3">
                     <div class="card-header" data-bs-toggle="collapse" data-bs-target="#motd_content">
@@ -57,6 +38,7 @@
                     </div>
                 </div>
             {% endif %}
+            
             <div class="card mb-3">
                 <div class="card-header" data-bs-toggle="collapse" data-bs-target="#stats_content">
                     <span class="fs-6">Statistiques de votre empire - {{ date|timezone:"Europe/Paris"|date:"d M Y H:i:s" }}</span>
@@ -146,6 +128,7 @@
                     </div>
                 </div>
             </div>
+            
             <div class="card mb-3">
                 <div class="card-header">
                     <span class="fs-6">Mouvements en cours</span>
@@ -197,6 +180,7 @@
                     {% endfor %}
                 </div>
             </div>
+            
             <div class="card mb-3">
                 <div class="card-header">
                     <span class="fs-6">Recherche en cours</span>
@@ -212,6 +196,7 @@
                     {% endif %}
                 </div>
             </div>
+            
             <div class="row gx-3">
                 <div class="col-6">
                     <div class="card">
@@ -289,6 +274,7 @@
                     </div>
                 {% endif %}
             </div>
+        
         </div>
     </div>
     

@@ -36,7 +36,11 @@ class View(GlobalView):
 
         tpl = getTemplate(request, 'alliance-view')
 
-        if tag == '': self.selectedMenu = 'alliance'
+        if tag == '':
+        
+            self.selectedTab = 'view'
+            self.selectedMenu = 'alliance'
+            
         else: self.selectedMenu = 'ranking'
         
         #---

@@ -94,8 +94,7 @@ class View(GlobalView):
                 
                 chatid = result
                 
-                query = 'INSERT INTO users_chats(userid, chatid, password) VALUES(' + str(self.userId) + ',' + str(chatid) + ',' + dosql(pwd) + ')'
-                dbQuery(query)
+                dbQuery('INSERT INTO users_chats(userid, chatid, password) VALUES(' + str(self.userId) + ',' + str(chatid) + ',' + dosql(pwd) + ')')
                 
                 query = 'SELECT id, name, topic FROM chat WHERE id=' + str(chatid)
                 chat = dbRow(query)
@@ -118,11 +117,8 @@ class View(GlobalView):
             
             request.session['lastchatmsg_' + str(chatid)] = ''            
             
-            query = 'DELETE FROM users_chats WHERE userid=' + str(self.userId) + ' AND chatid=' + str(chatid)
-            dbQuery(query)
-
-            query = 'DELETE FROM chat WHERE id > 0 AND NOT public AND name IS NOT NULL AND id=' + str(chatid) + ' AND (SELECT count(1) FROM users_chats WHERE chatid=chat.id) = 0'
-            dbQuery(query)
+            dbQuery('DELETE FROM users_chats WHERE userid=' + str(self.userId) + ' AND chatid=' + str(chatid))
+            dbQuery('DELETE FROM chat WHERE id > 0 AND NOT public AND name IS NOT NULL AND id=' + str(chatid) + ' AND (SELECT count(1) FROM users_chats WHERE chatid=chat.id) = 0')
             
             return HttpResponse('')
             

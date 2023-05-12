@@ -9,43 +9,7 @@
         return false;
     }
 </script>
-<div class="page-content">
-    <ul class="nav nav-tabs mt-0 mb-3">
-        <li class="nav-item">
-            <a href="/s03/planet-view/?planet={{ cur_planetid }}" class="nav-link">Aperçu</a>
-        </li>
-        <li class="nav-item">
-            <a href="/s03/planet-production/?planet={{ cur_planetid }}" class="nav-link">Production</a>
-        </li>
-        <li class="nav-item">
-            <a href="/s03/planet-working/?planet={{ cur_planetid }}" class="nav-link">Fonctionnement</a>
-        </li>
-        <li class="nav-item active">
-            <a href="/s03/planet-buildings/?planet={{ cur_planetid }}" class="nav-link">Bâtiments</a>
-        </li>
-        <li class="nav-item">
-            <a href="/s03/planet-ships/?planet={{ cur_planetid }}" class="nav-link">Vaisseaux</a>
-        </li>
-        <li class="nav-item">
-            <a href="/s03/planet-recycling/?planet={{ cur_planetid }}" class="nav-link">Recyclage</a>
-        </li>
-        <li class="nav-item">
-            <a href="/s03/planet-trainings/?planet={{ cur_planetid }}" class="nav-link">Entraînements</a>
-        </li>
-        <li class="nav-item">
-            <a href="/s03/planet-orbit/?planet={{ cur_planetid }}" class="nav-link">Orbite</a>
-        </li>
-        <li class="nav-item">
-            <a href="/s03/market-sell/?planet={{ cur_planetid }}" class="nav-link">Vente</a>
-        </li>
-        <li class="nav-item">
-            <a href="/s03/market-buy/?planet={{ cur_planetid }}" class="nav-link">Achat</a>
-        </li>
-        <li class="nav-item">
-            <a href="/s03/planet-transferts/?planet={{ cur_planetid }}" class="nav-link">Transferts</a>
-        </li>
-    </ul>
-</div>
+    {% include "s03/planet-tabs.html" %}
 <div class="scroll-content" style="height:calc(100% - 158px);">
     <div class="page-content">
         <div class="row g-3 flex-column">

@@ -35,32 +35,28 @@ class View(GlobalView):
         
             commanderId = ToInt(request.POST.get('id'), 0)
             newName = request.POST.get('name')            
-            query = 'SELECT sp_commanders_rename(' + str(self.userId) + ',' + str(commanderId) + ',' + dosql(newName) + ')'
-            dbQuery(query)            
+            dbQuery('SELECT sp_commanders_rename(' + str(self.userId) + ',' + str(commanderId) + ',' + dosql(newName) + ')')            
         
         #---
         
         elif action == 'engage':
         
             commanderId = ToInt(request.POST.get('id'), 0)
-            query = 'SELECT sp_commanders_engage(' + str(self.userId) + ',' + str(commanderId) + ')'
-            dbQuery(query)
+            dbQuery('SELECT sp_commanders_engage(' + str(self.userId) + ',' + str(commanderId) + ')')
         
         #---
         
         elif action == 'train':
         
             commanderId = ToInt(request.POST.get('id'), 0)
-            query = 'SELECT sp_commanders_train(' + str(self.userId) + ',' + str(commanderId) + ')'
-            dbQuery(query)
+            dbQuery('SELECT sp_commanders_train(' + str(self.userId) + ',' + str(commanderId) + ')')
         
         #---
         
         elif action == 'fire':
         
             commanderId = ToInt(request.POST.get('id'), 0)
-            query = 'SELECT sp_commanders_fire(' + str(self.userId) + ',' + str(commanderId) + ')'
-            dbQuery(query)
+            dbQuery('SELECT sp_commanders_fire(' + str(self.userId) + ',' + str(commanderId) + ')')
 
         #---
         

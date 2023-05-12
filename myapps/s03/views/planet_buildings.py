@@ -58,6 +58,7 @@ class View(GlobalView):
         
         tpl = getTemplate(request, 'planet-buildings')
         
+        self.selectedTab = 'buildings'
         self.selectedMenu = 'planet'        
         
         self.showHeader = True

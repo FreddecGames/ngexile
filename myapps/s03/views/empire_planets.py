@@ -25,7 +25,8 @@ class View(GlobalView):
 
         tpl = getTemplate(request, 'empire-planets')
 
-        self.selectedMenu = 'planets'
+        self.selectedTab = 'planets'
+        self.selectedMenu = 'empire'
 
         #---
         

@@ -39,10 +39,9 @@ class View(GlobalView):
 
                 quantity = row['quantity'] - ToInt(request.POST.get('enabled' + str(row['buildingid'])), 0)
 
-                query = 'UPDATE planet_buildings SET' + \
-                        ' disabled=LEAST(quantity - CASE WHEN destroy_datetime IS NULL THEN 0 ELSE 1 END, ' + str(quantity) + ')' + \
-                        'WHERE planetid=' + str(self.currentPlanetId) + ' AND buildingid =' + str(row['buildingid'])
-                dbQuery(query)
+                dbQuery('UPDATE planet_buildings SET' + \
+                        ' disabled = LEAST(quantity - CASE WHEN destroy_datetime IS NULL THEN 0 ELSE 1 END, ' + str(quantity) + ')' + \
+                        ' WHERE planetid=' + str(self.currentPlanetId) + ' AND buildingid =' + str(row['buildingid']))
             
         #---
         
@@ -56,6 +55,7 @@ class View(GlobalView):
 
         tpl = getTemplate(request, 'planet-working')
         
+        self.selectedTab = 'working'
         self.selectedMenu = 'planet'
 
         self.showHeader = True

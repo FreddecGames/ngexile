@@ -38,10 +38,9 @@ class View(GlobalView):
                 if avatar != '' and not isValidURL(avatar): messages.error(request, 'check_avatar')
                 else:
                     
-                    query = 'UPDATE users SET' + \
+                    dbQuery('UPDATE users SET' + \
                             ' avatar_url=' + dosql(avatar) + ', description=' + dosql(description) + \
-                            ' WHERE id=' + str(self.userId)
-                    dbQuery(query)
+                            ' WHERE id=' + str(self.userId))
 
             elif optionCat == 2:
             
@@ -52,8 +51,8 @@ class View(GlobalView):
                 deleteaccount = request.POST.get('delete')
 
                 query = 'UPDATE users SET score_visibility=' + str(score_visibility)
-                if deletingaccount and not deleteaccount: query = query + ', deletion_date=NULL'
-                if not deletingaccount and deleteaccount: query = query + ', deletion_date=now() + INTERVAL \'2 days\''
+                if deletingaccount and not deleteaccount: query = query + ', deletion_date = NULL'
+                if not deletingaccount and deleteaccount: query = query + ', deletion_date = now() + INTERVAL \'2 days\''
                 query = query + ' WHERE id=' + str(self.userId)
                 dbQuery(query)
                 
@@ -62,8 +61,7 @@ class View(GlobalView):
                 result = dbRow('SELECT COALESCE(int4(date_part(\'epoch\', now()-last_holidays)), 10000000) AS cooldown, (SELECT 1 FROM users_holidays WHERE userid=users.id) AS holidays FROM users WHERE id=' + str(self.userId))
                 if result['cooldown'] > (7 * 24 * 60 * 60) and result['holidays'] == None:
                 
-                    query = 'INSERT INTO users_holidays(userid, start_time, min_end_time, end_time) VALUES(' + str(self.userId) + ',now()+INTERVAL \'24 hours\', now()+INTERVAL \'72 hours\', now()+INTERVAL \'22 days\')'
-                    dbQuery(query)
+                    dbQuery('INSERT INTO users_holidays(userid, start_time, min_end_time, end_time) VALUES(' + str(self.userId) + ',now()+INTERVAL \'24 hours\', now()+INTERVAL \'72 hours\', now()+INTERVAL \'22 days\')')
             
         #---
         
@@ -77,6 +75,7 @@ class View(GlobalView):
         
         tpl = getTemplate(request, 'profile-options')
         
+        self.selectedTab = 'options'
         self.selectedMenu = 'options'
 
         #---

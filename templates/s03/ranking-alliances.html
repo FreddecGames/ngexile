@@ -1,16 +1,7 @@
 {% extends "s03/_layout.html" %}
 {% load humanize %}
 {% block content %}
-    <div class="page-content">
-        <ul class="nav nav-tabs mt-0 mb-3">
-            <li class="nav-item">
-                <a href="/s03/ranking-players/" class="nav-link">Joueurs</a>
-            </li>
-            <li class="nav-item active">
-                <a href="/s03/ranking-alliances/" class="nav-link">Alliances</a>
-            </li>
-        </ul>
-    </div>
+    {% include "s03/ranking-tabs.html" %}
     <div class="scroll-content" style="height:calc(100% - 52px);">
         <div class="page-content">
 <div class="mb-3">

@@ -42,11 +42,8 @@ class View(GlobalView):
             for member in members:
                 
                 rankId = int(request.POST.get('member' + str(member['id']), 100))
-                
-                query = 'UPDATE users SET' + \
-                        ' alliance_rank=' + str(rankId) + \
-                        ' WHERE id=' + str(member['id']) + ' AND alliance_id=' + str(self.allianceId) + ' AND (alliance_rank > 0 OR id=' + str(self.userId) + ')'
-                dbQuery(query)                
+                dbQuery('UPDATE users SET alliance_rank=' + str(rankId) + ' WHERE id=' + str(member['id']) + ' AND alliance_id=' + str(self.allianceId) + ' AND (alliance_rank > 0 OR id=' + str(self.userId) + ')')                
+
         #---
         
         elif action == 'kick' and self.hasRight('can_kick_player'):
@@ -66,6 +63,7 @@ class View(GlobalView):
         
         tpl = getTemplate(request, 'alliance-members')
         
+        self.selectedTab = 'members'
         self.selectedMenu = 'alliance'
         
         #---

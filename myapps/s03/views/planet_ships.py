@@ -57,6 +57,7 @@ class View(GlobalView):
         
         tpl = getTemplate(request, 'planet-ships')
         
+        self.selectedTab = 'ships'
         self.selectedMenu = 'planet'
         
         self.headerUrl = '/s03/planet-ships/'

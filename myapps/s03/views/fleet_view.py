@@ -198,7 +198,7 @@ class View(GlobalView):
         
         tpl = getTemplate(request, 'fleet-view')
         
-        self.selectedMenu = 'fleets'
+        self.selectedMenu = 'fleet'
                 
         #---
         

@@ -55,6 +55,7 @@ class View(GlobalView):
         
         tpl = getTemplate(request, 'alliance-recruitment')
 
+        self.selectedTab = 'recruitment'
         self.selectedMenu = 'alliance'
         
         #---

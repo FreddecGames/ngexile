@@ -25,7 +25,8 @@ class View(GlobalView):
         
         tpl = getTemplate(request, 'empire-upkeep')
 
-        self.selectedMenu = 'upkeep'
+        self.selectedTab = 'upkeep'
+        self.selectedMenu = 'empire'
 
         #---
         

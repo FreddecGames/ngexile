@@ -30,6 +30,7 @@ class View(GlobalView):
 
         tpl = getTemplate(request, 'alliance-reports')
         
+        self.selectedTab = 'reports'
         self.selectedMenu = 'alliance'
         
         #---

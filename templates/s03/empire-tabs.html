@@ -1,0 +1,24 @@
+{% load humanize %}
+
+<div class="page-content">
+    <ul class="nav nav-tabs mt-0 mb-3">
+        <li class="nav-item">
+            <a href="/s03/empire-view/" class="nav-link {% if selectedtab == 'view' %}active{% endif %}">Aperçu</a>
+        </li>
+        <li class="nav-item">
+            <a href="/s03/empire-upkeep/" class="nav-link {% if selectedtab == 'upkeep' %}active{% endif %}">Coût d'entretien</a>
+        </li>
+        <li class="nav-item">
+            <a href="/s03/empire-planets/" class="nav-link {% if selectedtab == 'planets' %}active{% endif %}">Planètes</a>
+        </li>
+        <li class="nav-item">
+            <a href="/s03/empire-orbiting/" class="nav-link {% if selectedtab == 'orbiting' %}active{% endif %}">Flottes en orbite</a>
+        </li>
+        <li class="nav-item">
+            <a href="/s03/empire-standby/" class="nav-link {% if selectedtab == 'standby' %}active{% endif %}">Au sol</a>
+        </li>
+        <li class="nav-item">
+            <a href="/s03/empire-stats/" class="nav-link {% if selectedtab == 'stats' %}active{% endif %}">Stats</a>
+        </li>
+    </ul>
+</div>

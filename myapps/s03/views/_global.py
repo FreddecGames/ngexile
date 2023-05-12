@@ -4,6 +4,7 @@ from myapps.s03.views._utils import *
 
 class GlobalView(BaseView):
 
+    selectedTab = ''
     selectedMenu = ''
     
     headerUrl = '/s03/planet-view/'
@@ -183,7 +184,8 @@ class GlobalView(BaseView):
         
         #---
         
-        tpl.set('selectedmenu', self.selectedMenu.replace('.', '_'))
+        tpl.set('selectedtab', self.selectedTab)
+        tpl.set('selectedmenu', self.selectedMenu)
         
         #---
         

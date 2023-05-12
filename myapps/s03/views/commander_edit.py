@@ -69,14 +69,9 @@ class View(GlobalView):
                     ' WHERE ownerid=' + str(self.userId) + ' AND id=' + str(self.commanderId) + ' AND points >= ' + str(total)
             dbQuery(query)
 
-            query = 'SELECT sp_commanders_update_salary(' + str(self.userId) + ', ' + str(self.commanderId) + ')'
-            dbQuery(query)
-
-            query = 'SELECT sp_update_fleet_bonus(id) FROM fleets WHERE commanderid=' + str(self.commanderId)
-            dbQuery(query)
-
-            query = 'SELECT sp_update_planet(id) FROM nav_planet WHERE commanderid=' + str(self.commanderId)
-            dbQuery(query)
+            dbQuery('SELECT sp_commanders_update_salary(' + str(self.userId) + ', ' + str(self.commanderId) + ')')
+            dbQuery('SELECT sp_update_fleet_bonus(id) FROM fleets WHERE commanderid=' + str(self.commanderId))
+            dbQuery('SELECT sp_update_planet(id) FROM nav_planet WHERE commanderid=' + str(self.commanderId))
 
             return HttpResponseRedirect('/s03/commander-list/')
             

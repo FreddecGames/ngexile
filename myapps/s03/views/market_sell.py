@@ -41,8 +41,7 @@ class View(GlobalView):
 
                 if ore > 0 or hydrocarbon > 0:
                 
-                    query = 'SELECT sp_market_sell(' + str(self.userId) + ',' + str(planetId) + ',' + str(ore * 1000) + ',' + str(hydrocarbon * 1000) + ')'
-                    dbQuery(query)
+                    dbQuery('SELECT sp_market_sell(' + str(self.userId) + ',' + str(planetId) + ',' + str(ore * 1000) + ',' + str(hydrocarbon * 1000) + ')')
         
         #---
         
@@ -101,6 +100,7 @@ class View(GlobalView):
         
         if get_planet != '':
         
+            self.selectedTab = 'sell'
             self.selectedMenu = 'planet'
             
             self.showHeader = True
@@ -110,6 +110,7 @@ class View(GlobalView):
             
         else:
         
+            self.selectedTab = 'sell'
             self.selectedMenu = 'merchants'
         
             tpl.set('total', int(total))

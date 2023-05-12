@@ -1,195 +1,159 @@
 {% extends "s03/_layout.html" %}
+
 {% load humanize %}
+
 {% block content %}
-<div class="page-content">
-    <ul class="nav nav-tabs mt-0 mb-3">
-        <li class="nav-item">
-            <a href="/s03/alliance-view/" class="nav-link">Aperçu</a>
-        </li>
-        {% if show_management %}
-            <li class="nav-item">
-                <a href="/s03/alliance-manage/" class="nav-link">Gestion</a>
-            </li>
-        {% endif %}
-        {% if show_ranks %}
-            <li class="nav-item">
-                <a href="/s03/alliance-ranks/" class="nav-link">Grades</a>
-            </li>
-        {% endif %}
-        {% if show_members %}
-            <li class="nav-item active">
-                <a href="/s03/alliance-members/" class="nav-link">Membres</a>
-            </li>
-        {% endif %}
-        {% if show_members %}
-            <li class="nav-item">
-                <a href="/s03/alliance-recruitment/" class="nav-link">Recrutement</a>
-            </li>
-        {% endif %}
-        <li class="nav-item">
-            <a href="/s03/alliance-naps/" class="nav-link">PNA</a>
-        </li>
-        <li class="nav-item">
-            <a href="/s03/alliance-tributes/" class="nav-link">Tributs</a>
-        </li>
-        <li class="nav-item">
-            <a href="/s03/alliance-wars/" class="nav-link">Guerres</a>
-        </li>
-        <li class="nav-item">
-            <a href="/s03/alliance-wallet/" class="nav-link">Portefeuille</a>
-        </li>
-        {% if show_reports %}
-            <li class="nav-item">
-                <a href="/s03/alliance-reports/" class="nav-link">Rapports</a>
-            </li>
-        {% endif %}
-        <li class="nav-item">
-            <a href="/s03/alliance-invitations/" class="nav-link">Invitations</a>
-        </li>
-    </ul>
-</div>
-<div class="scroll-content" style="height:calc(100% - 52px);">
-<div class="page-content">
-    <script>
-        var ranks = new Array()
-        {% for rank in ranks %}ranks[{{rank.rankid}}] = '{{rank.label}}';{% endfor %}
+
+    {% include "s03/alliance-tabs.html" %}
+    
+    <div class="scroll-content" style="height:calc(100% - 52px);">
+        <div class="page-content">
         
-        {% if can_kick %}
-            function showKick(name) {
-            
-                $("kick" + name).style.display = "none";
-                $("kickConfirm" + name).style.display = "block";
-                $("kickConfirm" + name).style.visibility = "visible";
+            <script>
+                var ranks = new Array()
+                {% for rank in ranks %}ranks[{{rank.rankid}}] = '{{rank.label}}';{% endfor %}
                 
-                return false;
-            }
-        {% endif %}
-        
-        function displayStatus(id, rank, manage, kick) {
-        
-            var s = '';
+                {% if can_kick %}
+                    function showKick(name) {
+                    
+                        $("kick" + name).style.display = "none";
+                        $("kickConfirm" + name).style.display = "block";
+                        $("kickConfirm" + name).style.visibility = "visible";
+                        
+                        return false;
+                    }
+                {% endif %}
+                
+                function displayStatus(id, rank, manage, kick) {
+                
+                    var s = '';
 
-            if (!manage) s = ranks[rank];
-            else {
+                    if (!manage) s = ranks[rank];
+                    else {
+                    
+                        s = '<select name="member' + id + '" class="form-control" onchange="showSubmit()">';
+                        for (var x in ranks) s += '<option value="' + x + '"' + (rank == x ? ' selected' : '') + '>' + ranks[x] + '</option>';
+                        s += '</select>';
+                    }
+
+                    document.write(s);
+                }
+                
+                function showSubmit() { $("submitChanges").className = "list-group-item"; }
+            </script>
             
-                s = '<select name="member' + id + '" class="form-control" onchange="showSubmit()">';
-                for (var x in ranks) s += '<option value="' + x + '"' + (rank == x ? ' selected' : '') + '>' + ranks[x] + '</option>';
-                s += '</select>';
-            }
-
-            document.write(s);
-        }
-        
-        function showSubmit() { $("submitChanges").className = "list-group-item"; }
-    </script>
-    <div class="mb-3">
-        <div class="row gx-3 align-items-center">
-            <div class="col-auto"><span class="text-normal">Trié par</span></div>
-            <div class="col-auto"><a href="?cat={{ cat }}&col=1{% if r1 %}&r=1{% endif %}" class="{% if col == 1 %}badge text-bg-primary{% endif %}">Nom{% if col == 1 %}<i class="ms-1 fa-fw fas {% if r1 %}fa-caret-down{% else %}fa-caret-up{% endif %}"></i>{% endif %}</a></div>
-            <div class="col-auto"><a href="?cat={{ cat }}&col=2{% if r2 %}&r=1{% endif %}" class="{% if col == 2 %}badge text-bg-primary{% endif %}">Score{% if col == 2 %}<i class="ms-1 fa-fw fas {% if r2 %}fa-caret-down{% else %}fa-caret-up{% endif %}"></i>{% endif %}</a></div>
-            <div class="col-auto"><a href="?cat={{ cat }}&col=3{% if r3 %}&r=1{% endif %}" class="{% if col == 3 %}badge text-bg-primary{% endif %}">Planètes{% if col == 3 %}<i class="ms-1 fa-fw fas {% if r3 %}fa-caret-down{% else %}fa-caret-up{% endif %}"></i>{% endif %}</a></div>
-            <div class="col-auto"><a href="?cat={{ cat }}&col=4{% if r4 %}&r=1{% endif %}" class="{% if col == 4 %}badge text-bg-primary{% endif %}">Crédits{% if col == 4 %}<i class="ms-1 fa-fw fas {% if r4 %}fa-caret-down{% else %}fa-caret-up{% endif %}"></i>{% endif %}</a></div>
-            <div class="col-auto"><a href="?cat={{ cat }}&col=5{% if r5 %}&r=1{% endif %}" class="{% if col == 5 %}badge text-bg-primary{% endif %}">Activité{% if col == 5 %}<i class="ms-1 fa-fw fas {% if r5 %}fa-caret-down{% else %}fa-caret-up{% endif %}"></i>{% endif %}</a></div>
-            <div class="col-auto"><a href="?cat={{ cat }}&col=6{% if r6 %}&r=1{% endif %}" class="{% if col == 6 %}badge text-bg-primary{% endif %}">Ralliement{% if col == 6 %}<i class="ms-1 fa-fw fas {% if r6 %}fa-caret-down{% else %}fa-caret-up{% endif %}"></i>{% endif %}</a></div>
-            <div class="col-auto"><a href="?cat={{ cat }}&col=7{% if r7 %}&r=1{% endif %}" class="{% if col == 7 %}badge text-bg-primary{% endif %}">Grade{% if col == 7 %}<i class="ms-1 fa-fw fas {% if r7 %}fa-caret-down{% else %}fa-caret-up{% endif %}"></i>{% endif %}</a></div>
-        </div>
-    </div>
-    <div class="mb-3">
-        <form action="?" method="post">
-            {% csrf_token %}
-            <div class="card">
-                <div class="list-group list-group-flush">
-                    {% for member in members %}
-                        <div class="list-group-item">
-                            <div class="row gx-3 align-items-center">
-                                <div class="col-auto">
-                                    {{ forloop.counter }}
-                                    <span class="text-normal">.</span>
-                                </div>
-                                <div class="col">
-                                    <div><a href="/s03/profile-view/?name={{ member.username }}" data-bs-toggle="tooltip" data-bs-title="Voir profil">{{ member.username }}</a></div>
-                                    <div>
-                                        <small class="text-normal">
-                                            {% if member.orientation == 1 %}Marchand{% endif %}
-                                            {% if member.orientation == 2 %}Militaire{% endif %}
-                                            {% if member.orientation == 3 %}Scientifique{% endif %}
-                                        </small>
+            <div class="mb-3">
+                <div class="row gx-3 align-items-center">
+                    <div class="col-auto"><span class="text-normal">Trié par</span></div>
+                    <div class="col-auto"><a href="?cat={{ cat }}&col=1{% if r1 %}&r=1{% endif %}" class="{% if col == 1 %}badge text-bg-primary{% endif %}">Nom{% if col == 1 %}<i class="ms-1 fa-fw fas {% if r1 %}fa-caret-down{% else %}fa-caret-up{% endif %}"></i>{% endif %}</a></div>
+                    <div class="col-auto"><a href="?cat={{ cat }}&col=2{% if r2 %}&r=1{% endif %}" class="{% if col == 2 %}badge text-bg-primary{% endif %}">Score{% if col == 2 %}<i class="ms-1 fa-fw fas {% if r2 %}fa-caret-down{% else %}fa-caret-up{% endif %}"></i>{% endif %}</a></div>
+                    <div class="col-auto"><a href="?cat={{ cat }}&col=3{% if r3 %}&r=1{% endif %}" class="{% if col == 3 %}badge text-bg-primary{% endif %}">Planètes{% if col == 3 %}<i class="ms-1 fa-fw fas {% if r3 %}fa-caret-down{% else %}fa-caret-up{% endif %}"></i>{% endif %}</a></div>
+                    <div class="col-auto"><a href="?cat={{ cat }}&col=4{% if r4 %}&r=1{% endif %}" class="{% if col == 4 %}badge text-bg-primary{% endif %}">Crédits{% if col == 4 %}<i class="ms-1 fa-fw fas {% if r4 %}fa-caret-down{% else %}fa-caret-up{% endif %}"></i>{% endif %}</a></div>
+                    <div class="col-auto"><a href="?cat={{ cat }}&col=5{% if r5 %}&r=1{% endif %}" class="{% if col == 5 %}badge text-bg-primary{% endif %}">Activité{% if col == 5 %}<i class="ms-1 fa-fw fas {% if r5 %}fa-caret-down{% else %}fa-caret-up{% endif %}"></i>{% endif %}</a></div>
+                    <div class="col-auto"><a href="?cat={{ cat }}&col=6{% if r6 %}&r=1{% endif %}" class="{% if col == 6 %}badge text-bg-primary{% endif %}">Ralliement{% if col == 6 %}<i class="ms-1 fa-fw fas {% if r6 %}fa-caret-down{% else %}fa-caret-up{% endif %}"></i>{% endif %}</a></div>
+                    <div class="col-auto"><a href="?cat={{ cat }}&col=7{% if r7 %}&r=1{% endif %}" class="{% if col == 7 %}badge text-bg-primary{% endif %}">Grade{% if col == 7 %}<i class="ms-1 fa-fw fas {% if r7 %}fa-caret-down{% else %}fa-caret-up{% endif %}"></i>{% endif %}</a></div>
+                </div>
+            </div>
+            
+            <div class="mb-3">
+                <form action="?" method="post">
+                    {% csrf_token %}
+                    <div class="card">
+                        <div class="list-group list-group-flush">
+                            {% for member in members %}
+                                <div class="list-group-item">
+                                    <div class="row gx-3 align-items-center">
+                                        <div class="col-auto">
+                                            {{ forloop.counter }}
+                                            <span class="text-normal">.</span>
+                                        </div>
+                                        <div class="col">
+                                            <div><a href="/s03/profile-view/?name={{ member.username }}" data-bs-toggle="tooltip" data-bs-title="Voir profil">{{ member.username }}</a></div>
+                                            <div>
+                                                <small class="text-normal">
+                                                    {% if member.orientation == 1 %}Marchand{% endif %}
+                                                    {% if member.orientation == 2 %}Militaire{% endif %}
+                                                    {% if member.orientation == 3 %}Scientifique{% endif %}
+                                                </small>
+                                            </div>
+                                        </div>
+                                        <div class="col-2">
+                                            {% if member.scoreShown %}
+                                                <div>{{ member.score|intcomma }}</div>
+                                                <div><small class="{% if member.score_delta > 0 %}text-success{% else %}text-danger{% endif %}">{% if member.score_delta > 0 %}+{% endif %}{{ member.score_delta|intcomma }}</small></div>
+                                            {% else %}
+                                                <span class="text-normal">Non publié</span>
+                                            {% endif %}
+                                        </div>
+                                        <div class="col-1">
+                                            <img src="/static/s03/img/interface/planet.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Planètes">
+                                            {{ member.colonies|intcomma }}
+                                        </div>
+                                        <div class="col-2">
+                                            <img src="/static/s03/img/interface/credits.gif" data-bs-toggle="tooltip" data-bs-title="Crédits" class="res" width="16px" height="16px">
+                                            <span class="{% if member.credits < 0 %}text-danger{% endif %}">{{ member.credits|intcomma }}</span>
+                                        </div>
+                                        <div class="col-1">
+                                            {% if member.onholidays %}<span class="text-normal">En vacances</span>{% endif %}
+                                            {% if member.online %}<span class="text-success">En ligne</span>{% endif %}
+                                            {% if member.less1h %}<span class="text-success">&lt;1 heure</span>{% endif %}
+                                            {% if member.hours %}<span class="text-success">{{ member.lastactivity|add:"0" }} heure(s)</span>{% endif %}
+                                            {% if member.days %}<span class="text-danger">{{ member.days }} jour(s)</span>{% endif %}
+                                            {% if member.1weekplus %}<span class="text-danger">>1 semaine</span>{% endif %}
+                                            {% if member.2weeksplus %}<span class="text-danger">>2 semaines</span>{% endif %}
+                                        </div>
+                                        <div class="col-1">
+                                            <span class="text-normal">{{ member.alliance_joined }}</span>
+                                        </div>
+                                        <div id="statusref{{ member.id }}" class="col-3 d-flex align-items-center">
+                                            <script>displayStatus({{member.id}}, {{member.alliance_rank}}, 0{% if member.can_manage %}1{% endif %}, 0{% if can_kick %}1{% endif %});</script>
+                                            {% if member.can_kick %}
+                                                <span id="kick{{ member.id }}" onclick="return showKick({{ member.id }});"><a href="?#" class="ms-2">Exclure</a></span>
+                                                <span id="kickConfirm{{ member.id }}" class="hidden w-100 text-end">
+                                                    <a href="?cat={{ cat }}&a=kick&name={{ member.name }}" class="ms-2 btn btn-primary">Confirmer</a>
+                                                </span>
+                                            {% elif member.leaving_time %}
+                                                <div class="ms-2 text-end text-danger">
+                                                    <div><small>Quitte</small></div>
+                                                    <span class="text-yellow"><script>putcountdown1({{ member.leaving_time }}, "Terminé", "?");</script></span>
+                                                </div>
+                                            {% endif %}
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="col-2">
-                                    {% if member.scoreShown %}
-                                        <div>{{ member.score|intcomma }}</div>
-                                        <div><small class="{% if member.score_delta > 0 %}text-success{% else %}text-danger{% endif %}">{% if member.score_delta > 0 %}+{% endif %}{{ member.score_delta|intcomma }}</small></div>
-                                    {% else %}
-                                        <span class="text-normal">Non publié</span>
-                                    {% endif %}
+                            {% endfor %}
+                            <div id="submitChanges" class="d-none">
+                                <div class="row gx-3 justify-content-end">
+                                    <div class="col-3">
+                                        <input type="submit" class="btn btn-primary" name="submit" value="Valider">
+                                    </div>
                                 </div>
-                                <div class="col-1">
-                                    <img src="/static/s03/img/interface/planet.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Planètes">
-                                    {{ member.colonies|intcomma }}
-                                </div>
-                                <div class="col-2">
-                                    <img src="/static/s03/img/interface/credits.gif" data-bs-toggle="tooltip" data-bs-title="Crédits" class="res" width="16px" height="16px">
-                                    <span class="{% if member.credits < 0 %}text-danger{% endif %}">{{ member.credits|intcomma }}</span>
-                                </div>
-                                <div class="col-1">
-                                    {% if member.onholidays %}<span class="text-normal">En vacances</span>{% endif %}
-                                    {% if member.online %}<span class="text-success">En ligne</span>{% endif %}
-                                    {% if member.less1h %}<span class="text-success">&lt;1 heure</span>{% endif %}
-                                    {% if member.hours %}<span class="text-success">{{ member.lastactivity|add:"0" }} heure(s)</span>{% endif %}
-                                    {% if member.days %}<span class="text-danger">{{ member.days }} jour(s)</span>{% endif %}
-                                    {% if member.1weekplus %}<span class="text-danger">>1 semaine</span>{% endif %}
-                                    {% if member.2weeksplus %}<span class="text-danger">>2 semaines</span>{% endif %}
-                                </div>
-                                <div class="col-1">
-                                    <span class="text-normal">{{ member.alliance_joined }}</span>
-                                </div>
-                                <div id="statusref{{ member.id }}" class="col-3 d-flex align-items-center">
-                                    <script>displayStatus({{member.id}}, {{member.alliance_rank}}, 0{% if member.can_manage %}1{% endif %}, 0{% if can_kick %}1{% endif %});</script>
-                                    {% if member.can_kick %}
-                                        <span id="kick{{ member.id }}" onclick="return showKick({{ member.id }});"><a href="?#" class="ms-2">Exclure</a></span>
-                                        <span id="kickConfirm{{ member.id }}" class="hidden w-100 text-end">
-                                            <a href="?cat={{ cat }}&a=kick&name={{ member.name }}" class="ms-2 btn btn-primary">Confirmer</a>
-                                        </span>
-                                    {% elif member.leaving_time %}
-                                        <div class="ms-2 text-end text-danger">
-                                            <div><small>Quitte</small></div>
-                                            <span class="text-yellow"><script>putcountdown1({{ member.leaving_time }}, "Terminé", "?");</script></span>
-                                        </div>
-                                    {% endif %}
-                                </div>
-                            </div>
-                        </div>
-                    {% endfor %}
-                    <div id="submitChanges" class="d-none">
-                        <div class="row gx-3 justify-content-end">
-                            <div class="col-3">
-                                <input type="submit" class="btn btn-primary" name="submit" value="Valider">
                             </div>
                         </div>
                     </div>
+                </form>
+            </div>
+            
+            <div class="card card-body">
+                <div class="row gx-3 align-items-center justify-content-around">
+                    <div class="col-auto">
+                        <span class="text-normal me-2">Total score</span>
+                        <span>{{ total_score|intcomma }}</span>
+                        <small class="ms-2 {% if total_score_delta > 0 %}text-success{% else %}text-danger{% endif %}">{% if total_score_delta > 0 %}+{% endif %}{{ total_score_delta|intcomma }}</small>
+                    </div>
+                    <div class="col-auto">
+                        <span class="text-normal me-2">Total planètes</span>
+                        <span>{{ total_colonies|intcomma }}</span>
+                    </div>
+                    <div class="col-auto">
+                        <span class="text-normal me-2">Total crédits</span>
+                        <img src="/static/s03/img/interface/credits.gif" data-bs-toggle="tooltip" data-bs-title="Crédits" class="res" width="16px" height="16px">
+                        <span>{{ total_credits|intcomma }}</span>
+                    </div>
                 </div>
             </div>
-        </form>
-    </div>
-    <div class="card card-body">
-        <div class="row gx-3 align-items-center justify-content-around">
-            <div class="col-auto">
-                <span class="text-normal me-2">Total score</span>
-                <span>{{ total_score|intcomma }}</span>
-                <small class="ms-2 {% if total_score_delta > 0 %}text-success{% else %}text-danger{% endif %}">{% if total_score_delta > 0 %}+{% endif %}{{ total_score_delta|intcomma }}</small>
-            </div>
-            <div class="col-auto">
-                <span class="text-normal me-2">Total planètes</span>
-                <span>{{ total_colonies|intcomma }}</span>
-            </div>
-            <div class="col-auto">
-                <span class="text-normal me-2">Total crédits</span>
-                <img src="/static/s03/img/interface/credits.gif" data-bs-toggle="tooltip" data-bs-title="Crédits" class="res" width="16px" height="16px">
-                <span>{{ total_credits|intcomma }}</span>
-            </div>
+        
         </div>
     </div>
-</div>
-</div>
+
 {% endblock %}

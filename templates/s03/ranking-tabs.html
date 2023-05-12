@@ -1,0 +1,12 @@
+{% load humanize %}
+
+<div class="page-content">
+    <ul class="nav nav-tabs mt-0 mb-3">
+        <li class="nav-item {% if selectedtab == 'players' %}active{% endif %}">
+            <a href="/s03/ranking-players/" class="nav-link">Joueurs</a>
+        </li>
+        <li class="nav-item {% if selectedtab == 'alliances' %}active{% endif %}">
+            <a href="/s03/ranking-alliances/" class="nav-link">Alliances</a>
+        </li>
+    </ul>
+</div>

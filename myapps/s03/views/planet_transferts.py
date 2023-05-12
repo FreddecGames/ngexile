@@ -98,6 +98,7 @@ class View(GlobalView):
 
         tpl = getTemplate(request, 'planet-transferts')
         
+        self.selectedTab = 'transferts'
         self.selectedMenu = 'planet'
 
         self.showHeader = True

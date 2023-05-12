@@ -1,4 +1,7 @@
 {% load humanize %}
+
 {% if fleet_category_changed %}setFleetCategory({{ id }},{{old }},{{ new }});{% endif %}
+
 {% if category %}addCategory({{ category.id }}, '{{ category.label }}');{% endif %}
+
 {% if category_name_invalid %}alert('Nom de catégorie invalide');{% endif %}

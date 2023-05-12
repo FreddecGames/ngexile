@@ -25,7 +25,8 @@ class View(GlobalView):
 
         tpl = getTemplate(request, 'empire-standby')
         
-        self.selectedMenu = 'fleets.standby'
+        self.selectedTab = 'standby'
+        self.selectedMenu = 'empire'
         
         #---
         

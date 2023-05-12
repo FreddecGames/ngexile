@@ -25,6 +25,7 @@ class View(GlobalView):
 
         tpl = getTemplate(request, 'ranking-players')
 
+        self.selectedTab = 'players'
         self.selectedMenu = 'ranking'
 
         #---

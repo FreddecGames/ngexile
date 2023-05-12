@@ -25,6 +25,7 @@ class View(GlobalView):
         
         tpl = getTemplate(request, 'mail-outbox')
         
+        self.selectedTab = 'outbox'
         self.selectedMenu = 'mails'
         
         #---

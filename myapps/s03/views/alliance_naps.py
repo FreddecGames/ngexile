@@ -104,6 +104,7 @@ class View(GlobalView):
         
         tpl = getTemplate(request, 'alliance-naps')
         
+        self.selectedTab = 'naps'
         self.selectedMenu = 'alliance'
 
         #---

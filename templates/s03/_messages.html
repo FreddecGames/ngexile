@@ -1,0 +1,10 @@
+{% for message in messages %}
+    <div class="mt-2 alert alert-{{ message.tags }} text-center">
+        {% if message.message == 'name_invalid' %}Entrez un nom de 4 à 32 lettres (A-Z, 0-9, -, .)
+        {% elif message.message == 'name_already_used' %}Ce nom est déjà utilisé, veuillez en choisir un autre
+        {% elif message.message == 'tag_invalid' %}Le tag doit être composé de 2 à 4 lettres
+        {% elif message.message == 'tag_already_used-2' %}Ce tag est déjà utilisé, veuillez en choisir un autre
+        {% else %}{{ message }}
+        {% endif %}
+    </div>
+{% endfor %}
