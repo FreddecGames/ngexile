@@ -1,26 +1,28 @@
 {% load humanize %}
+
 <!doctype html>
 <html>
     <head>
+
         <title>[s03] NG Exile</title>
+
         <link rel="shortcut icon" href="/static/favicon.ico">
+
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css"
-              rel="stylesheet"
-              integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65"
-              crossorigin="anonymous">
-        <link href="{{ PATH_IMAGES }}styles.css?v=0"
-              type="text/css"
-              rel="stylesheet"
-              media="all"/>
+
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+        <link href="{{ PATH_IMAGES }}styles.css?v=0" type="text/css" rel="stylesheet" media="all"/>
+              
         <script type="text/javascript" src="/static/js/vendor-fontawesome.js"></script>
         <script type="text/javascript" src="/static/s03/scripts/common.js?v=1"></script>
         <script type="text/javascript" src="/static/s03/scripts/ajax.js?v=1"></script>
         <script type="text/javascript" src="/static/s03/scripts/planet.js?v=1"></script>
         <script type="text/javascript" src="/static/s03/scripts/time.js?v=1"></script>
+        
     </head>
     <body>
+    
         <div id="hint" onclick="donothide(event)">
             <div class="rtop">
                 <b class="r1"></b><b class="r2"></b><b class="r3"></b><b class="r4"></b>
@@ -30,56 +32,358 @@
                 <b class="r4"></b><b class="r3"></b><b class="r2"></b><b class="r1"></b>
             </div>
         </div>
+        
         <div id="super">
             <div id="top" class="d-flex align-items-center">
-                <div class="px-3">
-                    <div class="row gx-3 align-items-center">
-                        <div class="col-auto">
-                            <img src="/static/img/logo.png" width="32px" class="rounded" />
-                        </div>
-                        <div class="col-auto">
-                            <span class="fs-5">NG Exile</span>
-                        </div>
-                        <div class="col-auto">
-                            <span class="badge text-bg-secondary">s03</span>
-                        </div>
-                        <div class="col-auto">
-                            <img src="{{ PATH_IMAGES }}img/interface/credits.gif"
-                                 class="res"
-                                 data-bs-toggle="tooltip"
-                                 data-bs-title="Crédits"
-                                 width="16px"
-                                 height="16px">
-                            <span class="{% if profile_credits <= 0 %}text-danger{% endif %}">{{ profile_credits|intcomma }}</span>
-                        </div>
-                        <div class="col-auto">
-                            <img src="{{ PATH_IMAGES }}img/interface/prestige.gif"
-                                 class="res"
-                                 data-bs-toggle="tooltip"
-                                 data-bs-title="Prestige"
-                                 width="16px"
-                                 height="16px">
-                            <span>{{ profile_prestige_points|intcomma }}</span>
-                        </div>
-                        <div class="col-auto">
-                            <a href="/s03/help/" class="link-normal p-1 {% if selectedmenu == 'help' %}text-warning{% endif %}">
-                                <i class="fas fa-question-circle me-1"></i>
-                                Aide
-                            </a>
+                <div class="col-auto" style="width:256px;">
+                    <div class="px-3">
+                        <div class="row gx-3 align-items-center justify-content-center">
+                        
+                            <div class="col-auto">
+                                <div class="row gx-1 align-items-center">
+                                
+                                    <div class="col-auto">
+                                        <img src="/static/img/logo.png" width="32px" class="rounded" />
+                                    </div>
+                                    
+                                    <div class="col-auto">
+                                        <span class="fs-5">NG Exile</span>
+                                    </div>
+                                    
+                                </div>
+                            </div>
+                            
+                            <div class="col-auto">
+                                <span class="badge text-bg-secondary">s03</span>
+                            </div>
+                            
                         </div>
                     </div>
                 </div>
-            </div>
-            <div id="main">
-                <div id="leftnav">{% include "s03/menu.html" %}</div>
+            </div>            
+            <div id="main">            
+                <div id="leftnav">                
+                    <div id="leftnav-top" class="scroll-content">
+
+                        {% if impersonating %}
+                            <div class="px-3 py-2 text-bg-warning">
+                                <div><b>Impersonisation</b></div>
+                                <div><a href="/impersonate/stop/" class="text-danger">Revenir au compte de départ</a></div>
+                                <div>Impossible d'envoyer des messages</div>
+                            </div>
+                        {% endif %}
+
+                        {% if creditswarning %}
+                            <div class="px-3 py-2 text-bg-warning">
+                                <div><b>Fonds insuffisants</b></div>
+                                <div>Nous sommes actuellement en déficit, cette situation est tolérable pendant un moment mais nous devons réagir. Nous pouvons soit alléger nos coûts d'entretien, soit augmenter nos revenus en vendant une plus grande partie de notre production.</div>
+                                <div>Vous avez {{ bankruptcy_hours|intcomma }} heure(s) pour faire revenir l'argent de la trésorerie dans le positif avant qu'un coup d'état n'éclate et que vous soyiez chassé de votre poste.</div>
+                                <div>Chaque heure passée en déficit, le nombre d'heures avant le coup d'état diminue d'une heure. Celui-ci remonte chaque heure passée dans le positif.</div>
+                            </div>
+                        {% endif %}
+
+                        {% if deleting %}
+                            <div class="px-3 py-2 text-bg-danger">
+                                <div><b>Suppression du compte en cours</b></div>
+                                <div>Ce compte sera effacé le {{ delete_datetime|date:"D d M Y" }} à {{ delete_datetime|time }}</div>
+                            </div>
+                        {% endif %}
+
+                        <div class="p-3 border-bottom border-dark">
+                            <div class="row gx-3 align-items-center justify-content-center">
+                                        
+                                <div class="col-auto">
+                                    <img src="{{ PATH_IMAGES }}img/interface/credits.gif" class="res" data-bs-toggle="tooltip" data-bs-title="Crédits" width="16px" height="16px">
+                                    <span class="{% if profile_credits <= 0 %}text-danger{% endif %}">{{ profile_credits|intcomma }}</span>
+                                </div>
+                                
+                                <div class="col-auto">
+                                    <img src="{{ PATH_IMAGES }}img/interface/prestige.gif" class="res" data-bs-toggle="tooltip" data-bs-title="Prestige" width="16px" height="16px">
+                                    <span>{{ profile_prestige_points|intcomma }}</span>
+                                </div>
+                                
+                            </div>
+                        </div>
+                        
+                        <div class="p-3 border-bottom border-dark">
+                            <div class="row gx-3 align-items-center justify-content-around">
+                            
+                                <div class="col-auto">
+                                    <a href="/s03/profile-options/" class="link-normal p-1 {% if selectedmenu == 'options' %}text-warning{% endif %}" data-bs-toggle="tooltip" data-bs-title="Options">
+                                        <i class="fs-5 fas fa-cog" aria-hidden="true"></i>
+                                    </a>
+                                </div>
+                                
+                                <div class="col-auto">
+                                    <a href="/s03/profile-view/" class="link-normal p-1 {% if selectedmenu == 'profile' %}text-warning{% endif %}" data-bs-toggle="tooltip" data-bs-title="Profile">
+                                        <i class="fs-5 fas fa-user" aria-hidden="true"></i>
+                                    </a>
+                                </div>
+                                
+                                <div class="col-auto">
+                                    <a href="/s03/mail-inbox/" class="link-normal p-1 position-relative {% if selectedmenu == 'mails' %}text-warning{% endif %}" data-bs-toggle="tooltip" data-bs-title="Messagerie">
+                                        <i class="fs-5 fas fa-envelope" aria-hidden="true"></i>
+                                        {% if new_mail != 0 %}<span class="position-absolute top-0 start-100 translate-middle badge text-bg-success">{{ new_mail }}</span>{% endif %}
+                                    </a>
+                                </div>
+                                
+                                <div class="col-auto">
+                                    <a href="/s03/report-list/" class="link-normal p-1 position-relative {% if selectedmenu == 'reports' %}text-warning{% endif %}" data-bs-toggle="tooltip" data-bs-title="Rapports">
+                                        <i class="fs-5 fas fa-bell" aria-hidden="true"></i>
+                                        {% if new_report != 0 %}<span class="position-absolute top-0 start-100 translate-middle badge text-bg-success">{{ new_report }}</span>{% endif %}
+                                    </a>
+                                </div>
+                                
+                                <div class="col-auto position-relative">
+                                    <a href="/s03/chat/" class="link-normal p-1 position-relative {% if selectedmenu == 'chat' %}text-warning{% endif %}" data-bs-toggle="tooltip" data-bs-title="Salons">
+                                        <i class="fs-5 fas fa-comments" aria-hidden="true"></i>
+                                    </a>
+                                </div>
+                                
+                            </div>
+                        </div>
+                        
+                        <a href="/s03/empire-view/" class="menu lvl2 {% if selectedmenu == 'empire' %}text-warning{% endif %}">
+                            <span class="pe-3"><i class="fs-6 fas fa-fw fa-eye"></i></span>
+                            Empire
+                        </a>
+                        
+                        <a href="/s03/planet-view/?planet={{ cur_planetid }}" class="menu lvl2 {% if selectedmenu == 'planet' %}text-warning{% endif %}">
+                            <span class="pe-3"><i class="fs-6 fas fa-fw fa-globe"></i></span>
+                            <div class="flex-grow-1 d-inline-flex align-items-center">
+                                Planète
+                                <span class="ms-auto badge text-bg-secondary">{{ cur_g }}.{{ cur_s }}.{{ cur_p }}</span>
+                            </div>
+                        </a>
+                        
+                        <a href="/s03/fleet-list/" class="menu lvl2 {% if selectedmenu == 'fleets' %}text-warning{% endif %}">
+                            <span class="pe-3"><i class="fs-6 fas fa-fw fa-space-shuttle"></i></span>
+                            Flottes
+                        </a>
+                        
+                        <a href="/s03/tech-list/" class="menu lvl2 {% if selectedmenu == 'research' %}text-warning{% endif %}">
+                            <span class="pe-3"><i class="fs-6 fas fa-fw fa-flask"></i></span>
+                            Recherches
+                        </a>
+                        
+                        <a href="/s03/commander-list/" class="menu lvl2 {% if selectedmenu == 'commanders' %}text-warning{% endif %}">
+                            <span class="pe-3"><i class="fs-6 fas fa-fw fa-star"></i></span>
+                            Commandants
+                        </a>
+                        
+                        <a href="/s03/market-sell/" class="menu lvl2 {% if selectedmenu == 'merchants' %}text-warning{% endif %}">
+                            <span class="pe-3"><i class="fs-6 fas fa-fw fa-handshake"></i></span>
+                            Commerce
+                        </a>
+                        
+                        {% if profile_alliance_id %}
+                            <a href="/s03/alliance-view/" class="menu lvl2 {% if selectedmenu == 'alliance' %}text-warning{% endif %}">
+                                <span class="pe-3"><i class="fs-6 fas fa-fw fa-users"></i></span>
+                                Alliance
+                            </a>
+                        {% else %}
+                            <a href="/s03/alliance-invitations/" class="menu lvl2 {% if selectedmenu == 'alliance' %}text-warning{% endif %}">
+                                <span class="pe-3"><i class="fs-6 fas fa-fw fa-users"></i></span>
+                                Alliance
+                            </a>
+                        {% endif %}
+                        
+                        <a href="/s03/ranking-players/" class="menu lvl2 {% if selectedmenu == 'map' %}text-warning{% endif %}">
+                            <span class="pe-3"><i class="fs-6 fas fa-fw fa-map"></i></span>
+                            Carte spatiale
+                        </a>
+                        
+                        <a href="/s03/ranking-players/" class="menu lvl2 {% if selectedmenu == 'ranking' %}text-warning{% endif %}">
+                            <span class="pe-3"><i class="fs-6 fas fa-fw fa-signal"></i></span>
+                            Classement
+                        </a>
+                        
+                        <a href="/s03/mercenary/" class="menu lvl2 {% if selectedmenu == 'intelligence' %}text-warning{% endif %}">
+                            <span class="pe-3"><i class="fs-6 fas fa-fw fa-user-secret"></i></span>
+                            Espionnage
+                        </a>
+                        
+                        <a href="/s03/help/" class="menu lvl2 {% if selectedmenu == 'help' %}text-warning{% endif %}">
+                            <span class="pe-3"><i class="fs-6 fas fa-fw fa-question-circle"></i></span>
+                            Aide
+                        </a>
+                        
+                    </div>
+                    <div id="leftnav-bottom" class="px-3 py-3">
+
+                        <div class="mb-2 text-center small">
+                            <span class="text-muted">Ce jeu est codé et maintenu avec tout l'amour <i class="fas fa-heart text-danger"></i> du monde par <span class="text-white">Freddec</span>. Vous pouvez supporter le dev en cliquant ci-dessous :)</span>
+                        </div>
+                        
+                        <div class="flex-grow-1 row gx-3 align-items-center justify-content-around">
+                            <form class="col-auto" action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_blank">
+                                <input type="hidden" name="cmd" value="_s-xclick">
+                                <input type="hidden" name="hosted_button_id" value="7XYD7SJFKQ8M4">
+                                <button type="submit" class="p-0 border-0 bg-transparent" data-bs-toggle="tooltip" data-bs-placement="left" data-bs-title="Make a donation">
+                                    <img src="/static/img/paypal.png" width="22px" />
+                                </button>
+                            </form>
+                            <div class="col-auto">
+                                <a href="https://ko-fi.com/freddecgames" target="_blank" data-bs-toggle="tooltip" data-bs-placement="left" data-bs-title="Buy me a Ko-fi">
+                                    <img src="/static/img/kofi.png" width="22px" />
+                                </a>
+                            </div>
+                            <div class="col-auto">
+                                <a href="https://www.patreon.com/bePatron?u=61283131" target="_blank" data-bs-toggle="tooltip" data-bs-placement="left" data-bs-title="Become a Patreon supporter">
+                                    <img src="/static/img/patreon.png" width="22px" />
+                                </a>
+                            </div>
+                            <div class="col-auto">
+                                <a href="https://discord.gg/3UkgeeT9CV" target="_blank" data-bs-toggle="tooltip" data-bs-placement="left" data-bs-title="Discord">
+                                    <img src="/static/img/discord.png" width="22px" />
+                                </a>
+                            </div>
+                        </div>
+                        
+                    </div>                    
+                </div>
                 <div id="content" class="scroll-content">
                     <div id="page" class="scroll-content">
-                        {% if header %}{% include "s03/header.html" %}{% endif %}
+                    
+                        {% if header %}
+                        
+                            <script>
+                                function jump(obj) { eval("location='{{ url|safe }}" + obj.options[obj.selectedIndex].value + "'") }
+
+                                function nextplanet() {
+                                
+                                    var obj = document.getElementById("planetlist")
+                                    if (obj.selectedIndex < obj.options.length - 1) { obj.selectedIndex = obj.selectedIndex + 1 }
+                                    jump(obj)
+                                }
+
+                                function previousplanet() {
+                                
+                                    var obj = document.getElementById("planetlist");
+                                    if (obj.selectedIndex > 0) { obj.selectedIndex = obj.selectedIndex - 1 }
+                                    jump(obj)
+                                }
+                            </script>
+                            
+                            <div class="page-content">
+                                <div class="card card-body mb-3">
+                                    <div class="row gx-3 align-items-center justify-content-between">
+                                        
+                                        <div class="col-auto">
+                                            <a href="#" class="fs-6" onclick="previousplanet(); return false;" data-bs-toggle="tooltip" data-bs-title="Planète précédente">
+                                                <i class="fa-fw fas fa-chevron-circle-left"></i>
+                                            </a>
+                                        </div>
+                                        
+                                        <div class="col-auto text-center" style="width:250px;">                                        
+                                            <div class="row g-1 flex-column">
+                                                <div class="col-12">
+                                                    <select id="planetlist" class="form-control text-center" tabindex="1" onchange="jump(this)">
+                                                        {% for planet in planets %}
+                                                            <option value="{{ planet.id }}" {% if planet.id == cur_planetid %}selected{% endif %}>
+                                                                {{ planet.name }} ({{ planet.galaxy }}.{{ planet.sector }}.{{ planet.planet }})
+                                                            </option>
+                                                        {% endfor %}
+                                                    </select>
+                                                </div>
+                                                {% for special in specials %}
+                                                    <div class="col-12">
+                                                        <img src="{{ PATH_IMAGES }}img/interface/special.gif" data-bs-toggle="tooltip" data-bs-title="Spécial" class="res" width="16px" height="16px">
+                                                        {{ special.label }}
+                                                    </div>
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="col-auto">
+                                            <a href="#" class="fs-6" onclick="nextplanet(); return false;" data-bs-toggle="tooltip" data-bs-title="Planète suivante">
+                                                <i class="fa-fw fas fa-chevron-circle-right"></i>
+                                            </a>
+                                        </div>
+                                        
+                                        <div class="col-auto">
+                                            <div class="row g-1 flex-column">
+                                            
+                                                <div class="col-12">
+                                                    <img src="{{ PATH_IMAGES }}img/interface/ore.gif" data-bs-toggle="tooltip" data-bs-title="Minerai" width="16px" height="16px" class="res">
+                                                    <span class="{% if currentPlanet.ore_level >= 90 %}text-danger{% elif currentPlanet.ore_level >= 70 %}text-warning{% endif %}">{{ currentPlanet.ore|intcomma }}</span>
+                                                    <small class="text-normal">/{{ currentPlanet.ore_capacity|intcomma }}</small>
+                                                    <small class="ms-2 {% if medium_ore_production %}text-warning{% else %}text-success{% endif %}">+{{ currentPlanet.ore_production|intcomma }}</small>
+                                                </div>
+                                                
+                                                <div class="col-12">
+                                                    <img src="{{ PATH_IMAGES }}img/interface/hydrocarbon.gif" data-bs-toggle="tooltip" data-bs-title="Hydrocarbure" width="16px" height="16px" class="res">
+                                                    <span class="{% if currentPlanet.hydrocarbon_level >= 90 %}text-danger{% elif currentPlanet.hydrocarbon_level >= 70 %}text-warning{% endif %}">{{ currentPlanet.hydrocarbon|intcomma }}</span>
+                                                    <small class="text-normal">/{{ currentPlanet.hydrocarbon_capacity|intcomma }}</small>
+                                                    <small class="ms-2 {% if medium_hydrocarbon_production %}text-warning{% else %}text-success{% endif %}">+{{ currentPlanet.hydrocarbon_production|intcomma }}</small>
+                                                </div>
+                                                
+                                                <div class="col-12">
+                                                    <img src="{{ PATH_IMAGES }}img/interface/energy.gif" data-bs-toggle="tooltip" data-bs-title="Energie" width="16px" height="16px" class="res">
+                                                    <span>{{ currentPlanet.energy|intcomma }}</span>
+                                                    <small class="text-normal">/{{ currentPlanet.energy_capacity|intcomma }}</small>
+                                                    <small class="ms-2 {% if currentPlanet.energy_production < 0 %}text-danger{% else %}text-success{% endif %}">{% if currentPlanet.energy_production > 0 %}+{% endif %} {{ currentPlanet.energy_production|intcomma }}</small>
+                                                </div>
+                                                
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="col-auto">
+                                            <div class="row g-1 flex-column">
+                                            
+                                                <div class="col-12">
+                                                    <img src="{{ PATH_IMAGES }}img/interface/workers.gif" data-bs-toggle="tooltip" data-bs-title="Travailleurs" width="16px" height="16px" class="res">
+                                                    <span class="{% if workers_low %}text-danger{% endif %}">{{ currentPlanet.workers|intcomma }}</span>
+                                                    <small class="text-normal me-2">/{{ currentPlanet.workers_capacity|intcomma }}</small>
+                                                    <img src="{{ PATH_IMAGES }}img/interface/workers_idle.gif" data-bs-toggle="tooltip" data-bs-title="Oisifs" width="12" height="12" class="idleworkers">
+                                                    <small class="text-success">{{ currentPlanet.workers_idle|intcomma }}</small>
+                                                </div>
+                                                
+                                                <div class="col-12">
+                                                    <img src="{{ PATH_IMAGES }}img/interface/scientists.gif" data-bs-toggle="tooltip" data-bs-title="Scientifiques" width="16px" height="16px" class="res">
+                                                    <span>{{ currentPlanet.scientists|intcomma }}</span>
+                                                    <small class="text-normal">/{{ currentPlanet.scientists_capacity|intcomma }}</small>
+                                                </div>
+                                                
+                                                <div class="col-12">
+                                                    <img src="{{ PATH_IMAGES }}img/interface/soldiers.gif" data-bs-toggle="tooltip" data-bs-title="Soldats" width="16px" height="16px" class="res">
+                                                    <span class="{% if soldiers_low %}text-danger{% endif %}">{{ currentPlanet.soldiers|intcomma }}</span>
+                                                    <small class="text-normal">/{{ currentPlanet.soldiers_capacity|intcomma }}</small>
+                                                </div>
+                                                
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="col-auto">
+                                            <div class="row g-1 flex-column">
+                                            
+                                                <div class="col-12">
+                                                    <img src="{{ PATH_IMAGES }}img/interface/floor.gif" data-bs-toggle="tooltip" data-bs-title="Terrain" width="16px" height="16px" class="res">
+                                                    <span>{{ currentPlanet.floor_occupied|intcomma }}</span>
+                                                    <small class="text-normal">/{{ currentPlanet.floor|intcomma }}</small>
+                                                </div>
+                                                
+                                                <div class="col-12">
+                                                    <img src="{{ PATH_IMAGES }}img/interface/space.gif" data-bs-toggle="tooltip" data-bs-title="Espace" width="16px" height="16px" class="res">
+                                                    <span>{{ currentPlanet.space_occupied|intcomma }}</span>
+                                                    <small class="text-normal">/{{ currentPlanet.space|intcomma }}</small>
+                                                </div>
+                                                
+                                            </div>
+                                        </div>
+                                    
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
+                        
                         {% block content %}{% endblock %}
+                        
                     </div>
                 </div>
-            </div>
+            </div>            
         </div>
+        
         <script async src="https://www.googletagmanager.com/gtag/js?id=G-212X2QX8W5"></script>
         <script>
             window.dataLayer = window.dataLayer || []
@@ -87,12 +391,12 @@
             gtag('js', new Date())
             gtag('config', 'G-212X2QX8W5')
         </script>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
-                integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4"
-                crossorigin="anonymous"></script>
+        
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
         <script>
             const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
             const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
         </script>
+        
     </body>
 </html>
