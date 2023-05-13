@@ -9,219 +9,221 @@
     
     <div class="scroll-content" style="height:calc(100% - 52px);">
         <div class="page-content">
+        
             {% if cat == 1 %}
-            <div class="card mb-3">
-                <div class="card-header">
-                    <span class="fs-6">Aperçu</span>
-                </div>
-                <div class="card-body">
-                    <div class="d-flex justify-content-center">
-                        <div class="row gx-3">
-                            <div class="col-auto">
-                                {% if profile.avatar_url %}<img src="{{ profile.avatar_url }}" width="64" height="64" class="rounded">
-                                {% else %}<img src="{{ PATH_IMAGES }}img/interface/noavatar.gif" width="64" height="64" class="rounded">
-                                {% endif %}
-                            </div>
-                            <div class="col-auto">
-                                <div class="mb-1">
-                                    {% if profile.alliance_id %}<a href="/s03/alliance-view/?tag={{ profile.tag }}" class="text-info" data-bs-toggle="tooltip" data-bs-title="Voir alliance">[{{ profile.tag }}]</a>{% endif %}
-                                    <span class="text-info">{{ profile.username }}</span>
-                                </div>
-                                <div class="mb-1">
-                                    <span class="text-normal me-2">Grade</span>
-                                    {% if profile.alliance_id %}{{ profile.label }}
-                                    {% else %}indépendant
+                <div class="card mb-3">
+                    <div class="card-header">
+                        <span class="fs-6">Aperçu</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex justify-content-center">
+                            <div class="row gx-3">
+                                <div class="col-auto">
+                                    {% if profile.avatar_url %}<img src="{{ profile.avatar_url }}" width="64" height="64" class="rounded">
+                                    {% else %}<img src="{{ PATH_IMAGES }}img/interface/noavatar.gif" width="64" height="64" class="rounded">
                                     {% endif %}
                                 </div>
-                                <div class="">
-                                    <span class="text-normal me-2">Date d'arrivée</span>
-                                    {{ profile.regdate }}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    {% if profile.description %}
-                    <div class="mt-3 col-12 text-center">
-                        {{ profile.description|safe|bbcode }}
-                    </div>
-                    {% endif %}
-                </div>
-            </div>
-            <form method="post" action="?cat={{ cat }}">
-                {% csrf_token %}
-                <input type="hidden" name="action" value="save">
-                <div class="card">
-                    <div class="card-header">
-                        <span class="fs-6">Configuration</span>
-                    </div>
-                    <div class="card-body">
-                        <div class="row gx-3">
-                            <div class="col-3 text-end pt-1">
-                                <span>URL avatar taille</span>
-                                <small class="text-normal ms-2">64px x 64px</small>
-                            </div>
-                            <div class="col-9">
-                                <input type="text" class="form-control" name="avatar" id="avatar" value="{{ profile.avatar_url }}" maxlength="250" />
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <div class="row gx-3">
-                            <div class="col-3 text-end">
-                                <span>Description</span>
-                            </div>
-                            <div class="col-9">
-                                <textarea name="description" class="form-control" cols="62" rows="10">{{profile.description}}</textarea>
-                                <div class="mt-1"><a href="/s03/help/?cat=tags" target="_blank" data-bs-toggle="tooltip" data-bs-title="Voir aide">Balises supportées</a></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <div class="row gx-3 align-items-center">
-                            <div class="col-3"></div>
-                            <div class="col-auto">
-                                <input type="submit" class="btn btn-primary" name="submit" id="submit" value="Envoyer">
-                            </div>
-                            {% if changes %}
                                 <div class="col-auto">
-                                    {% if done %}<span class="text-success">Changements effectués</span>{% endif %}
-                                    {% if check_avatar %}<span class="text-danger">L'adresse de votre avatar est incorrecte, vérifiez votre saisie</span>{% endif %}
+                                    <div class="mb-1">
+                                        {% if profile.alliance_id %}<a href="/s03/alliance-view/?tag={{ profile.tag }}" class="text-info" data-bs-toggle="tooltip" data-bs-title="Voir alliance">[{{ profile.tag }}]</a>{% endif %}
+                                        <span class="text-info">{{ profile.username }}</span>
+                                    </div>
+                                    <div class="mb-1">
+                                        <span class="text-normal me-2">Grade</span>
+                                        {% if profile.alliance_id %}{{ profile.label }}
+                                        {% else %}indépendant
+                                        {% endif %}
+                                    </div>
+                                    <div class="">
+                                        <span class="text-normal me-2">Date d'arrivée</span>
+                                        {{ profile.regdate }}
+                                    </div>
                                 </div>
-                            {% endif %}
+                            </div>
                         </div>
+                        {% if profile.description %}
+                        <div class="mt-3 col-12 text-center">
+                            {{ profile.description|safe|bbcode }}
+                        </div>
+                        {% endif %}
                     </div>
                 </div>
-            </form>
+                <form method="post" action="?cat={{ cat }}">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="save">
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="fs-6">Configuration</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="row gx-3">
+                                <div class="col-3 text-end pt-1">
+                                    <span>URL avatar taille</span>
+                                    <small class="text-normal ms-2">64px x 64px</small>
+                                </div>
+                                <div class="col-9">
+                                    <input type="text" class="form-control" name="avatar" id="avatar" value="{{ profile.avatar_url }}" maxlength="250" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="row gx-3">
+                                <div class="col-3 text-end">
+                                    <span>Description</span>
+                                </div>
+                                <div class="col-9">
+                                    <textarea name="description" class="form-control" cols="62" rows="10">{{profile.description}}</textarea>
+                                    <div class="mt-1"><a href="/s03/help/?cat=tags" target="_blank" data-bs-toggle="tooltip" data-bs-title="Voir aide">Balises supportées</a></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="row gx-3 align-items-center">
+                                <div class="col-3"></div>
+                                <div class="col-auto">
+                                    <input type="submit" class="btn btn-primary" name="submit" id="submit" value="Envoyer">
+                                </div>
+                                {% if changes %}
+                                    <div class="col-auto">
+                                        {% if done %}<span class="text-success">Changements effectués</span>{% endif %}
+                                        {% if check_avatar %}<span class="text-danger">L'adresse de votre avatar est incorrecte, vérifiez votre saisie</span>{% endif %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </form>
             {% elif cat == 2 %}
-            <form method="post" action="?cat={{ cat }}">
-                {% csrf_token %}
-                <input type="hidden" name="action" value="save">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="row gx-3 align-items-center">
-                            <div class="col-3 text-end">
-                                <span>Affichage du score</span>
-                            </div>
-                            <div class="col-9">
-                                <select name="score_visibility" class="form-control">
-                                    <option value="0" {% if data.score_visibility == 0 %}selected{% endif %}>Personne</option>
-                                    <option value="1" {% if data.score_visibility == 1 %}selected{% endif %}>Alliance uniquement</option>
-                                    <option value="2" {% if data.score_visibility == 2 %}selected{% endif %}>Tout le monde (+10% gain de prestige)</option>
-                                </select>
+                <form method="post" action="?cat={{ cat }}">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="save">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row gx-3 align-items-center">
+                                <div class="col-3 text-end">
+                                    <span>Affichage du score</span>
+                                </div>
+                                <div class="col-9">
+                                    <select name="score_visibility" class="form-control">
+                                        <option value="0" {% if data.score_visibility == 0 %}selected{% endif %}>Personne</option>
+                                        <option value="1" {% if data.score_visibility == 1 %}selected{% endif %}>Alliance uniquement</option>
+                                        <option value="2" {% if data.score_visibility == 2 %}selected{% endif %}>Tout le monde (+10% gain de prestige)</option>
+                                    </select>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="card-body {% if data.remainingtime %}bg-danger{% endif %}">
-                        <div class="row gx-3 align-items-center">
-                            <div class="col-3 text-end">
-                                <span>Suppression du compte</span>
-                                <small class="text-normal ms-2">2 jours de délai</small>
+                        <div class="card-body {% if data.remainingtime %}bg-danger{% endif %}">
+                            <div class="row gx-3 align-items-center">
+                                <div class="col-3 text-end">
+                                    <span>Suppression du compte</span>
+                                    <small class="text-normal ms-2">2 jours de délai</small>
+                                </div>
+                                <div class="col-9">
+                                    {% if not data.remainingtime %}
+                                    <div class="form-check">
+                                        <input type="checkbox" class="form-check-input" name="delete" id="delete" value="1">
+                                        <label class="form-check-label" for="delete">Cochez cette case pour supprimer votre compte</label>
+                                    </div>
+                                    {% else %}
+                                    <input type="hidden" class="checkbox" name="deleting" value="1">
+                                    <div class="form-check">
+                                        <input type="checkbox" class="form-check-input" name="delete" id="delete" value="1" checked>
+                                        <label class="form-check-label" for="delete">Votre compte sera supprimé dans <span class="text-yellow"><script>putcountdown1({{data.remainingtime}},"");</script></span></label>
+                                    </div>
+                                    {% endif %}
+                                </div>
                             </div>
-                            <div class="col-9">
-                                {% if not data.remainingtime %}
-                                <div class="form-check">
-                                    <input type="checkbox" class="form-check-input" name="delete" id="delete" value="1">
-                                    <label class="form-check-label" for="delete">Cochez cette case pour supprimer votre compte</label>
+                        </div>
+                        <div class="card-body">
+                            <div class="row gx-3 align-items-center">
+                                <div class="col-3"></div>
+                                <div class="col-auto">
+                                    <input type="submit" class="btn btn-primary" name="submit" id="submit" value="Envoyer">
                                 </div>
-                                {% else %}
-                                <input type="hidden" class="checkbox" name="deleting" value="1">
-                                <div class="form-check">
-                                    <input type="checkbox" class="form-check-input" name="delete" id="delete" value="1" checked>
-                                    <label class="form-check-label" for="delete">Votre compte sera supprimé dans <script>putcountdown1({{data.remainingtime}},"");</script></label>
-                                </div>
+                                {% if changes %}
+                                    <div class="col-auto">
+                                        {% if done %}<span class="text-success">Changements effectués</span>{% endif %}
+                                    </div>
                                 {% endif %}
                             </div>
                         </div>
                     </div>
-                    <div class="card-body">
-                        <div class="row gx-3 align-items-center">
-                            <div class="col-3"></div>
-                            <div class="col-auto">
-                                <input type="submit" class="btn btn-primary" name="submit" id="submit" value="Envoyer">
-                            </div>
-                            {% if changes %}
-                                <div class="col-auto">
-                                    {% if done %}<span class="text-success">Changements effectués</span>{% endif %}
-                                </div>
-                            {% endif %}
-                        </div>
-                    </div>
-                </div>
-            </form>
+                </form>
             {% elif cat == 3 %}
-            <script>
-                function checkCheckBox() {
-                
-                    var obj = document.getElementById("holidays");
-                    if(!obj.checked) window.alert("Veuillez confirmer l'activation du mode vacances en cochant la case.");
-                    return obj.checked;
-                }
-            </script>
-            <form method="post" action="?cat={{ cat }}">
-                {% csrf_token %}
-                <input type="hidden" name="action" value="save">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="row gx-3">
-                            <div class="col-3 text-end">
-                                <span>Mode vacance</span>
-                            </div>
-                            <div class="col-9">
-                                <div class="text-normal">
-                                    <div class="mb-1">Le mode vacances vous permet de protéger vos colonies pour une durée limitée. Activer ce mode aura pour effet :</div>
-                                    <ul class="mb-1">
-                                        <li>D'empêcher toute flotte ennemie de se mettre en orbite autour de vos planètes</li>
-                                        <li>D'empêcher tout ennemi d'envahir vos planètes</li>
-                                        <li>De suspendre vos constructions de bâtiments et vaisseaux en cours</li>
-                                        <li>De suspendre vos recherches en cours</li>
-                                        <li>De suspendre toute production de matière première</li>
-                                        <li>De désactiver les radars et les brouilleurs radar de vos planètes</li>
-                                        <li>De désactiver les liens d'énergie (vous devrez les réactiver une fois le mode vacances terminé)</li>
-                                    </ul>
-                                    <div class="mb-1">Attention, votre compte ne passera en mode vacance <span class="text-white">que 24 heures après l'activation</span>. Prévoyez donc d'activer le mode vacance 1 journée à l'avance.</div>
-                                    <div class="mb-1">De plus, les planètes ayant des flottes ennemies en orbite ou ayant des flottes ennemies arrivant sous moins d'un jour à l'activation ne seront pas protégées.</div>
-                                    <div class="mb-1">Une fois en mode vacance, vous ne pourrez plus accéder à votre compte. La prochaine fois que vous vous identifierez, un message vous informera du temps de vacances restant.</div>
-                                    <div class="mb-1">Vous pourrez annuler le mode vacances uniquement <span class="text-white">à partir du troisième jour de vacances</span>.</div>
-                                    <div class="mb-1">Le mode vacances dure au maximum 21 jours. Une fois expiré ou annulé, vous ne pourrez le réactiver qu'après une semaine de jeu.</div>
+                <script>
+                    function checkCheckBox() {
+                    
+                        var obj = document.getElementById("holidays");
+                        if(!obj.checked) window.alert("Veuillez confirmer l'activation du mode vacances en cochant la case.");
+                        return obj.checked;
+                    }
+                </script>
+                <form method="post" action="?cat={{ cat }}">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="save">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row gx-3">
+                                <div class="col-3 text-end">
+                                    <span>Mode vacance</span>
+                                </div>
+                                <div class="col-9">
+                                    <div class="text-normal">
+                                        <div class="mb-1">Le mode vacances vous permet de protéger vos colonies pour une durée limitée. Activer ce mode aura pour effet :</div>
+                                        <ul class="mb-1">
+                                            <li>D'empêcher toute flotte ennemie de se mettre en orbite autour de vos planètes</li>
+                                            <li>D'empêcher tout ennemi d'envahir vos planètes</li>
+                                            <li>De suspendre vos constructions de bâtiments et vaisseaux en cours</li>
+                                            <li>De suspendre vos recherches en cours</li>
+                                            <li>De suspendre toute production de matière première</li>
+                                            <li>De désactiver les radars et les brouilleurs radar de vos planètes</li>
+                                            <li>De désactiver les liens d'énergie (vous devrez les réactiver une fois le mode vacances terminé)</li>
+                                        </ul>
+                                        <div class="mb-1">Attention, votre compte ne passera en mode vacance <span class="text-white">que 24 heures après l'activation</span>. Prévoyez donc d'activer le mode vacance 1 journée à l'avance.</div>
+                                        <div class="mb-1">De plus, les planètes ayant des flottes ennemies en orbite ou ayant des flottes ennemies arrivant sous moins d'un jour à l'activation ne seront pas protégées.</div>
+                                        <div class="mb-1">Une fois en mode vacance, vous ne pourrez plus accéder à votre compte. La prochaine fois que vous vous identifierez, un message vous informera du temps de vacances restant.</div>
+                                        <div class="mb-1">Vous pourrez annuler le mode vacances uniquement <span class="text-white">à partir du troisième jour de vacances</span>.</div>
+                                        <div class="mb-1">Le mode vacances dure au maximum 21 jours. Une fois expiré ou annulé, vous ne pourrez le réactiver qu'après une semaine de jeu.</div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="card-body">
-                        <div class="row gx-3 align-items-center">
-                            <div class="col-3 text-end"></div>
-                            <div class="col-9">
-                                {% if can_enable %}
-                                <div class="form-check">
-                                    <input type="checkbox" class="form-check-input" name="holidays" id="holidays" value="1">
-                                    <label class="form-check-label" for="holidays">J'ai pris connaissance du mode vacances et je l'active pour une durée maximum de 21 jours.</label>
+                        <div class="card-body">
+                            <div class="row gx-3 align-items-center">
+                                <div class="col-3 text-end"></div>
+                                <div class="col-9">
+                                    {% if can_enable %}
+                                    <div class="form-check">
+                                        <input type="checkbox" class="form-check-input" name="holidays" id="holidays" value="1">
+                                        <label class="form-check-label" for="holidays">J'ai pris connaissance du mode vacances et je l'active pour une durée maximum de 21 jours.</label>
+                                    </div>
+                                    {% elif cant_enable %}
+                                        Impossible d'activer le mode vacances avant : <span class="text-yellow"><script>putcountdown1({{remaining_time}}, "", "");</script></span>
+                                    {% elif start_in %}
+                                        Le mode vacance sera activé dans : <span class="text-yellow"><script>putcountdown1({{remaining_time}}, "", "");</script></span>
+                                    {% endif %}
                                 </div>
-                                {% elif cant_enable %}
-                                    Impossible d'activer le mode vacances avant : <script>putcountdown1({{remaining_time}}, "", "");</script>
-                                {% elif start_in %}
-                                    Le mode vacance sera activé dans : <script>putcountdown1({{remaining_time}}, "", "");</script>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="row gx-3 align-items-center">
+                                <div class="col-3"></div>
+                                {% if can_enable %}
+                                <div class="col-auto">
+                                    <input type="submit" class="btn btn-primary" name="submit" id="submit" value="Envoyer" onclick="return checkCheckBox()">
+                                </div>
+                                {% endif %}
+                                {% if changes %}
+                                    <div class="col-auto">
+                                        {% if done %}<span class="text-success">Changements effectués</span>{% endif %}
+                                    </div>
                                 {% endif %}
                             </div>
                         </div>
                     </div>
-                    <div class="card-body">
-                        <div class="row gx-3 align-items-center">
-                            <div class="col-3"></div>
-                            {% if can_enable %}
-                            <div class="col-auto">
-                                <input type="submit" class="btn btn-primary" name="submit" id="submit" value="Envoyer" onclick="return checkCheckBox()">
-                            </div>
-                            {% endif %}
-                            {% if changes %}
-                                <div class="col-auto">
-                                    {% if done %}<span class="text-success">Changements effectués</span>{% endif %}
-                                </div>
-                            {% endif %}
-                        </div>
-                    </div>
-                </div>
-            </form>
+                </form>
             {% endif %}
+            
         </div>
     </div>
 

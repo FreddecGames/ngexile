@@ -11,7 +11,7 @@
         
             <script>
                 var ranks = new Array()
-                {% for rank in ranks %}ranks[{{rank.rankid}}] = '{{rank.label}}';{% endfor %}
+                {% for rank in ranks %}ranks[{{ rank.rankid }}] = '{{ rank.label }}';{% endfor %}
                 
                 {% if can_kick %}
                     function showKick(name) {
@@ -106,11 +106,16 @@
                                             <span class="text-normal">{{ member.alliance_joined }}</span>
                                         </div>
                                         <div id="statusref{{ member.id }}" class="col-3 d-flex align-items-center">
-                                            <script>displayStatus({{member.id}}, {{member.alliance_rank}}, 0{% if member.can_manage %}1{% endif %}, 0{% if can_kick %}1{% endif %});</script>
+                                            <script>displayStatus({{ member.id }}, {{ member.alliance_rank }}, 0{% if member.can_manage %}1{% endif %}, 0{% if can_kick %}1{% endif %});</script>
                                             {% if member.can_kick %}
-                                                <span id="kick{{ member.id }}" onclick="return showKick({{ member.id }});"><a href="?#" class="ms-2">Exclure</a></span>
+                                                <span id="kick{{ member.id }}" onclick="return showKick({{ member.id }});"><a href="#" class="ms-2">Exclure</a></span>
                                                 <span id="kickConfirm{{ member.id }}" class="hidden w-100 text-end">
-                                                    <a href="?cat={{ cat }}&a=kick&name={{ member.name }}" class="ms-2 btn btn-primary">Confirmer</a>
+                                                    <form method="post" class="d-inline">
+                                                        {% csrf_token %}
+                                                        <input type="hidden" name="action" value="kick" />
+                                                        <input type="hidden" name="name" value="{{ member.name }}" />
+                                                        <button type="submit" class="ms-2 btn btn-primary">Confirmer</button>
+                                                    </form>
                                                 </span>
                                             {% elif member.leaving_time %}
                                                 <div class="ms-2 text-end text-danger">

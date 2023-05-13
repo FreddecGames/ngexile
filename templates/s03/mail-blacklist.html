@@ -1,41 +1,48 @@
 {% extends "s03/_layout.html" %}
+
 {% load humanize %}
+
 {% block content %}
-{% include "s03/mail-tabs.html" %}
-<div class="scroll-content" style="height:calc(100% - 52px);">
-<div class="page-content">
-<form method="post" action="">
-    {% csrf_token %}
-    <input type="hidden" name="action" value="unignore">
-    <div class="card">
-        <div class="list-group list-group-flush">
-            {% for ignorednation in ignorednations %}
-                <div class="list-group-item">
-                    <div class="row gx-3 align-items-center">
-                        <div class="col">
-                            <div class="form-check">
-                                <input type="checkbox" class="form-check-input" id="check_{{ forloop.counter }}" name="unignore" value="{{ ignorednation.userid }}"/>
-                                <label class="form-check-label" for="check_{{ forloop.counter }}">{{ ignorednation.name }}</label>
+
+    {% include "s03/mail-tabs.html" %}
+    
+    <div class="scroll-content" style="height:calc(100% - 52px);">
+        <div class="page-content">
+        
+            <form method="post" action="">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="unignore">
+                <div class="card">
+                    <div class="list-group list-group-flush">
+                        {% for ignorednation in ignorednations %}
+                            <div class="list-group-item">
+                                <div class="row gx-3 align-items-center">
+                                    <div class="col">
+                                        <div class="form-check">
+                                            <input type="checkbox" class="form-check-input" id="check_{{ forloop.counter }}" name="unignore" value="{{ ignorednation.userid }}"/>
+                                            <label class="form-check-label" for="check_{{ forloop.counter }}">{{ ignorednation.name }}</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <span class="text-normal">{{ ignorednation.added }}</span>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                        <div class="col-auto">
-                            <span class="text-normal">{{ ignorednation.added }}</span>
-                        </div>
+                        {% empty %}
+                            <div class="list-group-item text-center">
+                                <span class="text-normal">Aucun joueur bloqué</span>
+                            </div>
+                        {% endfor %}
+                        {% if ignorednations|length > 0 %}
+                            <div class="list-group-item">
+                                <input type="submit" class="btn btn-primary" value="Débloquer"/>
+                            </div>
+                        {% endif %}
                     </div>
                 </div>
-            {% empty %}
-                <div class="list-group-item text-center">
-                    <span class="text-normal">Aucun joueur bloqué</span>
-                </div>
-            {% endfor %}
-            {% if ignorednations|length > 0 %}
-                <div class="list-group-item">
-                    <input type="submit" class="btn btn-primary" value="Débloquer"/>
-                </div>
-            {% endif %}
+            </form>
+            
         </div>
     </div>
-</form>
-</div>
-</div>
+    
 {% endblock %}

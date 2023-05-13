@@ -5,6 +5,7 @@
 {% block content %}
 
     <div class="page-content">
+    
         <script>
             var fleetcapacity = 0;
             var fleetload = {{ fleet.cargo_load }};
@@ -43,6 +44,7 @@
                     document.forms.ships.submit();
             }
         </script>
+        
         <form method="post" action="/s03/fleet-ships/?id={{ fleet.id }}" name="ships">
             {% csrf_token %}
             <input type="hidden" name="action" value="transfer_ships">
@@ -108,9 +110,11 @@
             </div>
             </div>
         </form>
+        
         <script>
             window.setTimeout("updatecargo()", 100);
         </script>
         
     </div>
+    
 {% endblock %}

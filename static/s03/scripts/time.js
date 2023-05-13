@@ -1,17 +1,16 @@
 var counters = [];
 
-function Counter(name, seconds, display, endContent, onFinished) {
+function Counter(name, seconds, display, endContent) {
     
 	this.name = name;
 	this.started = new Date().getTime();
 	this.endTime = new Date().getTime() + seconds * 1000;
 	this.display = display;
 	this.endContent = endContent;
-	this.onFinished = onFinished;
 
 	this.remainingTime = function() { return Math.ceil((this.endTime - new Date().getTime()) / 1000); };
 
-	this.update = function(){
+	this.update = function() {
 
 		if (!this.obj) this.obj = document.getElementById(this.name);
 		if (!this.obj && new Date().getTime() - this.started > 20000) return false;
@@ -26,12 +25,6 @@ function Counter(name, seconds, display, endContent, onFinished) {
 				if (this.endContent != '') this.obj.innerHTML = this.endContent;
 				else this.obj.innerHTML = formatRemainingTime(0);
 
-				if (this.onFinished) {
-                    
-					this.onFinished(this);
-					this.onFinished = null;
-				}
-
 				return false;
 			}
             else if (s > 0 && (this.display == null))
@@ -43,22 +36,7 @@ function Counter(name, seconds, display, endContent, onFinished) {
             
 			return false;
 		}
-	};
-
-	this.toString = function() {
-        
-		var s = this.remainingTime();
-		var toDisplay = this.display;
-		if (!toDisplay) toDisplay = (s <= 0 && this.endContent != '') ? this.endContent:formatRemainingTime(s);
-		return '<span id="' + this.name + '">' + toDisplay + '</span>';
-	};
-}
-
-function startCountdown(name, seconds, displayCountdown, endContent, onFinished) {
-    
-	var c = new Counter(name, seconds, displayCountdown, endContent, onFinished);
-	counters.push(c);
-	return c;
+	}
 }
 
 function updateCounters() {
@@ -99,14 +77,21 @@ function formatRemainingTime(s) {
 
 var countdownnbr = 0;
 
+function startCountdown(name, seconds, displayCountdown, endContent) {
+    
+	var c = new Counter(name, seconds, displayCountdown, endContent);
+	counters.push(c);
+	return c;
+}
+
 function putcountdown1(seconds, endlabel, url)
 {
-	var c = startCountdown('cntdwn' + countdownnbr++, seconds, null, '<a href="' + url + '">' + endlabel + '</a>', null);
+	var c = startCountdown('cntdwn' + countdownnbr++, seconds, null, '<a href="' + url + '">' + endlabel + '</a>');
 	document.write(c);
 }
 
 function putcountdown2(seconds, content1, content2)
 {
-	var c = startCountdown('cntdwn' + countdownnbr++, seconds, content1, content2, null);
+	var c = startCountdown('cntdwn' + countdownnbr++, seconds, content1, content2);
 	document.write(c);
 }

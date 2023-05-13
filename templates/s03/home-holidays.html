@@ -1,26 +1,27 @@
 <!doctype html>
 <html>
     <head>
+    
         <title>[s03] NG Exile</title>
+        
         <link rel="shortcut icon" href="/static/favicon.ico">
+        
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css"
-              rel="stylesheet"
-              integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65"
-              crossorigin="anonymous">
-        <link href="{{ PATH_IMAGES }}styles.css?v=0"
-              type="text/css"
-              rel="stylesheet"
-              media="all"/>
-        <script type="text/javascript">
-            var timers_enabled = true;
-            function alertAbort() { return window.confirm("Êtes-vous sûr de vouloir arrêter le mode vacances ?\r\nVous ne pourrez le réactiver qu'après une semaine de jeu."); }	
-        </script>
+        
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+        <link href="{{ PATH_IMAGES }}styles.css?v=0" type="text/css" rel="stylesheet" media="all"/>
+        
         <script type="text/javascript" src="/static/s03/scripts/common.js"></script>
         <script type="text/javascript" src="/static/s03/scripts/time.js"></script>
+        
+        <script type="text/javascript">
+            function alertAbort() { return window.confirm("Êtes-vous sûr de vouloir arrêter le mode vacances ?\r\nVous ne pourrez le réactiver qu'après une semaine de jeu."); }	
+        </script>
+        
     </head>
     <body>
+    
         <div align="center" class="pt-3">
             <div class="card card-body" style="width:800px;">
                 <div class="mb-3">
@@ -49,12 +50,13 @@
                             <input onclick="return alertAbort()" class="btn btn-primary" type="submit" name="unlock" value="Débloquer">
                         </form>
                     {% else %}
-                        Temps restant avant déblocage: <script>putcountdown1({{user.min_time}},"", "");</script>
+                        Temps restant avant déblocage: <span class="text-yellow"><script>putcountdown1({{user.min_time}},"", "");</script></span>
                         <script>putcountdown2({{user.min_time}},"", "<form method='post' action='?'>{% csrf_token %}<input onclick='return alertAbort()' class='btn btn-primary' type='submit' name='unlock' value='Débloquer'></form>");</script>
                     {% endif %}
                 </div>
             </div>
-        </div>        
+        </div>
+        
         <script async src="https://www.googletagmanager.com/gtag/js?id=G-212X2QX8W5"></script>
         <script>
             window.dataLayer = window.dataLayer || []
@@ -62,8 +64,8 @@
             gtag('js', new Date())
             gtag('config', 'G-212X2QX8W5')
         </script>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
-                integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4"
-                crossorigin="anonymous"></script>
+        
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
+        
     </body>
 </html>

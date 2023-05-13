@@ -15,7 +15,7 @@
                     {% for rank in ranks %}
                         if ($('n{{ rank.rankid }}').value.length <= 2) {
                         
-                            alert('Le nom du grade "' + $('n{{rank.rankid}}').value + '" est trop court : 2 lettres minimum.');
+                            alert('Le nom du grade "' + $('n{{ rank.rankid }}').value + '" est trop court : 2 lettres minimum.');
                             return false;
                         }
                     {% endfor %}

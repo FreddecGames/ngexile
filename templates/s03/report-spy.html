@@ -1,361 +1,368 @@
 {% extends "s03/_layout.html" %}
+
 {% load humanize %}
+
 {% block content %}
-<div class="page-content">
-    <script>
-        function putlevel(level, levels) {
+
+    <div class="page-content">
+    
+        <script>
+            function putlevel(level, levels) {
+            
+                var s = '<img src="{{PATH_IMAGES}}img/research/level' + levels + '_' + level + '.gif" alt="Niveau ' + level + '">';
+                document.write(s);
+            }
+        </script>
         
-            var s = '<img src="{{PATH_IMAGES}}img/research/level' + levels + '_' + level + '.gif" alt="Niveau ' + level + '">';
-            document.write(s);
-        }
-    </script>
-    {% if report.type == 1 %}
-        <div class="card mb-3">
-            <div class="card-header">
-                <span class="fs-6">Rapport d'espionnage</span>
-            </div>
-            <div class="card-body">
-                <div class="row g-1">
-                    {% if report.spotted %}
-                        <div class="col-12">
-                            <span class="text-danger">Attention, nos transmissions ont été repérées et la nation {{ nation }} sait que nous avons opéré pour votre compte.</span>
-                        </div>
-                    {% endif %}
-                    <div class="col-12">
-                        <div class="row gx-3">
-                            <div class="col-3"><span class="text-normal">Date</span></div>
-                            <div class="col-9"><span>{{ report.date }}</span></div>
-                        </div>
-                    </div>
-                    <div class="col-12">
-                        <div class="row gx-3">
-                            <div class="col-3"><span class="text-normal">Nation expionnée</span></div>
-                            <div class="col-9"><span>{{ report.target_name }}</span></div>
-                        </div>
-                    </div>
-                    <div class="col-12">
-                        <div class="row gx-3">
-                            <div class="col-3"><span class="text-normal">Agent</span></div>
-                            <div class="col-9">
-                                {% if report.level == 0 %}<span>Novice</span>
-                                {% elif report.level == 1 %}<span>Initié</span>
-                                {% elif report.level == 2 %}<span>Agent</span>
-                                {% elif report.level == 3 %}<span>Taupe</span>
-                                {% endif %}
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-12">
-                        <div class="row gx-3">
-                            <div class="col-3"><span class="text-normal">Planètes repérées</span></div>
-                            <div class="col-9"><span>{{ planets|length }}</span></div>
-                        </div>
-                    </div>
-                    {% if report.credits %}
-                        <div class="col-12">
-                            <div class="row gx-3">
-                                <div class="col-3"><span class="text-normal">Portefeuille</span></div>
-                                <div class="col-9">
-                                    <img src="{{ PATH_IMAGES }}img/interface/credits.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Crédit" />
-                                    <span>{{ report.credits|intcomma }}</span>
-                                </div>
-                            </div>
-                        </div>
-                    {% endif %}
-                    {% if researches %}
-                        <div class="col-12">
-                            <div class="row gx-3">
-                                <div class="col-3"><span class="text-normal">Recherches connues</span></div>
-                                <div class="col-9"><span>{{ researches|length }}</span></div>
-                            </div>
-                        </div>
-                    {% endif %}
-                </div>
-            </div>
-        </div>
-        {% if researches %}
+        {% if report.type == 1 %}
             <div class="card mb-3">
                 <div class="card-header">
-                    <span class="fs-6">Recherches</span>
+                    <span class="fs-6">Rapport d'espionnage</span>
                 </div>
-                <div class="list-group list-group-flush">
-                    {% for category in categories %}
-                        {% for research in category.researches %}
-                            <div class="list-group-item">
+                <div class="card-body">
+                    <div class="row g-1">
+                        {% if report.spotted %}
+                            <div class="col-12">
+                                <span class="text-danger">Attention, nos transmissions ont été repérées et la nation {{ nation }} sait que nous avons opéré pour votre compte.</span>
+                            </div>
+                        {% endif %}
+                        <div class="col-12">
+                            <div class="row gx-3">
+                                <div class="col-3"><span class="text-normal">Date</span></div>
+                                <div class="col-9"><span>{{ report.date }}</span></div>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="row gx-3">
+                                <div class="col-3"><span class="text-normal">Nation expionnée</span></div>
+                                <div class="col-9"><span>{{ report.target_name }}</span></div>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="row gx-3">
+                                <div class="col-3"><span class="text-normal">Agent</span></div>
+                                <div class="col-9">
+                                    {% if report.level == 0 %}<span>Novice</span>
+                                    {% elif report.level == 1 %}<span>Initié</span>
+                                    {% elif report.level == 2 %}<span>Agent</span>
+                                    {% elif report.level == 3 %}<span>Taupe</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="row gx-3">
+                                <div class="col-3"><span class="text-normal">Planètes repérées</span></div>
+                                <div class="col-9"><span>{{ planets|length }}</span></div>
+                            </div>
+                        </div>
+                        {% if report.credits %}
+                            <div class="col-12">
                                 <div class="row gx-3">
-                                    <div class="col">
-                                        <span>{{ research.label }}</span>
-                                    </div>
-                                    <div class="col-2 text-center">
-                                        <script>putlevel({{research.research_level}},{{research.levels}});</script>
+                                    <div class="col-3"><span class="text-normal">Portefeuille</span></div>
+                                    <div class="col-9">
+                                        <img src="{{ PATH_IMAGES }}img/interface/credits.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Crédit" />
+                                        <span>{{ report.credits|intcomma }}</span>
                                     </div>
                                 </div>
                             </div>
+                        {% endif %}
+                        {% if researches %}
+                            <div class="col-12">
+                                <div class="row gx-3">
+                                    <div class="col-3"><span class="text-normal">Recherches connues</span></div>
+                                    <div class="col-9"><span>{{ researches|length }}</span></div>
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% if researches %}
+                <div class="card mb-3">
+                    <div class="card-header">
+                        <span class="fs-6">Recherches</span>
+                    </div>
+                    <div class="list-group list-group-flush">
+                        {% for category in categories %}
+                            {% for research in category.researches %}
+                                <div class="list-group-item">
+                                    <div class="row gx-3">
+                                        <div class="col">
+                                            <span>{{ research.label }}</span>
+                                        </div>
+                                        <div class="col-2 text-center">
+                                            <script>putlevel({{research.research_level}},{{research.levels}});</script>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
                         {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+            <div class="card mb-3">
+                <div class="card-header">
+                    <span class="fs-6">Planètes</span>
+                </div>
+                <div class="list-group list-group-flush">
+                    {% for planet in planets %}
+                        <div class="list-group-item">
+                            <div class="row gx-3">
+                                <div class="col-1">
+                                    <a href="/s03/map/?g={{ planet.galaxy }}&s={{ planet.sector }}&p={{ planet.planet }}" data-bs-toggle="tooltip" data-bs-title="Carte spatiale">{{ planet.galaxy }}.{{ planet.sector }}.{{ planet.planet }}</a>
+                                </div>
+                                <div class="col">
+                                    <span>{{ planet.planet_name }}</span>
+                                </div>
+                                <div class="col-auto">
+                                    <img src="{{ PATH_IMAGES }}img/interface/floor.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Terrain">
+                                    {{ planet.floor|intcomma }}
+                                </div>
+                                <div class="col-auto">
+                                    <img src="{{ PATH_IMAGES }}img/interface/space.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Espace">
+                                    {{ planet.space|intcomma }}
+                                </div>
+                                <div class="col-auto">
+                                    <img src="{{ PATH_IMAGES }}img/interface/ore.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Minerai">
+                                    {{ planet.pct_ore|intcomma }}%
+                                </div>
+                                <div class="col-auto">
+                                    <img src="{{ PATH_IMAGES }}img/interface/hydrocarbon.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Hydrocarbure">
+                                    {{ planet.pct_hydrocarbon|intcomma }}%
+                                </div>
+                                <div class="col-auto">
+                                    <img src="{{ PATH_IMAGES }}img/interface/fleets.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Vaisseaux au sol">
+                                    {{ planet.ground|intcomma }}
+                                </div>
+                            </div>
+                        </div>
                     {% endfor %}
                 </div>
             </div>
-        {% endif %}
-        <div class="card mb-3">
-            <div class="card-header">
-                <span class="fs-6">Planètes</span>
-            </div>
-            <div class="list-group list-group-flush">
-                {% for planet in planets %}
-                    <div class="list-group-item">
-                        <div class="row gx-3">
-                            <div class="col-1">
-                                <a href="/s03/map/?g={{ planet.galaxy }}&s={{ planet.sector }}&p={{ planet.planet }}" data-bs-toggle="tooltip" data-bs-title="Carte spatiale">{{ planet.galaxy }}.{{ planet.sector }}.{{ planet.planet }}</a>
-                            </div>
-                            <div class="col">
-                                <span>{{ planet.planet_name }}</span>
-                            </div>
-                            <div class="col-auto">
-                                <img src="{{ PATH_IMAGES }}img/interface/floor.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Terrain">
-                                {{ planet.floor|intcomma }}
-                            </div>
-                            <div class="col-auto">
-                                <img src="{{ PATH_IMAGES }}img/interface/space.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Espace">
-                                {{ planet.space|intcomma }}
-                            </div>
-                            <div class="col-auto">
-                                <img src="{{ PATH_IMAGES }}img/interface/ore.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Minerai">
-                                {{ planet.pct_ore|intcomma }}%
-                            </div>
-                            <div class="col-auto">
-                                <img src="{{ PATH_IMAGES }}img/interface/hydrocarbon.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Hydrocarbure">
-                                {{ planet.pct_hydrocarbon|intcomma }}%
-                            </div>
-                            <div class="col-auto">
-                                <img src="{{ PATH_IMAGES }}img/interface/fleets.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Vaisseaux au sol">
-                                {{ planet.ground|intcomma }}
-                            </div>
-                        </div>
-                    </div>
-                {% endfor %}
-            </div>
-        </div>
-    {% elif report.type == 3 %}
-        <div class="card mb-3">
-            <div class="card-header">
-                <span class="fs-6">Rapport d'espionnage</span>
-            </div>
-            <div class="card-body">
-                <div class="row g-1">
-                    {% if report.spotted %}
-                        <div class="col-12">
-                            <span class="text-danger">Attention, nos transmissions ont été repérées et la nation {{ nation }} sait que nous avons opéré pour votre compte.</span>
-                        </div>
-                    {% endif %}
-                    <div class="col-12">
-                        <div class="row gx-3">
-                            <div class="col-3"><span class="text-normal">Date</span></div>
-                            <div class="col-9"><span>{{ report.date }}</span></div>
-                        </div>
-                    </div>
-                    <div class="col-12">
-                        <div class="row gx-3">
-                            <div class="col-3"><span class="text-normal">Planète espionnée</span></div>
-                            <div class="col-9"><span>{{ planet.planet_name }}</span></div>
-                        </div>
-                    </div>
-                    <div class="col-12">
-                        <div class="row gx-3">
-                            <div class="col-3"><span class="text-normal">Agent</span></div>
-                            <div class="col-9">
-                                {% if report.level == 0 %}<span>Novice</span>
-                                {% elif report.level == 1 %}<span>Initié</span>
-                                {% elif report.level == 2 %}<span>Agent</span>
-                                {% elif report.level == 3 %}<span>Taupe</span>
-                                {% endif %}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="card">
-            <div class="card-header">
-                <span class="fs-6">Informations générales</span>
-            </div>
-            <div class="card-body">
-                <div class="row g-1">
-                    <div class="col-12">
-                        <div class="row gx-3">
-                            <div class="col-3"><span class="text-normal">Nom</span></div>
-                            <div class="col-9"><span>{{ planet.planet_name }}</span></div>
-                        </div>
-                    </div>
-                    <div class="col-12">
-                        <div class="row gx-3">
-                            <div class="col-3"><span class="text-normal">Localisation</span></div>
-                            <div class="col-9"><a href="/s03/map/?g={{ planet.galaxy }}&s={{ planet.sector }}&p={{ planet.planet }}" data-bs-toggle="tooltip" data-bs-title="Carte spatiale">{{ planet.galaxy }}.{{ planet.sector }}.{{ planet.planet }}</a></div>
-                        </div>
-                    </div>
-                    <div class="col-12">
-                        <div class="row gx-3">
-                            <div class="col-3"><span class="text-normal">Propriétaire</span></div>
-                            <div class="col-9">
-                                {% if planet.owner_name %}<span>{{ planet.owner_name }}</span>
-                                {% else %}<span class="text-normal">aucun</span>
-                                {% endif %}
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-12">
-                        <div class="row gx-3">
-                            <div class="col-3"><span class="text-normal">Terrains</span></div>
-                            <div class="col-9"><span>{{ planet.floor }}</span></div>
-                        </div>
-                    </div>
-                    <div class="col-12">
-                        <div class="row gx-3">
-                            <div class="col-3"><span class="text-normal">Espace</span></div>
-                            <div class="col-9"><span>{{ planet.space }}</span></div>
-                        </div>
-                    </div>
-                    {% if planet.radar_strength != None %}
-                        <div class="col-12">
-                            <div class="row gx-3">
-                                <div class="col-3"><span class="text-normal">Abondance minerai</span></div>
-                                <div class="col-9"><span>{{ planet.pct_ore }}%</span></div>
-                            </div>
-                        </div>
-                        <div class="col-12">
-                            <div class="row gx-3">
-                                <div class="col-3"><span class="text-normal">Abondance hydrocarbure</span></div>
-                                <div class="col-9"><span>{{ planet.pct_hydrocarbon }}%</span></div>
-                            </div>
-                        </div>
-                    {% endif %}
-                    <div class="col-12">
-                        <div class="row gx-3">
-                            <div class="col-3"><span class="text-normal">Signature au sol</span></div>
-                            <div class="col-9">
-                                {% if planet.ground != None %}<span>{{ planet.ground|intcomma }}</span>
-                                {% else %}<span class="text-normal">-</span>
-                                {% endif %}
-                            </div>
-                        </div>
-                    </div>
-                    {% if planet.ore_production != None %}
-                        <div class="col-12">
-                            <div class="row gx-3">
-                                <div class="col-3"><span class="text-normal">Production minerai</span></div>
-                                <div class="col-9"><span>{{ planet.ore_production|intcomma }}</span></div>
-                            </div>
-                        </div>
-                        <div class="col-12">
-                            <div class="row gx-3">
-                                <div class="col-3"><span class="text-normal">Production hydrocarbure</span></div>
-                                <div class="col-9"><span>{{ planet.hydrocarbon_production|intcomma }}</span></div>
-                            </div>
-                        </div>
-                        <div class="col-12">
-                            <div class="row gx-3">
-                                <div class="col-3"><span class="text-normal">Reserve / Capacité minerai</span></div>
-                                <div class="col-9"><span>{{ planet.ore|intcomma }} / {{ planet.ore_capacity|intcomma }}</span></div>
-                            </div>
-                        </div>
-                        <div class="col-12">
-                            <div class="row gx-3">
-                                <div class="col-3"><span class="text-normal">Reserve / Capacité hydrocarbure</span></div>
-                                <div class="col-9"><span>{{ planet.hydrocarbon|intcomma }} / {{ planet.hydrocarbon_capacity|intcomma }}</span></div>
-                            </div>
-                        </div>
-                        <div class="col-12">
-                            <div class="row gx-3">
-                                <div class="col-3"><span class="text-normal">Consommation / Production énergie</span></div>
-                                <div class="col-9"><span>{{ planet.energy_consumption|intcomma }} / {{ planet.energy_production|intcomma }}</span></div>
-                            </div>
-                        </div>
-                    {% endif %}
-                    {% if planet.radar_strength != None %}
-                        <div class="col-12">
-                            <div class="row gx-3">
-                                <div class="col-3"><span class="text-normal">Puissance radar</span></div>
-                                <div class="col-9"><span>{{ planet.radar_strength }}</span></div>
-                            </div>
-                        </div>
-                        <div class="col-12">
-                            <div class="row gx-3">
-                                <div class="col-3"><span class="text-normal">Puissance du brouillage</span></div>
-                                <div class="col-9"><span>{{ planet.radar_jamming }}</span></div>
-                            </div>
-                        </div>
-                        <div class="col-12">
-                            <div class="row gx-3">
-                                <div class="col-3"><span class="text-normal">Minerai en orbite</span></div>
-                                <div class="col-9"><span>{{ planet.orbit_ore|intcomma }}</span></div>
-                            </div>
-                        </div>
-                        <div class="col-12">
-                            <div class="row gx-3">
-                                <div class="col-3"><span class="text-normal">Hydrocarbure en orbite</span></div>
-                                <div class="col-9"><span>{{ planet.orbit_hydrocarbon|intcomma }}</span></div>
-                            </div>
-                        </div>
-                    {% endif %}
-                    {% if planet.workers != None %}
-                        <div class="col-12">
-                            <div class="row gx-3">
-                                <div class="col-3"><span class="text-normal">Effectif / Capacité travailleurs</span></div>
-                                <div class="col-9"><span>{{ planet.workers }} / {{ planet.workers_capacity }}</span></div>
-                            </div>
-                        </div>
-                        <div class="col-12">
-                            <div class="row gx-3">
-                                <div class="col-3"><span class="text-normal">Effectif / Capacité scientifiques</span></div>
-                                <div class="col-9"><span>{{ planet.scientists }} / {{ planet.scientists_capacity }}</span></div>
-                            </div>
-                        </div>
-                        <div class="col-12">
-                            <div class="row gx-3">
-                                <div class="col-3"><span class="text-normal">Effectif / Capacité soldats</span></div>
-                                <div class="col-9"><span>{{ planet.soldiers }} / {{ planet.soldiers_capacity }}</span></div>
-                            </div>
-                        </div>
-                    {% endif %}
-                </div>
-            </div>
-        </div>
-        {% if buildings %}
-            <div class="card mt-3">
+        {% elif report.type == 3 %}
+            <div class="card mb-3">
                 <div class="card-header">
-                    <span class="fs-6">Batiments</span>
+                    <span class="fs-6">Rapport d'espionnage</span>
                 </div>
                 <div class="card-body">
-                    <div class="row gx-3 gy-1">
-                        {% for building in buildings %}
-                            <div class="col-4">
-                                <span>{{ building.label }}</span>
-                                <small class="mx-1 text-normal">x</small>
-                                <span>{{ building.quantity }}</span>
-                            </div>
-                        {% endfor %}
-                    </div>
-                </div>
-            </div>
-        {% endif %}
-        {% if pendings %}
-            <div class="card mt-3">
-                <div class="card-header">
-                    <span class="fs-6">Constructions en cours</span>
-                </div>
-                <div class="card-body">
-                    <div class="row gx-3 gy-1">
-                        {% for building in pendings %}
+                    <div class="row g-1">
+                        {% if report.spotted %}
                             <div class="col-12">
-                                <div class="row gx-3">
-                                    <div class="col">{{ building.label }}</div>
-                                    <div class="col-auto">{{ building.endtime }}</div>
+                                <span class="text-danger">Attention, nos transmissions ont été repérées et la nation {{ nation }} sait que nous avons opéré pour votre compte.</span>
+                            </div>
+                        {% endif %}
+                        <div class="col-12">
+                            <div class="row gx-3">
+                                <div class="col-3"><span class="text-normal">Date</span></div>
+                                <div class="col-9"><span>{{ report.date }}</span></div>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="row gx-3">
+                                <div class="col-3"><span class="text-normal">Planète espionnée</span></div>
+                                <div class="col-9"><span>{{ planet.planet_name }}</span></div>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="row gx-3">
+                                <div class="col-3"><span class="text-normal">Agent</span></div>
+                                <div class="col-9">
+                                    {% if report.level == 0 %}<span>Novice</span>
+                                    {% elif report.level == 1 %}<span>Initié</span>
+                                    {% elif report.level == 2 %}<span>Agent</span>
+                                    {% elif report.level == 3 %}<span>Taupe</span>
+                                    {% endif %}
                                 </div>
                             </div>
-                        {% endfor %}
+                        </div>
                     </div>
                 </div>
             </div>
+            <div class="card">
+                <div class="card-header">
+                    <span class="fs-6">Informations générales</span>
+                </div>
+                <div class="card-body">
+                    <div class="row g-1">
+                        <div class="col-12">
+                            <div class="row gx-3">
+                                <div class="col-3"><span class="text-normal">Nom</span></div>
+                                <div class="col-9"><span>{{ planet.planet_name }}</span></div>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="row gx-3">
+                                <div class="col-3"><span class="text-normal">Localisation</span></div>
+                                <div class="col-9"><a href="/s03/map/?g={{ planet.galaxy }}&s={{ planet.sector }}&p={{ planet.planet }}" data-bs-toggle="tooltip" data-bs-title="Carte spatiale">{{ planet.galaxy }}.{{ planet.sector }}.{{ planet.planet }}</a></div>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="row gx-3">
+                                <div class="col-3"><span class="text-normal">Propriétaire</span></div>
+                                <div class="col-9">
+                                    {% if planet.owner_name %}<span>{{ planet.owner_name }}</span>
+                                    {% else %}<span class="text-normal">aucun</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="row gx-3">
+                                <div class="col-3"><span class="text-normal">Terrains</span></div>
+                                <div class="col-9"><span>{{ planet.floor }}</span></div>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="row gx-3">
+                                <div class="col-3"><span class="text-normal">Espace</span></div>
+                                <div class="col-9"><span>{{ planet.space }}</span></div>
+                            </div>
+                        </div>
+                        {% if planet.radar_strength != None %}
+                            <div class="col-12">
+                                <div class="row gx-3">
+                                    <div class="col-3"><span class="text-normal">Abondance minerai</span></div>
+                                    <div class="col-9"><span>{{ planet.pct_ore }}%</span></div>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="row gx-3">
+                                    <div class="col-3"><span class="text-normal">Abondance hydrocarbure</span></div>
+                                    <div class="col-9"><span>{{ planet.pct_hydrocarbon }}%</span></div>
+                                </div>
+                            </div>
+                        {% endif %}
+                        <div class="col-12">
+                            <div class="row gx-3">
+                                <div class="col-3"><span class="text-normal">Signature au sol</span></div>
+                                <div class="col-9">
+                                    {% if planet.ground != None %}<span>{{ planet.ground|intcomma }}</span>
+                                    {% else %}<span class="text-normal">-</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        {% if planet.ore_production != None %}
+                            <div class="col-12">
+                                <div class="row gx-3">
+                                    <div class="col-3"><span class="text-normal">Production minerai</span></div>
+                                    <div class="col-9"><span>{{ planet.ore_production|intcomma }}</span></div>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="row gx-3">
+                                    <div class="col-3"><span class="text-normal">Production hydrocarbure</span></div>
+                                    <div class="col-9"><span>{{ planet.hydrocarbon_production|intcomma }}</span></div>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="row gx-3">
+                                    <div class="col-3"><span class="text-normal">Reserve / Capacité minerai</span></div>
+                                    <div class="col-9"><span>{{ planet.ore|intcomma }} / {{ planet.ore_capacity|intcomma }}</span></div>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="row gx-3">
+                                    <div class="col-3"><span class="text-normal">Reserve / Capacité hydrocarbure</span></div>
+                                    <div class="col-9"><span>{{ planet.hydrocarbon|intcomma }} / {{ planet.hydrocarbon_capacity|intcomma }}</span></div>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="row gx-3">
+                                    <div class="col-3"><span class="text-normal">Consommation / Production énergie</span></div>
+                                    <div class="col-9"><span>{{ planet.energy_consumption|intcomma }} / {{ planet.energy_production|intcomma }}</span></div>
+                                </div>
+                            </div>
+                        {% endif %}
+                        {% if planet.radar_strength != None %}
+                            <div class="col-12">
+                                <div class="row gx-3">
+                                    <div class="col-3"><span class="text-normal">Puissance radar</span></div>
+                                    <div class="col-9"><span>{{ planet.radar_strength }}</span></div>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="row gx-3">
+                                    <div class="col-3"><span class="text-normal">Puissance du brouillage</span></div>
+                                    <div class="col-9"><span>{{ planet.radar_jamming }}</span></div>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="row gx-3">
+                                    <div class="col-3"><span class="text-normal">Minerai en orbite</span></div>
+                                    <div class="col-9"><span>{{ planet.orbit_ore|intcomma }}</span></div>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="row gx-3">
+                                    <div class="col-3"><span class="text-normal">Hydrocarbure en orbite</span></div>
+                                    <div class="col-9"><span>{{ planet.orbit_hydrocarbon|intcomma }}</span></div>
+                                </div>
+                            </div>
+                        {% endif %}
+                        {% if planet.workers != None %}
+                            <div class="col-12">
+                                <div class="row gx-3">
+                                    <div class="col-3"><span class="text-normal">Effectif / Capacité travailleurs</span></div>
+                                    <div class="col-9"><span>{{ planet.workers }} / {{ planet.workers_capacity }}</span></div>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="row gx-3">
+                                    <div class="col-3"><span class="text-normal">Effectif / Capacité scientifiques</span></div>
+                                    <div class="col-9"><span>{{ planet.scientists }} / {{ planet.scientists_capacity }}</span></div>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="row gx-3">
+                                    <div class="col-3"><span class="text-normal">Effectif / Capacité soldats</span></div>
+                                    <div class="col-9"><span>{{ planet.soldiers }} / {{ planet.soldiers_capacity }}</span></div>
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% if buildings %}
+                <div class="card mt-3">
+                    <div class="card-header">
+                        <span class="fs-6">Batiments</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="row gx-3 gy-1">
+                            {% for building in buildings %}
+                                <div class="col-4">
+                                    <span>{{ building.label }}</span>
+                                    <small class="mx-1 text-normal">x</small>
+                                    <span>{{ building.quantity }}</span>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+            {% if pendings %}
+                <div class="card mt-3">
+                    <div class="card-header">
+                        <span class="fs-6">Constructions en cours</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="row gx-3 gy-1">
+                            {% for building in pendings %}
+                                <div class="col-12">
+                                    <div class="row gx-3">
+                                        <div class="col">{{ building.label }}</div>
+                                        <div class="col-auto">{{ building.endtime }}</div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
         {% endif %}
-    {% endif %}
-</div>
+
+    </div>
+
 {% endblock %}

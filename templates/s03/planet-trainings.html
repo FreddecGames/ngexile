@@ -1,195 +1,203 @@
 {% extends "s03/_layout.html" %}
+
 {% load humanize %}
+
 {% block content %}
+
     {% include "s03/planet-tabs.html" %}
 
-<div class="scroll-content" style="height:calc(100% - 158px);">
-<div class="page-content">
-<script>
-    function updateNeeds() {
-    
-        var sc = getval('scientists');
-        var so = getval('soldiers');
+    <div class="scroll-content" style="height:calc(100% - 158px);">
+        <div class="page-content">
+        
+            <script>
+                function updateNeeds() {
+                
+                    var sc = getval('scientists');
+                    var so = getval('soldiers');
 
-        var ore = sc * {{prices.scientist_ore}} + so * {{prices.soldier_ore}};
-        var hydro = sc * {{prices.scientist_hydrocarbon}} + so * {{prices.soldier_hydrocarbon}};
-        var credits = sc * {{prices.scientist_credits}} + so * {{prices.soldier_credits}};
+                    var ore = sc * {{prices.scientist_ore}} + so * {{prices.soldier_ore}};
+                    var hydro = sc * {{prices.scientist_hydrocarbon}} + so * {{prices.soldier_hydrocarbon}};
+                    var credits = sc * {{prices.scientist_credits}} + so * {{prices.soldier_credits}};
 
-        $('totalore').innerHTML = formatnumber(ore);
-        $('totalhydrocarbon').innerHTML = formatnumber(hydro);
-        $('totalcredits').innerHTML = formatnumber(credits);
-    }
-</script>
-{% if trainings %}
-<div class="card mb-3">
-    <div class="card-header">
-        <span class="fs-6">En cours</span>
-    </div>
-    <div class="list-group list-group-flush">
-        {% for item in trainings %}
-            <div class="list-group-item bg-success">
-                <div class="row gx-3 align-items-center">
-                    <div class="col">
-                        {% if item.scientists %}
-                            <img src="{{ PATH_IMAGES }}img/interface/scientists.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Scientifique" />
-                            <a href="/s03/help/#scientists" data-bs-toggle="tooltip" data-bs-title="Voir aide">Scientifiques</a>
-                        {% endif %}
-                        {% if item.soldiers %}
-                            <img src="{{ PATH_IMAGES }}img/interface/soldiers.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Soldat" />
-                            <a href="/s03/help/#soldiers" data-bs-toggle="tooltip" data-bs-title="Voir aide">Soldats</a>
-                        {% endif %}
+                    $('totalore').innerHTML = formatnumber(ore);
+                    $('totalhydrocarbon').innerHTML = formatnumber(hydro);
+                    $('totalcredits').innerHTML = formatnumber(credits);
+                }
+            </script>
+            
+            {% if trainings %}
+                <div class="card mb-3">
+                    <div class="card-header">
+                        <span class="fs-6">En cours</span>
                     </div>
-                    <div class="col-auto">
-                        <small class="text-normal">x</small>
-                        {% if item.scientists %}{{ item.scientists|intcomma }}{% endif %}
-                        {% if item.soldiers %}{{ item.soldiers|intcomma }}{% endif %}
-                    </div>
-                    <div class="col-auto">
-                        <span class="text-yellow"><script>putcountdown1({{ item.remainingtime }}, "");</script></span>
-                    </div>
-                    <div class="col-auto">
-                        <script>
-                            let html = ''
-                            html += '<form method="post" action="">'
-                                html += '{% csrf_token %}'
-                                html += '<input type="hidden" name="action" value="cancel" />'
-                                html += '<input type="hidden" name="q" value="{{ item.id }}" />'
-                                html += '<button type="submit" class="btn btn-link text-danger p-0" data-bs-toggle="tooltip" data-bs-title="Annuler"><i class="fa-fw fas fa-times"></i></button>'
-                            html += '</form>'
-                            putcountdown2({{ item.remainingtime }}, html, "<a href='/s03/planet-trainings/'>Terminé</a>");
-                        </script>
+                    <div class="list-group list-group-flush">
+                        {% for item in trainings %}
+                            <div class="list-group-item bg-success">
+                                <div class="row gx-3 align-items-center">
+                                    <div class="col">
+                                        {% if item.scientists %}
+                                            <img src="{{ PATH_IMAGES }}img/interface/scientists.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Scientifique" />
+                                            <a href="/s03/help/#scientists" data-bs-toggle="tooltip" data-bs-title="Voir aide">Scientifiques</a>
+                                        {% endif %}
+                                        {% if item.soldiers %}
+                                            <img src="{{ PATH_IMAGES }}img/interface/soldiers.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Soldat" />
+                                            <a href="/s03/help/#soldiers" data-bs-toggle="tooltip" data-bs-title="Voir aide">Soldats</a>
+                                        {% endif %}
+                                    </div>
+                                    <div class="col-auto">
+                                        <small class="text-normal">x</small>
+                                        {% if item.scientists %}{{ item.scientists|intcomma }}{% endif %}
+                                        {% if item.soldiers %}{{ item.soldiers|intcomma }}{% endif %}
+                                    </div>
+                                    <div class="col-auto">
+                                        <span class="text-yellow"><script>putcountdown1({{ item.remainingtime }}, "");</script></span>
+                                    </div>
+                                    <div class="col-auto">
+                                        <script>
+                                            let html = ''
+                                            html += '<form method="post" action="">'
+                                                html += '{% csrf_token %}'
+                                                html += '<input type="hidden" name="action" value="cancel" />'
+                                                html += '<input type="hidden" name="q" value="{{ item.id }}" />'
+                                                html += '<button type="submit" class="btn btn-link text-danger p-0" data-bs-toggle="tooltip" data-bs-title="Annuler"><i class="fa-fw fas fa-times"></i></button>'
+                                            html += '</form>'
+                                            putcountdown2({{ item.remainingtime }}, html, "<a href='/s03/planet-trainings/'>Terminé</a>");
+                                        </script>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                        {% for item in queues %}
+                            <div class="list-group-item">
+                                <div class="row gx-3 align-items-center">
+                                    <div class="col">
+                                        {% if item.scientists %}
+                                            <img src="{{ PATH_IMAGES }}img/interface/scientists.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Scientifique" />
+                                            <a href="/s03/help/#scientists" data-bs-toggle="tooltip" data-bs-title="Voir aide">Scientifiques</a>
+                                        {% endif %}
+                                        {% if item.soldiers %}
+                                            <img src="{{ PATH_IMAGES }}img/interface/soldiers.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Soldat" />
+                                            <a href="/s03/help/#soldiers" data-bs-toggle="tooltip" data-bs-title="Voir aide">Soldats</a>
+                                        {% endif %}
+                                    </div>
+                                    <div class="col-auto">
+                                        <small class="text-normal">x</small>
+                                        {% if item.scientists %}{{ item.scientists|intcomma }}{% endif %}
+                                        {% if item.soldiers %}{{ item.soldiers|intcomma }}{% endif %}
+                                    </div>
+                                    <div class="col-auto">
+                                        {% if item.scientists %}<script>document.write(formattime({{item.scientists_remainingtime }}))</script>{% endif %}
+                                        {% if item.soldiers %}<script>document.write(formattime({{item.soldiers_remainingtime }}))</script>{% endif %}
+                                    </div>
+                                    <div class="col-auto">
+                                        <form method="post" action="">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="action" value="cancel" />
+                                            <input type="hidden" name="q" value="{{ item.id }}" />
+                                            <button type="submit" class="btn btn-link text-danger p-0" data-bs-toggle="tooltip" data-bs-title="Annuler"><i class="fa-fw fas fa-times"></i></button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
                     </div>
                 </div>
-            </div>
-        {% endfor %}
-        {% for item in queues %}
-            <div class="list-group-item">
-                <div class="row gx-3 align-items-center">
-                    <div class="col">
-                        {% if item.scientists %}
-                            <img src="{{ PATH_IMAGES }}img/interface/scientists.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Scientifique" />
-                            <a href="/s03/help/#scientists" data-bs-toggle="tooltip" data-bs-title="Voir aide">Scientifiques</a>
-                        {% endif %}
-                        {% if item.soldiers %}
-                            <img src="{{ PATH_IMAGES }}img/interface/soldiers.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Soldat" />
-                            <a href="/s03/help/#soldiers" data-bs-toggle="tooltip" data-bs-title="Voir aide">Soldats</a>
-                        {% endif %}
+            {% endif %}
+            
+            <form method="post" action="">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="train" />
+                <div class="card mb-3">
+                    <div class="card-header">
+                        <span class="fs-6">Entraînements</span>
                     </div>
-                    <div class="col-auto">
-                        <small class="text-normal">x</small>
-                        {% if item.scientists %}{{ item.scientists|intcomma }}{% endif %}
-                        {% if item.soldiers %}{{ item.soldiers|intcomma }}{% endif %}
-                    </div>
-                    <div class="col-auto">
-                        {% if item.scientists %}<script>document.write(formattime({{item.scientists_remainingtime }}))</script>{% endif %}
-                        {% if item.soldiers %}<script>document.write(formattime({{item.soldiers_remainingtime }}))</script>{% endif %}
-                    </div>
-                    <div class="col-auto">
-                        <form method="post" action="">
-                            {% csrf_token %}
-                            <input type="hidden" name="action" value="cancel" />
-                            <input type="hidden" name="q" value="{{ item.id }}" />
-                            <button type="submit" class="btn btn-link text-danger p-0" data-bs-toggle="tooltip" data-bs-title="Annuler"><i class="fa-fw fas fa-times"></i></button>
-                        </form>
+                    <div class="list-group list-group-flush">
+                        <div class="list-group-item">
+                            <div class="row gx-3 align-items-center">
+                                <div class="col">
+                                    <img src="{{ PATH_IMAGES }}img/interface/scientists.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Scientifique" />
+                                    <a href="/s03/help/#scientists" data-bs-toggle="tooltip" data-bs-title="Voir aide">Scientifiques</a>
+                                </div>
+                                <div class="col-auto" style="width:200px;">
+                                    {{ planet.scientists|intcomma }}
+                                    <small class="text-normal">/{{ planet.scientists_capacity|intcomma }}</small>
+                                </div>
+                                <div class="col-auto" style="width:100px;">
+                                    <img src="{{ PATH_IMAGES }}img/interface/ore.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Minerai" />
+                                    <span>{{ prices.scientist_ore|intcomma }}</span>
+                                </div>
+                                <div class="col-auto" style="width:100px;">
+                                    <img src="{{ PATH_IMAGES }}img/interface/hydrocarbon.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Hydrocarbure" />
+                                    <span>{{ prices.scientist_hydrocarbon|intcomma }}</span>
+                                </div>
+                                <div class="col-auto" style="width:100px;">
+                                    <img src="{{ PATH_IMAGES }}img/interface/credits.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Crédit" />
+                                    <span>{{ prices.scientist_credits|intcomma }}</span>
+                                </div>
+                                <div class="col-auto text-end" style="width:110px;">
+                                    {% if planet.scientists < planet.scientists_capacity %}
+                                        <input type="number" class="form-control" style="max-width:100%;" min="0" name="scientists" onkeyup="updateNeeds()" size="5" maxlength="5" />
+                                    {% else %}
+                                        <span class="text-danger">Maximum atteint</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="list-group-item">
+                            <div class="row gx-3 align-items-center">
+                                <div class="col">
+                                    <img src="{{ PATH_IMAGES }}img/interface/soldiers.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Soldat" />
+                                    <a href="/s03/help/#soldiers" data-bs-toggle="tooltip" data-bs-title="Voir aide">Soldats</a>
+                                </div>
+                                <div class="col-auto" style="width:200px;">
+                                    {{ planet.soldiers|intcomma }}
+                                    <small class="text-normal">/{{ planet.soldiers_capacity|intcomma }}</small>
+                                </div>
+                                <div class="col-auto" style="width:100px;">
+                                    <img src="{{ PATH_IMAGES }}img/interface/ore.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Minerai" />
+                                    <span>{{ prices.soldier_ore|intcomma }}</span>
+                                </div>
+                                <div class="col-auto" style="width:100px;">
+                                    <img src="{{ PATH_IMAGES }}img/interface/hydrocarbon.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Hydrocarbure" />
+                                    <span>{{ prices.soldier_hydrocarbon|intcomma }}</span>
+                                </div>
+                                <div class="col-auto" style="width:100px;">
+                                    <img src="{{ PATH_IMAGES }}img/interface/credits.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Credit" />
+                                    <span>{{ prices.soldier_credits|intcomma }}</span>
+                                </div>
+                                <div class="col-auto text-end" style="width:110px;">
+                                    {% if planet.soldiers < planet.soldiers_capacity %}
+                                        <input type="number" class="form-control" style="max-width:100%;" min="0" name="soldiers" onkeyup="updateNeeds()" size="5" maxlength="5" />
+                                    {% else %}
+                                        <span class="text-danger">Maximum atteint</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
-        {% endfor %}
-    </div>
-</div>
-{% endif %}
-<form method="post" action="">
-    {% csrf_token %}
-    <input type="hidden" name="action" value="train" />
-    <div class="card mb-3">
-        <div class="card-header">
-            <span class="fs-6">Entraînements</span>
+                <div class="card card-body">
+                    <div class="row gx-3 align-items-center justify-content-end">
+                        <div class="col-auto" style="width:100px;">
+                            <img src="{{ PATH_IMAGES }}img/interface/ore.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Minerai" />
+                            <span id="totalore">0</span>
+                        </div>
+                        <div class="col-auto" style="width:100px;">
+                            <img src="{{ PATH_IMAGES }}img/interface/hydrocarbon.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Hydrocarbure" />
+                            <span id="totalhydrocarbon">0</span>
+                        </div>
+                        <div class="col-auto" style="width:100px;">
+                            <img src="{{ PATH_IMAGES }}img/interface/credits.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Credit" />
+                            <span id="totalcredits">0</span>
+                        </div>
+                        <div class="col-auto" style="width:110px;">
+                            <input type="submit" class="w-100 btn btn-primary" value="Entraîner" />
+                        </div>
+                    </div>
+                </div>
+            </form>
+
         </div>
-        <div class="list-group list-group-flush">
-            <div class="list-group-item">
-                <div class="row gx-3 align-items-center">
-                    <div class="col">
-                        <img src="{{ PATH_IMAGES }}img/interface/scientists.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Scientifique" />
-                        <a href="/s03/help/#scientists" data-bs-toggle="tooltip" data-bs-title="Voir aide">Scientifiques</a>
-                    </div>
-                    <div class="col-auto" style="width:200px;">
-                        {{ planet.scientists|intcomma }}
-                        <small class="text-normal">/{{ planet.scientists_capacity|intcomma }}</small>
-                    </div>
-                    <div class="col-auto" style="width:100px;">
-                        <img src="{{ PATH_IMAGES }}img/interface/ore.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Minerai" />
-                        <span>{{ prices.scientist_ore|intcomma }}</span>
-                    </div>
-                    <div class="col-auto" style="width:100px;">
-                        <img src="{{ PATH_IMAGES }}img/interface/hydrocarbon.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Hydrocarbure" />
-                        <span>{{ prices.scientist_hydrocarbon|intcomma }}</span>
-                    </div>
-                    <div class="col-auto" style="width:100px;">
-                        <img src="{{ PATH_IMAGES }}img/interface/credits.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Crédit" />
-                        <span>{{ prices.scientist_credits|intcomma }}</span>
-                    </div>
-                    <div class="col-auto text-end" style="width:110px;">
-                        {% if planet.scientists < planet.scientists_capacity %}
-                            <input type="number" class="form-control" style="max-width:100%;" min="0" name="scientists" onkeyup="updateNeeds()" size="5" maxlength="5" />
-                        {% else %}
-                            <span class="text-danger">Maximum atteint</span>
-                        {% endif %}
-                    </div>
-                </div>
-            </div>
-            <div class="list-group-item">
-                <div class="row gx-3 align-items-center">
-                    <div class="col">
-                        <img src="{{ PATH_IMAGES }}img/interface/soldiers.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Soldat" />
-                        <a href="/s03/help/#soldiers" data-bs-toggle="tooltip" data-bs-title="Voir aide">Soldats</a>
-                    </div>
-                    <div class="col-auto" style="width:200px;">
-                        {{ planet.soldiers|intcomma }}
-                        <small class="text-normal">/{{ planet.soldiers_capacity|intcomma }}</small>
-                    </div>
-                    <div class="col-auto" style="width:100px;">
-                        <img src="{{ PATH_IMAGES }}img/interface/ore.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Minerai" />
-                        <span>{{ prices.soldier_ore|intcomma }}</span>
-                    </div>
-                    <div class="col-auto" style="width:100px;">
-                        <img src="{{ PATH_IMAGES }}img/interface/hydrocarbon.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Hydrocarbure" />
-                        <span>{{ prices.soldier_hydrocarbon|intcomma }}</span>
-                    </div>
-                    <div class="col-auto" style="width:100px;">
-                        <img src="{{ PATH_IMAGES }}img/interface/credits.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Credit" />
-                        <span>{{ prices.soldier_credits|intcomma }}</span>
-                    </div>
-                    <div class="col-auto text-end" style="width:110px;">
-                        {% if planet.soldiers < planet.soldiers_capacity %}
-                            <input type="number" class="form-control" style="max-width:100%;" min="0" name="soldiers" onkeyup="updateNeeds()" size="5" maxlength="5" />
-                        {% else %}
-                            <span class="text-danger">Maximum atteint</span>
-                        {% endif %}
-                    </div>
-                </div>
-            </div>
-        </div>
     </div>
-    <div class="card card-body">
-        <div class="row gx-3 align-items-center justify-content-end">
-            <div class="col-auto" style="width:100px;">
-                <img src="{{ PATH_IMAGES }}img/interface/ore.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Minerai" />
-                <span id="totalore">0</span>
-            </div>
-            <div class="col-auto" style="width:100px;">
-                <img src="{{ PATH_IMAGES }}img/interface/hydrocarbon.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Hydrocarbure" />
-                <span id="totalhydrocarbon">0</span>
-            </div>
-            <div class="col-auto" style="width:100px;">
-                <img src="{{ PATH_IMAGES }}img/interface/credits.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Credit" />
-                <span id="totalcredits">0</span>
-            </div>
-            <div class="col-auto" style="width:110px;">
-                <input type="submit" class="w-100 btn btn-primary" value="Entraîner" />
-            </div>
-        </div>
-    </div>
-</form>
-</div>
-</div>
+
 {% endblock %}

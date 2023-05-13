@@ -1,635 +1,648 @@
 {% extends "s03/_layout.html" %}
+
 {% load humanize %}
+
 {% block content %}
-<div class="page-content">
-    <ul class="nav nav-tabs mt-0 mb-3">
-        <li class="nav-item {% if general %}active{% endif %}">
-            <a href="/s03/help/?" class="nav-link">Aide générale</a>
-        </li>
-        <li class="nav-item {% if buildings %}active{% endif %}">
-            <a href="/s03/help/?cat=buildings" class="nav-link">Bâtiments</a>
-        </li>
-        <li class="nav-item {% if research %}active{% endif %}">
-            <a href="/s03/help/?cat=research" class="nav-link">Recherches</a>
-        </li>
-        <li class="nav-item {% if ships %}active{% endif %}">
-            <a href="/s03/help/?cat=ships" class="nav-link">Vaisseaux</a>
-        </li>
-        <li class="nav-item {% if battle %}active{% endif %}">
-            <a href="/s03/help/?cat=battle" class="nav-link">Combat</a>
-        </li>
-        <li class="nav-item {% if orientations %}active{% endif %}">
-            <a href="/s03/help/?cat=orientations" class="nav-link">Orientations</a>
-        </li>
-        <li class="nav-item {% if tags %}active{% endif %}">
-            <a href="/s03/help/?cat=tags" class="nav-link">Balises</a>
-        </li>
-    </ul>
-</div>
-<div class="scroll-content" style="height:calc(100% - 52px);">
-<div class="page-content">
-    {% if general %}
-    <div class="row g-3">
-        <div class="col-6">
-            <div class="h-100 card">
-                <div class="card-header">
-                    <img src="{{ PATH_IMAGES }}img/interface/ore.gif" data-bs-toggle="tooltip" data-bs-title="Minerai" class="res" width="16px" height="16px">
-                    <span class="fs-6">Minerai</span>
-                </div>
-                <div class="card-body">
-                    <div class="row g-1">
-                        <div class="col-12"><span class="text-normal">L'extraction de minerai est l'activité principale de votre colonie avec la production d'hydrocarbure.</span></div>
-                        <div class="col-12"><span class="text-normal">Le stockage de minerai vous permettra de faire face à une incapacité de production temporaire.</span></div>
-                        <div class="col-12"><span class="text-normal">La recherche vous permettra d'optimiser votre production ou de trouver de nouvelles techniques d'extraction.</span></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-6">
-            <div class="h-100 card">
-                <div class="card-header">
-                    <img src="{{ PATH_IMAGES }}img/interface/hydrocarbon.gif" data-bs-toggle="tooltip" data-bs-title="Hydrocarbure" class="res" width="16px" height="16px">
-                    <span class="fs-6">Hydrocarbure</span>
-                </div>
-                <div class="card-body">
-                    <div class="row g-1">
-                        <div class="col-12"><span class="text-normal">Après extraction dans vos puits, les hydrocarbures (gaz naturel, pétrole) sont transformés afin de produire des plastiques, fibres, solvants et matériaux nécessaires à la réalisation de produits synthétiques et utilisés dans l'élaboration de nouveaux composés chimiques découverts lors de vos travaux de recherche.</span></div>
-                        <div class="col-12"><span class="text-normal">Grâce à la recherche, vous pourrez certainement réduire certains coûts et augmenter le rendement des hydrocarbures.</span></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-6">
-            <div class="h-100 card">
-                <div class="card-header">
-                    <img src="{{ PATH_IMAGES }}img/interface/energy.gif" data-bs-toggle="tooltip" data-bs-title="Energie" class="res" width="16px" height="16px">
-                    <span class="fs-6">Energie</span>
-                </div>
-                <div class="card-body">
-                    <div class="row g-1">
-                        <div class="col-12"><span class="text-normal">Chaque bâtiment ou structure construite a constamment besoin d'énergie pour fonctionner; si les petits bâtiments ont des besoins minimums, la construction de certaines structures pourra requérir un surplus d'énergie que vous devrez assurer avant de pouvoir lancer leur construction.</span></div>
-                        <div class="col-12"><span class="text-normal">La recherche devrait pouvoir vous aider à réaliser des générateurs plus puissants ou mettre à profit de nouvelles sources d'énergie.</span></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-6">
-            <div class="h-100 card">
-                <div class="card-header">
-                    <img src="{{ PATH_IMAGES }}img/interface/credits.gif" data-bs-toggle="tooltip" data-bs-title="Crédits" class="res" width="16px" height="16px">
-                    <span class="fs-6">Crédits</span>
-                </div>
-                <div class="card-body">
-                    <div class="row g-1">
-                        <div class="col-12"><span class="text-normal">Le crédit est la monnaie en vigueur dans la galaxie. Universelle, elle permet d'acheter tout ce qui est à vendre. Vous pourrez augmenter, ou diminuer, votre fortune en marchandant auprès des vendeurs qui se poseront sur votre spatioport.</span></div>
-                        <div class="col-12"><span class="text-normal">Vous avez la possibilité de vendre sur le marché ou bien de commercer avec les membres de votre alliance (vente entre joueurs non implémentée).</span></div>
-                        <div class="col-12"><span class="text-normal">Plus vous vendez de ressources, plus le paiement est rapide. Les marchands payent la moitié à la vente et l'autre moitié lorsque les ressources arrivent à leur planète.</span></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-6">
-            <div class="h-100 card">
-                <div class="card-header">
-                    <img src="{{ PATH_IMAGES }}img/interface/scientists.gif" data-bs-toggle="tooltip" data-bs-title="Scientifiques" class="res" width="16px" height="16px">
-                    <span class="fs-6">Scientifiques</span>
-                </div>
-                <div class="card-body">
-                    <div class="row g-1">
-                        <div class="col-12"><span class="text-normal">Les scientifiques effectuent toutes les recherches que vous pourrez choisir d'entreprendre.</span></div>
-                        <div class="col-12"><span class="text-normal">En augmentant le nombre de scientifiques dont vous disposez, les recherches seront plus rapides.</span></div>
-                        <div class="col-12"><span class="text-normal">Vous pouvez avoir des scientifiques sur toutes vos planètes, ils collaboreront tous sur la même recherche en même temps. Cependant, il est conseillé de grouper vos chercheurs pour maximiser l'efficacité des recherches.</span></div>
-                        <div class="col-12"><span class="text-normal">La collaboration sera plus efficace entre un nombre réduit de grand groupes de scientifiques plutôt qu'entre de nombreux groupes de petites tailles.</span></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-6">
-            <div class="h-100 card">
-                <div class="card-header">
-                    <img src="{{ PATH_IMAGES }}img/interface/soldiers.gif" data-bs-toggle="tooltip" data-bs-title="Soldats" class="res" width="16px" height="16px">
-                    <span class="fs-6">Soldats</span>
-                </div>
-                <div class="card-body">
-                    <div class="row g-1">
-                        <div class="col-12"><span class="text-normal">Les soldats font respecter l'ordre dans vos colonies et les protègent des envahisseurs. Ils peuvent aussi être embarqués à bord de vaisseaux pour envahir une planète ennemie que vous convoitez.</span></div>
-                        <div class="col-12"><span class="text-normal">S'il n'y a pas assez de soldats dans vos colonies, des vols, voire des émeutes peuvent se produire. Il est admis qu'il faut en général 1 soldat pour 250 colons afin d'éviter ce genre d'incident.</span></div>
-                        <div class="col-12"><span class="text-normal">Le nombre de soldats est écrit en rouge lorsque celui-ci est jugé insuffisant.</span></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-6">
-            <div class="h-100 card">
-                <div class="card-header">
-                    <img src="{{ PATH_IMAGES }}img/interface/workers.gif" data-bs-toggle="tooltip" data-bs-title="Travailleurs" class="res" width="16px" height="16px">
-                    <span class="fs-6">Travailleurs</span>
-                </div>
-                <div class="card-body">
-                    <div class="row g-1">
-                        <div class="col-12"><span class="text-normal">Les travailleurs regroupent l'ensemble des professions telles que l'ingénierie, l'électronique, l'architecture, la mécanique, l'avionique, la construction (BTP) ... nécessaires à la mise en chantier de vos projets d'infrastructures (mines, puits, production d'énergie ...) mais aussi tout ce qui concerne la création spatiale pour réaliser vos vaisseaux spatiaux.</span></div>
-                        <div class="col-12"><span class="text-normal">Plus le projet sera ambitieux, plus le nombre de travailleurs requis sera important.</span></div>
-                        <div class="col-12"><span class="text-normal">Au fur et à mesure de la croissance de votre colonie, de plus en plus de civils seront formés afin de devenir travailleur.</span></div>
-                        <div class="col-12"><span class="text-normal">Il vous faudra garder au moins 5% des travailleurs nécessaires à la construction d'une infrastructure sur la colonie pour la maintenance et les réparations.</span></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-6">
-            <div class="h-100 card">
-                <div class="card-header">
-                    <img src="{{ PATH_IMAGES }}img/interface/upkeep_commander.gif" data-bs-toggle="tooltip" data-bs-title="Commandant" class="res" width="16px" height="16px">
-                    <span class="fs-6">Commandant</span>
-                </div>
-                <div class="card-body">
-                    <div class="row g-1">
-                        <div class="col-12"><span class="text-normal">Les commandants sont des personnages importants que vous pouvez affecter à une planète ou à une flotte. Les bonus que vous leur attribuez les disposent plus au commandement de l'un ou de l'autre.</span></div>
-                        <div class="col-12"><span class="text-normal">Les commandants affectés à une planète permettent de vous donner un bonus d'influence sur celle-ci ce qui permet de pallier à un manque de soldats ou de travailleurs sur le long terme.</span></div>
-                        <div class="col-12"><span class="text-normal">Les commandants affectés à une flotte sont pleinement efficaces jusqu'à 20 000 vaisseaux, au-delà, leurs bonus s'atténuent à moins de posséder des vaisseaux offrant des bonus de commandement et allégeant la charge au commandant.</span></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-6">
-            <div class="h-100 card">
-                <div class="card-header">
-                    <img src="{{ PATH_IMAGES }}img/interface/prestige.gif" data-bs-toggle="tooltip" data-bs-title="Prestige" class="res" width="16px" height="16px">
-                    <span class="fs-6">Points de Prestige</span>
-                </div>
-                <div class="card-body">
-                    <div class="row g-1">
-                        <div class="col-12"><span class="text-normal">Il y a divers moyen de gagner des Points de Prestige, la principale étant en détruisant des vaisseaux militaires ennemis lors des combats (les vaisseaux non armés ne rapportent pas de point).</span></div>
-                        <div class="col-12"><span class="text-normal">En général, les vaisseaux légers rapportent 1 point, les corvettes 2 points, les frégates 5 points et les croiseurs 10 points.</span></div>
-                        <div class="col-12"><span class="text-normal">Ces points vous serviront pour améliorer vos commandants et pour la construction de certains bâtiments et vaisseaux.</span></div>
-                    </div>
-                </div>
-            </div>
-        </div>
+
+    <div class="page-content">
+        <ul class="nav nav-tabs mt-0 mb-3">
+            <li class="nav-item {% if general %}active{% endif %}">
+                <a href="/s03/help/?" class="nav-link">Aide générale</a>
+            </li>
+            <li class="nav-item {% if buildings %}active{% endif %}">
+                <a href="/s03/help/?cat=buildings" class="nav-link">Bâtiments</a>
+            </li>
+            <li class="nav-item {% if research %}active{% endif %}">
+                <a href="/s03/help/?cat=research" class="nav-link">Recherches</a>
+            </li>
+            <li class="nav-item {% if ships %}active{% endif %}">
+                <a href="/s03/help/?cat=ships" class="nav-link">Vaisseaux</a>
+            </li>
+            <li class="nav-item {% if battle %}active{% endif %}">
+                <a href="/s03/help/?cat=battle" class="nav-link">Combat</a>
+            </li>
+            <li class="nav-item {% if orientations %}active{% endif %}">
+                <a href="/s03/help/?cat=orientations" class="nav-link">Orientations</a>
+            </li>
+            <li class="nav-item {% if tags %}active{% endif %}">
+                <a href="/s03/help/?cat=tags" class="nav-link">Balises</a>
+            </li>
+        </ul>
     </div>
-    {% endif %}
-    {% if buildings %}
-    <div class="row g-3">
-        {% for category in categories %}
-            <div class="col-12">
-            <div class="mb-2">
-                <span class="text-normal text-uppercase">
-                    {% if category.id == 10 %}Colonie{% endif %}
-                    {% if category.id == 11 %}Construction{% endif %}
-                    {% if category.id == 20 %}Production{% endif %}
-                    {% if category.id == 21 %}Production de minerai{% endif %}
-                    {% if category.id == 22 %}Production d'hydrocarbure{% endif %}
-                    {% if category.id == 23 %}Production d'énergie{% endif %}
-                    {% if category.id == 30 %}Ressources humaines{% endif %}
-                    {% if category.id == 31 %}Stockage de minerai{% endif %}
-                    {% if category.id == 32 %}Stockage d'hydrocarbure{% endif %}
-                    {% if category.id == 33 %}Stockage d'énergie{% endif %}
-                    {% if category.id == 40 %}Armement{% endif %}
-                    {% if category.id == 80 %}Espace{% endif %}
-                    {% if category.id == 110 %}Evénements{% endif %}
-                </span>
-            </div>
-            <div class="row g-3">
-            {% for building in category.buildings %}
-                <div class="col-6">
-                <div class="h-100 card">
-                <div class="card-header">
-                    <a name="{{ building.id }}"></a>
-                    <span class="fs-6">{{ building.label }}</span>
-                </div>
-                <div class="card-body">
-                    <div class="clearfix">
-                        <img src="{{ PATH_IMAGES }}img/buildings/{{ building.id }}.jpg"
-                             class="rounded me-2" style="float:left;"
-                             title="{{ building.label }}"
-                             width="52"
-                             height="52">
-                        <span class="text-normal">{{ building.description|safe }}</span>
-                    </div>
-                    <div class="mt-3 mb-1"><span class="fs-6">Coût de construction</span></div>
-                    <div class="mb-3 row gx-3">
-                        {% if building.floor %}
-                        <div class="col-auto">
-                            <img src="/static/s03/img/interface/floor.gif" class="res" data-bs-toggle="tooltip" data-bs-title="Terrain" width="16px" height="16px">
-                            <span class="text-normal">{{ building.floor|intcomma }}</span>
-                        </div>
-                        {% endif %}
-                        {% if building.space %}
-                        <div class="col-auto">
-                            <img src="/static/s03/img/interface/space.gif" class="res" data-bs-toggle="tooltip" data-bs-title="Espace" width="16px" height="16px">
-                            <span class="text-normal">{{ building.space|intcomma }}</span>
-                        </div>
-                        {% endif %}
-                        {% if building.ore %}
-                        <div class="col-auto">
-                            <img src="{{ PATH_IMAGES }}img/interface/ore.gif" data-bs-toggle="tooltip" data-bs-title="Minerai" class="res" width="16px" height="16px">
-                            <span class="text-normal">{{ building.ore|intcomma }}</span>
-                        </div>
-                        {% endif %}
-                        {% if building.hydrocarbon %}
-                        <div class="col-auto">
-                            <img src="{{ PATH_IMAGES }}img/interface/hydrocarbon.gif" data-bs-toggle="tooltip" data-bs-title="Hydrocarbure" class="res" width="16px" height="16px">
-                            <span class="text-normal">{{ building.hydrocarbon|intcomma }}</span>
-                        </div>
-                        {% endif %}
-                        {% if building.workers %}
-                        <div class="col-auto">
-                            <img src="/static/s03/img/interface/workers_idle.gif" class="idleworkers" data-bs-toggle="tooltip" data-bs-title="Oisifs" width="12" height="12">
-                            <span class="text-normal">{{ building.workers|intcomma }}</span>
-                        </div>
-                        {% endif %}
-                    </div>
-                    <div class="mb-1"><span class="fs-6">Coût fonctionnement</span></div>
-                    <div class="row gx-3">
-                        {% if building.upkeep_credits %}
-                        <div class="col-auto">
-                            <img src="{{ PATH_IMAGES }}img/interface/credits.gif" data-bs-toggle="tooltip" data-bs-title="Crédits" class="res" width="16px" height="16px">
-                            <span class="text-normal">{{ building.upkeep_credits|intcomma }}</span>
-                        </div>
-                        {% endif %}
-                        {% if building.upkeep_energy %}
-                        <div class="col-auto">
-                            <img src="{{ PATH_IMAGES }}img/interface/energy.gif" data-bs-toggle="tooltip" data-bs-title="Energie" class="res" width="16px" height="16px">
-                            <span class="text-normal">{{ building.upkeep_energy|intcomma }}</span>
-                        </div>
-                        {% endif %}
-                        {% if building.upkeep_workers %}
-                        <div class="col-auto">
-                            <img src="{{ PATH_IMAGES }}img/interface/workers.gif" data-bs-toggle="tooltip" data-bs-title="Travailleurs" class="res" width="16px" height="16px">
-                            <span class="text-normal">{{ building.upkeep_workers|intcomma }}</span>
-                        </div>
-                        {% endif %}
-                    </div>
-                    {% if building.production_ore != 0 or building.production_hydrocarbon != 0 or building.energy_production != 0 %}
-                    <div class="mb-1 mt-3"><span class="fs-6">Production</span></div>
-                    <div class="row gx-3">
-                        {% if building.production_ore != 0 %}
-                        <div class="col-auto">
-                            <img src="{{ PATH_IMAGES }}img/interface/ore.gif" data-bs-toggle="tooltip" data-bs-title="Minerai" class="res" width="16px" height="16px">
-                            <span class="text-normal">{{ building.production_ore|intcomma }}</span>
-                        </div>
-                        {% endif %}
-                        {% if building.production_hydrocarbon != 0 %}
-                        <div class="col-auto">
-                            <img src="{{ PATH_IMAGES }}img/interface/hydrocarbon.gif" data-bs-toggle="tooltip" data-bs-title="Hydrocarbure" class="res" width="16px" height="16px">
-                            <span class="text-normal">{{ building.production_hydrocarbon|intcomma }}</span>
-                        </div>
-                        {% endif %}
-                        {% if building.energy_production != 0 %}
-                        <div class="col-auto">
-                            <img src="{{ PATH_IMAGES }}img/interface/energy.gif" data-bs-toggle="tooltip" data-bs-title="Energie" class="res" width="16px" height="16px">
-                            <span class="text-normal">{{ building.energy_production|intcomma }}</span>
-                        </div>
-                        {% endif %}
-                    </div>
-                    {% endif %}
-                    {% if building.storage_ore != 0 or building.storage_hydrocarbon != 0 or building.storage_energy != 0 %}
-                    <div class="mb-1 mt-3"><span class="fs-6">Stockage</span></div>
-                    <div class="row gx-3">
-                        {% if building.storage_ore != 0 %}
-                        <div class="col-auto">
-                            <img src="{{ PATH_IMAGES }}img/interface/ore.gif" data-bs-toggle="tooltip" data-bs-title="Minerai" class="res" width="16px" height="16px">
-                            <span class="text-normal">{{ building.storage_ore|intcomma }}</span>
-                        </div>
-                        {% endif %}
-                        {% if building.storage_hydrocarbon != 0 %}
-                        <div class="col-auto">
-                            <img src="{{ PATH_IMAGES }}img/interface/hydrocarbon.gif" data-bs-toggle="tooltip" data-bs-title="Hydrocarbure" class="res" width="16px" height="16px">
-                            <span class="text-normal">{{ building.storage_hydrocarbon|intcomma }}</span>
-                        </div>
-                        {% endif %}
-                        {% if building.storage_energy != 0 %}
-                        <div class="col-auto">
-                            <img src="{{ PATH_IMAGES }}img/interface/energy.gif" data-bs-toggle="tooltip" data-bs-title="Energie" class="res" width="16px" height="16px">
-                            <span class="text-normal">{{ building.storage_energy|intcomma }}</span>
-                        </div>
-                        {% endif %}
-                    </div>
-                    {% endif %}
-                </div>
-                </div>
-                </div>
-            {% endfor %}
-            </div>
-            </div>
-        {% endfor %}
-    </div>
-    {% endif %}
-    {% if research %}
-    <div class="row g-3">
-        {% for category in categories %}
-        <div class="col-12">
-            <div class="mb-2">
-                <span class="text-normal text-uppercase">
-                    {% if category.id == 10 %}Technologies{% endif %}
-                    {% if category.id == 20 %}Industrie{% endif %}
-                    {% if category.id == 30 %}Empire{% endif %}
-                    {% if category.id == 40 %}Recherche{% endif %}
-                    {% if category.id == 50 %}Technologies militaires{% endif %}
-                    {% if category.id == 90 %}Vaisseaux spatiaux{% endif %}
-                </span>
-            </div>
-            <div class="row g-3">
-            {% for research in category.researches %}
-                <div class="col-6">
-                <div class="h-100 card">
-                    <div class="card-header">
-                        <a name="{{ research.id }}"></a>
-                        <span class="fs-6">{{ research.label }}</span>
-                    </div>
-                    <div class="card-body">
-                        <div class="mb-3">
-                            <span class="text-normal">{{ research.description|safe }}</span>
-                        </div>
-                        {% if research.total_cost %}
-                        <div class="mb-1"><span class="fs-6">Coût</span></div>
-                        <div class="row gx-3">
-                            <div class="col-auto">
-                                <img src="{{ PATH_IMAGES }}img/interface/credits.gif" data-bs-toggle="tooltip" data-bs-title="Crédits" class="res" width="16px" height="16px">
-                                <span class="text-normal">{{ research.total_cost|intcomma }}</span>
-                            </div>
-                        </div>
-                        {% endif %}
-                    </div>
-                </div>
-                </div>
-            {% endfor %}
-            </div>
-        </div>
-        {% endfor %}
-    </div>
-    {% endif %}
-    {% if ships %}
-    <div class="row g-3">
-        {% for category in categories %}
-        <div class="col-12">
-            <div class="mb-2">
-                <span class="text-normal text-uppercase">
-                    {% if category.id == 10 %}Vaisseaux utilitaires{% endif %}
-                    {% if category.id == 11 %}Vaisseaux de déploiement{% endif %}
-                    {% if category.id == 15 %}Vaisseaux tactiques{% endif %}
-                    {% if category.id == 20 %}Vaisseaux légers{% endif %}
-                    {% if category.id == 30 %}Corvettes{% endif %}
-                    {% if category.id == 40 %}Frégates{% endif %}
-                    {% if category.id == 50 %}Croiseurs{% endif %}
-                    {% if category.id == 60 %}Dreadnought{% endif %}
-                </span>
-            </div>
-            <div class="row g-3">
-            {% for ship in category.ships %}
-            <div class="col-6">
-                <div class="h-100 card">
-                    <div class="card-header">
-                        <a name="{{ ship.id }}"></a>
-                        <span class="fs-6">{{ ship.label }}</span>
-                    </div>
-                    <div class="card-body">
-                        <div class="mb-3">
-                            <span class="text-normal">{{ ship.description|safe }}</span>
-                        </div>
-                        <div class="mb-1"><span class="fs-6">Caractéristiques</span></div>
-                        <div class="mb-3 row gx-3 gy-1">
-                            {% if ship.building %}
-                            <div class="col-auto">
-                                <small class="text-normal">Bâtiment</small>
-                                <span>{{ ship.building|intcomma }}</span>
-                            </div>
-                            {% endif %}
-                            <div class="col-auto">
-                                <small class="text-normal">Entretien</small>
-                                <img src="{{ PATH_IMAGES }}img/interface/credits.gif" data-bs-toggle="tooltip" data-bs-title="Crédits" class="res" width="16px" height="16px">
-                                <span>{{ ship.upkeep|intcomma }}</span>
-                            </div>
-                            <div class="col-auto">
-                                <small class="text-normal">Signature</small>
-                                <span>{{ ship.signature|intcomma }}</span>
-                            </div>
-                            {% if ship.capacity %}
-                            <div class="col-auto">
-                                <small class="text-normal">Cargo</small>
-                                <span>{{ ship.capacity|intcomma }}</span>
-                            </div>
-                            {% endif %}
-                            <div class="col-auto">
-                                <small class="text-normal">Vitesse</small>
-                                <span>{{ ship.speed|intcomma }}</span>
-                            </div>
-                            <div class="col-auto">
-                                <small class="text-normal">Manœuvrabilité</small>
-                                <span>{{ ship.handling|intcomma }}</span>
-                            </div>
-                            <div class="col-auto">
-                                <small class="text-normal">Stabilité</small>
-                                <span>{{ ship.required_vortex_strength|intcomma }}</span>
-                            </div>
-                            {% if ship.leadership %}
-                            <div class="col-auto">
-                                <small class="text-normal">Commandement</small>
-                                <span>{{ ship.leadership|intcomma }}</span>
-                            </div>
-                            {% endif %}
-                            {% if ship.weapon_turrets > 0 %}
-                                <div class="col-auto">
-                                    <small class="text-normal">Puissance d'attaque</small>
-                                    <span>{{ ship.weapon_turrets|intcomma }} <small class="text-normal">x</small> {{ ship.weapon_power }}</span>
-                                </div>
-                                <div class="col-auto">
-                                    <small class="text-normal">Ciblage</small>
-                                    <span>{{ ship.weapon_tracking_speed|intcomma }}</span>
-                                </div>
-                            {% endif %}
-                            <div class="col-auto">
-                                <small class="text-normal">Armure</small>
-                                <span>{{ ship.hull|intcomma }}</span>
-                            </div>
-                            {% if ship.shield %}
-                                <div class="col-auto">
-                                    <small class="text-normal">Bouclier</small>
-                                    <span>{{ ship.shield|intcomma }}</span>
-                                </div>
-                            {% endif %}
-                            {% if ship.recycler_output %}
-                                <div class="col-auto">
-                                    <small class="text-normal">Capacité de recyclage</small>
-                                    <span>{{ ship.recycler_output|intcomma }}</span>
-                                </div>
-                            {% endif %}
-                            {% if ship.long_distance_capacity %}
-                                <div class="col-auto">
-                                    <small class="text-normal">Capacité de saut intergalactique</small>
-                                    <span>{{ ship.long_distance_capacity|intcomma }}</span>
-                                </div>
-                            {% endif %}
-                            {% if ship.droppods %}
-                                <div class="col-auto">
-                                    <small class="text-normal">Capacité d'invasion</small>
-                                    <span>{{ ship.droppods|intcomma }}</span>
-                                </div>
-                            {% endif %}
-                        </div>
-                        {% if ship.buildings %}
-                        <div class="mb-1"><span class="fs-6">Bâtiment requis</span></div>
-                        <div class="mb-3 row gx-3 gy-1">
-                            {% for building in ship.buildings %}
-                            <div class="col-auto">
-                                <span class="text-normal">{{ building }}</span>
-                            </div>
-                            {% endfor %}
-                        </div>
-                        {% endif %}
-                        <div class="mb-1"><span class="fs-6">Coût de construction</span></div>
-                        <div class="row gx-3 gy-1">
-                            <div class="col-auto">
+    
+    <div class="scroll-content" style="height:calc(100% - 52px);">
+        <div class="page-content">
+        
+            {% if general %}
+                <div class="row g-3">
+                    <div class="col-6">
+                        <div class="h-100 card">
+                            <div class="card-header">
                                 <img src="{{ PATH_IMAGES }}img/interface/ore.gif" data-bs-toggle="tooltip" data-bs-title="Minerai" class="res" width="16px" height="16px">
-                                <span class="text-normal">{{ ship.cost_ore|intcomma }}</span>
+                                <span class="fs-6">Minerai</span>
                             </div>
-                            <div class="col-auto">
+                            <div class="card-body">
+                                <div class="row g-1">
+                                    <div class="col-12"><span class="text-normal">L'extraction de minerai est l'activité principale de votre colonie avec la production d'hydrocarbure.</span></div>
+                                    <div class="col-12"><span class="text-normal">Le stockage de minerai vous permettra de faire face à une incapacité de production temporaire.</span></div>
+                                    <div class="col-12"><span class="text-normal">La recherche vous permettra d'optimiser votre production ou de trouver de nouvelles techniques d'extraction.</span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="h-100 card">
+                            <div class="card-header">
                                 <img src="{{ PATH_IMAGES }}img/interface/hydrocarbon.gif" data-bs-toggle="tooltip" data-bs-title="Hydrocarbure" class="res" width="16px" height="16px">
-                                <span class="text-normal">{{ ship.cost_hydrocarbon|intcomma }}</span>
+                                <span class="fs-6">Hydrocarbure</span>
                             </div>
-                            <div class="col-auto">
+                            <div class="card-body">
+                                <div class="row g-1">
+                                    <div class="col-12"><span class="text-normal">Après extraction dans vos puits, les hydrocarbures (gaz naturel, pétrole) sont transformés afin de produire des plastiques, fibres, solvants et matériaux nécessaires à la réalisation de produits synthétiques et utilisés dans l'élaboration de nouveaux composés chimiques découverts lors de vos travaux de recherche.</span></div>
+                                    <div class="col-12"><span class="text-normal">Grâce à la recherche, vous pourrez certainement réduire certains coûts et augmenter le rendement des hydrocarbures.</span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="h-100 card">
+                            <div class="card-header">
                                 <img src="{{ PATH_IMAGES }}img/interface/energy.gif" data-bs-toggle="tooltip" data-bs-title="Energie" class="res" width="16px" height="16px">
-                                <span class="text-normal">{{ ship.cost_energy|intcomma }}</span>
+                                <span class="fs-6">Energie</span>
                             </div>
-                            {% if ship.crew %}
-                            <div class="col-auto">
+                            <div class="card-body">
+                                <div class="row g-1">
+                                    <div class="col-12"><span class="text-normal">Chaque bâtiment ou structure construite a constamment besoin d'énergie pour fonctionner; si les petits bâtiments ont des besoins minimums, la construction de certaines structures pourra requérir un surplus d'énergie que vous devrez assurer avant de pouvoir lancer leur construction.</span></div>
+                                    <div class="col-12"><span class="text-normal">La recherche devrait pouvoir vous aider à réaliser des générateurs plus puissants ou mettre à profit de nouvelles sources d'énergie.</span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="h-100 card">
+                            <div class="card-header">
+                                <img src="{{ PATH_IMAGES }}img/interface/credits.gif" data-bs-toggle="tooltip" data-bs-title="Crédits" class="res" width="16px" height="16px">
+                                <span class="fs-6">Crédits</span>
+                            </div>
+                            <div class="card-body">
+                                <div class="row g-1">
+                                    <div class="col-12"><span class="text-normal">Le crédit est la monnaie en vigueur dans la galaxie. Universelle, elle permet d'acheter tout ce qui est à vendre. Vous pourrez augmenter, ou diminuer, votre fortune en marchandant auprès des vendeurs qui se poseront sur votre spatioport.</span></div>
+                                    <div class="col-12"><span class="text-normal">Vous avez la possibilité de vendre sur le marché ou bien de commercer avec les membres de votre alliance (vente entre joueurs non implémentée).</span></div>
+                                    <div class="col-12"><span class="text-normal">Plus vous vendez de ressources, plus le paiement est rapide. Les marchands payent la moitié à la vente et l'autre moitié lorsque les ressources arrivent à leur planète.</span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="h-100 card">
+                            <div class="card-header">
+                                <img src="{{ PATH_IMAGES }}img/interface/scientists.gif" data-bs-toggle="tooltip" data-bs-title="Scientifiques" class="res" width="16px" height="16px">
+                                <span class="fs-6">Scientifiques</span>
+                            </div>
+                            <div class="card-body">
+                                <div class="row g-1">
+                                    <div class="col-12"><span class="text-normal">Les scientifiques effectuent toutes les recherches que vous pourrez choisir d'entreprendre.</span></div>
+                                    <div class="col-12"><span class="text-normal">En augmentant le nombre de scientifiques dont vous disposez, les recherches seront plus rapides.</span></div>
+                                    <div class="col-12"><span class="text-normal">Vous pouvez avoir des scientifiques sur toutes vos planètes, ils collaboreront tous sur la même recherche en même temps. Cependant, il est conseillé de grouper vos chercheurs pour maximiser l'efficacité des recherches.</span></div>
+                                    <div class="col-12"><span class="text-normal">La collaboration sera plus efficace entre un nombre réduit de grand groupes de scientifiques plutôt qu'entre de nombreux groupes de petites tailles.</span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="h-100 card">
+                            <div class="card-header">
+                                <img src="{{ PATH_IMAGES }}img/interface/soldiers.gif" data-bs-toggle="tooltip" data-bs-title="Soldats" class="res" width="16px" height="16px">
+                                <span class="fs-6">Soldats</span>
+                            </div>
+                            <div class="card-body">
+                                <div class="row g-1">
+                                    <div class="col-12"><span class="text-normal">Les soldats font respecter l'ordre dans vos colonies et les protègent des envahisseurs. Ils peuvent aussi être embarqués à bord de vaisseaux pour envahir une planète ennemie que vous convoitez.</span></div>
+                                    <div class="col-12"><span class="text-normal">S'il n'y a pas assez de soldats dans vos colonies, des vols, voire des émeutes peuvent se produire. Il est admis qu'il faut en général 1 soldat pour 250 colons afin d'éviter ce genre d'incident.</span></div>
+                                    <div class="col-12"><span class="text-normal">Le nombre de soldats est écrit en rouge lorsque celui-ci est jugé insuffisant.</span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="h-100 card">
+                            <div class="card-header">
                                 <img src="{{ PATH_IMAGES }}img/interface/workers.gif" data-bs-toggle="tooltip" data-bs-title="Travailleurs" class="res" width="16px" height="16px">
-                                <span class="text-normal">{{ ship.crew|intcomma }}</span>
+                                <span class="fs-6">Travailleurs</span>
                             </div>
-                            {% endif %}
+                            <div class="card-body">
+                                <div class="row g-1">
+                                    <div class="col-12"><span class="text-normal">Les travailleurs regroupent l'ensemble des professions telles que l'ingénierie, l'électronique, l'architecture, la mécanique, l'avionique, la construction (BTP) ... nécessaires à la mise en chantier de vos projets d'infrastructures (mines, puits, production d'énergie ...) mais aussi tout ce qui concerne la création spatiale pour réaliser vos vaisseaux spatiaux.</span></div>
+                                    <div class="col-12"><span class="text-normal">Plus le projet sera ambitieux, plus le nombre de travailleurs requis sera important.</span></div>
+                                    <div class="col-12"><span class="text-normal">Au fur et à mesure de la croissance de votre colonie, de plus en plus de civils seront formés afin de devenir travailleur.</span></div>
+                                    <div class="col-12"><span class="text-normal">Il vous faudra garder au moins 5% des travailleurs nécessaires à la construction d'une infrastructure sur la colonie pour la maintenance et les réparations.</span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="h-100 card">
+                            <div class="card-header">
+                                <img src="{{ PATH_IMAGES }}img/interface/upkeep_commander.gif" data-bs-toggle="tooltip" data-bs-title="Commandant" class="res" width="16px" height="16px">
+                                <span class="fs-6">Commandant</span>
+                            </div>
+                            <div class="card-body">
+                                <div class="row g-1">
+                                    <div class="col-12"><span class="text-normal">Les commandants sont des personnages importants que vous pouvez affecter à une planète ou à une flotte. Les bonus que vous leur attribuez les disposent plus au commandement de l'un ou de l'autre.</span></div>
+                                    <div class="col-12"><span class="text-normal">Les commandants affectés à une planète permettent de vous donner un bonus d'influence sur celle-ci ce qui permet de pallier à un manque de soldats ou de travailleurs sur le long terme.</span></div>
+                                    <div class="col-12"><span class="text-normal">Les commandants affectés à une flotte sont pleinement efficaces jusqu'à 20 000 vaisseaux, au-delà, leurs bonus s'atténuent à moins de posséder des vaisseaux offrant des bonus de commandement et allégeant la charge au commandant.</span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="h-100 card">
+                            <div class="card-header">
+                                <img src="{{ PATH_IMAGES }}img/interface/prestige.gif" data-bs-toggle="tooltip" data-bs-title="Prestige" class="res" width="16px" height="16px">
+                                <span class="fs-6">Points de Prestige</span>
+                            </div>
+                            <div class="card-body">
+                                <div class="row g-1">
+                                    <div class="col-12"><span class="text-normal">Il y a divers moyen de gagner des Points de Prestige, la principale étant en détruisant des vaisseaux militaires ennemis lors des combats (les vaisseaux non armés ne rapportent pas de point).</span></div>
+                                    <div class="col-12"><span class="text-normal">En général, les vaisseaux légers rapportent 1 point, les corvettes 2 points, les frégates 5 points et les croiseurs 10 points.</span></div>
+                                    <div class="col-12"><span class="text-normal">Ces points vous serviront pour améliorer vos commandants et pour la construction de certains bâtiments et vaisseaux.</span></div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            {% endfor %}
-            </div>
-        </div>
-        {% endfor %}
-    </div>
-    {% endif %}
-    {% if orientations %}
-    <div class="row g-3">
-        <div class="col-6">
-            <div class="h-100 card">
-                <div class="card-header">
-                    <span class="fs-6">Marchand</span>
-                </div>
-                <div class="card-body">
-                    <ul class="mb-0 ps-1 text-normal" style="list-style: inside;">
-                        <li>Prix de vente des ressources augmenté de 10%</li>
-                        <li>La guilde marchande viendra plus vite sur vos planètes lors de vos achats</li>
-                        <li>La production de minerai et d'hydrocarbure est augmentée de 5%</li>
-                        <li>Le coût d'entretien de vos planètes est diminué de 10%</li>
-                        <li>Les points de prestige gagnés par les bâtiments augmentés de 5%</li>
-                        <li>Vous aurez accès à un vaisseau de transport supérieur aux vaisseaux de transport classiques</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-        <div class="col-6">
-            <div class="h-100 card">
-                <div class="card-header">
-                    <span class="fs-6">Militaire</span>
-                </div>
-                <div class="card-body">
-                    <ul class="mb-0 ps-1 text-normal" style="list-style: inside;">
-                        <li>Prime sur les fossoyeurs détruits augmentée de 15%</li>
-                        <li>Vitesse de construction des vaisseaux augmentée de 20%</li>
-                        <li>Les boucliers de vos vaisseaux sont augmentés de 10%</li>
-                        <li>La manoeuvrabilité de vos vaisseaux est augmentée de 10%</li>
-                        <li>Le coût d'entretien de vos soldats est diminué de 10%</li>
-                        <li>Les salaires de vos commandants sont diminués de 10%</li>
-                        <li>Les points de prestige gagnés lors des combats sont augmentés de 5%</li>
-                        <li>Votre premier commandant est spécialisé dans les combats spatiaux</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-        <div class="col-6">
-            <div class="h-100 card">
-                <div class="card-header">
-                    <span class="fs-6">Scientifique</span>
-                </div>
-                <div class="card-body">
-                    <ul class="mb-0 ps-1 text-normal" style="list-style: inside;">
-                        <li>Vitesse de construction des bâtiments augmentée de 10%</li>
-                        <li>Le coût des recherches est diminué de 20%</li>
-                        <li>Le temps des recherches est diminué de 5%</li>
-                        <li>Le coût d'entretien de vos scientifiques est diminué de 20%</li>
-                        <li>Vos vaisseaux se déplacent 20% plus vite</li>
-                        <li>Vos centrales produisent 20% d'énergie en plus</li>
-                        <li>Les points de prestige gagnés par les bâtiments sont augmentés de 3%</li>
-                        <li>Les points de prestige gagnés lors des combats sont augmentés de 3%</li>
-                        <li>Vous aurez accès à une technologie permettant la construction de vaisseaux de déploiement qui pourront installer instantanément des bâtiments sur vos planètes ou les planètes de vos alliés</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </div>
-    {% endif %}
-    {% if battle %}
-    <div class="row g-3">
-        <div class="col-6">
-            <div class="h-100 card">
-                <div class="card-header">
-                    <span class="fs-6">Généralité</span>
-                </div>
-                <div class="card-body">
-                    <div class="row gy-2">
-                        <div class="col-12"><span class="text-normal">Les règles de déclenchement d'un combat sont les suivantes:</span></div>
+            {% endif %}
+            
+            {% if buildings %}
+                <div class="row g-3">
+                    {% for category in categories %}
                         <div class="col-12">
-                            <ul class="mb-2 text-normal" style="list-style: inside;">
-                                <li>Au moins 2 flottes appartenant à 2 joueurs différents sont présentes sur le même emplacement</li>
-                                <li>Au moins 1 flotte à une signature militaire supérieure à 0</li>
-                                <li>Au moins 2 flottes appartiennent à des joueurs dont les alliances sont en guerre ou au moins 1 flotte est en mode attaque et les autres flottes appartiennent à des joueurs non alliés et non PNA</li>
-                            </ul>
+                            <div class="mb-2">
+                                <span class="text-normal text-uppercase">
+                                    {% if category.id == 10 %}Colonie{% endif %}
+                                    {% if category.id == 11 %}Construction{% endif %}
+                                    {% if category.id == 20 %}Production{% endif %}
+                                    {% if category.id == 21 %}Production de minerai{% endif %}
+                                    {% if category.id == 22 %}Production d'hydrocarbure{% endif %}
+                                    {% if category.id == 23 %}Production d'énergie{% endif %}
+                                    {% if category.id == 30 %}Ressources humaines{% endif %}
+                                    {% if category.id == 31 %}Stockage de minerai{% endif %}
+                                    {% if category.id == 32 %}Stockage d'hydrocarbure{% endif %}
+                                    {% if category.id == 33 %}Stockage d'énergie{% endif %}
+                                    {% if category.id == 40 %}Armement{% endif %}
+                                    {% if category.id == 80 %}Espace{% endif %}
+                                    {% if category.id == 110 %}Evénements{% endif %}
+                                </span>
+                            </div>
+                            <div class="row g-3">
+                                {% for building in category.buildings %}
+                                    <div class="col-6">
+                                        <div class="h-100 card">
+                                            <div class="card-header">
+                                                <a name="{{ building.id }}"></a>
+                                                <span class="fs-6">{{ building.label }}</span>
+                                            </div>
+                                            <div class="card-body">
+                                                <div class="clearfix">
+                                                    <img src="{{ PATH_IMAGES }}img/buildings/{{ building.id }}.jpg"
+                                                         class="rounded me-2" style="float:left;"
+                                                         title="{{ building.label }}"
+                                                         width="52"
+                                                         height="52">
+                                                    <span class="text-normal">{{ building.description|safe }}</span>
+                                                </div>
+                                                <div class="mt-3 mb-1"><span class="fs-6">Coût de construction</span></div>
+                                                <div class="mb-3 row gx-3">
+                                                    {% if building.floor %}
+                                                    <div class="col-auto">
+                                                        <img src="/static/s03/img/interface/floor.gif" class="res" data-bs-toggle="tooltip" data-bs-title="Terrain" width="16px" height="16px">
+                                                        <span class="text-normal">{{ building.floor|intcomma }}</span>
+                                                    </div>
+                                                    {% endif %}
+                                                    {% if building.space %}
+                                                    <div class="col-auto">
+                                                        <img src="/static/s03/img/interface/space.gif" class="res" data-bs-toggle="tooltip" data-bs-title="Espace" width="16px" height="16px">
+                                                        <span class="text-normal">{{ building.space|intcomma }}</span>
+                                                    </div>
+                                                    {% endif %}
+                                                    {% if building.ore %}
+                                                    <div class="col-auto">
+                                                        <img src="{{ PATH_IMAGES }}img/interface/ore.gif" data-bs-toggle="tooltip" data-bs-title="Minerai" class="res" width="16px" height="16px">
+                                                        <span class="text-normal">{{ building.ore|intcomma }}</span>
+                                                    </div>
+                                                    {% endif %}
+                                                    {% if building.hydrocarbon %}
+                                                    <div class="col-auto">
+                                                        <img src="{{ PATH_IMAGES }}img/interface/hydrocarbon.gif" data-bs-toggle="tooltip" data-bs-title="Hydrocarbure" class="res" width="16px" height="16px">
+                                                        <span class="text-normal">{{ building.hydrocarbon|intcomma }}</span>
+                                                    </div>
+                                                    {% endif %}
+                                                    {% if building.workers %}
+                                                    <div class="col-auto">
+                                                        <img src="/static/s03/img/interface/workers_idle.gif" class="idleworkers" data-bs-toggle="tooltip" data-bs-title="Oisifs" width="12" height="12">
+                                                        <span class="text-normal">{{ building.workers|intcomma }}</span>
+                                                    </div>
+                                                    {% endif %}
+                                                </div>
+                                                <div class="mb-1"><span class="fs-6">Coût fonctionnement</span></div>
+                                                <div class="row gx-3">
+                                                    {% if building.upkeep_credits %}
+                                                    <div class="col-auto">
+                                                        <img src="{{ PATH_IMAGES }}img/interface/credits.gif" data-bs-toggle="tooltip" data-bs-title="Crédits" class="res" width="16px" height="16px">
+                                                        <span class="text-normal">{{ building.upkeep_credits|intcomma }}</span>
+                                                    </div>
+                                                    {% endif %}
+                                                    {% if building.upkeep_energy %}
+                                                    <div class="col-auto">
+                                                        <img src="{{ PATH_IMAGES }}img/interface/energy.gif" data-bs-toggle="tooltip" data-bs-title="Energie" class="res" width="16px" height="16px">
+                                                        <span class="text-normal">{{ building.upkeep_energy|intcomma }}</span>
+                                                    </div>
+                                                    {% endif %}
+                                                    {% if building.upkeep_workers %}
+                                                    <div class="col-auto">
+                                                        <img src="{{ PATH_IMAGES }}img/interface/workers.gif" data-bs-toggle="tooltip" data-bs-title="Travailleurs" class="res" width="16px" height="16px">
+                                                        <span class="text-normal">{{ building.upkeep_workers|intcomma }}</span>
+                                                    </div>
+                                                    {% endif %}
+                                                </div>
+                                                {% if building.production_ore != 0 or building.production_hydrocarbon != 0 or building.energy_production != 0 %}
+                                                <div class="mb-1 mt-3"><span class="fs-6">Production</span></div>
+                                                <div class="row gx-3">
+                                                    {% if building.production_ore != 0 %}
+                                                    <div class="col-auto">
+                                                        <img src="{{ PATH_IMAGES }}img/interface/ore.gif" data-bs-toggle="tooltip" data-bs-title="Minerai" class="res" width="16px" height="16px">
+                                                        <span class="text-normal">{{ building.production_ore|intcomma }}</span>
+                                                    </div>
+                                                    {% endif %}
+                                                    {% if building.production_hydrocarbon != 0 %}
+                                                    <div class="col-auto">
+                                                        <img src="{{ PATH_IMAGES }}img/interface/hydrocarbon.gif" data-bs-toggle="tooltip" data-bs-title="Hydrocarbure" class="res" width="16px" height="16px">
+                                                        <span class="text-normal">{{ building.production_hydrocarbon|intcomma }}</span>
+                                                    </div>
+                                                    {% endif %}
+                                                    {% if building.energy_production != 0 %}
+                                                    <div class="col-auto">
+                                                        <img src="{{ PATH_IMAGES }}img/interface/energy.gif" data-bs-toggle="tooltip" data-bs-title="Energie" class="res" width="16px" height="16px">
+                                                        <span class="text-normal">{{ building.energy_production|intcomma }}</span>
+                                                    </div>
+                                                    {% endif %}
+                                                </div>
+                                                {% endif %}
+                                                {% if building.storage_ore != 0 or building.storage_hydrocarbon != 0 or building.storage_energy != 0 %}
+                                                <div class="mb-1 mt-3"><span class="fs-6">Stockage</span></div>
+                                                <div class="row gx-3">
+                                                    {% if building.storage_ore != 0 %}
+                                                    <div class="col-auto">
+                                                        <img src="{{ PATH_IMAGES }}img/interface/ore.gif" data-bs-toggle="tooltip" data-bs-title="Minerai" class="res" width="16px" height="16px">
+                                                        <span class="text-normal">{{ building.storage_ore|intcomma }}</span>
+                                                    </div>
+                                                    {% endif %}
+                                                    {% if building.storage_hydrocarbon != 0 %}
+                                                    <div class="col-auto">
+                                                        <img src="{{ PATH_IMAGES }}img/interface/hydrocarbon.gif" data-bs-toggle="tooltip" data-bs-title="Hydrocarbure" class="res" width="16px" height="16px">
+                                                        <span class="text-normal">{{ building.storage_hydrocarbon|intcomma }}</span>
+                                                    </div>
+                                                    {% endif %}
+                                                    {% if building.storage_energy != 0 %}
+                                                    <div class="col-auto">
+                                                        <img src="{{ PATH_IMAGES }}img/interface/energy.gif" data-bs-toggle="tooltip" data-bs-title="Energie" class="res" width="16px" height="16px">
+                                                        <span class="text-normal">{{ building.storage_energy|intcomma }}</span>
+                                                    </div>
+                                                    {% endif %}
+                                                </div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
                         </div>
-                        <div class="col-12"><span class="text-normal">Un combat dure toujours 5 minutes, quelles que soient la signature des flottes impliquées.</span></div>
-                        <div class="col-12"><span class="text-normal">Un combat dure 25 rounds au maximum.</span></div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+            
+            {% if research %}
+                <div class="row g-3">
+                    {% for category in categories %}
+                    <div class="col-12">
+                        <div class="mb-2">
+                            <span class="text-normal text-uppercase">
+                                {% if category.id == 10 %}Technologies{% endif %}
+                                {% if category.id == 20 %}Industrie{% endif %}
+                                {% if category.id == 30 %}Empire{% endif %}
+                                {% if category.id == 40 %}Recherche{% endif %}
+                                {% if category.id == 50 %}Technologies militaires{% endif %}
+                                {% if category.id == 90 %}Vaisseaux spatiaux{% endif %}
+                            </span>
+                        </div>
+                        <div class="row g-3">
+                        {% for research in category.researches %}
+                            <div class="col-6">
+                            <div class="h-100 card">
+                                <div class="card-header">
+                                    <a name="{{ research.id }}"></a>
+                                    <span class="fs-6">{{ research.label }}</span>
+                                </div>
+                                <div class="card-body">
+                                    <div class="mb-3">
+                                        <span class="text-normal">{{ research.description|safe }}</span>
+                                    </div>
+                                    {% if research.total_cost %}
+                                    <div class="mb-1"><span class="fs-6">Coût</span></div>
+                                    <div class="row gx-3">
+                                        <div class="col-auto">
+                                            <img src="{{ PATH_IMAGES }}img/interface/credits.gif" data-bs-toggle="tooltip" data-bs-title="Crédits" class="res" width="16px" height="16px">
+                                            <span class="text-normal">{{ research.total_cost|intcomma }}</span>
+                                        </div>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            </div>
+                        {% endfor %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+            
+            {% if ships %}
+                <div class="row g-3">
+                    {% for category in categories %}
+                    <div class="col-12">
+                        <div class="mb-2">
+                            <span class="text-normal text-uppercase">
+                                {% if category.id == 10 %}Vaisseaux utilitaires{% endif %}
+                                {% if category.id == 11 %}Vaisseaux de déploiement{% endif %}
+                                {% if category.id == 15 %}Vaisseaux tactiques{% endif %}
+                                {% if category.id == 20 %}Vaisseaux légers{% endif %}
+                                {% if category.id == 30 %}Corvettes{% endif %}
+                                {% if category.id == 40 %}Frégates{% endif %}
+                                {% if category.id == 50 %}Croiseurs{% endif %}
+                                {% if category.id == 60 %}Dreadnought{% endif %}
+                            </span>
+                        </div>
+                        <div class="row g-3">
+                        {% for ship in category.ships %}
+                        <div class="col-6">
+                            <div class="h-100 card">
+                                <div class="card-header">
+                                    <a name="{{ ship.id }}"></a>
+                                    <span class="fs-6">{{ ship.label }}</span>
+                                </div>
+                                <div class="card-body">
+                                    <div class="mb-3">
+                                        <span class="text-normal">{{ ship.description|safe }}</span>
+                                    </div>
+                                    <div class="mb-1"><span class="fs-6">Caractéristiques</span></div>
+                                    <div class="mb-3 row gx-3 gy-1">
+                                        {% if ship.building %}
+                                        <div class="col-auto">
+                                            <small class="text-normal">Bâtiment</small>
+                                            <span>{{ ship.building|intcomma }}</span>
+                                        </div>
+                                        {% endif %}
+                                        <div class="col-auto">
+                                            <small class="text-normal">Entretien</small>
+                                            <img src="{{ PATH_IMAGES }}img/interface/credits.gif" data-bs-toggle="tooltip" data-bs-title="Crédits" class="res" width="16px" height="16px">
+                                            <span>{{ ship.upkeep|intcomma }}</span>
+                                        </div>
+                                        <div class="col-auto">
+                                            <small class="text-normal">Signature</small>
+                                            <span>{{ ship.signature|intcomma }}</span>
+                                        </div>
+                                        {% if ship.capacity %}
+                                        <div class="col-auto">
+                                            <small class="text-normal">Cargo</small>
+                                            <span>{{ ship.capacity|intcomma }}</span>
+                                        </div>
+                                        {% endif %}
+                                        <div class="col-auto">
+                                            <small class="text-normal">Vitesse</small>
+                                            <span>{{ ship.speed|intcomma }}</span>
+                                        </div>
+                                        <div class="col-auto">
+                                            <small class="text-normal">Manœuvrabilité</small>
+                                            <span>{{ ship.handling|intcomma }}</span>
+                                        </div>
+                                        <div class="col-auto">
+                                            <small class="text-normal">Stabilité</small>
+                                            <span>{{ ship.required_vortex_strength|intcomma }}</span>
+                                        </div>
+                                        {% if ship.leadership %}
+                                        <div class="col-auto">
+                                            <small class="text-normal">Commandement</small>
+                                            <span>{{ ship.leadership|intcomma }}</span>
+                                        </div>
+                                        {% endif %}
+                                        {% if ship.weapon_turrets > 0 %}
+                                            <div class="col-auto">
+                                                <small class="text-normal">Puissance d'attaque</small>
+                                                <span>{{ ship.weapon_turrets|intcomma }} <small class="text-normal">x</small> {{ ship.weapon_power }}</span>
+                                            </div>
+                                            <div class="col-auto">
+                                                <small class="text-normal">Ciblage</small>
+                                                <span>{{ ship.weapon_tracking_speed|intcomma }}</span>
+                                            </div>
+                                        {% endif %}
+                                        <div class="col-auto">
+                                            <small class="text-normal">Armure</small>
+                                            <span>{{ ship.hull|intcomma }}</span>
+                                        </div>
+                                        {% if ship.shield %}
+                                            <div class="col-auto">
+                                                <small class="text-normal">Bouclier</small>
+                                                <span>{{ ship.shield|intcomma }}</span>
+                                            </div>
+                                        {% endif %}
+                                        {% if ship.recycler_output %}
+                                            <div class="col-auto">
+                                                <small class="text-normal">Capacité de recyclage</small>
+                                                <span>{{ ship.recycler_output|intcomma }}</span>
+                                            </div>
+                                        {% endif %}
+                                        {% if ship.long_distance_capacity %}
+                                            <div class="col-auto">
+                                                <small class="text-normal">Capacité de saut intergalactique</small>
+                                                <span>{{ ship.long_distance_capacity|intcomma }}</span>
+                                            </div>
+                                        {% endif %}
+                                        {% if ship.droppods %}
+                                            <div class="col-auto">
+                                                <small class="text-normal">Capacité d'invasion</small>
+                                                <span>{{ ship.droppods|intcomma }}</span>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                    {% if ship.buildings %}
+                                    <div class="mb-1"><span class="fs-6">Bâtiment requis</span></div>
+                                    <div class="mb-3 row gx-3 gy-1">
+                                        {% for building in ship.buildings %}
+                                        <div class="col-auto">
+                                            <span class="text-normal">{{ building }}</span>
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                    <div class="mb-1"><span class="fs-6">Coût de construction</span></div>
+                                    <div class="row gx-3 gy-1">
+                                        <div class="col-auto">
+                                            <img src="{{ PATH_IMAGES }}img/interface/ore.gif" data-bs-toggle="tooltip" data-bs-title="Minerai" class="res" width="16px" height="16px">
+                                            <span class="text-normal">{{ ship.cost_ore|intcomma }}</span>
+                                        </div>
+                                        <div class="col-auto">
+                                            <img src="{{ PATH_IMAGES }}img/interface/hydrocarbon.gif" data-bs-toggle="tooltip" data-bs-title="Hydrocarbure" class="res" width="16px" height="16px">
+                                            <span class="text-normal">{{ ship.cost_hydrocarbon|intcomma }}</span>
+                                        </div>
+                                        <div class="col-auto">
+                                            <img src="{{ PATH_IMAGES }}img/interface/energy.gif" data-bs-toggle="tooltip" data-bs-title="Energie" class="res" width="16px" height="16px">
+                                            <span class="text-normal">{{ ship.cost_energy|intcomma }}</span>
+                                        </div>
+                                        {% if ship.crew %}
+                                        <div class="col-auto">
+                                            <img src="{{ PATH_IMAGES }}img/interface/workers.gif" data-bs-toggle="tooltip" data-bs-title="Travailleurs" class="res" width="16px" height="16px">
+                                            <span class="text-normal">{{ ship.crew|intcomma }}</span>
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+            
+            {% if orientations %}
+                <div class="row g-3">
+                    <div class="col-6">
+                        <div class="h-100 card">
+                            <div class="card-header">
+                                <span class="fs-6">Marchand</span>
+                            </div>
+                            <div class="card-body">
+                                <ul class="mb-0 ps-1 text-normal" style="list-style: inside;">
+                                    <li>Prix de vente des ressources augmenté de 10%</li>
+                                    <li>La guilde marchande viendra plus vite sur vos planètes lors de vos achats</li>
+                                    <li>La production de minerai et d'hydrocarbure est augmentée de 5%</li>
+                                    <li>Le coût d'entretien de vos planètes est diminué de 10%</li>
+                                    <li>Les points de prestige gagnés par les bâtiments augmentés de 5%</li>
+                                    <li>Vous aurez accès à un vaisseau de transport supérieur aux vaisseaux de transport classiques</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="h-100 card">
+                            <div class="card-header">
+                                <span class="fs-6">Militaire</span>
+                            </div>
+                            <div class="card-body">
+                                <ul class="mb-0 ps-1 text-normal" style="list-style: inside;">
+                                    <li>Prime sur les fossoyeurs détruits augmentée de 15%</li>
+                                    <li>Vitesse de construction des vaisseaux augmentée de 20%</li>
+                                    <li>Les boucliers de vos vaisseaux sont augmentés de 10%</li>
+                                    <li>La manoeuvrabilité de vos vaisseaux est augmentée de 10%</li>
+                                    <li>Le coût d'entretien de vos soldats est diminué de 10%</li>
+                                    <li>Les salaires de vos commandants sont diminués de 10%</li>
+                                    <li>Les points de prestige gagnés lors des combats sont augmentés de 5%</li>
+                                    <li>Votre premier commandant est spécialisé dans les combats spatiaux</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="h-100 card">
+                            <div class="card-header">
+                                <span class="fs-6">Scientifique</span>
+                            </div>
+                            <div class="card-body">
+                                <ul class="mb-0 ps-1 text-normal" style="list-style: inside;">
+                                    <li>Vitesse de construction des bâtiments augmentée de 10%</li>
+                                    <li>Le coût des recherches est diminué de 20%</li>
+                                    <li>Le temps des recherches est diminué de 5%</li>
+                                    <li>Le coût d'entretien de vos scientifiques est diminué de 20%</li>
+                                    <li>Vos vaisseaux se déplacent 20% plus vite</li>
+                                    <li>Vos centrales produisent 20% d'énergie en plus</li>
+                                    <li>Les points de prestige gagnés par les bâtiments sont augmentés de 3%</li>
+                                    <li>Les points de prestige gagnés lors des combats sont augmentés de 3%</li>
+                                    <li>Vous aurez accès à une technologie permettant la construction de vaisseaux de déploiement qui pourront installer instantanément des bâtiments sur vos planètes ou les planètes de vos alliés</li>
+                                </ul>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </div>
-        <div class="col-6">
-            <div class="h-100 card">
-                <div class="card-header">
-                    <span class="fs-6">Rapport de combat</span>
-                </div>
-                <div class="card-body">
-                    <div class="row gy-2">
-                        <div class="col-12"><span class="text-normal">Un rapport de combat est généré pour chaque combat (même si il n'y a eu aucune perte).</span></div>
-                        <div class="col-12"><span class="text-normal">Le rapport est envoyé à chacun des joueurs ayant au moins 1 flotte impliquée dans le combat.</span></div>
-                        <div class="col-12"><span class="text-normal">Le rapport est visible pour n'importe quel joueur si celui-ci connaît le lien public.</span></div>
-                        <div class="col-12"><span class="text-normal">La composition d'une flotte est affichée si la flotte a perdu au moins 1 vaisseau ou si la flotte vous appartient ou si la flotte appartient à un allié ou un membre d'une alliance en PNA ; par conséquent, ce n'est pas toujours les mêmes infos affichées en fonction de qui regarde la rapport.</span></div>
-                        <div class="col-12"><span class="text-normal">Seules les catégories des vaisseaux perdus seront affichées si le combat n'a duré qu'1 seul round et que la flotte ne vous appartient pas, ni à un allié, ni à un membre d'une alliance en PNA.</span></div>
+            {% endif %}
+            
+            {% if battle %}
+                <div class="row g-3">
+                    <div class="col-6">
+                        <div class="h-100 card">
+                            <div class="card-header">
+                                <span class="fs-6">Généralité</span>
+                            </div>
+                            <div class="card-body">
+                                <div class="row gy-2">
+                                    <div class="col-12"><span class="text-normal">Les règles de déclenchement d'un combat sont les suivantes:</span></div>
+                                    <div class="col-12">
+                                        <ul class="mb-2 text-normal" style="list-style: inside;">
+                                            <li>Au moins 2 flottes appartenant à 2 joueurs différents sont présentes sur le même emplacement</li>
+                                            <li>Au moins 1 flotte à une signature militaire supérieure à 0</li>
+                                            <li>Au moins 2 flottes appartiennent à des joueurs dont les alliances sont en guerre ou au moins 1 flotte est en mode attaque et les autres flottes appartiennent à des joueurs non alliés et non PNA</li>
+                                        </ul>
+                                    </div>
+                                    <div class="col-12"><span class="text-normal">Un combat dure toujours 5 minutes, quelles que soient la signature des flottes impliquées.</span></div>
+                                    <div class="col-12"><span class="text-normal">Un combat dure 25 rounds au maximum.</span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="h-100 card">
+                            <div class="card-header">
+                                <span class="fs-6">Rapport de combat</span>
+                            </div>
+                            <div class="card-body">
+                                <div class="row gy-2">
+                                    <div class="col-12"><span class="text-normal">Un rapport de combat est généré pour chaque combat (même si il n'y a eu aucune perte).</span></div>
+                                    <div class="col-12"><span class="text-normal">Le rapport est envoyé à chacun des joueurs ayant au moins 1 flotte impliquée dans le combat.</span></div>
+                                    <div class="col-12"><span class="text-normal">Le rapport est visible pour n'importe quel joueur si celui-ci connaît le lien public.</span></div>
+                                    <div class="col-12"><span class="text-normal">La composition d'une flotte est affichée si la flotte a perdu au moins 1 vaisseau ou si la flotte vous appartient ou si la flotte appartient à un allié ou un membre d'une alliance en PNA ; par conséquent, ce n'est pas toujours les mêmes infos affichées en fonction de qui regarde la rapport.</span></div>
+                                    <div class="col-12"><span class="text-normal">Seules les catégories des vaisseaux perdus seront affichées si le combat n'a duré qu'1 seul round et que la flotte ne vous appartient pas, ni à un allié, ni à un membre d'une alliance en PNA.</span></div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
+            {% endif %}
+            
+            {% if tags %}
+                <div class="card">
+                    <div class="card-header">
+                        <span class="fs-6">Aide sur les balises</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="row gy-2">
+                            <div class="col-12"><span class="text-normal">Les balises peuvent être utilisée pour mettre en couleur et en forme les descriptions de votre alliance, nation et l'annonce de l'alliance.</span></div>
+                            <div class="col-12"><span class="text-normal">Voici la liste des balises supportées et leur résultat:</span></div>
+                            <div class="col-12"><span class="ps-4">[b]le texte[\b] <span class="text-normal">pour écrire</span> <b>le texte en gras</b></span></div>
+                            <div class="col-12"><span class="ps-4">[i]le texte[\i] <span class="text-normal">pour écrire</span> <i>le texte en italique</i></span></div>
+                            <div class="col-12"><span class="ps-4">[u]le texte[\u] <span class="text-normal">pour souligner</span> <u>le texte</u></span></div>
+                            <div class="col-12"><span class="ps-4">[color=#FF0000]rouge[\color] <span class="text-normal">pour écrire</span> <span style="color:#f00">en rouge en utilisant un code de couleur</span></span></div>
+                            <div class="col-12"><span class="ps-4">[color=blue]bleu[\color] <span class="text-normal">pour écrire</span> <span style="color:#00f">en bleu en utilisant la couleur en anglais</span></span></div>
+                            <div class="col-12"><span class="ps-4">[url=http://ngexile.freddecgames.com/]NG Exile[\url] <span class="text-normal">pour créer un lien vers www.exil.pw en affichant</span> <a href="http://ngexile.freddecgames.com/">NG Exile</a></span></div>
+                            <div class="col-12"><span class="ps-4">[url]http://ngexile.freddecgames.com/[\url] <span class="text-normal">pour créer un lien vers www.exil.pw en affichant</span> <a href="http://ngexile.freddecgames.com/">http://ngexile.freddecgames.com/</a></span></div>
+                            <div class="col-12"><span class="ps-4">[img]http://ngexile.freddecgames.com/static/s03/img/interface/credits.gif[\img] <span class="text-normal">pour afficher une image</span> <img src="{{ PATH_IMAGES }}img/interface/credits.gif"/></span></div>
+                            <div class="col-12"><span class="text-normal">Il est possible d'imbriquer les balises:</span></div>
+                            <div class="col-12"><span class="ps-4">[u][b]mon texte[b][u] <span class="text-normal">écrira</span> <u><b>"mon texte" en gras et souligné</b></u></span></div>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+            
         </div>
     </div>
-    {% endif %}
-    {% if tags %}
-    <div class="card">
-        <div class="card-header">
-            <span class="fs-6">Aide sur les balises</span>
-        </div>
-        <div class="card-body">
-            <div class="row gy-2">
-                <div class="col-12"><span class="text-normal">Les balises peuvent être utilisée pour mettre en couleur et en forme les descriptions de votre alliance, nation et l'annonce de l'alliance.</span></div>
-                <div class="col-12"><span class="text-normal">Voici la liste des balises supportées et leur résultat:</span></div>
-                <div class="col-12"><span class="ps-4">[b]le texte[\b] <span class="text-normal">pour écrire</span> <b>le texte en gras</b></span></div>
-                <div class="col-12"><span class="ps-4">[i]le texte[\i] <span class="text-normal">pour écrire</span> <i>le texte en italique</i></span></div>
-                <div class="col-12"><span class="ps-4">[u]le texte[\u] <span class="text-normal">pour souligner</span> <u>le texte</u></span></div>
-                <div class="col-12"><span class="ps-4">[color=#FF0000]rouge[\color] <span class="text-normal">pour écrire</span> <span style="color:#f00">en rouge en utilisant un code de couleur</span></span></div>
-                <div class="col-12"><span class="ps-4">[color=blue]bleu[\color] <span class="text-normal">pour écrire</span> <span style="color:#00f">en bleu en utilisant la couleur en anglais</span></span></div>
-                <div class="col-12"><span class="ps-4">[url=http://ngexile.freddecgames.com/]NG Exile[\url] <span class="text-normal">pour créer un lien vers www.exil.pw en affichant</span> <a href="http://ngexile.freddecgames.com/">NG Exile</a></span></div>
-                <div class="col-12"><span class="ps-4">[url]http://ngexile.freddecgames.com/[\url] <span class="text-normal">pour créer un lien vers www.exil.pw en affichant</span> <a href="http://ngexile.freddecgames.com/">http://ngexile.freddecgames.com/</a></span></div>
-                <div class="col-12"><span class="ps-4">[img]http://ngexile.freddecgames.com/static/s03/img/interface/credits.gif[\img] <span class="text-normal">pour afficher une image</span> <img src="{{ PATH_IMAGES }}img/interface/credits.gif"/></span></div>
-                <div class="col-12"><span class="text-normal">Il est possible d'imbriquer les balises:</span></div>
-                <div class="col-12"><span class="ps-4">[u][b]mon texte[b][u] <span class="text-normal">écrira</span> <u><b>"mon texte" en gras et souligné</b></u></span></div>
-            </div>
-        </div>
-    </div>
-    {% endif %}
-</div>
-</div>
+    
 {% endblock %}

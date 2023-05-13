@@ -8,13 +8,14 @@
     
     <div class="scroll-content" style="height:calc(100% - 52px);">
         <div class="page-content">
+        
             <script>
                 function update(obj) {
                 
                     document.getElementById("count").innerHTML = obj.value.length
                 }
             </script>
-            <form method="post" action="/s03/notes/" name="note">
+            <form method="post">
                 {% csrf_token %}
                 <input type="hidden" name="action" value="save">
                 <div class="card">
@@ -55,6 +56,7 @@
                 </div>
             </form>
             <script>onload = function() { var o = document.getElementById("notes"); o.focus(); o.value = o.value; }</script>
+            
         </div>
     </div>
     
