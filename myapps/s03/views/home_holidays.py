@@ -16,8 +16,8 @@ class View(BaseView):
         #---
         
         query = 'SELECT privilege' + \
-                'FROM users' + \
-                'WHERE id=' + str(self.userId)
+                ' FROM users' + \
+                ' WHERE id=' + str(self.userId)
         row = dbRow(query)
         
         if not row or row['privilege'] != -2: return HttpResponseRedirect('/s03/')
@@ -56,9 +56,9 @@ class View(BaseView):
         #---
 
         query = 'SELECT username,' + \
-                '       (SELECT int4(date_part(\'epoch\', min_end_time - now())) FROM users_holidays WHERE userid = id) AS min_time,' + \
-                '       (SELECT int4(date_part(\'epoch\', end_time - now())) FROM users_holidays WHERE userid = id) AS remaining_time' + \
-                'FROM users WHERE privilege = -2 AND id=' + str(self.userId)
+                ' (SELECT int4(date_part(\'epoch\', min_end_time - now())) FROM users_holidays WHERE userid = id) AS min_time,' + \
+                ' (SELECT int4(date_part(\'epoch\', end_time - now())) FROM users_holidays WHERE userid = id) AS remaining_time' + \
+                ' FROM users WHERE privilege = -2 AND id=' + str(self.userId)
         row = dbRow(query)
         
         tpl.set('user', row)

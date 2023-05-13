@@ -48,7 +48,7 @@
                         {% endif %}
                     </div>
                 </div>
-                <form method="post" action="?cat={{ cat }}">
+                <form method="post">
                     {% csrf_token %}
                     <input type="hidden" name="action" value="save">
                     <div class="card">
@@ -94,7 +94,7 @@
                     </div>
                 </form>
             {% elif cat == 2 %}
-                <form method="post" action="?cat={{ cat }}">
+                <form method="post">
                     {% csrf_token %}
                     <input type="hidden" name="action" value="save">
                     <div class="card">
@@ -128,7 +128,7 @@
                                     <input type="hidden" class="checkbox" name="deleting" value="1">
                                     <div class="form-check">
                                         <input type="checkbox" class="form-check-input" name="delete" id="delete" value="1" checked>
-                                        <label class="form-check-label" for="delete">Votre compte sera supprimé dans <span class="text-yellow"><script>putcountdown1({{data.remainingtime}},"");</script></span></label>
+                                        <label class="form-check-label" for="delete">Votre compte sera supprimé dans <span class="text-yellow"><script>putcountdown1({{data.remainingtime}}, "");</script></span></label>
                                     </div>
                                     {% endif %}
                                 </div>
@@ -158,7 +158,7 @@
                         return obj.checked;
                     }
                 </script>
-                <form method="post" action="?cat={{ cat }}">
+                <form method="post">
                     {% csrf_token %}
                     <input type="hidden" name="action" value="save">
                     <div class="card">

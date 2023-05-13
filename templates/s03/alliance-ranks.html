@@ -23,7 +23,7 @@
                 }
             </script>
             
-            <form method="post" action="?" onsubmit="return check()">
+            <form method="post" onsubmit="return check()">
                 {% csrf_token %}
                 <input type="hidden" name="action" value="save">
                 {% for rank in ranks %}

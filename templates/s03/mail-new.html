@@ -9,6 +9,8 @@
     
     <div class="scroll-content" style="height:calc(100% - 52px);">
         <div class="page-content">
+
+            {% include "s03/_messages.html" %}
         
             <script>
                 function setaddressee(obj, input) {
@@ -68,7 +70,7 @@
                 }
             </script>
             
-            <form method="post" action="" onsubmit="return validateAmount();">
+            <form method="post" onsubmit="return validateAmount();">
                 {% csrf_token %}
                 <input type="hidden" name="action" value="sendmail">
                 <div class="card">
@@ -177,20 +179,6 @@
                                     </div>
                                 </div>
                             </div>
-                            {% for message in messages %}
-                                <div class="col-12">
-                                    <div class="alert alert-{{ message.tags }} text-center">
-                                        {% if message.message == 'mail_unknown_from' %}Expéditeur inconnu{% endif %}
-                                        {% if message.message == 'mail_unknown_to' %}Destinataire inconnu <script>onload=function() { document.newmail.to.focus(); document.newmail.to.value = document.newmail.to.value; }</script>{% endif %}
-                                        {% if message.message == 'mail_missing_to' %}Destinataire manquant <script>onload=function() { document.newmail.to.focus(); }</script>{% endif %}
-                                        {% if message.message == 'mail_same' %}Vous ne pouvez pas envoyer de message à vous même{% endif %}
-                                        {% if message.message == 'mail_empty' %}Spécifiez un message{% endif %}
-                                        {% if message.message == 'not_enough_credits' %}Vous ne possédez pas assez d'argent pour envoyer cette somme{% endif %}
-                                        {% if message.message == 'blocked' %}Vous êtes ignoré : le destinataire ne souhaite pas recevoir de message provenant de votre nation{% endif %}
-                                        {% if message.message == 'mail_sent' %}Message envoyé{% endif %}
-                                    </div>
-                                </div>
-                            {% endfor %}
                         </div>
                     </div>
                 </div>

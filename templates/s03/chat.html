@@ -5,643 +5,645 @@
 
 {% block content %}
 
-    <div class="page-content">
-    
-        <script>
-            var chatDateTime = new Date(new Date({{now|timezone:"Europe/Paris"|date:"Y"}},{{now|timezone:"Europe/Paris"|date:"m"}}-1,{{now|timezone:"Europe/Paris"|date:"d"}},{{now|timezone:"Europe/Paris"|date:"H"}},{{now|timezone:"Europe/Paris"|date:"i"}},{{now|timezone:"Europe/Paris"|date:"s"}},{{now|date:"z"}}));
-            var pageLocation = location.href;
+    <div class="scroll-content" style="height:100%;">
+        <div class="page-content">
+        
+            <script>
+                var chatDateTime = new Date(new Date({{now|timezone:"Europe/Paris"|date:"Y"}},{{now|timezone:"Europe/Paris"|date:"m"}}-1,{{now|timezone:"Europe/Paris"|date:"d"}},{{now|timezone:"Europe/Paris"|date:"H"}},{{now|timezone:"Europe/Paris"|date:"i"}},{{now|timezone:"Europe/Paris"|date:"s"}},{{now|date:"z"}}));
+                var pageLocation = location.href;
 
-            var days=['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
-            var months=['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
+                var days=['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
+                var months=['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
 
-            function formatDate(dt)
-            {
-                return days[dt.getDay()] + " " + dt.getDate() + " " + months[dt.getMonth()];
-            }
-
-            function sameDay(d1, d2)
-            {
-                return d1.getYear() == d2.getYear() && d1.getMonth() == d2.getMonth() && d1.getDay() == d2.getDay();
-            }
-
-            function formatTime(dt)
-            {
-                if(dt==null) return '';
-                return '<span class="me-2">' + dt.getHours().lz() + ':' + dt.getMinutes().lz() + '</span>';
-            }
-
-            var Smileys={
-                list:[],
-                add:function() {
-                    for(var i=1; i<arguments.length; i++)
-                        this.list.push([arguments[0], arguments[i]]);
-                },
-                get:function(smiley) {
-                    for(var i=0; i<this.list.length; i++)
-                        if(this.list[i][1] == smiley)
-                            return this.list[i][0];
-                    return false;
-                }
-            }
-
-            Smileys.add('smile.png', ':)','=)');
-            Smileys.add('neutral.png', ':|','|)');
-            Smileys.add('sad.png', ':(','=(');
-            Smileys.add('big_smile.png', ':D','=D');
-            Smileys.add('yikes.png', ':o',':O','=o','=O');
-            Smileys.add('wink.png', ';)',';D');
-            Smileys.add('hmm.png', ':/');
-            Smileys.add('tongue.png', ':p',':P');
-            Smileys.add('lol.png', ':lol:',':rofl');
-            Smileys.add('mad.png', ':mad:');
-            Smileys.add('roll.png', ':rolleyes:');
-            Smileys.add('cool.png', ':cool:');
-            Smileys.add('grog.gif', ':beer:', ':grog:');
-
-
-            var regexpCoords = new RegExp('^([0-9]+)[.]([0-9]+)[.]([0-9]+)$','');
-
-            function formatLine(author,line)
-            {
-                var smileys = 0;
-
-                highlight = line.indexOf('{{username}}', 0) > -1;
-                words = line.split(" ");
-
-                for(i=0;i<words.length;i++)
+                function formatDate(dt)
                 {
-                    var tab = words[i].match(regexpCoords);
+                    return days[dt.getDay()] + " " + dt.getDate() + " " + months[dt.getMonth()];
+                }
 
-                    if(tab != null && tab[1] > 0 && tab[2] > 0 && tab[2] < 100 && tab[3] > 0 && tab[3] <= 25)
-                    {
-                        words[i] = "<a href='/s03/map/?g="+tab[1] + "&s=" + tab[2] + "&p=" + tab[3] + "' target=_blank>" + words[i] + "</a>";
-                        continue;
+                function sameDay(d1, d2)
+                {
+                    return d1.getYear() == d2.getYear() && d1.getMonth() == d2.getMonth() && d1.getDay() == d2.getDay();
+                }
+
+                function formatTime(dt)
+                {
+                    if(dt==null) return '';
+                    return '<span class="me-2">' + dt.getHours().lz() + ':' + dt.getMinutes().lz() + '</span>';
+                }
+
+                var Smileys={
+                    list:[],
+                    add:function() {
+                        for(var i=1; i<arguments.length; i++)
+                            this.list.push([arguments[0], arguments[i]]);
+                    },
+                    get:function(smiley) {
+                        for(var i=0; i<this.list.length; i++)
+                            if(this.list[i][1] == smiley)
+                                return this.list[i][0];
+                        return false;
                     }
+                }
 
-                    if(smileys < 3) {
-                        var smiley = Smileys.get(words[i]);
-                        if(smiley) {
-                            words[i] = '<img src="{{PATH_IMAGES}}img/smileys/'+smiley+'" class=smiley alt="'+smiley+'">';
-                            smileys++;
+                Smileys.add('smile.png', ':)','=)');
+                Smileys.add('neutral.png', ':|','|)');
+                Smileys.add('sad.png', ':(','=(');
+                Smileys.add('big_smile.png', ':D','=D');
+                Smileys.add('yikes.png', ':o',':O','=o','=O');
+                Smileys.add('wink.png', ';)',';D');
+                Smileys.add('hmm.png', ':/');
+                Smileys.add('tongue.png', ':p',':P');
+                Smileys.add('lol.png', ':lol:',':rofl');
+                Smileys.add('mad.png', ':mad:');
+                Smileys.add('roll.png', ':rolleyes:');
+                Smileys.add('cool.png', ':cool:');
+                Smileys.add('grog.gif', ':beer:', ':grog:');
+
+
+                var regexpCoords = new RegExp('^([0-9]+)[.]([0-9]+)[.]([0-9]+)$','');
+
+                function formatLine(author,line)
+                {
+                    var smileys = 0;
+
+                    highlight = line.indexOf('{{username}}', 0) > -1;
+                    words = line.split(" ");
+
+                    for(i=0;i<words.length;i++)
+                    {
+                        var tab = words[i].match(regexpCoords);
+
+                        if(tab != null && tab[1] > 0 && tab[2] > 0 && tab[2] < 100 && tab[3] > 0 && tab[3] <= 25)
+                        {
+                            words[i] = "<a href='/s03/map/?g="+tab[1] + "&s=" + tab[2] + "&p=" + tab[3] + "' target=_blank>" + words[i] + "</a>";
                             continue;
                         }
+
+                        if(smileys < 3) {
+                            var smiley = Smileys.get(words[i]);
+                            if(smiley) {
+                                words[i] = '<img src="{{PATH_IMAGES}}img/smileys/'+smiley+'" class=smiley alt="'+smiley+'">';
+                                smileys++;
+                                continue;
+                            }
+                        }
+
+                        if(words[i].substr(0,7).toLowerCase() == 'http://' || words[i].substr(0,8).toLowerCase() == 'https://')
+                            words[i] = '<a href="'+words[i]+'" target=_blank>'+addWbr(words[i])+'</a>';
+                        else
+                            words[i] = addWbr(words[i]);
                     }
 
-                    if(words[i].substr(0,7).toLowerCase() == 'http://' || words[i].substr(0,8).toLowerCase() == 'https://')
-                        words[i] = '<a href="'+words[i]+'" target=_blank>'+addWbr(words[i])+'</a>';
+                    if(author == '{{username}}')
+                        return '<span class="text-white">' + words.join(' ') + '</span>';
                     else
-                        words[i] = addWbr(words[i]);
+                    if(highlight)
+                        return '<span class="highlight">' + words.join(' ') + '</span>';
+                    else
+                        return words.join(' ');
                 }
 
-                if(author == '{{username}}')
-                    return '<span class="text-white">' + words.join(' ') + '</span>';
-                else
-                if(highlight)
-                    return '<span class="highlight">' + words.join(' ') + '</span>';
-                else
-                    return words.join(' ');
-            }
+                function sortName(a, b)
+                {
+                    if(a.name.toLowerCase() < b.name.toLowerCase()) return -1;
+                    if(a.name.toLowerCase() > b.name.toLowerCase()) return 1;
+                    return 0;
+                }
 
-            function sortName(a, b)
-            {
-                if(a.name.toLowerCase() < b.name.toLowerCase()) return -1;
-                if(a.name.toLowerCase() > b.name.toLowerCase()) return 1;
-                return 0;
-            }
+                var min_refreshtime = 2000;
+                var max_refreshtime = 10000;
+                var disabled_refreshtime = 120000;
+                var max_idletime = 600000;
+                var chatlist = [];
 
-            var min_refreshtime = 2000;
-            var max_refreshtime = 10000;
-            var disabled_refreshtime = 120000;
-            var max_idletime = 600000;
-            var chatlist = [];
-
-            function User(allianceTag, name, idleTime) {
-                this.tag = allianceTag;
-                this.name = name;
-                this.idleSince = new Date().getTime()-idleTime*1000;
-            }
+                function User(allianceTag, name, idleTime) {
+                    this.tag = allianceTag;
+                    this.name = name;
+                    this.idleSince = new Date().getTime()-idleTime*1000;
+                }
 
 
-            var Class = {
-                create: function() {
-                    return function() {
-                        this.initialize.apply(this, arguments);
+                var Class = {
+                    create: function() {
+                        return function() {
+                            this.initialize.apply(this, arguments);
+                        } 
                     } 
                 } 
-            } 
 
-            var Chat = Class.create();
-            Chat.prototype = {
-                initialize: function(id, name, canClose, showTag) {
-                    this.id = id;
-                    this.name = name;
-                    this.showTag = showTag;
+                var Chat = Class.create();
+                Chat.prototype = {
+                    initialize: function(id, name, canClose, showTag) {
+                        this.id = id;
+                        this.name = name;
+                        this.showTag = showTag;
 
-                    this.active = false;
-                    this.lines = [];
-                    this.users = [];
-                    this.lastLine = 0;
-                    this.linesAdded = 0;
-                    this.lastDateTime = "";
-                    this.refreshTime = disabled_refreshtime;
-                    this.lastRefresh = new Date().getTime();
-                    this.nextRefreshOnlineUsers = new Date().getTime() + 60000;
+                        this.active = false;
+                        this.lines = [];
+                        this.users = [];
+                        this.lastLine = 0;
+                        this.linesAdded = 0;
+                        this.lastDateTime = "";
+                        this.refreshTime = disabled_refreshtime;
+                        this.lastRefresh = new Date().getTime();
+                        this.nextRefreshOnlineUsers = new Date().getTime() + 60000;
 
-                    this.loaded = false; {% if comment %}// set to true once chat history has been filled{% endif %}
+                        this.loaded = false; {% if comment %}// set to true once chat history has been filled{% endif %}
 
-                    this.lastTo = '';
-                    this.line = '';
-                    this.sendingText = false;
+                        this.lastTo = '';
+                        this.line = '';
+                        this.sendingText = false;
 
-                    // create/display this chat tab
-                    var newtab = $('newtab');
-                    var tabs = $('chattabs');
+                        // create/display this chat tab
+                        var newtab = $('newtab');
+                        var tabs = $('chattabs');
 
-                    this.tab = document.createElement('li');
-                    this.tab.chat = this;
-                    this.tab.className = 'nav-item'
+                        this.tab = document.createElement('li');
+                        this.tab.chat = this;
+                        this.tab.className = 'nav-item'
 
-                    this.tab.innerHTML = '<a href="#" class="nav-link" onclick="chatlist['+id+'].setActive(); return false;">' + name +
-                                         (canClose?'&nbsp;<i class="ms-1 fa-fw fas fa-times text-danger" data-bs-toggle="tooltip" data-bs-title="Fermer le salon" onclick="event.stopPropagation(); chatlist['+id+'].close(); return false;"></i>':'') + '</a>';
+                        this.tab.innerHTML = '<a href="#" class="nav-link" onclick="chatlist['+id+'].setActive(); return false;">' + name +
+                                             (canClose?'&nbsp;<i class="ms-1 fa-fw fas fa-times text-danger" data-bs-toggle="tooltip" data-bs-title="Fermer le salon" onclick="event.stopPropagation(); chatlist['+id+'].close(); return false;"></i>':'') + '</a>';
 
-                    tabs.insertBefore(this.tab, newtab);
+                        tabs.insertBefore(this.tab, newtab);
 
-                    // add this chat to the chat list
-                    chatlist[this.id] = this;
+                        // add this chat to the chat list
+                        chatlist[this.id] = this;
 
-                    checkNewTabVisility();
-                },
+                        checkNewTabVisility();
+                    },
 
-                close: function() {
-                    if(!confirm('Êtes-vous sûr de vouloir fermer le salon ' + this.name + ' ?')) return;
+                    close: function() {
+                        if(!confirm('Êtes-vous sûr de vouloir fermer le salon ' + this.name + ' ?')) return;
 
-                    this.setInactive();
+                        this.setInactive();
 
-                    this.tab.parentNode.removeChild(this.tab);
-                    chatlist[this.id] = null;
+                        this.tab.parentNode.removeChild(this.tab);
+                        chatlist[this.id] = null;
 
-                    checkNewTabVisility();
+                        checkNewTabVisility();
 
-                    // activate first possible tab
-                    if(activeChat == this) {
-                        activeChat = null;
+                        // activate first possible tab
+                        if(activeChat == this) {
+                            activeChat = null;
 
-                        var previousTab = null;
+                            var previousTab = null;
 
-                        for(x in chatlist)
-                            if(chatlist[x]) {
-                                previousTab = chatlist[x];
-                                break;
+                            for(x in chatlist)
+                                if(chatlist[x]) {
+                                    previousTab = chatlist[x];
+                                    break;
+                                }
+                            
+                            if(previousTab)
+                                previousTab.setActive();
+                            else
+                                showJoinChatForm();
+                        }
+
+                        // send leave command
+                        var url = "/s03/chat/?action=leave&id="+this.id;
+                        openURL(url, leaveChatResponse);
+                    },
+
+                    setTopic: function(topic) {
+                    //
+                    },
+
+                    send: function(line) {
+                        if(line == '') return false;
+
+                        this.sendingText = true;
+                        this.lastTo = '';
+
+                        var url = pageLocation + '?action=send&id=' + this.id + '&l=' + encodeURIComponent(line);
+
+                        var c = this;
+                        var cb = function(req) {
+                                    var s=0;
+                                    try {
+                                        s=req.status;
+                                        if(s != 200) throw null;
+                                    }
+                                    catch(e) {
+                                        c.addLine('', '', null, s+':Erreur lors de l\'envoi de "' + line + '"');
+                                    }
+                                    c.display();
+                                    c.textSent(); 
+                                }
+                        openURL(url, cb);
+
+                        this.refreshTime = new Date() - this.lastRefresh + 500;
+                        return true;
+                    },
+
+                    textSent: function() {
+                        this.sendingText=false;
+                    },
+
+                    setActive: function() {
+                        if(this.active) return;
+
+                        if(activeChat) activeChat.setInactive();
+
+                        var newtab = $('newtab');
+                        newtab.className = 'nav-item';
+
+                        this.active = true;
+                        this.tab.className = 'nav-item active';
+
+                        this.refreshTime = 200;
+
+                        activeChat = this;
+                        this.display();
+                        this.displayUsers();
+
+                        var obj = $('chatform');
+                        obj.style.visibility = 'visible';
+                        obj.style.display = 'block';
+
+                        var obj = $('joinchatform');
+                        obj.style.visibility = 'hidden';
+                        obj.style.display = 'none';
+
+                        oChatLine.value = this.line;
+                        oChatLine.focus();
+                        this.line = "";
+
+                        oChat.scrollTop = oChat.scrollHeight;
+                    },
+
+                    setInactive: function() {
+                        if(!this.active) return;
+
+                        this.line = oChatLine.value;
+
+                        this.lastLine = 0;
+                        this.tab.className = 'nav-item';
+                        this.active = false;
+                        this.refreshTime = disabled_refreshtime;
+                    },
+
+                    tell: function(to) {
+                        oChatLine.focus();
+
+                        if(this.lastTo != '' && oChatLine.value.substring(0, this.lastTo.length) == this.lastTo)
+                            oChatLine.value = oChatLine.value.substring(this.lastTo.length+1, oChatLine.value.length);
+
+                        to = to + ' >';
+                        oChatLine.value = to + ' ' + oChatLine.value;
+                        this.lastTo = to;
+                    },
+
+                    addLine: function(tag, author, datetime, line) {
+                        if (tag == 'None') tag = ''
+                    
+                        this.refreshTime -= 100;
+                        if(this.refreshTime > max_refreshtime) this.refreshTime = max_refreshtime;
+                        if(this.refreshTime < min_refreshtime) this.refreshTime = min_refreshtime;
+
+                        if(datetime!=null && (this.lastDateTime=='' || !sameDay(this.lastDateTime,datetime)))
+                        {
+                            this.lines.push('<div class=newday>' + formatDate(datetime) + '</div>');
+                            this.lastDateTime = datetime;
+                        }
+
+                        line = formatLine(author,line);
+
+                        if(!this.showTag) tag = '';
+
+                        this.lines.push((datetime==null?'<b>':'')+formatTime(datetime) + (tag!=''?'<a href="/s03/alliance-view/?tag='+tag+'" target="_blank">['+tag+']</a> ':'') + '<a href="#" onclick="chatlist['+this.id+'].tell(\''+author+'\'); return false;" class="author me-2">' + author + '</a>' + line + (datetime==null?'</b>':''));
+
+                        // limit chatbox to 250 messages
+                        while(this.lines.length > 250) this.lines.shift();
+
+                        if(author!='' && this.loaded && datetime.getTime() > chatDateTime.getTime()-max_idletime) this.addUser(tag, author, 0);
+
+                        this.linesAdded++;
+                    },
+
+                    addUser: function(allianceTag, name, idleTime) {
+                        if (!this.showTag) allianceTag = '';
+                        if (allianceTag == 'None') allianceTag = '';
+
+                        for(var i=0; i<this.users.length; i++) {
+                            var user = this.users[i];
+                            if(user.name.toLowerCase() == name.toLowerCase()) {
+                                this.users[i] = new User(allianceTag, name, idleTime);
+                                return;
                             }
+                        }
+
+                        this.users.push(new User(allianceTag, name, idleTime));
+                    },
+
+                    clearUsers: function() { this.users = []; },
+
+                    display: function() {
+                    
+                        this.loaded = true
+                        if (!this.active) return
+
+                        oChat.innerHTML = this.lines.join('<br/>')
                         
-                        if(previousTab)
-                            previousTab.setActive();
-                        else
-                            showJoinChatForm();
+                        if (this.linesAdded > this.lastLine) {
+                        
+                            this.lastLine = this.linesAdded
+                            oChat.scrollTop = oChat.scrollHeight
+                        }
+                    },
+
+                    displayUsers: function() {
+                        if(!this.active) return;
+
+                        var d = new Date().getTime()-max_idletime;
+
+                        this.users.sort(sortName);
+
+                        var s = '';
+                        for(var i=0; i<this.users.length; i++) {
+                            var user = this.users[i];
+                            if(user.idleSince > d)
+                                s += (s!=''?', ':'') + (user.tag!=''?' <a href="/s03/alliance-view/?tag='+user.tag+'" target="_blank">['+user.tag+']</a>':'') + ' <a href="#" onclick="chatlist[' + this.id + '].tell(\'' + user.name + '\'); return false;">' + user.name + '</a>';
+                        }
+
+                        $('onlineusers').innerHTML = s;
+                    },
+
+                    refresh: function() {
+                        if(!this.active) {
+                            window.setTimeout('refreshChat('+this.id+')', 100);
+                            return;
+                        }
+
+                        var url = "/s03/chat/?action=refresh&id=" + this.id;
+
+                        var c = this;
+                        var cb = function(req) {
+                                    try {
+                                        if(req.status==200)
+                                            eval(req.responseText);
+                                    } catch(e) {
+                                        //window.location.reload(true);
+                                        try {
+                                            c.addLine('', '', null, ':Erreur lors de la réception des données: "' + e.message + '"');
+                                        } catch(e) {
+                                        }
+                                    }
+                                    c.refreshed(); 
+                                }
+                        openURL(url, cb);
+                    },
+
+                    refreshed: function() {
+                        if(this.active) {
+                            this.refreshTime += this.refreshTime / 10;
+                            if(this.refreshTime < min_refreshtime) this.refreshTime = min_refreshtime;
+                            if(this.refreshTime > max_refreshtime) this.refreshTime = max_refreshtime;
+                        }
+
+                        // refresh list of online users
+                        if(new Date().getTime() > this.nextRefreshOnlineUsers) {
+                            this.nextRefreshOnlineUsers = new Date().getTime() + 60000;
+                            this.displayUsers();
+                        }
+
+                        this.lastRefresh = new Date().getTime();
+
+                        window.setTimeout('refreshChat('+this.id+')', 100);
+                    }
+                }
+
+                function checkNewTabVisility() {
+                    var newtab = $('newtab');
+
+                    activeChatsCount = 0;
+
+                    for(var x in chatlist) {
+                        var chat = chatlist[x];
+                        if(chat) activeChatsCount++;
                     }
 
-                    // send leave command
-                    var url = "/s03/chat/?action=leave&id="+this.id;
-                    openURL(url, leaveChatResponse);
-                },
+                    if(activeChatsCount < 10)
+                    {
+                        newtab.style.visibility = "visible";
+                        newtab.style.display = "block";
+                    }
+                    else
+                    {
+                        newtab.style.visibility = "hidden";
+                        newtab.style.display = "none";
+                    }
+                }
 
-                setTopic: function(topic) {
+                var oChat, oChatLine;
+                var activeChat;
+
+                function leaveChatResponse(req) {
+                    if(req.status=="200") eval(req.responseText);
+                }
+
+                function sendText() {
+                    if(activeChat.sendingText) return false;
+
+                    activeChat.send(oChatLine.value);
+                    oChatLine.value = "";
+
+                    return false;
+                }
+
                 //
-                },
+                // Chat refresh
+                //
 
-                send: function(line) {
-                    if(line == '') return false;
+                function refreshChat(id) {
+                    var chat = chatlist[id];
+                    if(!chat) return;
 
-                    this.sendingText = true;
-                    this.lastTo = '';
+                    if(chat.lastRefresh + chat.refreshTime < new Date().getTime() && !chat.sendingText)
+                        chat.refresh();
+                    else
+                        window.setTimeout('refreshChat('+id+')', 100);
+                }
 
-                    var url = pageLocation + '?action=send&id=' + this.id + '&l=' + encodeURIComponent(line);
+                //
+                // Join chat
+                //
 
-                    var c = this;
-                    var cb = function(req) {
-                                var s=0;
-                                try {
-                                    s=req.status;
-                                    if(s != 200) throw null;
-                                }
-                                catch(e) {
-                                    c.addLine('', '', null, s+':Erreur lors de l\'envoi de "' + line + '"');
-                                }
-                                c.display();
-                                c.textSent(); 
-                            }
-                    openURL(url, cb);
+                var joining = false;
 
-                    this.refreshTime = new Date() - this.lastRefresh + 500;
-                    return true;
-                },
+                function joinChatResponse(req) {
+                    joining = false;
 
-                textSent: function() {
-                    this.sendingText=false;
-                },
+                    try {
+                        if(req.status=="200")
+                            eval(req.responseText);
+                    } catch (e)	{
+                        //window.location.reload(true);
+                        alert(e.message);
+                    }
+                }
 
-                setActive: function() {
-                    if(this.active) return;
+                function joinChat2(name,pass) {
+                    var url = pageLocation + "?action=join&chat=" + encodeURIComponent(name) + "&pass=" + encodeURIComponent(pass);
 
+                    for(var x in chatlist)
+                        if(chatlist[x] && chatlist[x].id > 0 && (chatlist[x].name.toLowerCase() == name.toLowerCase())) {
+                            alert('Vous êtes déjà sur ce salon.');
+                            return;
+                        }
+
+                    joining = true;
+                    openURL(url, joinChatResponse);
+                }
+
+                function joinChat() {
+                    var oName = $("chatname");
+                    var oPass = $("chatpassword");
+                    joinChat2(oName.value, oPass.value);
+
+                    return false;
+                }
+
+                var isFirstChat=true;
+                function addChat(id, name, topic, canClose, showTag) {
+                    // reset join form if we joined a chat
+                    var oName = $("chatname");
+                    var oPass = $("chatpassword");
+
+                    if(name.toLowerCase() == oName.value.toLowerCase()) {
+                        oName.value = "";
+                        oPass.value = "";
+                    }
+
+                    var c = new Chat(id, name, canClose, showTag);
+                    c.setTopic(topic);
+
+                    if(isFirstChat) {
+                        c.setActive();
+                        isFirstChat = false;
+                    }
+                    window.setTimeout('refreshChat('+c.id+')', 100);
+                    return c;
+                }
+
+                function showJoinChatForm()
+                {
                     if(activeChat) activeChat.setInactive();
 
                     var newtab = $('newtab');
-                    newtab.className = 'nav-item';
-
-                    this.active = true;
-                    this.tab.className = 'nav-item active';
-
-                    this.refreshTime = 200;
-
-                    activeChat = this;
-                    this.display();
-                    this.displayUsers();
+                    newtab.className = "nav-item active";
 
                     var obj = $('chatform');
-                    obj.style.visibility = 'visible';
-                    obj.style.display = 'block';
+                    obj.style.visibility = "hidden";
+                    obj.style.display = "none";
 
                     var obj = $('joinchatform');
-                    obj.style.visibility = 'hidden';
-                    obj.style.display = 'none';
+                    obj.style.visibility = "visible";
+                    obj.style.display = "block";
 
-                    oChatLine.value = this.line;
-                    oChatLine.focus();
-                    this.line = "";
+                    $("chatname").focus();
+                }
 
-                    oChat.scrollTop = oChat.scrollHeight;
-                },
+                        function displayPublicChats(list) {
+                        
+                            var s = ''
 
-                setInactive: function() {
-                    if(!this.active) return;
-
-                    this.line = oChatLine.value;
-
-                    this.lastLine = 0;
-                    this.tab.className = 'nav-item';
-                    this.active = false;
-                    this.refreshTime = disabled_refreshtime;
-                },
-
-                tell: function(to) {
-                    oChatLine.focus();
-
-                    if(this.lastTo != '' && oChatLine.value.substring(0, this.lastTo.length) == this.lastTo)
-                        oChatLine.value = oChatLine.value.substring(this.lastTo.length+1, oChatLine.value.length);
-
-                    to = to + ' >';
-                    oChatLine.value = to + ' ' + oChatLine.value;
-                    this.lastTo = to;
-                },
-
-                addLine: function(tag, author, datetime, line) {
-                    if (tag == 'None') tag = ''
-                
-                    this.refreshTime -= 100;
-                    if(this.refreshTime > max_refreshtime) this.refreshTime = max_refreshtime;
-                    if(this.refreshTime < min_refreshtime) this.refreshTime = min_refreshtime;
-
-                    if(datetime!=null && (this.lastDateTime=='' || !sameDay(this.lastDateTime,datetime)))
-                    {
-                        this.lines.push('<div class=newday>' + formatDate(datetime) + '</div>');
-                        this.lastDateTime = datetime;
-                    }
-
-                    line = formatLine(author,line);
-
-                    if(!this.showTag) tag = '';
-
-                    this.lines.push((datetime==null?'<b>':'')+formatTime(datetime) + (tag!=''?'<a href="/s03/alliance-view/?tag='+tag+'" target="_blank">['+tag+']</a> ':'') + '<a href="#" onclick="chatlist['+this.id+'].tell(\''+author+'\'); return false;" class="author me-2">' + author + '</a>' + line + (datetime==null?'</b>':''));
-
-                    // limit chatbox to 250 messages
-                    while(this.lines.length > 250) this.lines.shift();
-
-                    if(author!='' && this.loaded && datetime.getTime() > chatDateTime.getTime()-max_idletime) this.addUser(tag, author, 0);
-
-                    this.linesAdded++;
-                },
-
-                addUser: function(allianceTag, name, idleTime) {
-                    if (!this.showTag) allianceTag = '';
-                    if (allianceTag == 'None') allianceTag = '';
-
-                    for(var i=0; i<this.users.length; i++) {
-                        var user = this.users[i];
-                        if(user.name.toLowerCase() == name.toLowerCase()) {
-                            this.users[i] = new User(allianceTag, name, idleTime);
-                            return;
-                        }
-                    }
-
-                    this.users.push(new User(allianceTag, name, idleTime));
-                },
-
-                clearUsers: function() { this.users = []; },
-
-                display: function() {
-                
-                    this.loaded = true
-                    if (!this.active) return
-
-                    oChat.innerHTML = this.lines.join('<br/>')
-                    
-                    if (this.linesAdded > this.lastLine) {
-                    
-                        this.lastLine = this.linesAdded
-                        oChat.scrollTop = oChat.scrollHeight
-                    }
-                },
-
-                displayUsers: function() {
-                    if(!this.active) return;
-
-                    var d = new Date().getTime()-max_idletime;
-
-                    this.users.sort(sortName);
-
-                    var s = '';
-                    for(var i=0; i<this.users.length; i++) {
-                        var user = this.users[i];
-                        if(user.idleSince > d)
-                            s += (s!=''?', ':'') + (user.tag!=''?' <a href="/s03/alliance-view/?tag='+user.tag+'" target="_blank">['+user.tag+']</a>':'') + ' <a href="#" onclick="chatlist[' + this.id + '].tell(\'' + user.name + '\'); return false;">' + user.name + '</a>';
-                    }
-
-                    $('onlineusers').innerHTML = s;
-                },
-
-                refresh: function() {
-                    if(!this.active) {
-                        window.setTimeout('refreshChat('+this.id+')', 100);
-                        return;
-                    }
-
-                    var url = "/s03/chat/?action=refresh&id=" + this.id;
-
-                    var c = this;
-                    var cb = function(req) {
-                                try {
-                                    if(req.status==200)
-                                        eval(req.responseText);
-                                } catch(e) {
-                                    //window.location.reload(true);
-                                    try {
-                                        c.addLine('', '', null, ':Erreur lors de la réception des données: "' + e.message + '"');
-                                    } catch(e) {
-                                    }
-                                }
-                                c.refreshed(); 
+                            for (var i = 1; i < list.length; i++) {
+                                
+                                s += '<div class="list-group-item">' +
+                                         '<div class="row gx-3">' +
+                                            '<div class="col"><a href="#" onclick="joinChat2(\'' + list[i][0] + '\',\'\'); return false;">' + list[i][0] + '</a></div>' +
+                                            '<div class="col-auto">' + list[i][2] + ' <span class="text-normal">en ligne</span></div>' +
+                                         '</div>' +
+                                     '</div>'
                             }
-                    openURL(url, cb);
-                },
 
-                refreshed: function() {
-                    if(this.active) {
-                        this.refreshTime += this.refreshTime / 10;
-                        if(this.refreshTime < min_refreshtime) this.refreshTime = min_refreshtime;
-                        if(this.refreshTime > max_refreshtime) this.refreshTime = max_refreshtime;
-                    }
-
-                    // refresh list of online users
-                    if(new Date().getTime() > this.nextRefreshOnlineUsers) {
-                        this.nextRefreshOnlineUsers = new Date().getTime() + 60000;
-                        this.displayUsers();
-                    }
-
-                    this.lastRefresh = new Date().getTime();
-
-                    window.setTimeout('refreshChat('+this.id+')', 100);
-                }
-            }
-
-            function checkNewTabVisility() {
-                var newtab = $('newtab');
-
-                activeChatsCount = 0;
-
-                for(var x in chatlist) {
-                    var chat = chatlist[x];
-                    if(chat) activeChatsCount++;
-                }
-
-                if(activeChatsCount < 10)
-                {
-                    newtab.style.visibility = "visible";
-                    newtab.style.display = "block";
-                }
-                else
-                {
-                    newtab.style.visibility = "hidden";
-                    newtab.style.display = "none";
-                }
-            }
-
-            var oChat, oChatLine;
-            var activeChat;
-
-            function leaveChatResponse(req) {
-                if(req.status=="200") eval(req.responseText);
-            }
-
-            function sendText() {
-                if(activeChat.sendingText) return false;
-
-                activeChat.send(oChatLine.value);
-                oChatLine.value = "";
-
-                return false;
-            }
-
-            //
-            // Chat refresh
-            //
-
-            function refreshChat(id) {
-                var chat = chatlist[id];
-                if(!chat) return;
-
-                if(chat.lastRefresh + chat.refreshTime < new Date().getTime() && !chat.sendingText)
-                    chat.refresh();
-                else
-                    window.setTimeout('refreshChat('+id+')', 100);
-            }
-
-            //
-            // Join chat
-            //
-
-            var joining = false;
-
-            function joinChatResponse(req) {
-                joining = false;
-
-                try {
-                    if(req.status=="200")
-                        eval(req.responseText);
-                } catch (e)	{
-                    //window.location.reload(true);
-                    alert(e.message);
-                }
-            }
-
-            function joinChat2(name,pass) {
-                var url = pageLocation + "?action=join&chat=" + encodeURIComponent(name) + "&pass=" + encodeURIComponent(pass);
-
-                for(var x in chatlist)
-                    if(chatlist[x] && chatlist[x].id > 0 && (chatlist[x].name.toLowerCase() == name.toLowerCase())) {
-                        alert('Vous êtes déjà sur ce salon.');
-                        return;
-                    }
-
-                joining = true;
-                openURL(url, joinChatResponse);
-            }
-
-            function joinChat() {
-                var oName = $("chatname");
-                var oPass = $("chatpassword");
-                joinChat2(oName.value, oPass.value);
-
-                return false;
-            }
-
-            var isFirstChat=true;
-            function addChat(id, name, topic, canClose, showTag) {
-                // reset join form if we joined a chat
-                var oName = $("chatname");
-                var oPass = $("chatpassword");
-
-                if(name.toLowerCase() == oName.value.toLowerCase()) {
-                    oName.value = "";
-                    oPass.value = "";
-                }
-
-                var c = new Chat(id, name, canClose, showTag);
-                c.setTopic(topic);
-
-                if(isFirstChat) {
-                    c.setActive();
-                    isFirstChat = false;
-                }
-                window.setTimeout('refreshChat('+c.id+')', 100);
-                return c;
-            }
-
-            function showJoinChatForm()
-            {
-                if(activeChat) activeChat.setInactive();
-
-                var newtab = $('newtab');
-                newtab.className = "nav-item active";
-
-                var obj = $('chatform');
-                obj.style.visibility = "hidden";
-                obj.style.display = "none";
-
-                var obj = $('joinchatform');
-                obj.style.visibility = "visible";
-                obj.style.display = "block";
-
-                $("chatname").focus();
-            }
-
-                    function displayPublicChats(list) {
-                    
-                        var s = ''
-
-                        for (var i = 1; i < list.length; i++) {
-                            
-                            s += '<div class="list-group-item">' +
-                                     '<div class="row gx-3">' +
-                                        '<div class="col"><a href="#" onclick="joinChat2(\'' + list[i][0] + '\',\'\'); return false;">' + list[i][0] + '</a></div>' +
-                                        '<div class="col-auto">' + list[i][2] + ' <span class="text-normal">en ligne</span></div>' +
-                                     '</div>' +
-                                 '</div>'
+                            s = '<div class="card mt-3">' +
+                                    '<div class="card-header"><span class="fs-6">Liste des salons publics</span></div>' +
+                                    '<div class="list-group list-group-flush">' + s + '</div>' +
+                                '</div>'
+                                
+                            $('publicchats').innerHTML = s;
                         }
-
-                        s = '<div class="card mt-3">' +
-                                '<div class="card-header"><span class="fs-6">Liste des salons publics</span></div>' +
-                                '<div class="list-group list-group-flush">' + s + '</div>' +
-                            '</div>'
-                            
-                        $('publicchats').innerHTML = s;
-                    }
-        </script>
-        
-        <ul id="chattabs" class="nav nav-tabs mt-0 mb-3">
-            <li id="newtab" class="nav-item">
-                <a href="#" class="nav-link" onclick="showJoinChatForm(); return false;"><i class="fa-fw fas fa-plus-circle"></i></a>
-            </li>
-        </ul>
-        
-        <form id="chatform" action="#" method="get" onsubmit="return sendText();">
-            {% csrf_token %}
-            <div class="card">
-                <div class="list-group list-group-flush">
-                    <div class="list-group-item pe-2">
-                        <div id="chat"></div>
-                    </div>
-                    <div class="list-group-item">
-                        <div class="row gx-2 align-items-center">
-                            <div class="col"><input type="text" class="form-control" id="chatline" maxlength="256"></div>
-                            <div class="col-auto"><input type="submit" class="btn btn-primary" value="Envoyer"></div>
-                        </div>
-                    </div>
-                    <div class="list-group-item">
-                        <span class="text-normal">En ligne</span>
-                        <span id="onlineusers"></span>
-                    </div>
-                </div>
-            </div>
-        </form>
-        
-        <div id="joinchatform">
-            <form action="#" method=get onsubmit="return joinChat();">
+            </script>
+            
+            <ul id="chattabs" class="nav nav-tabs mt-0 mb-3">
+                <li id="newtab" class="nav-item">
+                    <a href="#" class="nav-link" onclick="showJoinChatForm(); return false;"><i class="fa-fw fas fa-plus-circle"></i></a>
+                </li>
+            </ul>
+            
+            <form id="chatform" method="get" onsubmit="return sendText();">
                 {% csrf_token %}
                 <div class="card">
-                    <div class="card-header">
-                        <span class="fs-6">Rejoindre un nouveau salon</span>
-                    </div>
-                    <div class="card-body">
-                        <div class="row gx-2 align-items-center justify-content-center">
-                            <div class="col-auto">
-                                <span class="text-normal">Nom du salon</span>
+                    <div class="list-group list-group-flush">
+                        <div class="list-group-item pe-2">
+                            <div id="chat"></div>
+                        </div>
+                        <div class="list-group-item">
+                            <div class="row gx-2 align-items-center">
+                                <div class="col"><input type="text" class="form-control" id="chatline" maxlength="256"></div>
+                                <div class="col-auto"><input type="submit" class="btn btn-primary" value="Envoyer"></div>
                             </div>
-                            <div class="col-auto">
-                                <input type="text" class="form-control" id="chatname" maxlength="12">
-                            </div>
-                            <div class="col-auto">
-                                <span class="text-normal">Mot de passe</span>
-                            </div>
-                            <div class="col-auto">
-                                <input type="password" class="form-control" id="chatpassword" maxlength="16">
-                            </div>
-                            <div class="col-auto">
-                                <input type="submit" class="btn btn-primary" value="Rejoindre">
-                            </div>
+                        </div>
+                        <div class="list-group-item">
+                            <span class="text-normal">En ligne</span>
+                            <span id="onlineusers"></span>
                         </div>
                     </div>
                 </div>
             </form>
-            <div id="publicchats"></div>
+            
+            <div id="joinchatform">
+                <form method=get onsubmit="return joinChat();">
+                    {% csrf_token %}
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="fs-6">Rejoindre un nouveau salon</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="row gx-2 align-items-center justify-content-center">
+                                <div class="col-auto">
+                                    <span class="text-normal">Nom du salon</span>
+                                </div>
+                                <div class="col-auto">
+                                    <input type="text" class="form-control" id="chatname" maxlength="12">
+                                </div>
+                                <div class="col-auto">
+                                    <span class="text-normal">Mot de passe</span>
+                                </div>
+                                <div class="col-auto">
+                                    <input type="password" class="form-control" id="chatpassword" maxlength="16">
+                                </div>
+                                <div class="col-auto">
+                                    <input type="submit" class="btn btn-primary" value="Rejoindre">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                <div id="publicchats"></div>
+            </div>
+            
+            <script>
+                oChat = $('chat')
+                oChatLine = $('chatline')
+
+                {% if alliance %}addChat(0, 'Alliance', '', false, false){% endif %}
+
+                {% for join in joins %}
+                    addChat({{ join.id }}, '{{ join.name }}', '{{ join.topic }}', true, true)
+                {% endfor %}
+
+                displayPublicChats([0
+                    {% for chat in chats %},['{{ chat.name }}','{{ chat.topic }}',{{ chat.online }}]{% endfor %}
+                ]);
+
+                if (chatlist.length == 0) showJoinChatForm()
+            </script>
+            
         </div>
-        
-        <script>
-            oChat = $('chat')
-            oChatLine = $('chatline')
-
-            {% if alliance %}addChat(0, 'Alliance', '', false, false){% endif %}
-
-            {% for join in joins %}
-                addChat({{ join.id }}, '{{ join.name }}', '{{ join.topic }}', true, true)
-            {% endfor %}
-
-            displayPublicChats([0
-                {% for chat in chats %},['{{ chat.name }}','{{ chat.topic }}',{{ chat.online }}]{% endfor %}
-            ]);
-
-            if (chatlist.length == 0) showJoinChatForm()
-        </script>
-        
     </div>
     
 {% endblock %}

@@ -62,7 +62,7 @@
                                         <div class="col-auto">
                                             <script>
                                                 let html = ''
-                                                html += '<form method="post" action="">'
+                                                html += '<form method="post">'
                                                     html += '{% csrf_token %}'
                                                     html += '<input type="hidden" name="action" value="cancel" />'
                                                     html += '<input type="hidden" name="q" value="{{ ship.id }}" />'
@@ -127,7 +127,7 @@
                                             <script>document.write(formattime({{ship.remaining_time }}))</script>
                                         </div>
                                         <div class="col-auto text-end">
-                                            <form method="post" action="">
+                                            <form method="post">
                                                 {% csrf_token %}
                                                 <input type="hidden" name="action" value="cancel" />
                                                 <input type="hidden" name="q" value="{{ ship.id }}" />
@@ -140,7 +140,7 @@
                         </div>
                     </div>
                 {% endif %}
-                <form method="post" action="">
+                <form method="post">
                     {% csrf_token %}
                     <input type="hidden" name="action" value="recycle" />
                     {% for category in categories %}

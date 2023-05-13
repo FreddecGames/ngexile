@@ -38,42 +38,42 @@
             {% else %}
                 <div class="row gy-3">
                     {% for mail in mails %}
-                    <div class="col-12">
-                        <div class="card card-body">
-                            <div class="row g-2 flex-column">
-                                <div class="col-12">
-                                    <div class="row gx-3 align-items-center">
-                                        <div class="col-auto">
-                                            {% if mail.avatar_url %}<img src="{{ mail.avatar_url }}" width="48" height="48" class="rounded">
-                                            {% else %}<img src="{{ PATH_IMAGES }}img/interface/noavatar.gif" width="48" height="48" class="rounded">
-                                            {% endif %}
-                                        </div>
-                                        <div class="col">
-                                            <div class="mb-1">
-                                                {% if mail.tag %}<a href="/s03/alliance-view/?tag={{ mail.tag }}" class="me-2" data-bs-toggle="tooltip" data-bs-title="Voir alliance">[{{ mail.tag }}]</a>{% endif %}
-                                                {% if mail.owner and mail.owner != ':alliance' %}<a href="/s03/profile-view/?name={{ mail.owner }}" class="me-2" data-bs-toggle="tooltip" data-bs-title="Voir profil">{{ mail.owner }}</a>{% endif %}
-                                                <span class="text-normal me-2">{{ mail.datetime|timezone:"Europe/Paris" }}</span>
-                                                {% if mail.owner == ':alliance' %}<span class="ms-2">À l'alliance</span>{% endif %}
-                                            </div>
-                                            <div>
-                                                <span class="fs-6">{{ mail.subject }}</span>
-                                                {% if mail.credits > 0 %}
-                                                    <span class="ms-3 text-normal">Crédits envoyés</span>
-                                                    <img src="{{ PATH_IMAGES }}img/interface/credits.gif" title="Crédits" class="res" width="16px" height="16px">
-                                                    {{ mail.credits|intcomma }}
+                        <div class="col-12">
+                            <div class="card card-body">
+                                <div class="row g-2 flex-column">
+                                    <div class="col-12">
+                                        <div class="row gx-3 align-items-center">
+                                            <div class="col-auto">
+                                                {% if mail.avatar_url %}<img src="{{ mail.avatar_url }}" width="48" height="48" class="rounded">
+                                                {% else %}<img src="{{ PATH_IMAGES }}img/interface/noavatar.gif" width="48" height="48" class="rounded">
                                                 {% endif %}
+                                            </div>
+                                            <div class="col">
+                                                <div class="mb-1">
+                                                    {% if mail.tag %}<a href="/s03/alliance-view/?tag={{ mail.tag }}" class="me-2" data-bs-toggle="tooltip" data-bs-title="Voir alliance">[{{ mail.tag }}]</a>{% endif %}
+                                                    {% if mail.owner and mail.owner != ':alliance' %}<a href="/s03/profile-view/?name={{ mail.owner }}" class="me-2" data-bs-toggle="tooltip" data-bs-title="Voir profil">{{ mail.owner }}</a>{% endif %}
+                                                    <span class="text-normal me-2">{{ mail.datetime|timezone:"Europe/Paris" }}</span>
+                                                    {% if mail.owner == ':alliance' %}<span class="ms-2">À l'alliance</span>{% endif %}
+                                                </div>
+                                                <div>
+                                                    <span class="fs-6">{{ mail.subject }}</span>
+                                                    {% if mail.credits > 0 %}
+                                                        <span class="ms-3 text-normal">Crédits envoyés</span>
+                                                        <img src="{{ PATH_IMAGES }}img/interface/credits.gif" title="Crédits" class="res" width="16px" height="16px">
+                                                        {{ mail.credits|intcomma }}
+                                                    {% endif %}
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="col-12">
-                                    {% if mail.bbcode %}{{ mail.body|bbcode }}
-                                    {% else %}{{ mail.body|safe }}
-                                    {% endif %}
+                                    <div class="col-12">
+                                        {% if mail.bbcode %}{{ mail.body|bbcode }}
+                                        {% else %}{{ mail.body|safe }}
+                                        {% endif %}
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
                     {% endfor %}
                 </div>
             {% endif %}

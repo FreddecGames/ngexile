@@ -46,6 +46,9 @@
     
         <div align="center" class="pt-3">
             <div class="card card-body" style="width:800px;">
+
+                {% include "s03/_messages.html" %}
+
                 <div class="mb-3">
                     <span class="fs-4">NG Exile</span>
                 </div>
@@ -67,7 +70,7 @@
                     L'univers NG Exile est grand, et si vous le décidez, une chance supplémentaire vous sera donnée de montrer au monde votre courage et votre sagacité.
                     En choisissant de rejouer, une nouvelle planète libre vous sera allouée. Vos rapports et messages seront conservés ainsi que certaines de vos recherches.
                 </div>
-                <form method="post" action="?" class="mb-3">
+                <form method="post" class="mb-3">
                     {% csrf_token %}
                     <input type="hidden" name="action" value="retry">
                     <div class="mb-3 text-normal">
@@ -115,7 +118,7 @@
                         </div>
                     {% endfor %}
                 </form>
-                <form method="post" action="?" class="mb-3">
+                <form method="post" class="mb-3">
                     {% csrf_token %}
                     <input type="hidden" name="action" value="abandon">
                     <div class="mb-2 text-normal">

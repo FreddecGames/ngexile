@@ -16,8 +16,8 @@ class View(BaseView):
         #---
         
         query = 'SELECT privilege, resets' + \
-                'FROM users' + \
-                'WHERE id=' + str(self.userId)
+                ' FROM users' + \
+                ' WHERE id=' + str(self.userId)
         row = dbRow(query)
         
         if not row or row['privilege'] != -3 or row['resets'] != 0: return HttpResponseRedirect('/s03/')
@@ -103,7 +103,7 @@ class View(BaseView):
         #---
         
         query = 'SELECT id, recommended' + \
-                'FROM sp_get_galaxy_info(' + str(self.userId) + ')'
+                ' FROM sp_get_galaxy_info(' + str(self.userId) + ')'
         rows = dbRows(query)
         
         tpl.set('galaxies', rows)

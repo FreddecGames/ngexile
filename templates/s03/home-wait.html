@@ -35,7 +35,7 @@
                 <div class="mb-3">
                     <span>Lorsqu'il sera arrivé, vous pourrez coloniser la planète et commencer à fonder votre empire.</span>
                 </div>
-                <form method="post" action="?">
+                <form method="post">
                     {% csrf_token %}
                     <input type="hidden" name="action" value="unlock">
                     <input type="submit" class="btn btn-primary" value="Coloniser">

@@ -164,7 +164,7 @@
                                                             <div class="col-12">
                                                                 <script>
                                                                     let html = ''
-                                                                    html += '<form method="post" action="">'
+                                                                    html += '<form method="post">'
                                                                         html += '{% csrf_token %}'
                                                                         html += '<input type="hidden" name="action" value="cancel" />'
                                                                         html += '<input type="hidden" name="b" value="{{ building.id }}" />'
@@ -184,7 +184,7 @@
                                                         <div class="row g-1 flex-column">
                                                             <div class="col-12"><script>document.write(formattime({{ building.construction_time }}));</script></div>
                                                             <div class="col-12">
-                                                                <form method="post" action="">
+                                                                <form method="post">
                                                                     {% csrf_token %}
                                                                     <input type="hidden" name="action" value="build" />
                                                                     <input type="hidden" name="b" value="{{ building.id }}" />
@@ -218,7 +218,7 @@
                                                         <div>
                                                             <span id="destroy{{ building.id }}"><a href="?" data-bs-toggle="tooltip" data-bs-title="Détruire le bâtiment" onclick="javascript:return showDestroy({{ building.id }});">Démolir</a></span>
                                                             <span id="destroyConfirm{{ building.id }}" style="display:none;">
-                                                                <form method="post" action="">
+                                                                <form method="post">
                                                                     {% csrf_token %}
                                                                     <input type="hidden" name="action" value="destroy" />
                                                                     <input type="hidden" name="b" value="{{ building.id }}" />

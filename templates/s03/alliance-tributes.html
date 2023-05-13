@@ -8,7 +8,9 @@
     
     <div class="scroll-content" style="height:calc(100% - 52px);">
         <div class="page-content">
-        
+            
+            {% include "s03/_messages.html" %}
+            
             <div class="card mb-3">
                 <div class="card-header">
                     <span class="fs-6">Nos tributs</span>
@@ -33,7 +35,7 @@
                                 </div>
                                 {% if can_break %}
                                     <div class="col-auto">
-                                        <form method="post" action="">
+                                        <form method="post">
                                             {% csrf_token %}
                                             <input type="hidden" name="action" value="cancel" />
                                             <input type="hidden" name="tag" value="{{ item.tag }}" />
@@ -46,14 +48,6 @@
                     {% empty %}
                         <div class="list-group-item text-center">
                             <span class="text-normal">Aucun</span>
-                        </div>
-                    {% endfor %}
-                    {% for message in messages %}
-                        <div class="list-group-item">
-                            <div class="alert alert-{{ message.tags }} text-center">
-                                {% if message.message == 'norights' %}Vous n'êtes pas en droit de faire une telle demande{% endif %}
-                                {% if message.message == 'unknown' %}Aucune alliance avec un tel tag n'a été trouvée{% endif %}
-                            </div>
                         </div>
                     {% endfor %}
                 </div>
@@ -95,7 +89,7 @@
             </div>
             
             {% if can_create %}
-                <form action="?" method="post">
+                <form method="post">
                     {% csrf_token %}
                     <input type="hidden" name="action" value="create">
                     <div class="card mt-3">
@@ -126,15 +120,6 @@
                                     <input type="submit" class="btn btn-primary" name="submit" value="Envoyer">
                                 </div>
                             </div>
-                            {% for message in messages %}
-                                <div class="mt-2">
-                                    <div class="alert alert-{{ message.tags }} text-center">
-                                        {% if message.message == 'new_norights' %}Vous n'êtes pas en droit de faire une telle demande{% endif %}
-                                        {% if message.message == 'new_unknown' %}Aucune alliance avec un tel tag n'a été trouvée{% endif %}
-                                        {% if message.message == 'new_already_exists' %}Nous avons déjà un versement automatique avec cette alliance, annuler celui existant et recommencez{% endif %}
-                                    </div>
-                                </div>
-                            {% endfor %}
                         </div>
                     </div>
                 </form>

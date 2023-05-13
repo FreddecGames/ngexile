@@ -15,12 +15,12 @@ class View(BaseView):
             
         #---
         
-        query = 'SELECT privilege' + \
-                'FROM users' + \
-                'WHERE id=' + str(self.userId)
+        query = 'SELECT privilege, resets' + \
+                ' FROM users' + \
+                ' WHERE id=' + str(self.userId)
         row = dbRow(query)
         
-        if not row or row['privilege'] != -3: return HttpResponseRedirect('/s03/')
+        if not row or row['privilege'] != -3 or row['resets'] == 0: return HttpResponseRedirect('/s03/')
         
         #---
         
@@ -56,8 +56,8 @@ class View(BaseView):
         #---
 
         query = 'SELECT username' + \
-                'FROM users' + \
-                'WHERE id=' + str(self.userId)
+                ' FROM users' + \
+                ' WHERE id=' + str(self.userId)
         row = dbRow(query)
 
         tpl.set('profile', row)

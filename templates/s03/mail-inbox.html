@@ -42,7 +42,7 @@
                             <div class="card card-body {% if not mail.read_date %}bg-success{% endif %}">
                                 <div class="row gx-3">
                                     <div class="col-auto">
-                                        <form method="post" action="?start={{ offset }}">
+                                        <form method="post">
                                             {% csrf_token %}
                                             <input type="hidden" name="action" value="delete" />
                                             <input type="hidden" name="mailId" value="{{ mail.mailid }}" />
@@ -67,14 +67,14 @@
                                                             <span class="text-normal me-2">{{ mail.datetime|timezone:"Europe/Paris" }}</span>
                                                             {% if mail.owner == ':alliance' %}<span class="ms-2">À l'alliance</span>{% endif %}
                                                             {% if mail.added %}
-                                                                <form method="post" action="" class="d-inline">
+                                                                <form method="post" class="d-inline">
                                                                     {% csrf_token %}
                                                                     <input type="hidden" name="action" value="unignore" />
                                                                     <input type="hidden" name="user" value="{{ mail.sender }}" />
                                                                     <button type="submit" class="btn btn-link text-danger p-0">Bloqué</button>
                                                                 </form>
                                                             {% elif mail.sender %}
-                                                                <form method="post" action="" class="d-inline" onsubmit="return confirm('Êtes-vous sûr de vouloir bloquer les messages en provenance du joueur {{ mail.sender }} ?')">
+                                                                <form method="post" class="d-inline" onsubmit="return confirm('Êtes-vous sûr de vouloir bloquer les messages en provenance du joueur {{ mail.sender }} ?')">
                                                                     {% csrf_token %}
                                                                     <input type="hidden" name="action" value="ignore" />
                                                                     <input type="hidden" name="user" value="{{ mail.sender }}" />

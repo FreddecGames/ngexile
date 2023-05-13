@@ -9,6 +9,8 @@
     <div class="scroll-content" style="height:calc(100% - 52px);">
         <div class="page-content">
             
+            {% include "s03/_messages.html" %}
+
             <script>
                 function confirmBreakPact(tag, name) {
                 
@@ -43,7 +45,7 @@
                                 {% if not nap.breaking_time %}
                                     <div class="col-2 text-end">
                                         {% if can_create %}
-                                            <form method="post" action="">
+                                            <form method="post">
                                                 {% csrf_token %}
                                                 <input type="hidden" name="action" value="sharelocs" />
                                                 <input type="hidden" name="tag" value="{{ nap.tag }}" />
@@ -54,7 +56,7 @@
                                     </div>
                                     <div class="col-2 text-end">
                                         {% if can_create %}
-                                            <form method="post" action="">
+                                            <form method="post">
                                                 {% csrf_token %}
                                                 <input type="hidden" name="action" value="shareradars" />
                                                 <input type="hidden" name="tag" value="{{ nap.tag }}" />
@@ -70,7 +72,7 @@
                                         <small class="text-normal me-1">délai</small>
                                         <span class="me-3"><script>document.write(formattime({{ nap.break_interval }}))</script></span>
                                         {% if can_break %}
-                                            <form method="post" action="" class="d-inline" onsubmit="return confirmBreakPact('{{ nap.tag }}','{{ nap.name }}')">
+                                            <form method="post" class="d-inline" onsubmit="return confirmBreakPact('{{ nap.tag }}','{{ nap.name }}')">
                                                 {% csrf_token %}
                                                 <input type="hidden" name="action" value="break" />
                                                 <input type="hidden" name="tag" value="{{ nap.tag }}" />
@@ -85,16 +87,6 @@
                     {% empty %}
                         <div class="list-group-item text-center">
                             <span class="text-normal">Aucun</span>
-                        </div>
-                    {% endfor %}
-                    {% for message in messages %}
-                        <div class="list-group-item">
-                            <div class="alert alert-{{ message.tags }} text-center">
-                                {% if message.message == 'norights' %}Vous n'êtes pas en droit de faire une telle demande{% endif %}
-                                {% if message.message == 'unknown' %}Aucune alliance avec un tel tag n'a été trouvée{% endif %}
-                                {% if message.message == 'nap_not_found' %}Nous n'avons aucun pacte avec cette alliance{% endif %}
-                                {% if message.message == 'not_enough_credits' %}L'alliance ne dispose pas d'assez de crédits pour rompre le pacte{% endif %}
-                            </div>
                         </div>
                     {% endfor %}
                 </div>
@@ -121,7 +113,7 @@
                                     <script>document.write(formattime({{proposition.break_interval}}))</script>
                                 </div>
                                 <div class="col-auto">
-                                    <form method="post" action="">
+                                    <form method="post">
                                         {% csrf_token %}
                                         <input type="hidden" name="action" value="decline" />
                                         <input type="hidden" name="tag" value="{{ proposition.tag }}" />
@@ -129,7 +121,7 @@
                                     </form>
                                 </div>
                                 <div class="col-auto">
-                                    <form method="post" action="">
+                                    <form method="post">
                                         {% csrf_token %}
                                         <input type="hidden" name="action" value="accept" />
                                         <input type="hidden" name="tag" value="{{ proposition.tag }}" />
@@ -147,7 +139,7 @@
             </div>
             
             {% if can_create %}
-                <form action="?" method="post">
+                <form method="post">
                     {% csrf_token %}
                     <input type="hidden" name="action" value="request">
                     <div class="card mb-3">
@@ -178,15 +170,6 @@
                                     <input type="submit" class="btn btn-primary" name="submit" value="Envoyer">
                                 </div>
                             </div>
-                            {% for message in messages %}
-                                <div class="mt-2 alert alert-{{ message.tags }} text-center">
-                                    {% if norights %}Vous n'êtes pas en droit de faire une telle demande{% endif %}
-                                    {% if unknown %}Aucune alliance avec un tel tag n'a été trouvée{% endif %}
-                                    {% if already_naped %}Cette alliance a déjà un pacte avec notre alliance !{% endif %}
-                                    {% if request_waiting %}Cette alliance nous a déjà offert un pacte, acceptons leur pacte{% endif %}
-                                    {% if already_requested %}Nous avons déjà essayé d'établir un pacte avec cette alliance récemment{% endif %}
-                                </div>
-                            {% endfor %}
                         </div>
                     </div>
                 </form>
@@ -218,7 +201,7 @@
                                     {% endif %}
                                 </div>
                                 <div class="col-auto">
-                                    <form method="post" action="">
+                                    <form method="post">
                                         {% csrf_token %}
                                         <input type="hidden" name="action" value="cancel" />
                                         <input type="hidden" name="tag" value="{{ request.tag }}" />

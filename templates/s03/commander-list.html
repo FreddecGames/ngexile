@@ -5,208 +5,210 @@
 
 {% block content %}
 
-    <div class="page-content">
-    
-        <script>
-            function confirmFireCommander(name) {
-            
-                if (confirm('Êtes-vous sûr de vouloir vous séparer du commandant "' + name + '" ?')) {
-                    if (confirm('Êtes-vous VRAIMENT sûr de vouloir vous séparer du commandant "' + name + '" ?\nNote: Les commandants renvoyés ne peuvent pas être récupérés !'))
-                        return true;
-                }
-                
-                return false;
-            }
-
-            function confirmTrain(prestige) {
-            
-                return confirm('Êtes-vous sûr de vouloir effectuer un entraînement intensif pour ' + prestige + ' points de prestige ?');
-            }
-        </script>
+    <div class="scroll-content" style="height:100%;">
+        <div class="page-content">
         
-        {% if commanders %}
-            <div class="card">
-                <div class="card-header">
-                    <div class="row gx-3 align-items-baseline">
-                        <div class="col"><span class="fs-6">Les commandants de votre empire</span></div>
-                        <div class="col-auto">{{ commanders|length }} <small class="text-normal">/{{ max_commanders }}</small></div>
+            <script>
+                function confirmFireCommander(name) {
+                
+                    if (confirm('Êtes-vous sûr de vouloir vous séparer du commandant "' + name + '" ?')) {
+                        if (confirm('Êtes-vous VRAIMENT sûr de vouloir vous séparer du commandant "' + name + '" ?\nNote: Les commandants renvoyés ne peuvent pas être récupérés !'))
+                            return true;
+                    }
+                    
+                    return false;
+                }
+
+                function confirmTrain(prestige) {
+                
+                    return confirm('Êtes-vous sûr de vouloir effectuer un entraînement intensif pour ' + prestige + ' points de prestige ?');
+                }
+            </script>
+            
+            {% if commanders %}
+                <div class="card">
+                    <div class="card-header">
+                        <div class="row gx-3 align-items-baseline">
+                            <div class="col"><span class="fs-6">Les commandants de votre empire</span></div>
+                            <div class="col-auto">{{ commanders|length }} <small class="text-normal">/{{ max_commanders }}</small></div>
+                        </div>
                     </div>
-                </div>
-                <div class="list-group list-group-flush">
-                    {% for commander in commanders %}            
-                        <div class="list-group-item">
-                            <div class="row gx-3">
-                                <div class="col-4">
-                                    <div class="row gy-1 gx-3">
-                                        <div id="renamebox{{ commander.cmd_id }}" class="hidden">
-                                            <form action='?' method='post' class="row gx-2">
-                                                {% csrf_token %}
-                                                <input type='hidden' name='action' value='rename'>
-                                                <input type='hidden' name='id' value='{{ commander.cmd_id }}'>
-                                                <div class="col"><input type='text' class="form-control" name='name' size="28" maxlength="32" value='{{ commander.cmd_name }}'></div>
-                                                <div class="col-auto"><input type='submit' value='OK' class="btn btn-primary"></div>
-                                                <div class="col-auto"><button type="button" onclick='hide();' class="btn btn-danger"><i class="fa-fw fas fa-times"></i></button></div>
-                                            </form>
+                    <div class="list-group list-group-flush">
+                        {% for commander in commanders %}            
+                            <div class="list-group-item">
+                                <div class="row gx-3">
+                                    <div class="col-4">
+                                        <div class="row gy-1 gx-3">
+                                            <div id="renamebox{{ commander.cmd_id }}" class="hidden">
+                                                <form method='post' class="row gx-2">
+                                                    {% csrf_token %}
+                                                    <input type='hidden' name='action' value='rename'>
+                                                    <input type='hidden' name='id' value='{{ commander.cmd_id }}'>
+                                                    <div class="col"><input type='text' class="form-control" name='name' size="28" maxlength="32" value='{{ commander.cmd_name }}'></div>
+                                                    <div class="col-auto"><input type='submit' value='OK' class="btn btn-primary"></div>
+                                                    <div class="col-auto"><button type="button" onclick='hide();' class="btn btn-danger"><i class="fa-fw fas fa-times"></i></button></div>
+                                                </form>
+                                            </div>
+                                            <div id="renameref{{ commander.cmd_id }}" class="col">
+                                                <span class="text-normal"><i class="fa-fw fas fa-user-astronaut"></i></span>
+                                                {{ commander.cmd_name }}
+                                                <a href="#" name="{{ commander.cmd_name }}" class="ms-1" onclick="return show('renameref{{ commander.cmd_id }}','renamebox{{ commander.cmd_id }}')" data-bs-toggle="tooltip" data-bs-title="Renommer"><i class="fa-fw fas fa-edit"></i></a>
+                                            </div>
+                                            {% if commander.can_be_fired %}
+                                            <div class="col-auto">
+                                                <form method="post" onsubmit="return confirmFireCommander('{{ commander.cmd_name }}')">
+                                                    {% csrf_token %}
+                                                    <input type="hidden" name="action" value="fire" />
+                                                    <input type="hidden" name="id" value="{{ commander.cmd_id }}" />
+                                                    <button type="submit" class="btn btn-link p-0">Renvoyer</button>
+                                                </form>
+                                            </div>
+                                            {% endif %}
+                                            <div class="col-12"></div>
+                                            <div class="col-3 text-end"><span class="text-normal">Salaire</span></div>
+                                            <div class="col-9">
+                                                <img src="{{ PATH_IMAGES }}img/interface/credits.gif" class="res" data-bs-toggle="tooltip" data-bs-title="Crédits" width="16px" height="16px">
+                                                <span>{{ commander.salary|intcomma }}</span>
+                                            </div>
+                                            <div class="col-3 text-end"><span class="text-normal">Engagé</span></div>
+                                            <div class="col-9"><span class="text-normal">{{ commander.recruited|timezone:"Europe/Paris"|date:"d M Y H:i" }}</span></div>
+                                            <div class="col-3 text-end"><span class="text-normal">Affectation</span></div>
+                                            <div class="col-9">
+                                                {% if commander.planet_id %}
+                                                    <img src="{{ PATH_IMAGES }}img/interface/planet.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Planète">
+                                                    <script>putplanet("{{commander.planet_id}}", "{{commander.planet_name}}", "{{commander.galaxy}}", "{{commander.sector}}", "{{commander.planet}}", 2);</script>
+                                                {% elif commander.fleet_id %}
+                                                    <img src="{{ PATH_IMAGES }}img/interface/fleets.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Flotte">
+                                                    <a href="/s03/fleet-view/?id={{ commander.fleet_id }}" data-bs-toggle="tooltip" data-bs-title="Voir flotte">{{ commander.fleet_name }}</a>
+                                                {% else %}
+                                                    <span class="text-normal">Aucune</span>
+                                                {% endif %}
+                                            </div>
                                         </div>
-                                        <div id="renameref{{ commander.cmd_id }}" class="col">
-                                            <span class="text-normal"><i class="fa-fw fas fa-user-astronaut"></i></span>
-                                            {{ commander.cmd_name }}
-                                            <a href="#" name="{{ commander.cmd_name }}" class="ms-1" onclick="return show('renameref{{ commander.cmd_id }}','renamebox{{ commander.cmd_id }}')" data-bs-toggle="tooltip" data-bs-title="Renommer"><i class="fa-fw fas fa-edit"></i></a>
-                                        </div>
-                                        {% if commander.can_be_fired %}
-                                        <div class="col-auto">
-                                            <form method="post" action="" onsubmit="return confirmFireCommander('{{ commander.cmd_name }}')">
-                                                {% csrf_token %}
-                                                <input type="hidden" name="action" value="fire" />
-                                                <input type="hidden" name="id" value="{{ commander.cmd_id }}" />
-                                                <button type="submit" class="btn btn-link p-0">Renvoyer</button>
-                                            </form>
-                                        </div>
-                                        {% endif %}
-                                        <div class="col-12"></div>
-                                        <div class="col-3 text-end"><span class="text-normal">Salaire</span></div>
-                                        <div class="col-9">
-                                            <img src="{{ PATH_IMAGES }}img/interface/credits.gif" class="res" data-bs-toggle="tooltip" data-bs-title="Crédits" width="16px" height="16px">
-                                            <span>{{ commander.salary|intcomma }}</span>
-                                        </div>
-                                        <div class="col-3 text-end"><span class="text-normal">Engagé</span></div>
-                                        <div class="col-9"><span class="text-normal">{{ commander.recruited|timezone:"Europe/Paris"|date:"d M Y H:i" }}</span></div>
-                                        <div class="col-3 text-end"><span class="text-normal">Affectation</span></div>
-                                        <div class="col-9">
-                                            {% if commander.planet_id %}
-                                                <img src="{{ PATH_IMAGES }}img/interface/planet.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Planète">
-                                                <script>putplanet("{{commander.planet_id}}","{{commander.planet_name}}","{{commander.galaxy}}","{{commander.sector}}","{{commander.planet}}", 2);</script>
-                                            {% elif commander.fleet_id %}
-                                                <img src="{{ PATH_IMAGES }}img/interface/fleets.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Flotte">
-                                                <a href="/s03/fleet-view/?id={{ commander.fleet_id }}" data-bs-toggle="tooltip" data-bs-title="Voir flotte">{{ commander.fleet_name }}</a>
+                                    </div>
+                                    <div class="col">
+                                        <div class="row gy-1 gx-3">
+                                            {% if commander.mod_production_ore %}<div class="col-12"><span class="text-success">{{ commander.mod_production_ore }}% Planète - Production de minerai</span></div>{% endif %}
+                                            {% if commander.mod_production_hydrocarbon %}<div class="col-12"><span class="text-success">{{ commander.mod_production_hydrocarbon }}% Planète - Production d'hydrocarbure</span></div>{% endif %}
+                                            {% if commander.mod_production_energy %}<div class="col-12"><span class="text-success">{{ commander.mod_production_energy }}% Planète - Production d'énergie</span></div>{% endif %}
+                                            {% if commander.mod_production_workers %}<div class="col-12"><span class="text-success">{{ commander.mod_production_workers }}% Planète - Formation des travailleurs</span></div>{% endif %}
+                                            {% if commander.mod_construction_speed_buildings %}<div class="col-12"><span class="text-success">{{ commander.mod_construction_speed_buildings }}% Planète - Vitesse de construction des bâtiments</span></div>{% endif %}
+                                            {% if commander.mod_construction_speed_ships %}<div class="col-12"><span class="text-success">{{ commander.mod_construction_speed_ships }}% Planète - Vitesse de construction des vaisseaux</span></div>{% endif %}
+                                            {% if commander.mod_fleet_speed %}<div class="col-12"><span class="text-success">{{ commander.mod_fleet_speed }}% Flotte - Vitesse</span></div>{% endif %}
+                                            {% if commander.mod_fleet_shield %}<div class="col-12"><span class="text-success">{{ commander.mod_fleet_shield }}% Flotte - Bouclier</span></div>{% endif %}
+                                            {% if commander.mod_fleet_handling %}<div class="col-12"><span class="text-success">{{ commander.mod_fleet_handling }}% Flotte - Manœuvrabilité</span></div>{% endif %}
+                                            {% if commander.mod_fleet_tracking_speed %}<div class="col-12"><span class="text-success">{{ commander.mod_fleet_tracking_speed }}% Flotte - Ciblage</span></div>{% endif %}
+                                            {% if commander.mod_fleet_damage %}<div class="col-12"><span class="text-success">{{ commander.mod_fleet_damage }}% Flotte - Dégats</span></div>{% endif %}
+                                            {% if commander.mod_fleet_signature %}<div class="col-12"><span class="text-success">{{ commander.mod_fleet_signature }}% Flotte - Réduction signature</span></div>{% endif %}
+                                            {% if commander.points %}
+                                                <div class="col-12">
+                                                    <a href="/s03/commander-edit/?id={{ commander.cmd_id }}">Répartir les {{ commander.points }} points de compétences restants</a>
+                                                </div>
+                                            {% endif %}
+                                            {% if commander.can_train %}
+                                                <div class="col-12">
+                                                    <form method="post" onsubmit="return confirmTrain('{{ commander.train_cost|intcomma }}')">
+                                                        {% csrf_token %}
+                                                        <input type="hidden" name="action" value="train" />
+                                                        <input type="hidden" name="id" value="{{ commander.cmd_id }}" />
+                                                        <button type="submit" class="btn btn-link p-0">
+                                                            Entrainement intensif pour
+                                                            <img src="{{ PATH_IMAGES }}img/interface/prestige.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Prestige">
+                                                            {{ commander.train_cost|intcomma }}
+                                                        </button>
+                                                    </form>
+                                                </div>
                                             {% else %}
-                                                <span class="text-normal">Aucune</span>
+                                                <div class="col-12">
+                                                    <span class="text-danger">Vous ne pouvez entrainer ce commandant qu'une fois par jour</span>
+                                                </div>
+                                            {% endif %}
+                                            {% if commander.cant_train_anymore %}
+                                                <div class="col-12">
+                                                    <span class="text-danger">Vous ne pouvez pas entrainer ce commandant plus</span>
+                                                </div>
                                             {% endif %}
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col">
-                                    <div class="row gy-1 gx-3">
-                                        {% if commander.mod_production_ore %}<div class="col-12"><span class="text-success">{{ commander.mod_production_ore }}% Planète - Production de minerai</span></div>{% endif %}
-                                        {% if commander.mod_production_hydrocarbon %}<div class="col-12"><span class="text-success">{{ commander.mod_production_hydrocarbon }}% Planète - Production d'hydrocarbure</span></div>{% endif %}
-                                        {% if commander.mod_production_energy %}<div class="col-12"><span class="text-success">{{ commander.mod_production_energy }}% Planète - Production d'énergie</span></div>{% endif %}
-                                        {% if commander.mod_production_workers %}<div class="col-12"><span class="text-success">{{ commander.mod_production_workers }}% Planète - Formation des travailleurs</span></div>{% endif %}
-                                        {% if commander.mod_construction_speed_buildings %}<div class="col-12"><span class="text-success">{{ commander.mod_construction_speed_buildings }}% Planète - Vitesse de construction des bâtiments</span></div>{% endif %}
-                                        {% if commander.mod_construction_speed_ships %}<div class="col-12"><span class="text-success">{{ commander.mod_construction_speed_ships }}% Planète - Vitesse de construction des vaisseaux</span></div>{% endif %}
-                                        {% if commander.mod_fleet_speed %}<div class="col-12"><span class="text-success">{{ commander.mod_fleet_speed }}% Flotte - Vitesse</span></div>{% endif %}
-                                        {% if commander.mod_fleet_shield %}<div class="col-12"><span class="text-success">{{ commander.mod_fleet_shield }}% Flotte - Bouclier</span></div>{% endif %}
-                                        {% if commander.mod_fleet_handling %}<div class="col-12"><span class="text-success">{{ commander.mod_fleet_handling }}% Flotte - Manœuvrabilité</span></div>{% endif %}
-                                        {% if commander.mod_fleet_tracking_speed %}<div class="col-12"><span class="text-success">{{ commander.mod_fleet_tracking_speed }}% Flotte - Ciblage</span></div>{% endif %}
-                                        {% if commander.mod_fleet_damage %}<div class="col-12"><span class="text-success">{{ commander.mod_fleet_damage }}% Flotte - Dégats</span></div>{% endif %}
-                                        {% if commander.mod_fleet_signature %}<div class="col-12"><span class="text-success">{{ commander.mod_fleet_signature }}% Flotte - Réduction signature</span></div>{% endif %}
-                                        {% if commander.points %}
-                                            <div class="col-12">
-                                                <a href="/s03/commander-edit/?id={{ commander.cmd_id }}">Répartir les {{ commander.points }} points de compétences restants</a>
+                            </div>
+                        {% empty %}
+                            <div class="list-group-item text-center">
+                                <span class="text-normal">Aucun actuellement</span>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+            
+            {% if available_commanders %}
+                <div class="mt-3 card">
+                    <div class="card-header">
+                        <span class="fs-6">Commandants pouvant être recrutés</span>
+                    </div>
+                    <div class="list-group list-group-flush">
+                        {% for commander in available_commanders %}
+                            <div class="list-group-item">
+                                <div class="row gx-3">
+                                    <div class="col-4">
+                                        <div class="row gy-1 gx-3">
+                                            <div class="col">
+                                                <span class="text-normal"><i class="fa-fw fas fa-user-astronaut"></i></span>
+                                                {{ commander.cmd_name }}
                                             </div>
-                                        {% endif %}
-                                        {% if commander.can_train %}
-                                            <div class="col-12">
-                                                <form method="post" action="" onsubmit="return confirmTrain('{{ commander.train_cost|intcomma }}')">
+                                            {% if can_engage %}
+                                            <div class="col-auto">
+                                                <form method="post" onsubmit="return confirmEngageCommander('{{ commander.cmd_name }}')">
                                                     {% csrf_token %}
-                                                    <input type="hidden" name="action" value="train" />
+                                                    <input type="hidden" name="action" value="engage" />
                                                     <input type="hidden" name="id" value="{{ commander.cmd_id }}" />
-                                                    <button type="submit" class="btn btn-link p-0">
-                                                        Entrainement intensif pour
-                                                        <img src="{{ PATH_IMAGES }}img/interface/prestige.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Prestige">
-                                                        {{ commander.train_cost|intcomma }}
-                                                    </button>
+                                                    <button type="submit" class="btn btn-link p-0">Engager</button>
                                                 </form>
                                             </div>
-                                        {% else %}
-                                            <div class="col-12">
-                                                <span class="text-danger">Vous ne pouvez entrainer ce commandant qu'une fois par jour</span>
+                                            {% endif %}
+                                            <div class="col-12"></div>
+                                            <div class="col-3 text-end"><span class="text-normal">Salaire</span></div>
+                                            <div class="col-9">
+                                                <img src="{{ PATH_IMAGES }}img/interface/credits.gif" class="res" data-bs-toggle="tooltip" data-bs-title="Crédits" width="16px" height="16px">
+                                                <span>{{ commander.salary|intcomma }}</span>
                                             </div>
-                                        {% endif %}
-                                        {% if commander.cant_train_anymore %}
-                                            <div class="col-12">
-                                                <span class="text-danger">Vous ne pouvez pas entrainer ce commandant plus</span>
-                                            </div>
-                                        {% endif %}
+                                            <div class="col-3 text-end"><span class="text-normal">Repéré le</span></div>
+                                            <div class="col-9"><span class="text-normal">{{ commander.added|timezone:"Europe/Paris"|date:"d M Y H:i" }}</span></div>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="row gy-1 gx-3">
+                                            {% if commander.mod_production_ore %}<div class="col-12"><span class="text-success">{{ commander.mod_production_ore }}% Planète - Production de minerai</span></div>{% endif %}
+                                            {% if commander.mod_production_hydrocarbon %}<div class="col-12"><span class="text-success">{{ commander.mod_production_hydrocarbon }}% Planète - Production d'hydrocarbure</span></div>{% endif %}
+                                            {% if commander.mod_production_energy %}<div class="col-12"><span class="text-success">{{ commander.mod_production_energy }}% Planète - Production d'énergie</span></div>{% endif %}
+                                            {% if commander.mod_production_workers %}<div class="col-12"><span class="text-success">{{ commander.mod_production_workers }}% Planète - Formation des travailleurs</span></div>{% endif %}
+                                            {% if commander.mod_construction_speed_buildings %}<div class="col-12"><span class="text-success">{{ commander.mod_construction_speed_buildings }}% Planète - Vitesse de construction des bâtiments</span></div>{% endif %}
+                                            {% if commander.mod_construction_speed_ships %}<div class="col-12"><span class="text-success">{{ commander.mod_construction_speed_ships }}% Planète - Vitesse de construction des vaisseaux</span></div>{% endif %}
+                                            {% if commander.mod_fleet_speed %}<div class="col-12"><span class="text-success">{{ commander.mod_fleet_speed }}% Flotte - Vitesse</span></div>{% endif %}
+                                            {% if commander.mod_fleet_shield %}<div class="col-12"><span class="text-success">{{ commander.mod_fleet_shield }}% Flotte - Bouclier</span></div>{% endif %}
+                                            {% if commander.mod_fleet_handling %}<div class="col-12"><span class="text-success">{{ commander.mod_fleet_handling }}% Flotte - Manœuvrabilité</span></div>{% endif %}
+                                            {% if commander.mod_fleet_tracking_speed %}<div class="col-12"><span class="text-success">{{ commander.mod_fleet_tracking_speed }}% Flotte - Ciblage</span></div>{% endif %}
+                                            {% if commander.mod_fleet_damage %}<div class="col-12"><span class="text-success">{{ commander.mod_fleet_damage }}% Flotte - Dégats</span></div>{% endif %}
+                                            {% if commander.mod_fleet_signature %}<div class="col-12"><span class="text-success">{{ commander.mod_fleet_signature }}% Flotte - Réduction signature</span></div>{% endif %}
+                                            {% if commander.points %}
+                                                <div class="col-12">
+                                                    {{ commander.points }} points de compétences restants à distribuer
+                                                </div>
+                                            {% endif %}
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    {% empty %}
-                        <div class="list-group-item text-center">
-                            <span class="text-normal">Aucun actuellement</span>
-                        </div>
-                    {% endfor %}
-                </div>
-            </div>
-        {% endif %}
-        
-        {% if available_commanders %}
-            <div class="mt-3 card">
-                <div class="card-header">
-                    <span class="fs-6">Commandants pouvant être recrutés</span>
-                </div>
-                <div class="list-group list-group-flush">
-                    {% for commander in available_commanders %}
-                        <div class="list-group-item">
-                            <div class="row gx-3">
-                                <div class="col-4">
-                                    <div class="row gy-1 gx-3">
-                                        <div class="col">
-                                            <span class="text-normal"><i class="fa-fw fas fa-user-astronaut"></i></span>
-                                            {{ commander.cmd_name }}
-                                        </div>
-                                        {% if can_engage %}
-                                        <div class="col-auto">
-                                            <form method="post" action="" onsubmit="return confirmEngageCommander('{{ commander.cmd_name }}')">
-                                                {% csrf_token %}
-                                                <input type="hidden" name="action" value="engage" />
-                                                <input type="hidden" name="id" value="{{ commander.cmd_id }}" />
-                                                <button type="submit" class="btn btn-link p-0">Engager</button>
-                                            </form>
-                                        </div>
-                                        {% endif %}
-                                        <div class="col-12"></div>
-                                        <div class="col-3 text-end"><span class="text-normal">Salaire</span></div>
-                                        <div class="col-9">
-                                            <img src="{{ PATH_IMAGES }}img/interface/credits.gif" class="res" data-bs-toggle="tooltip" data-bs-title="Crédits" width="16px" height="16px">
-                                            <span>{{ commander.salary|intcomma }}</span>
-                                        </div>
-                                        <div class="col-3 text-end"><span class="text-normal">Repéré le</span></div>
-                                        <div class="col-9"><span class="text-normal">{{ commander.added|timezone:"Europe/Paris"|date:"d M Y H:i" }}</span></div>
-                                    </div>
-                                </div>
-                                <div class="col">
-                                    <div class="row gy-1 gx-3">
-                                        {% if commander.mod_production_ore %}<div class="col-12"><span class="text-success">{{ commander.mod_production_ore }}% Planète - Production de minerai</span></div>{% endif %}
-                                        {% if commander.mod_production_hydrocarbon %}<div class="col-12"><span class="text-success">{{ commander.mod_production_hydrocarbon }}% Planète - Production d'hydrocarbure</span></div>{% endif %}
-                                        {% if commander.mod_production_energy %}<div class="col-12"><span class="text-success">{{ commander.mod_production_energy }}% Planète - Production d'énergie</span></div>{% endif %}
-                                        {% if commander.mod_production_workers %}<div class="col-12"><span class="text-success">{{ commander.mod_production_workers }}% Planète - Formation des travailleurs</span></div>{% endif %}
-                                        {% if commander.mod_construction_speed_buildings %}<div class="col-12"><span class="text-success">{{ commander.mod_construction_speed_buildings }}% Planète - Vitesse de construction des bâtiments</span></div>{% endif %}
-                                        {% if commander.mod_construction_speed_ships %}<div class="col-12"><span class="text-success">{{ commander.mod_construction_speed_ships }}% Planète - Vitesse de construction des vaisseaux</span></div>{% endif %}
-                                        {% if commander.mod_fleet_speed %}<div class="col-12"><span class="text-success">{{ commander.mod_fleet_speed }}% Flotte - Vitesse</span></div>{% endif %}
-                                        {% if commander.mod_fleet_shield %}<div class="col-12"><span class="text-success">{{ commander.mod_fleet_shield }}% Flotte - Bouclier</span></div>{% endif %}
-                                        {% if commander.mod_fleet_handling %}<div class="col-12"><span class="text-success">{{ commander.mod_fleet_handling }}% Flotte - Manœuvrabilité</span></div>{% endif %}
-                                        {% if commander.mod_fleet_tracking_speed %}<div class="col-12"><span class="text-success">{{ commander.mod_fleet_tracking_speed }}% Flotte - Ciblage</span></div>{% endif %}
-                                        {% if commander.mod_fleet_damage %}<div class="col-12"><span class="text-success">{{ commander.mod_fleet_damage }}% Flotte - Dégats</span></div>{% endif %}
-                                        {% if commander.mod_fleet_signature %}<div class="col-12"><span class="text-success">{{ commander.mod_fleet_signature }}% Flotte - Réduction signature</span></div>{% endif %}
-                                        {% if commander.points %}
-                                            <div class="col-12">
-                                                {{ commander.points }} points de compétences restants à distribuer
-                                            </div>
-                                        {% endif %}
-                                    </div>
-                                </div>
+                        {% empty %}
+                            <div class="list-group-item text-center">
+                                <span class="text-normal">Aucun actuellement</span>
                             </div>
-                        </div>
-                    {% empty %}
-                        <div class="list-group-item text-center">
-                            <span class="text-normal">Aucun actuellement</span>
-                        </div>
-                    {% endfor %}
+                        {% endfor %}
+                    </div>
                 </div>
-            </div>
-        {% endif %}
-        
+            {% endif %}
+            
+        </div>
     </div>
 
 {% endblock %}

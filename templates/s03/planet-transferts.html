@@ -45,7 +45,7 @@
                                         <span>{{ received.loss }}%</span>
                                     </div>
                                     <div class="col-1 text-end">
-                                        <form method="post" action="">
+                                        <form method="post">
                                             {% csrf_token %}
                                             <input type="hidden" name="action" value="cancel" />
                                             <input type="hidden" name="from" value="{{ received.planetid }}" />
@@ -58,7 +58,7 @@
                     {% endif %}
                 </div>
             </div>
-            <form method="post" action="">
+            <form method="post">
                 {% csrf_token %}
                 <input type="hidden" name="action" value="submit" />
                 <div class="card">

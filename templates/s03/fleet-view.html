@@ -4,8 +4,12 @@
 
 {% block content %}
 
-    {% if header %}<div class="scroll-content" style="height:calc(100% - 106px);">{% endif %}
+    {% if header %}<div class="scroll-content" style="height:calc(100% - 106px);">
+    {% else %}<div class="scroll-content" style="height:100%;">
+    {% endif %}
         <div class="page-content">
+        
+            {% include "s03/_messages.html" %}
         
             {% if fleet.action == 0 %}
             
@@ -35,6 +39,7 @@
             
             <div class="row gx-3">
                 <div class="col-8">
+                
                     <div class="card">
                         <div id="renameref" class="card-header">
                             <div class="row gx-3 align-items-baseline">
@@ -46,7 +51,7 @@
                                         <a href="#" onclick="return show('renameref','renamebox')">Renommer</a>
                                     </div>
                                     <div class="col-auto">
-                                        <form method="post" action="" onsubmit="return confirmAbandon()">
+                                        <form method="post" onsubmit="return confirmAbandon()">
                                             {% csrf_token %}
                                             <input type="hidden" name="action" value="abandon" />
                                             <input type="hidden" name="id" value="{{ fleet.id }}" />
@@ -72,16 +77,16 @@
                                                                 <span class="text-danger">En combat</span>
                                                             </div>
                                                             <div class="col">
-                                                                <script>putplanet("{{fleet.planetid}}","{{fleet.planet_name}}","{{fleet.planet_galaxy}}","{{fleet.planet_sector}}","{{fleet.planet_planet}}",{{fleet.planet_owner_relation}});</script>
+                                                                <script>putplanet("{{fleet.planetid}}", "{{fleet.planet_name}}", "{{fleet.planet_galaxy}}", "{{fleet.planet_sector}}", "{{fleet.planet_planet}}",{{fleet.planet_owner_relation}});</script>
                                                             </div>
                                                         {% elif fleet.action == -1 or fleet.action == 1 %}
                                                             <div class="col-auto">
                                                                 <span class="text-success">En transit</span>
                                                             </div>
                                                             <div class="col">
-                                                                <script>putplanet("{{fleet.planetid}}","{{fleet.planet_name}}","{{fleet.planet_galaxy}}","{{fleet.planet_sector}}","{{fleet.planet_planet}}",{{fleet.planet_owner_relation}});</script>
+                                                                <script>putplanet("{{fleet.planetid}}", "{{fleet.planet_name}}", "{{fleet.planet_galaxy}}", "{{fleet.planet_sector}}", "{{fleet.planet_planet}}",{{fleet.planet_owner_relation}});</script>
                                                                 <small class="mx-1 text-normal"><i class="fa-fw fas fa-long-arrow-alt-right"></i></small>
-                                                                <script>putplanet("{{fleet.destplanetid}}","{{fleet.destplanet_name}}","{{fleet.destplanet_galaxy}}","{{fleet.destplanet_sector}}","{{fleet.destplanet_planet}}",{{fleet.destplanet_owner_relation}});</script>
+                                                                <script>putplanet("{{fleet.destplanetid}}", "{{fleet.destplanet_name}}", "{{fleet.destplanet_galaxy}}", "{{fleet.destplanet_sector}}", "{{fleet.destplanet_planet}}",{{fleet.destplanet_owner_relation}});</script>
                                                             </div>
                                                             <div class="col-auto">
                                                                 <span class="text-yellow"><script>putcountdown1({{fleet.remaining_time}}, 'Arrivé', '?id={{fleet.id}}')</script></span>
@@ -91,7 +96,7 @@
                                                                 <span class="text-success">En recyclage</span>
                                                             </div>
                                                             <div class="col">
-                                                                <script>putplanet("{{fleet.planetid}}","{{fleet.planet_name}}","{{fleet.planet_galaxy}}","{{fleet.planet_sector}}","{{fleet.planet_planet}}",{{fleet.planet_owner_relation}});</script>
+                                                                <script>putplanet("{{fleet.planetid}}", "{{fleet.planet_name}}", "{{fleet.planet_galaxy}}", "{{fleet.planet_sector}}", "{{fleet.planet_planet}}",{{fleet.planet_owner_relation}});</script>
                                                             </div>
                                                             <div class="col-auto">
                                                                 <span class="text-yellow"><script>putcountdown1({{fleet.remaining_time}}, 'Cycle terminé', '?id={{fleet.id}}')</script></span>
@@ -108,7 +113,7 @@
                                                                 <span class="text-normal">En patrouille</span>
                                                             </div>
                                                             <div class="col">
-                                                                <script>putplanet("{{fleet.planetid}}","{{fleet.planet_name}}","{{fleet.planet_galaxy}}","{{fleet.planet_sector}}","{{fleet.planet_planet}}",{{fleet.planet_owner_relation}});</script>
+                                                                <script>putplanet("{{fleet.planetid}}", "{{fleet.planet_name}}", "{{fleet.planet_galaxy}}", "{{fleet.planet_sector}}", "{{fleet.planet_planet}}",{{fleet.planet_owner_relation}});</script>
                                                             </div>
                                                         {% endif %}
                                                     </div>
@@ -118,7 +123,7 @@
                                                                 <li>
                                                                     {% if action.action == 1 %}
                                                                         <span class="text-normal pe-3">Aller vers</span>
-                                                                        <script>putplanet("{{action.id}}","{{action.name}}","{{action.galaxy}}","{{action.sector}}","{{action.planet}}",{{action.relation}});</script>
+                                                                        <script>putplanet("{{action.id}}", "{{action.name}}", "{{action.galaxy}}", "{{action.sector}}", "{{action.planet}}",{{action.relation}});</script>
                                                                     {% elif action.action == 0 and action.ore > 0 %}<span class="text-normal">Tout charger</span>
                                                                     {% elif action.action == 0 and action.ore < 0 %}<span class="text-normal">Tout décharger</span>
                                                                     {% elif action.action == 2 %}<span class="text-normal">Récolter les ressources</span>
@@ -132,7 +137,7 @@
                                                 </div>
                                                 {% if fleet.can_warp and not fleet.engaged %}
                                                     <div class="col-auto">
-                                                        <form method="post" action="">
+                                                        <form method="post">
                                                             {% csrf_token %}
                                                             <input type="hidden" name="action" value="warp" />
                                                             <input type="hidden" name="id" value="{{ fleet.id }}" />
@@ -142,7 +147,7 @@
                                                 {% endif %}
                                                 {% if fleet.action == 4 %}
                                                     <div class="col-auto">
-                                                        <form method="post" action="">
+                                                        <form method="post">
                                                             {% csrf_token %}
                                                             <input type="hidden" name="action" value="stopwaiting" />
                                                             <input type="hidden" name="id" value="{{ fleet.id }}" />
@@ -182,7 +187,7 @@
                                                 </div>
                                                 <div class="col-auto">
                                                     {% if fleet.firepower > 0 and not fleet.engaged %}
-                                                        <form method="post" action="">
+                                                        <form method="post">
                                                             {% csrf_token %}
                                                             <input type="hidden" name="action" value="{% if fleet.attackonsight %}defend{% else %}attack{% endif %}" />
                                                             <input type="hidden" name="id" value="{{ fleet.id }}" />
@@ -195,12 +200,12 @@
                                     </div>
                                 </div>
                                 <div id="commandersbox" class="hidden">
-                                    <form action='?id={{ fleet.id }}' method='post' class="row gx-2">
+                                    <form method="post" class="row gx-2">
                                         {% csrf_token %}
-                                        <input type='hidden' name='action' value='assigncommander'>
-                                        <div class="col-auto"><select class="form-control" name='commander'>
-                                            {% if planet.commanderid %}<option value='0'>Renvoyer</option>
-                                            {% else %}<option value='0'>Aucun</option>
+                                        <input type="hidden" name="action" value="assigncommander">
+                                        <div class="col-auto"><select class="form-control" name="commander">
+                                            {% if planet.commanderid %}<option value="0">Renvoyer</option>
+                                            {% else %}<option value="0">Aucun</option>
                                             {% endif %}
                                             {% for optgroup in optgroups %}
                                                 <optgroup label="{% if optgroup.typ == 'fleet' %}sur Flottes{% endif %}{% if optgroup.typ == 'planet' %}sur Planètes{% endif %}{% if optgroup.typ == 'none' %}Non affectés{% endif %}">
@@ -215,7 +220,7 @@
                                             {% endfor %}
                                         </select></div>
                                         <div class="col-auto">
-                                            <input type="submit" class="btn btn-primary" value='OK'>
+                                            <input type="submit" class="btn btn-primary" value="OK">
                                         </div>
                                         <div class="col-auto">
                                             <button type="button" onclick="hide();" class="btn btn-danger">
@@ -260,7 +265,7 @@
                                                     </div>
                                                     <div class="col-auto">
                                                         {% if can_recycle and not fleet.engaged %}
-                                                            <form method="post" action="">
+                                                            <form method="post">
                                                                 {% csrf_token %}
                                                                 <input type="hidden" name="action" value="recycle" />
                                                                 <input type="hidden" name="id" value="{{ fleet.id }}" />
@@ -268,7 +273,7 @@
                                                             </form>
                                                         {% endif %}
                                                         {% if fleet.action == 2 %}
-                                                            <form method="post" action="">
+                                                            <form method="post">
                                                                 {% csrf_token %}
                                                                 <input type="hidden" name="action" value="stoprecycling" />
                                                                 <input type="hidden" name="id" value="{{ fleet.id }}" />
@@ -283,7 +288,7 @@
                                 {% endif %}
                                 {% if can_invade %}
                                     <div id="invadebox" class="hidden">
-                                        <form action="?id={{ fleet.id }}" method="post" class="row gx-2 align-items-center">
+                                        <form method="post" class="row gx-2 align-items-center">
                                             {% csrf_token %}
                                             <input type="hidden" name="action" value="invade">
                                             <div class="col-auto">
@@ -335,8 +340,8 @@
                                                     </div>
                                                     {% if can_invade %}
                                                         <div class="col-auto">
-                                                            <script>putcountdown2({{invade_time}},"Invasion possible dans ", '<a href="#" onclick=\'return show("invaderef","invadebox")\'>Envahir</a>')</script>
-                                                            <span class="text-yellow"><script>putcountdown1({{invade_time}},"","#")</script></span>
+                                                            <script>putcountdown2({{invade_time}}, "Invasion possible dans ", '<a href="#" onclick=\'return show("invaderef", "invadebox")\'>Envahir</a>')</script>
+                                                            <span class="text-yellow"><script>putcountdown1({{invade_time}}, "", "#")</script></span>
                                                         </div>
                                                     {% endif %}
                                                 </div>
@@ -388,10 +393,10 @@
                                                 {% if can_cancel_moving %}
                                                     <div class="col-auto">
                                                         <span class="text-normal">Perte du contact</span>
-                                                        <span class="text-yellow"><script>putcountdown1({{timelimit}},"Effective"," ");</script></span>
+                                                        <span class="text-yellow"><script>putcountdown1({{timelimit}}, "Effective", " ");</script></span>
                                                         <script>
                                                             let html = ''
-                                                            html += '<form method="post" action="" class="d-inline">'
+                                                            html += '<form method="post" class="d-inline">'
                                                                 html += '{% csrf_token %}'
                                                                 html += '<input type="hidden" name="action" value="return" />'
                                                                 html += '<input type="hidden" name="id" value="{{ fleet.id }}" />'
@@ -415,7 +420,7 @@
                                                 <div class="col">
                                                     <span class="text-normal">Flotte partagée à l'alliance</span>
                                                     {% if not fleet.engaged %}
-                                                        <form method="post" action="" class="d-inline">
+                                                        <form method="post" class="d-inline">
                                                             {% csrf_token %}
                                                             <input type="hidden" name="action" value="share" />
                                                             <input type="hidden" name="id" value="{{ fleet.id }}" />
@@ -441,29 +446,6 @@
                                         </div>
                                     </div>
                                 {% endif %}
-                                {% for message in messages %}
-                                    <div class="col-12">
-                                        <div class="alert alert-{{ message.tags }} text-center">
-                                            {% if message.message == 'error_soldiers' %}Nombre de soldat incorrect !{% endif %}
-                                            {% if message.message == 'error_fleet' %}La flotte n'est pas prête pour une invasion !{% endif %}
-                                            {% if message.message == 'error_planet' %}Impossible d'envahir une planète inoccupée, alliée ou dans une alliance qui n'est pas en guerre contre nous !{% endif %}
-                                            {% if message.message == 'error_invade_enemy_ships' %}Impossible d'envahir tant que des vaisseaux militaires ennemis sont proches de la planète !{% endif %}
-                                            {% if message.message == 'error_name' %}mmm{% endif %}
-                                            {% if message.message == 'bad_destination' %}Destination non valide{% endif %}
-                                            {% if message.message == 'new_player_protection' %}Planète temporairement protégée{% endif %}
-                                            {% if message.message == 'long_travel_impossible' %}Saut impossible{% endif %}
-                                            {% if message.message == 'not_enough_credits' %}Pas assez de crédits{% endif %}
-                                            {% if message.message == 'error_jump_from_require_empty_location' %}Impossible de sauter d'ici. Déplacez la flotte à proximité d'un vortex avant de sauter.{% endif %}
-                                            {% if message.message == 'error_jump_protected_galaxy' %}Galaxie protégée{% endif %}
-                                            {% if message.message == 'error_jump_to_require_empty_location' %}Impossible de sauter vers cette destination. Choisissez un vortex comme point d'arrivé.{% endif %}
-                                            {% if message.message == 'error_jump_to_same_point_limit_reached' %}Trop de flottes sautent vers la même destination, utilisez des vortex avec stabilité suffisante.{% endif %}
-                                            {% if message.message == 'error_recycling' %}Une de nos flottes est déjà en train de recycler dans les parages !{% endif %}
-                                            {% if message.message == 'error_max_planets_reached' %}Nombre maximal de colonisations atteint !{% endif %}
-                                            {% if message.message == 'error_deploy_enemy_ships' %}Impossible de coloniser tant que des vaisseaux militaires ennemis sont proches de la planète !{% endif %}
-                                            {% if message.message == 'error_deploy_too_many_safe_planets' %}Impossible de coloniser plus de planètes dans des galaxies protégées !{% endif %}
-                                        </div>
-                                    </div>
-                                {% endfor %}
                             </div>
                         </div>
                     </div>
@@ -567,7 +549,7 @@
                                 if(oTravelCost.innerHTML != cost) oTravelCost.innerHTML = formatnumber(cost);
                             }
                         </script>
-                        <form method="post" action="?id={{ fleet.id }}">
+                        <form method="post">
                             {% csrf_token %}
                             <input type="hidden" name="action" value="move">
                             <input type="hidden" name="loop" value="0">
@@ -693,7 +675,7 @@
                                 {% endif %}
                             </script>
                             {% if can_load_cargo %}
-                                <form method="post" action="/s03/fleet-view/?id={{ fleet.id }}">
+                                <form method="post">
                                     {% csrf_token %}
                                     <input type="hidden" name="action" value="transfer">
                                     <div class="card">
@@ -841,7 +823,7 @@
                                     </div>
                                 </form>
                             {% elif can_unload_cargo %}
-                                <form method="post" action="/s03/fleet-view/?id={{ fleet.id }}">
+                                <form method="post">
                                     <input type="hidden" name="action" value="transfer">
                                     {% csrf_token %}
                                     <div class="card">
@@ -1038,8 +1020,10 @@
                             {% endif %}
                         </div>
                     {% endif %}
+                    
                 </div>
                 <div class="col-4">
+                
                     <div class="card">
                         <div class="card-header">
                             <div class="row gx-3">
@@ -1135,7 +1119,7 @@
                                             </div>
                                             {% if can_install_building and ship.buildingid and ship.can_build %}
                                                 <div class="col-auto">
-                                                    <form method="post" action="">
+                                                    <form method="post">
                                                         {% csrf_token %}
                                                         <input type="hidden" name="action" value="install" />
                                                         <input type="hidden" name="id" value="{{ fleet.id }}" />
@@ -1203,7 +1187,7 @@
                                                     </div>
                                                     {% if orbittingfleet.action == 0 and fleet.action == 0 %}
                                                         <div class="col-auto">
-                                                            <form method="post" action="">
+                                                            <form method="post">
                                                                 {% csrf_token %}
                                                                 <input type="hidden" name="action" value="merge" />
                                                                 <input type="hidden" name="id" value="{{ fleet.id }}" />
@@ -1228,9 +1212,11 @@
                             </div>
                         </div>
                     {% endif %}
+                    
                 </div>
             </div>
+            
         </div>
-    {% if header %}</div>{% endif %}
+    </div>
 
 {% endblock %}

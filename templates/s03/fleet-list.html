@@ -505,7 +505,7 @@
             categories[id].editing = true;
             categories[id].old = tab.innerHTML;
             
-            tab.innerHTML = '<form action="#" method="get" onsubmit="return renameCategory(' + id + ')">' +
+            tab.innerHTML = '<form method="get" onsubmit="return renameCategory(' + id + ')">' +
                         '<input type="text" size="20" id="editcat' + id + '" value="' + categories[id].name + '" onblur="editCategory(' + id + ')">' +
                     '</form>';
                         
@@ -565,7 +565,7 @@
             <div id="fleet_list"></div>
             
             <div id="createcategoryform">
-                <form action="#" method="get" onsubmit="return createCategory();" class="card">
+                <form method="get" onsubmit="return createCategory();" class="card">
                     <div class="card-header text-center">
                         <span class="fs-6">Créer une nouvelle catégorie</span>
                     </div>
@@ -594,9 +594,9 @@
 
         fleetList = [];
         {% for fleet in fleets %}
-            fleetList.push(new Fleet({{ fleet.id }},'{{ fleet.name }}',{{ fleet.categoryid }},{{ fleet.attackonsight }},{{ fleet.size }},{{ fleet.signature }},{{ fleet.cargo_load }},{{ fleet.cargo_capacity }},"{{ fleet.action }}",{{ fleet.remaining_time }},'{{ fleet.commandername }}',
-            new Planet({{ fleet.planetid }},'{{ fleet.planet_name }}',{{ fleet.planet_owner_relation }},"{{ fleet.planet_galaxy }}","{{ fleet.planet_sector }}","{{ fleet.planet_planet }}"),
-            new Planet({{ fleet.destplanetid }},'{{ fleet.destplanet_name }}',{{ fleet.destplanet_owner_relation }},"{{ fleet.destplanet_galaxy }}","{{ fleet.destplanet_sector }}","{{ fleet.destplanet_planet }}"),
+            fleetList.push(new Fleet({{ fleet.id }},'{{ fleet.name }}',{{ fleet.categoryid }},{{ fleet.attackonsight }},{{ fleet.size }},{{ fleet.signature }},{{ fleet.cargo_load }},{{ fleet.cargo_capacity }}, "{{ fleet.action }}",{{ fleet.remaining_time }},'{{ fleet.commandername }}',
+            new Planet({{ fleet.planetid }},'{{ fleet.planet_name }}',{{ fleet.planet_owner_relation }}, "{{ fleet.planet_galaxy }}", "{{ fleet.planet_sector }}", "{{ fleet.planet_planet }}"),
+            new Planet({{ fleet.destplanetid }},'{{ fleet.destplanet_name }}',{{ fleet.destplanet_owner_relation }}, "{{ fleet.destplanet_galaxy }}", "{{ fleet.destplanet_sector }}", "{{ fleet.destplanet_planet }}"),
             new Array(0{% for ship in fleet.ships %},new Ship('{{ ship.label }}',{{ ship.quantity }}){% endfor %}),
             new Array(0,new Resource(1,{{ fleet.cargo_ore }}),new Resource(2,{{ fleet.cargo_hydrocarbon }}),new Resource(3,{{ fleet.cargo_scientists }}),new Resource(4,{{ fleet.cargo_soldiers }}),new Resource(5,{{ fleet.cargo_workers }}))));
         {% endfor %}

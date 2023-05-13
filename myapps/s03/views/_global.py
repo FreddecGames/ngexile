@@ -36,10 +36,10 @@ class GlobalView(BaseView):
                 ' WHERE id=' + str(self.userId)
         self.profile = dbRow(query)
         
-        if self.profile['privilege'] == -3 and self.profile['resets'] == 0: return HttpResponseRedirect('/s03/start/')
-        elif self.profile['privilege'] == -3: return HttpResponseRedirect('/s03/wait/')
-        elif self.profile['privilege'] == -2: return HttpResponseRedirect('/s03/holidays/')        
-        elif self.profile['planets'] <= 0 or self.profile['credits_bankruptcy'] <= 0: return HttpResponseRedirect('/s03/game-over/')
+        if self.profile['privilege'] == -3 and self.profile['resets'] == 0: return HttpResponseRedirect('/s03/home-start/')
+        elif self.profile['privilege'] == -3: return HttpResponseRedirect('/s03/home-wait/')
+        elif self.profile['privilege'] == -2: return HttpResponseRedirect('/s03/home-holidays/')        
+        elif self.profile['planets'] <= 0 or self.profile['credits_bankruptcy'] <= 0: return HttpResponseRedirect('/s03/home-gameover/')
 
         #---
         

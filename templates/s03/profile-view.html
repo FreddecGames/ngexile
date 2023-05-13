@@ -6,141 +6,143 @@
 
 {% block content %}
 
-    <div class="page-content">
-    
-        <form method="get" action="/s03/profile-view/">
-            {% csrf_token %}
-            <div class="card mb-3">
-                <div class="card-body">
-                    <div class="row gx-3 align-items-center justify-content-center">
-                        <div class="col-auto">Saisissez le nom d'une nation</div>
-                        <div class="col-auto"><input type="text" class="form-control" size="14" maxlength="14" name="name" value=""></div>
-                    </div>
-                </div>
-            </div>
-        </form>
+    <div class="scroll-content" style="height:100%;">
+        <div class="page-content">
         
-        <div class="card mb-3">
-            <div class="card-header">
-                <span class="fs-6">Profile</span>
-            </div>
-            <div class="card-body">
-                <div class="d-flex justify-content-center">
-                    <div class="row gx-3">
-                        <div class="col-auto">
-                            {% if nation.avatar_url %}<img src="{{ nation.avatar_url }}" width="64" height="64" class="rounded">
-                            {% else %}<img src="{{ PATH_IMAGES }}img/interface/noavatar.gif" width="64" height="64" class="rounded">
-                            {% endif %}
-                        </div>
-                        <div class="col-auto">
-                            <div class="mb-1">
-                                {% if nation.alliance_id %}<a href="/s03/alliance-view/?tag={{ nation.tag }}" class="{% if nation.relation == 2 %}text-info{% elif nation.relation == 1 %}text-success{% elif nation.relation == 0 %}text-friend{% else %}text-danger{% endif %}" data-bs-toggle="tooltip" data-bs-title="Voir alliance">[{{ nation.tag }}]</a>{% endif %}
-                                <span class="{% if nation.relation == 2 %}text-info{% elif nation.relation == 1 %}text-success{% elif nation.relation == 0 %}text-friend{% else %}text-danger{% endif %}">{{ nation.username }}</span>
-                            </div>
-                            <div class="mb-1">
-                                <span class="text-normal me-2">Grade</span>
-                                {% if nation.alliance_id %}{{ nation.label }}
-                                {% else %}indépendant
-                                {% endif %}
-                            </div>
-                            <div class="">
-                                <span class="text-normal me-2">Date d'arrivée</span>
-                                {{ nation.regdate }}
-                            </div>
-                            {% if nation.id %}
-                            <div class="mt-1">
-                                <a href="/s03/mail-new/?to={{nation.username}}" data-bs-toggle="tooltip" data-bs-title="Contacter {{nation.username}}">Envoyer un message</a>
-                            </div>
-                            {% endif %}
+            <form method="get">
+                {% csrf_token %}
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <div class="row gx-3 align-items-center justify-content-center">
+                            <div class="col-auto">Saisissez le nom d'une nation</div>
+                            <div class="col-auto"><input type="text" class="form-control" size="14" maxlength="14" name="name" value=""></div>
                         </div>
                     </div>
                 </div>
-                {% if nation.description %}
-                <div class="mt-3 col-12 text-center">
-                    {{ nation.description|safe|bbcode }}
-                </div>
-                {% endif %}
-            </div>
-        </div>
-        {% if alliances %}
+            </form>
+            
             <div class="card mb-3">
                 <div class="card-header">
-                    <span class="fs-6">Alliances</span>
+                    <span class="fs-6">Profile</span>
                 </div>
-                <div class="list-group list-group-flush">
-                    {% for item in alliances %}
-                        <div class="list-group-item">
-                            <div class="row gx-3">
-                                <div class="col-6 text-end"><span>[{{ item.alliance_tag }}] {{ item.alliance_name }}</span></div>
-                                <div class="col-6"><span class="text-normal">de</span> {{ item.joined }} <span class="text-normal">à</span> {{ item.left }}</div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-center">
+                        <div class="row gx-3">
+                            <div class="col-auto">
+                                {% if nation.avatar_url %}<img src="{{ nation.avatar_url }}" width="64" height="64" class="rounded">
+                                {% else %}<img src="{{ PATH_IMAGES }}img/interface/noavatar.gif" width="64" height="64" class="rounded">
+                                {% endif %}
+                            </div>
+                            <div class="col-auto">
+                                <div class="mb-1">
+                                    {% if nation.alliance_id %}<a href="/s03/alliance-view/?tag={{ nation.tag }}" class="{% if nation.relation == 2 %}text-info{% elif nation.relation == 1 %}text-success{% elif nation.relation == 0 %}text-friend{% else %}text-danger{% endif %}" data-bs-toggle="tooltip" data-bs-title="Voir alliance">[{{ nation.tag }}]</a>{% endif %}
+                                    <span class="{% if nation.relation == 2 %}text-info{% elif nation.relation == 1 %}text-success{% elif nation.relation == 0 %}text-friend{% else %}text-danger{% endif %}">{{ nation.username }}</span>
+                                </div>
+                                <div class="mb-1">
+                                    <span class="text-normal me-2">Grade</span>
+                                    {% if nation.alliance_id %}{{ nation.label }}
+                                    {% else %}indépendant
+                                    {% endif %}
+                                </div>
+                                <div class="">
+                                    <span class="text-normal me-2">Date d'arrivée</span>
+                                    {{ nation.regdate }}
+                                </div>
+                                {% if nation.id %}
+                                <div class="mt-1">
+                                    <a href="/s03/mail-new/?to={{nation.username}}" data-bs-toggle="tooltip" data-bs-title="Contacter {{nation.username}}">Envoyer un message</a>
+                                </div>
+                                {% endif %}
                             </div>
                         </div>
-                    {% endfor %}
+                    </div>
+                    {% if nation.description %}
+                    <div class="mt-3 col-12 text-center">
+                        {{ nation.description|safe|bbcode }}
+                    </div>
+                    {% endif %}
                 </div>
             </div>
-        {% endif %}
-        {% if planets|length or fleets|length %}
-            <div class="row gx-3">
-                <div class="col-4">
-                    <div class="card">
-                        <div class="card-header">
-                            <span class="fs-6">Planètes</span>
-                            <small class="ms-2 text-normal">{{ planets|length }}</small>
+            {% if alliances %}
+                <div class="card mb-3">
+                    <div class="card-header">
+                        <span class="fs-6">Alliances</span>
+                    </div>
+                    <div class="list-group list-group-flush">
+                        {% for item in alliances %}
+                            <div class="list-group-item">
+                                <div class="row gx-3">
+                                    <div class="col-6 text-end"><span>[{{ item.alliance_tag }}] {{ item.alliance_name }}</span></div>
+                                    <div class="col-6"><span class="text-normal">de</span> {{ item.joined }} <span class="text-normal">à</span> {{ item.left }}</div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+            {% if planets|length or fleets|length %}
+                <div class="row gx-3">
+                    <div class="col-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <span class="fs-6">Planètes</span>
+                                <small class="ms-2 text-normal">{{ planets|length }}</small>
+                            </div>
+                            <div class="card-body">
+                                <div class="row gx-3 gy-2">
+                                    {% for planet in planets %}
+                                        <div class="col-3 text-center">
+                                            <a href="/s03/map/?g={{ planet.galaxy }}&s={{ planet.sector }}" data-bs-toggle="tooltip" data-bs-title="Carte spatiale">{{ planet.galaxy }}.{{ planet.sector }}.{{ planet.planet }}</a>
+                                        </div>
+                                    {% empty %}
+                                        <div class="col text-center">
+                                            <span class="text-normal">Aucune planète</span>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
                         </div>
-                        <div class="card-body">
-                            <div class="row gx-3 gy-2">
-                                {% for planet in planets %}
-                                    <div class="col-3 text-center">
-                                        <a href="/s03/map/?g={{ planet.galaxy }}&s={{ planet.sector }}" data-bs-toggle="tooltip" data-bs-title="Carte spatiale">{{ planet.galaxy }}.{{ planet.sector }}.{{ planet.planet }}</a>
+                    </div>
+                    <div class="col-8">
+                        <div class="card">
+                            <div class="card-header">
+                                <span class="fs-6">Flottes</span>
+                                <small class="ms-2 text-normal">{{ fleets|length }}</small>
+                            </div>
+                            <div class="list-group list-group-flush">
+                                {% for fleet in fleets %}
+                                    <div class="list-group-item">
+                                        <div class="row gx-3">
+                                            <div class="col-3">
+                                                {% if nation.relation == 2 %}<a href="/s03/fleet-view/?id={{ fleet.id }}" data-bs-toggle="tooltip" data-bs-title="Voir flotte">{{ fleet.name }}</a>
+                                                {% elif nation.relation == 1 %}<span class="text-success">{{ fleet.name }}</span>
+                                                {% endif %}
+                                                <small class="ms-2">{{ fleet.signature|intcomma }}</small>
+                                            </div>
+                                            <div class="col-4">
+                                                <script>putplanet("{{fleet.planetid}}", "{{fleet.planet_name}}", "{{fleet.planet_galaxy}}", "{{fleet.planet_sector}}", "{{fleet.planet_planet}}",{{fleet.planet_relation}});</script>
+                                            </div>
+                                            <div class="col-5">
+                                                {% if fleet.engaged %}En combat
+                                                {% elif fleet.action == 2 %}Recyclage - (<span class="text-yellow"><script>putcountdown1({{fleet.remaining_time}}, 'Cycle terminé', '/s03/profile-view/?')</script></span>)
+                                                {% elif fleet.action == 1 %}En transit vers <script>putplanet("{{fleet.destplanetid}}", "{{fleet.destplanet_name}}", "{{fleet.destplanet_galaxy}}", "{{fleet.destplanet_sector}}", "{{fleet.destplanet_planet}}",{{fleet.destplanet_relation}});</script> - (<span class="text-yellow"><script>putcountdown1({{fleet.remaining_time}}, 'Arrivé', '/s03/profile-view/')</script></span>)
+                                                {% elif fleet.action == 0 %}En patrouille
+                                                {% endif %}
+                                            </div>
+                                        </div>
                                     </div>
                                 {% empty %}
-                                    <div class="col text-center">
-                                        <span class="text-normal">Aucune planète</span>
+                                    <div class="list-group-item text-center">
+                                        <span class="text-normal">Aucune flotte</span>
                                     </div>
                                 {% endfor %}
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="col-8">
-                    <div class="card">
-                        <div class="card-header">
-                            <span class="fs-6">Flottes</span>
-                            <small class="ms-2 text-normal">{{ fleets|length }}</small>
-                        </div>
-                        <div class="list-group list-group-flush">
-                            {% for fleet in fleets %}
-                                <div class="list-group-item">
-                                    <div class="row gx-3">
-                                        <div class="col-3">
-                                            {% if nation.relation == 2 %}<a href="/s03/fleet-view/?id={{ fleet.id }}" data-bs-toggle="tooltip" data-bs-title="Voir flotte">{{ fleet.name }}</a>
-                                            {% elif nation.relation == 1 %}<span class="text-success">{{ fleet.name }}</span>
-                                            {% endif %}
-                                            <small class="ms-2">{{ fleet.signature|intcomma }}</small>
-                                        </div>
-                                        <div class="col-4">
-                                            <script>putplanet("{{fleet.planetid}}","{{fleet.planet_name}}","{{fleet.planet_galaxy}}","{{fleet.planet_sector}}","{{fleet.planet_planet}}",{{fleet.planet_relation}});</script>
-                                        </div>
-                                        <div class="col-5">
-                                            {% if fleet.engaged %}En combat
-                                            {% elif fleet.action == 2 %}Recyclage - (<span class="text-yellow"><script>putcountdown1({{fleet.remaining_time}}, 'Cycle terminé', '/s03/profile-view/?')</script></span>)
-                                            {% elif fleet.action == 1 %}En transit vers <script>putplanet("{{fleet.destplanetid}}","{{fleet.destplanet_name}}","{{fleet.destplanet_galaxy}}","{{fleet.destplanet_sector}}","{{fleet.destplanet_planet}}",{{fleet.destplanet_relation}});</script> - (<span class="text-yellow"><script>putcountdown1({{fleet.remaining_time}}, 'Arrivé', '/s03/profile-view/')</script></span>)
-                                            {% elif fleet.action == 0 %}En patrouille
-                                            {% endif %}
-                                        </div>
-                                    </div>
-                                </div>
-                            {% empty %}
-                                <div class="list-group-item text-center">
-                                    <span class="text-normal">Aucune flotte</span>
-                                </div>
-                            {% endfor %}
-                        </div>
-                    </div>
-                </div>
-            </div>
-        {% endif %}
-        
+            {% endif %}
+            
+        </div>
     </div>
     
 {% endblock %}

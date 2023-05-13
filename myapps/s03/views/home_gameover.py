@@ -16,8 +16,8 @@ class View(BaseView):
         #---
         
         query = 'SELECT planets, credits_bankruptcy' + \
-                'FROM users' + \
-                'WHERE id=' + str(self.userId)
+                ' FROM users' + \
+                ' WHERE id=' + str(self.userId)
         row = dbRow(query)
         
         if not row or (row['planets'] > 0 and row['credits_bankruptcy'] > 0): return HttpResponseRedirect('/s03/')
@@ -78,8 +78,8 @@ class View(BaseView):
         #---
         
         query = 'SELECT username, planets, credits_bankruptcy' + \
-                'FROM users' + \
-                'WHERE id=' + str(self.userId)
+                ' FROM users' + \
+                ' WHERE id=' + str(self.userId)
         row = dbRow(query)
         
         tpl.set('profile', row)
@@ -87,7 +87,7 @@ class View(BaseView):
         #---
 
         query = 'SELECT id, recommended' + \
-                'FROM sp_get_galaxy_info(' + str(self.userId) + ')'
+                ' FROM sp_get_galaxy_info(' + str(self.userId) + ')'
         rows = dbRows(query)
         
         tpl.set('galaxies', rows)

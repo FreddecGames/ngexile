@@ -12,7 +12,7 @@
             {% include "s03/_messages.html" %}
             
             {% if can_join_alliance %}
-                <form method="post" action="?">
+                <form method="post">
                     {% csrf_token %}
                     <input type="hidden" name="action" value="create">
                     <div class="card">

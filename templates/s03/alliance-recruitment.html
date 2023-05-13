@@ -8,9 +8,11 @@
     
     <div class="scroll-content" style="height:calc(100% - 52px);">
         <div class="page-content">
-        
+            
+            {% include "s03/_messages.html" %}
+            
             {% if can_invite %}
-                <form action="?" method="post">
+                <form method="post">
                     {% csrf_token %}
                     <input type="hidden" name="action" value="invite">
                     <div class="card mb-3">
@@ -23,17 +25,6 @@
                                 <div class="col-auto"><input type="text" class="form-control" name="name" value=""></div>
                                 <div class="col-auto"><input type="submit" class="btn btn-primary" name="submit" value="Inviter"></div>
                             </div>
-                            {% for message in messages %}
-                                <div class="mt-2 alert alert-{{ message.tags }} text-center">
-                                    {% if message.message == 'no_right' %}Vous n'êtes pas en droit de rallier de nouvelles nations
-                                    {% elif message.message == 'name_unknown' %}Aucune nation répondant à ce nom n'a été trouvée
-                                    {% elif message.message == 'already_member' %}Cette nation est déjà membre de notre alliance !
-                                    {% elif message.message == 'already_invited-2' %}Cette nation a déjà été invitée récemment
-                                    {% elif message.message == 'impossible-2' %}Cette nation ne peut être invitée
-                                    {% else %}{{ message }}
-                                    {% endif %}
-                                </div>
-                            {% endfor %}
                         </div>
                     </div>
                 </form>

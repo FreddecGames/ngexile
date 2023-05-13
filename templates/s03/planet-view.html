@@ -16,7 +16,7 @@
                 function confirmWorkers(id) { return window.confirm('Êtes-vous sûr de vouloir renvoyer ' + getval('workers' + id) + ' travailleurs ?'); }
             </script>
             <div id="renamebox" class="hidden">
-                <form action='?planet={{ planet.id }}' method='post' class="row gx-2">
+                <form method='post' class="row gx-2">
                     {% csrf_token %}
                     <input type='hidden' name='action' value='rename'>
                     <div class="col-auto"><input type='text' class="form-control" name='name' size="28" maxlength="16"  value='{{ planet.name }}'></div>
@@ -25,7 +25,7 @@
                 </form>
             </div>
             <div id="commandersbox" class="hidden">
-                <form action='?planet={{ planet.id }}' method='post' class="row gx-2">
+                <form method='post' class="row gx-2">
                     {% csrf_token %}
                     <input type='hidden' name='action' value='assigncommander'>
                     <div class="col-auto"><select class="form-control" name='commander'>
@@ -49,7 +49,7 @@
                 </form>
             </div>
             <div id="scientistsbox" class="hidden">
-                <form action='?planet={{ planet.id }}' method='post' class="row gx-2">
+                <form method='post' class="row gx-2">
                     {% csrf_token %}
                     <input type='hidden' name='action' value='firescientists'>
                     <input type='hidden' name='planet' value='{{ planet.id }}'>
@@ -65,7 +65,7 @@
                 </form>
             </div>
             <div id="soldiersbox" class="hidden">
-                <form action='?planet={{ planet.id }}' method='post' class="row gx-2">
+                <form method='post' class="row gx-2">
                     {% csrf_token %}
                     <input type='hidden' name='action' value='firesoldiers'>
                     <div class="col-auto"><input type='text'
@@ -80,7 +80,7 @@
                 </form>
             </div>
             <div id="workersbox" class="hidden">
-                <form action='?planet={{ planet.id }}' method='post' class="row gx-2">
+                <form method='post' class="row gx-2">
                     {% csrf_token %}
                     <input type='hidden' name='action' value='fireworkers'>
                     <div class="col-auto"><input type='text'
@@ -99,7 +99,7 @@
                     <div class="row gx-3">
                         <div class="col-auto text-center">
                             <img src="{{ PATH_IMAGES }}img/planets/p{{ planet.img }}.gif" class="rounded" width="64" height="64">
-                            <form method="post" action="/s03/planet-view/?planet={{ planet.id }}">
+                            <form method="post">
                                 {% csrf_token %}
                                 <input type="hidden" name="action" value="abandon">
                                 <input type="submit" class="mt-2 btn btn-danger" value="Abandonner" onclick="return confirmAbandon()">
@@ -112,13 +112,6 @@
                                     <span class="me-auto">{{ planet.name }}</span>
                                     <a href="#" onclick="return show('renameref','renamebox')">Renommer</a>
                                 </div>
-                                {% for message in messages %}
-                                    <div class="col-12">
-                                        <div class="alert alert-{{ message.tags }} text-center">
-                                            {% if message.message == 'name_invalid' %}Veuillez spécifier un nom de planète valide.{% endif %}
-                                        </div>
-                                    </div>
-                                {% endfor %}
                                 <div class="col-3 text-end"><span class="text-normal">Localisation</span></div>
                                 <div class="col-9">
                                     <a href="/s03/map/?g={{ planet.galaxy }}&s={{ planet.sector }}" data-bs-toggle="tooltip" data-bs-title="Carte spatiale">{{ planet.galaxy }}.{{ planet.sector }}.{{ planet.planet }}</a>
@@ -157,13 +150,13 @@
                                 <div class="col-9 d-flex">
                                     <span>{{ planet.growth|floatformat:1 }}% <small class="text-normal">par heure</small></span>
                                     {% if planet.recruit_workers %}
-                                        <form method="post" action="" class="ms-auto">
+                                        <form method="post" class="ms-auto">
                                             {% csrf_token %}
                                             <input type="hidden" name="action" value="suspend" />
                                             <button type="submit" class="btn btn-link p-0" data-bs-toggle="tooltip" data-bs-title="Suspendre le recrutement de nouveaux travailleurs">Suspendre</button>
                                         </form>
                                     {% else %}
-                                        <form method="post" action="" class="ms-auto">
+                                        <form method="post" class="ms-auto">
                                             {% csrf_token %}
                                             <input type="hidden" name="action" value="resume" />
                                             <button type="submit" class="btn btn-link p-0" data-bs-toggle="tooltip" data-bs-title="Reprendre le recrutement de nouveaux travailleurs">Reprendre</button>
@@ -175,7 +168,7 @@
                     </div>
                 </div>
             </div>
-            <form action="?planet={{ planet.id }}" method="post">
+            <form method="post">
                 {% csrf_token %}
                 <input type="hidden" name="action" value="resources_price"/>
                 <div class="card mb-3">
