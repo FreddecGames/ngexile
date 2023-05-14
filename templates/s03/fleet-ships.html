@@ -38,15 +38,19 @@
                 }
 
                 function submitchanges() {
+                
                     if (fleetload > fleetcapacity) {
-                        alert("La capacité de votre flotte est plus faible que son chargement actuel");
-                        return false;
-                    } else
-                        document.forms.ships.submit();
+                    
+                        alert("La capacité de votre flotte est plus faible que son chargement actuel")
+                        return false
+                        
+                    }
+                    
+                    document.forms.ships.submit();
                 }
             </script>
             
-            <form method="post">
+            <form method="post" name="ships">
                 {% csrf_token %}
                 <input type="hidden" name="action" value="transfer_ships">
                 <div class="card">
