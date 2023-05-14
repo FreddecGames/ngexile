@@ -10,6 +10,9 @@
         <div class="page-content">
         
             <script>
+                
+                let html = ''
+                
                 function showDestroy(id) {
                 
                     $("destroy" + id).style.display = "none";
@@ -163,7 +166,7 @@
                                                             <div class="col-12"><span class="text-yellow"><script>putcountdown1({{ building.remainingtime }}, '')</script></span></div>
                                                             <div class="col-12">
                                                                 <script>
-                                                                    let html = ''
+                                                                    html = ''
                                                                     html += '<form method="post">'
                                                                         html += '{% csrf_token %}'
                                                                         html += '<input type="hidden" name="action" value="cancel" />'

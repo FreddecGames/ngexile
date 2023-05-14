@@ -10,194 +10,202 @@
     
     <div class="scroll-content" style="height:calc(100% - 52px);">
         <div class="page-content">
-        
-            <script>
-                function sig(signature) {
-                    if (signature > 0) document.write('<small>' + formatnumber(signature) + '</small>');
-                    else document.write('???');
-                }
-            </script>
+            <div class="row g-3">
             
-            {% if alliance %}
-                <div class="card mb-3">
-                    <div class="card-header" data-bs-toggle="collapse" data-bs-target="#motd_content">
-                        <span class="fs-6">
-                            Annonce de l'alliance -
-                            {% if alliance.defcon == 5 %}DEFCON 5: Préparation normale en temps de paix
-                            {% elif alliance.defcon == 4 %}DEFCON 4: Préparation normale, mais renseignement accru et mesures de sécurité renforcées
-                            {% elif alliance.defcon == 3 %}DEFCON 3: Accroissement de la préparation des forces au-dessus de la préparation normale
-                            {% elif alliance.defcon == 2 %}DEFCON 2: Accroissement supplémentaire dans la préparation des forces
-                            {% elif alliance.defcon == 1 %}DEFCON 1: Préparation maximale des forces (état de guerre)
-                            {% endif %}
-                        </span>
-                    </div>
-                    <div id="motd_content" class="collapse show">
-                        <div class="card-body">
-                            {{ alliance.announce|safe|bbcode }}
-                        </div>
-                    </div>
-                </div>
-            {% endif %}
-            
-            <div class="card mb-3">
-                <div class="card-header" data-bs-toggle="collapse" data-bs-target="#stats_content">
-                    <span class="fs-6">Statistiques de votre empire - {{ date|timezone:"Europe/Paris"|date:"d M Y H:i:s" }}</span>
-                </div>
-                <div id="stats_content" class="collapse show">
-                    <div class="card-body">
-                        <div class="row gx-3">
-                            <div class="col-5">
-                                <div class="row g-1 flex-column">
-                                    <div class="col-12">
-                                        <span class="text-normal me-2">Nation</span>
-                                        <span class="me-2">
-                                            {% if orientation == 1 %}Marchand
-                                            {% elif orientation == 2 %}Militaire
-                                            {% elif orientation == 3 %}Scientifique
-                                            {% endif %}
-                                        </span>
-                                        <span class="text-info me-2">{{ nation }}</span>
-                                    </div>
-                                    <div class="col-12">
-                                        <span class="text-normal me-2">Grade</span>
-                                        {% if alliance %}{{ alliance_rank_label }}<a href="/s03/alliance-view/?tag={{ alliance.tag }}" class="ms-2" data-bs-toggle="tooltip" data-bs-title="Voir alliance">[{{ alliance.tag }}] {{ alliance.name }}</a>
-                                        {% else %}<span class="text-normal">Indépendant</span>
-                                        {% endif %}
-                                    </div>
-                                    <div class="col-12">
-                                        <span class="text-normal me-2">Trésorerie</span>
-                                        <img src="/static/s03/img/interface/credits.gif" class="res" data-bs-toggle="tooltip" data-bs-title="Crédits" width="16px" height="16px">
-                                        <span class="{% if stat_credits <= 0 %}text-danger{% endif %}">{{ stat_credits|intcomma }}</span>
-                                    </div>
-                                    <div class="col-12">
-                                        <span class="text-normal me-2">Score de développement</span>
-                                        {{ stat_score|intcomma }}
-                                        <small class="ms-2 {% if stat_score_delta > 0 %}text-success{% else %}text-danger{% endif %}">{% if stat_score_delta > 0 %}+{% endif %}{{ stat_score_delta|intcomma }}</small>
-                                        <a href="/s03/ranking-players/" class="small ms-2" data-bs-toggle="tooltip" data-bs-title="Voir classement">{{ stat_rank }} /{{ stat_players }}</a>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-4">
-                                <div class="row g-1 flex-column">
-                                    <div class="col-12">
-                                        <span class="text-normal me-2">Nombre de colonies</span>
-                                        {{ stat_colonies|intcomma }} <small class="text-normal">/{{ stat_maxcolonies|intcomma }}</small>
-                                    </div>
-                                    <div class="col-12">
-                                        <span class="text-normal me-2">Minerai par heure</span>
-                                        <img src="/static/s03/img/interface/ore.gif" class="res" data-bs-toggle="tooltip" data-bs-title="Minerai" width="16px" height="16px">
-                                        {{ stat_prod_ore|intcomma }}
-                                    </div>
-                                    <div class="col-12">
-                                        <span class="text-normal me-2">Hydrocarbure par heure</span>
-                                        <img src="/static/s03/img/interface/hydrocarbon.gif" class="res" data-bs-toggle="tooltip" data-bs-title="Hydrocarbure" width="16px" height="16px">
-                                        {{ stat_prod_hydrocarbon|intcomma }}
-                                    </div>
-                                    <div class="col-12">
-                                        <span class="text-normal me-2">Score de prestige</span>
-                                        {{ stat_score_battle|intcomma }}
-                                        <a href="/s03/ranking-players/?col=4" class="small ms-2" data-bs-toggle="tooltip" data-bs-title="Voir classement">{{ stat_rank_battle }} /{{ stat_players }}</a>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-3">
-                                <div class="row g-1 flex-column">
-                                    <div class="col-12">
-                                        <span class="text-normal me-2">Travailleurs</span>
-                                        <img src="/static/s03/img/interface/workers.gif" class="res" data-bs-toggle="tooltip" data-bs-title="Travailleur" width="16px" height="16px">
-                                        {{ stat_workers|intcomma }}
-                                    </div>
-                                    <div>
-                                        <span class="text-normal me-2">Scientifiques</span>
-                                        <img src="/static/s03/img/interface/scientists.gif" class="res" data-bs-toggle="tooltip" data-bs-title="Scientifique" width="16px" height="16px">
-                                        {{ stat_scientists|intcomma }}
-                                    </div>
-                                    <div>
-                                        <span class="text-normal me-2">Soldats</span>
-                                        <img src="/static/s03/img/interface/soldiers.gif" class="res" data-bs-toggle="tooltip" data-bs-title="Soldat" width="16px" height="16px">
-                                        {{ stat_soldiers|intcomma }}
-                                    </div>
-                                    <div>
-                                        <span class="text-normal me-2">Points de prestige</span>
-                                        <img src="/static/s03/img/interface/prestige.gif" class="res" data-bs-toggle="tooltip" data-bs-title="Prestige" width="16px" height="16px">
-                                        {{ stat_victory_marks|intcomma }}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="card mb-3">
-                <div class="card-header">
-                    <span class="fs-6">Mouvements en cours</span>
-                </div>
-                <div class="list-group list-group-flush">
-                    {% for fleet in fleets %}
-                        <div class="list-group-item">
-                            <div class="row gx-3">
-                                <div class="col">
-                                    {% if fleet.owner_relation == 2 %}
-                                        {% if fleet.attackonsight %}
-                                            <img src="{{ PATH_IMAGES }}img/interface/stance_attack.gif"
-                                                 class="stance"
-                                                 data-bs-toggle="tooltip" data-bs-title="Mode attaque"
-                                                 width="10"
-                                                 height="10">
-                                        {% else %}
-                                            <img src="{{ PATH_IMAGES }}img/interface/stance_defend.gif"
-                                                 class="stance"
-                                                 data-bs-toggle="tooltip" data-bs-title="Mode riposte"
-                                                 width="10"
-                                                 height="10">
-                                        {% endif %}
-                                        <a href="/s03/fleet-view/?id={{ fleet.id }}" class="text-info" data-bs-toggle="tooltip" data-bs-title="Voir flotte">{{ fleet.name }}</a>
-                                    {% elif fleet.owner_relation == 1 %}
-                                        <a href="/s03/mail-new/?to={{ fleet.name }}" class="text-success" data-bs-toggle="tooltip" data-bs-title="Contacter propriétaire">{{ fleet.owner_name }}</a>
-                                    {% elif fleet.owner_relation == 0 %}
-                                        <a href="/s03/mail-new/?to={{ fleet.name }}" class="text-friend" data-bs-toggle="tooltip" data-bs-title="Contacter propriétaire">{{ fleet.owner_name }}</a>
-                                    {% else %}
-                                        <a href="/s03/profile-view/?name={{ fleet.owner_name }}" class="text-danger" data-bs-toggle="tooltip" data-bs-title="Voir profil">{{ fleet.owner_name }}</a>
+                <script>
+                    function sig(signature) {
+                        if (signature > 0) document.write('<small>' + formatnumber(signature) + '</small>');
+                        else document.write('???');
+                    }
+                </script>
+                
+                {% if alliance %}
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header" data-bs-toggle="collapse" data-bs-target="#motd_content">
+                                <span class="fs-6">
+                                    Annonce de l'alliance -
+                                    {% if alliance.defcon == 5 %}DEFCON 5: Préparation normale en temps de paix
+                                    {% elif alliance.defcon == 4 %}DEFCON 4: Préparation normale, mais renseignement accru et mesures de sécurité renforcées
+                                    {% elif alliance.defcon == 3 %}DEFCON 3: Accroissement de la préparation des forces au-dessus de la préparation normale
+                                    {% elif alliance.defcon == 2 %}DEFCON 2: Accroissement supplémentaire dans la préparation des forces
+                                    {% elif alliance.defcon == 1 %}DEFCON 1: Préparation maximale des forces (état de guerre)
                                     {% endif %}
-                                    <span class="ms-2"><script>sig({{ fleet.signature }})</script></span>
-                                </div>
-                                <div class="col-auto">
-                                    {% if fleet.f_planetid %}<script>putplanet("{{fleet.f_planetid}}", "{{fleet.f_planetname}}", "{{fleet.f_g}}", "{{fleet.f_s}}", "{{fleet.f_p}}",{{fleet.f_relation}});</script>
-                                    {% else %}<span class="text-normal">???</span>{% endif %}
-                                    <i class="fa-fw fas fa-long-arrow-alt-right mx-2 text-normal"></i>
-                                    <script>putplanet("{{fleet.t_planetid }}", "{{fleet.t_planetname}}", "{{fleet.t_g}}", "{{fleet.t_s}}", "{{fleet.t_p}}",{{fleet.t_relation}});</script>
-                                </div>
-                                <div class="col-auto text-end" style="width:75px;">
-                                    <span class="text-yellow"><script>putcountdown1({{fleet.time}}, "Terminé", "/s03/overview/");</script></span>
+                                </span>
+                            </div>
+                            <div id="motd_content" class="collapse show">
+                                <div class="card-body">
+                                    {{ alliance.announce|safe|bbcode }}
                                 </div>
                             </div>
                         </div>
-                    {% empty %}
-                        <div class="list-group-item text-center">
-                            <span class="text-normal">Aucun mouvement en cours</span>
+                    </div>
+                {% endif %}
+                
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header" data-bs-toggle="collapse" data-bs-target="#stats_content">
+                            <span class="fs-6">Statistiques de votre empire - {{ date|timezone:"Europe/Paris"|date:"d M Y H:i:s" }}</span>
                         </div>
-                    {% endfor %}
-                </div>
-            </div>
-            
-            <div class="card mb-3">
-                <div class="card-header">
-                    <span class="fs-6">Recherche en cours</span>
-                </div>
-                <div class="card-body">
-                    {% if research %}
-                        <div class="row gx-3">
-                            <div class="col"><a href="/s03/research/#{{ research.researchid }}" data-bs-toggle="tooltip" data-bs-title="Voir laboratoire">{{ research.label }}</a></div>
-                            <div class="col-auto"><span class="text-yellow"><script>putcountdown1({{ research.time }}, "Terminé", "/s03/research/");</script></span></div>
+                        <div id="stats_content" class="collapse show">
+                            <div class="card-body">
+                                <div class="row gx-3">
+                                    <div class="col-5">
+                                        <div class="row g-1 flex-column">
+                                            <div class="col-12">
+                                                <span class="text-normal me-2">Nation</span>
+                                                <span class="me-2">
+                                                    {% if orientation == 1 %}Marchand
+                                                    {% elif orientation == 2 %}Militaire
+                                                    {% elif orientation == 3 %}Scientifique
+                                                    {% endif %}
+                                                </span>
+                                                <span class="text-info me-2">{{ nation }}</span>
+                                            </div>
+                                            <div class="col-12">
+                                                <span class="text-normal me-2">Grade</span>
+                                                {% if alliance %}{{ alliance_rank_label }}<a href="/s03/alliance-view/?tag={{ alliance.tag }}" class="ms-2" data-bs-toggle="tooltip" data-bs-title="Voir alliance">[{{ alliance.tag }}] {{ alliance.name }}</a>
+                                                {% else %}<span class="text-normal">Indépendant</span>
+                                                {% endif %}
+                                            </div>
+                                            <div class="col-12">
+                                                <span class="text-normal me-2">Trésorerie</span>
+                                                <img src="/static/s03/img/interface/credits.gif" class="res" data-bs-toggle="tooltip" data-bs-title="Crédits" width="16px" height="16px">
+                                                <span class="{% if stat_credits <= 0 %}text-danger{% endif %}">{{ stat_credits|intcomma }}</span>
+                                            </div>
+                                            <div class="col-12">
+                                                <span class="text-normal me-2">Score de développement</span>
+                                                {{ stat_score|intcomma }}
+                                                <small class="ms-2 {% if stat_score_delta > 0 %}text-success{% else %}text-danger{% endif %}">{% if stat_score_delta > 0 %}+{% endif %}{{ stat_score_delta|intcomma }}</small>
+                                                <a href="/s03/ranking-players/" class="small ms-2" data-bs-toggle="tooltip" data-bs-title="Voir classement">{{ stat_rank }} /{{ stat_players }}</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="row g-1 flex-column">
+                                            <div class="col-12">
+                                                <span class="text-normal me-2">Nombre de colonies</span>
+                                                {{ stat_colonies|intcomma }} <small class="text-normal">/{{ stat_maxcolonies|intcomma }}</small>
+                                            </div>
+                                            <div class="col-12">
+                                                <span class="text-normal me-2">Minerai par heure</span>
+                                                <img src="/static/s03/img/interface/ore.gif" class="res" data-bs-toggle="tooltip" data-bs-title="Minerai" width="16px" height="16px">
+                                                {{ stat_prod_ore|intcomma }}
+                                            </div>
+                                            <div class="col-12">
+                                                <span class="text-normal me-2">Hydrocarbure par heure</span>
+                                                <img src="/static/s03/img/interface/hydrocarbon.gif" class="res" data-bs-toggle="tooltip" data-bs-title="Hydrocarbure" width="16px" height="16px">
+                                                {{ stat_prod_hydrocarbon|intcomma }}
+                                            </div>
+                                            <div class="col-12">
+                                                <span class="text-normal me-2">Score de prestige</span>
+                                                {{ stat_score_battle|intcomma }}
+                                                <a href="/s03/ranking-players/?col=4" class="small ms-2" data-bs-toggle="tooltip" data-bs-title="Voir classement">{{ stat_rank_battle }} /{{ stat_players }}</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-3">
+                                        <div class="row g-1 flex-column">
+                                            <div class="col-12">
+                                                <span class="text-normal me-2">Travailleurs</span>
+                                                <img src="/static/s03/img/interface/workers.gif" class="res" data-bs-toggle="tooltip" data-bs-title="Travailleur" width="16px" height="16px">
+                                                {{ stat_workers|intcomma }}
+                                            </div>
+                                            <div>
+                                                <span class="text-normal me-2">Scientifiques</span>
+                                                <img src="/static/s03/img/interface/scientists.gif" class="res" data-bs-toggle="tooltip" data-bs-title="Scientifique" width="16px" height="16px">
+                                                {{ stat_scientists|intcomma }}
+                                            </div>
+                                            <div>
+                                                <span class="text-normal me-2">Soldats</span>
+                                                <img src="/static/s03/img/interface/soldiers.gif" class="res" data-bs-toggle="tooltip" data-bs-title="Soldat" width="16px" height="16px">
+                                                {{ stat_soldiers|intcomma }}
+                                            </div>
+                                            <div>
+                                                <span class="text-normal me-2">Points de prestige</span>
+                                                <img src="/static/s03/img/interface/prestige.gif" class="res" data-bs-toggle="tooltip" data-bs-title="Prestige" width="16px" height="16px">
+                                                {{ stat_victory_marks|intcomma }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                    {% else %}
-                        <a href="/s03/research/" data-bs-toggle="tooltip" data-bs-title="Voir laboratoire">Aucune recherche en cours</a>
-                    {% endif %}
+                    </div>
                 </div>
-            </div>
-            
-            <div class="row gx-3">
+                    
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="fs-6">Mouvements en cours</span>
+                        </div>
+                        <div class="list-group list-group-flush">
+                            {% for fleet in fleets %}
+                                <div class="list-group-item">
+                                    <div class="row gx-3">
+                                        <div class="col">
+                                            {% if fleet.owner_relation == 2 %}
+                                                {% if fleet.attackonsight %}
+                                                    <img src="{{ PATH_IMAGES }}img/interface/stance_attack.gif"
+                                                         class="stance"
+                                                         data-bs-toggle="tooltip" data-bs-title="Mode attaque"
+                                                         width="10"
+                                                         height="10">
+                                                {% else %}
+                                                    <img src="{{ PATH_IMAGES }}img/interface/stance_defend.gif"
+                                                         class="stance"
+                                                         data-bs-toggle="tooltip" data-bs-title="Mode riposte"
+                                                         width="10"
+                                                         height="10">
+                                                {% endif %}
+                                                <a href="/s03/fleet-view/?id={{ fleet.id }}" class="text-info" data-bs-toggle="tooltip" data-bs-title="Voir flotte">{{ fleet.name }}</a>
+                                            {% elif fleet.owner_relation == 1 %}
+                                                <a href="/s03/mail-new/?to={{ fleet.name }}" class="text-success" data-bs-toggle="tooltip" data-bs-title="Contacter propriétaire">{{ fleet.owner_name }}</a>
+                                            {% elif fleet.owner_relation == 0 %}
+                                                <a href="/s03/mail-new/?to={{ fleet.name }}" class="text-friend" data-bs-toggle="tooltip" data-bs-title="Contacter propriétaire">{{ fleet.owner_name }}</a>
+                                            {% else %}
+                                                <a href="/s03/profile-view/?name={{ fleet.owner_name }}" class="text-danger" data-bs-toggle="tooltip" data-bs-title="Voir profil">{{ fleet.owner_name }}</a>
+                                            {% endif %}
+                                            <span class="ms-2"><script>sig({{ fleet.signature }})</script></span>
+                                        </div>
+                                        <div class="col-auto">
+                                            {% if fleet.f_planetid %}<script>putplanet("{{fleet.f_planetid}}", "{{fleet.f_planetname}}", "{{fleet.f_g}}", "{{fleet.f_s}}", "{{fleet.f_p}}",{{fleet.f_relation}});</script>
+                                            {% else %}<span class="text-normal">???</span>{% endif %}
+                                            <i class="fa-fw fas fa-long-arrow-alt-right mx-2 text-normal"></i>
+                                            <script>putplanet("{{fleet.t_planetid }}", "{{fleet.t_planetname}}", "{{fleet.t_g}}", "{{fleet.t_s}}", "{{fleet.t_p}}",{{fleet.t_relation}});</script>
+                                        </div>
+                                        <div class="col-auto text-end" style="width:75px;">
+                                            <span class="text-yellow"><script>putcountdown1({{fleet.time}}, "Terminé", "/s03/overview/");</script></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% empty %}
+                                <div class="list-group-item text-center">
+                                    <span class="text-normal">Aucun mouvement en cours</span>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                    
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="fs-6">Recherche en cours</span>
+                        </div>
+                        <div class="card-body">
+                            {% if research %}
+                                <div class="row gx-3">
+                                    <div class="col"><a href="/s03/research/#{{ research.researchid }}" data-bs-toggle="tooltip" data-bs-title="Voir laboratoire">{{ research.label }}</a></div>
+                                    <div class="col-auto"><span class="text-yellow"><script>putcountdown1({{ research.time }}, "Terminé", "/s03/research/");</script></span></div>
+                                </div>
+                            {% else %}
+                                <a href="/s03/research/" data-bs-toggle="tooltip" data-bs-title="Voir laboratoire">Aucune recherche en cours</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                    
                 <div class="col-6">
                     <div class="card">
                         <div class="card-header">
@@ -235,6 +243,7 @@
                         </div>
                     </div>
                 </div>
+                        
                 {% if shipyards|length > 0 %}
                     <div class="col-6">
                         <div class="card">
@@ -273,8 +282,8 @@
                         </div>
                     </div>
                 {% endif %}
+            
             </div>
-        
         </div>
     </div>
     

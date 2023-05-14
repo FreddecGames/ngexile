@@ -40,7 +40,6 @@ function Counter(name, seconds, display, endContent) {
 
 	this.toString = function() {
         
-        console.log('coucou')
 		var s = this.remainingTime();
 		var toDisplay = this.display;
 		if (!toDisplay) toDisplay = (s <= 0 && this.endContent != '') ? this.endContent:formatRemainingTime(s);
