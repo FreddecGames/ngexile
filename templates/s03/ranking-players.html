@@ -8,79 +8,87 @@
 
     <div class="scroll-content" style="height:calc(100% - 52px);">
         <div class="page-content">
+            <div class="row g-3">
         
-            <div class="mb-3">
-                <div class="row gx-3 align-items-center">
-                    <div class="col-auto"><span class="text-normal">Trié par</span></div>
-                    <div class="col-auto"><a href="?col=1{% if r1 %}&r=1{% endif %}" class="{% if col == 1 %}badge text-bg-primary{% endif %}">Nom{% if col == 1 %}<i class="ms-1 fa-fw fas {% if r1 %}fa-caret-down{% else %}fa-caret-up{% endif %}"></i>{% endif %}</a></div>
-                    <div class="col-auto"><a href="?col=2{% if r2 %}&r=1{% endif %}" class="{% if col == 2 %}badge text-bg-primary{% endif %}">Alliance{% if col == 2 %}<i class="ms-1 fa-fw fas {% if r2 %}fa-caret-down{% else %}fa-caret-up{% endif %}"></i>{% endif %}</a></div>
-                    <div class="col-auto"><a href="?col=3{% if r3 %}&r=1{% endif %}" class="{% if col == 3 %}badge text-bg-primary{% endif %}">Développement{% if col == 3 %}<i class="ms-1 fa-fw fas {% if r3 %}fa-caret-down{% else %}fa-caret-up{% endif %}"></i>{% endif %}</a></div>
-                    <div class="col-auto"><a href="?col=4{% if r4 %}&r=1{% endif %}" class="{% if col == 4 %}badge text-bg-primary{% endif %}">Prestige{% if col == 4 %}<i class="ms-1 fa-fw fas {% if r4 %}fa-caret-down{% else %}fa-caret-up{% endif %}"></i>{% endif %}</a></div>
+                <div class="col-12">
+                    <div class="row gx-3 align-items-center">
+                        <div class="col-auto"><span class="text-normal">Trié par</span></div>
+                        <div class="col-auto"><a href="?col=1{% if r1 %}&r=1{% endif %}" class="{% if col == 1 %}badge text-bg-primary{% endif %}">Nom{% if col == 1 %}<i class="ms-1 fa-fw fas {% if r1 %}fa-caret-down{% else %}fa-caret-up{% endif %}"></i>{% endif %}</a></div>
+                        <div class="col-auto"><a href="?col=2{% if r2 %}&r=1{% endif %}" class="{% if col == 2 %}badge text-bg-primary{% endif %}">Alliance{% if col == 2 %}<i class="ms-1 fa-fw fas {% if r2 %}fa-caret-down{% else %}fa-caret-up{% endif %}"></i>{% endif %}</a></div>
+                        <div class="col-auto"><a href="?col=3{% if r3 %}&r=1{% endif %}" class="{% if col == 3 %}badge text-bg-primary{% endif %}">Développement{% if col == 3 %}<i class="ms-1 fa-fw fas {% if r3 %}fa-caret-down{% else %}fa-caret-up{% endif %}"></i>{% endif %}</a></div>
+                        <div class="col-auto"><a href="?col=4{% if r4 %}&r=1{% endif %}" class="{% if col == 4 %}badge text-bg-primary{% endif %}">Prestige{% if col == 4 %}<i class="ms-1 fa-fw fas {% if r4 %}fa-caret-down{% else %}fa-caret-up{% endif %}"></i>{% endif %}</a></div>
+                    </div>
                 </div>
-            </div>
-            {% if pages %}
-                <div class="card card-body mb-3">
-                    <div class="row gx-3">
-                        <div class="col-auto">
-                            <span class="text-normal">Page {{ page_displayed }}</span>
+            
+                {% if pages %}
+                    <div class="col-12">
+                        <div class="card card-body">
+                            <div class="row gx-3">
+                                <div class="col-auto">
+                                    <span class="text-normal">Page {{ page_displayed }}</span>
+                                </div>
+                                <div class="col">
+                                    <span class="text-normal">Joueurs {{ page_first }}-{{ page_last }}</span>
+                                </div>
+                                <div class="col-auto">
+                                    <span class="text-normal">Aller à la page</span>
+                                    {% for p in pages %}
+                                        {% if p.link %}<a href="?start={{ page.link }}&col={{ col }}{% if reversed %}&r=1{% endif %}" class="ms-2" data-bs-toggle="tooltip" data-bs-title="Voir page">{{ p.page_id }}</a>{% endif %}
+                                        {% if p.selected %}<span class="ms-2">{{ p.page_id }}</span>{% endif %}
+                                    {% endfor %}
+                                </div>
+                            </div>
                         </div>
-                        <div class="col">
-                            <span class="text-normal">Joueurs {{ page_first }}-{{ page_last }}</span>
-                        </div>
-                        <div class="col-auto">
-                            <span class="text-normal">Aller à la page</span>
-                            {% for p in pages %}
-                                {% if p.link %}<a href="?start={{ page.link }}&col={{ col }}{% if reversed %}&r=1{% endif %}" class="ms-2" data-bs-toggle="tooltip" data-bs-title="Voir page">{{ p.page_id }}</a>{% endif %}
-                                {% if p.selected %}<span class="ms-2">{{ p.page_id }}</span>{% endif %}
+                    </div>
+                {% endif %}
+            
+                <div class="col-12">
+                    <div class="card">
+                        <div class="list-group list-group-flush">
+                            {% for player in players %}
+                                <div class="list-group-item {% if player.self %}bg-info{% elif player.ally %}bg-success{% endif %}">
+                                    <div class="row gx-3 align-items-center">
+                                        <div class="col-auto" style="width:40px;">
+                                            {{ player.place }}.
+                                        </div>
+                                        {% if player.visible %}
+                                            {% if player.score >= TenthUserScore %}
+                                                <div class="col-auto">
+                                                    <a href="/s03/profile-view/?name={{ player.username }}" data-bs-toggle="tooltip" data-bs-title="Voir profil">
+                                                        {% if player.avatar_url %}<img src="{{ player.avatar_url }}" width="48" height="48" class="rounded">
+                                                        {% else %}<img src="{{ PATH_IMAGES }}img/interface/noavatar.gif" width="48" height="48" class="rounded">
+                                                        {% endif %}
+                                                    </a>
+                                                </div>
+                                            {% endif %}
+                                            <div class="col">
+                                                <a href="/s03/profile-view/?name={{ player.username }}" data-bs-toggle="tooltip" data-bs-title="Voir profil">{{ player.username }}</a>
+                                            </div>
+                                            <div class="col-4">
+                                                {% if player.alliancetag %}
+                                                    <a href="/s03/alliance-view/?tag={{ player.alliancetag }}" data-bs-toggle="tooltip" data-bs-title="Voir alliance">[{{ player.alliancetag }}] {{ player.alliancename }}</a>
+                                                {% endif %}
+                                            </div>
+                                            <div class="col-2">
+                                                {{ player.score|intcomma }}
+                                                <small class="ms-2 {% if player.score_delta > 0 %}text-success{% else %}text-danger{% endif %}">{% if player.score_delta > 0 %}+{% endif %}{{ player.score_delta|intcomma }}</small>
+                                            </div>
+                                            <div class="col-2 text-end">
+                                                {{ player.score_prestige|intcomma }}
+                                            </div>
+                                        {% else %}
+                                            <div class="col">
+                                                <span class="text-normal">Inconnu</span>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
                             {% endfor %}
                         </div>
                     </div>
                 </div>
-            {% endif %}
-            <div class="card">
-                <div class="list-group list-group-flush">
-                    {% for player in players %}
-                        <div class="list-group-item {% if player.self %}bg-info{% elif player.ally %}bg-success{% endif %}">
-                            <div class="row gx-3 align-items-center">
-                                <div class="col-auto" style="width:40px;">
-                                    {{ player.place }}.
-                                </div>
-                                {% if player.visible %}
-                                    {% if player.score >= TenthUserScore %}
-                                        <div class="col-auto">
-                                            <a href="/s03/profile-view/?name={{ player.username }}" data-bs-toggle="tooltip" data-bs-title="Voir profil">
-                                                {% if player.avatar_url %}<img src="{{ player.avatar_url }}" width="48" height="48" class="rounded">
-                                                {% else %}<img src="{{ PATH_IMAGES }}img/interface/noavatar.gif" width="48" height="48" class="rounded">
-                                                {% endif %}
-                                            </a>
-                                        </div>
-                                    {% endif %}
-                                    <div class="col">
-                                        <a href="/s03/profile-view/?name={{ player.username }}" data-bs-toggle="tooltip" data-bs-title="Voir profil">{{ player.username }}</a>
-                                    </div>
-                                    <div class="col-4">
-                                        {% if player.alliancetag %}
-                                            <a href="/s03/alliance-view/?tag={{ player.alliancetag }}" data-bs-toggle="tooltip" data-bs-title="Voir alliance">[{{ player.alliancetag }}] {{ player.alliancename }}</a>
-                                        {% endif %}
-                                    </div>
-                                    <div class="col-2">
-                                        {{ player.score|intcomma }}
-                                        <small class="ms-2 {% if player.score_delta > 0 %}text-success{% else %}text-danger{% endif %}">{% if player.score_delta > 0 %}+{% endif %}{{ player.score_delta|intcomma }}</small>
-                                    </div>
-                                    <div class="col-2 text-end">
-                                        {{ player.score_prestige|intcomma }}
-                                    </div>
-                                {% else %}
-                                    <div class="col">
-                                        <span class="text-normal">Inconnu</span>
-                                    </div>
-                                {% endif %}
-                            </div>
-                        </div>
-                    {% endfor %}
-                </div>
-            </div>
 
+            </div>
         </div>
     </div>
 

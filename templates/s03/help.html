@@ -32,9 +32,10 @@
     
     <div class="scroll-content" style="height:calc(100% - 52px);">
         <div class="page-content">
+            <div class="row g-3">
         
-            {% if general %}
-                <div class="row g-3">
+                {% if general %}
+                    
                     <div class="col-6">
                         <div class="h-100 card">
                             <div class="card-header">
@@ -50,6 +51,7 @@
                             </div>
                         </div>
                     </div>
+                    
                     <div class="col-6">
                         <div class="h-100 card">
                             <div class="card-header">
@@ -64,6 +66,7 @@
                             </div>
                         </div>
                     </div>
+                    
                     <div class="col-6">
                         <div class="h-100 card">
                             <div class="card-header">
@@ -78,6 +81,7 @@
                             </div>
                         </div>
                     </div>
+                    
                     <div class="col-6">
                         <div class="h-100 card">
                             <div class="card-header">
@@ -93,6 +97,7 @@
                             </div>
                         </div>
                     </div>
+                    
                     <div class="col-6">
                         <div class="h-100 card">
                             <div class="card-header">
@@ -109,6 +114,7 @@
                             </div>
                         </div>
                     </div>
+                    
                     <div class="col-6">
                         <div class="h-100 card">
                             <div class="card-header">
@@ -124,6 +130,7 @@
                             </div>
                         </div>
                     </div>
+                    
                     <div class="col-6">
                         <div class="h-100 card">
                             <div class="card-header">
@@ -140,6 +147,7 @@
                             </div>
                         </div>
                     </div>
+                    
                     <div class="col-6">
                         <div class="h-100 card">
                             <div class="card-header">
@@ -155,6 +163,7 @@
                             </div>
                         </div>
                     </div>
+                    
                     <div class="col-6">
                         <div class="h-100 card">
                             <div class="card-header">
@@ -170,11 +179,10 @@
                             </div>
                         </div>
                     </div>
-                </div>
-            {% endif %}
+                    
+                {% endif %}
             
-            {% if buildings %}
-                <div class="row g-3">
+                {% if buildings %}
                     {% for category in categories %}
                         <div class="col-12">
                             <div class="mb-2">
@@ -318,11 +326,9 @@
                             </div>
                         </div>
                     {% endfor %}
-                </div>
-            {% endif %}
+                {% endif %}
             
-            {% if research %}
-                <div class="row g-3">
+                {% if research %}
                     {% for category in categories %}
                     <div class="col-12">
                         <div class="mb-2">
@@ -363,11 +369,9 @@
                         </div>
                     </div>
                     {% endfor %}
-                </div>
-            {% endif %}
+                {% endif %}
             
-            {% if ships %}
-                <div class="row g-3">
+                {% if ships %}
                     {% for category in categories %}
                     <div class="col-12">
                         <div class="mb-2">
@@ -512,11 +516,9 @@
                         </div>
                     </div>
                     {% endfor %}
-                </div>
-            {% endif %}
+                {% endif %}
             
-            {% if orientations %}
-                <div class="row g-3">
+                {% if orientations %}
                     <div class="col-6">
                         <div class="h-100 card">
                             <div class="card-header">
@@ -573,11 +575,9 @@
                             </div>
                         </div>
                     </div>
-                </div>
-            {% endif %}
+                {% endif %}
             
-            {% if battle %}
-                <div class="row g-3">
+                {% if battle %}
                     <div class="col-6">
                         <div class="h-100 card">
                             <div class="card-header">
@@ -615,33 +615,35 @@
                             </div>
                         </div>
                     </div>
-                </div>
-            {% endif %}
+                {% endif %}
             
-            {% if tags %}
-                <div class="card">
-                    <div class="card-header">
-                        <span class="fs-6">Aide sur les balises</span>
-                    </div>
-                    <div class="card-body">
-                        <div class="row gy-2">
-                            <div class="col-12"><span class="text-normal">Les balises peuvent être utilisée pour mettre en couleur et en forme les descriptions de votre alliance, nation et l'annonce de l'alliance.</span></div>
-                            <div class="col-12"><span class="text-normal">Voici la liste des balises supportées et leur résultat:</span></div>
-                            <div class="col-12"><span class="ps-4">[b]le texte[\b] <span class="text-normal">pour écrire</span> <b>le texte en gras</b></span></div>
-                            <div class="col-12"><span class="ps-4">[i]le texte[\i] <span class="text-normal">pour écrire</span> <i>le texte en italique</i></span></div>
-                            <div class="col-12"><span class="ps-4">[u]le texte[\u] <span class="text-normal">pour souligner</span> <u>le texte</u></span></div>
-                            <div class="col-12"><span class="ps-4">[color=#FF0000]rouge[\color] <span class="text-normal">pour écrire</span> <span style="color:#f00">en rouge en utilisant un code de couleur</span></span></div>
-                            <div class="col-12"><span class="ps-4">[color=blue]bleu[\color] <span class="text-normal">pour écrire</span> <span style="color:#00f">en bleu en utilisant la couleur en anglais</span></span></div>
-                            <div class="col-12"><span class="ps-4">[url=http://ngexile.freddecgames.com/]NG Exile[\url] <span class="text-normal">pour créer un lien vers www.exil.pw en affichant</span> <a href="http://ngexile.freddecgames.com/">NG Exile</a></span></div>
-                            <div class="col-12"><span class="ps-4">[url]http://ngexile.freddecgames.com/[\url] <span class="text-normal">pour créer un lien vers www.exil.pw en affichant</span> <a href="http://ngexile.freddecgames.com/">http://ngexile.freddecgames.com/</a></span></div>
-                            <div class="col-12"><span class="ps-4">[img]http://ngexile.freddecgames.com/static/s03/img/interface/credits.gif[\img] <span class="text-normal">pour afficher une image</span> <img src="{{ PATH_IMAGES }}img/interface/credits.gif"/></span></div>
-                            <div class="col-12"><span class="text-normal">Il est possible d'imbriquer les balises:</span></div>
-                            <div class="col-12"><span class="ps-4">[u][b]mon texte[b][u] <span class="text-normal">écrira</span> <u><b>"mon texte" en gras et souligné</b></u></span></div>
+                {% if tags %}
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <span class="fs-6">Aide sur les balises</span>
+                            </div>
+                            <div class="card-body">
+                                <div class="row gy-2">
+                                    <div class="col-12"><span class="text-normal">Les balises peuvent être utilisée pour mettre en couleur et en forme les descriptions de votre alliance, nation et l'annonce de l'alliance.</span></div>
+                                    <div class="col-12"><span class="text-normal">Voici la liste des balises supportées et leur résultat:</span></div>
+                                    <div class="col-12"><span class="ps-4">[b]le texte[\b] <span class="text-normal">pour écrire</span> <b>le texte en gras</b></span></div>
+                                    <div class="col-12"><span class="ps-4">[i]le texte[\i] <span class="text-normal">pour écrire</span> <i>le texte en italique</i></span></div>
+                                    <div class="col-12"><span class="ps-4">[u]le texte[\u] <span class="text-normal">pour souligner</span> <u>le texte</u></span></div>
+                                    <div class="col-12"><span class="ps-4">[color=#FF0000]rouge[\color] <span class="text-normal">pour écrire</span> <span style="color:#f00">en rouge en utilisant un code de couleur</span></span></div>
+                                    <div class="col-12"><span class="ps-4">[color=blue]bleu[\color] <span class="text-normal">pour écrire</span> <span style="color:#00f">en bleu en utilisant la couleur en anglais</span></span></div>
+                                    <div class="col-12"><span class="ps-4">[url=http://ngexile.freddecgames.com/]NG Exile[\url] <span class="text-normal">pour créer un lien vers www.exil.pw en affichant</span> <a href="http://ngexile.freddecgames.com/">NG Exile</a></span></div>
+                                    <div class="col-12"><span class="ps-4">[url]http://ngexile.freddecgames.com/[\url] <span class="text-normal">pour créer un lien vers www.exil.pw en affichant</span> <a href="http://ngexile.freddecgames.com/">http://ngexile.freddecgames.com/</a></span></div>
+                                    <div class="col-12"><span class="ps-4">[img]http://ngexile.freddecgames.com/static/s03/img/interface/credits.gif[\img] <span class="text-normal">pour afficher une image</span> <img src="{{ PATH_IMAGES }}img/interface/credits.gif"/></span></div>
+                                    <div class="col-12"><span class="text-normal">Il est possible d'imbriquer les balises:</span></div>
+                                    <div class="col-12"><span class="ps-4">[u][b]mon texte[b][u] <span class="text-normal">écrira</span> <u><b>"mon texte" en gras et souligné</b></u></span></div>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
-            {% endif %}
+                {% endif %}
             
+            </div>
         </div>
     </div>
     

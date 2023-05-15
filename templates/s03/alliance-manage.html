@@ -9,75 +9,83 @@
 
     <div class="scroll-content" style="height:calc(100% - 52px);">
         <div class="page-content">
+            <div class="row g-3">
         
-            <form method="post">
-                {% csrf_token %}
-                <input type="hidden" name="action" value="save">
-                <div class="card">
-                    {% if cat1 %}
-                    <div class="card-body">
-                        <div class="row gx-3">
-                            <div class="col-3 text-end pt-1">
-                                <span>Logo</span>
-                            </div>
-                            <div class="col-9">
-                                <input type="text" class="form-control" name="logo" id="logo" value="{{ alliance.logo_url }}" maxlength="250" />
-                                <div class="mt-1"><span class="text-normal">Exemple: https://domain.com/image.gif</span></div>
+                <form method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="save">
+                    <div class="row g-3">
+                    
+                        <div class="col-12">
+                            <div class="card">
+                                {% if cat1 %}
+                                    <div class="card-body">
+                                        <div class="row gx-3">
+                                            <div class="col-3 text-end pt-1">
+                                                <span>Logo</span>
+                                            </div>
+                                            <div class="col-9">
+                                                <input type="text" class="form-control" name="logo" id="logo" value="{{ alliance.logo_url }}" maxlength="250" />
+                                                <div class="mt-1"><span class="text-normal">Exemple: https://domain.com/image.gif</span></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row gx-3">
+                                            <div class="col-3 text-end">
+                                                <span>Description</span>
+                                            </div>
+                                            <div class="col-9">
+                                                <textarea name="description" class="form-control" cols="62" rows="10">{{ alliance.description }}</textarea>
+                                                <div class="mt-1"><a href="/s03/help/?cat=tags" target="_blank" data-bs-toggle="tooltip" data-bs-title="Voir aide">Balises supportées</a></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                                {% if cat2 %}
+                                    <div class="card-body">
+                                        <div class="row gx-3">
+                                            <div class="col-3 text-end pt-1">
+                                                <span>Defcon</span>
+                                            </div>
+                                            <div class="col-9">
+                                                <select name="defcon" class="form-control">
+                                                    <option value="5" {% if alliance.defcon == 5 %}selected{% endif %}>5 : Préparation normale en temps de paix</option>
+                                                    <option value="4" {% if alliance.defcon == 4 %}selected{% endif %}>4 : Préparation normale, mais renseignement accru et mesures de sécurité renforcées</option>
+                                                    <option value="3" {% if alliance.defcon == 3 %}selected{% endif %}>3 : Accroissement de la préparation des forces au-dessus de la préparation normale</option>
+                                                    <option value="2" {% if alliance.defcon == 2 %}selected{% endif %}>2 : Accroissement supplémentaire dans la préparation des forces</option>
+                                                    <option value="1" {% if alliance.defcon == 1 %}selected{% endif %}>1 : Préparation maximale des forces (état de guerre)</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row gx-3">
+                                            <div class="col-3 text-end">
+                                                <span>Annonce</span>
+                                            </div>
+                                            <div class="col-9">
+                                                <textarea name="motd" class="form-control" cols="62" rows="10">{{ alliance.announce }}</textarea>
+                                                <div class="mt-1"><a href="/s03/help/?cat=tags" target="_blank" data-bs-toggle="tooltip" data-bs-title="Voir aide">Balises supportées</a></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                                <div class="card-body">
+                                    <div class="row gx-3 align-items-center">
+                                        <div class="col-3"></div>
+                                        <div class="col-auto">
+                                            <input type="submit" class="btn btn-primary" name="submit" id="submit" value="Valider">
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
+                
                     </div>
-                    <div class="card-body">
-                        <div class="row gx-3">
-                            <div class="col-3 text-end">
-                                <span>Description</span>
-                            </div>
-                            <div class="col-9">
-                                <textarea name="description" class="form-control" cols="62" rows="10">{{ alliance.description }}</textarea>
-                                <div class="mt-1"><a href="/s03/help/?cat=tags" target="_blank" data-bs-toggle="tooltip" data-bs-title="Voir aide">Balises supportées</a></div>
-                            </div>
-                        </div>
-                    </div>
-                    {% endif %}
-                    {% if cat2 %}
-                    <div class="card-body">
-                        <div class="row gx-3">
-                            <div class="col-3 text-end pt-1">
-                                <span>Defcon</span>
-                            </div>
-                            <div class="col-9">
-                                <select name="defcon" class="form-control">
-                                    <option value="5" {% if alliance.defcon == 5 %}selected{% endif %}>5 : Préparation normale en temps de paix</option>
-                                    <option value="4" {% if alliance.defcon == 4 %}selected{% endif %}>4 : Préparation normale, mais renseignement accru et mesures de sécurité renforcées</option>
-                                    <option value="3" {% if alliance.defcon == 3 %}selected{% endif %}>3 : Accroissement de la préparation des forces au-dessus de la préparation normale</option>
-                                    <option value="2" {% if alliance.defcon == 2 %}selected{% endif %}>2 : Accroissement supplémentaire dans la préparation des forces</option>
-                                    <option value="1" {% if alliance.defcon == 1 %}selected{% endif %}>1 : Préparation maximale des forces (état de guerre)</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <div class="row gx-3">
-                            <div class="col-3 text-end">
-                                <span>Annonce</span>
-                            </div>
-                            <div class="col-9">
-                                <textarea name="motd" class="form-control" cols="62" rows="10">{{ alliance.announce }}</textarea>
-                                <div class="mt-1"><a href="/s03/help/?cat=tags" target="_blank" data-bs-toggle="tooltip" data-bs-title="Voir aide">Balises supportées</a></div>
-                            </div>
-                        </div>
-                    </div>
-                    {% endif %}
-                    <div class="card-body">
-                        <div class="row gx-3 align-items-center">
-                            <div class="col-3"></div>
-                            <div class="col-auto">
-                                <input type="submit" class="btn btn-primary" name="submit" id="submit" value="Valider">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </form>
+                </form>
             
+            </div>
         </div>
     </div>
 

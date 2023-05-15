@@ -7,14 +7,19 @@
     {% include "s03/empire-tabs.html" %}
 
     <div class="scroll-content" style="height:calc(100% - 52px);">
-        <div class="page-content">
-        
+        <div class="page-content">        
             <div class="row g-3">
+            
                 {% if no_ship %}
-                    <div class="col-12 text-center">
-                        <span class="text-normal">Vous n'avez détruit et/ou perdu aucun vaisseau</span>
+                
+                    <div class="col-12">
+                        <div class="card card-body text-center">
+                            <span class="text-normal">Vous n'avez détruit et/ou perdu aucun vaisseau</span>
+                        </div>
                     </div>
+                    
                 {% else %}
+                
                     {% for category in cats %}
                         <div class="col-12">
                             <div class="card">
@@ -50,6 +55,7 @@
                             </div>
                         </div>
                     {% endfor %}
+                    
                     <div class="col-12">
                         <div class="card card-body">
                             <div class="row gx-3">
@@ -59,6 +65,7 @@
                             </div>
                         </div>
                     </div>
+                    
                 {% endif %}
             </div>
         

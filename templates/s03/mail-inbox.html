@@ -10,34 +10,41 @@
     
     <div class="scroll-content" style="height:calc(100% - 52px);">
         <div class="page-content">
+            <div class="row g-3">
         
-            {% if pages|length > 1 %}
-                <div class="card card-body mb-3">
-                    <div class="row gx-3">
-                        <div class="col-auto">
-                            <span class="text-normal">Page {{ page_display }}</span>
-                        </div>
-                        <div class="col">
-                            <span class="text-normal">Messages {{ min }}-{{ max }}</span>
-                        </div>
-                        <div class="col-auto">
-                            <span class="text-normal">Aller à la page</span>
-                            {% for p in pages %}
-                                {% if p.link %}<a href="?start={{ p.link }}" class="ms-2" data-bs-toggle="tooltip" data-bs-title="Voir page">{{ p.id }}</a>{% endif %}
-                                {% if p.selected %}<span class="ms-2">{{ p.id }}</span>{% endif %}
-                            {% endfor %}
+                {% if pages|length > 1 %}
+                    <div class="col-12">
+                        <div class="card card-body">
+                            <div class="row gx-3">
+                                <div class="col-auto">
+                                    <span class="text-normal">Page {{ page_display }}</span>
+                                </div>
+                                <div class="col">
+                                    <span class="text-normal">Messages {{ min }}-{{ max }}</span>
+                                </div>
+                                <div class="col-auto">
+                                    <span class="text-normal">Aller à la page</span>
+                                    {% for p in pages %}
+                                        {% if p.link %}<a href="?start={{ p.link }}" class="ms-2" data-bs-toggle="tooltip" data-bs-title="Voir page">{{ p.id }}</a>{% endif %}
+                                        {% if p.selected %}<span class="ms-2">{{ p.id }}</span>{% endif %}
+                                    {% endfor %}
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
-            {% endif %}
-            
-            {% if mails|length < 1 %}
-                <div class="text-center">
-                    <span class="text-normal">Aucun message</span>
-                </div>
-            {% else %}
-                <div class="row gy-3">
+                {% endif %}
+                
+                {% if mails|length < 1 %}
+                
+                    <div class="col-12">
+                        <div class="card card-body text-center">
+                            <span class="text-normal">Aucun message</span>
+                        </div>
+                    </div>
+                    
+                {% else %}
                     {% for mail in mails %}
+                    
                         <div class="col-12">
                             <div class="card card-body {% if not mail.read_date %}bg-success{% endif %}">
                                 <div class="row gx-3">
@@ -108,10 +115,11 @@
                                 </div>
                             </div>
                         </div>
+                        
                     {% endfor %}
-                </div>
-            {% endif %}
+                {% endif %}
             
+            </div>
         </div>
     </div>
     

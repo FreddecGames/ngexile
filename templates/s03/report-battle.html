@@ -7,41 +7,44 @@
 
     <div class="scroll-content" style="height:100%;">
         <div class="page-content">
-
-            <div class="card mb-3">
-                <div class="card-header">
-                    <span class="fs-6">Rapport de combat</span>
-                </div>
-                <div class="card-body">
-                    <div class="row gy-1 gx-3">
-                        <div class="col-3 text-end">
-                            <span class="text-normal">Localisation</span>
+            <div class="row g-3">
+            
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="fs-6">Rapport de combat</span>
                         </div>
-                        <div class="col-9">
-                            <a href="/s03/map/?g={{ battle.galaxy }}&s={{ battle.sector }}" data-bs-toggle="tooltip" data-bs-title="Carte spatiale">{{ battle.galaxy }}.{{ battle.sector }}.{{ battle.planet }}</a>
-                        </div>
-                        <div class="col-3 text-end">
-                            <span class="text-normal">Date</span>
-                        </div>
-                        <div class="col-9">
-                            {{ battle.time|timezone:"Europe/Paris"|date:"d M Y H:i" }}
-                        </div>
-                        <div class="col-3 text-end">
-                            <span class="text-normal">Round</span>
-                        </div>
-                        <div class="col-9">
-                            {{ battle.rounds }}
-                        </div>
-                        <div class="col-3 text-end">
-                            <span class="text-normal">Lien public</span>
-                        </div>
-                        <div class="col-9">
-                            <a href="https://{{ baseurl }}/s03/report-battle/?id={{ battle.id }}&v={{ fromview }}&key={{ battle.key }}">https://{{ baseurl }}/s03/report-battle/?id={{ battle.id }}&v={{ fromview }}&key={{ battle.key }}</a>
+                        <div class="card-body">
+                            <div class="row gy-1 gx-3">
+                                <div class="col-3 text-end">
+                                    <span class="text-normal">Localisation</span>
+                                </div>
+                                <div class="col-9">
+                                    <a href="/s03/map/?g={{ battle.galaxy }}&s={{ battle.sector }}" data-bs-toggle="tooltip" data-bs-title="Carte spatiale">{{ battle.galaxy }}.{{ battle.sector }}.{{ battle.planet }}</a>
+                                </div>
+                                <div class="col-3 text-end">
+                                    <span class="text-normal">Date</span>
+                                </div>
+                                <div class="col-9">
+                                    {{ battle.time|timezone:"Europe/Paris"|date:"d M Y H:i" }}
+                                </div>
+                                <div class="col-3 text-end">
+                                    <span class="text-normal">Round</span>
+                                </div>
+                                <div class="col-9">
+                                    {{ battle.rounds }}
+                                </div>
+                                <div class="col-3 text-end">
+                                    <span class="text-normal">Lien public</span>
+                                </div>
+                                <div class="col-9">
+                                    <a href="https://{{ baseurl }}/s03/report-battle/?id={{ battle.id }}&v={{ fromview }}&key={{ battle.key }}">https://{{ baseurl }}/s03/report-battle/?id={{ battle.id }}&v={{ fromview }}&key={{ battle.key }}</a>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="row g-3 flex-column">
+                
                 {% for fleet in fleets %}
                     <div class="col-12">
                         <div class="card">
@@ -148,8 +151,8 @@
                         </div>
                     </div>
                 {% endfor %}
-            </div>
 
+            </div>
         </div>
     </div>
 

@@ -6,24 +6,28 @@
 
     <div class="scroll-content" style="height:100%;">
         <div class="page-content">
+            <div class="row g-3">
 
-            <div class="card">
-                <div class="card-header">
-                    <span class="fs-6">Résultats</span>
-                </div>
-                <div class="card-body">
-                    <div class="row gx-3 gy-2 justify-content-center">
-                        {% for nation in nations %}
-                            <div class="col-auto">
-                                <a href="?name={{ nation.username }}" data-bs-toggle="tooltip" data-bs-title="Voir profil">{{ nation.username }}</a>
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="fs-6">Résultats</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="row gx-3 gy-2 justify-content-center">
+                                {% for nation in nations %}
+                                    <div class="col-auto">
+                                        <a href="?name={{ nation.username }}" data-bs-toggle="tooltip" data-bs-title="Voir profil">{{ nation.username }}</a>
+                                    </div>
+                                {% empty %}
+                                    <div class="col-auto"><span class="text-normal">Aucun résultat</span></div>
+                                {% endfor %}
                             </div>
-                        {% empty %}
-                            <div class="col-auto"><span class="text-normal">Aucun résultat</span></div>
-                        {% endfor %}
+                        </div>
                     </div>
                 </div>
-            </div>
 
+            </div>
         </div>
     </div>
 

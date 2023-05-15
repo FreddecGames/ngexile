@@ -8,20 +8,20 @@
     
     <div class="scroll-content" style="height:calc(100% - 158px);">
         <div class="page-content">
+            <div class="row g-3">
         
-            <script>
-                
-                let html = ''
-                
-                function showDestroy(id) {
-                
-                    $("destroy" + id).style.display = "none";
-                    $("destroyConfirm" + id).style.display = "block";
-                    return false;
-                }
-            </script>
+                <script>
+                    
+                    let html = ''
+                    
+                    function showDestroy(id) {
+                    
+                        $("destroy" + id).style.display = "none";
+                        $("destroyConfirm" + id).style.display = "block";
+                        return false;
+                    }
+                </script>
     
-            <div class="row g-3 flex-column">
                 {% for category in categories %}
                     <div class="col-12">
                         <div class="card">
@@ -239,8 +239,8 @@
                         </div>
                     </div>
                 {% endfor %}
+                
             </div>
-
         </div>
     </div>
     

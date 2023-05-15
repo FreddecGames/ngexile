@@ -6,27 +6,27 @@
 
     <div class="scroll-content" style="height:100%;">
         <div class="page-content">
+            <div class="row g-3">
         
-            <script>
-                var costs = new Array();
+                <script>
+                    var costs = new Array();
 
-                costs["nation"] = new Array({{nation_cost_lvl_0}}, {{nation_cost_lvl_1}}, {{nation_cost_lvl_2}}, {{nation_cost_lvl_3}});
-                costs["planet"] = new Array({{planet_cost_lvl_0}}, {{planet_cost_lvl_1}}, {{planet_cost_lvl_2}}, {{planet_cost_lvl_3}});
+                    costs["nation"] = new Array({{nation_cost_lvl_0}}, {{nation_cost_lvl_1}}, {{nation_cost_lvl_2}}, {{nation_cost_lvl_3}});
+                    costs["planet"] = new Array({{planet_cost_lvl_0}}, {{planet_cost_lvl_1}}, {{planet_cost_lvl_2}}, {{planet_cost_lvl_3}});
 
-                function updateCost(obj, type) {
-                
-                    var selected = obj.selectedIndex;
-                    document.getElementById(type + "cost").innerHTML = formatnumber(costs[type][selected]);
-                }
+                    function updateCost(obj, type) {
+                    
+                        var selected = obj.selectedIndex;
+                        document.getElementById(type + "cost").innerHTML = formatnumber(costs[type][selected]);
+                    }
 
-                function confirmAction(id) {
-                
-                    var cost = $(id).innerHTML;
-                    return confirm('Confirmez-vous la dépense de ' + cost + ' Points de Prestige pour l\'espionnage ?');
-                }
-            </script>
+                    function confirmAction(id) {
+                    
+                        var cost = $(id).innerHTML;
+                        return confirm('Confirmez-vous la dépense de ' + cost + ' Points de Prestige pour l\'espionnage ?');
+                    }
+                </script>
             
-            <div class="row gx-3">
                 <div class="col-6">
                     <div class="card">
                         <div class="card-header">
@@ -130,6 +130,7 @@
                         </div>
                     </div>
                 </div>
+
                 <div class="col-6">
                     <div class="card">
                         <div class="card-header">
@@ -237,8 +238,8 @@
                         </div>
                     </div>
                 </div>
-            </div>
-            
+                
+            </div>            
         </div>
     </div>
 

@@ -206,7 +206,7 @@
 
             var s = ''
 
-            s += '<div class="mb-3">'
+            s += '<div class="col-12">'
             s += '<div class="row gx-3 align-items-center">'
                 s += '<div class="col-auto"><span class="text-normal">Trié par</span></div>'
                 s += displaySort(0, 'Nom')
@@ -219,7 +219,7 @@
             s += '</div>'
             s += '</div>'
 
-            s += '<div class="mb-3">'
+            s += '<div class="col-12">'
             s += '<div class="card">'
                 s += '<div class="list-group list-group-flush">'
                     for (var i = 0; i < list.length; i++) {
@@ -309,25 +309,27 @@
             s += '</div>'
             s += '</div>'
 
-            s += '<div class="card card-body py-2">'
-            s += '<div class="row gx-3 justify-content-around">'
-                s += '<div class="col-auto">'
-                    s += '<span class="text-normal me-2">Flottes</span>'
-                    s += '<span>' + formatnumber(list.length) + '</span>'
+            s += '<div class="col-12">'
+                s += '<div class="card card-body py-2">'
+                    s += '<div class="row gx-3 justify-content-around">'
+                        s += '<div class="col-auto">'
+                            s += '<span class="text-normal me-2">Flottes</span>'
+                            s += '<span>' + formatnumber(list.length) + '</span>'
+                        s += '</div>'
+                        s += '<div class="col-auto">'
+                            s += '<span class="text-normal me-2">Total vaisseaux</span>'
+                            s += '<span>' + formatnumber(ships) + '</span>'
+                        s += '</div>'
+                        s += '<div class="col-auto">'
+                            s += '<span class="text-normal me-2">Total signature</span>'
+                            s += '<span>' + formatnumber(signature) + '</span>'
+                        s += '</div>'
+                        s += '<div class="col-auto">'
+                            s += '<span class="text-normal me-2">Total cargaison</span>'
+                            s += '<span>' + formatnumber(cargoload) + '</span>'
+                        s += '</div>'
+                    s += '</div>'
                 s += '</div>'
-                s += '<div class="col-auto">'
-                    s += '<span class="text-normal me-2">Total vaisseaux</span>'
-                    s += '<span>' + formatnumber(ships) + '</span>'
-                s += '</div>'
-                s += '<div class="col-auto">'
-                    s += '<span class="text-normal me-2">Total signature</span>'
-                    s += '<span>' + formatnumber(signature) + '</span>'
-                s += '</div>'
-                s += '<div class="col-auto">'
-                    s += '<span class="text-normal me-2">Total cargaison</span>'
-                    s += '<span>' + formatnumber(cargoload) + '</span>'
-                s += '</div>'
-            s += '</div>'
             s += '</div>'
 
             $('fleet_list').innerHTML = s
@@ -561,29 +563,39 @@
 
     <div class="scroll-content" style="height:calc(100% - 52px);">
         <div class="page-content">
+            <div class="row g-3">
         
-            <div id="fleet_list"></div>
-            
-            <div id="createcategoryform">
-                <form method="get" onsubmit="return createCategory();" class="card">
-                    <div class="card-header text-center">
-                        <span class="fs-6">Créer une nouvelle catégorie</span>
-                    </div>
-                    <div class="card-body text-center">
-                        <div class="mb-3">
-                            <div class="text-normal">Une fois la catégorie créée, vous pouvez glisser/déposer une flotte vers l'onglet de la page pour changer sa catégorie.</div>
-                            <div class="text-normal">Pour renommer une catégorie, double cliquez sur l'onglet.</div>
-                            <div class="text-normal">Pour supprimer une catégorie, double cliquez sur l'onglet et spécifiez un nouveau nom vide.</div>
+                <div class="col-12">
+                    <div id="fleet_list" class="row g-3"></div>
+                </div>
+                
+                <div id="createcategoryform">
+                    <form method="get" onsubmit="return createCategory();">
+                    
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header text-center">
+                                    <span class="fs-6">Créer une nouvelle catégorie</span>
+                                </div>
+                                <div class="card-body text-center">
+                                    <div class="mb-3">
+                                        <div class="text-normal">Une fois la catégorie créée, vous pouvez glisser/déposer une flotte vers l'onglet de la page pour changer sa catégorie.</div>
+                                        <div class="text-normal">Pour renommer une catégorie, double cliquez sur l'onglet.</div>
+                                        <div class="text-normal">Pour supprimer une catégorie, double cliquez sur l'onglet et spécifiez un nouveau nom vide.</div>
+                                    </div>
+                                    <div class="row gx-2 align-items-center justify-content-center">
+                                        <div class="col-auto">Nom de catégorie</div>
+                                        <div class="col-auto"><input type="text" class="form-control" id="categoryname" maxlength="32"></div>
+                                        <div class="col-auto"><input type="submit" class="btn btn-primary" value="Créer"></div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <div class="row gx-2 align-items-center justify-content-center">
-                            <div class="col-auto">Nom de catégorie</div>
-                            <div class="col-auto"><input type="text" class="form-control" id="categoryname" maxlength="32"></div>
-                            <div class="col-auto"><input type="submit" class="btn btn-primary" value="Créer"></div>
-                        </div>
-                    </div>
-                </form>
+                        
+                    </form>
+                </div>
+                
             </div>
-            
         </div>
     </div>
 

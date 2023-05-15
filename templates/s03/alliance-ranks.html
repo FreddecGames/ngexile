@@ -9,154 +9,165 @@
 
     <div class="scroll-content" style="height:calc(100% - 52px);">
         <div class="page-content">
+            <div class="row g-3">
         
-            <script>
-                function check() {
-                    {% for rank in ranks %}
-                        if ($('n{{ rank.rankid }}').value.length <= 2) {
-                        
-                            alert('Le nom du grade "' + $('n{{ rank.rankid }}').value + '" est trop court : 2 lettres minimum.');
-                            return false;
-                        }
-                    {% endfor %}
-                    return true;
-                }
-            </script>
-            
-            <form method="post" onsubmit="return check()">
-                {% csrf_token %}
-                <input type="hidden" name="action" value="save">
-                {% for rank in ranks %}
-                    <div class="mb-3 card card-body">
-                        <div class="list-group-item">
-                            <div class="row gx-3">
-                                <div class="col-4">
-                                    <div class="row g-1 flex-column">
-                                        <div class="col-12">
-                                            <div class="row gx-1 align-items-center">
-                                                <div class="col-auto d-flex"><input type="checkbox" class="form-check-input" id="c{{rank.rankid}}_enabled" name="c{{rank.rankid}}_enabled" value="1" {% if rank.checked_enabled %}checked{% endif %} {% if rank.disabled %}disabled{% endif %}></div>
-                                                <div class="col"><input type="text" class="form-control" size="28" maxlength="32" name="n{{rank.rankid}}" id="n{{rank.rankid}}" value="{{rank.label}}"></div>
+                <script>
+                    function check() {
+                        {% for rank in ranks %}
+                            if ($('n{{ rank.rankid }}').value.length <= 2) {
+                            
+                                alert('Le nom du grade "' + $('n{{ rank.rankid }}').value + '" est trop court : 2 lettres minimum.');
+                                return false;
+                            }
+                        {% endfor %}
+                        return true;
+                    }
+                </script>
+                
+                <form method="post" onsubmit="return check()">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="save">
+                    <div class="row g-3">
+                    
+                        {% for rank in ranks %}
+                            <div class="col-12">
+                                <div class="card card-body">
+                                    <div class="list-group-item">
+                                        <div class="row gx-3">
+                                            <div class="col-4">
+                                                <div class="row g-1 flex-column">
+                                                    <div class="col-12">
+                                                        <div class="row gx-1 align-items-center">
+                                                            <div class="col-auto d-flex"><input type="checkbox" class="form-check-input" id="c{{rank.rankid}}_enabled" name="c{{rank.rankid}}_enabled" value="1" {% if rank.checked_enabled %}checked{% endif %} {% if rank.disabled %}disabled{% endif %}></div>
+                                                            <div class="col"><input type="text" class="form-control" size="28" maxlength="32" name="n{{rank.rankid}}" id="n{{rank.rankid}}" value="{{rank.label}}"></div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-12">
+                                                        <div class="form-check">
+                                                            <input type="checkbox" class="form-check-input" id="c{{rank.rankid}}_0" name="c{{rank.rankid}}_0" value="1" {% if rank.checked_0 %}checked{% endif %} {% if rank.disabled %}disabled{% endif %}>
+                                                            <label class="form-check-label" for="c{{rank.rankid}}_0">Grade des nouveaux membres</label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-12">
+                                                        <div class="form-check">
+                                                            <input type="checkbox" class="form-check-input" id="c{{rank.rankid}}_1" name="c{{rank.rankid}}_1" value="1" {% if rank.checked_1 %}checked{% endif %} {% if rank.disabled %}disabled{% endif %}>
+                                                            <label class="form-check-label" for="c{{rank.rankid}}_1">Recruter une nation</label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-12">
+                                                        <div class="form-check">
+                                                            <input type="checkbox" class="form-check-input" id="c{{rank.rankid}}_2" name="c{{rank.rankid}}_2" value="1" {% if rank.checked_2 %}checked{% endif %} {% if rank.disabled %}disabled{% endif %}>
+                                                            <label class="form-check-label" for="c{{rank.rankid}}_2">Exclure une nation</label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-12">
+                                                        <div class="form-check">
+                                                            <input type="checkbox" class="form-check-input" id="c{{rank.rankid}}_13" name="c{{rank.rankid}}_13" value="1" {% if rank.checked_13 %}checked{% endif %} {% if rank.disabled %}disabled{% endif %}>
+                                                            <label class="form-check-label" for="c{{rank.rankid}}_13">Publier la liste des membres</label>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div class="col-12">
-                                            <div class="form-check">
-                                                <input type="checkbox" class="form-check-input" id="c{{rank.rankid}}_0" name="c{{rank.rankid}}_0" value="1" {% if rank.checked_0 %}checked{% endif %} {% if rank.disabled %}disabled{% endif %}>
-                                                <label class="form-check-label" for="c{{rank.rankid}}_0">Grade des nouveaux membres</label>
+                                            <div class="col-4">
+                                                <div class="row g-1 flex-column">
+                                                    <div class="col-12">
+                                                        <div class="form-check">
+                                                            <input type="checkbox" class="form-check-input" id="c{{rank.rankid}}_3" name="c{{rank.rankid}}_3" value="1" {% if rank.checked_3 %}checked{% endif %} {% if rank.disabled %}disabled{% endif %}>
+                                                            <label class="form-check-label" for="c{{rank.rankid}}_3">Créer un pacte/tribut/guerre</label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-12">
+                                                        <div class="form-check">
+                                                            <input type="checkbox" class="form-check-input" id="c{{rank.rankid}}_4" name="c{{rank.rankid}}_4" value="1" {% if rank.checked_4 %}checked{% endif %} {% if rank.disabled %}disabled{% endif %}>
+                                                            <label class="form-check-label" for="c{{rank.rankid}}_4">Rompre un pacte/tribut/guerre</label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-12">
+                                                        <div class="form-check">
+                                                            <input type="checkbox" class="form-check-input" id="c{{rank.rankid}}_5" name="c{{rank.rankid}}_5" value="1" {% if rank.checked_5 %}checked{% endif %} {% if rank.disabled %}disabled{% endif %}>
+                                                            <label class="form-check-label" for="c{{rank.rankid}}_5">Demander un financement</label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-12">
+                                                        <div class="form-check">
+                                                            <input type="checkbox" class="form-check-input" id="c{{rank.rankid}}_6" name="c{{rank.rankid}}_6" value="1" {% if rank.checked_6 %}checked{% endif %} {% if rank.disabled %}disabled{% endif %}>
+                                                            <label class="form-check-label" for="c{{rank.rankid}}_6">Voir les rapports d'alliance</label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-12">
+                                                        <div class="form-check">
+                                                            <input type="checkbox" class="form-check-input" id="c{{rank.rankid}}_7" name="c{{rank.rankid}}_7" value="1" {% if rank.checked_7 %}checked{% endif %} {% if rank.disabled %}disabled{% endif %}>
+                                                            <label class="form-check-label" for="c{{rank.rankid}}_7">Accepter les demandes de financement</label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-12">
+                                                        <div class="form-check">
+                                                            <input type="checkbox" class="form-check-input" id="c{{rank.rankid}}_8" name="c{{rank.rankid}}_8" value="1" {% if rank.checked_8 %}checked{% endif %} {% if rank.disabled %}disabled{% endif %}>
+                                                            <label class="form-check-label" for="c{{rank.rankid}}_8">Modifier la taxe</label>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div class="col-12">
-                                            <div class="form-check">
-                                                <input type="checkbox" class="form-check-input" id="c{{rank.rankid}}_1" name="c{{rank.rankid}}_1" value="1" {% if rank.checked_1 %}checked{% endif %} {% if rank.disabled %}disabled{% endif %}>
-                                                <label class="form-check-label" for="c{{rank.rankid}}_1">Recruter une nation</label>
-                                            </div>
-                                        </div>
-                                        <div class="col-12">
-                                            <div class="form-check">
-                                                <input type="checkbox" class="form-check-input" id="c{{rank.rankid}}_2" name="c{{rank.rankid}}_2" value="1" {% if rank.checked_2 %}checked{% endif %} {% if rank.disabled %}disabled{% endif %}>
-                                                <label class="form-check-label" for="c{{rank.rankid}}_2">Exclure une nation</label>
-                                            </div>
-                                        </div>
-                                        <div class="col-12">
-                                            <div class="form-check">
-                                                <input type="checkbox" class="form-check-input" id="c{{rank.rankid}}_13" name="c{{rank.rankid}}_13" value="1" {% if rank.checked_13 %}checked{% endif %} {% if rank.disabled %}disabled{% endif %}>
-                                                <label class="form-check-label" for="c{{rank.rankid}}_13">Publier la liste des membres</label>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-4">
-                                    <div class="row g-1 flex-column">
-                                        <div class="col-12">
-                                            <div class="form-check">
-                                                <input type="checkbox" class="form-check-input" id="c{{rank.rankid}}_3" name="c{{rank.rankid}}_3" value="1" {% if rank.checked_3 %}checked{% endif %} {% if rank.disabled %}disabled{% endif %}>
-                                                <label class="form-check-label" for="c{{rank.rankid}}_3">Créer un pacte/tribut/guerre</label>
-                                            </div>
-                                        </div>
-                                        <div class="col-12">
-                                            <div class="form-check">
-                                                <input type="checkbox" class="form-check-input" id="c{{rank.rankid}}_4" name="c{{rank.rankid}}_4" value="1" {% if rank.checked_4 %}checked{% endif %} {% if rank.disabled %}disabled{% endif %}>
-                                                <label class="form-check-label" for="c{{rank.rankid}}_4">Rompre un pacte/tribut/guerre</label>
-                                            </div>
-                                        </div>
-                                        <div class="col-12">
-                                            <div class="form-check">
-                                                <input type="checkbox" class="form-check-input" id="c{{rank.rankid}}_5" name="c{{rank.rankid}}_5" value="1" {% if rank.checked_5 %}checked{% endif %} {% if rank.disabled %}disabled{% endif %}>
-                                                <label class="form-check-label" for="c{{rank.rankid}}_5">Demander un financement</label>
-                                            </div>
-                                        </div>
-                                        <div class="col-12">
-                                            <div class="form-check">
-                                                <input type="checkbox" class="form-check-input" id="c{{rank.rankid}}_6" name="c{{rank.rankid}}_6" value="1" {% if rank.checked_6 %}checked{% endif %} {% if rank.disabled %}disabled{% endif %}>
-                                                <label class="form-check-label" for="c{{rank.rankid}}_6">Voir les rapports d'alliance</label>
-                                            </div>
-                                        </div>
-                                        <div class="col-12">
-                                            <div class="form-check">
-                                                <input type="checkbox" class="form-check-input" id="c{{rank.rankid}}_7" name="c{{rank.rankid}}_7" value="1" {% if rank.checked_7 %}checked{% endif %} {% if rank.disabled %}disabled{% endif %}>
-                                                <label class="form-check-label" for="c{{rank.rankid}}_7">Accepter les demandes de financement</label>
-                                            </div>
-                                        </div>
-                                        <div class="col-12">
-                                            <div class="form-check">
-                                                <input type="checkbox" class="form-check-input" id="c{{rank.rankid}}_8" name="c{{rank.rankid}}_8" value="1" {% if rank.checked_8 %}checked{% endif %} {% if rank.disabled %}disabled{% endif %}>
-                                                <label class="form-check-label" for="c{{rank.rankid}}_8">Modifier la taxe</label>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-4">
-                                    <div class="row g-1 flex-column">
-                                        <div class="col-12">
-                                            <div class="form-check">
-                                                <input type="checkbox" class="form-check-input" id="c{{rank.rankid}}_9" name="c{{rank.rankid}}_9" value="1" {% if rank.checked_9 %}checked{% endif %} {% if rank.disabled %}disabled{% endif %}>
-                                                <label class="form-check-label" for="c{{rank.rankid}}_9">Envoyer un message à toute l'alliance</label>
-                                            </div>
-                                        </div>
-                                        <div class="col-12">
-                                            <div class="form-check">
-                                                <input type="checkbox" class="form-check-input" id="c{{rank.rankid}}_12" name="c{{rank.rankid}}_12" value="1" {% if rank.checked_12 %}checked{% endif %} {% if rank.disabled %}disabled{% endif %}>
-                                                <label class="form-check-label" for="c{{rank.rankid}}_12">Voir les détails sur les membres (infos nation)</label>
-                                            </div>
-                                        </div>
-                                        <div class="col-12">
-                                            <div class="form-check">
-                                                <input type="checkbox" class="form-check-input" id="c{{rank.rankid}}_10" name="c{{rank.rankid}}_10" value="1" {% if rank.checked_10 %}checked{% endif %} {% if rank.disabled %}disabled{% endif %}>
-                                                <label class="form-check-label" for="c{{rank.rankid}}_10">Modifier la description de l'alliance</label>
-                                            </div>
-                                        </div>
-                                        <div class="col-12">
-                                            <div class="form-check">
-                                                <input type="checkbox" class="form-check-input" id="c{{rank.rankid}}_11" name="c{{rank.rankid}}_11" value="1" {% if rank.checked_11 %}checked{% endif %} {% if rank.disabled %}disabled{% endif %}>
-                                                <label class="form-check-label" for="c{{rank.rankid}}_11">Modifier l'annonce de l'alliance</label>
-                                            </div>
-                                        </div>
-                                        <div class="col-12">
-                                            <div class="form-check">
-                                                <input type="checkbox" class="form-check-input" id="c{{rank.rankid}}_14" name="c{{rank.rankid}}_14" value="1" {% if rank.checked_14 %}checked{% endif %} {% if rank.disabled %}disabled{% endif %}>
-                                                <label class="form-check-label" for="c{{rank.rankid}}_14">Commander les flottes partagées</label>
-                                            </div>
-                                        </div>
-                                        <div class="col-12">
-                                            <div class="form-check">
-                                                <input type="checkbox" class="form-check-input" id="c{{rank.rankid}}_15" name="c{{rank.rankid}}_15" value="1" {% if rank.checked_15 %}checked{% endif %} {% if rank.disabled %}disabled{% endif %}>
-                                                <label class="form-check-label" for="c{{rank.rankid}}_15">Utiliser les radars de l'alliance</label>
+                                            <div class="col-4">
+                                                <div class="row g-1 flex-column">
+                                                    <div class="col-12">
+                                                        <div class="form-check">
+                                                            <input type="checkbox" class="form-check-input" id="c{{rank.rankid}}_9" name="c{{rank.rankid}}_9" value="1" {% if rank.checked_9 %}checked{% endif %} {% if rank.disabled %}disabled{% endif %}>
+                                                            <label class="form-check-label" for="c{{rank.rankid}}_9">Envoyer un message à toute l'alliance</label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-12">
+                                                        <div class="form-check">
+                                                            <input type="checkbox" class="form-check-input" id="c{{rank.rankid}}_12" name="c{{rank.rankid}}_12" value="1" {% if rank.checked_12 %}checked{% endif %} {% if rank.disabled %}disabled{% endif %}>
+                                                            <label class="form-check-label" for="c{{rank.rankid}}_12">Voir les détails sur les membres (infos nation)</label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-12">
+                                                        <div class="form-check">
+                                                            <input type="checkbox" class="form-check-input" id="c{{rank.rankid}}_10" name="c{{rank.rankid}}_10" value="1" {% if rank.checked_10 %}checked{% endif %} {% if rank.disabled %}disabled{% endif %}>
+                                                            <label class="form-check-label" for="c{{rank.rankid}}_10">Modifier la description de l'alliance</label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-12">
+                                                        <div class="form-check">
+                                                            <input type="checkbox" class="form-check-input" id="c{{rank.rankid}}_11" name="c{{rank.rankid}}_11" value="1" {% if rank.checked_11 %}checked{% endif %} {% if rank.disabled %}disabled{% endif %}>
+                                                            <label class="form-check-label" for="c{{rank.rankid}}_11">Modifier l'annonce de l'alliance</label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-12">
+                                                        <div class="form-check">
+                                                            <input type="checkbox" class="form-check-input" id="c{{rank.rankid}}_14" name="c{{rank.rankid}}_14" value="1" {% if rank.checked_14 %}checked{% endif %} {% if rank.disabled %}disabled{% endif %}>
+                                                            <label class="form-check-label" for="c{{rank.rankid}}_14">Commander les flottes partagées</label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-12">
+                                                        <div class="form-check">
+                                                            <input type="checkbox" class="form-check-input" id="c{{rank.rankid}}_15" name="c{{rank.rankid}}_15" value="1" {% if rank.checked_15 %}checked{% endif %} {% if rank.disabled %}disabled{% endif %}>
+                                                            <label class="form-check-label" for="c{{rank.rankid}}_15">Utiliser les radars de l'alliance</label>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
+                        {% endfor %}                
+                            
+                        <div class="col-12">
+                            <div class="card card-body">
+                                <div class="row gx-3 align-items-center justify-content-center">
+                                    <div class="col-auto">
+                                        <input type="submit" class="btn btn-primary" name="submit" id="submit" value="Valider">
+                                    </div>
+                                </div>
+                            </div>
                         </div>
+                    
                     </div>
-                {% endfor %}                
-                <div class="mb-3 card card-body">
-                    <div class="row gx-3 align-items-center justify-content-center">
-                        <div class="col-auto">
-                            <input type="submit" class="btn btn-primary" name="submit" id="submit" value="Valider">
-                        </div>
-                    </div>
-                </div>
-            </form>
+                </form>
         
+            </div>
         </div>
     </div>
 

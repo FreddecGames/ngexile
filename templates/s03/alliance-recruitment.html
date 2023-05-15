@@ -8,58 +8,68 @@
     
     <div class="scroll-content" style="height:calc(100% - 52px);">
         <div class="page-content">
+            <div class="row g-3">
             
-            {% include "s03/_messages.html" %}
-            
-            {% if can_invite %}
-                <form method="post">
-                    {% csrf_token %}
-                    <input type="hidden" name="action" value="invite">
-                    <div class="card mb-3">
-                        <div class="card-header">
-                            <span class="fs-6">Inviter une nation à rallier notre alliance</span>
-                        </div>
-                        <div class="card-body">
-                            <div class="row gx-2 align-items-center justify-content-center">
-                                <div class="col-auto"><span class="text-normal">Joueur</span></div>
-                                <div class="col-auto"><input type="text" class="form-control" name="name" value=""></div>
-                                <div class="col-auto"><input type="submit" class="btn btn-primary" name="submit" value="Inviter"></div>
+                {% include "s03/_messages.html" %}
+                
+                {% if can_invite %}
+                    <form method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="invite">
+                        <div class="row g-3">
+                        
+                            <div class="col-12">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <span class="fs-6">Inviter une nation à rallier notre alliance</span>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row gx-2 align-items-center justify-content-center">
+                                            <div class="col-auto"><span class="text-normal">Joueur</span></div>
+                                            <div class="col-auto"><input type="text" class="form-control" name="name" value=""></div>
+                                            <div class="col-auto"><input type="submit" class="btn btn-primary" name="submit" value="Inviter"></div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
+                            
+                        </div>
+                    </form>
+                {% endif %}
+                
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="fs-6">Invitations de ralliement en cours</span>
+                        </div>
+                        <div class="list-group list-group-flush">
+                            {% for invitation in invits %}
+                                <div class="list-group-item">
+                                    <div class="row gx-3 align-items-center">
+                                        <div class="col">
+                                            {{ invitation.name }}
+                                        </div>
+                                        <div class="col-2">
+                                            <span class="text-normal">{{ invitation.created }}</span>
+                                        </div>
+                                        <div class="col-2">
+                                            <span class="text-normal">{{ invitation.recruiter }}</span>
+                                        </div>
+                                        <div class="col-1 text-end">
+                                            <span class="text-success">En attente</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% empty %}
+                                <div class="list-group-item text-center">
+                                    <span class="text-normal">Aucune invitation</span>
+                                </div>
+                            {% endfor %}
                         </div>
                     </div>
-                </form>
-            {% endif %}
-            
-            <div class="card">
-                <div class="card-header">
-                    <span class="fs-6">Invitations de ralliement en cours</span>
                 </div>
-                <div class="list-group list-group-flush">
-                    {% for invitation in invits %}
-                        <div class="list-group-item">
-                            <div class="row gx-3 align-items-center">
-                                <div class="col">
-                                    {{ invitation.name }}
-                                </div>
-                                <div class="col-2">
-                                    <span class="text-normal">{{ invitation.created }}</span>
-                                </div>
-                                <div class="col-2">
-                                    <span class="text-normal">{{ invitation.recruiter }}</span>
-                                </div>
-                                <div class="col-1 text-end">
-                                    <span class="text-success">En attente</span>
-                                </div>
-                            </div>
-                        </div>
-                    {% empty %}
-                        <div class="list-group-item text-center">
-                            <span class="text-normal">Aucune invitation</span>
-                        </div>
-                    {% endfor %}
-                </div>
-            </div>
         
+            </div>
         </div>
     </div>
 

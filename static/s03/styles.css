@@ -9,11 +9,11 @@ body {
 	font-family: Roboto, Arial; font-size: 12px; color: #fff;
 }
 
-::-webkit-scrollbar { width: .35rem; height: .25rem; }
+::-webkit-scrollbar { width: .35rem; height: .35rem; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { border-radius: .25rem; background: rgba(255, 255, 255, .25); }
 
-.scroll-content { overflow-y: auto; overflow-x: hidden; scroll-margin-left: .5rem; scrollbar-color: rgba(255, 255, 255, .075); scrollbar-width: thin; }
+.scroll-content { overflow-y: auto; overflow-x: hidden; margin-left: .25rem; scrollbar-color: rgba(255, 255, 255, .075); scrollbar-width: thin; }
 
 input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
 input[type=number] { max-width: 55px; -moz-appearance: textfield; }

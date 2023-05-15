@@ -5,166 +5,178 @@
 {% block content %}
 
     {% if header %}
+    
         {% include "s03/planet-tabs.html" %}
         <div class="scroll-content" style="height:calc(100% - 158px);">
-            <div class="page-content">
+            
     {% else %}
+    
         {% include "s03/market-tabs.html" %}
         <div class="scroll-content" style="height:calc(100% - 52px);">
-            <div class="page-content">
+            
     {% endif %}
-    
-            <script>
-                var planets = [];
-                {% for planet in m_planets %}
-                planets.push({ id:{{planet.id}}, oreMax:{{planet.ore_max}}, hydroMax:{{planet.hydrocarbon_max}}, orePrice:{{planet.ore_price2}}, hydroPrice:{{planet.hydrocarbon_price2}}, total:0 });
-                {% endfor %}
 
-                function getPlanet(id) {
-                
-                    for (var i = 0; i < planets.length; i++)
-                        if (planets[i].id == id)
-                            return planets[i];
-                            
-                    return null;
-                }
+        <div class="page-content">
+            <div class="row g-3">
+        
+                <script>
+                    var planets = [];
+                    {% for planet in m_planets %}
+                    planets.push({ id:{{planet.id}}, oreMax:{{planet.ore_max}}, hydroMax:{{planet.hydrocarbon_max}}, orePrice:{{planet.ore_price2}}, hydroPrice:{{planet.hydrocarbon_price2}}, total:0 });
+                    {% endfor %}
 
-                function updateprice(id) {
-                
-                    var p = getPlanet(id);
-                    if( p == null) return;
-
-                    var ore = getval("o" + p.id);
-                    if (ore > p.oreMax) {
-                        ore = p.oreMax;
-                        setval("o" + p.id, p.oreMax);
-                    }
-
-                    var hydro = getval("h" + p.id);
-                    if (hydro > p.hydroMax) {
-                        hydro = p.hydroMax;
-                        setval("h" + p.id, p.hydroMax);
-                    }
-
-                    p.total = ore * p.orePrice + hydro * p.hydroPrice;
-
-                    var obj = $("totalprice" + p.id);
-
-                    if ((obj != null) && (obj.innerHTML != formatnumber(p.total))) {
+                    function getPlanet(id) {
                     
-                        obj.innerHTML = formatnumber(Math.round(p.total*100)/100.0);
-                        {% if not showHeader %}computetotal();{% endif %}
+                        for (var i = 0; i < planets.length; i++)
+                            if (planets[i].id == id)
+                                return planets[i];
+                                
+                        return null;
                     }
-                }
-                
-                {% if not showHeader %}
-                    function computetotal() {
-                    
-                        var total = {{total}};
 
-                        for (var i=0; i<planets.length; i++) {
-                        
-                            var p = planets[i];
-                            var obj = $("totalprice" + p.id);
-                            total += parseInt(obj.innerHTML.replace(" ", ""));
+                    function updateprice(id) {
+                    
+                        var p = getPlanet(id);
+                        if( p == null) return;
+
+                        var ore = getval("o" + p.id);
+                        if (ore > p.oreMax) {
+                            ore = p.oreMax;
+                            setval("o" + p.id, p.oreMax);
                         }
 
-                        var obj = $("total");
-                        obj.innerHTML = formatnumber(total);
+                        var hydro = getval("h" + p.id);
+                        if (hydro > p.hydroMax) {
+                            hydro = p.hydroMax;
+                            setval("h" + p.id, p.hydroMax);
+                        }
+
+                        p.total = ore * p.orePrice + hydro * p.hydroPrice;
+
+                        var obj = $("totalprice" + p.id);
+
+                        if ((obj != null) && (obj.innerHTML != formatnumber(p.total))) {
+                        
+                            obj.innerHTML = formatnumber(Math.round(p.total*100)/100.0);
+                            {% if not showHeader %}computetotal();{% endif %}
+                        }
                     }
-                {% endif %}
-            </script>
-            
-            <form method="post">
-                {% csrf_token %}
-                <input type="hidden" name="rel" value="1">
-                <input type="hidden" name="action" value="sell">
-                <div class="card">
-                    <div class="card-header">
-                        <span class="fs-6">Vente de ressources</span>
-                    </div>
-                    <div class="list-group list-group-flush">
-                        {% for planet in m_planets %}
-                            <div class="list-group-item {% if planet.highlight %}bg-success{% endif %}">
-                                <div class="row gx-3 align-items-center">
-                                    <div class="col-auto">
-                                        <img src="{{ PATH_IMAGES }}img/planets/p{{ planet.img }}.gif" class="rounded" width="48px" height="48px">                        
-                                    </div>
-                                    <div class="col-4">
-                                        <div class="row g-1 flex-column">
-                                            <div class="col-12">
-                                                <a href="/s03/map/?g={{ planet.galaxy }}&s={{ planet.sector }}&p={{ planet.planet }}" class="me-2" data-bs-toggle="tooltip" data-bs-title="Carte spatiale">{{ planet.galaxy }}.{{ planet.sector }}.{{ planet.planet }}</a>
-                                                <a href="/s03/planet-view/?planet={{ planet.id }}" data-bs-toggle="tooltip" data-bs-title="Voir planète">{{ planet.name }}</a>
-                                            </div>
-                                            <div class="col-12">
-                                                <img src="{{ PATH_IMAGES }}img/interface/ore.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Minerai">
-                                                <span class="{% if planet.high_ore_capacity %}text-danger{% endif %}">{{ planet.ore|intcomma }}</span>
-                                                <small class="text-normal">/{{ planet.ore_capacity|intcomma }}</small>
-                                                <small class="ms-2 text-success">+{{ planet.ore_production|intcomma }}</small>
-                                            </div>
-                                            <div class="col-12">
-                                                <img src="{{ PATH_IMAGES }}img/interface/hydrocarbon.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Hydrocarbure">
-                                                <span class="{% if planet.high_hydrocarbon_capacity %}text-danger{% endif %}">{{ planet.hydrocarbon|intcomma }}</span>
-                                                <small class="text-normal">/{{ planet.hydrocarbon_capacity|intcomma }}</small>
-                                                <small class="ms-2 text-success">+{{ planet.hydrocarbon_production|intcomma }}</small>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-4">
-                                        <div class="row g-1 flex-column">
-                                            <div class="col-12 d-flex align-items-center">
-                                                <img src="{{ PATH_IMAGES }}img/interface/ore.gif" width="16px" height="16px" class="res me-2" data-bs-toggle="tooltip" data-bs-title="Minerai">
-                                                <input type="number" class="form-control" min="0" id="o{{ planet.id }}" name="o{{ planet.id }}" value="" onkeyup="updateprice({{ planet.id }})" size="3" maxlength="4" />
-                                                <span class="mx-2 text-normal">x{{ 1000|intcomma }}</span>
-                                                <img src="{{ PATH_IMAGES }}img/interface/credits.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Crédits">
-                                                <span class="me-2">{{ planet.ore_price2|floatformat:2|intcomma }}</span>
-                                                <a href="javascript:setval('o{{ planet.id }}', {{ planet.ore_max }}); updateprice({{ planet.id }})">Max</a>
-                                            </div>
-                                            <div class="col-12 d-flex align-items-center">
-                                                <img src="{{ PATH_IMAGES }}img/interface/hydrocarbon.gif" width="16px" height="16px" class="res me-2" data-bs-toggle="tooltip" data-bs-title="Hydrocarbure">
-                                                <input type="number" class="form-control" min="0" id="h{{ planet.id }}" name="h{{ planet.id }}" value="" onkeyup="updateprice({{ planet.id }})" size="3" maxlength="4" />
-                                                <span class="mx-2 text-normal">x{{ 1000|intcomma }}</span>
-                                                <img src="{{ PATH_IMAGES }}img/interface/credits.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Crédits">
-                                                <span class="me-2">{{ planet.hydrocarbon_price2|floatformat:2|intcomma }}</span>
-                                                <a href="javascript:setval('h{{ planet.id }}', {{ planet.hydrocarbon_max }}); updateprice({{ planet.id }})">Max</a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-auto">
-                                        <a href="javascript:setval('o{{ planet.id }}', 0); setval('h{{ planet.id }}', 0); updateprice({{ planet.id }})">Rien</a>
-                                    </div>
-                                    <div class="col-auto">
-                                        <a href="javascript:setval('o{{ planet.id }}', {{ planet.ore_max }}); setval('h{{ planet.id }}', {{ planet.hydrocarbon_max }}); updateprice({{ planet.id }})">Tout</a>
-                                    </div>
-                                    <div class="col text-end">
-                                        <img src="{{ PATH_IMAGES }}img/interface/credits.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Crédits">
-                                        <span id="totalprice{{ planet.id }}">{{ planet.selling_price|intcomma }}</span>
-                                    </div>
+                    
+                    {% if not showHeader %}
+                        function computetotal() {
+                        
+                            var total = {{total}};
+
+                            for (var i=0; i<planets.length; i++) {
+                            
+                                var p = planets[i];
+                                var obj = $("totalprice" + p.id);
+                                total += parseInt(obj.innerHTML.replace(" ", ""));
+                            }
+
+                            var obj = $("total");
+                            obj.innerHTML = formatnumber(total);
+                        }
+                    {% endif %}
+                </script>
+                
+                <form method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="rel" value="1">
+                    <input type="hidden" name="action" value="sell">
+                    <div class="row g-3">
+                        
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <span class="fs-6">Vente de ressources</span>
                                 </div>
-                            </div>
-                        {% endfor %}
-                        {% if sell %}
-                            <div class="list-group-item">
-                                <div class="row gx-3 align-items-center justify-content-end">
-                                    {% if not showHeader %}
-                                        <div class="col-auto">
-                                            <span class="text-normal me-2">Total</span>
-                                            <img src="{{ PATH_IMAGES }}img/interface/credits.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Crédits">
-                                            <span id="total">0</span>
+                                <div class="list-group list-group-flush">
+                                    {% for planet in m_planets %}
+                                        <div class="list-group-item {% if planet.highlight %}bg-success{% endif %}">
+                                            <div class="row gx-3 align-items-center">
+                                                <div class="col-auto">
+                                                    <img src="{{ PATH_IMAGES }}img/planets/p{{ planet.img }}.gif" class="rounded" width="48px" height="48px">                        
+                                                </div>
+                                                <div class="col-4">
+                                                    <div class="row g-1 flex-column">
+                                                        <div class="col-12">
+                                                            <a href="/s03/map/?g={{ planet.galaxy }}&s={{ planet.sector }}&p={{ planet.planet }}" class="me-2" data-bs-toggle="tooltip" data-bs-title="Carte spatiale">{{ planet.galaxy }}.{{ planet.sector }}.{{ planet.planet }}</a>
+                                                            <a href="/s03/planet-view/?planet={{ planet.id }}" data-bs-toggle="tooltip" data-bs-title="Voir planète">{{ planet.name }}</a>
+                                                        </div>
+                                                        <div class="col-12">
+                                                            <img src="{{ PATH_IMAGES }}img/interface/ore.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Minerai">
+                                                            <span class="{% if planet.high_ore_capacity %}text-danger{% endif %}">{{ planet.ore|intcomma }}</span>
+                                                            <small class="text-normal">/{{ planet.ore_capacity|intcomma }}</small>
+                                                            <small class="ms-2 text-success">+{{ planet.ore_production|intcomma }}</small>
+                                                        </div>
+                                                        <div class="col-12">
+                                                            <img src="{{ PATH_IMAGES }}img/interface/hydrocarbon.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Hydrocarbure">
+                                                            <span class="{% if planet.high_hydrocarbon_capacity %}text-danger{% endif %}">{{ planet.hydrocarbon|intcomma }}</span>
+                                                            <small class="text-normal">/{{ planet.hydrocarbon_capacity|intcomma }}</small>
+                                                            <small class="ms-2 text-success">+{{ planet.hydrocarbon_production|intcomma }}</small>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-4">
+                                                    <div class="row g-1 flex-column">
+                                                        <div class="col-12 d-flex align-items-center">
+                                                            <img src="{{ PATH_IMAGES }}img/interface/ore.gif" width="16px" height="16px" class="res me-2" data-bs-toggle="tooltip" data-bs-title="Minerai">
+                                                            <input type="number" class="form-control" min="0" id="o{{ planet.id }}" name="o{{ planet.id }}" value="" onkeyup="updateprice({{ planet.id }})" size="3" maxlength="4" />
+                                                            <span class="mx-2 text-normal">x{{ 1000|intcomma }}</span>
+                                                            <img src="{{ PATH_IMAGES }}img/interface/credits.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Crédits">
+                                                            <span class="me-2">{{ planet.ore_price2|floatformat:2|intcomma }}</span>
+                                                            <a href="javascript:setval('o{{ planet.id }}', {{ planet.ore_max }}); updateprice({{ planet.id }})">Max</a>
+                                                        </div>
+                                                        <div class="col-12 d-flex align-items-center">
+                                                            <img src="{{ PATH_IMAGES }}img/interface/hydrocarbon.gif" width="16px" height="16px" class="res me-2" data-bs-toggle="tooltip" data-bs-title="Hydrocarbure">
+                                                            <input type="number" class="form-control" min="0" id="h{{ planet.id }}" name="h{{ planet.id }}" value="" onkeyup="updateprice({{ planet.id }})" size="3" maxlength="4" />
+                                                            <span class="mx-2 text-normal">x{{ 1000|intcomma }}</span>
+                                                            <img src="{{ PATH_IMAGES }}img/interface/credits.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Crédits">
+                                                            <span class="me-2">{{ planet.hydrocarbon_price2|floatformat:2|intcomma }}</span>
+                                                            <a href="javascript:setval('h{{ planet.id }}', {{ planet.hydrocarbon_max }}); updateprice({{ planet.id }})">Max</a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-auto">
+                                                    <a href="javascript:setval('o{{ planet.id }}', 0); setval('h{{ planet.id }}', 0); updateprice({{ planet.id }})">Rien</a>
+                                                </div>
+                                                <div class="col-auto">
+                                                    <a href="javascript:setval('o{{ planet.id }}', {{ planet.ore_max }}); setval('h{{ planet.id }}', {{ planet.hydrocarbon_max }}); updateprice({{ planet.id }})">Tout</a>
+                                                </div>
+                                                <div class="col text-end">
+                                                    <img src="{{ PATH_IMAGES }}img/interface/credits.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Crédits">
+                                                    <span id="totalprice{{ planet.id }}">{{ planet.selling_price|intcomma }}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                    {% if sell %}
+                                        <div class="list-group-item">
+                                            <div class="row gx-3 align-items-center justify-content-end">
+                                                {% if not showHeader %}
+                                                    <div class="col-auto">
+                                                        <span class="text-normal me-2">Total</span>
+                                                        <img src="{{ PATH_IMAGES }}img/interface/credits.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Crédits">
+                                                        <span id="total">0</span>
+                                                    </div>
+                                                {% endif %}
+                                                <div class="col-auto">
+                                                    <input type="submit" class="btn btn-primary" value="Vendre">
+                                                </div>
+                                            </div>
                                         </div>
                                     {% endif %}
-                                    <div class="col-auto">
-                                        <input type="submit" class="btn btn-primary" value="Vendre">
-                                    </div>
                                 </div>
                             </div>
-                        {% endif %}
+                        </div>
+                        
                     </div>
-                </div>
-            </form>
-            
-            {% if not showHeader %}<script>computetotal();</script>{% endif %}
-    
+                </form>
+                
+                {% if not showHeader %}<script>computetotal();</script>{% endif %}
+        
+            </div>
         </div>
     </div>
     
