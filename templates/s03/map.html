@@ -5,7 +5,7 @@
 
 {% block content %}
 
-    <div class="scroll-content" style="height:calc(100% - 106px);">
+    <div id="mapPage" class="scroll-content" style="height:calc(100% - 106px);">
         <div class="page-content">
         
             <script>
@@ -25,47 +25,25 @@
                 <form method="get" class="card card-body py-2">
                     <div class="row gx-3 align-items-center justify-content-center">
                         <div class="col-auto">
-                            <a href="#"
-                               onclick="openGalaxy(''); return false;"
-                               data-bs-toggle="tooltip"
-                               data-bs-title="Voir l'univers">Univers</a>
+                            <a href="#" onclick="openGalaxy(''); return false;" data-bs-toggle="tooltip" data-bs-title="Voir l'univers">Univers</a>
                         </div>
                         <div class="col-auto">
                             <div class="row gx-2 align-items-center">
                                 <div class="col-auto">
                                     {% if galaxy_link %}
-                                        <a href="#"
-                                           onclick="openGalaxy(currGalaxy); return false;"
-                                           data-bs-toggle="tooltip"
-                                           data-bs-title="Voir la galaxie">Galaxie</a>
+                                        <a href="#" onclick="openGalaxy(currGalaxy); return false;" data-bs-toggle="tooltip" data-bs-title="Voir la galaxie">Galaxie</a>
                                     {% else %}
                                         <span class="text-normal">Galaxie</span>
                                     {% endif %}
                                 </div>
                                 <div class="col-auto">
-                                    <input type="number"
-                                           class="form-control text-center"
-                                           name="g"
-                                           id="locgalaxy"
-                                           size="2"
-                                           min="1"
-                                           maxlength="2"
-                                           autocomplete="off"
-                                           value="{{ galaxy }}">
+                                    <input type="number" class="form-control text-center" name="g" id="locgalaxy" size="2" min="1" maxlength="2" autocomplete="off" value="{{ galaxy }}">
                                 </div>
                                 <div class="col-auto">
                                     <span class="text-normal">Secteur</span>
                                 </div>
                                 <div class="col-auto">
-                                    <input type="number"
-                                           class="form-control text-center"
-                                           name="s"
-                                           id="locsector"
-                                           size="2"
-                                           min="1"
-                                           maxlength="2"
-                                           autocomplete="off"
-                                           value="{{ sector }}">
+                                    <input type="number" class="form-control text-center" name="s" id="locsector" size="2" min="1" maxlength="2" autocomplete="off" value="{{ sector }}">
                                 </div>
                                 <div class="col-auto">
                                     <input type="submit" class="btn btn-primary" value="Localiser">
@@ -112,22 +90,12 @@
                                         <div class="row gx-3 align-items-center justify-content-center">
                                             <div class="col-auto">
                                                 <small class="text-normal me-2">Minerai</small>
-                                                <img src="{{ PATH_IMAGES }}img/interface/credits.gif"
-                                                     data-bs-toggle="tooltip"
-                                                     data-bs-title="Crédits"
-                                                     class="res"
-                                                     width="16px"
-                                                     height="16px">
+                                                <img src="{{ PATH_IMAGES }}img/interface/credits.gif" data-bs-toggle="tooltip" data-bs-title="Crédits" class="res" width="16px" height="16px">
                                                 <span>{{ price.sell_ore }}</span>
                                             </div>
                                             <div class="col-auto">
                                                 <small class="text-normal me-2">Hydrocarbure</small>
-                                                <img src="{{ PATH_IMAGES }}img/interface/credits.gif"
-                                                     data-bs-toggle="tooltip"
-                                                     data-bs-title="Crédits"
-                                                     class="res"
-                                                     width="16px"
-                                                     height="16px">
+                                                <img src="{{ PATH_IMAGES }}img/interface/credits.gif" data-bs-toggle="tooltip" data-bs-title="Crédits" class="res" width="16px" height="16px">
                                                 <span>{{ price.sell_hydrocarbon }}</span>
                                             </div>
                                         </div>
@@ -145,9 +113,7 @@
                                         <div class="row gx-3 align-items-center justify-content-center">
                                             {% for s in sov %}
                                                 <div class="col-auto">
-                                                    <a href="/s03/alliance-view/?tag={{ s.tag }}"
-                                                       data-bs-toggle="tooltip"
-                                                       data-bs-title="Voir l'alliance">[{{ s.tag }}]</a>
+                                                    <a href="/s03/alliance-view/?tag={{ s.tag }}" data-bs-toggle="tooltip" data-bs-title="Voir l'alliance">[{{ s.tag }}]</a>
                                                     <span class="ms-1">{{ s.percent }}%</span>
                                                 </div>
                                             {% empty %}
@@ -358,7 +324,7 @@
                         var obj = $(objet);
                         var max = $("mapSector").offsetWidth + get_left($("mapSector"));
                         var x = (get_left(obj) + 16);
-                        var y = (get_top(obj) - $("page").scrollTop);
+                        var y = (get_top(obj) - $("mapPage").scrollTop);
 
                         var hinttext = $("hinttext");
                         hinttext.innerHTML = "<div class='mb-1'><span class='fs-6 text-white'>" + title + "</span></div>" + txt;
