@@ -1,6 +1,6 @@
 {% extends "s03/_layout.html" %}
 
-{% load l10n %}
+{% load i18n %}
 {% load humanize %}
 
 {% block content %}
@@ -23,35 +23,41 @@
                 </script>
                     
                 <div class="col-12">
-                    <form method="get" class="card card-body py-2">
-                        <div class="row gx-3 align-items-center justify-content-center">
-                            <div class="col-auto">
-                                <a href="#" onclick="openGalaxy(''); return false;" data-bs-toggle="tooltip" data-bs-title="Voir l'univers">Univers</a>
-                            </div>
-                            <div class="col-auto">
-                                <div class="row gx-2 align-items-center">
+                    <form method="get">
+                    
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="row gx-3 align-items-center justify-content-center">
                                     <div class="col-auto">
-                                        {% if galaxy_link %}
-                                            <a href="#" onclick="openGalaxy(currGalaxy); return false;" data-bs-toggle="tooltip" data-bs-title="Voir la galaxie">Galaxie</a>
-                                        {% else %}
-                                            <span class="text-normal">Galaxie</span>
-                                        {% endif %}
+                                        <a href="#" onclick="openGalaxy(''); return false;" data-bs-toggle="tooltip" data-bs-title="Voir l'univers">Univers</a>
                                     </div>
                                     <div class="col-auto">
-                                        <input type="number" class="form-control text-center" name="g" id="locgalaxy" size="2" min="1" maxlength="2" autocomplete="off" value="{{ galaxy }}">
-                                    </div>
-                                    <div class="col-auto">
-                                        <span class="text-normal">Secteur</span>
-                                    </div>
-                                    <div class="col-auto">
-                                        <input type="number" class="form-control text-center" name="s" id="locsector" size="2" min="1" maxlength="2" autocomplete="off" value="{{ sector }}">
-                                    </div>
-                                    <div class="col-auto">
-                                        <input type="submit" class="btn btn-primary" value="Localiser">
+                                        <div class="row gx-2 align-items-center">
+                                            <div class="col-auto">
+                                                {% if galaxy_link %}
+                                                    <a href="#" onclick="openGalaxy(currGalaxy); return false;" data-bs-toggle="tooltip" data-bs-title="Voir la galaxie">Galaxie</a>
+                                                {% else %}
+                                                    <span class="text-normal">Galaxie</span>
+                                                {% endif %}
+                                            </div>
+                                            <div class="col-auto">
+                                                <input type="number" class="form-control text-center" name="g" id="locgalaxy" size="2" min="1" maxlength="2" autocomplete="off" value="{{ galaxy }}">
+                                            </div>
+                                            <div class="col-auto">
+                                                <span class="text-normal">Secteur</span>
+                                            </div>
+                                            <div class="col-auto">
+                                                <input type="number" class="form-control text-center" name="s" id="locsector" size="2" min="1" maxlength="2" autocomplete="off" value="{{ sector }}">
+                                            </div>
+                                            <div class="col-auto">
+                                                <input type="submit" class="btn btn-primary" value="Localiser">
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
+                            </div>                            
                         </div>
+                        
                     </form>
                 </div>
                 
@@ -77,22 +83,24 @@
                 {% elif mapgalaxy %}
                 
                     <div class="col-4">
-                        <div class="card card-body py-2">
-                            <div class="row g-1 flex-column">
-                                <div class="col-12 text-center">
-                                    <span class="fs-6">Marché</span>
-                                </div>
-                                <div class="col-12">
-                                    <div class="row gx-3 align-items-center justify-content-center">
-                                        <div class="col-auto">
-                                            <small class="text-normal me-2">Minerai</small>
-                                            <img src="{{ PATH_IMAGES }}img/interface/credits.gif" data-bs-toggle="tooltip" data-bs-title="Crédits" class="res" width="16px" height="16px">
-                                            <span>{{ price.sell_ore }}</span>
-                                        </div>
-                                        <div class="col-auto">
-                                            <small class="text-normal me-2">Hydrocarbure</small>
-                                            <img src="{{ PATH_IMAGES }}img/interface/credits.gif" data-bs-toggle="tooltip" data-bs-title="Crédits" class="res" width="16px" height="16px">
-                                            <span>{{ price.sell_hydrocarbon }}</span>
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="row g-1 flex-column">
+                                    <div class="col-12 text-center">
+                                        <span class="fs-6">Marché</span>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="row gx-3 align-items-center justify-content-center">
+                                            <div class="col-auto">
+                                                <small class="text-normal me-2">Minerai</small>
+                                                <img src="{{ PATH_IMAGES }}img/interface/credits.gif" data-bs-toggle="tooltip" data-bs-title="Crédits" class="res" width="16px" height="16px">
+                                                <span>{{ price.sell_ore }}</span>
+                                            </div>
+                                            <div class="col-auto">
+                                                <small class="text-normal me-2">Hydrocarbure</small>
+                                                <img src="{{ PATH_IMAGES }}img/interface/credits.gif" data-bs-toggle="tooltip" data-bs-title="Crédits" class="res" width="16px" height="16px">
+                                                <span>{{ price.sell_hydrocarbon }}</span>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -101,23 +109,25 @@
                     </div>
                     
                     <div class="col-4">
-                        <div class="card card-body py-2">
-                            <div class="row g-1 flex-column">
-                                <div class="col-12 text-center">
-                                    <span class="fs-6">Souveraineté</span>
-                                </div>
-                                <div class="col-12">
-                                    <div class="row gx-3 align-items-center justify-content-center">
-                                        {% for s in sov %}
-                                            <div class="col-auto">
-                                                <a href="/s03/alliance-view/?tag={{ s.tag }}" data-bs-toggle="tooltip" data-bs-title="Voir l'alliance">[{{ s.tag }}]</a>
-                                                <span class="ms-1">{{ s.percent }}%</span>
-                                            </div>
-                                        {% empty %}
-                                            <div class="col-auto">
-                                                <span class="text-normal">Aucune alliance n'a la souveraineté</span>
-                                            </div>
-                                        {% endfor %}
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="row g-1 flex-column">
+                                    <div class="col-12 text-center">
+                                        <span class="fs-6">Souveraineté</span>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="row gx-3 align-items-center justify-content-center">
+                                            {% for s in sov %}
+                                                <div class="col-auto">
+                                                    <a href="/s03/alliance-view/?tag={{ s.tag }}" data-bs-toggle="tooltip" data-bs-title="Voir l'alliance">[{{ s.tag }}]</a>
+                                                    <span class="ms-1">{{ s.percent }}%</span>
+                                                </div>
+                                            {% empty %}
+                                                <div class="col-auto">
+                                                    <span class="text-normal">Aucune alliance n'a la souveraineté</span>
+                                                </div>
+                                            {% endfor %}
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -125,17 +135,19 @@
                     </div>
                     
                     <div class="col-4">
-                        <div class="card card-body py-2">
-                            <div class="row g-1 flex-column">
-                                <div class="col-12 text-center">
-                                    <span class="fs-6">Ouverture</span>
-                                </div>
-                                <div class="col-12 text-center">
-                                    {% if protected_until > 0 %}
-                                        <script>document.write(formattime({{ protected_until }}))</script>
-                                    {% else %}
-                                        <span class="text-success">Ouverte au saut</span>
-                                    {% endif %}
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="row g-1 flex-column">
+                                    <div class="col-12 text-center">
+                                        <span class="fs-6">Ouverture</span>
+                                    </div>
+                                    <div class="col-12 text-center">
+                                        {% if protected_until > 0 %}
+                                            <script>document.write(formattime({{ protected_until }}))</script>
+                                        {% else %}
+                                            <span class="text-success">Ouverte au saut</span>
+                                        {% endif %}
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -198,16 +210,17 @@
                     </script>
                     
                     <div class="col-12 d-flex align-items-center justify-content-center">
-                        <div class="card card-body p-1" style="max-width:560px;">
-                            <div id="mapGalaxy" class="row g-0">
+                        <div class="card" style="max-width:560px;">
+                            <div class="card-body p-1">
+                                <div id="mapGalaxy" class="row g-0"></div>
+                                <script>displayGalaxy({{ galaxy }}, '{{ mapgalaxy }}');</script>
                             </div>
-                            <script>displayGalaxy({{ galaxy }}, '{{ mapgalaxy }}');</script>
                         </div>
                     </div>
                     
-                    <div class="col-12">
-                        <div class="d-flex align-items-center justify-content-center">
-                            <div class="card card-body py-2" style="max-width:560px;">
+                    <div class="col-12 d-flex align-items-center justify-content-center">
+                        <div class="card" style="max-width:560px;">
+                            <div class="card-body">
                                 <div class="row gx-3">
                                     <div class="col-3">
                                         <div class="row gx-2 align-items-center">
@@ -419,7 +432,7 @@
                             var c = getRelationClass(rel);
 
                             s = '<div class="col-auto" style="width:20%;">'
-                                s += '<table border="0" cellspacing="0" cellpadding="0" width="100%">'
+                                s += '<table>'
                                     s += '<tr>'
 
                                         s += '<td align="right" width="25%">';
@@ -638,7 +651,7 @@
                                                 if (enemyfleets) f = "-enemy";
                                                 else if(orbit.length > 0) f = "-fleets";
                                                 else f = "";
-                                                s += '<a href="#" class="none" onclick="return donothide(event)" onfocus="this.onmouseover()" onmouseover="showmenu(\'fleets.' + idx + '\', \'Flottes\', descOrbit(' + idx + ',' + id + ',' + rel + ',' + parked + '))">'
+                                                s += '<a href="#" class="none" onclick="return doNotHide(event)" onfocus="this.onmouseover()" onmouseover="showmenu(\'fleets.' + idx + '\', \'Flottes\', descOrbit(' + idx + ',' + id + ',' + rel + ',' + parked + '))">'
                                                     s += '<img id="fleets.' + idx + '" width=16 height=16 src="{{PATH_IMAGES}}img/map/orbit' + f + '.gif">'
                                                 s += '</a>'
                                             }
@@ -709,7 +722,7 @@
 
                     <div class="col-12 d-flex align-items-center justify-content-center">
                         <div class="bg-black border rounded">
-                            <table cellspacing="0" border="0">
+                            <table>
                                 <tr>
                                     <td>
                                         <a href="#"
@@ -790,7 +803,7 @@
                                 let classname = getRelationClass(rel);
                                 
                                 let html = ''
-                                html += '<div class="list-group-item">'
+                                html += '<div class="card-body">'
                                     html += '<div class="row gx-3">'
                                         html += '<div class="col">'
                                             if (tag != '') {
@@ -831,15 +844,13 @@
                                 <div class="card-header">
                                     <span class="fs-6">Mouvements de flotte</span>
                                 </div>
-                                <div class="list-group list-group-flush">
-                                    {% for fleet in movings %}
-                                        <script>radarFleet({{ fleet.relation }}, "{{ fleet.alliancetag }}", "{{ fleet.name }}", "{{ fleet.fleetid }}", "{{ fleet.fleetname }}", {{ fleet.signature }}, "{{ fleet.f_planetid }}", "{{ fleet.f_planetname }}", "{{ fleet.f_g }}", "{{ fleet.f_s }}", "{{ fleet.f_p }}", {{ fleet.f_relation }}, "{{ fleet.t_planetid }}", "{{ fleet.t_planetname }}", "{{ fleet.t_g }}", "{{ fleet.t_s }}", "{{ fleet.t_p }}", {{ fleet.t_relation }}, {{ fleet.time}}, {% if fleet.losing %}true{% else %}false{% endif %});</script>
-                                    {% empty %}
-                                        <div class="list-group-item text-center">
-                                            <span class="text-normal">Aucune flotte détectée</span>
-                                        </div>
-                                    {% endfor %}
-                                </div>
+                                {% for fleet in movings %}
+                                    <script>radarFleet({{ fleet.relation }}, "{{ fleet.alliancetag }}", "{{ fleet.name }}", "{{ fleet.fleetid }}", "{{ fleet.fleetname }}", {{ fleet.signature }}, "{{ fleet.f_planetid }}", "{{ fleet.f_planetname }}", "{{ fleet.f_g }}", "{{ fleet.f_s }}", "{{ fleet.f_p }}", {{ fleet.f_relation }}, "{{ fleet.t_planetid }}", "{{ fleet.t_planetname }}", "{{ fleet.t_g }}", "{{ fleet.t_s }}", "{{ fleet.t_p }}", {{ fleet.t_relation }}, {{ fleet.time}}, {% if fleet.losing %}true{% else %}false{% endif %});</script>
+                                {% empty %}
+                                    <div class="card-body text-center">
+                                        <span class="text-normal">Aucune flotte détectée</span>
+                                    </div>
+                                {% endfor %}
                             </div>
                         </div>
                         
@@ -848,15 +859,13 @@
                                 <div class="card-header">
                                     <span class="fs-6">Flottes entrant dans le secteur</span>
                                 </div>
-                                <div class="list-group list-group-flush">
-                                    {% for fleet in enterings %}
-                                        <script>radarFleet({{ fleet.relation }}, "{{ fleet.alliancetag }}", "{{ fleet.name }}", "{{ fleet.fleetid }}", "{{ fleet.fleetname }}", {{ fleet.signature }}, "{{ fleet.f_planetid }}", "{{ fleet.f_planetname }}", "{{ fleet.f_g }}", "{{ fleet.f_s }}", "{{ fleet.f_p }}", {{ fleet.f_relation }}, "{{ fleet.t_planetid }}", "{{ fleet.t_planetname }}", "{{ fleet.t_g }}", "{{ fleet.t_s }}", "{{ fleet.t_p }}", {{ fleet.t_relation }}, {{ fleet.time}}, {% if fleet.losing %}true{% else %}false{% endif %});</script>
-                                    {% empty %}
-                                        <div class="list-group-item text-center">
-                                            <span class="text-normal">Aucune flotte détectée</span>
-                                        </div>
-                                    {% endfor %}
-                                </div>
+                                {% for fleet in enterings %}
+                                    <script>radarFleet({{ fleet.relation }}, "{{ fleet.alliancetag }}", "{{ fleet.name }}", "{{ fleet.fleetid }}", "{{ fleet.fleetname }}", {{ fleet.signature }}, "{{ fleet.f_planetid }}", "{{ fleet.f_planetname }}", "{{ fleet.f_g }}", "{{ fleet.f_s }}", "{{ fleet.f_p }}", {{ fleet.f_relation }}, "{{ fleet.t_planetid }}", "{{ fleet.t_planetname }}", "{{ fleet.t_g }}", "{{ fleet.t_s }}", "{{ fleet.t_p }}", {{ fleet.t_relation }}, {{ fleet.time}}, {% if fleet.losing %}true{% else %}false{% endif %});</script>
+                                {% empty %}
+                                    <div class="card-body text-center">
+                                        <span class="text-normal">Aucune flotte détectée</span>
+                                    </div>
+                                {% endfor %}
                             </div>
                         </div>
                         
@@ -865,15 +874,13 @@
                                 <div class="card-header">
                                     <span class="fs-6">Flottes sortant du secteur</span>
                                 </div>
-                                <div class="list-group list-group-flush">
-                                    {% for fleet in leavings %}
-                                        <script>radarFleet({{ fleet.relation }}, "{{ fleet.alliancetag }}", "{{ fleet.name }}", "{{ fleet.fleetid }}", "{{ fleet.fleetname }}", {{ fleet.signature }}, "{{ fleet.f_planetid }}", "{{ fleet.f_planetname }}", "{{ fleet.f_g }}", "{{ fleet.f_s }}", "{{ fleet.f_p }}", {{ fleet.f_relation }}, "{{ fleet.t_planetid }}", "{{ fleet.t_planetname }}", "{{ fleet.t_g }}", "{{ fleet.t_s }}", "{{ fleet.t_p }}", {{ fleet.t_relation }}, {{ fleet.time}}, {% if fleet.losing %}true{% else %}false{% endif %});</script>
-                                    {% empty %}
-                                        <div class="list-group-item text-center">
-                                            <span class="text-normal">Aucune flotte détectée</span>
-                                        </div>
-                                    {% endfor %}
-                                </div>
+                                {% for fleet in leavings %}
+                                    <script>radarFleet({{ fleet.relation }}, "{{ fleet.alliancetag }}", "{{ fleet.name }}", "{{ fleet.fleetid }}", "{{ fleet.fleetname }}", {{ fleet.signature }}, "{{ fleet.f_planetid }}", "{{ fleet.f_planetname }}", "{{ fleet.f_g }}", "{{ fleet.f_s }}", "{{ fleet.f_p }}", {{ fleet.f_relation }}, "{{ fleet.t_planetid }}", "{{ fleet.t_planetname }}", "{{ fleet.t_g }}", "{{ fleet.t_s }}", "{{ fleet.t_p }}", {{ fleet.t_relation }}, {{ fleet.time}}, {% if fleet.losing %}true{% else %}false{% endif %});</script>
+                                {% empty %}
+                                    <div class="card-body text-center">
+                                        <span class="text-normal">Aucune flotte détectée</span>
+                                    </div>
+                                {% endfor %}
                             </div>
                         </div>
                         

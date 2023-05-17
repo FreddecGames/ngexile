@@ -3,13 +3,13 @@
 {% load i18n %}
 
 {% block content %}
-
+    
     <div class="col-12">
         <div class="card">
             <div class="card-header">
                 <div class="row gx-2 align-items-center">
                     <div class="col-auto" style="padding-top:2px;">
-                        <a href="/"><i class="fs-6 fa-fw fas fa-arrow-alt-circle-left"></i></a>
+                        <a href="/lobby/"><i class="fs-6 fa-fw fas fa-arrow-alt-circle-left"></i></a>
                     </div>
                     <div class="col">
                         <div class="row gx-2 align-items-center">
@@ -22,21 +22,18 @@
                         </div>
                     </div>
                     <div class="col-auto">
-                        <span class="fs-6 text-white">{% translate "Inscription" %}</span>
+                        <span class="fs-6 text-white">ng0</span>
                     </div>
                 </div>
             </div>
             <div class="card-body">
                 <div class="row gx-2 gy-3">
                     <div class="col-12 text-center">
-                        <span>{% translate "Votre compte est activé. Vous pouvez vous connecter pour commencer à jouer." %}</span>
-                    </div>
-                    <div class="col-12 text-center">
-                        <a href="/accounts/login/" class="btn btn-primary"><i class="fa-fw fas fa-sign-in-alt me-1"></i> {% translate "Connexion" %}</a>
+                        <span class="text-danger">{% translate "Les inscriptions sur ce serveur ne sont pas ouvertes." %}</span><br/>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-        
+
 {% endblock %}

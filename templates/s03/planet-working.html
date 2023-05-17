@@ -1,5 +1,6 @@
 {% extends "s03/_layout.html" %}
 
+{% load i18n %}
 {% load humanize %}
 
 {% block content %}
@@ -20,9 +21,8 @@
                                 <div class="card-header">
                                     <span class="fs-6">Coût de fonctionnement</span>
                                 </div>
-                                <div class="list-group list-group-flush">
-                                    {% for building in buildings %}
-                                    <div class="list-group-item {% if building.disabled > 0 %}bg-danger{% endif %}">
+                                {% for building in buildings %}
+                                    <div class="card-body {% if building.disabled > 0 %}bg-danger{% endif %}">
                                         <div class="row gx-3 align-items-center">
                                             <div class="col-auto">
                                                 <img src="{{ PATH_IMAGES }}img/buildings/{{ building.buildingid }}.jpg" class="rounded" width="24" height="24">
@@ -76,10 +76,9 @@
                                             </div>
                                         </div>
                                     </div>
-                                    {% endfor %}
-                                    <div class="list-group-item text-center">
-                                        <input type="submit" class="btn btn-primary" value="Valider changements">
-                                    </div>
+                                {% endfor %}
+                                <div class="card-body text-center">
+                                    <input type="submit" class="btn btn-primary" value="Valider changements">
                                 </div>
                             </div>
                         </div>

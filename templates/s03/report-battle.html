@@ -1,6 +1,7 @@
 {% extends "s03/_layout.html" %}
 
 {% load tz %}
+{% load i18n %}
 {% load humanize %}
 
 {% block content %}
@@ -93,61 +94,59 @@
                                     {% endif %}
                                 </div>
                             </div>
-                            <div class="list-group list-group-flush">
-                                {% if fleet.visible %}
-                                    {% for ship in fleet.ships %}
-                                        <div class="list-group-item">
-                                            <div class="row gx-3 align-items-baseline">
-                                                <div class="col-6">
-                                                    <div class="row gx-3">
-                                                        <div class="col">
-                                                            <span class="text-normal">
-                                                                {% if ship.name %}{{ ship.name }}
-                                                                {% elif ship.category == 10 %}Vaisseaux utilitaires
-                                                                {% elif ship.category == 11 %}Vaisseaux de déploiement
-                                                                {% elif ship.category == 15 %}Vaisseaux tactiques
-                                                                {% elif ship.category == 20 %}Vaisseaux légers
-                                                                {% elif ship.category == 30 %}Corvettes
-                                                                {% elif ship.category == 40 %}Frégates
-                                                                {% elif ship.category == 50 %}Croiseurs
-                                                                {% elif ship.category == 60 %}Dreadnought
-                                                                {% endif %}
-                                                            </span>
-                                                            <small class="text-normal">x</small>
-                                                            <span class="text-normal">{{ ship.count|intcomma }}</span>
-                                                            <small class="text-normal"><i class="fa-fw fas fa-long-arrow-alt-right"></i></small>
-                                                            {{ ship.after|intcomma }}
-                                                        </div>
-                                                        <div class="col-auto">
-                                                            {% if ship.lost > 0 %}<span class="text-danger">{{ ship.lost }} <i class="fa-fw fas fa-thumbs-down" data-bs-toggle="tooltip" data-bs-title="Perdus"></i></span>{% endif %}
-                                                        </div>
+                            {% if fleet.visible %}
+                                {% for ship in fleet.ships %}
+                                    <div class="card-body">
+                                        <div class="row gx-3 align-items-baseline">
+                                            <div class="col-6">
+                                                <div class="row gx-3">
+                                                    <div class="col">
+                                                        <span class="text-normal">
+                                                            {% if ship.name %}{{ ship.name }}
+                                                            {% elif ship.category == 10 %}Vaisseaux utilitaires
+                                                            {% elif ship.category == 11 %}Vaisseaux de déploiement
+                                                            {% elif ship.category == 15 %}Vaisseaux tactiques
+                                                            {% elif ship.category == 20 %}Vaisseaux légers
+                                                            {% elif ship.category == 30 %}Corvettes
+                                                            {% elif ship.category == 40 %}Frégates
+                                                            {% elif ship.category == 50 %}Croiseurs
+                                                            {% elif ship.category == 60 %}Dreadnought
+                                                            {% endif %}
+                                                        </span>
+                                                        <small class="text-normal">x</small>
+                                                        <span class="text-normal">{{ ship.count|intcomma }}</span>
+                                                        <small class="text-normal"><i class="fa-fw fas fa-long-arrow-alt-right"></i></small>
+                                                        {{ ship.after|intcomma }}
+                                                    </div>
+                                                    <div class="col-auto">
+                                                        {% if ship.lost > 0 %}<span class="text-danger">{{ ship.lost }} <i class="fa-fw fas fa-thumbs-down" data-bs-toggle="tooltip" data-bs-title="Perdus"></i></span>{% endif %}
                                                     </div>
                                                 </div>
-                                                <div class="col-6">
-                                                    <div class="row gx-3">
-                                                        <div class="col-auto">
-                                                            {% if ship.killed > 0 %}<span class="text-success"><i class="fa-fw fas fa-thumbs-up" data-bs-toggle="tooltip" data-bs-title="Détruits"></i> {{ ship.killed }}</span>{% endif %}
-                                                        </div>
-                                                        <div class="col">
-                                                            <div class="row g-1 gx-4 justify-content-end">
-                                                                {% for kill in ship.kills %}
-                                                                    <div class="col-auto">
-                                                                        <span class="text-normal">{{ kill.name }}</span> <small class="text-normal">x</small> {{ kill.count|intcomma }}
-                                                                    </div>
-                                                                {% endfor %}
-                                                            </div>
+                                            </div>
+                                            <div class="col-6">
+                                                <div class="row gx-3">
+                                                    <div class="col-auto">
+                                                        {% if ship.killed > 0 %}<span class="text-success"><i class="fa-fw fas fa-thumbs-up" data-bs-toggle="tooltip" data-bs-title="Détruits"></i> {{ ship.killed }}</span>{% endif %}
+                                                    </div>
+                                                    <div class="col">
+                                                        <div class="row g-1 gx-4 justify-content-end">
+                                                            {% for kill in ship.kills %}
+                                                                <div class="col-auto">
+                                                                    <span class="text-normal">{{ kill.name }}</span> <small class="text-normal">x</small> {{ kill.count|intcomma }}
+                                                                </div>
+                                                            {% endfor %}
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    {% endfor %}
-                                {% else %}
-                                    <div class="list-group-item">
-                                        <span class="text-normal">Pas de donnée disponible sur la composition de la flotte</span>
                                     </div>
-                                {% endif %}
-                            </div>
+                                {% endfor %}
+                            {% else %}
+                                <div class="card-body">
+                                    <span class="text-normal">Pas de donnée disponible sur la composition de la flotte</span>
+                                </div>
+                            {% endif %}
                         </div>
                     </div>
                 {% endfor %}

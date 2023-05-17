@@ -1,5 +1,6 @@
 {% extends "s03/_layout.html" %}
 
+{% load i18n %}
 {% load humanize %}
 
 {% block content %}
@@ -12,9 +13,9 @@
             
                 <script>
                     function confirmAbandon() { return window.confirm('Êtes-vous sûr de vouloir abandonner la planète "{{planet.name}}" ?'); }
-                    function confirmScientists(id) { return window.confirm('Êtes-vous sûr de vouloir renvoyer ' + getval('scientists' + id) + ' scientifiques ?'); }
-                    function confirmSoldiers(id) { return window.confirm('Êtes-vous sûr de vouloir renvoyer ' + getval('soldiers' + id) + ' soldats ?'); }
-                    function confirmWorkers(id) { return window.confirm('Êtes-vous sûr de vouloir renvoyer ' + getval('workers' + id) + ' travailleurs ?'); }
+                    function confirmScientists(id) { return window.confirm('Êtes-vous sûr de vouloir renvoyer ' + getVal('scientists' + id) + ' scientifiques ?'); }
+                    function confirmSoldiers(id) { return window.confirm('Êtes-vous sûr de vouloir renvoyer ' + getVal('soldiers' + id) + ' soldats ?'); }
+                    function confirmWorkers(id) { return window.confirm('Êtes-vous sûr de vouloir renvoyer ' + getVal('workers' + id) + ' travailleurs ?'); }
                 </script>
                 
                 <div id="renamebox" class="hidden">

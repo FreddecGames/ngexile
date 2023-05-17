@@ -14,6 +14,8 @@ from django.views import View
 
 maintenance = False
 
+registration = { 'enabled':True, 'until':None }
+
 #---
 
 def strSql(str):
@@ -66,7 +68,7 @@ class Template():
         self.name = ''
         self.data = {}
 
-    def setValue(self, key, value):
+    def set(self, key, value):
     
         self.data[key] = value
 
@@ -75,7 +77,5 @@ def getTemplate(request, name):
     result = Template()
     
     result.name = 'ng0/' + name + '.html'
-    
-    result.setValue('STATIC_PATH', '/static/ng0/')
     
     return result

@@ -1,5 +1,6 @@
 {% extends "s03/_layout.html" %}
 
+{% load i18n %}
 {% load humanize %}
 
 {% block content %}
@@ -8,25 +9,27 @@
     
     <div class="page-content">
     
-        <div class="card card-body mb-3">
-            <div class="row gx-3 align-items-center">
-                <div class="col-auto">
-                    <img src="{{ PATH_IMAGES }}img/interface/wallet.jpg" class="rounded" width="64" height="64">
-                </div>
-                <div class="col">
-                    <div class="row g-1 flex-column">
-                        <div class="col-12">
-                            <span class="text-normal me-2">Solde</span>
-                            {{ alliance.credits|intcomma }}
-                        </div>
-                        <div class="col-12">
-                            <span class="text-normal me-2">Dernière 24 heures</span>
-                            {{ alliance.last24h|intcomma }}
-                        </div>
-                        <div class="col-12">
-                            <span class="text-normal me-2">Taxe</span>
-                            {{ alliance.taxrate|floatformat:1 }}%
-                            {% if notax %}<span class="text-success ms-2">Exonéré</span>{% endif %}
+        <div class="card mb-3">
+            <div class="card-body">
+                <div class="row gx-3 align-items-center">
+                    <div class="col-auto">
+                        <img src="{{ PATH_IMAGES }}img/interface/wallet.jpg" class="rounded" width="64" height="64">
+                    </div>
+                    <div class="col">
+                        <div class="row g-1 flex-column">
+                            <div class="col-12">
+                                <span class="text-normal me-2">Solde</span>
+                                {{ alliance.credits|intcomma }}
+                            </div>
+                            <div class="col-12">
+                                <span class="text-normal me-2">Dernière 24 heures</span>
+                                {{ alliance.last24h|intcomma }}
+                            </div>
+                            <div class="col-12">
+                                <span class="text-normal me-2">Taxe</span>
+                                {{ alliance.taxrate|floatformat:1 }}%
+                                {% if notax %}<span class="text-success ms-2">Exonéré</span>{% endif %}
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -104,52 +107,50 @@
                         
                         <div class="col-12">
                             <div class="card">
-                                <div class="list-group list-group-flush">
-                                    {% for entry in entries %}
-                                        <div class="list-group-item {% if  entry.type == 0 %}bg-success{% elif entry.type == 4 %}bg-info{% elif entry.type == 2 %}bg-danger{% endif %}">
-                                            <div class="row gx-3 align-items-center">
-                                                <div class="col-2">
-                                                    <span class="text-normal">{{ entry.date }}</span>
-                                                </div>
-                                                <div class="col-3">
-                                                    {% if entry.type == 0 %}Don{% endif %}
-                                                    {% if entry.type == 1 %}Taxe{% endif %}
-                                                    {% if entry.type == 2 %}Départ du membre{% endif %}
-                                                    {% if entry.type == 3 %}Financement{% endif %}
-                                                    {% if entry.type == 4 %}Taxe changée{% endif %}
-                                                    {% if entry.type == 5 %}Exclusion du membre{% endif %}
-                                                    {% if entry.type == 10 or entry.type == 11 %}PNA rompu{% endif %}
-                                                    {% if entry.type == 12 %}Guerre{% endif %}
-                                                    {% if entry.type == 20 %}Tribut{% endif %}
-                                                </div>
-                                                <div class="col">
-                                                    {% if entry.source %}{{ entry.source }}{% endif %}
-                                                    {% if entry.destination %}{{ entry.destination }}{% endif %}
-                                                </div>
-                                                {% if entry.credits > 0 %}
-                                                <div class="col-auto">
-                                                    <span class="text-success">+{{ entry.credits|intcomma }}</span>
-                                                </div>
-                                                {% elif entry.credits < 0 %}
-                                                <div class="col-auto">
-                                                    <span class="text-danger">-{{ entry.credits|intcomma }}</span>
-                                                </div>
-                                                {% endif %}
-                                                {% if entry.description %}
-                                                <div class="col-auto">
-                                                    {% if entry.type == 4 %}Nouvelle taxe: {{ entry.description }}%
-                                                    {% else %}{{ entry.description }}
-                                                    {% endif %}
-                                                </div>
+                                {% for entry in entries %}
+                                    <div class="card-body {% if  entry.type == 0 %}bg-success{% elif entry.type == 4 %}bg-info{% elif entry.type == 2 %}bg-danger{% endif %}">
+                                        <div class="row gx-3 align-items-center">
+                                            <div class="col-2">
+                                                <span class="text-normal">{{ entry.date }}</span>
+                                            </div>
+                                            <div class="col-3">
+                                                {% if entry.type == 0 %}Don{% endif %}
+                                                {% if entry.type == 1 %}Taxe{% endif %}
+                                                {% if entry.type == 2 %}Départ du membre{% endif %}
+                                                {% if entry.type == 3 %}Financement{% endif %}
+                                                {% if entry.type == 4 %}Taxe changée{% endif %}
+                                                {% if entry.type == 5 %}Exclusion du membre{% endif %}
+                                                {% if entry.type == 10 or entry.type == 11 %}PNA rompu{% endif %}
+                                                {% if entry.type == 12 %}Guerre{% endif %}
+                                                {% if entry.type == 20 %}Tribut{% endif %}
+                                            </div>
+                                            <div class="col">
+                                                {% if entry.source %}{{ entry.source }}{% endif %}
+                                                {% if entry.destination %}{{ entry.destination }}{% endif %}
+                                            </div>
+                                            {% if entry.credits > 0 %}
+                                            <div class="col-auto">
+                                                <span class="text-success">+{{ entry.credits|intcomma }}</span>
+                                            </div>
+                                            {% elif entry.credits < 0 %}
+                                            <div class="col-auto">
+                                                <span class="text-danger">-{{ entry.credits|intcomma }}</span>
+                                            </div>
+                                            {% endif %}
+                                            {% if entry.description %}
+                                            <div class="col-auto">
+                                                {% if entry.type == 4 %}Nouvelle taxe: {{ entry.description }}%
+                                                {% else %}{{ entry.description }}
                                                 {% endif %}
                                             </div>
+                                            {% endif %}
                                         </div>
-                                    {% empty %}
-                                        <div class="list-group-item text-center">
-                                            <span class="text-normal">Aucun mouvement effectué récemment</span>
-                                        </div>
-                                    {% endfor %}
-                                </div>
+                                    </div>
+                                {% empty %}
+                                    <div class="card-body text-center">
+                                        <span class="text-normal">Aucun mouvement effectué récemment</span>
+                                    </div>
+                                {% endfor %}
                             </div>
                         </div>
 
@@ -264,46 +265,44 @@
                                     <div class="card-header">
                                         <span class="fs-6">En tant que trésorier, vous pouvez accepter ou refuser les demandes d'argent</span>
                                     </div>
-                                    <div class="list-group list-group-flush">
-                                        {% for entry in requests %}
-                                            <div class="list-group-item">
-                                                <div class="row gx-3 align-items-center">
-                                                    <div class="col-2">
-                                                        <span class="text-normal">{{ entry.datetime }}</span>
-                                                    </div>
-                                                    <div class="col">
-                                                        {{ entry.username }}
-                                                    </div>
-                                                    <div class="col-auto">
-                                                        {{ entry.credits|intcomma }} <span class="text-normal">crédits</span>
-                                                    </div>
-                                                    <div class="col-auto">
-                                                        <span class="text-normal">{{ entry.description }}</span>
-                                                    </div>
-                                                    <div class="col-auto">
-                                                        <form method="post">
-                                                            {% csrf_token %}
-                                                            <input type="hidden" name="action" value="deny" />
-                                                            <input type="hidden" name="id" value="{{ entry.id }}" />
-                                                            <button type="submit" class="btn btn-danger">Refuser</button>
-                                                        </form>
-                                                    </div>
-                                                    <div class="col-auto">
-                                                        <form method="post">
-                                                            {% csrf_token %}
-                                                            <input type="hidden" name="action" value="accept" />
-                                                            <input type="hidden" name="id" value="{{ entry.id }}" />
-                                                            <button type="submit" class="btn btn-danger">Accepter</button>
-                                                        </form>
-                                                    </div>
+                                    {% for entry in requests %}
+                                        <div class="card-body">
+                                            <div class="row gx-3 align-items-center">
+                                                <div class="col-2">
+                                                    <span class="text-normal">{{ entry.datetime }}</span>
+                                                </div>
+                                                <div class="col">
+                                                    {{ entry.username }}
+                                                </div>
+                                                <div class="col-auto">
+                                                    {{ entry.credits|intcomma }} <span class="text-normal">crédits</span>
+                                                </div>
+                                                <div class="col-auto">
+                                                    <span class="text-normal">{{ entry.description }}</span>
+                                                </div>
+                                                <div class="col-auto">
+                                                    <form method="post">
+                                                        {% csrf_token %}
+                                                        <input type="hidden" name="action" value="deny" />
+                                                        <input type="hidden" name="id" value="{{ entry.id }}" />
+                                                        <button type="submit" class="btn btn-danger">Refuser</button>
+                                                    </form>
+                                                </div>
+                                                <div class="col-auto">
+                                                    <form method="post">
+                                                        {% csrf_token %}
+                                                        <input type="hidden" name="action" value="accept" />
+                                                        <input type="hidden" name="id" value="{{ entry.id }}" />
+                                                        <button type="submit" class="btn btn-danger">Accepter</button>
+                                                    </form>
                                                 </div>
                                             </div>
-                                        {% empty %}
-                                            <div class="list-group-item text-center">
-                                                <span class="text-normal">Aucune demande</span>
-                                            </div>
-                                        {% endfor %}
-                                    </div>
+                                        </div>
+                                    {% empty %}
+                                        <div class="card-body text-center">
+                                            <span class="text-normal">Aucune demande</span>
+                                        </div>
+                                    {% endfor %}
                                 </div>
                             </div>
                         {% endif %}
@@ -365,30 +364,28 @@
                                     <div class="card-header">
                                         <span class="fs-6">Dons d'argent ces 7 derniers jours</span>
                                     </div>
-                                    <div class="list-group list-group-flush">
-                                        {% for entry in gifts %}
-                                            <div class="list-group-item">
-                                                <div class="row gx-3 align-items-center">
-                                                    <div class="col-2">
-                                                        <span class="text-normal">{{ entry.datetime }}</span>
-                                                    </div>
-                                                    <div class="col">
-                                                        {{ entry.source }}
-                                                    </div>
-                                                    <div class="col-auto">
-                                                        {{ entry.credits|intcomma }} <span class="text-normal">crédits</span>
-                                                    </div>
-                                                    <div class="col-auto">
-                                                        <span class="text-normal">{{ entry.description }}</span>
-                                                    </div>
+                                    {% for entry in gifts %}
+                                        <div class="card-body">
+                                            <div class="row gx-3 align-items-center">
+                                                <div class="col-2">
+                                                    <span class="text-normal">{{ entry.datetime }}</span>
+                                                </div>
+                                                <div class="col">
+                                                    {{ entry.source }}
+                                                </div>
+                                                <div class="col-auto">
+                                                    {{ entry.credits|intcomma }} <span class="text-normal">crédits</span>
+                                                </div>
+                                                <div class="col-auto">
+                                                    <span class="text-normal">{{ entry.description }}</span>
                                                 </div>
                                             </div>
-                                        {% empty %}
-                                            <div class="list-group-item text-center">
-                                                <span class="text-normal">Aucun don</span>
-                                            </div>
-                                        {% endfor %}
-                                    </div>
+                                        </div>
+                                    {% empty %}
+                                        <div class="card-body text-center">
+                                            <span class="text-normal">Aucun don</span>
+                                        </div>
+                                    {% endfor %}
                                 </div>
                             </div>
                         {% endif %}

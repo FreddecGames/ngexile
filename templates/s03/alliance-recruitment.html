@@ -1,5 +1,6 @@
 {% extends "s03/_layout.html" %}
 
+{% load i18n %}
 {% load humanize %}
 
 {% block content %}
@@ -42,30 +43,28 @@
                         <div class="card-header">
                             <span class="fs-6">Invitations de ralliement en cours</span>
                         </div>
-                        <div class="list-group list-group-flush">
-                            {% for invitation in invits %}
-                                <div class="list-group-item">
-                                    <div class="row gx-3 align-items-center">
-                                        <div class="col">
-                                            {{ invitation.name }}
-                                        </div>
-                                        <div class="col-2">
-                                            <span class="text-normal">{{ invitation.created }}</span>
-                                        </div>
-                                        <div class="col-2">
-                                            <span class="text-normal">{{ invitation.recruiter }}</span>
-                                        </div>
-                                        <div class="col-1 text-end">
-                                            <span class="text-success">En attente</span>
-                                        </div>
+                        {% for invitation in invits %}
+                            <div class="card-body">
+                                <div class="row gx-3 align-items-center">
+                                    <div class="col">
+                                        {{ invitation.name }}
+                                    </div>
+                                    <div class="col-2">
+                                        <span class="text-normal">{{ invitation.created }}</span>
+                                    </div>
+                                    <div class="col-2">
+                                        <span class="text-normal">{{ invitation.recruiter }}</span>
+                                    </div>
+                                    <div class="col-1 text-end">
+                                        <span class="text-success">En attente</span>
                                     </div>
                                 </div>
-                            {% empty %}
-                                <div class="list-group-item text-center">
-                                    <span class="text-normal">Aucune invitation</span>
-                                </div>
-                            {% endfor %}
-                        </div>
+                            </div>
+                        {% empty %}
+                            <div class="card-body text-center">
+                                <span class="text-normal">Aucune invitation</span>
+                            </div>
+                        {% endfor %}
                     </div>
                 </div>
         

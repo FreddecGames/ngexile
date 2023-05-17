@@ -2,18 +2,28 @@
 
 from myapps.ng0.views._base import *
 
-class View(BaseView):
-
+class View(LoginRequiredMixin, View):
+    
+    ################################################################################
+    
     def dispatch(self, request, *args, **kwargs):
+        
+        #---
+        
+        if not request.user.is_authenticated: return HttpResponseRedirect('/')
+
+        if not maintenance: return HttpResponseRedirect('/ng0/')
+        
+        #---
         
         return super().dispatch(request, *args, **kwargs)
         
+    ################################################################################
+    
     def get(self, request, *args, **kwargs):
-        
+    
         #---
-
-        self.tpl = getTemplate(request, "ng0/maintenance")
         
-        #---
-
-        return render(request, self.tpl.template, self.tpl.data)
+        tpl = getTemplate(request, 'home-maintenance')
+        
+        return render(request, tpl.name, tpl.data)

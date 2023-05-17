@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 from django.urls import path
-from django.views.generic import TemplateView
 from django.views.generic.base import RedirectView
 
 from .views import alliance_create

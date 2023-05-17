@@ -27,6 +27,7 @@ class View(BaseView):
         if not registration['enabled'] or (registration['until'] != None and timezone.now() > registration['until']):
         
             tpl = getTemplate(request, 'home-closed')
+            
             return render(request, tpl.template, tpl.data)
         
         #---

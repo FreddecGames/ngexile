@@ -1,3 +1,5 @@
+{% load i18n %}
+
 <!doctype html>
 <html>
     <head>
@@ -15,7 +17,7 @@
         <script type="text/javascript" src="/static/s03/scripts/common.js"></script>
         <script type="text/javascript" src="/static/s03/scripts/time.js"></script>
         
-        <script type="text/javascript">
+        <script>
             function alertAbort() { return window.confirm("Êtes-vous sûr de vouloir arrêter le mode vacances ?\r\nVous ne pourrez le réactiver qu'après une semaine de jeu."); }	
         </script>
         
@@ -23,36 +25,38 @@
     <body>
     
         <div align="center" class="pt-3">
-            <div class="card card-body" style="width:800px;">
-                <div class="mb-3">
-                    <span class="fs-4">NG Exile</span>
-                </div>
-                <div class="mb-0">
-                    <span class="text-normal">Commandant</span>
-                </div>
-                <div class="mb-3">
-                    <span class="fs-5 text-info">{{ user.username }}</span>
-                </div>
-                <div class="mb-3">
-                    <span class="text-normal">Votre compte est actuellement en mode vacances, vos planètes sont protégées de toutes attaques et invasion mais toutes vos productions, constructions et recherches sont suspendues.</span>
-                </div>
-                <div class="mb-3">
-                    <span class="text-normal">En cliquant sur Débloquer, le mode vacances sera arrêté, vos productions, constructions et recherches reprendront et vos planètes ne seront plus protégées.</span>
-                </div>
-                <div class="mb-3">
-                    Temps restant: <span class="text-yellow"><script type="text/javascript">putcountdown1({{ user.remaining_time}}, "", "");</script></span>
-                </div>
-                <div class="mb-0">
-                    {% if user.min_time <= 0 %}
-                        <form method="post">
-                            {% csrf_token %}
-                            <input type="hidden" name="action" value="unlock">
-                            <input onclick="return alertAbort()" class="btn btn-primary" type="submit" name="unlock" value="Débloquer">
-                        </form>
-                    {% else %}
-                        Temps restant avant déblocage: <span class="text-yellow"><script>putcountdown1({{user.min_time}}, "", "");</script></span>
-                        <script>putcountdown2({{user.min_time}}, "", "<form method='post'>{% csrf_token %}<input onclick='return alertAbort()' class='btn btn-primary' type='submit' name='unlock' value='Débloquer'></form>");</script>
-                    {% endif %}
+            <div class="card" style="width:800px;">
+                <div class="card-body">
+                    <div class="mb-3">
+                        <span class="fs-4">NG Exile</span>
+                    </div>
+                    <div class="mb-0">
+                        <span class="text-normal">Commandant</span>
+                    </div>
+                    <div class="mb-3">
+                        <span class="fs-5 text-info">{{ user.username }}</span>
+                    </div>
+                    <div class="mb-3">
+                        <span class="text-normal">Votre compte est actuellement en mode vacances, vos planètes sont protégées de toutes attaques et invasion mais toutes vos productions, constructions et recherches sont suspendues.</span>
+                    </div>
+                    <div class="mb-3">
+                        <span class="text-normal">En cliquant sur Débloquer, le mode vacances sera arrêté, vos productions, constructions et recherches reprendront et vos planètes ne seront plus protégées.</span>
+                    </div>
+                    <div class="mb-3">
+                        Temps restant: <span class="text-yellow"><script type="text/javascript">putcountdown1({{ user.remaining_time}}, "", "");</script></span>
+                    </div>
+                    <div class="mb-0">
+                        {% if user.min_time <= 0 %}
+                            <form method="post">
+                                {% csrf_token %}
+                                <input type="hidden" name="action" value="unlock">
+                                <input onclick="return alertAbort()" class="btn btn-primary" type="submit" name="unlock" value="Débloquer">
+                            </form>
+                        {% else %}
+                            Temps restant avant déblocage: <span class="text-yellow"><script>putcountdown1({{user.min_time}}, "", "");</script></span>
+                            <script>putcountdown2({{user.min_time}}, "", "<form method='post'>{% csrf_token %}<input onclick='return alertAbort()' class='btn btn-primary' type='submit' name='unlock' value='Débloquer'></form>");</script>
+                        {% endif %}
+                    </div>
                 </div>
             </div>
         </div>

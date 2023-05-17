@@ -10,7 +10,7 @@ function planet_str(id, name, g, s, p, rel) {
 			case 0:	var col = 'text-friend'; break;
 			case -1: var col = 'text-danger'; break;
 			case -2: var col = 'text-danger'; break;
-			case -3: var col = 'text-normal'; break;
+			default: var col = ''; break;
 		}
 
 		var s = '<a href="/s03/map/?g=' + g + '&s=' + s + '" class="' + col + '" data-bs-toggle="tooltip" data-bs-title="Carte spatiale">' + (name ? '<span class="me-2">' + name + '</span>' : '') + '<span>' + g + '.' + s + '.' + p + '</span></a>';

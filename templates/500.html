@@ -3,44 +3,42 @@
 {% load i18n %}
 
 {% block content %}
-<div class="p-3" style="width:100%; max-width:512px;">
-    <div class="row g-3">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-header">
-                    <div class="row gx-2 align-items-center">
-                        <div class="col">
-                            <div class="row gx-2 align-items-center">
-                                <div class="col-auto">
-                                    <img src="/static/img/logo.png" width="24px" class="rounded" />
-                                </div>
-                                <div class="col-auto">
-                                    <span class="fs-6">NG Exile</span>
-                                </div>
+
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row gx-2 align-items-center">
+                    <div class="col">
+                        <div class="row gx-2 align-items-center">
+                            <div class="col-auto">
+                                <img src="/static/img/interface/logo.png" width="24px" class="rounded" />
+                            </div>
+                            <div class="col-auto">
+                                <span class="fs-6">NG Exile</span>
                             </div>
                         </div>
-                        <div class="col-auto">
-                            <span class="fs-6 text-white">{% translate "Oups..." %}</span>
-                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <span class="fs-6 text-white">{% translate "Oups..." %}</span>
                     </div>
                 </div>
-                <div class="card-body">
-                    <div class="row gx-2 gy-3">
-                        <div class="col-12 text-center">
-                            <img src="/static/img/error500.jpg" width="250px" height="216px" class="rounded" />
-                        </div>
-                        <div class="col-12 text-center">
-                            <span class="text-danger">Une erreur est survenue sur la page que vous avez demandée.</span><br/>
-                            Merci de bien vouloir nous en excuser.
-                        </div>
-                        <div class="col-12 text-center">
-                            <div class="mb-2">Si le problème persiste contactez <span class="text-white">Freddec</span> sur Discord.</div>
-                            <a href="https://discord.gg/x39nHzM" target="_blank" class="btn btn-secondary"><i class="fa-fw fab fa-discord me-1"></i> Discord</a>
-                        </div>
+            </div>
+            <div class="card-body">
+                <div class="row gx-2 gy-3">
+                    <div class="col-12 text-center">
+                        <img src="/static/img/interface/error500.jpg" width="250px" height="216px" class="rounded" />
+                    </div>
+                    <div class="col-12 text-center">
+                        <span class="text-danger">{% translate "Une erreur est survenue sur la page que vous avez demandée." %}</span><br/>
+                        {% translate "Merci de bien vouloir nous en excuser." %}
+                    </div>
+                    <div class="col-12 text-center">
+                        <div class="mb-2">{% translate "Si le problème persiste contactez <span class='text-white'>Freddec</span> sur Discord." %}</div>
+                        <a href="https://discord.gg/x39nHzM" target="_blank" class="btn btn-secondary"><i class="fa-fw fab fa-discord me-1"></i> Discord</a>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
-{% endblock %}
+
+{% endblock content %}

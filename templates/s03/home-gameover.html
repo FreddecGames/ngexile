@@ -1,3 +1,5 @@
+{% load i18n %}
+
 <!doctype html>
 <html>
     <head>
@@ -14,7 +16,7 @@
         
         <script type="text/javascript" src="/static/s03/scripts/common.js"></script>
         
-        <script type="text/javascript">       
+        <script>       
             function alertAbandon() { return confirm("Attention ! En validant vous supprimerez définitivement votre compte."); }
             
             var rec = [];
@@ -45,91 +47,96 @@
     <body>
     
         <div align="center" class="pt-3">
-            <div class="card card-body" style="width:800px;">
+            <div class="card" style="width:800px;">
+                <div class="card-body">
 
-                {% include "s03/_messages.html" %}
+                    {% include "s03/_messages.html" %}
 
-                <div class="mb-3">
-                    <span class="fs-4">NG Exile</span>
-                </div>
-                <div class="mb-0">
-                    <span class="text-normal">Commandant</span>
-                </div>
-                <div class="mb-3">
-                    <span class="fs-5 text-info">{{ profile.username }}</span>
-                </div>
-                <div class="mb-3">
-                    {% if profile.credits_bankruptcy <= 0 %}
-                        Malgré tous vos efforts pour développer votre Nation, vous n'avez su gérer correctement le budget de celui-ci ce qui a amené votre peuple à choisir un autre dirigeant.
-                        Vous finissez votre vie dans une des prisons coloniales comme un vulgaire voleur.
-                    {% else %}
-                        Malgré tous vos efforts pour développer votre Nation, vous n'avez pu faire face aux puissants ennemis qui vous ont mené à la destruction.
-                    {% endif %}
-                </div>
-                <div class="mb-3 text-normal">
-                    L'univers NG Exile est grand, et si vous le décidez, une chance supplémentaire vous sera donnée de montrer au monde votre courage et votre sagacité.
-                    En choisissant de rejouer, une nouvelle planète libre vous sera allouée. Vos rapports et messages seront conservés ainsi que certaines de vos recherches.
-                </div>
-                <form method="post" class="mb-3">
-                    {% csrf_token %}
-                    <input type="hidden" name="action" value="retry">
-                    <div class="mb-3 text-normal">
-                        Si vous le souhaitez, vous pouvez changer de nom. Ceci peut vous aider à prendre un nouveau départ de manière anonyme.
-                        L'ancien nom deviendra alors disponible aux nouveaux joueurs ou aux joueurs souhaitant modifier leur nom suite à un game over.
-                    </div>
-                    <div class="mb-2">
-                        <div class="row gx-3 align-items-center">
-                            <div class="col-6 text-end"><span>Nouveau nom</span></div>
-                            <div class="col-auto"><input type="text" class="form-control" name="name" value="{{ profile.username }}"/></div>
-                        </div>
-                    </div>
-                    {% if galaxies %}
                     <div class="mb-3">
-                        <div class="row gx-3 align-items-center">
-                            <div class="col-6 text-end"><span>Galaxie de départ</span></div>
-                            <div class="col-auto">
-                                <select name="galaxy" class="form-control" id="galaxies" onchange="showRecommendation(this)">
-                                    {% for galaxy in galaxies %}
-                                        <option value="{{ galaxy.id }}"{% if galaxy.selected %} selected{% endif %}>
-                                            {{ galaxy.id }}
-                                        </option>
-                                    {% endfor %}
-                                </select>
+                        <span class="fs-4">NG Exile</span>
+                    </div>
+                    <div class="mb-0">
+                        <span class="text-normal">Commandant</span>
+                    </div>
+                    <div class="mb-3">
+                        <span class="fs-5 text-info">{{ profile.username }}</span>
+                    </div>
+                    <div class="mb-3">
+                        {% if profile.credits_bankruptcy <= 0 %}
+                            Malgré tous vos efforts pour développer votre Nation, vous n'avez su gérer correctement le budget de celui-ci ce qui a amené votre peuple à choisir un autre dirigeant.
+                            Vous finissez votre vie dans une des prisons coloniales comme un vulgaire voleur.
+                        {% else %}
+                            Malgré tous vos efforts pour développer votre Nation, vous n'avez pu faire face aux puissants ennemis qui vous ont mené à la destruction.
+                        {% endif %}
+                    </div>
+                    <div class="mb-3 text-normal">
+                        L'univers NG Exile est grand, et si vous le décidez, une chance supplémentaire vous sera donnée de montrer au monde votre courage et votre sagacité.
+                        En choisissant de rejouer, une nouvelle planète libre vous sera allouée. Vos rapports et messages seront conservés ainsi que certaines de vos recherches.
+                    </div>
+                    
+                    <form method="post" class="mb-3">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="retry">
+                        <div class="mb-3 text-normal">
+                            Si vous le souhaitez, vous pouvez changer de nom. Ceci peut vous aider à prendre un nouveau départ de manière anonyme.
+                            L'ancien nom deviendra alors disponible aux nouveaux joueurs ou aux joueurs souhaitant modifier leur nom suite à un game over.
+                        </div>
+                        <div class="mb-2">
+                            <div class="row gx-3 align-items-center">
+                                <div class="col-6 text-end"><span>Nouveau nom</span></div>
+                                <div class="col-auto"><input type="text" class="form-control" name="name" value="{{ profile.username }}"/></div>
                             </div>
-                            <div class="col-auto">
-                                <span id="recommendation"></span>
+                        </div>
+                        {% if galaxies %}
+                        <div class="mb-3">
+                            <div class="row gx-3 align-items-center">
+                                <div class="col-6 text-end"><span>Galaxie de départ</span></div>
+                                <div class="col-auto">
+                                    <select name="galaxy" class="form-control" id="galaxies" onchange="showRecommendation(this)">
+                                        {% for galaxy in galaxies %}
+                                            <option value="{{ galaxy.id }}"{% if galaxy.selected %} selected{% endif %}>
+                                                {{ galaxy.id }}
+                                            </option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="col-auto">
+                                    <span id="recommendation"></span>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    {% endif %}                    
-                    <div class="row gy-1 gx-3 align-items-center justify-content-center">
-                        <div class="col-auto">
-                            <input type="submit" class="btn btn-primary" value="Rejouer">
+                        {% endif %}                    
+                        <div class="row gy-1 gx-3 align-items-center justify-content-center">
+                            <div class="col-auto">
+                                <input type="submit" class="btn btn-primary" value="Rejouer">
+                            </div>
                         </div>
-                    </div>
-                    {% if galaxies %}<script>showRecommendation($("galaxies"));</script>{% endif %}
-                    {% for message in messages %}
-                        <div class="mt-2 alert alert-{{ message.tags }}">
-                            {% if message.message == 'name_invalid' %}Ce nom de joueur est invalide
-                            {% elif message.message == 'name_already_used' %}Ce nom de joueur est déjà utilisé
-                            {% elif message.message == 'error_-2' %}Désolé, aucune planète ne peut actuellement vous accueillir
-                            {% else %}{{ message }}
-                            {% endif %}
+                        {% if galaxies %}<script>showRecommendation($("galaxies"));</script>{% endif %}
+                        {% for message in messages %}
+                            <div class="mt-2 alert alert-{{ message.tags }}">
+                                {% if message.message == 'name_invalid' %}Ce nom de joueur est invalide
+                                {% elif message.message == 'name_already_used' %}Ce nom de joueur est déjà utilisé
+                                {% elif message.message == 'error_-2' %}Désolé, aucune planète ne peut actuellement vous accueillir
+                                {% else %}{{ message }}
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    </form>
+                    
+                    <form method="post" class="mb-3">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="abandon">
+                        <div class="mb-2 text-normal">
+                            Vous pouvez decider de quitter l'aventure et de supprimer définitivement votre compte.
                         </div>
-                    {% endfor %}
-                </form>
-                <form method="post" class="mb-3">
-                    {% csrf_token %}
-                    <input type="hidden" name="action" value="abandon">
-                    <div class="mb-2 text-normal">
-                        Vous pouvez decider de quitter l'aventure et de supprimer définitivement votre compte.
-                    </div>
-                    <div class="row gx-3 align-items-center justify-content-center">
-                        <div class="col-auto">
-                            <input type="submit" class="btn btn-danger" value="Supprimer le compte" onclick="return alertAbandon()">
+                        <div class="row gx-3 align-items-center justify-content-center">
+                            <div class="col-auto">
+                                <input type="submit" class="btn btn-danger" value="Supprimer le compte" onclick="return alertAbandon()">
+                            </div>
                         </div>
-                    </div>
-                </form>
+                    </form>
+                    
+                </div>
             </div>
         </div>
         

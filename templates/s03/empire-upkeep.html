@@ -1,5 +1,6 @@
 {% extends "s03/_layout.html" %}
 
+{% load i18n %}
 {% load humanize %}
 
 {% block content %}
@@ -15,138 +16,136 @@
                         <div class="card-header">
                             <span class="fs-6">Estimation du coût d'entretien</span>  
                         </div>
-                        <div class="list-group list-group-flush">
-                            <div class="list-group-item">
-                                <div class="row gx-3">
-                                    <div class="col-5">
-                                        <img src="/static/s03/img/interface/upkeep_commander.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Commandants">
-                                        <span class="text-normal me-1">Commandants</span>                    
-                                    </div>
-                                    <div class="col-5">
-                                        <img src="{{ PATH_IMAGES }}img/interface/credits.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Crédits">
-                                        {{ upkeep.commanders_salary|intcomma }}
-                                        <small class="text-normal mx-2">x</small>
-                                        {{ upkeep.cost_commanders|intcomma }}
-                                    </div>
-                                    <div class="col-2 text-end">
-                                        <img src="{{ PATH_IMAGES }}img/interface/credits.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Crédits">
-                                        {{ upkeep.upkeep_commanders|intcomma }}
-                                    </div>
+                        <div class="card-body">
+                            <div class="row gx-3">
+                                <div class="col-5">
+                                    <img src="/static/s03/img/interface/upkeep_commander.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Commandants">
+                                    <span class="text-normal me-1">Commandants</span>                    
+                                </div>
+                                <div class="col-5">
+                                    <img src="{{ PATH_IMAGES }}img/interface/credits.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Crédits">
+                                    {{ upkeep.commanders_salary|intcomma }}
+                                    <small class="text-normal mx-2">x</small>
+                                    {{ upkeep.cost_commanders|intcomma }}
+                                </div>
+                                <div class="col-2 text-end">
+                                    <img src="{{ PATH_IMAGES }}img/interface/credits.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Crédits">
+                                    {{ upkeep.upkeep_commanders|intcomma }}
                                 </div>
                             </div>
-                            <div class="list-group-item">
-                                <div class="row gx-3">
-                                    <div class="col-5">
-                                        <img src="/static/s03/img/interface/planet.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Planètes">
-                                        <span class="text-normal me-1">Planètes</span>                    
-                                    </div>
-                                    <div class="col-5">
-                                        <img src="{{ PATH_IMAGES }}img/interface/credits.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Crédits">
-                                        {{ upkeep.cost_planets2|intcomma }}
-                                        <small class="text-normal mx-2">x</small>
-                                        1,0
-                                    </div>
-                                    <div class="col-2 text-end">
-                                        <img src="{{ PATH_IMAGES }}img/interface/credits.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Crédits">
-                                        {{ upkeep.upkeep_planets|intcomma }}
-                                    </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="row gx-3">
+                                <div class="col-5">
+                                    <img src="/static/s03/img/interface/planet.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Planètes">
+                                    <span class="text-normal me-1">Planètes</span>                    
+                                </div>
+                                <div class="col-5">
+                                    <img src="{{ PATH_IMAGES }}img/interface/credits.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Crédits">
+                                    {{ upkeep.cost_planets2|intcomma }}
+                                    <small class="text-normal mx-2">x</small>
+                                    1,0
+                                </div>
+                                <div class="col-2 text-end">
+                                    <img src="{{ PATH_IMAGES }}img/interface/credits.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Crédits">
+                                    {{ upkeep.upkeep_planets|intcomma }}
                                 </div>
                             </div>
-                            <div class="list-group-item">
-                                <div class="row gx-3">
-                                    <div class="col-5">
-                                        <img src="/static/s03/img/interface/scientists.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Scientifiques">
-                                        <span class="text-normal me-1">Scientifiques</span>                    
-                                    </div>
-                                    <div class="col-5">
-                                        <img src="{{ PATH_IMAGES }}img/interface/credits.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Crédits">
-                                        {{ upkeep.scientists|intcomma }}
-                                        <small class="text-normal mx-2">x</small>
-                                        {{ upkeep.cost_scientists|intcomma }}
-                                    </div>
-                                    <div class="col-2 text-end">
-                                        <img src="{{ PATH_IMAGES }}img/interface/credits.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Crédits">
-                                        {{ upkeep.upkeep_scientists|intcomma }}
-                                    </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="row gx-3">
+                                <div class="col-5">
+                                    <img src="/static/s03/img/interface/scientists.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Scientifiques">
+                                    <span class="text-normal me-1">Scientifiques</span>                    
+                                </div>
+                                <div class="col-5">
+                                    <img src="{{ PATH_IMAGES }}img/interface/credits.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Crédits">
+                                    {{ upkeep.scientists|intcomma }}
+                                    <small class="text-normal mx-2">x</small>
+                                    {{ upkeep.cost_scientists|intcomma }}
+                                </div>
+                                <div class="col-2 text-end">
+                                    <img src="{{ PATH_IMAGES }}img/interface/credits.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Crédits">
+                                    {{ upkeep.upkeep_scientists|intcomma }}
                                 </div>
                             </div>
-                            <div class="list-group-item">
-                                <div class="row gx-3">
-                                    <div class="col-5">
-                                        <img src="/static/s03/img/interface/soldiers.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Soldats">
-                                        <span class="text-normal me-1">Soldats</span>                    
-                                    </div>
-                                    <div class="col-5">
-                                        <img src="{{ PATH_IMAGES }}img/interface/credits.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Crédits">
-                                        {{ upkeep.soldiers|intcomma }}
-                                        <small class="text-normal mx-2">x</small>
-                                        {{ upkeep.cost_soldiers|intcomma }}
-                                    </div>
-                                    <div class="col-2 text-end">
-                                        <img src="{{ PATH_IMAGES }}img/interface/credits.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Crédits">
-                                        {{ upkeep.upkeep_soldiers|intcomma }}
-                                    </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="row gx-3">
+                                <div class="col-5">
+                                    <img src="/static/s03/img/interface/soldiers.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Soldats">
+                                    <span class="text-normal me-1">Soldats</span>                    
+                                </div>
+                                <div class="col-5">
+                                    <img src="{{ PATH_IMAGES }}img/interface/credits.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Crédits">
+                                    {{ upkeep.soldiers|intcomma }}
+                                    <small class="text-normal mx-2">x</small>
+                                    {{ upkeep.cost_soldiers|intcomma }}
+                                </div>
+                                <div class="col-2 text-end">
+                                    <img src="{{ PATH_IMAGES }}img/interface/credits.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Crédits">
+                                    {{ upkeep.upkeep_soldiers|intcomma }}
                                 </div>
                             </div>
-                            <div class="list-group-item">
-                                <div class="row gx-3">
-                                    <div class="col-5">
-                                        <img src="/static/s03/img/map/orbit-fleets.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Vaisseaux">
-                                        <span class="text-normal me-1">Vaisseaux</span>                    
-                                    </div>
-                                    <div class="col-5">
-                                        <img src="{{ PATH_IMAGES }}img/interface/credits.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Crédits">
-                                        {{ upkeep.ships_signature|intcomma }}
-                                        <small class="text-normal mx-2">x</small>
-                                        {{ upkeep.cost_ships|intcomma }}
-                                    </div>
-                                    <div class="col-2 text-end">
-                                        <img src="{{ PATH_IMAGES }}img/interface/credits.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Crédits">
-                                        {{ upkeep.upkeep_ships|intcomma }}
-                                    </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="row gx-3">
+                                <div class="col-5">
+                                    <img src="/static/s03/img/map/orbit-fleets.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Vaisseaux">
+                                    <span class="text-normal me-1">Vaisseaux</span>                    
+                                </div>
+                                <div class="col-5">
+                                    <img src="{{ PATH_IMAGES }}img/interface/credits.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Crédits">
+                                    {{ upkeep.ships_signature|intcomma }}
+                                    <small class="text-normal mx-2">x</small>
+                                    {{ upkeep.cost_ships|intcomma }}
+                                </div>
+                                <div class="col-2 text-end">
+                                    <img src="{{ PATH_IMAGES }}img/interface/credits.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Crédits">
+                                    {{ upkeep.upkeep_ships|intcomma }}
                                 </div>
                             </div>
-                            <div class="list-group-item">
-                                <div class="row gx-3">
-                                    <div class="col-5">
-                                        <img src="/static/s03/img/map/orbit-fleets.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Vaisseaux en position">
-                                        <span class="text-normal me-1">Vaisseaux en position</span>                    
-                                    </div>
-                                    <div class="col-5">
-                                        <img src="{{ PATH_IMAGES }}img/interface/credits.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Crédits">
-                                        {{ upkeep.ships_in_position_signature|intcomma }}
-                                        <small class="text-normal mx-2">x</small>
-                                        {{ upkeep.cost_ships_in_position|intcomma }}
-                                    </div>
-                                    <div class="col-2 text-end">
-                                        <img src="{{ PATH_IMAGES }}img/interface/credits.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Crédits">
-                                        {{ upkeep.upkeep_ships_in_position|intcomma }}
-                                    </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="row gx-3">
+                                <div class="col-5">
+                                    <img src="/static/s03/img/map/orbit-fleets.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Vaisseaux en position">
+                                    <span class="text-normal me-1">Vaisseaux en position</span>                    
+                                </div>
+                                <div class="col-5">
+                                    <img src="{{ PATH_IMAGES }}img/interface/credits.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Crédits">
+                                    {{ upkeep.ships_in_position_signature|intcomma }}
+                                    <small class="text-normal mx-2">x</small>
+                                    {{ upkeep.cost_ships_in_position|intcomma }}
+                                </div>
+                                <div class="col-2 text-end">
+                                    <img src="{{ PATH_IMAGES }}img/interface/credits.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Crédits">
+                                    {{ upkeep.upkeep_ships_in_position|intcomma }}
                                 </div>
                             </div>
-                            <div class="list-group-item">
-                                <div class="row gx-3">
-                                    <div class="col-5">
-                                        <img src="/static/s03/img/map/orbit-fleets.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Vaisseaux posés">
-                                        <span class="text-normal me-1">Vaisseaux posés</span>                    
-                                    </div>
-                                    <div class="col-5">
-                                        <img src="{{ PATH_IMAGES }}img/interface/credits.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Crédits">
-                                        {{ upkeep.ships_parked_signature|intcomma }}
-                                        <small class="text-normal mx-2">x</small>
-                                        {{ upkeep.cost_ships_parked|intcomma }}
-                                    </div>
-                                    <div class="col-2 text-end">
-                                        <img src="{{ PATH_IMAGES }}img/interface/credits.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Crédits">
-                                        {{ upkeep.upkeep_ships_parked|intcomma }}
-                                    </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="row gx-3">
+                                <div class="col-5">
+                                    <img src="/static/s03/img/map/orbit-fleets.gif" class="res" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="Vaisseaux posés">
+                                    <span class="text-normal me-1">Vaisseaux posés</span>                    
+                                </div>
+                                <div class="col-5">
+                                    <img src="{{ PATH_IMAGES }}img/interface/credits.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Crédits">
+                                    {{ upkeep.ships_parked_signature|intcomma }}
+                                    <small class="text-normal mx-2">x</small>
+                                    {{ upkeep.cost_ships_parked|intcomma }}
+                                </div>
+                                <div class="col-2 text-end">
+                                    <img src="{{ PATH_IMAGES }}img/interface/credits.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Crédits">
+                                    {{ upkeep.upkeep_ships_parked|intcomma }}
                                 </div>
                             </div>
-                            <div class="list-group-item text-end">
-                                <span class="text-normal me-2">Total</span>
-                                <img src="{{ PATH_IMAGES }}img/interface/credits.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Crédits">
-                                {{ total_estimation|intcomma }}
-                            </div>
+                        </div>
+                        <div class="card-body text-end">
+                            <span class="text-normal me-2">Total</span>
+                            <img src="{{ PATH_IMAGES }}img/interface/credits.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Crédits">
+                            {{ total_estimation|intcomma }}
                         </div>
                     </div>
                 </div>

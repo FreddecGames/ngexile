@@ -1,5 +1,6 @@
 {% extends "s03/_layout.html" %}
 
+{% load i18n %}
 {% load humanize %}
 
 {% block content %}
@@ -17,42 +18,40 @@
                         <div class="card-header">
                             <span class="fs-6">Nos tributs</span>
                         </div>
-                        <div class="list-group list-group-flush">
-                            {% for item in sent_tributes %}
-                                <div class="list-group-item">
-                                    <div class="row gx-3 align-items-center">
-                                        <div class="col-auto">
-                                            {{ forloop.counter }}
-                                            <span class="text-normal">.</span>
-                                        </div>
-                                        <div class="col">
-                                            <a href="/s03/alliance-view/?tag={{ item.tag }}" data-bs-toggle="tooltip" data-bs-title="Voir alliance">[{{ item.tag }}] {{ item.name }}</a>
-                                        </div>
-                                        <div class="col-auto">
-                                            <span class="text-normal">{{ item.created }}</span>
-                                        </div>
-                                        <div class="col-auto">
-                                            <img src="{{ PATH_IMAGES }}img/interface/credits.gif" data-bs-toggle="tooltip" data-bs-title="Crédits" class="res" width="16px" height="16px">
-                                            {{ item.credits|intcomma }}
-                                        </div>
-                                        {% if can_break %}
-                                            <div class="col-auto">
-                                                <form method="post">
-                                                    {% csrf_token %}
-                                                    <input type="hidden" name="action" value="cancel" />
-                                                    <input type="hidden" name="tag" value="{{ item.tag }}" />
-                                                    <button type="submit" class="btn btn-danger">Annuler</button>
-                                                </form>
-                                            </div>
-                                        {% endif %}
+                        {% for item in sent_tributes %}
+                            <div class="card-body">
+                                <div class="row gx-3 align-items-center">
+                                    <div class="col-auto">
+                                        {{ forloop.counter }}
+                                        <span class="text-normal">.</span>
                                     </div>
+                                    <div class="col">
+                                        <a href="/s03/alliance-view/?tag={{ item.tag }}" data-bs-toggle="tooltip" data-bs-title="Voir alliance">[{{ item.tag }}] {{ item.name }}</a>
+                                    </div>
+                                    <div class="col-auto">
+                                        <span class="text-normal">{{ item.created }}</span>
+                                    </div>
+                                    <div class="col-auto">
+                                        <img src="{{ PATH_IMAGES }}img/interface/credits.gif" data-bs-toggle="tooltip" data-bs-title="Crédits" class="res" width="16px" height="16px">
+                                        {{ item.credits|intcomma }}
+                                    </div>
+                                    {% if can_break %}
+                                        <div class="col-auto">
+                                            <form method="post">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="action" value="cancel" />
+                                                <input type="hidden" name="tag" value="{{ item.tag }}" />
+                                                <button type="submit" class="btn btn-danger">Annuler</button>
+                                            </form>
+                                        </div>
+                                    {% endif %}
                                 </div>
-                            {% empty %}
-                                <div class="list-group-item text-center">
-                                    <span class="text-normal">Aucun</span>
-                                </div>
-                            {% endfor %}
-                        </div>
+                            </div>
+                        {% empty %}
+                            <div class="card-body text-center">
+                                <span class="text-normal">Aucun</span>
+                            </div>
+                        {% endfor %}
                     </div>
                 </div>
                 
@@ -61,35 +60,33 @@
                         <div class="card-header">
                             <span class="fs-6">Nos tributs perçus</span>
                         </div>
-                        <div class="list-group list-group-flush">
-                            {% for item in received_tributes %}
-                                <div class="list-group-item">
-                                    <div class="row gx-3 align-items-center">
-                                        <div class="col-auto">
-                                            {{ forloop.counter }}
-                                            <span class="text-normal">.</span>
-                                        </div>
-                                        <div class="col">
-                                            <a href="/s03/alliance-view/?tag={{ item.tag }}" data-bs-toggle="tooltip" data-bs-title="Voir alliance">[{{ item.tag }}] {{ item.name }}</a>
-                                        </div>
-                                        <div class="col-auto">
-                                            <span class="text-normal">{{ item.created }}</span>
-                                        </div>
-                                        <div class="col-auto">
-                                            <img src="{{ PATH_IMAGES }}img/interface/credits.gif" data-bs-toggle="tooltip" data-bs-title="Crédits" class="res" width="16px" height="16px">
-                                            {{ item.credits|intcomma }}
-                                        </div>
-                                        <div class="col-auto">
-                                            <span class="text-normal">{{ item.next_transfer }}</span>
-                                        </div>
+                        {% for item in received_tributes %}
+                            <div class="card-body">
+                                <div class="row gx-3 align-items-center">
+                                    <div class="col-auto">
+                                        {{ forloop.counter }}
+                                        <span class="text-normal">.</span>
+                                    </div>
+                                    <div class="col">
+                                        <a href="/s03/alliance-view/?tag={{ item.tag }}" data-bs-toggle="tooltip" data-bs-title="Voir alliance">[{{ item.tag }}] {{ item.name }}</a>
+                                    </div>
+                                    <div class="col-auto">
+                                        <span class="text-normal">{{ item.created }}</span>
+                                    </div>
+                                    <div class="col-auto">
+                                        <img src="{{ PATH_IMAGES }}img/interface/credits.gif" data-bs-toggle="tooltip" data-bs-title="Crédits" class="res" width="16px" height="16px">
+                                        {{ item.credits|intcomma }}
+                                    </div>
+                                    <div class="col-auto">
+                                        <span class="text-normal">{{ item.next_transfer }}</span>
                                     </div>
                                 </div>
-                            {% empty %}
-                                <div class="list-group-item text-center">
-                                    <span class="text-normal">Aucun</span>
-                                </div>
-                            {% endfor %}
-                        </div>
+                            </div>
+                        {% empty %}
+                            <div class="card-body text-center">
+                                <span class="text-normal">Aucun</span>
+                            </div>
+                        {% endfor %}
                     </div>
                 </div>
                 

@@ -1,6 +1,7 @@
 {% extends "s03/_layout.html" %}
 
 {% load tz %}
+{% load i18n %}
 {% load humanize %}
 {% load bbcode_tags %}
 
@@ -14,20 +15,22 @@
         
                 {% if pages|length > 1 %}
                     <div class="col-12">
-                        <div class="card card-body">
-                            <div class="row gx-3">
-                                <div class="col-auto">
-                                    <span class="text-normal">Page {{ page_display }}</span>
-                                </div>
-                                <div class="col">
-                                    <span class="text-normal">Messages {{ min }}-{{ max }}</span>
-                                </div>
-                                <div class="col-auto">
-                                    <span class="text-normal">Aller à la page</span>
-                                    {% for p in pages %}
-                                        {% if p.link %}<a href="?start={{ p.link }}" class="ms-2" data-bs-toggle="tooltip" data-bs-title="Voir page">{{ p.id }}</a>{% endif %}
-                                        {% if p.selected %}<span class="ms-2">{{ p.id }}</span>{% endif %}
-                                    {% endfor %}
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="row gx-3">
+                                    <div class="col-auto">
+                                        <span class="text-normal">Page {{ page_display }}</span>
+                                    </div>
+                                    <div class="col">
+                                        <span class="text-normal">Messages {{ min }}-{{ max }}</span>
+                                    </div>
+                                    <div class="col-auto">
+                                        <span class="text-normal">Aller à la page</span>
+                                        {% for p in pages %}
+                                            {% if p.link %}<a href="?start={{ p.link }}" class="ms-2" data-bs-toggle="tooltip" data-bs-title="Voir page">{{ p.id }}</a>{% endif %}
+                                            {% if p.selected %}<span class="ms-2">{{ p.id }}</span>{% endif %}
+                                        {% endfor %}
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -37,8 +40,10 @@
                 {% if mails|length < 1 %}
                 
                     <div class="col-12">
-                        <div class="card card-body text-center">
-                            <span class="text-normal">Aucun message</span>
+                        <div class="card">
+                            <div class="card-body text-center">
+                                <span class="text-normal">Aucun message</span>
+                            </div>
                         </div>
                     </div>
                     
@@ -46,69 +51,71 @@
                     {% for mail in mails %}
                     
                         <div class="col-12">
-                            <div class="card card-body {% if not mail.read_date %}bg-success{% endif %}">
-                                <div class="row gx-3">
-                                    <div class="col-auto">
-                                        <form method="post">
-                                            {% csrf_token %}
-                                            <input type="hidden" name="action" value="delete" />
-                                            <input type="hidden" name="mailId" value="{{ mail.mailid }}" />
-                                            <button type="submit" class="btn btn-icon btn-link" data-bs-toggle="tooltip" data-bs-title="Supprimer">
-                                                <i class="fa-fw fas fa-trash"></i>
-                                            </button>
-                                        </form>
-                                    </div>
-                                    <div class="col">
-                                        <div class="row g-2 flex-column">
-                                            <div class="col-12">
-                                                <div class="row gx-3 align-items-center">
-                                                    <div class="col-auto">
-                                                        {% if mail.avatar_url %}<img src="{{ mail.avatar_url }}" width="48" height="48" class="rounded">
-                                                        {% else %}<img src="{{ PATH_IMAGES }}img/interface/noavatar.gif" width="48" height="48" class="rounded">
+                            <div class="card">
+                                <div class="card-body {% if not mail.read_date %}bg-success{% endif %}">
+                                    <div class="row gx-3">
+                                        <div class="col-auto">
+                                            <form method="post">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="action" value="delete" />
+                                                <input type="hidden" name="mailId" value="{{ mail.mailid }}" />
+                                                <button type="submit" class="btn btn-icon btn-link" data-bs-toggle="tooltip" data-bs-title="Supprimer">
+                                                    <i class="fa-fw fas fa-trash"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                        <div class="col">
+                                            <div class="row g-2 flex-column">
+                                                <div class="col-12">
+                                                    <div class="row gx-3 align-items-center">
+                                                        <div class="col-auto">
+                                                            {% if mail.avatar_url %}<img src="{{ mail.avatar_url }}" width="48" height="48" class="rounded">
+                                                            {% else %}<img src="{{ PATH_IMAGES }}img/interface/noavatar.gif" width="48" height="48" class="rounded">
+                                                            {% endif %}
+                                                        </div>
+                                                        <div class="col">
+                                                            <div class="mb-1">
+                                                                {% if mail.tag %}<a href="/s03/alliance-view/?tag={{ mail.tag }}" class="me-2" data-bs-toggle="tooltip" data-bs-title="Voir alliance">[{{ mail.tag }}]</a>{% endif %}
+                                                                {% if mail.sender %}<a href="/s03/profile-view/?name={{ mail.sender }}" class="me-2" data-bs-toggle="tooltip" data-bs-title="Voir profil">{{ mail.sender }}</a>{% endif %}
+                                                                <span class="text-normal me-2">{{ mail.datetime|timezone:"Europe/Paris" }}</span>
+                                                                {% if mail.owner == ':alliance' %}<span class="ms-2">À l'alliance</span>{% endif %}
+                                                                {% if mail.added %}
+                                                                    <form method="post" class="d-inline">
+                                                                        {% csrf_token %}
+                                                                        <input type="hidden" name="action" value="unignore" />
+                                                                        <input type="hidden" name="user" value="{{ mail.sender }}" />
+                                                                        <button type="submit" class="btn btn-link text-danger p-0">Bloqué</button>
+                                                                    </form>
+                                                                {% elif mail.sender %}
+                                                                    <form method="post" class="d-inline" onsubmit="return confirm('Êtes-vous sûr de vouloir bloquer les messages en provenance du joueur {{ mail.sender }} ?')">
+                                                                        {% csrf_token %}
+                                                                        <input type="hidden" name="action" value="ignore" />
+                                                                        <input type="hidden" name="user" value="{{ mail.sender }}" />
+                                                                        <button type="submit" class="btn btn-link p-0">Bloquer</button>
+                                                                    </form>
+                                                                {% endif %}
+                                                            </div>
+                                                            <div>
+                                                                <span class="fs-6">{{ mail.subject }}</span>
+                                                                {% if mail.credits %}
+                                                                    <span class="ms-3 text-normal">Crédits reçus</span>
+                                                                    <img src="{{ PATH_IMAGES }}img/interface/credits.gif" title="Crédits" class="res" width="16px" height="16px">
+                                                                    {{ mail.credits|intcomma }}
+                                                                {% endif %}
+                                                            </div>
+                                                        </div>
+                                                        {% if mail.userid %}
+                                                            <div class="col-auto">
+                                                                <a href="/s03/mail-new/?a=reply&mailid={{ mail.mailid }}" class="ms-2">Répondre</a>
+                                                            </div>
                                                         {% endif %}
                                                     </div>
-                                                    <div class="col">
-                                                        <div class="mb-1">
-                                                            {% if mail.tag %}<a href="/s03/alliance-view/?tag={{ mail.tag }}" class="me-2" data-bs-toggle="tooltip" data-bs-title="Voir alliance">[{{ mail.tag }}]</a>{% endif %}
-                                                            {% if mail.sender %}<a href="/s03/profile-view/?name={{ mail.sender }}" class="me-2" data-bs-toggle="tooltip" data-bs-title="Voir profil">{{ mail.sender }}</a>{% endif %}
-                                                            <span class="text-normal me-2">{{ mail.datetime|timezone:"Europe/Paris" }}</span>
-                                                            {% if mail.owner == ':alliance' %}<span class="ms-2">À l'alliance</span>{% endif %}
-                                                            {% if mail.added %}
-                                                                <form method="post" class="d-inline">
-                                                                    {% csrf_token %}
-                                                                    <input type="hidden" name="action" value="unignore" />
-                                                                    <input type="hidden" name="user" value="{{ mail.sender }}" />
-                                                                    <button type="submit" class="btn btn-link text-danger p-0">Bloqué</button>
-                                                                </form>
-                                                            {% elif mail.sender %}
-                                                                <form method="post" class="d-inline" onsubmit="return confirm('Êtes-vous sûr de vouloir bloquer les messages en provenance du joueur {{ mail.sender }} ?')">
-                                                                    {% csrf_token %}
-                                                                    <input type="hidden" name="action" value="ignore" />
-                                                                    <input type="hidden" name="user" value="{{ mail.sender }}" />
-                                                                    <button type="submit" class="btn btn-link p-0">Bloquer</button>
-                                                                </form>
-                                                            {% endif %}
-                                                        </div>
-                                                        <div>
-                                                            <span class="fs-6">{{ mail.subject }}</span>
-                                                            {% if mail.credits %}
-                                                                <span class="ms-3 text-normal">Crédits reçus</span>
-                                                                <img src="{{ PATH_IMAGES }}img/interface/credits.gif" title="Crédits" class="res" width="16px" height="16px">
-                                                                {{ mail.credits|intcomma }}
-                                                            {% endif %}
-                                                        </div>
-                                                    </div>
-                                                    {% if mail.userid %}
-                                                        <div class="col-auto">
-                                                            <a href="/s03/mail-new/?a=reply&mailid={{ mail.mailid }}" class="ms-2">Répondre</a>
-                                                        </div>
+                                                </div>
+                                                <div class="col-12">
+                                                    {% if mail.bbcode %}{{ mail.bodybb|bbcode }}
+                                                    {% else %}{{ mail.body|safe }}
                                                     {% endif %}
                                                 </div>
-                                            </div>
-                                            <div class="col-12">
-                                                {% if mail.bbcode %}{{ mail.bodybb|bbcode }}
-                                                {% else %}{{ mail.body|safe }}
-                                                {% endif %}
                                             </div>
                                         </div>
                                     </div>

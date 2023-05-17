@@ -1,80 +1,80 @@
 {% extends "base.html" %}
+
 {% load i18n %}
 
 {% block content %}
-<div class="p-3" style="width:100%; max-width:512px;">
-    <div class="row g-3">
-        <div class="col-12">
-            <form method="post" action="." class="card">
-                {% csrf_token %}
-                <div class="card-header">
-                    <div class="row gx-2 align-items-center">
-                        <div class="col-auto" style="padding-top:2px;">
-                            <a href="/" class="mt-1"><i class="fa-fw fas fa-arrow-alt-circle-left"></i></a>
-                        </div>
-                        <div class="col">
-                            <div class="row gx-2 align-items-center">
-                                <div class="col-auto">
-                                    <img src="/static/img/logo.png" width="24px" class="rounded" />
-                                </div>
-                                <div class="col-auto">
-                                    <span class="fs-6">NG Exile</span>
-                                </div>
+
+    <div class="col-12">
+        <form method="post" class="card">
+            {% csrf_token %}
+            <div class="card-header">
+                <div class="row gx-2 align-items-center">
+                    <div class="col-auto" style="padding-top:2px;">
+                        <a href="/"><i class="fs-6 fa-fw fas fa-arrow-alt-circle-left"></i></a>
+                    </div>
+                    <div class="col">
+                        <div class="row gx-2 align-items-center">
+                            <div class="col-auto">
+                                <img src="/static/img/interface/logo.png" width="24px" class="rounded" />
                             </div>
-                        </div>
-                        <div class="col-auto">
-                            <span class="fs-6 text-white">{% translate "Sign In" %}</span>
+                            <div class="col-auto">
+                                <span class="fs-6">NG Exile</span>
+                            </div>
                         </div>
                     </div>
+                    <div class="col-auto">
+                        <span class="fs-6 text-white">{% translate "Connexion" %}</span>
+                    </div>
                 </div>
-                <div class="card-body">
-                    <div class="row gx-2 gy-3">
-                        {% if form.non_field_errors %}
-                        <div class="col-12">
-                            <div class="text-bg-danger p-2 rounded">
-                                <div class="row gx-2 gy-2">
-                                    {% for error in form.non_field_errors %}
-                                        <div class="col-12 text-center">{{ error|escape }}</div>
-                                    {% endfor %}
-                                </div>
+            </div>
+            <div class="card-body">
+                <div class="row gx-2 gy-3">
+                    {% if form.non_field_errors %}
+                    <div class="col-12">
+                        <div class="text-bg-danger p-2 rounded">
+                            <div class="row gx-2 gy-2">
+                                {% for error in form.non_field_errors %}
+                                    <div class="col-12 text-center">{{ error|escape }}</div>
+                                {% endfor %}
                             </div>
                         </div>
+                    </div>
+                    {% endif %}
+                    <div class="col-12">
+                        <label for="id_username" class="form-label text-white required">{% translate "Adresse électronique" %}</label>
+                        <input type="email" class="form-control {% if form.errors and form.errors.username  %}is-invalid{% endif %}" name="username" maxlength="150" autocapitalize="none" autocomplete="username" autofocus="" required="" id="id_username" value="{% if form.username.value  %}{{ form.username.value }}{% endif %}">
+                        {% if form.errors and form.errors.username  %}
+                            {% for error in form.errors.username %}
+                                <div class="form-text"><span class="text-danger">{{ error|escape }}</span></div>
+                            {% endfor %}
                         {% endif %}
-                        <div class="col-12">
-                            <label for="id_username" class="form-label text-white required">{% translate "Email" %}</label>
-                            <input type="email" class="form-control {% if form.errors and form.errors.username  %}is-invalid{% endif %}" name="username" maxlength="150" autocapitalize="none" autocomplete="username" autofocus="" required="" id="id_username" value="{% if form.username.value  %}{{ form.username.value }}{% endif %}">
-                            {% if form.errors and form.errors.username  %}
-                                {% for error in form.errors.username %}
-                                    <div class="form-text"><span class="text-danger">{{ error|escape }}</span></div>
-                                {% endfor %}
-                            {% endif %}
-                        </div>
-                        <div class="col-12">
-                            <label for="id_password" class="form-label text-white required">{% translate "Password" %}</label>
-                            <input type="password" class="form-control {% if form.errors and form.errors.password  %}is-invalid{% endif %}" name="password" autocomplete="current-password" required="" id="id_password" data-gtm-form-interact-field-id="1">
-                            {% if form.errors and form.errors.password  %}
-                                {% for error in form.errors.password %}
-                                    <div class="form-text"><span class="text-danger">{{ error|escape }}</span></div>
-                                {% endfor %}
-                            {% endif %}
-                        </div>
-                        <div class="col-12">
-                            <div class="row gx-2 align-items-center">
-                                <div class="col">
-                                    <a href="/accounts/password_reset/">{% translate "Forgot your password?" %}</a>
-                                </div>
-                                <div class="col-auto">
-                                    <button type="submit" class="btn btn-primary"><i class="fa-fw fas fa-sign-in-alt me-1"></i> {% trans 'Sign In' %}</button>
-                                </div>
+                    </div>
+                    <div class="col-12">
+                        <label for="id_password" class="form-label text-white required">{% translate "Mot de passe" %}</label>
+                        <input type="password" class="form-control {% if form.errors and form.errors.password  %}is-invalid{% endif %}" name="password" autocomplete="current-password" required="" id="id_password" data-gtm-form-interact-field-id="1">
+                        {% if form.errors and form.errors.password  %}
+                            {% for error in form.errors.password %}
+                                <div class="form-text"><span class="text-danger">{{ error|escape }}</span></div>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                    <div class="col-12">
+                        <div class="row gx-2 align-items-center">
+                            <div class="col">
+                                <a href="/accounts/password_reset/">{% translate "Mot de passe oublié ?" %}</a>
+                            </div>
+                            <div class="col-auto">
+                                <button type="submit" class="btn btn-primary"><i class="fa-fw fas fa-sign-in-alt me-1"></i> {% trans 'Connexion' %}</button>
                             </div>
                         </div>
                     </div>
                 </div>
-            </form>
-        </div>
-        <div class="col-12 text-center">
-            <span>{% translate "Don't have an account? <a href='/accounts/register'>Create an account</a>." %}</span>
-        </div>
+            </div>
+        </form>
     </div>
-</div>
+    
+    <div class="col-12 text-center">
+        <span>{% translate "Pas encore inscrit ? <a href='/accounts/register'>Inscription</a>." %}</span>
+    </div>
+
 {% endblock %}

@@ -1,6 +1,13 @@
 {% load i18n %}
-{% trans "Activate account at" %} {{ site.name }}:
+
+{% trans "Bonjour," %}
+
+{% trans "Lien d'activation de votre compte pour" %} {{ site.name }}:
 
 http://{{ site.domain }}{% url 'django_registration_activate' activation_key %}
 
-{% blocktrans %}Link is valid for {{ expiration_days }} days.{% endblocktrans %}
+{% blocktrans %}Ce lien est valable pendant {{ expiration_days }} jours.{% endblocktrans %}
+
+{% trans "Merci d’utiliser notre site !" %}
+
+{% trans "L’équipe" %} {{ site.name }}

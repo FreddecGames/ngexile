@@ -3,13 +3,13 @@
 {% load i18n %}
 
 {% block content %}
-
+    
     <div class="col-12">
         <div class="card">
             <div class="card-header">
                 <div class="row gx-2 align-items-center">
                     <div class="col-auto" style="padding-top:2px;">
-                        <a href="/"><i class="fs-6 fa-fw fas fa-arrow-alt-circle-left"></i></a>
+                        <a href="/lobby/"><i class="fs-6 fa-fw fas fa-arrow-alt-circle-left"></i></a>
                     </div>
                     <div class="col">
                         <div class="row gx-2 align-items-center">
@@ -22,21 +22,22 @@
                         </div>
                     </div>
                     <div class="col-auto">
-                        <span class="fs-6 text-white">{% translate "Inscription" %}</span>
+                        <span class="fs-6 text-white">ng0</span>
                     </div>
                 </div>
             </div>
             <div class="card-body">
                 <div class="row gx-2 gy-3">
                     <div class="col-12 text-center">
-                        <span>{% translate "Votre compte est activé. Vous pouvez vous connecter pour commencer à jouer." %}</span>
+                        <span class="text-danger">{% translate "Le serveur est actuellement en maintenance." %}</span><br/>
                     </div>
                     <div class="col-12 text-center">
-                        <a href="/accounts/login/" class="btn btn-primary"><i class="fa-fw fas fa-sign-in-alt me-1"></i> {% translate "Connexion" %}</a>
+                        <div class="mb-2">{% translate "Pour avoir plus d'information, connectez-vous sur le serveur Discord." %}</div>
+                        <a href="https://discord.gg/x39nHzM" target="_blank" class="btn btn-secondary"><i class="fa-fw fab fa-discord me-1"></i> Discord</a>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-        
+
 {% endblock %}

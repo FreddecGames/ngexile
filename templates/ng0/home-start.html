@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% load i18n %}
+
+{% block content %}
+    
+    <div class="col-12">
+        <form method="post" class="card">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="start">
+            <div class="card-header">
+                <div class="row gx-2 align-items-center">
+                    <div class="col">
+                        <div class="row gx-2 align-items-center">
+                            <div class="col-auto">
+                                <img src="/static/img/interface/logo.png" width="24px" class="rounded" />
+                            </div>
+                            <div class="col-auto">
+                                <span class="fs-6">NG Exile</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <span class="fs-6 text-white">ng0</span>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row gx-2 gy-3">
+                    <div class="col-12">
+                        <span class="text-normal">{% translate "Bienvenue dans NG Exile, avant de commencer, veuillez saisir un pseudo pour votre compte. Ce sera le nom sous lequel vous jouerez dans le jeu." %}</span>
+                    </div>
+                    <div class="col-12">
+                        <label for="id_username" class="form-label text-white required">{% translate "Pseudo" %}</label>
+                        <input type="text" class="form-control" name="username" maxlength="12" autocapitalize="none" autocomplete="" autofocus="" required="" id="id_username">
+                        <div class="form-text">{% translate "Requis. 2 caractères minimum. 12 caractères maximum. Ne peut contenir que des chiffres, des lettres et les caractères ' ' (espace) ou '-'." %}</div>
+                    </div>
+                    <div class="col-12">
+                        <span class="text-normal">{% translate "Maintenant choisissez votre galaxie de départ. Toutes les galaxies sont identiques. Vous pourrez voyager dans les autres galaxies à partir d'un certain niveau de jeu. Les galaxies recommandées sont les galaxies les plus adaptées pour débuter le jeu." %}</span>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+{% endblock %}

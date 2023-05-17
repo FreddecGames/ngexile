@@ -1,5 +1,6 @@
 {% extends "s03/_layout.html" %}
 
+{% load i18n %}
 {% load humanize %}
 
 {% block content %}
@@ -45,8 +46,10 @@
                 {% empty %}
                 
                     <div class="col-12">
-                        <div class="card card-body text-center">
-                            <span class="text-normal">Aucune flotte étrangère en orbite de nos planètes</span>
+                        <div class="card">
+                            <div class="card-body text-center">
+                                <span class="text-normal">Aucune flotte étrangère en orbite de nos planètes</span>
+                            </div>
                         </div>
                     </div>
                     

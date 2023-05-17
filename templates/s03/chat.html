@@ -1,6 +1,7 @@
 {% extends "s03/_layout.html" %}
 
 {% load tz %}
+{% load i18n %}
 {% load humanize %}
 
 {% block content %}
@@ -33,6 +34,8 @@
                     {
                         return d1.getYear() == d2.getYear() && d1.getMonth() == d2.getMonth() && d1.getDay() == d2.getDay();
                     }
+
+                    Number.prototype.lz = function() { return (this < 10 ? "0" : "") + this; }
 
                     function formatTime(dt)
                     {
@@ -560,7 +563,7 @@
 
                                 for (var i = 1; i < list.length; i++) {
                                     
-                                    s += '<div class="list-group-item">' +
+                                    s += '<div class="card-body">' +
                                              '<div class="row gx-3">' +
                                                 '<div class="col"><a href="#" onclick="joinChat2(\'' + list[i][0] + '\',\'\'); return false;">' + list[i][0] + '</a></div>' +
                                                 '<div class="col-auto">' + list[i][2] + ' <span class="text-normal">en ligne</span></div>' +
@@ -570,7 +573,7 @@
 
                                 s = '<div class="card">' +
                                         '<div class="card-header"><span class="fs-6">Liste des salons publics</span></div>' +
-                                        '<div class="list-group list-group-flush">' + s + '</div>' +
+                                        s +
                                     '</div>'
                                     
                                 $('publicchats').innerHTML = s;
@@ -583,20 +586,18 @@
                     
                         <div class="col-12">
                             <div class="card">
-                                <div class="list-group list-group-flush">
-                                    <div class="list-group-item pe-2">
-                                        <div id="chat"></div>
+                                <div class="card-body">
+                                    <div id="chat"></div>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row gx-2 align-items-center">
+                                        <div class="col"><input type="text" class="form-control" id="chatline" maxlength="256"></div>
+                                        <div class="col-auto"><input type="submit" class="btn btn-primary" value="Envoyer"></div>
                                     </div>
-                                    <div class="list-group-item">
-                                        <div class="row gx-2 align-items-center">
-                                            <div class="col"><input type="text" class="form-control" id="chatline" maxlength="256"></div>
-                                            <div class="col-auto"><input type="submit" class="btn btn-primary" value="Envoyer"></div>
-                                        </div>
-                                    </div>
-                                    <div class="list-group-item">
-                                        <span class="text-normal">En ligne</span>
-                                        <span id="onlineusers"></span>
-                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <span class="text-normal">En ligne</span>
+                                    <span id="onlineusers"></span>
                                 </div>
                             </div>
                         </div>

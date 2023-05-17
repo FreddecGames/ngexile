@@ -1,0 +1,268 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-05-16 13:56+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: .\myapps\accounts\admin.py:13
+msgid "Personal info"
+msgstr ""
+
+#: .\myapps\accounts\admin.py:14
+msgid "Permissions"
+msgstr ""
+
+#: .\myapps\accounts\admin.py:15
+msgid "Important dates"
+msgstr ""
+
+#: .\myapps\accounts\models.py:46
+msgid "email address"
+msgstr ""
+
+#: .\templates\404.html:22 .\templates\500.html:22
+msgid "Oups..."
+msgstr "Oups..."
+
+#: .\templates\404.html:29
+msgid "La page demandée n'a pas été trouvée."
+msgstr "The requested page has not been found."
+
+#: .\templates\404.html:32 .\templates\lobby\home.html:22
+msgid "Serveurs"
+msgstr "Servers"
+
+#: .\templates\404.html:35 .\templates\500.html:36
+msgid ""
+"Si le problème persiste contactez <span class='text-white'>Freddec</span> "
+"sur Discord."
+msgstr ""
+"If the problem persists, contact <span class='text-white'>Freddec</span> on "
+"Discord."
+
+#: .\templates\500.html:32
+msgid "Une erreur est survenue sur la page que vous avez demandée."
+msgstr "An error has occurred on the page you requested."
+
+#: .\templates\500.html:33
+msgid "Merci de bien vouloir nous en excuser."
+msgstr "Please excuse us."
+
+#: .\templates\django_registration\activation_complete.html:25
+#: .\templates\django_registration\activation_failed.html:25
+#: .\templates\django_registration\registration_complete.html:25
+#: .\templates\django_registration\registration_form.html:26
+#: .\templates\django_registration\registration_form.html:74
+#: .\templates\index.html:55
+msgid "Inscription"
+msgstr "Sign Up"
+
+#: .\templates\django_registration\activation_complete.html:32
+msgid ""
+"Votre compte est activé. Vous pouvez vous connecter pour commencer à jouer."
+msgstr "Your account is activated. You can login to start playing."
+
+#: .\templates\django_registration\activation_complete.html:35
+#: .\templates\index.html:56 .\templates\registration\login.html:26
+#: .\templates\registration\login.html:67
+#: .\templates\registration\password_reset_complete.html:38
+msgid "Connexion"
+msgstr "Sign In"
+
+#: .\templates\django_registration\activation_email_body.txt:3
+msgid "Bonjour,"
+msgstr "Hello,"
+
+#: .\templates\django_registration\activation_email_body.txt:5
+msgid "Lien d'activation de votre compte pour"
+msgstr "Link to activate your account for"
+
+#: .\templates\django_registration\activation_email_body.txt:9
+#, python-format
+msgid "Ce lien est valable pendant %(expiration_days)s jours."
+msgstr "This link is valid for %(expiration_days)s days."
+
+#: .\templates\django_registration\activation_email_body.txt:11
+msgid "Merci d’utiliser notre site !"
+msgstr "Thank you for using our site!"
+
+#: .\templates\django_registration\activation_email_body.txt:13
+msgid "L’équipe"
+msgstr "Team"
+
+#: .\templates\django_registration\activation_email_subject.txt:3
+msgid "Activation de compte sur"
+msgstr "Account activation on"
+
+#: .\templates\django_registration\activation_failed.html:32
+msgid "Une erreur est survenue. Votre compte n'est pas activé :("
+msgstr "An error has occurred. Your account is not activated :("
+
+#: .\templates\django_registration\activation_failed.html:35
+msgid "Veuillez contacter Freddec sur Discord avec les données suivantes:"
+msgstr "Please contact Freddec on Discord with the following data:"
+
+#: .\templates\django_registration\registration_complete.html:32
+msgid ""
+"Vous êtes inscrit. Un email avec un lien d'activation a été envoyé à "
+"l'adresse électronique renseignée. N'oubliez pas de regarder parmi vos spams."
+msgstr ""
+"You are registered. An email with an activation link has been sent to the "
+"email address provided. Don't forget to look through your spam."
+
+#: .\templates\django_registration\registration_form.html:44
+#: .\templates\registration\login.html:44
+msgid "Adresse électronique"
+msgstr "Email"
+
+#: .\templates\django_registration\registration_form.html:51
+msgid "Requis. 254 caractères maximum. Doit contenir le caractère @."
+msgstr "Required. 254 characters maximum. Must contain the @ character."
+
+#: .\templates\django_registration\registration_form.html:54
+#: .\templates\registration\login.html:53
+#: .\templates\registration\password_reset_confirm.html:47
+msgid "Mot de passe"
+msgstr "Password"
+
+#: .\templates\django_registration\registration_form.html:61
+#: .\templates\registration\password_reset_confirm.html:54
+msgid ""
+"Requis. Votre mot de passe ne peut pas trop ressembler à vos autres "
+"informations personnelles. Votre mot de passe doit contenir au minimum 8 "
+"caractères. Votre mot de passe ne peut pas être un mot de passe couramment "
+"utilisé. Votre mot de passe ne peut pas être entièrement numérique."
+msgstr ""
+"Required. Your password can't be too similar to your other personal "
+"information. Your password must contain at least 8 characters. Your password "
+"cannot be a commonly used password. Your password cannot be entirely numeric."
+
+#: .\templates\django_registration\registration_form.html:64
+#: .\templates\registration\password_reset_confirm.html:57
+msgid "Confirmation du mot de passe"
+msgstr "Confirm password"
+
+#: .\templates\django_registration\registration_form.html:71
+#: .\templates\registration\password_reset_confirm.html:64
+msgid ""
+"Requis. Saisissez le même mot de passe que précédemment, pour vérification."
+msgstr "Required. Enter the same password as before, for verification."
+
+#: .\templates\django_registration\registration_form.html:82
+msgid "Déjà inscrit ? <a href='/accounts/login/'>Connexion</a>."
+msgstr "Already registered? <a href='/accounts/login/'>Sign In</a>."
+
+#: .\templates\index.html:24
+msgid "Bienvenue"
+msgstr "Welcome"
+
+#: .\templates\index.html:49
+msgid ""
+"NG Exile est un jeu web en ligne totalement gratuit de simulation "
+"stratégique spatiale jouable avec un simple navigateur."
+msgstr ""
+"NG Exile is a completely free online web game of strategic space simulation "
+"playable with a simple browser."
+
+#: .\templates\index.html:62
+msgid ""
+"Puisque NG Exile est un jeu multijoueur, vous devez créer un compte pour "
+"jouer. Votre email ne sera jamais utilisé sauf pour le lien d'activation."
+msgstr ""
+"Since NG Exile is a multiplayer game, you need to create an account to play. "
+"Your email will never be used except for the activation link."
+
+#: .\templates\index.html:69
+msgid ""
+"Pour vous tenir informé et obtenir les dernières informations, rejoignez le "
+"salon Discord du jeu."
+msgstr ""
+"To stay informed and get the latest information, join the game's Discord "
+"server."
+
+#: .\templates\lobby\home.html:29
+msgid "Sélectionner un serveur pour jouer"
+msgstr "Select a server to play"
+
+#: .\templates\lobby\home.html:38
+msgid "Serveur avec le code d'origine refactoré"
+msgstr "Server with refactored original code"
+
+#: .\templates\lobby\home.html:47
+msgid "Déconnexion"
+msgstr "Sign out"
+
+#: .\templates\registration\login.html:64
+msgid "Mot de passe oublié ?"
+msgstr "Forgot your password?"
+
+#: .\templates\registration\login.html:77
+msgid "Pas encore inscrit ? <a href='/accounts/register'>Inscription</a>."
+msgstr "Not registered? <a href='/accounts/register'>Sign In</a>."
+
+#: .\templates\registration\password_reset_complete.html:25
+#: .\templates\registration\password_reset_confirm.html:26
+#: .\templates\registration\password_reset_done.html:25
+#: .\templates\registration\password_reset_form.html:26
+msgid "Réinitialisation du mot de passe"
+msgstr "Password Resset"
+
+#: .\templates\registration\password_reset_complete.html:32
+msgid "Réinitialisation du mot de passe effectuée"
+msgstr "Password reset done"
+
+#: .\templates\registration\password_reset_complete.html:35
+msgid ""
+"Votre mot de passe a été réinitialisé. Vous pouvez vous connecter maintenant."
+msgstr "Your password has been reset. You can login now."
+
+#: .\templates\registration\password_reset_confirm.html:33
+msgid ""
+"Saisissez 2 fois votre nouveau mot de passe pour que nous puissions le "
+"vérifier."
+msgstr "Enter your new password twice so that we can verify it."
+
+#: .\templates\registration\password_reset_confirm.html:67
+#: .\templates\registration\password_reset_form.html:55
+msgid "Réinitialiser mon mot de passe"
+msgstr "Reset my password"
+
+#: .\templates\registration\password_reset_done.html:32
+msgid "Email de réinitialisation envoyé"
+msgstr "Reset email sent"
+
+#: .\templates\registration\password_reset_done.html:35
+msgid ""
+"Nous vous avons envoyé par email les instructions pour réinitialisaer votre "
+"mot de passe, si un compte existe avec l'email que vous avez saisi. Vous "
+"devriez le recevoir sous peu. Si vous ne recevez pas d'email, assurez-vous "
+"d'avoir entré l'adresse avec laquelle vous vous êtes inscrit et vérifiez "
+"votre dossier spam."
+msgstr ""
+"We have emailed you instructions to reset your password, if an account "
+"exists with the email you entered. You should receive it shortly. If you "
+"don't receive an email, make sure you've entered the address you signed up "
+"with and check your spam folder."
+
+#: .\templates\registration\password_reset_form.html:33
+msgid ""
+"Mot de passe oublié? Saisissez votre adresse électonique ci-dessous et nous "
+"vous enverrons un email avec les instructions pour réinitialiser votre mot "
+"de passe."
+msgstr ""
+"Forgot your password? Enter your email address below and we'll send you an "
+"email with instructions on how to reset your password."

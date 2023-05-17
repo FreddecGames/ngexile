@@ -1,5 +1,6 @@
 {% extends "s03/_layout.html" %}
 
+{% load i18n %}
 {% load humanize %}
 
 {% block content %}
@@ -170,20 +171,10 @@
                                                     <div class="row gx-3 align-items-center">
                                                         <div class="col">
                                                             {% if fleet.attackonsight %}
-                                                                <img src="{{ PATH_IMAGES }}img/interface/stance_attack.gif"
-                                                                     class="me-1 stance"
-                                                                     data-bs-toggle="tooltip"
-                                                                     data-bs-title="Mode attaque"
-                                                                     width="10px"
-                                                                     height="10px">
+                                                                <img src="{{ PATH_IMAGES }}img/interface/stance_attack.gif" class="me-1 stance" data-bs-toggle="tooltip" data-bs-title="Mode attaque" width="10px" height="10px">
                                                                 <span>Mode attaque</span>
                                                             {% else %}
-                                                                <img src="{{ PATH_IMAGES }}img/interface/stance_defend.gif"
-                                                                     class="me-1 stance"
-                                                                     data-bs-toggle="tooltip"
-                                                                     data-bs-title="Mode riposte"
-                                                                     width="10px"
-                                                                     height="10px">
+                                                                <img src="{{ PATH_IMAGES }}img/interface/stance_defend.gif" class="me-1 stance" data-bs-toggle="tooltip" data-bs-title="Mode riposte" width="10px" height="10px">
                                                                 <span>Mode riposte</span>
                                                             {% endif %}
                                                         </div>
@@ -461,9 +452,9 @@
                                 function fillDest(obj) {
                                 
                                     var dest = obj.selectedIndex;
-                                    setval("g",tab[dest][0]);
-                                    setval("s",tab[dest][1]);
-                                    setval("p",tab[dest][2]);	
+                                    setVal("g",tab[dest][0]);
+                                    setVal("s",tab[dest][1]);
+                                    setVal("p",tab[dest][2]);	
                                 }
                                 
                                 var index = 0
@@ -502,19 +493,19 @@
 
                                 function updatetravel() {
                                     window.setTimeout("updatetravel()", 100);
-                                    var to_g = getval("g");
+                                    var to_g = getVal("g");
 
-                                    if(to_g < 0){ to_g = 1; setval("g", 1); }
+                                    if(to_g < 0){ to_g = 1; setVal("g", 1); }
 
-                                    var to_s = getval("s");
+                                    var to_s = getVal("s");
 
-                                    if(to_s < 0){ to_s = 1; setval("s", 1); }
-                                    if(to_s > 99){ to_s = 99; setval("s", 99); }
+                                    if(to_s < 0){ to_s = 1; setVal("s", 1); }
+                                    if(to_s > 99){ to_s = 99; setVal("s", 99); }
 
-                                    var to_p = getval("p");
+                                    var to_p = getVal("p");
 
-                                    if(to_p < 0){ to_p = 1; setval("p", 1); }
-                                    if(to_p > 25){ to_p = 25; setval("p", 25); }
+                                    if(to_p < 0){ to_p = 1; setVal("p", 1); }
+                                    if(to_p > 25){ to_p = 25; setVal("p", 25); }
 
 
                                     var oTravelCost = document.getElementById("travel_cost");
@@ -662,21 +653,21 @@
                                 <script>
                                     function load_all(o,h,s,so,w) {
                                     
-                                        setval('load_ore',o);
-                                        setval('load_hydrocarbon',h);
-                                        setval('load_scientists',s);
-                                        setval('load_soldiers',so);
-                                        setval('load_workers',w);
+                                        setVal('load_ore',o);
+                                        setVal('load_hydrocarbon',h);
+                                        setVal('load_scientists',s);
+                                        setVal('load_soldiers',so);
+                                        setVal('load_workers',w);
                                         return false;
                                     }
 
                                     function unload_all(o,h,s,so,w) {
                                     
-                                        setval('unload_ore',o);
-                                        setval('unload_hydrocarbon',h);
-                                        setval('unload_scientists',s);
-                                        setval('unload_soldiers',so);
-                                        setval('unload_workers',w);
+                                        setVal('unload_ore',o);
+                                        setVal('unload_hydrocarbon',h);
+                                        setVal('unload_scientists',s);
+                                        setVal('unload_soldiers',so);
+                                        setVal('unload_workers',w);
                                         return false;
                                     }
                                     {% if unload %}
@@ -717,14 +708,14 @@
                                                             </div>
                                                             <div class="col-auto d-flex align-items-center">
                                                                 <input type="number" class="form-control" min="0" name="unload_ore" id="unload_ore" value="0" size="6"/>
-                                                                <a href="#" class="ms-2" onclick="setval('unload_ore', {{ fleet.cargo_ore }})">max</a>
+                                                                <a href="#" class="ms-2" onclick="setVal('unload_ore', {{ fleet.cargo_ore }})">max</a>
                                                             </div>
                                                             <div class="col-3 text-end">
                                                                 {{ planet.ore|intcomma }}
                                                             </div>
                                                             <div class="col-auto d-flex align-items-center">
                                                                 <input type="number" class="form-control" min="0" name="load_ore" id="load_ore" value="0" size="6"/>
-                                                                <a href="#" class="ms-2" onclick="setval('load_ore', {{ planet.ore }})">max</a>
+                                                                <a href="#" class="ms-2" onclick="setVal('load_ore', {{ planet.ore }})">max</a>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -739,14 +730,14 @@
                                                             </div>
                                                             <div class="col-auto d-flex align-items-center">
                                                                 <input type="number" class="form-control" min="0" name="unload_hydrocarbon" id="unload_hydrocarbon" value="0" size="6"/>
-                                                                <a href="#" class="ms-2" onclick="setval('unload_hydrocarbon', {{ fleet.cargo_hydrocarbon }})">max</a>
+                                                                <a href="#" class="ms-2" onclick="setVal('unload_hydrocarbon', {{ fleet.cargo_hydrocarbon }})">max</a>
                                                             </div>
                                                             <div class="col-3 text-end">
                                                                 {{ planet.hydrocarbon|intcomma }}
                                                             </div>
                                                             <div class="col-auto d-flex align-items-center">
                                                                 <input type="number" class="form-control" min="0" name="load_hydrocarbon" id="load_hydrocarbon" value="0" size="6"/>
-                                                                <a href="#" class="ms-2" onclick="setval('load_hydrocarbon', {{ planet.hydrocarbon }})">max</a>
+                                                                <a href="#" class="ms-2" onclick="setVal('load_hydrocarbon', {{ planet.hydrocarbon }})">max</a>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -761,14 +752,14 @@
                                                             </div>
                                                             <div class="col-auto d-flex align-items-center">
                                                                 <input type="number" class="form-control" min="0" name="unload_scientists" id="unload_scientists" value="0" size="6"/>
-                                                                <a href="#" class="ms-2" onclick="setval('unload_scientists', {{ fleet.cargo_scientists }})">max</a>
+                                                                <a href="#" class="ms-2" onclick="setVal('unload_scientists', {{ fleet.cargo_scientists }})">max</a>
                                                             </div>
                                                             <div class="col-3 text-end">
                                                                 {{ planet.scientists|intcomma }}
                                                             </div>
                                                             <div class="col-auto d-flex align-items-center">
                                                                 <input type="number" class="form-control" min="0" name="load_scientists" id="load_scientists" value="0" size="6"/>
-                                                                <a href="#" class="ms-2" onclick="setval('load_scientists', {{ planet.scientists }})">max</a>
+                                                                <a href="#" class="ms-2" onclick="setVal('load_scientists', {{ planet.scientists }})">max</a>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -783,14 +774,14 @@
                                                             </div>
                                                             <div class="col-auto d-flex align-items-center">
                                                                 <input type="number" class="form-control" min="0" name="unload_soldiers" id="unload_soldiers" value="0" size="6"/>
-                                                                <a href="#" class="ms-2" onclick="setval('unload_soldiers', {{ fleet.cargo_soldiers }})">max</a>
+                                                                <a href="#" class="ms-2" onclick="setVal('unload_soldiers', {{ fleet.cargo_soldiers }})">max</a>
                                                             </div>
                                                             <div class="col-3 text-end">
                                                                 {{ planet.soldiers|intcomma }}
                                                             </div>
                                                             <div class="col-auto d-flex align-items-center">
                                                                 <input type="number" class="form-control" min="0" name="load_soldiers" id="load_soldiers" value="0" size="6"/>
-                                                                <a href="#" class="ms-2" onclick="setval('load_soldiers', {{ planet.soldiers }})">max</a>
+                                                                <a href="#" class="ms-2" onclick="setVal('load_soldiers', {{ planet.soldiers }})">max</a>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -805,14 +796,14 @@
                                                             </div>
                                                             <div class="col-auto d-flex align-items-center">
                                                                 <input type="number" class="form-control" min="0" name="unload_workers" id="unload_workers" value="0" size="6"/>
-                                                                <a href="#" class="ms-2" onclick="setval('unload_workers', {{ fleet.cargo_workers }})">max</a>
+                                                                <a href="#" class="ms-2" onclick="setVal('unload_workers', {{ fleet.cargo_workers }})">max</a>
                                                             </div>
                                                             <div class="col-3 text-end">
                                                                 {{ planet.workers|intcomma }}
                                                             </div>
                                                             <div class="col-auto d-flex align-items-center">
                                                                 <input type="number" class="form-control" min="0" name="load_workers" id="load_workers" value="0" size="6"/>
-                                                                <a href="#" class="ms-2" onclick="setval('load_workers', {{ planet.workers }})">max</a>
+                                                                <a href="#" class="ms-2" onclick="setVal('load_workers', {{ planet.workers }})">max</a>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -865,14 +856,14 @@
                                                             </div>
                                                             <div class="col-auto d-flex align-items-center">
                                                                 <input type="number" class="form-control" min="0" name="unload_ore" id="unload_ore" value="0" size="6"/>
-                                                                <a href="#" class="ms-2" onclick="setval('unload_ore', {{ fleet.cargo_ore }})">max</a>
+                                                                <a href="#" class="ms-2" onclick="setVal('unload_ore', {{ fleet.cargo_ore }})">max</a>
                                                             </div>
                                                             <div class="col-3 text-end">
                                                                 {{ planet.ore|intcomma }}
                                                             </div>
                                                             <div class="col-auto d-flex align-items-center">
                                                                 <input type="number" class="form-control" min="0" name="load_ore" id="load_ore" value="0" size="6"/>
-                                                                <a href="#" class="ms-2" onclick="setval('load_ore', {{ planet.ore }})">max</a>
+                                                                <a href="#" class="ms-2" onclick="setVal('load_ore', {{ planet.ore }})">max</a>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -887,14 +878,14 @@
                                                             </div>
                                                             <div class="col-auto d-flex align-items-center">
                                                                 <input type="number" class="form-control" min="0" name="unload_hydrocarbon" id="unload_hydrocarbon" value="0" size="6"/>
-                                                                <a href="#" class="ms-2" onclick="setval('unload_hydrocarbon', {{ fleet.cargo_hydrocarbon }})">max</a>
+                                                                <a href="#" class="ms-2" onclick="setVal('unload_hydrocarbon', {{ fleet.cargo_hydrocarbon }})">max</a>
                                                             </div>
                                                             <div class="col-3 text-end">
                                                                 {{ planet.hydrocarbon|intcomma }}
                                                             </div>
                                                             <div class="col-auto d-flex align-items-center">
                                                                 <input type="number" class="form-control" min="0" name="load_hydrocarbon" id="load_hydrocarbon" value="0" size="6"/>
-                                                                <a href="#" class="ms-2" onclick="setval('load_hydrocarbon', {{ planet.hydrocarbon }})">max</a>
+                                                                <a href="#" class="ms-2" onclick="setVal('load_hydrocarbon', {{ planet.hydrocarbon }})">max</a>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -909,14 +900,14 @@
                                                             </div>
                                                             <div class="col-auto d-flex align-items-center">
                                                                 <input type="number" class="form-control" min="0" name="unload_scientists" id="unload_scientists" value="0" size="6"/>
-                                                                <a href="#" class="ms-2" onclick="setval('unload_scientists', {{ fleet.cargo_scientists }})">max</a>
+                                                                <a href="#" class="ms-2" onclick="setVal('unload_scientists', {{ fleet.cargo_scientists }})">max</a>
                                                             </div>
                                                             <div class="col-3 text-end">
                                                                 {{ planet.scientists|intcomma }}
                                                             </div>
                                                             <div class="col-auto d-flex align-items-center">
                                                                 <input type="number" class="form-control" min="0" name="load_scientists" id="load_scientists" value="0" size="6"/>
-                                                                <a href="#" class="ms-2" onclick="setval('load_scientists', {{ planet.scientists }})">max</a>
+                                                                <a href="#" class="ms-2" onclick="setVal('load_scientists', {{ planet.scientists }})">max</a>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -931,14 +922,14 @@
                                                             </div>
                                                             <div class="col-auto d-flex align-items-center">
                                                                 <input type="number" class="form-control" min="0" name="unload_soldiers" id="unload_soldiers" value="0" size="6"/>
-                                                                <a href="#" class="ms-2" onclick="setval('unload_soldiers', {{ fleet.cargo_soldiers }})">max</a>
+                                                                <a href="#" class="ms-2" onclick="setVal('unload_soldiers', {{ fleet.cargo_soldiers }})">max</a>
                                                             </div>
                                                             <div class="col-3 text-end">
                                                                 {{ planet.soldiers|intcomma }}
                                                             </div>
                                                             <div class="col-auto d-flex align-items-center">
                                                                 <input type="number" class="form-control" min="0" name="load_soldiers" id="load_soldiers" value="0" size="6"/>
-                                                                <a href="#" class="ms-2" onclick="setval('load_soldiers', {{ planet.soldiers }})">max</a>
+                                                                <a href="#" class="ms-2" onclick="setVal('load_soldiers', {{ planet.soldiers }})">max</a>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -953,14 +944,14 @@
                                                             </div>
                                                             <div class="col-auto d-flex align-items-center">
                                                                 <input type="number" class="form-control" min="0" name="unload_workers" id="unload_workers" value="0" size="6"/>
-                                                                <a href="#" class="ms-2" onclick="setval('unload_workers', {{ fleet.cargo_workers }})">max</a>
+                                                                <a href="#" class="ms-2" onclick="setVal('unload_workers', {{ fleet.cargo_workers }})">max</a>
                                                             </div>
                                                             <div class="col-3 text-end">
                                                                 {{ planet.workers|intcomma }}
                                                             </div>
                                                             <div class="col-auto d-flex align-items-center">
                                                                 <input type="number" class="form-control" min="0" name="load_workers" id="load_workers" value="0" size="6"/>
-                                                                <a href="#" class="ms-2" onclick="setval('load_workers', {{ planet.workers }})">max</a>
+                                                                <a href="#" class="ms-2" onclick="setVal('load_workers', {{ planet.workers }})">max</a>
                                                             </div>
                                                         </div>
                                                     </div>

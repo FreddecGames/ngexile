@@ -55,9 +55,12 @@ REGISTRATION_OPEN = True
 LOGIN_REDIRECT_URL = '/lobby'
 LOGOUT_REDIRECT_URL = '/'
 
+SITE_ID = 1
+
 
 INSTALLED_APPS = [
     'django.contrib.admin',
+    'django.contrib.sites',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -138,8 +141,8 @@ PASSWORD_HASHERS = [
 ]
 
 
-LANGUAGE_CODE = 'en-us'
-TIME_ZONE = 'UTC'
+LANGUAGE_CODE = 'fr-fr'
+TIME_ZONE = 'CET'
 USE_I18N = True
 USE_L10N = True
 USE_TZ = True

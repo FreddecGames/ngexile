@@ -1,3 +1,4 @@
+{% load i18n %}
 {% load humanize %}
 
 <!doctype html>
@@ -16,14 +17,13 @@
               
         <script type="text/javascript" src="/static/js/vendor-fontawesome.js"></script>
         <script type="text/javascript" src="/static/s03/scripts/common.js?v=1"></script>
-        <script type="text/javascript" src="/static/s03/scripts/ajax.js?v=1"></script>
         <script type="text/javascript" src="/static/s03/scripts/planet.js?v=1"></script>
         <script type="text/javascript" src="/static/s03/scripts/time.js?v=1"></script>
         
     </head>
     <body>
     
-        <div id="hint" onclick="donothide(event)">
+        <div id="hint" onclick="doNotHide(event)">
             <div class="rtop">
                 <b class="r1"></b><b class="r2"></b><b class="r3"></b><b class="r4"></b>
             </div>
@@ -243,7 +243,7 @@
                     </div>                    
                 </div>
                 <div id="content">
-                    <div id="page" class="scroll-content">
+                    <div id="page">
                     
                         {% if header %}
                         

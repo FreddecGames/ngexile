@@ -1,15 +1,17 @@
 {% extends "base.html" %}
+
 {% load i18n %}
 
 {% block content %}
-    <div class="p-3" style="width:512px; height:340px;">
-        <div class="w-100 h-100 card">
+    
+    <div class="col-12">
+        <div class="card">
             <div class="card-header">
                 <div class="row gx-2 align-items-center">
                     <div class="col">
                         <div class="row gx-2 align-items-center">
                             <div class="col-auto">
-                                <img src="/static/img/logo.png" width="24px" class="rounded" />
+                                <img src="/static/img/interface/logo.png" width="24px" class="rounded" />
                             </div>
                             <div class="col-auto">
                                 <span class="fs-6">NG Exile</span>
@@ -17,49 +19,36 @@
                         </div>
                     </div>
                     <div class="col-auto">
-                        <div class="nav nav-pills">
-                            <div class="nav-item"><button type="button" class="nav-link active" data-bs-toggle="tab" data-bs-target="#servers-pane">{% translate "Servers" %}</button></div>
-                            <div class="nav-item"><button type="button" class="nav-link" data-bs-toggle="tab" data-bs-target="#logout-pane">{% translate "Sign Out" %}</button></div>
-                        </div>
+                        <span class="fs-6 text-white">{% translate "Serveurs" %}</span>
                     </div>
                 </div>
             </div>
-            <div class="flex-grow-1 tab-content card-body">
-                <div id="servers-pane" class="h-100 tab-pane fade active show">
-                    <div class="h-100 w-100 d-flex align-items-center justify-content-center">
-                        <div class="row g-2">
-                            <div class="col-12 text-center">
-                                <span class="text-white">{% translate "Select a server to join" %}</span>
-                            </div>
-                            <div class="col-12">
-                                <a href="/s03/" class="w-100 btn btn-secondary text-start">
-                                    <div class="row g-2 align-items-center">
-                                        <div class="col">
-                                            <div class="fs-6 text-white">s03</div>
-                                            <div class="small text-normal">{% translate "Original server with original bugs and original design" %}</div>
-                                        </div>
-                                        <div class="col-auto">
-                                            <i class="fa-fw fas fa-chevron-right"></i>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
+            <div class="card-body">
+                <div class="row gx-2 gy-3">
+                    <div class="col-12 text-center">
+                        <span class="text-normal">{% translate "Sélectionner un serveur pour jouer" %}</span>
                     </div>
-                </div>
-                <div id="logout-pane" class="h-100 tab-pane fade">
-                    <div class="h-100 w-100 d-flex align-items-center justify-content-center">
-                        <div class="row g-2">
-                            <div class="col-12 text-center">
-                                <span class="text-white">{% translate "Are you sure?" %}</span>
+                    <div class="col-12">
+                        <a href="/s03/" class="w-100 btn btn-secondary text-start">
+                            <div class="row g-2 align-items-center">
+                                <div class="col-auto">
+                                    <div class="fs-6 text-white">s03</div>
+                                </div>
+                                <div class="col text-end">
+                                    <div class="small text-normal">{% translate "Serveur avec le code d'origine refactoré" %}</div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fa-fw fas fa-chevron-right"></i>
+                                </div>
                             </div>
-                            <div class="col-12 text-center">
-                                <a href="/accounts/logout/" class="btn btn-danger">{% translate "Sign Out" %}</a>
-                            </div>
-                        </div>
+                        </a>
+                    </div>
+                    <div class="col-12 text-center">
+                        <a href="/accounts/logout/" class="btn btn-danger">{% translate "Déconnexion" %}</a>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
 {% endblock %}

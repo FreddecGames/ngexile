@@ -48,8 +48,8 @@ class View(GlobalView):
         
         elif action == 'kick' and self.hasRight('can_kick_player'):
         
-            self.username = request.GET.get('name').strip()
-            dbQuery('SELECT sp_alliance_kick_member(' + str(self.userId) + ',' + dosql(self.username) + ')')
+            name = request.POST.get('name', '').strip()
+            dbQuery('SELECT sp_alliance_kick_member(' + str(self.userId) + ',' + dosql(name) + ')')
             
         #---
         

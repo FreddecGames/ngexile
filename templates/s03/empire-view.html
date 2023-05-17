@@ -1,6 +1,7 @@
 {% extends "s03/_layout.html" %}
 
 {% load tz %}
+{% load i18n %}
 {% load humanize %}
 {% load bbcode_tags %}
 
@@ -139,52 +140,50 @@
                         <div class="card-header">
                             <span class="fs-6">Mouvements en cours</span>
                         </div>
-                        <div class="list-group list-group-flush">
-                            {% for fleet in fleets %}
-                                <div class="list-group-item">
-                                    <div class="row gx-3">
-                                        <div class="col">
-                                            {% if fleet.owner_relation == 2 %}
-                                                {% if fleet.attackonsight %}
-                                                    <img src="{{ PATH_IMAGES }}img/interface/stance_attack.gif"
-                                                         class="stance"
-                                                         data-bs-toggle="tooltip" data-bs-title="Mode attaque"
-                                                         width="10"
-                                                         height="10">
-                                                {% else %}
-                                                    <img src="{{ PATH_IMAGES }}img/interface/stance_defend.gif"
-                                                         class="stance"
-                                                         data-bs-toggle="tooltip" data-bs-title="Mode riposte"
-                                                         width="10"
-                                                         height="10">
-                                                {% endif %}
-                                                <a href="/s03/fleet-view/?id={{ fleet.id }}" class="text-info" data-bs-toggle="tooltip" data-bs-title="Voir flotte">{{ fleet.name }}</a>
-                                            {% elif fleet.owner_relation == 1 %}
-                                                <a href="/s03/mail-new/?to={{ fleet.name }}" class="text-success" data-bs-toggle="tooltip" data-bs-title="Contacter propriétaire">{{ fleet.owner_name }}</a>
-                                            {% elif fleet.owner_relation == 0 %}
-                                                <a href="/s03/mail-new/?to={{ fleet.name }}" class="text-friend" data-bs-toggle="tooltip" data-bs-title="Contacter propriétaire">{{ fleet.owner_name }}</a>
+                        {% for fleet in fleets %}
+                            <div class="card-body">
+                                <div class="row gx-3">
+                                    <div class="col">
+                                        {% if fleet.owner_relation == 2 %}
+                                            {% if fleet.attackonsight %}
+                                                <img src="{{ PATH_IMAGES }}img/interface/stance_attack.gif"
+                                                     class="stance"
+                                                     data-bs-toggle="tooltip" data-bs-title="Mode attaque"
+                                                     width="10"
+                                                     height="10">
                                             {% else %}
-                                                <a href="/s03/profile-view/?name={{ fleet.owner_name }}" class="text-danger" data-bs-toggle="tooltip" data-bs-title="Voir profil">{{ fleet.owner_name }}</a>
+                                                <img src="{{ PATH_IMAGES }}img/interface/stance_defend.gif"
+                                                     class="stance"
+                                                     data-bs-toggle="tooltip" data-bs-title="Mode riposte"
+                                                     width="10"
+                                                     height="10">
                                             {% endif %}
-                                            <span class="ms-2"><script>sig({{ fleet.signature }})</script></span>
-                                        </div>
-                                        <div class="col-auto">
-                                            {% if fleet.f_planetid %}<script>putplanet("{{fleet.f_planetid}}", "{{fleet.f_planetname}}", "{{fleet.f_g}}", "{{fleet.f_s}}", "{{fleet.f_p}}",{{fleet.f_relation}});</script>
-                                            {% else %}<span class="text-normal">???</span>{% endif %}
-                                            <i class="fa-fw fas fa-long-arrow-alt-right mx-2 text-normal"></i>
-                                            <script>putplanet("{{fleet.t_planetid }}", "{{fleet.t_planetname}}", "{{fleet.t_g}}", "{{fleet.t_s}}", "{{fleet.t_p}}",{{fleet.t_relation}});</script>
-                                        </div>
-                                        <div class="col-auto text-end" style="width:75px;">
-                                            <span class="text-yellow"><script>putcountdown1({{fleet.time}}, "Terminé", "/s03/overview/");</script></span>
-                                        </div>
+                                            <a href="/s03/fleet-view/?id={{ fleet.id }}" class="text-info" data-bs-toggle="tooltip" data-bs-title="Voir flotte">{{ fleet.name }}</a>
+                                        {% elif fleet.owner_relation == 1 %}
+                                            <a href="/s03/mail-new/?to={{ fleet.name }}" class="text-success" data-bs-toggle="tooltip" data-bs-title="Contacter propriétaire">{{ fleet.owner_name }}</a>
+                                        {% elif fleet.owner_relation == 0 %}
+                                            <a href="/s03/mail-new/?to={{ fleet.name }}" class="text-friend" data-bs-toggle="tooltip" data-bs-title="Contacter propriétaire">{{ fleet.owner_name }}</a>
+                                        {% else %}
+                                            <a href="/s03/profile-view/?name={{ fleet.owner_name }}" class="text-danger" data-bs-toggle="tooltip" data-bs-title="Voir profil">{{ fleet.owner_name }}</a>
+                                        {% endif %}
+                                        <span class="ms-2"><script>sig({{ fleet.signature }})</script></span>
+                                    </div>
+                                    <div class="col-auto">
+                                        {% if fleet.f_planetid %}<script>putplanet("{{fleet.f_planetid}}", "{{fleet.f_planetname}}", "{{fleet.f_g}}", "{{fleet.f_s}}", "{{fleet.f_p}}",{{fleet.f_relation}});</script>
+                                        {% else %}<span class="text-normal">???</span>{% endif %}
+                                        <i class="fa-fw fas fa-long-arrow-alt-right mx-2 text-normal"></i>
+                                        <script>putplanet("{{fleet.t_planetid }}", "{{fleet.t_planetname}}", "{{fleet.t_g}}", "{{fleet.t_s}}", "{{fleet.t_p}}",{{fleet.t_relation}});</script>
+                                    </div>
+                                    <div class="col-auto text-end" style="width:75px;">
+                                        <span class="text-yellow"><script>putcountdown1({{fleet.time}}, "Terminé", "/s03/overview/");</script></span>
                                     </div>
                                 </div>
-                            {% empty %}
-                                <div class="list-group-item text-center">
-                                    <span class="text-normal">Aucun mouvement en cours</span>
-                                </div>
-                            {% endfor %}
-                        </div>
+                            </div>
+                        {% empty %}
+                            <div class="card-body text-center">
+                                <span class="text-normal">Aucun mouvement en cours</span>
+                            </div>
+                        {% endfor %}
                     </div>
                 </div>
                     
@@ -196,11 +195,11 @@
                         <div class="card-body">
                             {% if research %}
                                 <div class="row gx-3">
-                                    <div class="col"><a href="/s03/research/#{{ research.researchid }}" data-bs-toggle="tooltip" data-bs-title="Voir laboratoire">{{ research.label }}</a></div>
-                                    <div class="col-auto"><span class="text-yellow"><script>putcountdown1({{ research.time }}, "Terminé", "/s03/research/");</script></span></div>
+                                    <div class="col"><a href="/s03/tech-list/#{{ research.researchid }}" data-bs-toggle="tooltip" data-bs-title="Voir laboratoire">{{ research.label }}</a></div>
+                                    <div class="col-auto"><span class="text-yellow"><script>putcountdown1({{ research.time }}, "Terminé", "/s03/tech-list/");</script></span></div>
                                 </div>
                             {% else %}
-                                <a href="/s03/research/" data-bs-toggle="tooltip" data-bs-title="Voir laboratoire">Aucune recherche en cours</a>
+                                <a href="/s03/tech-list/" data-bs-toggle="tooltip" data-bs-title="Voir laboratoire">Aucune recherche en cours</a>
                             {% endif %}
                         </div>
                     </div>
@@ -211,36 +210,34 @@
                         <div class="card-header">
                             <span class="fs-6">Bâtiments en construction</span>
                         </div>
-                        <div class="list-group list-groups-flush">
-                            {% for item in constructionyards %}
-                                <div class="list-group-item">
-                                    <div class="row gx-3">
-                                        <div class="col-auto" style="width:55px;">
-                                            <small class="text-normal">{{ item.galaxy }}.{{ item.sector }}.{{ item.planet }}</small>
-                                        </div>
-                                        <div class="col">
-                                            <a href="/s03/planet-buildings/?planet={{ item.planetid }}" data-bs-toggle="tooltip" data-bs-title="Voir bâtiments">{{ item.planetname }}</a>
-                                        </div>
-                                        <div class="col-auto">
-                                            <div class="row g-1 flex-column">
-                                                {% for building in item.buildings %}
-                                                    <div class="col-12">
-                                                        <div class="row gx-3 justify-content-end">
-                                                            <div class="col text-end"><span class="{% if building.destroying %}text-danger{% endif %}">{{ building.building }}</span></div>
-                                                            <div class="col-auto text-end" style="width:75px;"><span class="text-yellow"><script>putcountdown1({{building.time}}, "Terminé", "/s03/planet-buildings/?planet={{item.planetid}}#{{building.buildingid}}");</script></span></div>
-                                                        </div>
+                        {% for item in constructionyards %}
+                            <div class="card-body">
+                                <div class="row gx-3">
+                                    <div class="col-auto" style="width:55px;">
+                                        <small class="text-normal">{{ item.galaxy }}.{{ item.sector }}.{{ item.planet }}</small>
+                                    </div>
+                                    <div class="col">
+                                        <a href="/s03/planet-buildings/?planet={{ item.planetid }}" data-bs-toggle="tooltip" data-bs-title="Voir bâtiments">{{ item.planetname }}</a>
+                                    </div>
+                                    <div class="col-auto">
+                                        <div class="row g-1 flex-column">
+                                            {% for building in item.buildings %}
+                                                <div class="col-12">
+                                                    <div class="row gx-3 justify-content-end">
+                                                        <div class="col text-end"><span class="{% if building.destroying %}text-danger{% endif %}">{{ building.building }}</span></div>
+                                                        <div class="col-auto text-end" style="width:75px;"><span class="text-yellow"><script>putcountdown1({{building.time}}, "Terminé", "/s03/planet-buildings/?planet={{item.planetid}}#{{building.buildingid}}");</script></span></div>
                                                     </div>
-                                                {% empty %}
-                                                    <div class="col-12 text-end">
-                                                        <span class="text-normal">Aucun bâtiment en cours</span>
-                                                    </div>
-                                                {% endfor %}
-                                            </div>
+                                                </div>
+                                            {% empty %}
+                                                <div class="col-12 text-end">
+                                                    <span class="text-normal">Aucun bâtiment en cours</span>
+                                                </div>
+                                            {% endfor %}
                                         </div>
                                     </div>
                                 </div>
-                            {% endfor %}
-                        </div>
+                            </div>
+                        {% endfor %}
                     </div>
                 </div>
                         
@@ -250,9 +247,8 @@
                             <div class="card-header">
                                 <span class="fs-6">Vaisseaux en construction</span>
                             </div>
-                            <div class="list-group list-groups-flush">
-                                {% for item in shipyards %}
-                                <div class="list-group-item">
+                            {% for item in shipyards %}
+                                <div class="card-body">
                                     <div class="row gx-3">
                                         <div class="col-auto" style="width:55px;">
                                             <small class="text-normal">{{ item.galaxy }}.{{ item.sector }}.{{ item.planet }}</small>
@@ -277,8 +273,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                {% endfor %}
-                            </div>
+                            {% endfor %}
                         </div>
                     </div>
                 {% endif %}

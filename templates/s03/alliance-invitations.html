@@ -1,5 +1,6 @@
 {% extends "s03/_layout.html" %}
 
+{% load i18n %}
 {% load humanize %}
 
 {% block content %}
@@ -15,46 +16,44 @@
                         <div class="card-header">
                             <span class="fs-6">Alliances nous invitant à les rejoindre</span>
                         </div>
-                        <div class="list-group list-group-flush">
-                            {% for invitation in invitations %}
-                                <div class="list-group-item">
-                                    <div class="row gx-3 align-items-center">
-                                        <div class="col"><a href="/s03/alliance-view/?tag={{ invitation.tag }}" data-bs-toggle="tooltip" data-bs-title="Voir alliance">[{{ invitation.tag }}] {{ invitation.name }}</a></div>
-                                        <div class="col-auto">{{ invitation.username }}</div>
-                                        <div class="col-auto">{{ invitation.created }}</div>
-                                        <div class="col-2 text-end">
-                                            {% if cant_accept %}<span class="text-danger">Déjà dans une alliance</span>
-                                            {% elif cant_join %}<span class="text-danger">Impossible de rejoindre</span>
-                                            {% else %}
-                                                <form method="post">
-                                                    {% csrf_token %}
-                                                    <input type="hidden" name="action" value="accept" />
-                                                    <input type="hidden" name="tag" value="{{ invitation.tag }}" />
-                                                    <button type="submit" class="btn btn-primary">Accepter</button>
-                                                </form>
-                                            {% endif %}
-                                        </div>
-                                        <div class="col-auto">
+                        {% for invitation in invitations %}
+                            <div class="card-body">
+                                <div class="row gx-3 align-items-center">
+                                    <div class="col"><a href="/s03/alliance-view/?tag={{ invitation.tag }}" data-bs-toggle="tooltip" data-bs-title="Voir alliance">[{{ invitation.tag }}] {{ invitation.name }}</a></div>
+                                    <div class="col-auto">{{ invitation.username }}</div>
+                                    <div class="col-auto">{{ invitation.created }}</div>
+                                    <div class="col-2 text-end">
+                                        {% if cant_accept %}<span class="text-danger">Déjà dans une alliance</span>
+                                        {% elif cant_join %}<span class="text-danger">Impossible de rejoindre</span>
+                                        {% else %}
                                             <form method="post">
                                                 {% csrf_token %}
-                                                <input type="hidden" name="action" value="decline" />
+                                                <input type="hidden" name="action" value="accept" />
                                                 <input type="hidden" name="tag" value="{{ invitation.tag }}" />
-                                                <button type="submit" class="btn btn-danger">Refuser</button>
+                                                <button type="submit" class="btn btn-primary">Accepter</button>
                                             </form>
-                                        </div>
+                                        {% endif %}
+                                    </div>
+                                    <div class="col-auto">
+                                        <form method="post">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="action" value="decline" />
+                                            <input type="hidden" name="tag" value="{{ invitation.tag }}" />
+                                            <button type="submit" class="btn btn-danger">Refuser</button>
+                                        </form>
                                     </div>
                                 </div>
-                            {% empty %}
-                                <div class="list-group-item text-center">
-                                    <span class="text-normal">Aucune invitation</span>
-                                </div>
-                            {% endfor %}
-                            {% if cant_join %}
-                                <div class="list-group-item text-center">
-                                    <span class="text-danger">Vous êtes actuellement en train de quitter votre ancienne alliance, il vous est actuellement impossible de rejoindre une autre alliance.</span>
-                                </div>
-                            {% endif %}
-                        </div>
+                            </div>
+                        {% empty %}
+                            <div class="card-body text-center">
+                                <span class="text-normal">Aucune invitation</span>
+                            </div>
+                        {% endfor %}
+                        {% if cant_join %}
+                            <div class="card-body text-center">
+                                <span class="text-danger">Vous êtes actuellement en train de quitter votre ancienne alliance, il vous est actuellement impossible de rejoindre une autre alliance.</span>
+                            </div>
+                        {% endif %}
                     </div>
                 </div>
                 

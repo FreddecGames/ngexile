@@ -1,5 +1,6 @@
 {% extends "s03/_layout.html" %}
 
+{% load i18n %}
 {% load humanize %}
 
 {% block content %}
@@ -30,68 +31,66 @@
                                 <div class="col-3"></div>
                             </div>
                         </div>
-                        <div class="list-group list-group-flush">
-                            {% for nap in naps %}
-                                <div class="list-group-item">
-                                    <div class="row gx-3 align-items-center">
-                                        <div class="col-auto">
-                                            {{ forloop.counter }}
-                                            <span class="text-normal">.</span>
-                                        </div>
-                                        <div class="col">
-                                            <a href="/s03/alliance-view/?tag={{ nap.tag }}" data-bs-toggle="tooltip" data-bs-title="Voir alliance">[{{ nap.tag }}] {{ nap.name }}</a>
-                                        </div>
-                                        <div class="col-auto">
-                                            <span class="text-normal">{{ nap.created }}</span>
-                                        </div>
-                                        {% if not nap.breaking_time %}
-                                            <div class="col-2 text-end">
-                                                {% if can_create %}
-                                                    <form method="post">
-                                                        {% csrf_token %}
-                                                        <input type="hidden" name="action" value="sharelocs" />
-                                                        <input type="hidden" name="tag" value="{{ nap.tag }}" />
-                                                        <button type="submit" class="btn btn-link p-0">{% if nap.share_locs %}Oui{% else %}Non{% endif %}</button>
-                                                    </form>
-                                                {% else %}{% if nap.share_locs %}Oui{% else %}Non{% endif %}
-                                                {% endif %}
-                                            </div>
-                                            <div class="col-2 text-end">
-                                                {% if can_create %}
-                                                    <form method="post">
-                                                        {% csrf_token %}
-                                                        <input type="hidden" name="action" value="shareradars" />
-                                                        <input type="hidden" name="tag" value="{{ nap.tag }}" />
-                                                        <button type="submit" class="btn btn-link p-0">{% if nap.share_radars %}Oui{% else %}Non{% endif %}</button>
-                                                    </form>
-                                                {% else %}{% if nap.share_radars %}Oui{% else %}Non{% endif %}
-                                                {% endif %}
-                                            </div>
-                                        {% endif %}
-                                        <div class="col-3 text-end">
-                                            {% if nap.breaking_time %}<span class="text-yellow"><script>putcountdown1({{ nap.breaking_time }}, "Rompu", "?")</script></span>
-                                            {% elif nap.break_interval %}
-                                                <small class="text-normal me-1">délai</small>
-                                                <span class="me-3"><script>document.write(formattime({{ nap.break_interval }}))</script></span>
-                                                {% if can_break %}
-                                                    <form method="post" class="d-inline" onsubmit="return confirmBreakPact('{{ nap.tag }}','{{ nap.name }}')">
-                                                        {% csrf_token %}
-                                                        <input type="hidden" name="action" value="break" />
-                                                        <input type="hidden" name="tag" value="{{ nap.tag }}" />
-                                                        <button type="submit" class="btn btn-link p-0">Rompre</button>
-                                                    </form>
-                                                {% else %}Rompu
-                                                {% endif %}
+                        {% for nap in naps %}
+                            <div class="card-body">
+                                <div class="row gx-3 align-items-center">
+                                    <div class="col-auto">
+                                        {{ forloop.counter }}
+                                        <span class="text-normal">.</span>
+                                    </div>
+                                    <div class="col">
+                                        <a href="/s03/alliance-view/?tag={{ nap.tag }}" data-bs-toggle="tooltip" data-bs-title="Voir alliance">[{{ nap.tag }}] {{ nap.name }}</a>
+                                    </div>
+                                    <div class="col-auto">
+                                        <span class="text-normal">{{ nap.created }}</span>
+                                    </div>
+                                    {% if not nap.breaking_time %}
+                                        <div class="col-2 text-end">
+                                            {% if can_create %}
+                                                <form method="post">
+                                                    {% csrf_token %}
+                                                    <input type="hidden" name="action" value="sharelocs" />
+                                                    <input type="hidden" name="tag" value="{{ nap.tag }}" />
+                                                    <button type="submit" class="btn btn-link p-0">{% if nap.share_locs %}Oui{% else %}Non{% endif %}</button>
+                                                </form>
+                                            {% else %}{% if nap.share_locs %}Oui{% else %}Non{% endif %}
                                             {% endif %}
                                         </div>
+                                        <div class="col-2 text-end">
+                                            {% if can_create %}
+                                                <form method="post">
+                                                    {% csrf_token %}
+                                                    <input type="hidden" name="action" value="shareradars" />
+                                                    <input type="hidden" name="tag" value="{{ nap.tag }}" />
+                                                    <button type="submit" class="btn btn-link p-0">{% if nap.share_radars %}Oui{% else %}Non{% endif %}</button>
+                                                </form>
+                                            {% else %}{% if nap.share_radars %}Oui{% else %}Non{% endif %}
+                                            {% endif %}
+                                        </div>
+                                    {% endif %}
+                                    <div class="col-3 text-end">
+                                        {% if nap.breaking_time %}<span class="text-yellow"><script>putcountdown1({{ nap.breaking_time }}, "Rompu", "?")</script></span>
+                                        {% elif nap.break_interval %}
+                                            <small class="text-normal me-1">délai</small>
+                                            <span class="me-3"><script>document.write(formattime({{ nap.break_interval }}))</script></span>
+                                            {% if can_break %}
+                                                <form method="post" class="d-inline" onsubmit="return confirmBreakPact('{{ nap.tag }}','{{ nap.name }}')">
+                                                    {% csrf_token %}
+                                                    <input type="hidden" name="action" value="break" />
+                                                    <input type="hidden" name="tag" value="{{ nap.tag }}" />
+                                                    <button type="submit" class="btn btn-link p-0">Rompre</button>
+                                                </form>
+                                            {% else %}Rompu
+                                            {% endif %}
+                                        {% endif %}
                                     </div>
                                 </div>
-                            {% empty %}
-                                <div class="list-group-item text-center">
-                                    <span class="text-normal">Aucun</span>
-                                </div>
-                            {% endfor %}
-                        </div>
+                            </div>
+                        {% empty %}
+                            <div class="card-body text-center">
+                                <span class="text-normal">Aucun</span>
+                            </div>
+                        {% endfor %}
                     </div>
                 </div>
                     
@@ -100,46 +99,44 @@
                         <div class="card-header">
                             <span class="fs-6">Propositions de pactes de non-agression</span>
                         </div>
-                        <div class="list-group list-group-flush">
-                            {% for proposition in propositions %}
-                                <div class="list-group-item">
-                                    <div class="row gx-3 align-items-center">
-                                        <div class="col">
-                                            <a href="/s03/alliance-view/?tag={{ proposition.tag }}" data-bs-toggle="tooltip" data-bs-title="Voir alliance">[{{ proposition.tag }}] {{ proposition.name }}</a>
-                                        </div>
-                                        <div class="col-auto">
-                                            <a href="/s03/mail-new/?to={{ proposition.username }}" data-bs-toggle="tooltip" data-bs-title="Envoyer message">{{ proposition.username }}</a>
-                                        </div>
-                                        <div class="col-auto">
-                                            <span class="text-normal">{{ proposition.created }}</span>
-                                        </div>
-                                        <div class="col-auto">
-                                            <script>document.write(formattime({{proposition.break_interval}}))</script>
-                                        </div>
-                                        <div class="col-auto">
-                                            <form method="post">
-                                                {% csrf_token %}
-                                                <input type="hidden" name="action" value="decline" />
-                                                <input type="hidden" name="tag" value="{{ proposition.tag }}" />
-                                                <button type="submit" class="btn btn-danger">Refuser</button>
-                                            </form>
-                                        </div>
-                                        <div class="col-auto">
-                                            <form method="post">
-                                                {% csrf_token %}
-                                                <input type="hidden" name="action" value="accept" />
-                                                <input type="hidden" name="tag" value="{{ proposition.tag }}" />
-                                                <button type="submit" class="btn btn-primary">Accepter</button>
-                                            </form>
-                                        </div>
+                        {% for proposition in propositions %}
+                            <div class="card-body">
+                                <div class="row gx-3 align-items-center">
+                                    <div class="col">
+                                        <a href="/s03/alliance-view/?tag={{ proposition.tag }}" data-bs-toggle="tooltip" data-bs-title="Voir alliance">[{{ proposition.tag }}] {{ proposition.name }}</a>
+                                    </div>
+                                    <div class="col-auto">
+                                        <a href="/s03/mail-new/?to={{ proposition.username }}" data-bs-toggle="tooltip" data-bs-title="Envoyer message">{{ proposition.username }}</a>
+                                    </div>
+                                    <div class="col-auto">
+                                        <span class="text-normal">{{ proposition.created }}</span>
+                                    </div>
+                                    <div class="col-auto">
+                                        <script>document.write(formattime({{proposition.break_interval}}))</script>
+                                    </div>
+                                    <div class="col-auto">
+                                        <form method="post">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="action" value="decline" />
+                                            <input type="hidden" name="tag" value="{{ proposition.tag }}" />
+                                            <button type="submit" class="btn btn-danger">Refuser</button>
+                                        </form>
+                                    </div>
+                                    <div class="col-auto">
+                                        <form method="post">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="action" value="accept" />
+                                            <input type="hidden" name="tag" value="{{ proposition.tag }}" />
+                                            <button type="submit" class="btn btn-primary">Accepter</button>
+                                        </form>
                                     </div>
                                 </div>
-                            {% empty %}
-                                <div class="list-group-item text-center">
-                                    <span class="text-normal">Aucune proposition</span>
-                                </div>
-                            {% endfor %}
-                        </div>
+                            </div>
+                        {% empty %}
+                            <div class="card-body text-center">
+                                <span class="text-normal">Aucune proposition</span>
+                            </div>
+                        {% endfor %}
                     </div>
                 </div>
                     
@@ -191,43 +188,41 @@
                         <div class="card-header">
                             <span class="fs-6">Nos demandes de pacte aux autres alliances</span>
                         </div>
-                        <div class="list-group list-group-flush">
-                            {% for request in requests %}
-                                <div class="list-group-item">
-                                    <div class="row gx-3 align-items-center">
-                                        <div class="col">
-                                            <a href="/s03/alliance-view/?tag={{ request.tag }}" data-bs-toggle="tooltip" data-bs-title="Voir alliance">[{{ request.tag }}] {{ request.name }}</a>
-                                        </div>
-                                        <div class="col-auto">
-                                            <a href="/s03/mail-new/?to={{ request.username }}" data-bs-toggle="tooltip" data-bs-title="Envoyer message">{{ request.username }}</a>
-                                        </div>
-                                        <div class="col-auto">
-                                            <span class="text-normal">{{ request.created }}</span>
-                                        </div>
-                                        <div class="col-auto">
-                                            <script>document.write(formattime({{request.break_interval}}))</script>
-                                        </div>
-                                        <div class="col-auto">
-                                            {% if not request.declined %}<span class="text-yellow">En attente</span>
-                                            {% else %}<span class="text-danger">Refusée</span>
-                                            {% endif %}
-                                        </div>
-                                        <div class="col-auto">
-                                            <form method="post">
-                                                {% csrf_token %}
-                                                <input type="hidden" name="action" value="cancel" />
-                                                <input type="hidden" name="tag" value="{{ request.tag }}" />
-                                                <button type="submit" class="btn btn-danger">Annuler</button>
-                                            </form>
-                                        </div>
+                        {% for request in requests %}
+                            <div class="card-body">
+                                <div class="row gx-3 align-items-center">
+                                    <div class="col">
+                                        <a href="/s03/alliance-view/?tag={{ request.tag }}" data-bs-toggle="tooltip" data-bs-title="Voir alliance">[{{ request.tag }}] {{ request.name }}</a>
+                                    </div>
+                                    <div class="col-auto">
+                                        <a href="/s03/mail-new/?to={{ request.username }}" data-bs-toggle="tooltip" data-bs-title="Envoyer message">{{ request.username }}</a>
+                                    </div>
+                                    <div class="col-auto">
+                                        <span class="text-normal">{{ request.created }}</span>
+                                    </div>
+                                    <div class="col-auto">
+                                        <script>document.write(formattime({{request.break_interval}}))</script>
+                                    </div>
+                                    <div class="col-auto">
+                                        {% if not request.declined %}<span class="text-yellow">En attente</span>
+                                        {% else %}<span class="text-danger">Refusée</span>
+                                        {% endif %}
+                                    </div>
+                                    <div class="col-auto">
+                                        <form method="post">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="action" value="cancel" />
+                                            <input type="hidden" name="tag" value="{{ request.tag }}" />
+                                            <button type="submit" class="btn btn-danger">Annuler</button>
+                                        </form>
                                     </div>
                                 </div>
-                            {% empty %}
-                                <div class="list-group-item text-center">
-                                    <span class="text-normal">Aucune demande</span>
-                                </div>
-                            {% endfor %}
-                        </div>
+                            </div>
+                        {% empty %}
+                            <div class="card-body text-center">
+                                <span class="text-normal">Aucune demande</span>
+                            </div>
+                        {% endfor %}
                     </div>
                 </div>
         

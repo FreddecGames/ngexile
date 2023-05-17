@@ -1,5 +1,6 @@
 {% extends "s03/_layout.html" %}
 
+{% load i18n %}
 {% load humanize %}
 
 {% block content %}
@@ -90,22 +91,20 @@
                                 <div class="card-header">
                                     <span class="fs-6">Recherches</span>
                                 </div>
-                                <div class="list-group list-group-flush">
-                                    {% for category in categories %}
-                                        {% for research in category.researches %}
-                                            <div class="list-group-item">
-                                                <div class="row gx-3">
-                                                    <div class="col">
-                                                        <span>{{ research.label }}</span>
-                                                    </div>
-                                                    <div class="col-2 text-center">
-                                                        <script>putlevel({{research.research_level}},{{research.levels}});</script>
-                                                    </div>
+                                {% for category in categories %}
+                                    {% for research in category.researches %}
+                                        <div class="card-body">
+                                            <div class="row gx-3">
+                                                <div class="col">
+                                                    <span>{{ research.label }}</span>
+                                                </div>
+                                                <div class="col-2 text-center">
+                                                    <script>putlevel({{research.research_level}},{{research.levels}});</script>
                                                 </div>
                                             </div>
-                                        {% endfor %}
+                                        </div>
                                     {% endfor %}
-                                </div>
+                                {% endfor %}
                             </div>
                         </div>
                     {% endif %}
@@ -115,40 +114,38 @@
                             <div class="card-header">
                                 <span class="fs-6">Planètes</span>
                             </div>
-                            <div class="list-group list-group-flush">
-                                {% for planet in planets %}
-                                    <div class="list-group-item">
-                                        <div class="row gx-3">
-                                            <div class="col-1">
-                                                <a href="/s03/map/?g={{ planet.galaxy }}&s={{ planet.sector }}&p={{ planet.planet }}" data-bs-toggle="tooltip" data-bs-title="Carte spatiale">{{ planet.galaxy }}.{{ planet.sector }}.{{ planet.planet }}</a>
-                                            </div>
-                                            <div class="col">
-                                                <span>{{ planet.planet_name }}</span>
-                                            </div>
-                                            <div class="col-auto">
-                                                <img src="{{ PATH_IMAGES }}img/interface/floor.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Terrain">
-                                                {{ planet.floor|intcomma }}
-                                            </div>
-                                            <div class="col-auto">
-                                                <img src="{{ PATH_IMAGES }}img/interface/space.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Espace">
-                                                {{ planet.space|intcomma }}
-                                            </div>
-                                            <div class="col-auto">
-                                                <img src="{{ PATH_IMAGES }}img/interface/ore.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Minerai">
-                                                {{ planet.pct_ore|intcomma }}%
-                                            </div>
-                                            <div class="col-auto">
-                                                <img src="{{ PATH_IMAGES }}img/interface/hydrocarbon.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Hydrocarbure">
-                                                {{ planet.pct_hydrocarbon|intcomma }}%
-                                            </div>
-                                            <div class="col-auto">
-                                                <img src="{{ PATH_IMAGES }}img/interface/fleets.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Vaisseaux au sol">
-                                                {{ planet.ground|intcomma }}
-                                            </div>
+                            {% for planet in planets %}
+                                <div class="card-body">
+                                    <div class="row gx-3">
+                                        <div class="col-1">
+                                            <a href="/s03/map/?g={{ planet.galaxy }}&s={{ planet.sector }}&p={{ planet.planet }}" data-bs-toggle="tooltip" data-bs-title="Carte spatiale">{{ planet.galaxy }}.{{ planet.sector }}.{{ planet.planet }}</a>
+                                        </div>
+                                        <div class="col">
+                                            <span>{{ planet.planet_name }}</span>
+                                        </div>
+                                        <div class="col-auto">
+                                            <img src="{{ PATH_IMAGES }}img/interface/floor.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Terrain">
+                                            {{ planet.floor|intcomma }}
+                                        </div>
+                                        <div class="col-auto">
+                                            <img src="{{ PATH_IMAGES }}img/interface/space.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Espace">
+                                            {{ planet.space|intcomma }}
+                                        </div>
+                                        <div class="col-auto">
+                                            <img src="{{ PATH_IMAGES }}img/interface/ore.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Minerai">
+                                            {{ planet.pct_ore|intcomma }}%
+                                        </div>
+                                        <div class="col-auto">
+                                            <img src="{{ PATH_IMAGES }}img/interface/hydrocarbon.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Hydrocarbure">
+                                            {{ planet.pct_hydrocarbon|intcomma }}%
+                                        </div>
+                                        <div class="col-auto">
+                                            <img src="{{ PATH_IMAGES }}img/interface/fleets.gif" width="16px" height="16px" class="res" data-bs-toggle="tooltip" data-bs-title="Vaisseaux au sol">
+                                            {{ planet.ground|intcomma }}
                                         </div>
                                     </div>
-                                {% endfor %}
-                            </div>
+                                </div>
+                            {% endfor %}
                         </div>
                     </div>
 
