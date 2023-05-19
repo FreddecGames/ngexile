@@ -114,6 +114,7 @@
                     
                         <form method="post">
                             {% csrf_token %}
+                            <input type="hidden" name="action" value="declare" />
                             <input type="hidden" name="tag" value="{{ newwar.tag }}"/>
                             <div class="row g-3">
                             

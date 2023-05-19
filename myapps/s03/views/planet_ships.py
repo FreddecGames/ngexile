@@ -120,7 +120,7 @@ class View(GlobalView):
             
         #---
         
-        query = 'SELECT s.id, shipid, remaining_time, quantity, end_time, recycle, s.required_shipid, int4(s.cost_ore*const_recycle_ore(ownerid)) AS r_cost_ore, int4(s.cost_hydrocarbon*const_recycle_hydrocarbon(ownerid)) AS r_cost_hydrocarbon, s.cost_ore, s.cost_hydrocarbon, s.cost_energy, s.crew,' + \
+        query = 'SELECT s.id, shipid, remaining_time, quantity, end_time, recycle, s.required_shipid, (int4(s.cost_ore*const_recycle_ore(ownerid)) * quantity) AS r_cost_ore, (int4(s.cost_hydrocarbon*const_recycle_hydrocarbon(ownerid)) * quantity) AS r_cost_hydrocarbon, (s.cost_ore * quantity) AS cost_ore, (s.cost_hydrocarbon * quantity) AS cost_hydrocarbon, (s.cost_energy * quantity) AS cost_energy, (s.crew * quantity) AS crew,' + \
                 ' db_ships.label, r.label AS r_label' + \
                 ' FROM vw_ships_under_construction AS s' + \
                 '   INNER JOIN db_ships ON db_ships.id = shipid' + \
