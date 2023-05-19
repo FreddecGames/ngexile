@@ -87,7 +87,7 @@ class View(BaseView):
                 messages.error(request, 'reset_error_' + result)
                 return HttpResponseRedirect(request.build_absolute_uri())
 
-            return HttpResponseRedirect('/s03/wait/')
+            return HttpResponseRedirect('/s03/home-wait/')
         
         #---
         

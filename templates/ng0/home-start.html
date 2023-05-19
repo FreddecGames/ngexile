@@ -38,6 +38,22 @@
                     <div class="col-12">
                         <span class="text-normal">{% translate "Maintenant choisissez votre galaxie de départ. Toutes les galaxies sont identiques. Vous pourrez voyager dans les autres galaxies à partir d'un certain niveau de jeu. Les galaxies recommandées sont les galaxies les plus adaptées pour débuter le jeu." %}</span>
                     </div>
+                    <div class="col-12">
+                        <label for="id_username" class="form-label text-white required">{% translate "Galaxie de départ" %}</label>
+                        <select name="galaxy" class="form-control" required="">
+                            {% for galaxy in galaxies %}
+                                <option value="{{ galaxy.id }}">
+                                    {% translate galaxy.name %}
+                                    {% if galaxy.recommended == 1 %}({% translate "Recommandée" %})
+                                    {% elif galaxy.recommended == -1 %}({% translate "Non recommandée" %})
+                                    {% endif %}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-12 text-center">
+                        <input type="submit" class="btn btn-primary" value="{% translate 'Continuer' %}">
+                    </div>
                 </div>
             </div>
         </form>

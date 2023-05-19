@@ -53,7 +53,7 @@ class View(GlobalView):
             droppods = ToInt(request.POST.get('droppods'), 0)
             
             result = dbExecute('SELECT sp_invade_planet(' + str(self.fleetOwnerId) + ',' + str(self.fleetId) + ',' + str(droppods) +',' + str(ToBool(take, False)) +')')            
-            if result > 0: return HttpResponseRedirect('/s03/invasion/?id=' + str(result) + '&fleetid=' + str(self.fleetId))
+            if result > 0: return HttpResponseRedirect('/s03/report-invasion/?id=' + str(result) + '&fleetid=' + str(self.fleetId))
             elif result == -1: messages.error(request, 'error_soldiers')
             elif result == -2: messages.error(request, 'error_fleet')
             elif result == -3: messages.error(request, 'error_planet')

@@ -101,10 +101,9 @@ class View(GlobalView):
 
         #---
 
-        if request.GET.get('a', '') == 'new':
+        if request.GET.get('action', '') == 'new':
 
             tag = request.GET.get('tag').strip()
-            print(tag)
 
             war = dbRow('SELECT id, tag, name, sp_alliance_war_cost(id) + (const_coef_score_to_war()*sp_alliance_value(' + str(self.allianceId) + '))::integer AS cost FROM alliances WHERE lower(tag)=lower(' + dosql(tag) + ')')
             if war == None:

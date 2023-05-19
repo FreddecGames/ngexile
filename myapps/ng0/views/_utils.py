@@ -18,6 +18,19 @@ registration = { 'enabled':True, 'until':None }
 
 #---
 
+def isValidUsername(username):
+
+    username = username.strip()
+
+    if username == '' or len(username) < 2 or len(username) > 12:
+        return False
+    else:
+    
+        p = re.compile('^[a-zA-Z0-9]+([ ]?[\-]?[ ]?[a-zA-Z0-9]+)*$')
+        return p.match(username)
+        
+#---
+
 def strSql(str):
     ret = str.replace('\\', '\\\\') 
     ret = ret.replace('\'', '\'\'')

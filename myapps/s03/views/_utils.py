@@ -94,7 +94,7 @@ def isValidCategoryName(myName):
 
 def ToInt(s, defaultValue):
  
-    if (s == '' or s == '' or s == None): return defaultValue
+    if (s == '' or s == None): return defaultValue
     i = int(float(s))
     if i == None: return defaultValue
     return i
