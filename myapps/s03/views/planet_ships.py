@@ -120,7 +120,7 @@ class View(GlobalView):
             
         #---
         
-        query = 'SELECT s.id, shipid, remaining_time, quantity, end_time, recycle, s.required_shipid, (int4(s.cost_ore*const_recycle_ore(ownerid)) * quantity) AS r_cost_ore, (int4(s.cost_hydrocarbon*const_recycle_hydrocarbon(ownerid)) * quantity) AS r_cost_hydrocarbon, (s.cost_ore * quantity) AS cost_ore, (s.cost_hydrocarbon * quantity) AS cost_hydrocarbon, (s.cost_energy * quantity) AS cost_energy, (s.crew * quantity) AS crew,' + \
+        query = 'SELECT s.id, shipid, remaining_time, quantity, end_time, recycle, s.required_shipid, int4(s.cost_ore*const_recycle_ore(ownerid)) AS r_cost_ore, int4(s.cost_hydrocarbon*const_recycle_hydrocarbon(ownerid)) AS r_cost_hydrocarbon, s.cost_ore, s.cost_hydrocarbon, s.cost_energy, s.crew,' + \
                 ' db_ships.label, r.label AS r_label' + \
                 ' FROM vw_ships_under_construction AS s' + \
                 '   INNER JOIN db_ships ON db_ships.id = shipid' + \
@@ -138,7 +138,17 @@ class View(GlobalView):
         for row in rows:
         
             if row['end_time']: underconstructions.append(row)
-            else: queues.append(row)
+            else:
+            
+                row['r_cost_ore'] *= row['quantity']
+                row['r_cost_hydrocarbon'] *= row['quantity']
+                
+                row['cost_ore'] *= row['quantity']
+                row['cost_hydrocarbon'] *= row['quantity']
+                row['cost_energy'] *= row['quantity']
+                row['crew'] *= row['quantity']
+            
+                queues.append(row)
         
         #---
         
