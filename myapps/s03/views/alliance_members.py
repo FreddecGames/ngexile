@@ -28,12 +28,13 @@ class View(GlobalView):
         
         #---
         
+        save = request.POST.get('save')
         action = request.POST.get('action')
         
         #---
         
-        if action == 'save' and self.allianceRights['leader']:
-        
+        if save and self.allianceRights['leader']:
+            
             query = 'SELECT id' + \
                     ' FROM users' + \
                     ' WHERE alliance_id=' + str(self.allianceId)
