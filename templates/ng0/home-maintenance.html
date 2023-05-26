@@ -3,14 +3,11 @@
 {% load i18n %}
 
 {% block content %}
-    
+
     <div class="col-12">
         <div class="card">
             <div class="card-header">
                 <div class="row gx-2 align-items-center">
-                    <div class="col-auto" style="padding-top:2px;">
-                        <a href="/lobby/"><i class="fs-6 fa-fw fas fa-arrow-alt-circle-left"></i></a>
-                    </div>
                     <div class="col">
                         <div class="row gx-2 align-items-center">
                             <div class="col-auto">
@@ -29,15 +26,17 @@
             <div class="card-body">
                 <div class="row gx-2 gy-3">
                     <div class="col-12 text-center">
-                        <span class="text-danger">{% translate "Le serveur est actuellement en maintenance." %}</span><br/>
+                        <span class="text-danger">{% translate "Le serveur est actuellement en maintenance." %}</span>
                     </div>
                     <div class="col-12 text-center">
-                        <div class="mb-2">{% translate "Pour avoir plus d'information, connectez-vous sur le serveur Discord." %}</div>
-                        <a href="https://discord.gg/x39nHzM" target="_blank" class="btn btn-secondary"><i class="fa-fw fab fa-discord me-1"></i> Discord</a>
+                        <span class="text-normal">{% translate "En attendant que l'accès au jeu revienne, vous pouvez consulter le serveur Discord." %}</span>
+                    </div>
+                    <div class="col-12 text-center">
+                        <a href="https://discord.gg/9RHUEhw" target="_blank" class="btn btn-primary"><i class="fa-fw fab fa-discord me-1"></i> Discord</a>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
-{% endblock %}
+    
+{% endblock content %}

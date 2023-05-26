@@ -1,0 +1,80 @@
+{% load i18n %}
+
+<div class="page-content">
+    <div class="pt-3 px-3">
+        <div class="card mb-2">
+            <div class="card-body">
+                <div class="row gx-2 align-items-center">
+                    <div class="col-auto">
+                        <a href="/ng0/map/?galaxy={{ curPlanet.galaxy_id }}&sector={{ curPlanet.sector }}" data-bs-toggle="tooltip" data-bs-title="{% translate 'Carte' %}">{{ curPlanet.galaxy_id }}.{{ curPlanet.sector }}.{{ curPlanet.number }}</a>
+                    </div>
+                    <div class="col text-truncate">
+                        <span class="text-self">{{ curPlanet.name }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <ul class="nav nav-tabs">
+            <li class="nav-item">
+                <a href="/ng0/planet-view/?planet={{ curPlanet.id }}" class="nav-link {% if selectedTab == 'view' %}active{% endif %}">
+                    <div class="row gx-2 align-items-center flex-nowrap">
+                        <div class="col-auto d-flex">
+                            <i class="fa-fw fas fa-eye"></i>
+                        </div>
+                        <div class="col-auto">
+                            {% translate "Aperçu" %}
+                        </div>
+                    </div>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/ng0/planet-buildings/?planet={{ curPlanet.id }}" class="nav-link {% if selectedTab == 'buildings' %}active{% endif %}">
+                    <div class="row gx-2 align-items-center flex-nowrap">
+                        <div class="col-auto d-flex">
+                            <i class="fa-fw fas fa-building"></i>
+                        </div>
+                        <div class="col-auto">
+                            {% translate "Bâtiments" %}
+                        </div>
+                    </div>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/ng0/planet-ships/?planet={{ curPlanet.id }}" class="nav-link {% if selectedTab == 'ships' %}active{% endif %}">
+                    <div class="row gx-2 align-items-center flex-nowrap">
+                        <div class="col-auto d-flex">
+                            <i class="fa-fw fas fa-rocket"></i>
+                        </div>
+                        <div class="col-auto">
+                            {% translate "Vaisseaux" %}
+                        </div>
+                    </div>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/ng0/planet-trainings/?planet={{ curPlanet.id }}" class="nav-link {% if selectedTab == 'trainings' %}active{% endif %}">
+                    <div class="row gx-2 align-items-center flex-nowrap">
+                        <div class="col-auto d-flex">
+                            <i class="fa-fw fas fa-users"></i>
+                        </div>
+                        <div class="col-auto">
+                            {% translate "Entraînements" %}
+                        </div>
+                    </div>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/ng0/planet-orbit/?planet={{ curPlanet.id }}" class="nav-link {% if selectedTab == 'orbit' %}active{% endif %}">
+                    <div class="row gx-2 align-items-center flex-nowrap">
+                        <div class="col-auto d-flex">
+                            <i class="fa-fw fas fa-dot-circle"></i>
+                        </div>
+                        <div class="col-auto">
+                            {% translate "Orbite" %}
+                        </div>
+                    </div>
+                </a>
+            </li>
+        </ul>
+    </div>
+</div>

@@ -1,0 +1,42 @@
+{% extends "ng0/_layout.html" %}
+
+{% load i18n %}
+
+{% block content %}
+
+    <div class="scroll-content" style="height:calc(100%);">
+        <div class="p-3">
+            <div class="row g-3">
+        
+                <div class="col-12">
+                    <div class="fs-6 mb-2">{% translate "Planètes colonisées" %}</div>
+                    <div class="row g-2">
+                        {% for planet in planets %}
+                            <div class="col-12 col-lg-4">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <div class="row gx-2">
+                                            <div class="col-auto">
+                                                <a href="/ng0/map/?galaxy={{ planet.galaxy_id }}&sector={{ planet.sector }}" data-bs-toggle="tooltip" data-bs-title="{% translate 'Carte' %}">{{ planet.galaxy_id }}.{{ planet.sector }}.{{ planet.number }}</a>
+                                            </div>
+                                            <div class="col text-truncate">
+                                                <span class="text-self">{{ planet.name }}</span>
+                                            </div>
+                                            <div class="col-auto">
+                                                <a href="/ng0/planet-view/?planet={{ planet.id }}" data-bs-toggle="tooltip" data-bs-title="{% translate 'Aperçu' %}"><i class="fa-fw fas fa-eye"></i></a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card-body">
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

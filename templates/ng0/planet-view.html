@@ -1,0 +1,56 @@
+{% extends "ng0/_layout.html" %}
+
+{% load i18n %}
+
+{% block content %}
+
+    {% include "ng0/planet-tabs.html" %}
+
+    <div id="renameBox" class="d-none">
+        <form method="post" class="row gx-2">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="rename">
+            <div class="col">
+                <input type="text" class="form-control" name="name" size="28" maxlength="16"  value="{{ curPlanet.name }}">
+            </div>
+            <div class="col-auto">
+                <button type="submit" class="btn btn-success px-2"><i class="fa-fw fas fa-check"></i></button>
+            </div>
+            <div class="col-auto">
+                <button type="button" class="btn btn-danger px-2" onclick="hide();"><i class="fa-fw fas fa-times"></i></button>
+            </div>
+        </form>
+    </div>
+    
+    <div class="scroll-content" style="height:calc(100% - 104px);">
+        <div class="p-3">
+            <div class="row g-3">
+                
+                {% include "ng0/_messages.html" %}
+        
+                <div class="col-12">
+                    <div class="fs-6 mb-2">{% translate "Détails" %}</div>
+                    <div class="row g-2">
+                        <div class="col-12 col-lg-4">
+                            <div class="card">
+                                <div id="renameRef" class="card-body">
+                                    <div class="row gx-2 align-items-center">
+                                        <div class="col text-truncate">
+                                            <div class="small">{% translate "Nom" %}</div>
+                                            <span class="text-self">{{ curPlanet.name }}</span>
+                                        </div>
+                                        <div class="col-auto">
+                                            <button class="btn btn-link" onclick="return show('renameRef','renameBox');"><i class="fa-fw fas fa-edit"></i></button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

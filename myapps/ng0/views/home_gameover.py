@@ -15,33 +15,25 @@ class View(BaseView):
         
         #---
         
-        profile = dbRow('SELECT * FROM ng0.profiles WHERE id=' + str(self.userId))
-        if not profile or profile['status'] != -3: return HttpResponseRedirect('/ng0/')
-        
-        #---
-        
-        if not registration['enabled'] or (registration['until'] != None and timezone.now() > registration['until']):
-        
-            tpl = Template('home-closed')
-            
-            return tpl.render(request)
+        profile = dbRow('SELECT * FROM ng0.vw_profiles WHERE id=' + str(self.userId))        
+        if not profile or profile['planet_count'] > 0: return HttpResponseRedirect('/ng0/')
         
         #---
         
         return super().dispatch(request)
 
     ################################################################################
-    
+
     def post(self, request):
-        
+
         #---
         
         action = request.POST.get('action')
-        
+
         #---
-        
-        if action == 'start':
-        
+
+        if action == 'retry':
+            
             name = request.POST.get('name','').strip()
             if not isValidName(name):
                 messages.error(request, 'name_invalid')
@@ -60,30 +52,36 @@ class View(BaseView):
                 return HttpResponseRedirect(request.build_absolute_uri())
 
             return HttpResponseRedirect('/ng0/home-wait/')
+
+        #---
+        
+        elif action == 'delete':
+        
+            dbQuery('UPDATE ng0.profiles SET deletion_date = now() WHERE id=' + str(self.userId))
+            return HttpResponseRedirect('/')
         
         #---
         
         return HttpResponseRedirect(request.build_absolute_uri())
-        
+
     ################################################################################
-
+        
     def get(self, request):
-        
-        #---
-
-        tpl = Template('home-start')
 
         #---
         
-        galaxies = dbRows('SELECT * FROM ng0.vw_galaxies WHERE allow_new_players = true AND planet_count_for_new > 0')
+        tpl = Template('home-gameover')
+        
+        #---
+        
+        profile = dbRow('SELECT * FROM ng0.vw_profiles WHERE id=' + str(self.userId))        
+        tpl.set('profile', profile)
+
+        #---
+
+        galaxies = dbRows('SELECT * FROM ng0.vw_galaxies WHERE new_planets > 0')
         tpl.set('galaxies', galaxies)
-        
-        for galaxy in galaxies:
-        
-            if galaxy['protected'] and galaxy['planet_count_for_new'] > 50: galaxy['recommended'] = 1
-            elif not galaxy['protected'] or galaxy['planet_count_for_new'] < 10: galaxy['recommended'] = -1
-            else: galaxy['recommended'] = 0
-        
+
         #---
 
         return tpl.render(request)
