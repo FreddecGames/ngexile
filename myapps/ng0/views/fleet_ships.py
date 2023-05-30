@@ -1,31 +1,31 @@
 # -*- coding: utf-8 -*-
 
-from myapps.ng0.views._base import *
+from myapps.ng0.views._global import *
 
-class View(GameView):
+class View(GlobalView):
 
     ################################################################################
     
-    def dispatch(self, request, fleetId):
+    def dispatch(self, request, *args, **kwargs):
 
         #---
 
-        response = super().pre_dispatch(request)
+        response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
         
         #---
         
-        fleetId = int(request.GET.get('id', 0))
-        if fleetId == 0:
+        self.fleetId = ToInt(request.GET.get('id'), 0)
+        if self.fleetId == 0:
             return HttpResponseRedirect('/ng0/')
         
         #---
         
-        return super().dispatch(request)
+        return super().dispatch(request, *args, **kwargs)
 
     ################################################################################
     
-    def post(self, request, fleetId):
+    def post(self, request, *args, **kwargs):
         
         #---
         
@@ -33,71 +33,66 @@ class View(GameView):
         
         #---
         
-        if action == 'transfer':
+        if action == 'transfer_ships':
 
             shipIds = dbRows('SELECT id FROM db_ships')
-            planetId = dbExecute('SELECT planetid FROM fleets WHERE id=' + str(fleetId))
+            planetId = dbExecute('SELECT planetid FROM fleets WHERE id=' + str(self.fleetId))
 
             for shipId in shipIds:
-            
-                count = int(request.POST.get('addship' + str(shipId['id'])), 0)
-                if count > 0:
-                
-                    result = dbExecute('SELECT fleet_ship_add(' + str(self.userId) + ',' + str(fleetId) + ',' + str(shipId['id']) + ',' + str(count) + ')')
-                    if result > 0:
-                        messages.error(request, 'fleet_ship_add_error_' + str(result))
-                        return HttpResponseRedirect(request.build_absolute_uri())
-                    
-                    result = dbExecute('SELECT planet_ship_remove(' + str(self.userId) + ',' + str(fleetId) + ',' + str(shipId['id']) + ',' + str(count) + ')')
-                    if result > 0:
-                        messages.error(request, 'fleet_ship_add_error_' + str(result))
-                        return HttpResponseRedirect(request.build_absolute_uri())
+                quantity = ToInt(request.POST.get('addship' + str(shipId['id'])), 0)
+                if quantity > 0:
+                    dbQuery('SELECT sp_transfer_ships_to_fleet(' + str(self.userId) + ',' + str(self.fleetId) + ',' + str(shipId['id']) + ',' + str(quantity) + ')')
+
 
             for shipId in shipIds:
-            
-                count = int(request.POST.get('removeship' + str(shipId['id'])), 0)
-                if count > 0:
-                
-                    result = dbExecute('SELECT fleet_ship_remove(' + str(self.userId) + ',' + str(fleetId) + ',' + str(shipId['id']) + ',' + str(count) + ')')
-                    if result > 0:
-                        messages.error(request, 'fleet_ship_remove_error_' + str(result))
-                        return HttpResponseRedirect(request.build_absolute_uri())
-                    
-                    result = dbExecute('SELECT planet_ship_add(' + str(self.userId) + ',' + str(fleetId) + ',' + str(shipId['id']) + ',' + str(count) + ')')
-                    if result > 0:
-                        messages.error(request, 'planet_ship_add_error_' + str(result))
-                        return HttpResponseRedirect(request.build_absolute_uri())
+                quantity = ToInt(request.POST.get('removeship' + str(shipId['id'])), 0)
+                if quantity > 0:
+                    dbQuery('SELECT sp_transfer_ships_to_planet(' + str(self.userId) + ',' + str(self.fleetId) + ',' + str(shipId['id']) + ',' + str(quantity) + ')')
 
+            result = dbExecute('SELECT id FROM fleets WHERE id=' + str(self.fleetId))
+            if result == None:
+                return HttpResponseRedirect('/ng0/planet-orbit/?planet=' + str(planetId))
+        
         #---
         
         return HttpResponseRedirect(request.build_absolute_uri())
     
     ################################################################################
     
-    def get(self, request, fleetId):
+    def get(self, request, *args, **kwargs):
 
         #---
         
-        tpl = Template('fleet-ships')
+        tpl = getTemplate(request, 'fleet-ships')
 
-        self.selectedTab = 'ships'
         self.selectedMenu = 'fleet'
 
         #---
-
-        fleet = dbRows('SELECT * FROM vw_fleets WHERE id=' + str(fleetId))        
+        
+        query = 'SELECT id, name, attackonsight, engaged, size, signature, speed, remaining_time, commanderid, commandername,' + \
+                ' planetid, planet_name, planet_galaxy, planet_sector, planet_planet, planet_ownerid, planet_owner_name, planet_owner_relation,' + \
+                ' cargo_capacity, cargo_load, cargo_ore, cargo_hydrocarbon, cargo_scientists, cargo_soldiers, cargo_workers' + \
+                ' FROM vw_fleets WHERE planet_owner_relation = 2 AND engaged = False AND remaining_time IS NULL AND ownerid=' + str(self.userId) + ' AND id=' + str(self.fleetId)
+        fleet = dbRow(query)
+        if fleet == None: return HttpResponseRedirect('/ng0/fleets/')
         tpl.set('fleet', fleet)
 
         #---
 
-        fleetShips = dbRows('SELECT * FROM vw_fleet_ships WHERE fleet_id=' + str(fleetId))        
-        tpl.set('fleetShips', fleetShips)
+        query = 'SELECT db_ships.id, db_ships.capacity, db_ships.label, db_ships.capacity,' + \
+                ' COALESCE((SELECT quantity FROM fleets_ships WHERE fleetId=' + str(self.fleetId) + ' AND shipId = db_ships.id), 0) AS fleet_count,' + \
+                ' COALESCE((SELECT quantity FROM planet_ships WHERE planetid=(SELECT planetid FROM fleets WHERE id=' + str(self.fleetId) + ') AND shipId = db_ships.id), 0) AS planet_count' + \
+                ' FROM db_ships' + \
+                ' ORDER BY db_ships.category, db_ships.label'
+        results = dbRows(query)
+        
+        ships = []
+        tpl.set('ships', ships)
+        
+        for result in results:
+            if result['fleet_count'] > 0 or result['planet_count'] > 0:
+                ships.append(result)
         
         #---
-
-        planetShips = dbRows('SELECT * FROM vw_planet_ships WHERE planet_id=' + str(fleet['planet_id']))        
-        tpl.set('planetShips', planetShips)
         
-        #---
-        
-        return self.display(request, tpl)
+        return self.display(tpl, request)

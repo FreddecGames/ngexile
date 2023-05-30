@@ -70,9 +70,9 @@ body {
 
 @media (min-width: 992px) { #content { left: 256px; } }
 
-#content-page {
+.content-page {
     margin: 0 auto;
-	width: 100%; height: 100%; max-width: 960px;
+	width: 100%; max-width: 960px;
 }
 
 a { text-decoration: none; }
@@ -270,19 +270,11 @@ a { text-decoration: none; }
     
     width: 100%; flex-wrap: nowrap; overflow-x: auto; overflow-y: hidden;
     background-color: var(--bs-gray-800);
-    border-radius: var(--bs-border-radius); border-bottom: 0;
+    border-radius: 0 0 var(--bs-border-radius) var(--bs-border-radius); border-bottom: 0;
 }
 
 .nav-tabs .nav-link {
     margin-bottom: 0;
-}
-
-.nav-tabs .nav-item:first-child .nav-link {
-    border-radius: var(--bs-border-radius) 0 0 var(--bs-border-radius);
-}
-
-.nav-tabs .nav-item:last-child .nav-link {
-    border-radius: 0 var(--bs-border-radius) var(--bs-border-radius) 0;
 }
 
 .dropdown-menu {
@@ -381,6 +373,11 @@ a { text-decoration: none; }
 .card-header {
     border-bottom: var(--bs-border-width) solid var(--bs-border-color);
     border-top-left-radius: var(--bs-border-radius); border-top-right-radius: var(--bs-border-radius);
+}
+
+.card-footer {
+    border-top: var(--bs-border-width) solid var(--bs-border-color);
+    border-bottom-left-radius: var(--bs-border-radius); border-bottom-right-radius: var(--bs-border-radius);
 }
 
 .list-group {

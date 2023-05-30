@@ -45,6 +45,7 @@ ROOT_URLCONF = 'config.urls'
 WSGI_APPLICATION = 'config.wsgi.application'
 
 ADMINS = [('Freddec', 'freddec.games@gmail.com')]
+MANAGERS = [('Freddec', 'freddec.games@gmail.com')]
 
 AUTH_USER_MODEL = 'accounts.User'
 

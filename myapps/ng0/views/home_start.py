@@ -1,38 +1,42 @@
 # -*- coding: utf-8 -*-
 
-from myapps.ng0.views._base import *
+from myapps.ng0.views._utils import *
 
 class View(BaseView):
 
     ################################################################################
 
-    def dispatch(self, request):
-
+    def dispatch(self, request, *args, **kwargs):
+        
         #---
-
-        response = super().pre_dispatch(request)
+        
+        response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
-        
+            
         #---
         
-        profile = dbRow('SELECT * FROM ng0.profiles WHERE id=' + str(self.userId))
-        if not profile or profile['status'] != -3: return HttpResponseRedirect('/ng0/')
+        query = 'SELECT privilege, resets' + \
+                ' FROM users' + \
+                ' WHERE id=' + str(self.userId)
+        row = dbRow(query)
+        
+        if not row or row['privilege'] != -3 or row['resets'] != 0: return HttpResponseRedirect('/ng0/')
         
         #---
         
         if not registration['enabled'] or (registration['until'] != None and timezone.now() > registration['until']):
         
-            tpl = Template('home-closed')
+            tpl = getTemplate(request, 'home-closed')
             
-            return tpl.render(request)
+            return render(request, tpl.template, tpl.data)
         
         #---
         
-        return super().dispatch(request)
+        return super().dispatch(request, *args, **kwargs)
 
     ################################################################################
     
-    def post(self, request):
+    def post(self, request, *args, **kwargs):
         
         #---
         
@@ -41,22 +45,46 @@ class View(BaseView):
         #---
         
         if action == 'start':
-        
-            name = request.POST.get('name','').strip()
+                        
+            name = request.POST.get('name', '').strip()
             if not isValidName(name):
                 messages.error(request, 'name_invalid')
                 return HttpResponseRedirect(request.build_absolute_uri())
-                
+            
             try:
-                dbQuery('UPDATE ng0.profiles SET username=' + strSql(name) + ' WHERE id=' + str(self.userId))
+                dbQuery('UPDATE users SET username=' + dosql(name) + ' WHERE id=' + str(self.userId))
             except:
                 messages.error(request, 'name_already_used')
                 return HttpResponseRedirect(request.build_absolute_uri())
+                
+            orientation = ToInt(request.POST.get('orientation'), 0)
+            if orientation == 0:
+                messages.error(request, 'orientation_invalid')
+                return HttpResponseRedirect(request.build_absolute_uri())
+            
+            dbQuery('UPDATE users SET orientation=' + str(orientation) + ' WHERE id=' + str(self.userId))
+            
+            if orientation == 1:
+                dbQuery('INSERT INTO researches(userid, researchid, level) VALUES(' + str(self.userId) + ', 10, 1)')
+                dbQuery('INSERT INTO researches(userid, researchid, level) VALUES(' + str(self.userId) + ', 11, 1)')
+                dbQuery('INSERT INTO researches(userid, researchid, level) VALUES(' + str(self.userId) + ', 12, 1)')
 
-            galaxy = int(request.POST.get('galaxy', 0))
-            result = dbExecute('SELECT ng0.profile_reset(' + str(self.userId) + ',' + str(galaxy) + ')')
+            elif orientation == 2:
+                dbQuery('INSERT INTO researches(userid, researchid, level) VALUES(' + str(self.userId) + ', 20, 1)')
+                dbQuery('INSERT INTO researches(userid, researchid, level) VALUES(' + str(self.userId) + ', 21, 1)')
+                dbQuery('INSERT INTO researches(userid, researchid, level) VALUES(' + str(self.userId) + ', 22, 1)')
+
+            elif orientation == 3:
+                dbQuery('INSERT INTO researches(userid, researchid, level) VALUES(' + str(self.userId) + ', 30, 1)')
+                dbQuery('INSERT INTO researches(userid, researchid, level) VALUES(' + str(self.userId) + ', 31, 1)')
+                dbQuery('INSERT INTO researches(userid, researchid, level) VALUES(' + str(self.userId) + ', 32, 1)')
+
+            dbQuery('SELECT sp_update_researches(' + str(self.userId) + ')')
+            
+            galaxy = ToInt(request.POST.get('galaxy'), 0)
+            result = dbExecute('SELECT sp_reset_account(' + str(self.userId) + ',' + str(galaxy) + ')')
             if result != 0:
-                messages.error(request, 'profile_reset_error_' + result)
+                messages.error(request, 'reset_error_' + result)
                 return HttpResponseRedirect(request.build_absolute_uri())
 
             return HttpResponseRedirect('/ng0/home-wait/')
@@ -66,24 +94,21 @@ class View(BaseView):
         return HttpResponseRedirect(request.build_absolute_uri())
         
     ################################################################################
-
-    def get(self, request):
-        
-        #---
-
-        tpl = Template('home-start')
+    
+    def get(self, request, *args, **kwargs):
 
         #---
+
+        tpl = getTemplate(request, 'home-start')
+
+        #---
         
-        galaxies = dbRows('SELECT * FROM ng0.vw_galaxies WHERE allow_new_players = true AND planet_count_for_new > 0')
-        tpl.set('galaxies', galaxies)
+        query = 'SELECT id, recommended' + \
+                ' FROM sp_get_galaxy_info(' + str(self.userId) + ')'
+        rows = dbRows(query)
         
-        for galaxy in galaxies:
-        
-            if galaxy['protected'] and galaxy['planet_count_for_new'] > 50: galaxy['recommended'] = 1
-            elif not galaxy['protected'] or galaxy['planet_count_for_new'] < 10: galaxy['recommended'] = -1
-            else: galaxy['recommended'] = 0
+        tpl.set('galaxies', rows)
         
         #---
-
-        return tpl.render(request)
+        
+        return render(request, tpl.template, tpl.data)

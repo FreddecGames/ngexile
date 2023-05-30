@@ -1,46 +1,176 @@
 {% extends "ng0/_layout.html" %}
 
 {% load i18n %}
+{% load humanize %}
 
 {% block content %}
 
     {% include "ng0/planet-tabs.html" %}
 
-    <div id="renameBox" class="d-none">
-        <form method="post" class="row gx-2">
-            {% csrf_token %}
-            <input type="hidden" name="action" value="rename">
-            <div class="col">
-                <input type="text" class="form-control" name="name" size="28" maxlength="16"  value="{{ curPlanet.name }}">
-            </div>
-            <div class="col-auto">
-                <button type="submit" class="btn btn-success px-2"><i class="fa-fw fas fa-check"></i></button>
-            </div>
-            <div class="col-auto">
-                <button type="button" class="btn btn-danger px-2" onclick="hide();"><i class="fa-fw fas fa-times"></i></button>
-            </div>
-        </form>
-    </div>
-    
-    <div class="scroll-content" style="height:calc(100% - 104px);">
-        <div class="p-3">
+    <div class="scroll-content" style="height:calc(100% - 158px);">
+        <div class="page-content">
             <div class="row g-3">
+            
+                <script>
+                    function confirmAbandon() { return window.confirm('Êtes-vous sûr de vouloir abandonner la planète "{{planet.name}}" ?'); }
+                    function confirmScientists(id) { return window.confirm('Êtes-vous sûr de vouloir renvoyer ' + getVal('scientists' + id) + ' scientifiques ?'); }
+                    function confirmSoldiers(id) { return window.confirm('Êtes-vous sûr de vouloir renvoyer ' + getVal('soldiers' + id) + ' soldats ?'); }
+                    function confirmWorkers(id) { return window.confirm('Êtes-vous sûr de vouloir renvoyer ' + getVal('workers' + id) + ' travailleurs ?'); }
+                </script>
                 
-                {% include "ng0/_messages.html" %}
-        
+                <div id="renamebox" class="hidden">
+                    <form method='post' class="row gx-2">
+                        {% csrf_token %}
+                        <input type='hidden' name='action' value='rename'>
+                        <div class="col-auto"><input type='text' class="form-control" name='name' size="28" maxlength="16"  value='{{ planet.name }}'></div>
+                        <div class="col-auto"><input type='submit' value='OK' class="btn btn-primary"></div>
+                        <div class="col-auto"><button type="button" onclick='hide();' class="btn btn-danger"><i class="fa-fw fas fa-times"></i></button></div>
+                    </form>
+                </div>
+                
+                <div id="commandersbox" class="hidden">
+                    <form method='post' class="row gx-2">
+                        {% csrf_token %}
+                        <input type='hidden' name='action' value='assigncommander'>
+                        <div class="col-auto"><select class="form-control" name='commander'>
+                            {% if planet.commanderid %}<option value='0'>Renvoyer</option>
+                            {% else %}<option value='0'>Aucun</option>
+                            {% endif %}
+                            {% for optgroup in optgroups %}
+                                <optgroup label="{% if optgroup.typ == 'fleet' %}sur Flottes{% endif %}{% if optgroup.typ == 'planet' %}sur Planètes{% endif %}{% if optgroup.typ == 'none' %}Non affectés{% endif %}">
+                                    {% for cmd in optgroup.cmds %}
+                                        <option value={{ cmd.id }}{% if cmd.id == planet.commanderid %} selected{% endif %}>&middot;&nbsp;{{ cmd.name }}
+                                            {% if cmd.fleetname %}({{ cmd.fleetname }}){% endif %}
+                                            {% if cmd.planetname %}({{ cmd.planetname }}){% endif %}
+                                            {% if cmd.unavailable %}(Indisponible){% endif %}
+                                        </option>
+                                    {% endfor %}
+                                </optgroup>
+                            {% endfor %}
+                        </select></div>
+                        <div class="col-auto"><input type='submit' value='OK' class="btn btn-primary"></div>
+                        <div class="col-auto"><button type="button" onclick='hide();' class="btn btn-danger"><i class="fa-fw fas fa-times"></i></button></div>
+                    </form>
+                </div>
+                
+                <div id="scientistsbox" class="hidden">
+                    <form method='post' class="row gx-2">
+                        {% csrf_token %}
+                        <input type='hidden' name='action' value='firescientists'>
+                        <input type='hidden' name='planet' value='{{ planet.id }}'>
+                        <div class="col-auto"><input type='text'
+                               class="form-control"
+                               name='amount'
+                               id="scientistsXXX"
+                               size="8"
+                               maxlength="8"
+                               value='0'></div>
+                        <div class="col-auto"><input type='submit' value='OK' class="btn btn-primary" onclick="return confirmScientists(XXX)"></div>
+                        <div class="col-auto"><button type="button" onclick='hide();' class="btn btn-danger"><i class="fa-fw fas fa-times"></i></button></div>
+                    </form>
+                </div>
+                
+                <div id="soldiersbox" class="hidden">
+                    <form method='post' class="row gx-2">
+                        {% csrf_token %}
+                        <input type='hidden' name='action' value='firesoldiers'>
+                        <div class="col-auto"><input type='text'
+                               class="form-control"
+                               name='amount'
+                               id="soldiersXXX"
+                               size="8"
+                               maxlength="8"
+                               value='0'></div>
+                        <div class="col-auto"><input type='submit' value='OK' class="btn btn-primary" onclick="return confirmSoldiers(XXX)"></div>
+                        <div class="col-auto"><button type="button" onclick='hide();' class="btn btn-danger"><i class="fa-fw fas fa-times"></i></button></div>
+                    </form>
+                </div>
+                
+                <div id="workersbox" class="hidden">
+                    <form method='post' class="row gx-2">
+                        {% csrf_token %}
+                        <input type='hidden' name='action' value='fireworkers'>
+                        <div class="col-auto"><input type='text'
+                               class="form-control"
+                               name='amount'
+                               id="workersXXX"
+                               size="8"
+                               maxlength="8"
+                               value='0'></div>
+                        <div class="col-auto"><input type='submit' value='OK' class="btn btn-primary" onclick="return confirmWorkers(XXX)"></div>
+                        <div class="col-auto"><button type="button" onclick='hide();' class="btn btn-danger"><i class="fa-fw fas fa-times"></i></button></div>
+                    </form>
+                </div>
+                
                 <div class="col-12">
-                    <div class="fs-6 mb-2">{% translate "Détails" %}</div>
-                    <div class="row g-2">
-                        <div class="col-12 col-lg-4">
-                            <div class="card">
-                                <div id="renameRef" class="card-body">
-                                    <div class="row gx-2 align-items-center">
-                                        <div class="col text-truncate">
-                                            <div class="small">{% translate "Nom" %}</div>
-                                            <span class="text-self">{{ curPlanet.name }}</span>
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row gx-3">
+                                <div class="col-auto text-center">
+                                    <img src="{{ PATH_IMAGES }}img/planets/p{{ planet.img }}.gif" class="rounded" width="64" height="64">
+                                    <form method="post">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="action" value="abandon">
+                                        <input type="submit" class="mt-2 btn btn-danger" value="Abandonner" onclick="return confirmAbandon()">
+                                    </form>
+                                </div>
+                                <div class="col">
+                                    <div class="row gy-1 gx-3 align-items-center">
+                                        <div class="col-3 text-end"><span class="text-normal">Planète</span></div>
+                                        <div id="renameref" class="col-9 d-flex">
+                                            <span class="me-auto">{{ planet.name }}</span>
+                                            <a href="#" onclick="return show('renameref','renamebox')">Renommer</a>
                                         </div>
-                                        <div class="col-auto">
-                                            <button class="btn btn-link" onclick="return show('renameRef','renameBox');"><i class="fa-fw fas fa-edit"></i></button>
+                                        <div class="col-3 text-end"><span class="text-normal">Localisation</span></div>
+                                        <div class="col-9">
+                                            <a href="/ng0/map/?g={{ planet.galaxy }}&s={{ planet.sector }}" data-bs-toggle="tooltip" data-bs-title="Carte spatiale">{{ planet.galaxy }}.{{ planet.sector }}.{{ planet.planet }}</a>
+                                        </div>
+                                        <div class="col-3 text-end"><span class="text-normal">Commandant</span></div>
+                                        <div id="cmdref" class="col-9 d-flex align-items-center">
+                                            {% if planet.commander %}<i class="fas fa-user-astronaut text-normal me-1"></i> {{ planet.commander.name }}
+                                            {% else %}<span class="text-normal">aucun</span>
+                                            {% endif %}
+                                            <a href="#" class="ms-auto" onclick="return show('cmdref','commandersbox')">Changer</a>
+                                        </div>
+                                        <div class="col-3 text-end"><span class="text-normal">Terrain</span></div>
+                                        <div class="col-9">
+                                            {{ planet.floor_occupied|intcomma }} <small class="text-normal">/{{ planet.floor|intcomma }}</small>
+                                        </div>
+                                        <div class="col-3 text-end"><span class="text-normal">Espace</span></div>
+                                        <div class="col-9">
+                                            {{ planet.space_occupied|intcomma }} <small class="text-normal">/{{ planet.space|intcomma }}</small>
+                                        </div>
+                                        <div class="col-3 text-end"><span class="text-normal">Scientifiques</span></div>
+                                        <div id="scientistsref" class="col-9 d-flex">
+                                            <span>{{ planet.scientists|intcomma }} <small class="text-normal">/{{ planet.scientists_capacity|intcomma }}</small></span>
+                                            <a href="#" class="ms-auto" onclick="return show('scientistsref','scientistsbox')">Renvoyer</a>
+                                        </div>
+                                        <div class="col-3 text-end"><span class="text-normal">Soldats</span></div>
+                                        <div id="soldiersref" class="col-9 d-flex">
+                                            <span>{{ planet.soldiers|intcomma }} <small class="text-normal">/{{ planet.soldiers_capacity|intcomma }}</small></span>
+                                            <a href="#" class="ms-auto" onclick="return show('soldiersref','soldiersbox')">Renvoyer</a>
+                                        </div>
+                                        <div class="col-3 text-end"><span class="text-normal">Travailleurs</span></div>
+                                        <div id="workersref" class="col-9 d-flex">
+                                            <span>{{ planet.workers|intcomma }} <small class="text-normal">/{{ planet.workers_capacity|intcomma }}</small></span>
+                                            <a href="#" class="ms-auto" onclick="return show('workersref','workersbox')">Renvoyer</a>
+                                        </div>
+                                        <div class="col-3 text-end"><span class="text-normal">Formation</span></div>
+                                        <div class="col-9 d-flex">
+                                            <span>{{ planet.growth|floatformat:1 }}% <small class="text-normal">par heure</small></span>
+                                            {% if planet.recruit_workers %}
+                                                <form method="post" class="ms-auto">
+                                                    {% csrf_token %}
+                                                    <input type="hidden" name="action" value="suspend" />
+                                                    <button type="submit" class="btn btn-link p-0" data-bs-toggle="tooltip" data-bs-title="Suspendre le recrutement de nouveaux travailleurs">Suspendre</button>
+                                                </form>
+                                            {% else %}
+                                                <form method="post" class="ms-auto">
+                                                    {% csrf_token %}
+                                                    <input type="hidden" name="action" value="resume" />
+                                                    <button type="submit" class="btn btn-link p-0" data-bs-toggle="tooltip" data-bs-title="Reprendre le recrutement de nouveaux travailleurs">Reprendre</button>
+                                                </form>
+                                            {% endif %}
                                         </div>
                                     </div>
                                 </div>
@@ -48,7 +178,132 @@
                         </div>
                     </div>
                 </div>
+                
+                <form method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="resources_price"/>
+                    <div class="row g-3">
+                    
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <span class="fs-6">Achat des ressources</span>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row gx-2 align-items-center justify-content-center">
+                                        <div class="col-auto"><span class="text-normal">Prix pour {{ 1000|intcomma }} minerai</span></div>
+                                        <div class="col-auto"><input type="number" class="form-control" name="buy_ore" value="{{ planet.buy_ore }}" maxlength="5" /></div>
+                                        <div class="col-auto"><span class="text-normal">Prix pour {{ 1000|intcomma }} hydrocarbure</span></div>
+                                        <div class="col-auto"><input type="number" class="form-control" name="buy_hydrocarbon" value="{{ planet.buy_hydrocarbon }}" maxlength="5" /></div>
+                                        <div class="col-auto"><input type="submit" class="btn btn-primary" value="Envoyer"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </form>
             
+                <div class="col-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="fs-6">Bâtiment en contruction</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="row gy-1">
+                                {% for building in buildings %}
+                                    <div class="col-12">
+                                        <div class="row gx-3">
+                                            <div class="col"><span class="{% if building.destroying %}text-danger{% endif %}">{{ building.label }}</span></div>
+                                            <div class="col-auto"><span class="text-yellow"><script>putcountdown1({{building.remaining_time}}, "Terminé", "/ng0/planet-view/?planet={{planet.id}}");</script></span></div>
+                                        </div>
+                                    </div>
+                                {% empty %}
+                                    <div class="col-12">
+                                        <span class="text-normal">Aucun bâtiment en construction</span>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="fs-6">Vaisseau en contruction</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="row gy-1">
+                                {% for ship in ships %}
+                                    <div class="col-12">
+                                        <div class="row gx-3">
+                                            <div class="col"><span class="{% if ship.recycle %}text-danger{% endif %}">{{ ship.label }}</span></div>
+                                            <div class="col-auto"><span class="text-yellow"><script>putcountdown1({{ship.remaining_time}}, "Terminé", "/ng0/planet-view/?planet={{planet.id}}");</script></span></div>
+                                        </div>
+                                    </div>
+                                {% empty %}
+                                    <div class="col-12">
+                                        <span class="text-normal">Aucun vaisseau en construction</span>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="fs-6">Flotte en orbite</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="row gy-1">
+                                {% for fleet in fleets %}
+                                    <div class="col-12">
+                                        <div class="row gx-3">
+                                            <div class="col-auto">
+                                                {% if fleet.attack %}
+                                                    <img src="{{ PATH_IMAGES }}img/interface/stance_attack.gif"
+                                                         class="stance"
+                                                         data-bs-toggle="tooltip" data-bs-title="Mode attaque"
+                                                         width="10"
+                                                         height="10">
+                                                {% else %}
+                                                    <img src="{{ PATH_IMAGES }}img/interface/stance_defend.gif"
+                                                         class="stance"
+                                                         data-bs-toggle="tooltip" data-bs-title="Mode riposte"
+                                                         width="10"
+                                                         height="10">
+                                                {% endif %}
+                                            </div>
+                                            <div class="ps-0 col-auto">
+                                                {% if fleet.relation == 2 %}<a href="/ng0/fleet-view/?id={{ fleet.id }}" class="text-info" data-bs-toggle="tooltip" data-bs-title="Voir flotte">{{ fleet.name }}</a>
+                                                {% elif fleet.relation == 1 %}<a href="/ng0/mail-new/?to={{ fleet.ownername }}" class="text-success" data-bs-toggle="tooltip" data-bs-title="Contacter propriétaire">{{ fleet.ownername }}</a>
+                                                {% elif fleet.relation == 0 %}<a href="/ng0/mail-new/?to={{ fleet.ownername }}" class="text-friend" data-bs-toggle="tooltip" data-bs-title="Contacter propriétaire">{{ fleet.ownername }}</a>
+                                                {% else %}<a href="/ng0/profile-view/?name={{ fleet.ownername }}" class="text-danger" data-bs-toggle="tooltip" data-bs-title="Voir profil">{{ fleet.ownername }}</a>
+                                                {% endif %}
+                                            </div>
+                                            <div class="ps-0 col">
+                                                <span>{{ fleet.signature|intcomma }}</span>
+                                            </div>
+                                            <div class="col-auto">
+                                                {% if fleet.engaged %}<span class="text-danger">En combat</span>
+                                                {% elif fleet.action == 2 %}<span class="text-success">En recyclage</span>
+                                                {% elif fleet.action == 4 %}<span class="text-success">En attente</span>
+                                                {% else %}<span class="text-normal">En patrouille</span>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% empty %}
+                                    <div class="col-12">
+                                        <span class="text-normal">Aucune flotte en orbit</span>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        
             </div>
         </div>
     </div>

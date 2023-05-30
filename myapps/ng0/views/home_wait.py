@@ -1,30 +1,34 @@
 # -*- coding: utf-8 -*-
 
-from myapps.ng0.views._base import *
+from myapps.ng0.views._utils import *
 
 class View(BaseView):
 
     ################################################################################
 
-    def dispatch(self, request):
+    def dispatch(self, request, *args, **kwargs):
 
         #---
 
-        response = super().pre_dispatch(request)
+        response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
             
         #---
         
-        profile = dbRow('SELECT * FROM ng0.profiles WHERE id=' + str(self.userId))        
-        if not profile or profile['status'] != -2: return HttpResponseRedirect('/ng0/')
+        query = 'SELECT privilege, resets' + \
+                ' FROM users' + \
+                ' WHERE id=' + str(self.userId)
+        row = dbRow(query)
+        
+        if not row or row['privilege'] != -3 or row['resets'] == 0: return HttpResponseRedirect('/ng0/')
         
         #---
         
-        return super().dispatch(request)
+        return super().dispatch(request, *args, **kwargs)
 
     ################################################################################
     
-    def post(self, request):
+    def post(self, request, *args, **kwargs):
         
         #---
         
@@ -34,8 +38,8 @@ class View(BaseView):
         
         if action == 'unlock':
         
-            dbQuery('UPDATE ng0.profiles SET status = 0 WHERE id=' + str(self.userId))
-            return HttpResponseRedirect('/ng0/')
+            dbQuery('UPDATE users SET privilege=0 WHERE id=' + str(self.userId))
+            return HttpResponseRedirect('/ng0/empire-view/')
         
         #---
         
@@ -43,17 +47,21 @@ class View(BaseView):
         
     ################################################################################
     
-    def get(self, request):
+    def get(self, request, *args, **kwargs):
 
         #---
 
-        tpl = Template('home-wait')
+        tpl = getTemplate(request, 'home-wait')
 
         #---
 
-        profile = dbRow('SELECT * FROM ng0.vw_profiles WHERE id=' + str(self.userId))        
-        tpl.set('profile', profile)
+        query = 'SELECT username' + \
+                ' FROM users' + \
+                ' WHERE id=' + str(self.userId)
+        row = dbRow(query)
+
+        tpl.set('profile', row)
         
         #---
         
-        return tpl.render(request)
+        return render(request, tpl.template, tpl.data)

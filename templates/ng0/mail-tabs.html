@@ -1,0 +1,22 @@
+{% load i18n %}
+
+<div class="content-page px-3 pt-3">
+    <div class="row g-3">
+        <div class="col-12">
+            <ul class="nav nav-tabs">
+                <li class="nav-item {% if selectedtab == 'inbox' %}active{% endif %}">
+                    <a href="/ng0/mail-inbox/" class="nav-link">Reçus</a>
+                </li>
+                <li class="nav-item {% if selectedtab == 'outbox' %}active{% endif %}">
+                    <a href="/ng0/mail-outbox/" class="nav-link">Envoyés</a>
+                </li>
+                <li class="nav-item {% if selectedtab == 'new' %}active{% endif %}">
+                    <a href="/ng0/mail-new/" class="nav-link">Composer</a>
+                </li>
+                <li class="nav-item {% if selectedtab == 'blacklist' %}active{% endif %}">
+                    <a href="/ng0/mail-blacklist/" class="nav-link">Nations ignorées</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>

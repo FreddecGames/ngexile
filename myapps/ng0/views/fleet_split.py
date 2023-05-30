@@ -1,25 +1,31 @@
 # -*- coding: utf-8 -*-
 
-from myapps.ng0.views._base import *
+from myapps.ng0.views._global import *
 
-class View(GameView):
+class View(GlobalView):
 
     ################################################################################
 
-    def dispatch(self, request, fleetId):
+    def dispatch(self, request, *args, **kwargs):
 
         #---
 
-        response = super().pre_dispatch(request)
+        response = super().pre_dispatch(request, *args, **kwargs)
         if response: return response
-                
+        
         #---
         
-        return super().dispatch(request)
+        self.fleetId = ToInt(request.GET.get('id'), 0)
+        if self.fleetId == 0:
+            return HttpResponseRedirect('/ng0/')
+        
+        #---
+        
+        return super().dispatch(request, *args, **kwargs)
 
     ################################################################################
     
-    def post(self, request, fleetId):
+    def post(self, request, *args, **kwargs):
         
         #---
         
@@ -29,45 +35,64 @@ class View(GameView):
         
         if action == 'split':
 
-            name = request.POST.get('name')
-            if not isValidName(name):
-                messages.error(request, 'name_invalid')
-                return HttpResponseRedirect(request.build_absolute_uri())
+            newfleetname = request.POST.get('newname')
+            if not isValidObjectName(newfleetname):
+                messages.error(request, 'error_badname')
+                return HttpResponseRedirect('/ng0/fleet-split/?id=' + str(self.fleetId))
             
-            fleet = dbRows('SELECT * FROM vw_fleets WHERE id=' + str(fleetId))        
-        
-            newFleetId = dbExecute('SELECT fleet_create(' + str(self.userId) + ',' + str(fleet['planet_id']) + ',' + strSql(name) + ')')
-            if newFleetId < 0:
-                messages.error(request, 'fleet_create_error_' + str(newFleetId))
-                return HttpResponseRedirect(request.build_absolute_uri())
+            #---
             
-            shipIds = dbRows('SELECT id FROM db_ships')
-            for shipId in shipIds:
+            query = 'SELECT id, planetid, action, cargo_ore, cargo_hydrocarbon,' + \
+                    ' cargo_scientists, cargo_soldiers, cargo_workers' + \
+                    ' FROM vw_fleets' + \
+                    ' WHERE action=0 AND ownerid=' + str(self.userId) + ' AND id=' + str(self.fleetId)
+            fleet = dbRow(query)
             
-                count = int(request.POST.get('ship' + str(shipId['id']), 0))
-                if count > 0:
+            if fleet == None:
+                messages.error(request, 'error_occupied')
+                return HttpResponseRedirect('/ng0/fleet-view/?id=' + str(self.fleetId))
                 
-                    result = dbExecute('SELECT * FROM fleet_ship_add(' + str(self.userId) + ',' + str(newFleetId) + ',' + str(shipId['id']) + ',' + str(count) + ')')
-                    if result > 0:
+            #---
+
+            newfleetid = dbExecute('SELECT sp_create_fleet(' + str(self.userId) + ',' + str(fleet['planetid']) + ',' + dosql(newfleetname) + ')')
+            if newfleetid < 0:
+                if newfleetid == -1: messages.error(request, 'error_already_exists')
+                elif newfleetid == -2: messages.error(request, 'error_already_exists')
+                elif newfleetid == -3: messages.error(request, 'error_limit_reached')
+                return HttpResponseRedirect('/ng0/fleet-split/?id=' + str(self.fleetId))
+            
+            #---
+            
+            query = 'SELECT db_ships.id, ' + \
+                    ' COALESCE((SELECT quantity FROM fleets_ships WHERE fleetId=' + str(self.fleetId) + ' AND shipid = db_ships.id), 0) AS count' + \
+                    ' FROM db_ships' + \
+                    ' ORDER BY db_ships.category, db_ships.label'
+            ships = dbRows(query)
+            
+            for ship in ships:            
+                quantity = min(ToInt(request.POST.get('transfership' + str(ship['id'])), 0), ship['count'])
+                if quantity > 0:
+                    dbQuery('INSERT INTO fleets_ships(fleetId, shipid, quantity) VALUES(' + str(newfleetid) + ',' + str(ship['id']) +',' + str(quantity) + ')')
+
+            #---
                     
-                        dbQuery('DELETE FROM fleets WHERE id=' + str(newFleetId) + ' AND profile_id=' + str(self.userId))
-                        
-                        messages.error(request, 'fleet_transfer_ship_to_fleet_error_' + str(result))
-                        return HttpResponseRedirect(request.build_absolute_uri())
+            dbQuery('UPDATE fleets SET idle_since=now() WHERE ownerid =' + str(self.userId) + ' AND (id=' + str(newfleetid) + ' OR id=' + str(self.fleetId) + ')')
+
+            #---
             
-            newload = dbExecute('SELECT cargo_capacity FROM vw_fleets WHERE profile_id=' + str(self.userId) + ' AND id=' + str(newfleetid))
+            newload = dbExecute('SELECT cargo_capacity FROM vw_fleets WHERE ownerid=' + str(self.userId) + ' AND id=' + str(newfleetid))
             
-            ore = max(min(int(request.POST.get('load_ore', 0)), fleet['ore_count']), 0)
-            hydro = max(min(int(request.POST.get('load_hydro', 0)), fleet['hydro_count']), 0)
-            scientists = max(min(int(request.POST.get('load_scientists', 0)), fleet['scientist_count']), 0)
-            soldiers = max(min(int(request.POST.get('load_soldiers', 0)), fleet['soldier_count']), 0)
-            workers = max(min(int(request.POST.get('load_workers', 0)), fleet['worker_count']), 0)
+            ore = max(min(ToInt(request.POST.get('load_ore'), 0), fleet['cargo_ore']), 0)
+            hydrocarbon = max(min(ToInt(request.POST.get('load_hydrocarbon'), 0), fleet['cargo_hydrocarbon']), 0)
+            scientists = max(min(ToInt(request.POST.get('load_scientists'), 0), fleet['cargo_scientists']), 0)
+            soldiers = max(min(ToInt(request.POST.get('load_soldiers'), 0), fleet['cargo_soldiers']), 0)
+            workers = max(min(ToInt(request.POST.get('load_workers'), 0), fleet['cargo_workers']), 0)
 
             ore = min(ore, newload)
             newload = newload - ore
 
-            hydro = min( hydro, newload)
-            newload = newload - hydro
+            hydrocarbon = min( hydrocarbon, newload)
+            newload = newload - hydrocarbon
 
             scientists = min( scientists, newload)
             newload = newload - scientists
@@ -78,27 +103,34 @@ class View(GameView):
             workers = min( workers, newload)
             newload = newload - workers
 
-            if ore != 0 or hydro != 0 or scientists != 0 or soldiers != 0 or workers != 0:
+            if ore != 0 or hydrocarbon != 0 or scientists != 0 or soldiers != 0 or workers != 0:
 
-                result = dbExecute('SELECT * FROM fleet_transfer_cargo_to_fleet(' + str(self.userId) + ',' + str(fleetId) + ',' + str(newFleetId) + ',' + str(ore) + ',' + str(hydro) + ',' + str(scientist) + ',' + str(soldier) + ',' + str(worker) + ')')
-                if result > 0:
-                    messages.error(request, 'fleet_transfer_cargo_to_fleet_error_' + str(result))
-                    return HttpResponseRedirect(request.build_absolute_uri())
+                dbQuery('UPDATE fleets SET' + \
+                        ' cargo_ore=' + str(ore) + ', cargo_hydrocarbon=' + str(hydrocarbon) + ', ' + \
+                        ' cargo_scientists=' + str(scientists) + ', cargo_soldiers=' + str(soldiers) + ', ' + \
+                        ' cargo_workers=' + str(workers) + \
+                        ' WHERE id =' + str(newfleetid) + ' AND ownerid =' + str(self.userId))
+
+                dbQuery('UPDATE fleets SET' + \
+                        ' cargo_ore=cargo_ore-' + str(ore) + ', cargo_hydrocarbon=cargo_hydrocarbon-' + str(hydrocarbon) + ', ' + \
+                        ' cargo_scientists=cargo_scientists-' + str(scientists) + ', ' + \
+                        ' cargo_soldiers=cargo_soldiers-' + str(soldiers) + ', ' + \
+                        ' cargo_workers=cargo_workers-' + str(workers) + \
+                        ' WHERE id =' + str(self.fleetId) + ' AND ownerid =' + str(self.userId))
+
+            #---
+                            
+            for ship in ships:
+                quantity = min(ToInt(request.POST.get('transfership' + str(ship['id'])), 0), ship['count'])
+                if quantity > 0:
+                    dbQuery('UPDATE fleets_ships SET quantity=quantity-' + str(quantity) + ' WHERE fleetId=' + str(self.fleetId) + ' AND shipid=' + str(ship['id']))
+
+            #---
+           
+            dbQuery('DELETE FROM fleets WHERE ownerid=' + str(self.userId) + ' AND size=0')
+
+            #---
             
-            shipIds = dbRows('SELECT id FROM db_ships')
-            for shipId in shipIds:
-            
-                count = int(request.POST.get('ship' + str(shipId['id']), 0))
-                if count > 0:
-                
-                    result = dbExecute('SELECT * FROM fleet_ship_remove(' + str(self.userId) + ',' + str(fleetId) + ',' + str(shipId['id']) + ',' + str(count) + ')')
-                    if result > 0:
-                    
-                        dbQuery('DELETE FROM fleets WHERE id=' + str(newFleetId) + ' AND profile_id=' + str(self.userId))
-                        
-                        messages.error(request, 'fleet_ship_remove_error_' + str(result))
-                        return HttpResponseRedirect(request.build_absolute_uri())
-                        
             return HttpResponseRedirect('/ng0/fleet-view/?id=' + str(newfleetid))
         
         #---
@@ -107,25 +139,37 @@ class View(GameView):
     
     ################################################################################
     
-    def get(self, request, fleetId):
+    def get(self, request, *args, **kwargs):
 
         #---
         
-        tpl = Template('fleet-split')
+        tpl = getTemplate(request, 'fleet-split')
 
-        self.selectedTab = 'split'
         self.selectedMenu = 'fleet'
 
         #---
 
-        fleet = dbRows('SELECT * FROM vw_fleets WHERE id=' + str(fleetId))        
+        query = 'SELECT id, name, attackonsight, engaged, size, signature, speed, remaining_time, commanderid, commandername,' + \
+                ' planetid, planet_name, planet_galaxy, planet_sector, planet_planet, planet_ownerid, planet_owner_name, planet_owner_relation,' + \
+                ' cargo_capacity, cargo_load, cargo_ore, cargo_hydrocarbon, cargo_scientists, cargo_soldiers, cargo_workers,' + \
+                ' action ' + \
+                ' FROM vw_fleets' + \
+                ' WHERE action=0 AND ownerid=' + str(self.userId) + ' AND id=' + str(self.fleetId)
+        fleet = dbRow(query)
+        if fleet == None: return HttpResponseRedirect('/ng0/fleets/')
         tpl.set('fleet', fleet)
 
         #---
 
-        ships = dbRows('SELECT * FROM vw_fleet_ships WHERE fleet_id=' + str(fleetId))        
+        query = 'SELECT db_ships.id, db_ships.label, db_ships.capacity, db_ships.signature, db_ships.label,' + \
+                    'COALESCE((SELECT quantity FROM fleets_ships WHERE fleetId=' + str(self.fleetId) + ' AND shipid = db_ships.id), 0) AS count' + \
+                ' FROM fleets_ships' + \
+                '    INNER JOIN db_ships ON (db_ships.id=fleets_ships.shipid)' + \
+                ' WHERE fleetId=' + str(self.fleetId) + \
+                ' ORDER BY db_ships.category, db_ships.label'
+        ships = dbRows(query)
         tpl.set('ships', ships)
         
         #---
          
-        return self.display(request, tpl)
+        return self.display(tpl, request)

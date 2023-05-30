@@ -6,22 +6,20 @@ class View(LoginRequiredMixin, View):
 
     ################################################################################
 
-    def dispatch(self, request):
+    def dispatch(self, request, *args, **kwargs):
 
         #---
         
-        if not request.user.is_authenticated: return HttpResponseRedirect('/')
+        if not maintenance: return HttpResponseRedirect('/')
         
-        if not maintenance: return HttpResponseRedirect('/ng0/')
-        
-        return super().dispatch(request)
+        return super().dispatch(request, *args, **kwargs)
         
     ################################################################################
 
-    def get(self, request):
+    def get(self, request, *args, **kwargs):
         
         #---
 
-        tpl = Template('home-maintenance')
+        tpl = getTemplate(request, 'maintenance')
 
-        return tpl.render(request)
+        return render(request, tpl.template, tpl.data)

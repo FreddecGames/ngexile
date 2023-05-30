@@ -1,80 +1,40 @@
 {% load i18n %}
+{% load humanize %}
 
 <div class="page-content">
-    <div class="pt-3 px-3">
-        <div class="card mb-2">
-            <div class="card-body">
-                <div class="row gx-2 align-items-center">
-                    <div class="col-auto">
-                        <a href="/ng0/map/?galaxy={{ curPlanet.galaxy_id }}&sector={{ curPlanet.sector }}" data-bs-toggle="tooltip" data-bs-title="{% translate 'Carte' %}">{{ curPlanet.galaxy_id }}.{{ curPlanet.sector }}.{{ curPlanet.number }}</a>
-                    </div>
-                    <div class="col text-truncate">
-                        <span class="text-self">{{ curPlanet.name }}</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <ul class="nav nav-tabs">
-            <li class="nav-item">
-                <a href="/ng0/planet-view/?planet={{ curPlanet.id }}" class="nav-link {% if selectedTab == 'view' %}active{% endif %}">
-                    <div class="row gx-2 align-items-center flex-nowrap">
-                        <div class="col-auto d-flex">
-                            <i class="fa-fw fas fa-eye"></i>
-                        </div>
-                        <div class="col-auto">
-                            {% translate "Aperçu" %}
-                        </div>
-                    </div>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="/ng0/planet-buildings/?planet={{ curPlanet.id }}" class="nav-link {% if selectedTab == 'buildings' %}active{% endif %}">
-                    <div class="row gx-2 align-items-center flex-nowrap">
-                        <div class="col-auto d-flex">
-                            <i class="fa-fw fas fa-building"></i>
-                        </div>
-                        <div class="col-auto">
-                            {% translate "Bâtiments" %}
-                        </div>
-                    </div>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="/ng0/planet-ships/?planet={{ curPlanet.id }}" class="nav-link {% if selectedTab == 'ships' %}active{% endif %}">
-                    <div class="row gx-2 align-items-center flex-nowrap">
-                        <div class="col-auto d-flex">
-                            <i class="fa-fw fas fa-rocket"></i>
-                        </div>
-                        <div class="col-auto">
-                            {% translate "Vaisseaux" %}
-                        </div>
-                    </div>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="/ng0/planet-trainings/?planet={{ curPlanet.id }}" class="nav-link {% if selectedTab == 'trainings' %}active{% endif %}">
-                    <div class="row gx-2 align-items-center flex-nowrap">
-                        <div class="col-auto d-flex">
-                            <i class="fa-fw fas fa-users"></i>
-                        </div>
-                        <div class="col-auto">
-                            {% translate "Entraînements" %}
-                        </div>
-                    </div>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="/ng0/planet-orbit/?planet={{ curPlanet.id }}" class="nav-link {% if selectedTab == 'orbit' %}active{% endif %}">
-                    <div class="row gx-2 align-items-center flex-nowrap">
-                        <div class="col-auto d-flex">
-                            <i class="fa-fw fas fa-dot-circle"></i>
-                        </div>
-                        <div class="col-auto">
-                            {% translate "Orbite" %}
-                        </div>
-                    </div>
-                </a>
-            </li>
-        </ul>
-    </div>
+    <ul class="nav nav-tabs mt-0 mb-3">
+        <li class="nav-item {% if selectedtab == 'view' %}active{% endif %}">
+            <a href="/ng0/planet-view/?planet={{ cur_planetid }}" class="nav-link">Aperçu</a>
+        </li>
+        <li class="nav-item {% if selectedtab == 'production' %}active{% endif %}">
+            <a href="/ng0/planet-production/?planet={{ cur_planetid }}" class="nav-link">Production</a>
+        </li>
+        <li class="nav-item {% if selectedtab == 'working' %}active{% endif %}">
+            <a href="/ng0/planet-working/?planet={{ cur_planetid }}" class="nav-link">Fonctionnement</a>
+        </li>
+        <li class="nav-item {% if selectedtab == 'buildings' %}active{% endif %}">
+            <a href="/ng0/planet-buildings/?planet={{ cur_planetid }}" class="nav-link">Bâtiments</a>
+        </li>
+        <li class="nav-item {% if selectedtab == 'ships' %}active{% endif %}">
+            <a href="/ng0/planet-ships/?planet={{ cur_planetid }}" class="nav-link">Vaisseaux</a>
+        </li>
+        <li class="nav-item {% if selectedtab == 'recycling' %}active{% endif %}">
+            <a href="/ng0/planet-recycling/?planet={{ cur_planetid }}" class="nav-link">Recyclage</a>
+        </li>
+        <li class="nav-item {% if selectedtab == 'trainings' %}active{% endif %}">
+            <a href="/ng0/planet-trainings/?planet={{ cur_planetid }}" class="nav-link">Entraînements</a>
+        </li>
+        <li class="nav-item {% if selectedtab == 'orbit' %}active{% endif %}">
+            <a href="/ng0/planet-orbit/?planet={{ cur_planetid }}" class="nav-link">Orbite</a>
+        </li>
+        <li class="nav-item {% if selectedtab == 'sell' %}active{% endif %}">
+            <a href="/ng0/market-sell/?planet={{ cur_planetid }}" class="nav-link">Vente</a>
+        </li>
+        <li class="nav-item {% if selectedtab == 'buy' %}active{% endif %}">
+            <a href="/ng0/market-buy/?planet={{ cur_planetid }}" class="nav-link">Achat</a>
+        </li>
+        <li class="nav-item {% if selectedtab == 'transferts' %}active{% endif %}">
+            <a href="/ng0/planet-transferts/?planet={{ cur_planetid }}" class="nav-link">Transferts</a>
+        </li>
+    </ul>
 </div>
