@@ -1,0 +1,148 @@
+{% extends "ng0/_layout.html" %}
+
+{% load i18n %}
+{% load humanize %}
+
+{% block content %}
+    
+    {% include "ng0/map-tabs.html" %}
+    
+    <div class="content-page p-3" style="height:calc(100% - 108px);">
+        <div class="h-100 scroll-content">
+            <div class="row g-3 justify-content-center">
+        
+                <script>
+                    function setLocSector(s) { $("locsector").value = s; }
+                    function openSector(g, s) { window.location = "?g=" + g + "&s=" + s; }
+                </script>                   
+                
+                <div class="col-12 col-lg-4">
+                    <div class="card">
+                        <div class="card-body text-center">
+                            <div class="small">Ouverture</div>
+                            {% if protected_until > 0 %} <script>putTime({{ protected_until }})</script>
+                            {% else %} <span class="text-success">Ouverte au saut</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                    
+                    <script>
+                        var pl = new Array();
+                        pl['0'] = 'hostile';
+                        pl['1'] = 'uninhabited';
+                        pl['2'] = 'friend';
+                        pl['3'] = 'ally';
+                        pl['4'] = 'player';
+                        pl['5'] = 'resource';
+                        pl['6'] = 'resource';
+                        pl['7'] = 'vortex';
+                        pl['8'] = 'nothing';
+                    
+                        function displayGalaxy(id, data) {
+                        
+                            var html = "";
+
+                            var pos = 0;
+                            for (var i = 1; i < 100; i++) {
+                                
+                                var s = ''
+                                s += '<div class="col-auto" style="width:55px; padding:1px;">'
+                                    s += '<a href="#" class="d-block bg-black rounded p-1" onmouseover="setLocSector(' + i + ')" onclick="openSector(' + id + ',' + i + ')">';
+                                        s += '<div class="row g-0 align-items-center justify-content-center">'
+
+                                            for (var j = 0; j < 25; j++) {
+                                            
+                                                c = pl[data.charAt(pos)];
+                                                
+                                                let classname = ''
+                                                if (c == 'nothing') classname = 'text-black'
+                                                else if (c == 'uninhabited') classname = 'text-muted'
+                                                else if (c == 'hostile') classname = 'text-danger'
+                                                else if (c == 'resource') classname = 'text-yellow'
+                                                else if (c == 'vortex') classname = 'text-purple'
+                                                else if (c == 'friend') classname = 'text-friend'
+                                                else if (c == 'ally') classname = 'text-success'
+                                                else if (c == 'player') classname = 'text-info'
+                                                
+                                                s += '<div class="col-auto lh-1 d-flex align-items-center justify-content-center" style="width:20%; padding:3px;">'
+                                                    s += '<i class="fa-fw fas fa-circle ' + classname + '" style="font-size:3px;"></i>'
+                                                s += '</div>';
+                                                                            
+                                                pos++;
+                                            }
+
+                                        s += '</div>';
+                                    s += '</a>';
+                                s += '</div>';
+
+                                html += s;
+                            }
+
+                            $('mapGalaxy').innerHTML = html;
+                        }
+                    </script>
+                    
+                    <div class="col-12 d-flex align-items-center justify-content-center">
+                        <div class="card" style="overflow-x:auto;">
+                            <div class="card-body p-1" style="width:558px;">
+                                <div id="mapGalaxy" class="row g-0 justify-content-center flex-wrap" style="width:550px;"></div>
+                                <script>displayGalaxy({{ galaxy }}, '{{ mapgalaxy }}');</script>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-12 d-flex align-items-center justify-content-center">
+                        <div class="card" style="max-width:560px;">
+                            <div class="card-body">
+                                <div class="row gx-3">
+                                    <div class="col-6">
+                                        <div class="row gx-2 align-items-center">
+                                            <div class="col-auto lh-1 d-flex align-items-center justify-content-center" style="padding:3px">
+                                                <i class="fa-fw fas fa-circle text-muted" style="font-size:3px;"></i>
+                                            </div>
+                                            <div class="col-auto">
+                                                <span class="text-muted">Planète inhabitée</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="row gx-2 align-items-center">
+                                            <div class="col-auto lh-1 d-flex align-items-center justify-content-center" style="padding:3px">
+                                                <i class="fa-fw fas fa-circle text-danger" style="font-size:3px;"></i>
+                                            </div>
+                                            <div class="col-auto">
+                                                <span class="text-danger">Planète hostile</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="row gx-2 align-items-center">
+                                            <div class="col-auto lh-1 d-flex align-items-center justify-content-center" style="padding:3px">
+                                                <i class="fa-fw fas fa-circle text-yellow" style="font-size:3px;"></i>
+                                            </div>
+                                            <div class="col-auto">
+                                                <span class="text-yellow">Ressources</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="row gx-2 align-items-center">
+                                            <div class="col-auto lh-1 d-flex align-items-center justify-content-center" style="padding:3px">
+                                                <i class="fa-fw fas fa-circle text-info" style="font-size:3px;"></i>
+                                            </div>
+                                            <div class="col-auto">
+                                                <span class="text-info">Planète colonisée</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+            
+            </div>
+        </div>
+    </div>
+    
+{% endblock %}

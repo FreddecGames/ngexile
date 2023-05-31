@@ -186,8 +186,8 @@ class GlobalView(BaseView):
         
         #---
         
-        tpl.set('selectedtab', self.selectedTab)
-        tpl.set('selectedmenu', self.selectedMenu)
+        tpl.set('selectedTab', self.selectedTab)
+        tpl.set('selectedMenu', self.selectedMenu)
         
         #---
         

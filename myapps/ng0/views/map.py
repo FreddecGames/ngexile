@@ -25,13 +25,6 @@ class View(GlobalView):
     
         self.selectedMenu = 'map'
         
-        tpl = getTemplate(request, 'map')
-        
-        #---
-
-        self.showHeader = True
-        self.headerUrl = '/ng0/map/'
-        
         #---
         
         galaxy = request.GET.get('g', '')
@@ -48,12 +41,21 @@ class View(GlobalView):
             if galaxy != '': galaxy = ToInt(galaxy, self.currentPlanetGalaxy)
             if sector != '': sector = ToInt(sector, self.currentPlanetSector)
 
-        tpl.set('galaxy', galaxy)
-        tpl.set('sector', sector)
-
         #---
         
         if galaxy == '':
+        
+            #---
+            
+            tpl = getTemplate(request, 'map-universe')
+
+            tpl.set('galaxy', galaxy)
+            tpl.set('sector', sector)
+            
+            #---
+
+            self.showHeader = True
+            self.headerUrl = '/ng0/map/'
 
             #---
             
@@ -75,6 +77,18 @@ class View(GlobalView):
 
         elif sector == '':
 
+            #---
+            
+            tpl = getTemplate(request, 'map-galaxy')
+
+            tpl.set('galaxy', galaxy)
+            tpl.set('sector', sector)
+            
+            #---
+
+            self.showHeader = True
+            self.headerUrl = '/ng0/map/'
+            
             #---
             
             query = 'SELECT sp_get_galaxy_planets(' + str(galaxy) + ',' + str(self.userId) + ')'
@@ -114,6 +128,18 @@ class View(GlobalView):
 
         else:
         
+            #---
+            
+            tpl = getTemplate(request, 'map-sector')
+
+            tpl.set('galaxy', galaxy)
+            tpl.set('sector', sector)
+            
+            #---
+
+            self.showHeader = True
+            self.headerUrl = '/ng0/map/'
+            
             #---
         
             tpl.set('sector0', self.getSector(sector,-1,-1))

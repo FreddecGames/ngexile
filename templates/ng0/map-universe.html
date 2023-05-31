@@ -1,0 +1,35 @@
+{% extends "ng0/_layout.html" %}
+
+{% load i18n %}
+{% load humanize %}
+
+{% block content %}
+
+    {% include "ng0/map-tabs.html" %}
+
+    <div class="content-page p-3" style="height:calc(100% - 108px);">
+        <div class="h-100 scroll-content">
+            <div class="row g-3 justify-content-center">
+        
+                <script>
+                    function setLocGalaxy(g) { $("locgalaxy").value = g; }
+                </script>
+                    
+                {% for galaxy in galaxies %}
+                    <div class="col-auto">
+                        <a href="/ng0/map/?g={{ galaxy.id }}" data-bs-toggle="tooltip" data-bs-title="Voir la galaxie" class="d-block bg-black rounded border {% if galaxy.hasplanet %}border-info{% elif galaxy.hasally %}border-success{% elif galaxy.hasfriend %}border-success{% endif %}">
+                            <div>
+                                <img src="/static/img/galaxies/01.jpg" width="64px" height="64px" class="rounded">
+                            </div>
+                            <div class="text-center">
+                                <span>{{ galaxy.id }}</span>
+                            </div>
+                        </a>
+                    </div>
+                {% endfor %}
+            
+            </div>
+        </div>
+    </div>
+    
+{% endblock %}

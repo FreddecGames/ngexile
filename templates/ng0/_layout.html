@@ -37,7 +37,7 @@
                         <span class="badge text-bg-secondary">ng0</span>
                     </div>
                     <div class="d-lg-none ms-auto col-auto">
-                        <button class="btn px-2" onclick="document.getElementById('menu').classList.toggle('open');">
+                        <button class="btn btn-transparent px-2" onclick="document.getElementById('menu').classList.toggle('open');">
                             <i class="fa-fw fas fa-bars"></i>
                         </button>
                     </div>
@@ -46,7 +46,7 @@
         </div>
             
         <div id="menu">
-            <div id="menu-content" class="border-right">
+            <div id="menu-content" class="border-end">
                 <div id="menu-top" class="scroll-content">
                     {% if impersonating %}
                         <div class="px-3 py-3 text-bg-danger border-bottom">
@@ -69,7 +69,7 @@
                     <div class="px-3 py-3">
                         <div class="row gx-0 gy-1">
                             <div class="col-12">
-                                <a href="/ng0/profile-view/?name={{ profile.username }}" class="w-100 btn text-start {% if selectedMenu == 'profile' %}btn-primary{% endif %}">
+                                <a href="/ng0/profile-view/" class="w-100 btn text-start {% if selectedMenu == 'profile' %}btn-primary{% endif %}">
                                     <div class="row gx-2 align-items-center">
                                         <div class="col-auto d-flex">
                                             <i class="fa-fw fas fa-user"></i>
@@ -81,7 +81,7 @@
                                 </a>
                             </div>
                             <div class="col-12">
-                                <a href="/ng0/report-list/" class="w-100 btn text-start {% if selectedMenu == 'report' %}btn-primary{% endif %}">
+                                <a href="/ng0/report-list/" class="w-100 btn text-start {% if selectedMenu == 'reports' %}btn-primary{% endif %}">
                                     <div class="row gx-2 align-items-center">
                                         <div class="col-auto d-flex">
                                             <i class="fa-fw fas fa-bell"></i>
@@ -98,7 +98,7 @@
                                 </a>
                             </div>
                             <div class="col-12">
-                                <a href="/ng0/mail-inbox/" class="w-100 btn text-start {% if selectedMenu == 'mail' %}btn-primary{% endif %}">
+                                <a href="/ng0/mail-inbox/" class="w-100 btn text-start {% if selectedMenu == 'mails' %}btn-primary{% endif %}">
                                     <div class="row gx-2 align-items-center">
                                         <div class="col-auto d-flex">
                                             <i class="fa-fw fas fa-envelope"></i>
@@ -139,7 +139,7 @@
                                 </a>
                             </div>
                             <div class="col-12">
-                                <a href="/ng0/tech-list/" class="w-100 btn text-start {% if selectedMenu == 'tech' %}btn-primary{% endif %}">
+                                <a href="/ng0/tech-list/" class="w-100 btn text-start {% if selectedMenu == 'research' %}btn-primary{% endif %}">
                                     <div class="row gx-2 align-items-center">
                                         <div class="col-auto d-flex">
                                             <i class="fa-fw fas fa-flask"></i>
@@ -151,7 +151,7 @@
                                 </a>
                             </div>
                             <div class="col-12">
-                                <a href="/ng0/map/?galaxy={{ curPlanet.galaxy_id }}&sector={{ curPlanet.sector }}" class="w-100 btn text-start {% if selectedMenu == 'map' %}btn-primary{% endif %}">
+                                <a href="/ng0/map/?g={{ cur_g }}&s={{ cur_s }}" class="w-100 btn text-start {% if selectedMenu == 'map' %}btn-primary{% endif %}">
                                     <div class="row gx-2 align-items-center">
                                         <div class="col-auto d-flex">
                                             <i class="fa-fw fas fa-map"></i>

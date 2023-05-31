@@ -59,7 +59,7 @@ class View(GlobalView):
         for row in rows:
 
             reportType = row['type'] * 100 + row['subtype']
-            if reportType != 140 and reportType != 141 and reportType != 142 and reportType != 133:
+            if reportType in [200, 300, 400, 401, 402, 403, 600]:
             
                 report = row
                 reports.append(report)
@@ -69,7 +69,9 @@ class View(GlobalView):
                 if row['planet_relation'] in [rHostile, rWar, rFriend]: report['planetname'] = row['planet_ownername']
                 elif row['planet_relation'] in [rAlliance, rSelf]: report['planetname'] = row['planet_name']
                 else: report['planetname'] = ''
-                    
+                
+                if row['researchid']: row['researchname'] = dbExecute('SELECt name FROM db_research WHERE id=' + str(row['researchid']))
+                
         #---
         
         query = 'SELECT r.type, int4(COUNT(1))AS count ' + \

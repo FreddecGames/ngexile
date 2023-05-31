@@ -8,8 +8,8 @@
 
     {% include "ng0/mail-tabs.html" %}
     
-    <div class="scroll-content" style="height:calc(100% - 52px);">
-        <div class="page-content">
+    <div class="content-page p-3" style="height:calc(100% - 92px);">
+        <div class="h-100 scroll-content">
             <div class="row g-3">
 
                 {% include "ng0/_messages.html" %}
@@ -20,59 +20,9 @@
                         if (obj.selectedIndex > 0) input.value = obj.options[obj.selectedIndex].text;
                         else input.value = '';
                     }
-
-                    {% if player.can_sendcredit %}
-                        function check(obj) { document.getElementById(obj).checked = true }
-                        
-                        function validateAmount() {
-                        
-                            var amount = Number(document.getElementById("amount").value);
-                            var to = document.getElementById("to").value;
-
-                            if (document.getElementById("sendcredits").checked && amount != 0) {
-                            
-                                if (isNaN(amount)) {
-                                
-                                    window.alert("Veuillez entrer un nombre !");
-                                    return false;
-                                }
-                                
-                                if (amount > {{player.credits}}) {
-                                
-                                    window.alert("Vous n'avez pas assez de crédits pour envoyer cette somme !") ;
-                                    return false;
-                                }
-                                else return window.confirm('Êtes-vous sûr de vouloir envoyer ' + amount + ' crédits à "' + to + '" ?');                    
-                            }
-                            else return true;
-                        }
-                    {% endif %}
-
-                    function showAddressee(obj) {
-
-                        var target = document.getElementById('nation');
-                        var sendcreditsbox = document.getElementById('sendcreditsbox');
-
-                        if (obj.value=="nation") {
-                        
-                            target.style.display = "";
-                            target.style.visibility = "visible";
-                            
-                            sendcreditsbox.style.display = "";
-                            sendcreditsbox.style.visibility = "visible";
-                        }
-                        else {
-                        
-                            target.style.display = "none";
-                            target.style.visibility = "hidden";
-                            
-                            sendcreditsbox.style.display = "none";
-                            sendcreditsbox.style.visibility = "hidden";
-                        }
-                    }
                 </script>
                 
-                <form method="post" onsubmit="return validateAmount();">
+                <form method="post">
                     {% csrf_token %}
                     <input type="hidden" name="action" value="sendmail">
                     <div class="row g-3">
@@ -80,109 +30,36 @@
                         <div class="col-12">
                             <div class="card">
                                 <div class="card-body">
-                                    <div class="row g-2 flex-column">
+                                    <div class="row g-3">
                                         <div class="col-12">
-                                            <div class="row gx-3 align-items-center">
-                                                <div class="col-2 text-end">
-                                                    <span class="text-normal">Destinataire</span>
-                                                </div>
+                                            <label for="to" class="form-label text-white">Destinataire</label>
+                                            <div class="row gx-2 align-items-center">
                                                 <div class="col">
-                                                    <select class="form-control" name="type" id="type" onchange="javascript:showAddressee(this)">
-                                                        {% if can_sendalliance %}
-                                                            <option value="alliance"{% if mailto == ':alliance' %} selected{% endif %}>
-                                                                Alliance
-                                                            </option>
-                                                        {% endif %}
-                                                        <option value="nation"{% if mailto != ':alliance' %} selected{% endif %}>
-                                                            Joueur
-                                                        </option>
+                                                    <input type="text" class="form-control" id="to" name="to" value="{{ mailto }}" size="36" maxlength="128">
+                                                </div>
+                                                <div class="col-auto">
+                                                    <select class="form-control" onchange="return setaddressee(this, to)">
+                                                        <option>Derniers contacts</option>
+                                                        {% for to in addressees %}
+                                                            <option>{{ to.username }}</option>
+                                                        {% endfor %}
                                                     </select>
                                                 </div>
                                             </div>
                                         </div>
-                                        <div id="nation" class="col-12">
-                                            <div class="row gx-3 align-items-center">
-                                                <div class="col-2 text-end">
-                                                    <span class="text-normal">Joueur</span>
-                                                </div>
-                                                <div class="col">
-                                                    <div class="row gx-2 align-items-center">
-                                                        <div class="col">
-                                                            <input type="text" class="form-control" id="to" name="to" value="{{ mailto }}" size="36" maxlength="128">
-                                                        </div>
-                                                        <div class="col-auto">
-                                                            <select class="form-control" onchange="return setaddressee(this, to)">
-                                                                <option>Derniers contacts</option>
-                                                                {% for to in addressees %}
-                                                                    <option>{{ to.username }}</option>
-                                                                {% endfor %}
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
+                                        <div class="col-12">
+                                            <label for="subject" class="form-label text-white">Objet</label>
+                                            <input type="text" class="form-control" name="subject" value="{{ subject }}" size="64" maxlength="64">
                                         </div>
                                         <div class="col-12">
-                                            <div class="row gx-3 align-items-center">
-                                                <div class="col-2 text-end">
-                                                    <span class="text-normal">Objet</span>
-                                                </div>
-                                                <div class="col">
-                                                    <div class="row gx-2 align-items-center">
-                                                        <div class="col">
-                                                            <input type="text" class="form-control" name="subject" value="{{ subject }}" size="64" maxlength="64">
-                                                        </div>
-                                                        {% if mailto != ':alliance' and player.can_sendcredit %}
-                                                        <div id="sendcreditsbox" class="col-auto">
-                                                            <div class="row gx-2 align-items-center">
-                                                                <div class="col-auto">
-                                                                    <div class="form-check">
-                                                                        <input type="checkbox" class="form-check-input" name="sendcredits" id="sendcredits" value="1">
-                                                                        <label class="form-check-label" for="sendcredits">Joindre la somme</label>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-auto d-flex align-items-center">
-                                                                    <img src="{{ PATH_IMAGES }}img/interface/credits.gif" class="res" width="16px" height="16px">
-                                                                    <input type="number" class="form-control" id="amount" name="amount" value="{{ mail_credits }}" size="11" maxlength="9" onclick="check('sendcredits')">
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        {% endif %}
-                                                        <div class="col-auto">
-                                                            <div class="form-check">
-                                                                <input type="checkbox" class="form-check-input" name="bbcode" id="bbcode" value="1">
-                                                                <label class="form-check-label" for="bbcode">Utiliser bbcode</label>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
+                                            <label for="message" class="form-label text-white">Message</label>
+                                            <textarea class="form-control" name="message" cols="45" rows="10">{% if message %}{{message}}{% endif %}</textarea>
                                         </div>
                                         <div class="col-12">
-                                            <div class="row gx-3">
-                                                <div class="col-2 text-end pt-1">
-                                                    <span class="text-normal">Message</span>
-                                                </div>
-                                                <div class="col">
-                                                    <textarea class="form-control" name="message" cols="45" rows="10">{% if message %}{{message}}{% endif %}</textarea>
-                                                </div>
-                                            </div>
+                                            <input type="submit" name="sendmail" value="Envoyer" class="btn btn-primary">
                                         </div>
                                         <div class="col-12">
-                                            <div class="row gx-3">
-                                                <div class="col-2 text-end pt-1">
-                                                </div>
-                                                <div class="col">
-                                                    <div class="row gx-3 align-items-center">
-                                                        <div class="col-auto">
-                                                            <input type="submit" name="sendmail" value="Envoyer" class="btn btn-primary">
-                                                        </div>
-                                                        <div class="col-auto">
-                                                            <span class="text-danger">Pas d'insulte. Restez courtois, merci.</span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
+                                            <span class="text-danger">Pas d'insulte. Restez courtois, merci.</span>
                                         </div>
                                     </div>
                                 </div>

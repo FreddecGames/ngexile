@@ -6,9 +6,19 @@
 
 {% block content %}
     
-    <div class="scroll-content" style="height:calc(100%);">
-        <div class="content-page p-3">
+    {% include "ng0/report-tabs.html" %}
+
+    <div class="content-page p-3" style="height:calc(100% - 40px);">
+        <div class="h-100 scroll-content">
             <div class="row g-3">
+
+                <script>
+                    function linkFleet(id, name) {
+                    
+                        if (id != "None") document.write('<a href="/ng0/fleet-view/?id=' + id + '" class="text-self">' + name + '</a>')
+                        else document.write('<span class="text-muted">' + name + '</span>')
+                    }
+                </script>
 
                 {% for report in reports %}
                     <div class="col-12 col-lg-4">
@@ -16,39 +26,38 @@
                             <div class="card-header">
                                 <div class="row gx-2 align-items-center">
                                     <div class="col-auto">
-                                        <img src="/static/img/reports/{{ report.type }}.jpg" width="16px"  height="16px" class="rounded" />
+                                        <img src="/static/img/reports/{{ report.type }}.jpg" width="42px" height="42px" class="rounded" />
                                     </div>
                                     <div class="col">
-                                        {% if report.type == 200 %}{% translate "Rapport de bataille" %}
-                                        {% elif report.type == 300 %}{% translate "Eurêka !" %}
-                                        {% elif report.type == 400 %}Flotte arrivée à destination
-                                        {% elif report.type == 401 %}Récolteurs pleins
-                                        {% elif report.type == 402 %}Plus de matériau à recycler
-                                        {% elif report.type == 403 %}Détection d'une flotte
-                                        {% elif report.type == 600 %}Nouvelle planète
-                                        {% else %}{{ report.type }}
-                                        {% endif %}
+                                        <div class="small">{{ report.date|timezone:"Europe/Paris" }}</div>
+                                        <div class="fs-6">
+                                            {% if report.type == 200 %}{% translate "Rapport de bataille" %}
+                                            {% elif report.type == 300 %}{% translate "Eurêka !" %}
+                                            {% elif report.type == 400 %}Flotte arrivée à destination
+                                            {% elif report.type == 401 %}Récolteurs pleins
+                                            {% elif report.type == 402 %}Plus de matériau à recycler
+                                            {% elif report.type == 403 %}Détection d'une flotte
+                                            {% elif report.type == 600 %}Nouvelle planète
+                                            {% else %}{{ report.type }}
+                                            {% endif %}
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                             <div class="card-body">
-                                <div class="small">
-                                    <span class="text-normal">{{ report.date|timezone:"Europe/Paris"|date:"d M Y H:i" }}</span>
-                                </div>
                                 {% if report.type == 200 %}
                                     <div><span class="text-normal">Une bataille a eu lieu près de la planète <a href="/ng0/map/?g={{ report.galaxy }}&s={{ report.sector }}" data-bs-toggle="tooltip" data-bs-title="Carte spatiale">{{ report.galaxy }}.{{ report.sector }}.{{ report.planet }}</a>.</span></div>
                                     <div><span class="text-normal">Vous pouvez accéder au <a href="/ng0/report-battle/?id={{ report.battleid }}&v={{ownerid}}" data-bs-toggle="tooltip" data-bs-title="Voir rapport">rapport du combat</a>.</span></div>
                                 {% elif report.type == 300 %}
-                                    <div><span class="text-normal">Nos scientifiques ont terminé la recherche sur "<span class="text-white">{{ report.researchname }}</span>".</span></div>
-                                    <div><span class="text-normal">Ils sont prêts pour de <a href="/ng0/tech-list/" data-bs-toggle="tooltip" data-bs-title="Voir laboratoire">nouvelles recherches</a>.</span></div>
+                                    <div><span class="text-normal">La recherche <span class="text-white">{{ report.researchname }}</span> est terminée. Prêt pour de <a href="/ng0/tech-list/">nouvelles recherches</a>.</span></div>
                                 {% elif report.type == 400 %}
-                                    <div><span class="text-normal">La flotte <script>LinkFleet('{{report.fleetid}}','{{report.fleetname}}')</script> est arrivée aux alentours de la planète <a href="/ng0/map/?g={{ report.galaxy }}&s={{ report.sector }}" data-bs-toggle="tooltip" data-bs-title="Carte spatiale">{{ report.galaxy }}.{{ report.sector }}.{{ report.planet }}</a>.</span></div>
+                                    <div><span class="text-normal">La flotte <script>linkFleet('{{report.fleetid}}','{{report.fleetname}}')</script> est arrivée aux alentours de la planète <a href="/ng0/map/?g={{ report.galaxy }}&s={{ report.sector }}">{{ report.galaxy }}.{{ report.sector }}.{{ report.planet }}</a>.</span></div>
                                 {% elif report.type == 401 %}
-                                    <div><span class="text-normal">Les récolteurs de la flotte <script>LinkFleet('{{report.fleetid}}','{{report.fleetname}}')</script> ne peuvent plus recycler car leurs soutes sont pleines. Videz leurs soutes avant de recycler à nouveau.</span></div>
+                                    <div><span class="text-normal">Les récolteurs de la flotte <script>linkFleet('{{report.fleetid}}','{{report.fleetname}}')</script> ne peuvent plus recycler car leurs soutes sont pleines. Videz leurs soutes avant de recycler à nouveau.</span></div>
                                 {% elif report.type == 402 %}
-                                    <div><span class="text-normal">La flotte <script>LinkFleet('{{report.fleetid}}','{{report.fleetname}}')</script>  a terminé le recyclage aux coordonnées suivantes <a href="/ng0/map/?g={{ report.galaxy }}&s={{ report.sector }}" data-bs-toggle="tooltip" data-bs-title="Carte spatiale">{{ report.galaxy }}.{{ report.sector }}.{{ report.planet }}</a>, il n'y a plus de ressources dans les parages.</span></div>
+                                    <div><span class="text-normal">La flotte <script>linkFleet('{{report.fleetid}}','{{report.fleetname}}')</script>  a terminé le recyclage aux coordonnées suivantes <a href="/ng0/map/?g={{ report.galaxy }}&s={{ report.sector }}" data-bs-toggle="tooltip" data-bs-title="Carte spatiale">{{ report.galaxy }}.{{ report.sector }}.{{ report.planet }}</a>, il n'y a plus de ressources dans les parages.</span></div>
                                 {% elif report.type == 403 %}
-                                    <div><span class="text-normal">Une flotte de la nation <a href="/ng0/profile-view/?name={{ report.username }}" data-bs-toggle="tooltip" data-bs-title="Voir profil">{{ report.username }}</a> vient d'être détectée à proximité de notre planète <a href="/ng0/map/?g={{ report.galaxy }}&s={{ report.sector }}">{{ report.planetname }}<small class="ms-1">{{ report.galaxy }}.{{ report.sector }}.{{ report.planet }}</small></a>.</span></div>
+                                    <div><span class="text-normal">Une flotte de <a href="/ng0/mail-new/?to={{ report.username }}" class="text-danger">{{ report.username }}</a> vient d'être détectée autour de <a href="/ng0/map/?g={{ report.galaxy }}&s={{ report.sector }}">{{ report.galaxy }}.{{ report.sector }}.{{ report.planet }}</a>.</span></div>
                                 {% elif report.type == 600 %}
                                     <div><span class="text-normal">Nous occupons désormais la planète <a href="/ng0/map/?g={{ report.galaxy }}&s={{ report.sector }}" data-bs-toggle="tooltip" data-bs-title="Carte spatiale">{{ report.planetname }}<small class="ms-1">{{ report.galaxy }}.{{ report.sector }}.{{ report.planet }}</small></a>.</span></div>
                                     <div><span class="text-normal">Nous devrions vérifier les installations et <a href="/ng0/planet-buildings/?planet={{ report.planetid }}" data-bs-toggle="tooltip" data-bs-title="Voir bâtiments">construire les bâtiments</a> dont nous avons besoin.</span></div>

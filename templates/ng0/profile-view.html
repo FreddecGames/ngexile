@@ -6,78 +6,86 @@
 
 {% block content %}
 
-    <div class="scroll-content" style="height:calc(100%);">
-        <div class="content-page p-3">
+    {% include "ng0/profile-tabs.html" %}
+    
+    <div class="content-page p-3" style="height:calc(100% - 40px);">
+        <div class="h-100 scroll-content">
             <div class="row g-3">
+
                 
-                <div class="col-12">
-                    <div class="row g-2">
-                        <div class="col-12 col-lg-6">
-                            <div class="card">
-                                <div class="card-header">
-                                    <span>Aperçu</span>
+                <div class="col-12 col-lg-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <span>Aperçu</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="row gx-3 align-items-center">
+                                <div class="col-auto">
+                                    {% if nation.avatar_url %}<img src="{{ nation.avatar_url }}" width="42" height="42" class="rounded">
+                                    {% else %}<img src="/static/img/interface/noavatar.gif" width="42" height="42" class="rounded">
+                                    {% endif %}
                                 </div>
-                                <div class="card-body">
-                                    <div class="row gx-3 align-items-center">
-                                        <div class="col-auto">
-                                            {% if nation.avatar_url %}<img src="{{ nation.avatar_url }}" width="42" height="42" class="rounded">
-                                            {% else %}<img src="/static/img/interface/noavatar.gif" width="42" height="42" class="rounded">
-                                            {% endif %}
-                                        </div>
-                                        <div class="col-auto">
-                                            <div>
-                                                <span class="text-self">{{ nation.username }}</span>
-                                            </div>
-                                            <div>
-                                                {% if nation.description %}{{ nation.description|safe }}
-                                                {% else %}<span class="text-normal">{% translate "Aucune description" %}</span>
-                                                {% endif %}
-                                            </div>
-                                        </div>
+                                <div class="col-auto">
+                                    <div>
+                                        <span class="text-self">{{ nation.username }}</span>
+                                    </div>
+                                    <div>
+                                        {% if nation.description %}{{ nation.description|safe }}
+                                        {% else %}<span class="text-normal">{% translate "Aucune description" %}</span>
+                                        {% endif %}
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-12 col-lg-6">
-                            <form method="post" class="card">
-                                {% csrf_token %}
-                                <input type="hidden" name="action" value="save">
-                                <div class="card-header">
-                                    <span>Configuration</span>
-                                </div>
-                                <div class="card-body">
-                                    <div class="row gy-3 align-items-center">
-                                        <div class="col-12">
-                                            <label for="avatar" class="form-label text-white">{% translate "URL avatar" %}</label>
-                                            <input type="text" class="form-control" name="avatar" value="{{ profile.avatar_url }}" maxlength="250" />
-                                        </div>
-                                        <div class="col-12">
-                                            <label for="description" class="form-label text-white">{% translate "Description" %}</label>
-                                            <textarea name="description" class="form-control" cols="62" rows="5">{{profile.description}}</textarea>
-                                        </div>
-                                        <div class="col-12">
-                                            <label class="form-label text-white">{% translate "Suppression du compte <small class='ms-2 text-normal'>2 jours de délai</small>" %}</label>
-                                            {% if not data.remainingtime %}
-                                                <div class="form-check">
-                                                    <input type="checkbox" class="form-check-input" name="delete" value="1">
-                                                    <label class="form-check-label" for="delete">{% translate "Cochez cette case pour supprimer votre compte" %}</label>
-                                                </div>
-                                            {% else %}
-                                                <input type="hidden" class="checkbox" name="deleting" value="1">
-                                                <div class="form-check">
-                                                    <input type="checkbox" class="form-check-input" name="delete" value="1" checked>
-                                                    <label class="form-check-label" for="delete">{% translate "Votre compte sera supprimé dans" %} <span class="text-yellow"><script>putcountdown1({{data.remainingtime}}, "");</script></span></label>
-                                                </div>
-                                            {% endif %}
-                                        </div>
-                                        <div class="col-12">
-                                            <input type="submit" class="btn btn-primary" name="submit" value="{% translate 'Envoyer' %}">
-                                        </div>
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
                     </div>
+                </div>
+                <div class="col-12 col-lg-6">
+                    <form method="post" class="card">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="save">
+                        <div class="card-header">
+                            <span>Configuration</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="row gy-3 align-items-center">
+                                <div class="col-12">
+                                    <label for="avatar" class="form-label text-white">{% translate "URL avatar" %}</label>
+                                    <input type="text" class="form-control" name="avatar" value="{{ profile.avatar_url }}" maxlength="250" />
+                                </div>
+                                <div class="col-12">
+                                    <label for="description" class="form-label text-white">{% translate "Description" %}</label>
+                                    <textarea name="description" class="form-control" cols="62" rows="5">{{profile.description}}</textarea>
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label text-white">{% translate "Suppression du compte <small class='ms-2 text-normal'>2 jours de délai</small>" %}</label>
+                                    {% if not data.remainingtime %}
+                                        <div class="form-check">
+                                            <input type="checkbox" class="form-check-input" id="delete" name="delete" value="1">
+                                            <label class="form-check-label" for="delete">{% translate "Cochez cette case pour supprimer votre compte" %}</label>
+                                        </div>
+                                    {% else %}
+                                        <input type="hidden" class="checkbox" name="deleting" value="1">
+                                        <div class="form-check">
+                                            <input type="checkbox" class="form-check-input" id="delete" name="delete" value="1" checked>
+                                            <label class="form-check-label" for="delete">{% translate "Votre compte sera supprimé dans" %} <span class="text-yellow"><script>putcountdown1({{data.remainingtime}}, "");</script></span></label>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                <div class="col-12">
+                                    <button type="submit" class="btn btn-primary">
+                                        <div class="row gx-2 align-items-center">
+                                            <div class="col-auto d-flex">
+                                                <i class="fa-fw fas fa-save"></i>
+                                            </div>
+                                            <div class="col">
+                                                <span>{% translate "Enregistrer" %}</span>
+                                            </div>
+                                        </div>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
                 </div>
 
             </div>

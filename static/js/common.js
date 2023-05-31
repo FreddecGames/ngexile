@@ -73,3 +73,107 @@ function formatNumber(n) {
 }
 
 function putNumber(n) { document.write(formatNumber(n)); }
+
+//---
+
+function formatTime(s) {
+    
+	d = Math.floor(s / (3600 * 24));
+
+	h = Math.floor(s / 3600) % 24;
+	if (h < 10) h = "0" + h;
+
+	m = Math.floor(s / 60) % 60;
+	if (m < 10) m = "0" + m;
+
+	s = s % 60;
+	if (s < 10) s = "0" + s
+
+	if (d > 0) return d + "j" + " " + h + ":" + m + ":" + s;
+	else return h + ":" + m + ":" + s;
+}
+
+function putTime(s) { document.write(formatTime(s)); }
+
+//---
+
+function Counter(name, seconds, display, endContent) {
+
+	this.name = name;
+	this.display = display;
+	this.endContent = endContent;
+
+	this.started = new Date().getTime();
+	this.endTime = new Date().getTime() + seconds * 1000;
+
+	this.remainingTime = function() {
+        
+        return Math.ceil((this.endTime - new Date().getTime()) / 1000);
+    }
+    
+    this.formatRemainingTime = function(s) {
+        
+        if (s < 0) s = 0;
+        if (s < 600) return "<span class='text-success'>" + formatTime(s) + "</span>";
+        return formatTime(s);
+    }
+    
+	this.update = function() {
+
+		if (!this.obj) this.obj = document.getElementById(this.name);
+		if (!this.obj && new Date().getTime() - this.started > 20000) return false;
+		if (!this.obj) return true;
+
+        var s = this.remainingTime();
+
+        if (s <= 0) {
+            
+            if (this.endContent != '') this.obj.innerHTML = this.endContent;
+            else this.obj.innerHTML = this.formatRemainingTime(0);
+
+            return false;
+        }
+        else if (s > 0 && (this.display == null))
+            this.obj.innerHTML = this.formatRemainingTime(s);
+
+        return true;
+
+	}
+
+	this.toString = function() {
+        
+		var s = this.remainingTime();
+		var toDisplay = this.display;
+		if (!toDisplay) toDisplay = (s <= 0 && this.endContent != '') ? this.endContent : this.formatRemainingTime(s);
+		return '<span id="' + this.name + '">' + toDisplay + '</span>';
+	}
+}
+
+var counters = []
+
+function updateCounters() {
+    
+	for (var x in counters) {
+		if (counters[x] != null)
+			if(!counters[x].update()) counters[x] = null
+	}
+
+	window.setTimeout('updateCounters()', 900)
+}
+
+updateCounters()
+
+var countdownnbr = 0
+
+function startCountdown(name, seconds, display, endContent) {
+    
+	var c = new Counter(name, seconds, display, endContent)
+	counters.push(c)
+	return c
+}
+
+function putCountdown(seconds, display, endContent)
+{
+	var c = startCountdown('cntdwn' + countdownnbr++, seconds, display, endContent)
+	document.write(c)
+}

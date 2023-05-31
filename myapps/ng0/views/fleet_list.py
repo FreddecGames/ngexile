@@ -20,120 +20,12 @@ class View(GlobalView):
     ################################################################################
     
     def get(self, request, *args, **kwargs):
-        
-        #---
-        
-        action = request.GET.get('action')
-        
-        #---
-        
-        if action == 'setcat':
-            
-            fleetId = ToInt(request.GET.get('id'), 0)
-            oldCat = ToInt(request.GET.get('old'), 0)
-            newCat = ToInt(request.GET.get('new'), 0)
-
-            result = dbExecute('SELECT sp_fleets_set_category(' + str(self.userId) + ',' + str(fleetId) + ',' + str(oldCat) + ',' + str(newCat) + ')')
-            if result:
-            
-                tpl = getTemplate(request, 'empire-fleets-handler')
-
-                tpl.set('id', fleetId)
-                tpl.set('old', oldCat)
-                tpl.set('new', newCat)
-                
-                tpl.set('fleet_category_changed')
-
-                return render(request, tpl.template, tpl.data)
-
-            return HttpResponseRedirect('/ng0/fleets/')
-            
-        #---
-        
-        elif action == 'newcat':
-        
-            name = request.GET.get('name')
-
-            if isValidCategoryName(name):
-            
-                result = dbExecute('SELECT sp_fleets_categories_add(' + str(self.userId) + ',' + dosql(name) + ')')                
-                if result:
-                    
-                    tpl = getTemplate(request, 'empire-fleets-handler')
-                    
-                    tpl.set('id', result)
-                    tpl.set('label', name)
-                    tpl.set('category')
-
-                    return render(request, tpl.template, tpl.data)
-
-            else:
-            
-                tpl = getTemplate(request, 'fleets-handler')
-                
-                tpl.set('category_name_invalid')
-
-                return render(request, tpl.template, tpl.data)
-
-            return HttpResponseRedirect('/ng0/fleets/')
-                
-        #---
-        
-        elif action == 'rencat':
-        
-            name = request.GET.get('name')
-            catid = ToInt(request.GET.get('id'), 0)
-
-            if name == '':
-            
-                result = dbExecute('SELECT sp_fleets_categories_delete(' + str(self.userId) + ',' + str(catid) + ')')
-                if result:
-
-                    tpl = getTemplate(request, 'empire-fleets-handler')
-                    
-                    tpl.set('id', catid)
-                    tpl.set('label', name)
-                    tpl.set('category')
-
-                    return render(request, tpl.template, tpl.data)
-
-            elif isValidCategoryName(name):
-            
-                result = dbExecute('SELECT sp_fleets_categories_rename(' + str(self.userId) + ',' + str(catid) + ',' + dosql(name) + ')')
-                if result:
-                    
-                    tpl = getTemplate(request, 'empire-fleets-handler')
-                    
-                    tpl.set('id', catid)
-                    tpl.set('label', name)
-                    tpl.set('category')
-
-                    return render(request, tpl.template, tpl.data)
-
-            else:
-                
-                tpl = getTemplate(request, 'empire-fleets-handler')
-                
-                tpl.set('category_name_invalid')
-
-                return render(request, tpl.template, tpl.data)
-
-            return HttpResponseRedirect('/ng0/fleets/')
-                
+                        
         #---
         
         tpl = getTemplate(request, 'fleet-list')
         
         self.selectedMenu = 'fleet'
-        
-        #---
-
-        query = 'SELECT category, label' + \
-                ' FROM users_fleets_categories' + \
-                ' WHERE userid=' + str(self.userId) + \
-                ' ORDER BY upper(label)'
-        categories = dbRows(query)
-        tpl.set('categories', categories)
         
         #---
 

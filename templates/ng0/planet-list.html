@@ -5,84 +5,87 @@
 
 {% block content %}
 
-    <div class="scroll-content" style="height:calc(100%);">
-        <div class="content-page p-3">
+    <div class="content-page px-3">
+        <div class="pt-3 fs-6">
+            <div class="row gx-2 align-items-center">
+                <div class="col-auto d-flex">
+                    <i class="fa-fw fas fa-globe"></i>
+                </div>
+                <div class="col">
+                    <span>Planètes</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="content-page p-3" style="height:calc(100% - 40px);">
+        <div class="h-100 scroll-content">
             <div class="row g-3">
                 
-                <div class="col-12">
-                    <div class="row g-3">
-                        <div class="col-12"><span class="fs-6">{% translate "Planètes colonisées" %}</span></div>
-                        {% for planet in planets %}
-                            <div class="col-12 col-lg-4">
-                                <div class="card">
-                                    <div class="card-header">
-                                        <div class="row gx-2 align-items-center">
-                                            <div class="col-auto">
-                                                <span>{{ planet.galaxy }}.{{ planet.sector }}.{{ planet.planet }}</span>
-                                            </div>
-                                            <div class="col text-truncate">
-                                                <span class="text-self">{{ planet.name }}</span>
-                                            </div>
-                                        </div>
+                {% for planet in planets %}
+                    <div class="col-12 col-lg-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="row gx-2 align-items-center">
+                                    <div class="col-auto">
+                                        <img src="/static/img/planets/p{{ planet.img }}.gif" width="42px" height="42px" class="rounded">
                                     </div>
-                                    <div class="card-body">
-                                        <div class="row g-2 align-items-center">
-                                            <div class="col-4">
-                                                <div class="">
-                                                    <img src="/static/img/interface/ore.png" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="{% translate 'Minerai' %}">
-                                                    <span class="{% if planet.ore >= planet.ore_capacity %}text-danger{% endif %}"><script>putNumber({{ planet.ore }})</script></span>
-                                                </div>
-                                                <div class="">
-                                                    <img src="/static/img/interface/hydro.png" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="{% translate 'Hydro' %}">
-                                                    <span class="{% if planet.hydrocarbon >= planet.hydrocarbon_capacity %}text-danger{% endif %}"><script>putNumber({{ planet.hydrocarbon }})</script></span>
-                                                </div>
-                                            </div>
-                                            <div class="col-4">
-                                                <div class="">
-                                                    <img src="/static/img/interface/energy.png" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="{% translate 'Energie' %}">
-                                                    <span class="{% if planet.energy >= planet.energy_capacity %}text-danger{% endif %}"><script>putNumber({{ planet.energy }})</script></span>
-                                                </div>
-                                                <div class="">
-                                                    <img src="/static/img/interface/worker.png" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="{% translate 'Ouvrier' %}">
-                                                    <span class="{% if planet.workers >= planet.workers_capacity %}text-danger{% endif %}"><script>putNumber({{ planet.workers }})</script></span>
-                                                </div>
-                                            </div>
-                                            <div class="col-4">
-                                                <div class="">
-                                                    <img src="/static/img/interface/floor.png" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="{% translate 'Terrain' %}">
-                                                    <span class="{% if planet.floor_occupied >= planet.floor %}text-danger{% endif %}"><script>putNumber({{ planet.floor_occupied }})</script></span>
-                                                </div>
-                                                <div class="">
-                                                    <img src="/static/img/interface/space.png" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="{% translate 'Espace' %}">
-                                                    <span class="{% if planet.space_occupied >= planet.space %}text-danger{% endif %}"><script>putNumber({{ planet.space_occupied }})</script></span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="card-footer">
-                                        <div class="row gx-2 align-items-center justify-content-between">
-                                            <div class="col-auto">
-                                                <a href="/ng0/map/?galaxy={{ planet.galaxy }}&sector={{ planet.sector }}"><i class="fa-fw fas fa-map"></i></a>
-                                            </div>
-                                            <div class="col-auto">
-                                                <a href="/ng0/planet-view/?planet={{ planet.id }}"><i class="fa-fw fas fa-eye"></i></a>
-                                            </div>
-                                            <div class="col-auto">
-                                                <a href="/ng0/planet-buildings/?planet={{ planet.id }}"><i class="fa-fw fas fa-building"></i></a>
-                                            </div>
-                                            <div class="col-auto">
-                                                <a href="/ng0/planet-ships/?planet={{ planet.id }}"><i class="fa-fw fas fa-rocket"></i></a>
-                                            </div>
-                                            <div class="col-auto">
-                                                <a href="/ng0/planet-orbit/?planet={{ planet.id }}"><i class="fa-fw fas fa-dot-circle"></i></a>
-                                            </div>
-                                        </div>
+                                    <div class="col">
+                                        <div class="small">{{ planet.galaxy }}.{{ planet.sector }}.{{ planet.planet }}</div>
+                                        <div class="fs-6 text-self">{{ planet.name }}</div>
                                     </div>
                                 </div>
                             </div>
-                        {% endfor %}            
+                            <div class="card-body">
+                                <div class="row g-2 align-items-center">
+                                    <div class="col-4">
+                                        <img src="/static/img/interface/ore.png" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="{% translate 'Minerai' %}">
+                                        <span class="{% if planet.ore >= planet.ore_capacity %}text-danger{% endif %}"><script>putNumber({{ planet.ore }})</script></span>
+                                    </div>
+                                    <div class="col-4">
+                                        <img src="/static/img/interface/hydro.png" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="{% translate 'Hydro' %}">
+                                        <span class="{% if planet.hydrocarbon >= planet.hydrocarbon_capacity %}text-danger{% endif %}"><script>putNumber({{ planet.hydrocarbon }})</script></span>
+                                    </div>
+                                    <div class="col-4">
+                                        <img src="/static/img/interface/energy.png" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="{% translate 'Energie' %}">
+                                        <span class="{% if planet.energy >= planet.energy_capacity %}text-danger{% endif %}"><script>putNumber({{ planet.energy }})</script></span>
+                                    </div>
+                                    <div class="col-4">
+                                        <img src="/static/img/interface/worker.png" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="{% translate 'Ouvrier' %}">
+                                        <span class="{% if planet.workers >= planet.workers_capacity %}text-danger{% endif %}"><script>putNumber({{ planet.workers }})</script></span>
+                                    </div>
+                                    <div class="col-4">
+                                        <img src="/static/img/interface/floor.png" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="{% translate 'Terrain' %}">
+                                        <span class="{% if planet.floor_occupied >= planet.floor %}text-danger{% endif %}"><script>putNumber({{ planet.floor_occupied }})</script></span>
+                                    </div>
+                                    <div class="col-4">
+                                        <img src="/static/img/interface/space.png" width="16px" height="16px" data-bs-toggle="tooltip" data-bs-title="{% translate 'Espace' %}">
+                                        <span class="{% if planet.space_occupied >= planet.space %}text-danger{% endif %}"><script>putNumber({{ planet.space_occupied }})</script></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-footer">
+                                <div class="row gx-2 align-items-center justify-content-between">
+                                    <div class="col-auto">
+                                        <a href="/ng0/map/?galaxy={{ planet.galaxy }}&sector={{ planet.sector }}"><i class="fa-fw fas fa-map"></i></a>
+                                    </div>
+                                    <div class="col-auto">
+                                        <a href="/ng0/planet-view/?planet={{ planet.id }}"><i class="fa-fw fas fa-eye"></i></a>
+                                    </div>
+                                    <div class="col-auto">
+                                        <a href="/ng0/planet-buildings/?planet={{ planet.id }}"><i class="fa-fw fas fa-building"></i></a>
+                                    </div>
+                                    <div class="col-auto">
+                                        <a href="/ng0/planet-ships/?planet={{ planet.id }}"><i class="fa-fw fas fa-rocket"></i></a>
+                                    </div>
+                                    <div class="col-auto">
+                                        <a href="/ng0/planet-orbit/?planet={{ planet.id }}"><i class="fa-fw fas fa-dot-circle"></i></a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                </div>
+                {% endfor %}            
                 
             </div>
         </div>

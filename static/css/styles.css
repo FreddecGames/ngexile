@@ -73,6 +73,7 @@ body {
 .content-page {
     margin: 0 auto;
 	width: 100%; max-width: 960px;
+    position: relative;
 }
 
 a { text-decoration: none; }
@@ -106,6 +107,7 @@ a { text-decoration: none; }
 .text-enemy { color: #f00!important; }
 .text-self { color: var(--bs-info)!important; }
 .text-normal { color: var(--bs-body-color)!important; }
+.text-yellow { color: #ffff00!important; }
 
 .btn {
     --bs-btn-padding-y: 0.35rem;
@@ -126,6 +128,10 @@ a { text-decoration: none; }
     --bs-btn-box-shadow: none;
     --bs-btn-disabled-opacity: 0.5;
     --bs-btn-focus-box-shadow: none;
+}
+
+.btn-transparent {
+    --bs-btn-bg: transparent;
 }
 
 .btn-primary {
@@ -270,7 +276,7 @@ a { text-decoration: none; }
     
     width: 100%; flex-wrap: nowrap; overflow-x: auto; overflow-y: hidden;
     background-color: var(--bs-gray-800);
-    border-radius: 0 0 var(--bs-border-radius) var(--bs-border-radius); border-bottom: 0;
+    border-bottom: 0;
 }
 
 .nav-tabs .nav-link {
@@ -421,6 +427,7 @@ a { text-decoration: none; }
     --bs-tooltip-font-size: var(--bs-body-font-size);
     --bs-tooltip-padding-y: .5rem;
     --bs-tooltip-padding-x: .75rem;
+    --bs-tooltip-max-width: 300px;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
