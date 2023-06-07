@@ -76,6 +76,25 @@ function putNumber(n) { document.write(formatNumber(n)); }
 
 //---
 
+function formatPlanet(g, s, p, rel) {
+    
+    switch(rel) {
+        
+        case 1: var col = 'text-success'; break;
+        case 0:	var col = 'text-friend'; break;
+        case -1: var col = 'text-danger'; break;
+        case -2: var col = 'text-danger'; break;
+        default: var col = ''; break;
+    }
+
+    var s = '<a href="/s03/map/?g=' + g + '&s=' + s + '" class="' + col + '">' + g + '.' + s + '.' + p + '</a>';
+	return s;
+}
+
+function putPlanet(g, s, p, rel) { document.write(formatPlanet(g, s, p, rel)); }
+
+//---
+
 function formatTime(s) {
     
 	d = Math.floor(s / (3600 * 24));

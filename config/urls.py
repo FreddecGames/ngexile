@@ -3,6 +3,7 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from django.views.generic import TemplateView
+from django.views.generic.base import RedirectView
 from django_registration.backends.activation.views import RegistrationView
 
 from myapps.accounts.forms import UserRegistrationForm
@@ -23,6 +24,8 @@ urlpatterns = [
     path('lobby/', include('myapps.lobby.urls')),
     path('s03/', include('myapps.s03.urls')),
     path('ng0/', include('myapps.ng0.urls')),
+    
+    path('favicon.ico', RedirectView.as_view(url='/static/favicon.ico')),
     
     path('', TemplateView.as_view(template_name='index.html'), name='home'),
 ]

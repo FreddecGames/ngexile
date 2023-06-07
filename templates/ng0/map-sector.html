@@ -497,34 +497,39 @@
                             let classname = getRelationClass(rel);
                             
                             let html = ''
-                            html += '<div class="card-body">'
-                                html += '<div class="row gx-3">'
-                                    html += '<div class="col">'
-                                        if (tag != '') {
-                                            html += '<a href="/ng0/alliance-view/?tag=' + tag + '" class="me-1 ' + classname + '" data-bs-toggle="tooltip" data-bs-title="Voir alliance">[' + tag + ']</a>'
-                                        }
-                                        if (rel == 2) {
-                                            html += '<a href="/ng0/fleet-view/?id=' + fleetid + '" class="text-info" data-bs-toggle="tooltip" data-bs-title="Voir flotte">' + fleet + '</a>'
-                                        }
-                                        else {
-                                            html += '<a href="/ng0/mail-new/?to=' + owner + '" class="' + classname + '" data-bs-toggle="tooltip" data-bs-title="Contacter propriétaire">' + owner + '</a>'
-                                        }
-                                        if (sig > 0) {
-                                            html += '<small class="ms-2">' + formatNumber(sig) + '</small>'
-                                        }
-                                        else {
-                                            html += '<small class="ms-2 text-normal">???</small>'
-                                        }
-                                    html += '</div>'
-                                    html += '<div class="col-auto">'
-                                        if (f_id != '') html += planet_str(f_id,f_name,f_g,f_s,f_p,f_rel)
-                                        else html += '<span class="text-normal">???</span>'
-                                        html += '<i class="fa-fw fas fa-long-arrow-alt-right mx-2 text-normal"></i>'
-                                        if (t_id != '') html += planet_str(t_id,t_name,t_g,t_s,t_p,t_rel)
-                                        else html += '<span class="text-normal">???</</span>'
-                                html += '</div>'
-                                    html += '<div class="col-1 text-end">'
-                                        html += '<span class="text-yellow"><script>putcountdown1(' + time + ', "Arrivée", "/ng0/overview/")</'+'script></span>'
+                            html += '<div class="col-12">'
+                                html += '<div class="card">'
+                                    html += '<div class="card-body">'
+                                        html += '<div class="row gx-3 align-items-center">'
+                                            html += '<div class="col">'
+                                                html += '<div>'
+                                                if (rel == 2) {
+                                                    html += '<a href="/ng0/fleet-view/?id=' + fleetid + '" class="text-info" data-bs-toggle="tooltip" data-bs-title="Voir flotte">' + fleet + '</a>'
+                                                }
+                                                else {
+                                                    html += '<a href="/ng0/mail-new/?to=' + owner + '" class="' + classname + '" data-bs-toggle="tooltip" data-bs-title="Contacter propriétaire">' + owner + '</a>'
+                                                }
+                                                html += '</div>'
+                                                html += '<div>'
+                                                if (sig > 0) {
+                                                    html += '<small class="ms-2">' + formatNumber(sig) + '</small>'
+                                                }
+                                                else {
+                                                    html += '<small class="ms-2 text-normal">???</small>'
+                                                }
+                                                html += '</div>'
+                                            html += '</div>'
+                                            html += '<div class="col-auto">'
+                                                html += '<div class="small text-end">'
+                                                    html += '<span class="text-yellow"><script>putCountdown(' + time + ', null, "<a href=\'/ng0/overview/\'>Arrivée</a>")</'+'script></span>'
+                                                html += '</div>'
+                                                if (f_id != '') html += formatPlanet(f_g,f_s,f_p,f_rel)
+                                                else html += '<span class="text-normal">???</span>'
+                                                html += '<i class="fa-fw fas fa-long-arrow-alt-right mx-2 text-normal"></i>'
+                                                if (t_id != '') html += formatPlanet(t_g,t_s,t_p,t_rel)
+                                                else html += '<span class="text-normal">???</</span>'
+                                            html += '</div>'
+                                        html += '</div>'
                                     html += '</div>'
                                 html += '</div>'
                             html += '</div>'
@@ -533,46 +538,58 @@
                         }
                     </script>
                     
-                    <div class="col-12">
-                        <div class="card">
-                            <div class="card-header">
+                    <div class="col-12 col-lg-4">
+                        <div class="row g-3">
+                            <div class="col-12">
                                 <span class="fs-6">Mouvements de flotte</span>
                             </div>
                             {% for fleet in movings %}
                                 <script>radarFleet({{ fleet.relation }}, "{{ fleet.alliancetag }}", "{{ fleet.name }}", "{{ fleet.fleetid }}", "{{ fleet.fleetname }}", {{ fleet.signature }}, "{{ fleet.f_planetid }}", "{{ fleet.f_planetname }}", "{{ fleet.f_g }}", "{{ fleet.f_s }}", "{{ fleet.f_p }}", {{ fleet.f_relation }}, "{{ fleet.t_planetid }}", "{{ fleet.t_planetname }}", "{{ fleet.t_g }}", "{{ fleet.t_s }}", "{{ fleet.t_p }}", {{ fleet.t_relation }}, {{ fleet.time}}, {% if fleet.losing %}true{% else %}false{% endif %});</script>
                             {% empty %}
-                                <div class="card-body text-center">
-                                    <span class="text-normal">Aucune flotte détectée</span>
+                                <div class="col-12">
+                                    <div class="card">
+                                        <div class="card-body text-center">
+                                            <span class="text-normal">Aucune flotte détectée</span>
+                                        </div>
+                                    </div>
                                 </div>
                             {% endfor %}
                         </div>
                     </div>
                     
-                    <div class="col-12">
-                        <div class="card">
-                            <div class="card-header">
+                    <div class="col-12 col-lg-4">
+                        <div class="row g-3">
+                            <div class="col-12">
                                 <span class="fs-6">Flottes entrant dans le secteur</span>
                             </div>
                             {% for fleet in enterings %}
                                 <script>radarFleet({{ fleet.relation }}, "{{ fleet.alliancetag }}", "{{ fleet.name }}", "{{ fleet.fleetid }}", "{{ fleet.fleetname }}", {{ fleet.signature }}, "{{ fleet.f_planetid }}", "{{ fleet.f_planetname }}", "{{ fleet.f_g }}", "{{ fleet.f_s }}", "{{ fleet.f_p }}", {{ fleet.f_relation }}, "{{ fleet.t_planetid }}", "{{ fleet.t_planetname }}", "{{ fleet.t_g }}", "{{ fleet.t_s }}", "{{ fleet.t_p }}", {{ fleet.t_relation }}, {{ fleet.time}}, {% if fleet.losing %}true{% else %}false{% endif %});</script>
                             {% empty %}
-                                <div class="card-body text-center">
-                                    <span class="text-normal">Aucune flotte détectée</span>
+                                <div class="col-12">
+                                    <div class="card">
+                                        <div class="card-body text-center">
+                                            <span class="text-normal">Aucune flotte détectée</span>
+                                        </div>
+                                    </div>
                                 </div>
                             {% endfor %}
                         </div>
                     </div>
                     
-                    <div class="col-12">
-                        <div class="card">
-                            <div class="card-header">
+                    <div class="col-12 col-lg-4">
+                        <div class="row g-3">
+                            <div class="col-12">
                                 <span class="fs-6">Flottes sortant du secteur</span>
                             </div>
                             {% for fleet in leavings %}
                                 <script>radarFleet({{ fleet.relation }}, "{{ fleet.alliancetag }}", "{{ fleet.name }}", "{{ fleet.fleetid }}", "{{ fleet.fleetname }}", {{ fleet.signature }}, "{{ fleet.f_planetid }}", "{{ fleet.f_planetname }}", "{{ fleet.f_g }}", "{{ fleet.f_s }}", "{{ fleet.f_p }}", {{ fleet.f_relation }}, "{{ fleet.t_planetid }}", "{{ fleet.t_planetname }}", "{{ fleet.t_g }}", "{{ fleet.t_s }}", "{{ fleet.t_p }}", {{ fleet.t_relation }}, {{ fleet.time}}, {% if fleet.losing %}true{% else %}false{% endif %});</script>
                             {% empty %}
-                                <div class="card-body text-center">
-                                    <span class="text-normal">Aucune flotte détectée</span>
+                                <div class="col-12">
+                                    <div class="card">
+                                        <div class="card-body text-center">
+                                            <span class="text-normal">Aucune flotte détectée</span>
+                                        </div>
+                                    </div>
                                 </div>
                             {% endfor %}
                         </div>
