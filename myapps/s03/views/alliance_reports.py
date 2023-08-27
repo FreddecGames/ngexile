@@ -44,12 +44,21 @@ class View(GlobalView):
                 ' invasionid, spyid, spy_key, description, ownerid, invited_username, login, buildingid' + \
                 ' FROM vw_alliances_reports' + \
                 ' WHERE ownerallianceid = ' + str(self.allianceId) + ' ORDER BY datetime DESC LIMIT 200'
-        reports = dbRows(query)
+        rows = dbRows(query)
+        
+        reports = []
         tpl.set('reports', reports)
+        
+        for row in rows:
 
-        for report in reports:
-            report['type'] = report['type'] * 100 + report['subtype']
+            reportType = row['type'] * 100 + row['subtype']
+            if reportType != 140 and reportType != 141 and reportType != 142 and reportType != 133:
+            
+                report = row
+                reports.append(report)
 
+                report['type'] = reportType
+                
         #---
         
         return self.display(tpl, request)

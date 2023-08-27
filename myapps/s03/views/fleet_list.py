@@ -36,7 +36,7 @@ class View(GlobalView):
             result = dbExecute('SELECT sp_fleets_set_category(' + str(self.userId) + ',' + str(fleetId) + ',' + str(oldCat) + ',' + str(newCat) + ')')
             if result:
             
-                tpl = getTemplate(request, 'empire-fleets-handler')
+                tpl = getTemplate(request, 'fleet-list')
 
                 tpl.set('id', fleetId)
                 tpl.set('old', oldCat)
@@ -59,7 +59,7 @@ class View(GlobalView):
                 result = dbExecute('SELECT sp_fleets_categories_add(' + str(self.userId) + ',' + dosql(name) + ')')                
                 if result:
                     
-                    tpl = getTemplate(request, 'empire-fleets-handler')
+                    tpl = getTemplate(request, 'fleet-list')
                     
                     tpl.set('id', result)
                     tpl.set('label', name)
@@ -89,7 +89,7 @@ class View(GlobalView):
                 result = dbExecute('SELECT sp_fleets_categories_delete(' + str(self.userId) + ',' + str(catid) + ')')
                 if result:
 
-                    tpl = getTemplate(request, 'empire-fleets-handler')
+                    tpl = getTemplate(request, 'fleet-list')
                     
                     tpl.set('id', catid)
                     tpl.set('label', name)
@@ -102,7 +102,7 @@ class View(GlobalView):
                 result = dbExecute('SELECT sp_fleets_categories_rename(' + str(self.userId) + ',' + str(catid) + ',' + dosql(name) + ')')
                 if result:
                     
-                    tpl = getTemplate(request, 'empire-fleets-handler')
+                    tpl = getTemplate(request, 'fleet-list')
                     
                     tpl.set('id', catid)
                     tpl.set('label', name)
@@ -112,7 +112,7 @@ class View(GlobalView):
 
             else:
                 
-                tpl = getTemplate(request, 'empire-fleets-handler')
+                tpl = getTemplate(request, 'fleet-list')
                 
                 tpl.set('category_name_invalid')
 
