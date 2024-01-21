@@ -84,7 +84,7 @@ class View(GlobalView):
 
             #---
             
-            query = 'SELECT alliances.tag, round(100.0 * sum(n.score) / (SELECT sum(score) FROM nav_planet WHERE galaxy=n.galaxy)) AS percent' + \
+            query = 'SELECT alliances.tag, round(100.0 * sum(n.score) / COALESCE((SELECT sum(score) FROM nav_planet WHERE galaxy=n.galaxy), 1)) AS percent' + \
                     ' FROM nav_planet AS n' + \
                     '    INNER JOIN users ON (users.id = n.ownerid)' + \
                     '    INNER JOIN alliances ON (users.alliance_id = alliances.id)' + \

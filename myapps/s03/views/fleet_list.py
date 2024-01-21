@@ -69,7 +69,7 @@ class View(GlobalView):
 
             else:
             
-                tpl = getTemplate(request, 'fleets-handler')
+                tpl = getTemplate(request, 'fleet-list')
                 
                 tpl.set('category_name_invalid')
 
