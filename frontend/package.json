@@ -1,0 +1,25 @@
+{
+    "name": "nuxt-app",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "build": "nuxt build",
+        "dev": "nuxt dev",
+        "generate": "nuxt generate",
+        "preview": "nuxt preview",
+        "postinstall": "nuxt prepare"
+    },
+    "dependencies": {
+        "@fortawesome/free-brands-svg-icons": "^6.5.1",
+        "@fortawesome/free-solid-svg-icons": "^6.5.1",
+        "@fortawesome/vue-fontawesome": "^3.0.6",
+        "@nuxtjs/i18n": "^8.2.0",
+        "@pinia/nuxt": "^0.5.1",
+        "bootstrap": "^5.3.3",
+        "lz-string": "^1.5.0",
+        "nuxt": "^3.10.3",
+        "pinia": "^2.1.7",
+        "vue": "^3.4.21",
+        "vue-router": "^4.3.0"
+    }
+}
