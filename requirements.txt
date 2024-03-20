@@ -1,9 +1,0 @@
-argon2-cffi==21.3.0
-Django==4.0.7
-django-impersonate==1.8.2
-django-precise-bbcode==1.2.15
-django-registration==3.3
-psycopg2==2.9.5
-python-environ==0.4.54
-python-gettext==4.1
-whitenoise==5.3.0

@@ -38,6 +38,11 @@ SECRET_KEY = env('SECRET_KEY')
 
 ALLOWED_HOSTS = [ 'localhost', '127.0.0.1', 'ngexile.freddecgames.com' ]
 
+CORS_ALLOWED_ORIGINS = [
+    'https://ngexile.freddecgames.com',
+    'http://localhost:3000',
+]
+
 INTERNAL_IPS = [ '127.0.0.1' ]
 
 ROOT_URLCONF = 'config.urls'
@@ -71,10 +76,13 @@ INSTALLED_APPS = [
     
     'precise_bbcode',
     'impersonate',
+    'corsheaders',
+    'rest_framework',
     
     'myapps.accounts',
     'myapps.lobby',
     'myapps.s03',
+    'myapps.api',
 ]
 
 
@@ -82,6 +90,7 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.BrokenLinkEmailsMiddleware',
     'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
