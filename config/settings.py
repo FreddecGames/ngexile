@@ -188,6 +188,15 @@ EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
 
 ACCOUNT_USER_MODEL_USERNAME_FIELD = 'email'
 
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.TokenAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticatedOrReadOnly',
+    ),
+}
+
 REST_AUTH_REGISTER_SERIALIZERS = {
     'REGISTER_SERIALIZER': 'myapps.api.serializers.UserRegisterSerializer',
 }
