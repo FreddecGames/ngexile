@@ -76,8 +76,17 @@ INSTALLED_APPS = [
     
     'precise_bbcode',
     'impersonate',
+    
     'corsheaders',
+    
     'rest_framework',
+    'rest_framework.authtoken',
+
+    'dj_rest_auth',
+    'dj_rest_auth.registration',
+
+    'allauth',
+    'allauth.account',
     
     'myapps.accounts',
     'myapps.lobby',
@@ -174,3 +183,10 @@ EMAIL_PORT = env('EMAIL_PORT')
 EMAIL_USE_SSL = True
 EMAIL_HOST_USER = env('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
+
+
+ACCOUNT_USER_MODEL_USERNAME_FIELD = 'email'
+
+REST_AUTH_REGISTER_SERIALIZERS = {
+    'REGISTER_SERIALIZER': 'myapps.api.serializers.UserRegisterSerializer',
+}
