@@ -39,7 +39,7 @@ SECRET_KEY = env('SECRET_KEY')
 ALLOWED_HOSTS = [ 'localhost', '127.0.0.1', 'ngexile.freddecgames.com' ]
 
 CORS_ALLOWED_ORIGINS = [
-    'https://ngexile.freddecgames.com',
+    'https://fgexile.freddecgames.com',
     'http://localhost:3000',
 ]
 
