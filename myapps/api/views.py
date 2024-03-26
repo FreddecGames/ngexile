@@ -54,6 +54,11 @@ def dbRow(query):
     cursor.execute(query)
     return dict_fetchone(cursor)
 
+def dbRows(query):
+
+    cursor.execute(query)
+    return dict_fetchall(cursor)
+    
 def dosql(ch):
 
     ret = ch.replace('\\', '\\\\') 
