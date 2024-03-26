@@ -95,6 +95,25 @@ class Profile(BaseView):
         return Response(data)
 
 
+class HomeStart(BaseView):
+
+    def get(self, request, format=None):
+        
+        data = {}
+        
+        #---
+        
+        query = 'SELECT id, recommended' + \
+                ' FROM sp_get_galaxy_info(' + str(self.userId) + ')'                
+        rows = dbRows(query)
+        
+        data['galaxies'] = rows
+        
+        #---
+        
+        return Response(data)
+
+
 class Layout(BaseView):
 
     def get(self, request, format=None):

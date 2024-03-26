@@ -16,5 +16,7 @@ urlpatterns = [
     
     path('profile/', views.Profile.as_view()),
     
+    path('home-start/', views.HomeStart.as_view()),
+    
     path('layout/', views.Layout.as_view()),
 ]
