@@ -15,4 +15,6 @@ urlpatterns = [
     path('confirm-account/<token>/', views.confirm_account, name='account_confirm_email'),
     
     path('profile/', views.Profile.as_view()),
+    
+    path('layout/', views.Layout.as_view()),
 ]
