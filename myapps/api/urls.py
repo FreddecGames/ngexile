@@ -1,6 +1,12 @@
 from django.urls import path, include
 
-from myapps.api import views
+from .views import redirection
+
+from .views import profile
+
+from .views import home_start
+
+from .views import layout
 
 
 urlpatterns = [
@@ -11,12 +17,12 @@ urlpatterns = [
     
     path('registration/', include('dj_rest_auth.registration.urls')),
 
-    path('reset-password/<uidb64>/<token>/', views.reset_password, name='password_reset_confirm'),
-    path('confirm-account/<token>/', views.confirm_account, name='account_confirm_email'),
+    path('reset-password/<uidb64>/<token>/', redirection.reset_password, name='password_reset_confirm'),
+    path('confirm-account/<token>/', redirection.confirm_account, name='account_confirm_email'),
     
-    path('profile/', views.Profile.as_view()),
+    path('profile/', profile.View.as_view()),
     
-    path('home-start/', views.HomeStart.as_view()),
+    path('home-start/', home_start.View.as_view()),
     
-    path('layout/', views.Layout.as_view()),
+    path('layout/', layout.View.as_view()),
 ]
