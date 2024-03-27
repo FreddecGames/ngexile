@@ -185,7 +185,6 @@ def getPercent(current, max, slice):
 
 class BaseView(APIView):
     authentication_classes = [ TokenAuthentication ]
-    permission_classes = [ IsAuthenticated ]
 
     def initial(self, request, *args, **kwargs):
         super(BaseView, self).initial(request, *args, **kwargs)

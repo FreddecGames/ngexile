@@ -4,8 +4,35 @@ from myapps.api.views._utils import *
 
 #---
 
-class View(BaseView):
+from rest_framework import permissions
 
+class HomeStartPermission(permissions.BasePermission):
+
+    def has_permission(self, request, view):
+        
+        #---
+        
+        query = 'SELECT privilege, resets' + \
+                ' FROM users' + \
+                ' WHERE id=' + str(self.userId)
+        row = dbRow(query)
+        
+        if not row or row['privilege'] != -3 or row['resets'] != 0:
+            return False
+        
+        #---
+        
+        if not registration['enabled'] or (registration['until'] != None and timezone.now() > registration['until']):        
+            return False
+        
+        #---
+        
+        return True
+        
+
+class View(BaseView):
+    permission_classes = [ IsAuthenticated, HomeStartPermission ]
+    
     def post(self, request, format=None):
         
         data = {}
