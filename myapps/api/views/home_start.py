@@ -10,6 +10,8 @@ class HomeStartPermission(permissions.BasePermission):
 
     def has_permission(self, request, view):
         
+        dbConnect()
+        
         #---
         
         query = 'SELECT privilege, resets' + \
