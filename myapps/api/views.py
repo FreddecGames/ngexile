@@ -69,6 +69,11 @@ def dosql(ch):
 
 #---
 
+def ToStr(s, defaultValue):
+ 
+    if (s == '' or s == None): return defaultValue
+    return s.strip()
+
 def ToInt(s, defaultValue):
  
     if (s == '' or s == None): return defaultValue
@@ -211,7 +216,7 @@ class HomeStart(BaseView):
         
         if action == 'start':
                         
-            name = request.data['name'].strip()
+            name = ToStr(request.data['name'])
             if not isValidName(name):
                 data['error'] = 'name_invalid'
                 return Response(data, status=status.HTTP_400_BAD_REQUEST)
