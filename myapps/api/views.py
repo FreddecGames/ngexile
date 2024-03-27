@@ -6,6 +6,7 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework import status
 
 #---
 
@@ -68,6 +69,86 @@ def dosql(ch):
 
 #---
 
+def ToInt(s, defaultValue):
+ 
+    if (s == '' or s == None): return defaultValue
+    i = int(float(s))
+    if i == None: return defaultValue
+    return i
+
+def ToBool(s, defaultValue):
+
+    if (s == '' or s == '' or s == None): return defaultValue
+    i = int(float(s))
+    if i == 0: return defaultValue
+    return True
+
+#---
+
+def isValidName(myName):
+
+    myName = myName.strip()
+
+    if myName == '' or len(myName) < 2 or len(myName) > 12:
+        return False
+    else:
+    
+        p = re.compile('^[a-zA-Z0-9]+([ ]?[\-]?[ ]?[a-zA-Z0-9]+)*$')
+        return p.match(myName)
+
+def isValidURL(myURL):
+
+    myURL = myURL.strip()
+
+    p = re.compile('^(http|https|ftp)\://([a-zA-Z0-9\.\-]+(\:[a-zA-Z0-9\.&%\$\-]+)*@)?((25[0-5]|2[0-4][0-9]|[0-1]{1}[0-9]{2}|[1-9]{1}[0-9]{1}|[1-9])\.(25[0-5]|2[0-4][0-9]|[0-1]{1}[0-9]{2}|[1-9]{1}[0-9]{1}|[1-9]|0)\.(25[0-5]|2[0-4][0-9]|[0-1]{1}[0-9]{2}|[1-9]{1}[0-9]{1}|[1-9]|0)\.(25[0-5]|2[0-4][0-9]|[0-1]{1}[0-9]{2}|[1-9]{1}[0-9]{1}|[0-9])|([a-zA-Z0-9\-]+\.)*[a-zA-Z0-9\-]+\.[a-zA-Z]{2,4})(\:[0-9]+)?(/[^/][a-zA-Z0-9\.\,\?\'\\/\+&%\$#\=~_\-@]*)*$')
+    return p.match(myURL)
+
+def isValidObjectName(myName):
+
+    myName = myName.strip()
+
+    if myName == '' or len(myName) < 2 or len(myName) > 16:
+        return False
+    else:
+    
+        p = re.compile('^[a-zA-Z0-9\- ]+$')
+        return p.match(myName)
+
+def isValidAllianceName(myName):
+    
+    myName = myName.strip()
+    
+    if myName == '' or len(myName) < 4 or len(myName) > 32:
+        return False
+    else:
+    
+        p = re.compile('^[a-zA-Z0-9]+([ ]?[.]?[\-]?[ ]?[a-zA-Z0-9]+)*$')
+        return p.match(myName)
+
+def isValidAllianceTag(myTag):
+    
+    myTag = myTag.strip()
+    
+    if myTag == '' or len(myTag) < 2 or len(myTag) > 4:
+        return False
+    else:
+    
+        p = re.compile('^[a-zA-Z0-9]+$')
+        return p.match(myTag)
+
+def isValidCategoryName(myName):
+    
+    myName = myName.strip()
+    
+    if myName == '' or len(myName) < 2 or len(myName) > 32:
+        return False
+    else:
+    
+        p = re.compile('^[a-zA-Z0-9\- ]+$')
+        return p.match(myName)
+
+#---
+
 class BaseView(APIView):
     authentication_classes = [ TokenAuthentication ]
     permission_classes = [ IsAuthenticated ]
@@ -118,6 +199,63 @@ class HomeStart(BaseView):
         
         return Response(data)
 
+    def post(self, request, format=None):
+        
+        data = {}
+
+        #---
+        
+        action = request.POST.get('action')
+
+        #---
+        
+        if action == 'start':
+                        
+            name = request.POST.get('name', '').strip()
+            if not isValidName(name):
+                data['error'] = 'name_invalid'
+                return Response(data, status=status.HTTP_400_BAD_REQUEST)
+            
+            try:
+                dbQuery('UPDATE users SET username=' + dosql(name) + ' WHERE id=' + str(self.userId))
+            except:
+                data['error'] = 'name_already_used'
+                return Response(data, status=status.HTTP_400_BAD_REQUEST)
+                
+            orientation = ToInt(request.POST.get('orientation'), 0)
+            if orientation == 0:
+                data['error'] = 'orientation_invalid'
+                return Response(data, status=status.HTTP_400_BAD_REQUEST)
+            
+            dbQuery('UPDATE users SET orientation=' + str(orientation) + ' WHERE id=' + str(self.userId))
+            
+            if orientation == 1:
+                dbQuery('INSERT INTO researches(userid, researchid, level) VALUES(' + str(self.userId) + ', 10, 1)')
+                dbQuery('INSERT INTO researches(userid, researchid, level) VALUES(' + str(self.userId) + ', 11, 1)')
+                dbQuery('INSERT INTO researches(userid, researchid, level) VALUES(' + str(self.userId) + ', 12, 1)')
+
+            elif orientation == 2:
+                dbQuery('INSERT INTO researches(userid, researchid, level) VALUES(' + str(self.userId) + ', 20, 1)')
+                dbQuery('INSERT INTO researches(userid, researchid, level) VALUES(' + str(self.userId) + ', 21, 1)')
+                dbQuery('INSERT INTO researches(userid, researchid, level) VALUES(' + str(self.userId) + ', 22, 1)')
+
+            elif orientation == 3:
+                dbQuery('INSERT INTO researches(userid, researchid, level) VALUES(' + str(self.userId) + ', 30, 1)')
+                dbQuery('INSERT INTO researches(userid, researchid, level) VALUES(' + str(self.userId) + ', 31, 1)')
+                dbQuery('INSERT INTO researches(userid, researchid, level) VALUES(' + str(self.userId) + ', 32, 1)')
+
+            dbQuery('SELECT sp_update_researches(' + str(self.userId) + ')')
+            
+            galaxy = ToInt(request.POST.get('galaxy'), 0)
+            result = dbExecute('SELECT sp_reset_account(' + str(self.userId) + ',' + str(galaxy) + ')')
+            if result != 0:
+                data['error'] = 'reset_error_' + result
+                return Response(data, status=status.HTTP_400_BAD_REQUEST)
+        
+        #---
+        
+        return Response(data)
+    
 
 class Layout(BaseView):
 
