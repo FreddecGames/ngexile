@@ -256,6 +256,7 @@ class HomeStart(BaseView):
             
         #---
         
+        data = request.data
         return Response(data, status=status.HTTP_400_BAD_REQUEST)
     
 
