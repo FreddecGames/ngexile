@@ -67,11 +67,5 @@ class View(BaseView):
         data['cur_p'] = ((data['cur_planetid']  - 1) % 25) + 1
         
         #---
-        
-        if request.user.is_impersonate:
-        
-            data['impersonating'] = True
-        
-        #---
-        
+                
         return Response(data)
