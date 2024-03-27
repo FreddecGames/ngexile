@@ -51,7 +51,7 @@ class View(BaseView):
         
         #---
         
-        if data['cur_planetid'] != None and data['cur_planetid'] != '':
+        if data['cur_planetid'] == None or data['cur_planetid'] == '':
         
             planet = dbRow('SELECT id, galaxy, sector FROM nav_planet WHERE planet_floor > 0 AND planet_space > 0 AND ownerid=' + str(self.userId) + ' LIMIT 1')
             
