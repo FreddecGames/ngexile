@@ -6,6 +6,16 @@ from myapps.api.views._utils import *
 
 class View(BaseView):
 
+    def dispatch(self, request, *args, **kwargs):
+        
+        #---
+        
+        super().pre_dispatch(request, *args, **kwargs)
+            
+        #---
+        
+        return super().dispatch(request, *args, **kwargs)
+
     def get(self, request, format=None):
         
         query = 'SELECT username, privilege, resets, credits, lastplanetid, deletion_date, planets, score, previous_score, mod_planets, mod_commanders,' + \
