@@ -205,13 +205,13 @@ class HomeStart(BaseView):
 
         #---
         
-        action = request.POST.get('action')
+        action = request.data.action
 
         #---
         
         if action == 'start':
                         
-            name = request.POST.get('name', '').strip()
+            name = request.data.name.strip()
             if not isValidName(name):
                 data['error'] = 'name_invalid'
                 return Response(data, status=status.HTTP_400_BAD_REQUEST)
@@ -222,7 +222,7 @@ class HomeStart(BaseView):
                 data['error'] = 'name_already_used'
                 return Response(data, status=status.HTTP_400_BAD_REQUEST)
                 
-            orientation = ToInt(request.POST.get('orientation'), 0)
+            orientation = ToInt(request.data.orientation, 0)
             if orientation == 0:
                 data['error'] = 'orientation_invalid'
                 return Response(data, status=status.HTTP_400_BAD_REQUEST)
@@ -246,7 +246,7 @@ class HomeStart(BaseView):
 
             dbQuery('SELECT sp_update_researches(' + str(self.userId) + ')')
             
-            galaxy = ToInt(request.POST.get('galaxy'), 0)
+            galaxy = ToInt(request.data.galaxy, 0)
             result = dbExecute('SELECT sp_reset_account(' + str(self.userId) + ',' + str(galaxy) + ')')
             if result != 0:
                 data['error'] = 'reset_error_' + result
@@ -256,7 +256,6 @@ class HomeStart(BaseView):
             
         #---
         
-        data = request.data
         return Response(data, status=status.HTTP_400_BAD_REQUEST)
     
 
