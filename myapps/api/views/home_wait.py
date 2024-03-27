@@ -53,6 +53,7 @@ class View(BaseView):
         
         #---
         
+        data['error'] = 'Bad action: ' + action
         return Response(data, status=status.HTTP_400_BAD_REQUEST)
         
     def get(self, request, format=None):
