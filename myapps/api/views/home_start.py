@@ -6,31 +6,6 @@ from myapps.api.views._utils import *
 
 class View(BaseView):
 
-    def dispatch(self, request, *args, **kwargs):
-        
-        #---
-        
-        super().pre_dispatch(request, *args, **kwargs)
-            
-        #---
-        
-        query = 'SELECT privilege, resets' + \
-                ' FROM users' + \
-                ' WHERE id=' + str(self.userId)
-        row = dbRow(query)
-        
-        if not row or row['privilege'] != -3 or row['resets'] != 0:
-            return Response(data, status=status.HTTP_400_BAD_REQUEST)
-        
-        #---
-        
-        if not registration['enabled'] or (registration['until'] != None and timezone.now() > registration['until']):            
-            return Response(data, status=status.HTTP_400_BAD_REQUEST)
-        
-        #---
-        
-        return super().dispatch(request, *args, **kwargs)
-
     def post(self, request, format=None):
         
         data = {}

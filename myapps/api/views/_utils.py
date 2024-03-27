@@ -187,7 +187,8 @@ class BaseView(APIView):
     authentication_classes = [ TokenAuthentication ]
     permission_classes = [ IsAuthenticated ]
 
-    def pre_dispatch(self, request, *args, **kwargs):
+    def initial(self, request, *args, **kwargs):
+        super(BaseView, self).initial(request, *args, **kwargs)
         
         self.userId = request.user.id
         
