@@ -69,19 +69,19 @@ def dosql(ch):
 
 #---
 
-def ToStr(s, defaultValue):
+def ToStr(s, defaultValue=''):
  
     if (s == '' or s == None): return defaultValue
     return s.strip()
 
-def ToInt(s, defaultValue):
+def ToInt(s, defaultValue=0):
  
     if (s == '' or s == None): return defaultValue
     i = int(float(s))
     if i == None: return defaultValue
     return i
 
-def ToBool(s, defaultValue):
+def ToBool(s, defaultValue=False):
 
     if (s == '' or s == '' or s == None): return defaultValue
     i = int(float(s))
