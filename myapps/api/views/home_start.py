@@ -14,7 +14,7 @@ class HomeStartPermission(permissions.BasePermission):
         
         query = 'SELECT privilege, resets' + \
                 ' FROM users' + \
-                ' WHERE id=' + str(self.userId)
+                ' WHERE id=' + str(request.user.id)
         row = dbRow(query)
         
         if not row or row['privilege'] != -3 or row['resets'] != 0:
