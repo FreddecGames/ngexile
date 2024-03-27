@@ -5,6 +5,7 @@ from .views import redirection
 from .views import profile
 
 from .views import home_start
+from .views import home_wait
 
 from .views import layout
 
@@ -23,6 +24,7 @@ urlpatterns = [
     path('profile/', profile.View.as_view()),
     
     path('home-start/', home_start.View.as_view()),
+    path('home-wait/', home_wait.View.as_view()),
     
     path('layout/', layout.View.as_view()),
 ]
