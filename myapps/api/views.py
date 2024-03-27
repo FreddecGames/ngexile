@@ -251,10 +251,12 @@ class HomeStart(BaseView):
             if result != 0:
                 data['error'] = 'reset_error_' + result
                 return Response(data, status=status.HTTP_400_BAD_REQUEST)
-        
+            
+            return Response(data)
+            
         #---
         
-        return Response(data)
+        return Response(data, status=status.HTTP_400_BAD_REQUEST)
     
 
 class Layout(BaseView):
