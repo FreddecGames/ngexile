@@ -50,6 +50,14 @@ class View(BaseView):
         data['new_report'] = result['new_report']
         
         #---
+        
+        if data['cur_planetid'] != None and data['cur_planetid'] != '':
+        
+            planet = dbRow('SELECT id, galaxy, sector FROM nav_planet WHERE planet_floor > 0 AND planet_space > 0 AND ownerid=' + str(self.userId) + ' LIMIT 1')
+            
+            data['cur_planetid'] = planet['id']
+        
+        #---
 
         query = 'SELECT galaxy, sector FROM nav_planet WHERE planet_floor > 0 AND planet_space > 0 AND id=' + str(data['cur_planetid']) + ' AND ownerid=' + str(self.userId)
         result = dbRow(query)
