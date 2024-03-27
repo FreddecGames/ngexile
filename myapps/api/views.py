@@ -205,13 +205,13 @@ class HomeStart(BaseView):
 
         #---
         
-        action = request.data.action
+        action = request.data['action']
 
         #---
         
         if action == 'start':
                         
-            name = request.data.name.strip()
+            name = request.data['name'].strip()
             if not isValidName(name):
                 data['error'] = 'name_invalid'
                 return Response(data, status=status.HTTP_400_BAD_REQUEST)
