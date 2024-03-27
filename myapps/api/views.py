@@ -1,3 +1,5 @@
+import re
+
 from django.conf import settings
 from django.db import connection
 from django.shortcuts import redirect
