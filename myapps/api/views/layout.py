@@ -5,6 +5,8 @@ from myapps.api.views._utils import *
 #---
 
 class View(BaseView):
+    permission_classes = [ IsAuthenticated ]
+
 
     def get(self, request, format=None):
         
@@ -48,23 +50,6 @@ class View(BaseView):
         
         data['new_mail'] = result['new_mail']
         data['new_report'] = result['new_report']
-        
-        #---
-        
-        if data['cur_planetid'] == None or data['cur_planetid'] == '':
-        
-            planet = dbRow('SELECT id, galaxy, sector FROM nav_planet WHERE planet_floor > 0 AND planet_space > 0 AND ownerid=' + str(self.userId) + ' LIMIT 1')
-            
-            data['cur_planetid'] = planet['id']
-        
-        #---
-
-        query = 'SELECT galaxy, sector FROM nav_planet WHERE planet_floor > 0 AND planet_space > 0 AND id=' + str(data['cur_planetid']) + ' AND ownerid=' + str(self.userId)
-        result = dbRow(query)
-        
-        data['cur_g'] = result['galaxy']
-        data['cur_s'] = result['sector']
-        data['cur_p'] = ((data['cur_planetid']  - 1) % 25) + 1
         
         #---
                 

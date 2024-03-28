@@ -35,6 +35,7 @@ class HomeStartPermission(permissions.BasePermission):
 class View(BaseView):
     permission_classes = [ IsAuthenticated, HomeStartPermission ]
     
+    
     def post(self, request, format=None):
         
         data = {}
@@ -93,6 +94,7 @@ class View(BaseView):
         #---
         
         return Response(data, status=status.HTTP_400_BAD_REQUEST)
+
 
     def get(self, request, format=None):
         

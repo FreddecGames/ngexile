@@ -183,18 +183,89 @@ def getPercent(current, max, slice):
 
 #---
 
+class Template():
+    
+    def __init__(self):
+
+        self.data = {}
+
+    def set(self, key, value=True):
+    
+        self.data[key] = value
+        
+def getTemplate():
+
+    result = Template()
+
+    return result
+
+#---
+
 class BaseView(APIView):
     authentication_classes = [ TokenAuthentication ]
+
 
     def initial(self, request, *args, **kwargs):
         super(BaseView, self).initial(request, *args, **kwargs)
         
+        #---
+        
         self.userId = request.user.id
         
+        #---
+        
         dbConnect()
+        
+        #---
 
         ipaddress = request.META.get('REMOTE_ADDR', '')
         useragent = request.META.get('HTTP_USER_AGENT', '')
         forwardedfor = request.META.get('HTTP_X_FORWARDED_FOR', '')
         
         dbQuery('SELECT * FROM sp_account_connect(' + str(self.userId) + ', 1036,' + dosql(ipaddress) + ',' + dosql(forwardedfor) + ',' + dosql(useragent) + ', 0)')
+        
+        #---
+        
+        query = 'SELECT username, privilege, resets, credits, lastplanetid, deletion_date, planets, score, previous_score, mod_planets, mod_commanders,' + \
+                ' alliance_id, alliance_rank, leave_alliance_datetime IS NULL AND (alliance_left IS NULL OR alliance_left < now()) AS can_join_alliance,' + \
+                ' credits_bankruptcy, orientation, prestige_points' + \
+                ' FROM users' + \
+                ' WHERE id=' + str(self.userId)
+        self.profile = dbRow(query)
+        
+        #---
+        
+        self.allianceId = self.profile['alliance_id']
+        self.allianceRankId = self.profile['alliance_rank']
+        
+        #---
+            
+        self.allianceRights = None
+        
+        if self.allianceId and self.allianceRankId:
+        
+            query = 'SELECT label, leader, can_invite_player, can_kick_player, can_create_nap, can_break_nap, can_ask_money, can_see_reports, can_accept_money_requests, can_change_tax_rate, can_mail_alliance,' + \
+                    ' can_manage_description, can_manage_announce, can_see_members_info, can_use_alliance_radars, can_order_other_fleets' + \
+                    ' FROM alliances_ranks' + \
+                    ' WHERE allianceid=' + str(self.allianceId) + ' AND rankid=' + str(self.allianceRankId)
+            self.allianceRights = dbRow(query)
+        
+        #---
+        
+        if self.profile['lastplanetid'] == None or  self.profile['lastplanetid'] == '':
+        
+            planet = dbRow('SELECT id, galaxy, sector FROM nav_planet WHERE planet_floor > 0 AND planet_space > 0 AND ownerid=' + str(self.userId) + ' LIMIT 1')
+            if planet:
+            
+                dbQuery('UPDATE users SET lastplanetid=' + str(planet['id']) + ' WHERE id=' + str(self.userId))
+                self.profile['lastplanetid'] = planet['id']
+
+        #---
+        
+        if self.profile['lastplanetid'] != None and self.profile['lastplanetid'] != '':
+        
+            planet = dbRow('SELECT id, galaxy, sector FROM nav_planet WHERE planet_floor > 0 AND planet_space > 0 AND ownerid=' + str(self.userId) + ' LIMIT 1')    
+            
+            self.currentPlanetId = planet['id']
+            self.currentPlanetGalaxy = planet['galaxy']
+            self.currentPlanetSector = planet['sector']
