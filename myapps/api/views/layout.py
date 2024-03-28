@@ -99,11 +99,6 @@ class View(BaseView):
         
         #---
         
-        tpl.set('selectedtab', self.selectedTab)
-        tpl.set('selectedmenu', self.selectedMenu)
-        
-        #---
-        
         if self.profile['deletion_date']:
         
             tpl.set('delete_datetime', self.profile['deletion_date'])
