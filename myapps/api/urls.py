@@ -9,6 +9,8 @@ from .views import home_wait
 
 from .views import layout
 
+from .views import empire_view
+
 
 urlpatterns = [
 
@@ -27,4 +29,6 @@ urlpatterns = [
     path('home-wait/', home_wait.View.as_view()),
     
     path('layout/', layout.View.as_view()),
+    
+    path('empire/view', empire_view.View.as_view()),
 ]
