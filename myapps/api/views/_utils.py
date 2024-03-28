@@ -203,7 +203,7 @@ def getTemplate():
 
 class BaseView(APIView):
     authentication_classes = [ TokenAuthentication ]
-
+    showHeader = False
 
     def initial(self, request, *args, **kwargs):
         super(BaseView, self).initial(request, *args, **kwargs)
