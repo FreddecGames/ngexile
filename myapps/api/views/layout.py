@@ -112,12 +112,5 @@ class View(BaseView):
             tpl.set('creditswarning')
         
         #---
-        
-        if request.user.is_impersonate:
-        
-            tpl.set('username', self.profile['username'])
-            tpl.set('impersonating')
-        
-        #---
                 
         return Response(tpl.data)
