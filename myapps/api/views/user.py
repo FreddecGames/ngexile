@@ -7,6 +7,7 @@ from myapps.api.views._utils import *
 class View(BaseView):
     permission_classes = [ IsAuthenticated ]
 
+    ################################################################################
 
     def get(self, request, format=None):
         

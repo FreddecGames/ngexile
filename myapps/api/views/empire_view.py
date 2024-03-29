@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 
-from myapps.api.views._utils import *
+from myapps.api.views._permissions import *
 
 #---        
 
 class View(BaseView):
-    permission_classes = [ IsAuthenticated ]
-    
+    permission_classes = [ IsAuthenticated, IsActive ]
+
+    ################################################################################    
     
     def get(self, request, format=None):
         

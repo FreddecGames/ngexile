@@ -1,77 +1,118 @@
 # -*- coding: utf-8 -*-
 
-from myapps.api.views._utils import *
+from myapps.api.views._permissions import *
 
-#---
-
-from rest_framework import permissions
-
-class HomeWaitPermission(permissions.BasePermission):
-
-    def has_permission(self, request, view):
-        
-        dbConnect()
-        
-        #---
-        
-        query = 'SELECT privilege, resets' + \
-                ' FROM users' + \
-                ' WHERE id=' + str(request.user.id)
-        row = dbRow(query)
-        
-        if not row or row['privilege'] != -3 or row['resets'] == 0:
-            return False
-        
-        #---
-        
-        if not registration['enabled'] or (registration['until'] != None and timezone.now() > registration['until']):        
-            return False
-        
-        #---
-        
-        return True
-
+#---        
 
 class View(BaseView):
-    permission_classes = [ IsAuthenticated, HomeWaitPermission ]
+    permission_classes = [ IsAuthenticated, IsActive ]
 
-
-    def post(self, request, format=None):
-        
-        data = {}
+    ################################################################################
+    
+    def get(self, request, *args, **kwargs):
         
         #---
+
+        tpl = getTemplate()
         
-        action = request.data['action']
+        self.selectedMenu = 'help'
         
         #---
-        
-        if action == 'unlock':
-        
-            dbQuery('UPDATE users SET privilege=0 WHERE id=' + str(self.userId))
+
+        cat = request.GET.get('cat', '')
+        if cat == '' or cat != 'buildings' and cat != 'research' and cat != 'ships' and cat != 'orientations' and cat != 'battle' and cat != 'tags':
+            cat = 'general'
             
-            return Response(data)
-        
-        #---
-        
-        return Response(data, status=status.HTTP_400_BAD_REQUEST)
-
-        
-    def get(self, request, format=None):
+        tpl.set(cat)
 
         #---
+        
+        if cat == 'buildings':
+        
+            query = 'SELECT id, category,' + \
+                    ' cost_ore, cost_hydrocarbon, workers, floor, space, production_ore, production_hydrocarbon, energy_production, (workers*maintenance_factor/100.0)::integer AS upkeep_workers, upkeep AS upkeep_credits, energy_consumption AS upkeep_energy,' + \
+                    ' storage_ore, storage_hydrocarbon, storage_energy,' + \
+                    ' label, description' + \
+                    ' FROM sp_list_available_buildings(' + str(self.userId) + ')' + \
+                    ' WHERE not is_planet_element'
+            results = dbRows(query)
 
-        data = {}
+            lastCategory = -1
+
+            categories = []
+            tpl.set('categories', categories)
+            
+            for result in results:
+                
+                if result['category'] != lastCategory:
+                    lastCategory = result['category']
+                    
+                    category = {'id': result['category'], 'buildings':[]}
+                    categories.append(category)
+
+                category['buildings'].append(result)
 
         #---
 
-        query = 'SELECT username' + \
-                ' FROM users' + \
-                ' WHERE id=' + str(self.userId)
-        row = dbRow(query)
+        elif cat == 'research':
+        
+            query = 'SELECT researchid, category, total_cost,' + \
+                    ' label, description' + \
+                    ' FROM sp_list_researches(' + str(self.userId) + ') WHERE level > 0 OR (researchable AND planet_elements_requirements_met)' + \
+                    ' ORDER BY category, researchid'
+            results = dbRows(query)
 
-        data['profile'] = row
-        
+            lastCategory = -1
+
+            categories = []
+            tpl.set('categories', categories)
+            
+            for result in results:
+                
+                if result['category'] != lastCategory:
+                    lastCategory = result['category']
+                    
+                    category = {'id': result['category'], 'researches':[]}
+                    categories.append(category)
+
+                category['researches'].append(result)
+
         #---
-        
-        return Response(data)
+
+        elif cat == 'ships':
+
+            query = 'SELECT shipid, required_buildingid, label' + \
+                    ' FROM db_ships_req_building' + \
+                    ' INNER JOIN db_buildings ON id=required_buildingid'
+            shipReqs = dbRows(query)
+            
+            query = 'SELECT id, category, cost_ore, cost_hydrocarbon, crew,' + \
+                    ' signature, capacity, handling, speed, weapon_turrets, weapon_dmg_em + weapon_dmg_explosive + weapon_dmg_kinetic + weapon_dmg_thermal AS weapon_power, ' + \
+                    ' weapon_tracking_speed, hull, shield, recycler_output, long_distance_capacity, droppods, cost_energy, upkeep, required_vortex_strength, leadership,' + \
+                    ' label, description' + \
+                    ' FROM sp_list_available_ships(' + str(self.userId) + ') WHERE new_shipid IS NULL'
+            results = dbRows(query)
+
+            lastCategory = -1
+
+            categories = []
+            tpl.set('categories', categories)
+            
+            for result in results:
+                
+                if result['category'] != lastCategory:
+                    lastCategory = result['category']
+                    
+                    category = {'id': result['category'], 'ships':[]}
+                    categories.append(category)
+
+                category['ships'].append(result)
+                
+                result['buildings'] = []
+                for req in shipReqs:
+                    if req['shipid'] == result['id']:
+                        result['buildings'].append(req['label'])
+
+        #---
+
+        return Response(tpl.data)

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from myapps.api.views._utils import *
+from myapps.api.views._permissions import *
 
 #---
 

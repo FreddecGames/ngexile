@@ -1,36 +1,46 @@
 # -*- coding: utf-8 -*-
 
-from myapps.api.views._utils import *
+from myapps.api.views._permissions import *
 
 #---        
 
 class View(BaseView):
-    permission_classes = [ IsAuthenticated ]
+    permission_classes = [ IsAuthenticated, IsActive ]
+
+    ################################################################################
     
-    
-    def post(self, request, format=None):
-        
-        data = {}
+    def get(self, request, *args, **kwargs):
 
         #---
-        
-        action = request.data['action']
 
+        tpl = getTemplate()
+        
         #---
         
-        if action == '':
-                      
-            return Response(data)
+        query = 'SELECT nav_planet.id AS planet_id, nav_planet.name AS planet_name, nav_planet.galaxy, nav_planet.sector, nav_planet.planet, shipid, quantity, label' + \
+                ' FROM planet_ships' + \
+                '    INNER JOIN nav_planet ON (planet_ships.planetid = nav_planet.id)' + \
+                '    INNER JOIN db_ships ON (db_ships.id = planet_ships.shipid)' + \
+                ' WHERE nav_planet.ownerid =' + str(self.userId) + \
+                ' ORDER BY nav_planet.id, shipid'
+        results = dbRows(query)
+
+        lastplanetid = -1
+
+        planets = []
+        tpl.set('planets', planets)
+        
+        for result in results:
             
+            if result['planet_id'] != lastplanetid:
+                lastplanetid = result['planet_id']
+                
+                planet = result
+                planet['ships'] = []
+                planets.append(planet)
+                
+            planet['ships'].append(result)
+        
         #---
-        
-        return Response(data, status=status.HTTP_400_BAD_REQUEST)
 
-
-    def get(self, request, format=None):
-        
-        data = {}
-        
-        #---
-        
-        return Response(data)
+        return Response(tpl.data)

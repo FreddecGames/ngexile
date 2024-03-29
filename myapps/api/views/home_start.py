@@ -1,40 +1,13 @@
 # -*- coding: utf-8 -*-
 
-from myapps.api.views._utils import *
+from myapps.api.views._permissions import *
 
-#---
-
-from rest_framework import permissions
-
-class HomeStartPermission(permissions.BasePermission):
-
-    def has_permission(self, request, view):
-        
-        dbConnect()
-        
-        #---
-        
-        query = 'SELECT privilege, resets' + \
-                ' FROM users' + \
-                ' WHERE id=' + str(request.user.id)
-        row = dbRow(query)
-        
-        if not row or row['privilege'] != -3 or row['resets'] != 0:
-            return False
-        
-        #---
-        
-        if not registration['enabled'] or (registration['until'] != None and timezone.now() > registration['until']):        
-            return False
-        
-        #---
-        
-        return True
-        
+#---        
 
 class View(BaseView):
-    permission_classes = [ IsAuthenticated, HomeStartPermission ]
-    
+    permission_classes = [ IsAuthenticated, IsNotInMaintenance, IsNew, IsRegistrationOpen ]
+
+    ################################################################################
     
     def post(self, request, format=None):
         
@@ -95,10 +68,11 @@ class View(BaseView):
         
         return Response(data, status=status.HTTP_400_BAD_REQUEST)
 
+    ################################################################################
 
     def get(self, request, format=None):
         
-        data = {}
+        tpl = getTemplate()
         
         #---
         
@@ -106,8 +80,8 @@ class View(BaseView):
                 ' FROM sp_get_galaxy_info(' + str(self.userId) + ')'                
         rows = dbRows(query)
         
-        data['galaxies'] = rows
+        tpl.set('galaxies', rows)
         
         #---
         
-        return Response(data)
+        return Response(tpl.data)
