@@ -269,3 +269,16 @@ class BaseView(APIView):
             self.currentPlanetId = planet['id']
             self.currentPlanetGalaxy = planet['galaxy']
             self.currentPlanetSector = planet['sector']
+    
+    def hasRight(self, right):
+    
+        if self.allianceRights == None: return True
+        else: return self.allianceRights['leader'] or self.allianceRights[right]
+    
+    def getPlanetName(self, relation, radar_strength, ownerName, planetName):
+    
+        if relation == rSelf: return planetName if planetName else ''
+        elif relation == rAlliance: return ownerName if ownerName else ''
+        elif relation == rFriend: return ownerName if ownerName else ''
+        elif radar_strength > 0: return ownerName if ownerName else ''
+        else: return ''
