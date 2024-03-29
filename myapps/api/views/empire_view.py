@@ -21,7 +21,7 @@ class View(BaseView):
             alliance = dbRow(query)
             tpl.set('alliance', alliance)
 
-            tpl.set('alliance_rank_label', self.allianceRights['label'])
+            if self.allianceRights: tpl.set('alliance_rank_label', self.allianceRights['label'])
 
         #---
         
