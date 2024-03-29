@@ -127,7 +127,7 @@ class IsGameover(permissions.BasePermission):
                 ' WHERE id=' + str(request.user.id)
         row = dbRow(query)
         
-        if not row or (profile['planets'] > 0 and profile['credits_bankruptcy'] > 0):
+        if not row or (row['planets'] > 0 and row['credits_bankruptcy'] > 0):
             return False
         
         #---
@@ -151,7 +151,7 @@ class IsActive(permissions.BasePermission):
                 ' WHERE id=' + str(request.user.id)
         row = dbRow(query)
         
-        if not row or row['privilege'] != 0 or profile['planets'] <= 0 or profile['credits_bankruptcy'] <= 0:
+        if not row or row['privilege'] != 0 or row['planets'] <= 0 or row['credits_bankruptcy'] <= 0:
             return False
         
         #---
