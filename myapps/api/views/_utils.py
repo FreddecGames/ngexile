@@ -242,7 +242,7 @@ class BaseView(APIView):
             
         self.allianceRights = None
         
-        if self.allianceId and self.allianceRankId:
+        if self.allianceId != None and self.allianceRankId != None:
         
             query = 'SELECT label, leader, can_invite_player, can_kick_player, can_create_nap, can_break_nap, can_ask_money, can_see_reports, can_accept_money_requests, can_change_tax_rate, can_mail_alliance,' + \
                     ' can_manage_description, can_manage_announce, can_see_members_info, can_use_alliance_radars, can_order_other_fleets' + \
