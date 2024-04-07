@@ -70,9 +70,11 @@
                                     {% endif %}
                                     <div class="col-3 text-end">
                                         {% if nap.breaking_time %}<span class="text-yellow"><script>putcountdown1({{ nap.breaking_time }}, "Rompu", "?")</script></span>
-                                        {% elif nap.break_interval %}
-                                            <small class="text-normal me-1">délai</small>
-                                            <span class="me-3"><script>document.write(formattime({{ nap.break_interval }}))</script></span>
+                                        {% else %}
+                                            {% if nap.break_interval %}
+                                                <small class="text-normal me-1">délai</small>
+                                                <span class="me-3"><script>document.write(formattime({{ nap.break_interval }}))</script></span>
+                                            {% endif %}
                                             {% if can_break %}
                                                 <form method="post" class="d-inline" onsubmit="return confirmBreakPact('{{ nap.tag }}','{{ nap.name }}')">
                                                     {% csrf_token %}
@@ -80,7 +82,8 @@
                                                     <input type="hidden" name="tag" value="{{ nap.tag }}" />
                                                     <button type="submit" class="btn btn-link p-0">Rompre</button>
                                                 </form>
-                                            {% else %}Rompu
+                                            {% else %}
+                                                Rompu
                                             {% endif %}
                                         {% endif %}
                                     </div>
