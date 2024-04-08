@@ -13,9 +13,9 @@
                 {% csrf_token %}
                 <input type="hidden" name="action" value="save">
                     
-                {% include "s03/_messages.html" %}
-                    
                 <div class="row g-3">
+                    
+                    <div class="col-12">{% include "s03/_messages.html" %}</div>
             
                     <div class="col-12">
                         <div class="card">
