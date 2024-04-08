@@ -60,56 +60,54 @@
                         {% endif %}
                     </div>
                 </div>
-                
-                <form method="post">
-                    {% csrf_token %}
-                    <input type="hidden" name="action" value="submit" />
-                    <div class="row g-3">
                         
-                        <div class="col-12">
-                            <div class="card">
-                                <div class="card-header d-flex">
-                                    <span class="fs-6 me-auto">Energie envoyée</span>
-                                    <span>{{ antennas_send_used }} <small class="text-normal">/{{ planet.energy_send_antennas }}</small></span>
-                                </div>
-                                {% if send_no_antenna %}
-                                    <div class="card-body text-center">
-                                        <span class="text-normal">Aucun émetteur d'énergie construit sur la planète</span>
-                                    </div>
-                                {% elif cant_send_when_receiving %}
-                                    <div class="card-body text-center">
-                                        <span class="text-danger">Impossible d'envoyer quand de l'énergie est reçue</span>
-                                    </div>
-                                {% else %}
-                                    {% for sent in sents %}
-                                        <div class="card-body">
-                                            <div class="row gx-3 align-items-center">
-                                                <div class="col-auto">
-                                                    <div class="form-check">
-                                                        <input type="checkbox" class="form-check-input" name="enabled_{{ sent.planetid }}" value="1" {% if sent.enabled %}checked{% endif %}>
-                                                    </div>
-                                                </div>
-                                                <div class="col">
-                                                    <script>putplanet({{sent.planetid}},'{{sent.name}}',{{sent.g}},{{sent.s}},{{sent.p}},{{sent.rel}});</script>
-                                                </div>
-                                                <div class="col-auto">
-                                                    <input type="number" class="form-control" min="0" name="energy_{{ sent.planetid }}" value="{{ sent.energy }}" maxlength="6" size="6">
-                                                </div>
-                                                <div class="col-2">
-                                                    <span>{{ sent.effective_energy|intcomma }}</span>
-                                                </div>
-                                                <div class="col-1">
-                                                    <small class="text-normal">perte</small>
-                                                    <span>{{ sent.loss }}%</span>
-                                                </div>
-                                                <div class="col-1 text-end">
-                                                    <a href="?cat={{ cat }}&a=cancel&to={{ sent.planetid }}" class="btn btn-danger">Retirer</a>
-                                                </div>
-                                            </div>
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header d-flex">
+                            <span class="fs-6 me-auto">Energie envoyée</span>
+                            <span>{{ antennas_send_used }} <small class="text-normal">/{{ planet.energy_send_antennas }}</small></span>
+                        </div>
+                        {% if send_no_antenna %}
+                            <div class="card-body text-center">
+                                <span class="text-normal">Aucun émetteur d'énergie construit sur la planète</span>
+                            </div>
+                        {% elif cant_send_when_receiving %}
+                            <div class="card-body text-center">
+                                <span class="text-danger">Impossible d'envoyer quand de l'énergie est reçue</span>
+                            </div>
+                        {% else %}
+                            {% for sent in sents %}
+                                <div class="card-body">
+                                    <div class="row gx-3 align-items-center">
+                                        <div class="col">
+                                            <script>putplanet({{sent.planetid}},'{{sent.name}}',{{sent.g}},{{sent.s}},{{sent.p}},{{sent.rel}});</script>
                                         </div>
-                                    {% endfor %}
-                                {% endif %}
-                                {% if send %}
+                                        <div class="col-auto">
+                                            <input type="number" class="form-control" min="0" name="energy_{{ sent.planetid }}" value="{{ sent.energy }}" maxlength="6" size="6">
+                                        </div>
+                                        <div class="col-2">
+                                            <span>{{ sent.effective_energy|intcomma }}</span>
+                                        </div>
+                                        <div class="col-1">
+                                            <small class="text-normal">perte</small>
+                                            <span>{{ sent.loss }}%</span>
+                                        </div>
+                                        <div class="col-1 text-end">        
+                                            <form method="post">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="action" value="cancel" />
+                                                <input type="hidden" name="to" value="{{ sent.planetid }}" />
+                                                <button type="submit" class="btn btn-danger">Retirer</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        {% endif %}                        
+                        {% if send %}
+                            <form method="post">
+                                {% csrf_token %}
+                                <input type="hidden" name="action" value="submit" />
                                 <div class="card-body">
                                     <div class="row gx-3 align-items-center">
                                         <div class="col-auto">
@@ -136,12 +134,11 @@
                                         </div>
                                     </div>
                                 </div>
-                                {% endif %}
-                            </div>
-                        </div>
-                    
+                            </form>
+                        {% endif %}
+                        
                     </div>
-                </form>
+                </div>
             
             </div>
         </div>
