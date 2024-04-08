@@ -35,13 +35,17 @@ class View(GlobalView):
                     ' WHERE can_be_disabled AND planetid=' + str(self.currentPlanetId)
             rows = dbRows(query)
             
-            for row in rows:
+            try:
+                for row in rows:
 
-                quantity = row['quantity'] - ToInt(request.POST.get('enabled' + str(row['buildingid'])), 0)
-
-                dbQuery('UPDATE planet_buildings SET' + \
-                        ' disabled = LEAST(quantity - CASE WHEN destroy_datetime IS NULL THEN 0 ELSE 1 END, ' + str(quantity) + ')' + \
-                        ' WHERE planetid=' + str(self.currentPlanetId) + ' AND buildingid =' + str(row['buildingid']))
+                    quantity = row['quantity'] - ToInt(request.POST.get('enabled' + str(row['buildingid'])), 0)
+                    
+                    dbQuery('UPDATE planet_buildings SET' + \
+                            ' disabled = LEAST(quantity - CASE WHEN destroy_datetime IS NULL THEN 0 ELSE 1 END, ' + str(quantity) + ')' + \
+                            ' WHERE planetid=' + str(self.currentPlanetId) + ' AND buildingid =' + str(row['buildingid']))
+            except:
+                messages.error(request, 'buildings_in_use')
+                return HttpResponseRedirect(request.build_absolute_uri())
             
         #---
         

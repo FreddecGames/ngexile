@@ -73,6 +73,8 @@
         {% elif message.message == 'nap_not_found' %}Nous n'avons aucun pacte avec cette alliance
         {% elif message.message == 'not_enough_credits' %}L'alliance ne dispose pas d'assez de crédits pour rompre le pacte
         
+        {% elif message.message == 'buildings_in_use' %}Des bâtiments en cours d'utilisation ne peuvent pas être désactivés, notamment les satellites de réception/émission d'énergie
+        
         {% else %}{{ message }}
         {% endif %}
         

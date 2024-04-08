@@ -11,6 +11,8 @@
         <div class="page-content">
             <div class="row g-3">
             
+                {% include "s03/_messages.html" %}
+            
                 <form method="post">
                     {% csrf_token %}
                     <input type="hidden" name="action" value="save">
