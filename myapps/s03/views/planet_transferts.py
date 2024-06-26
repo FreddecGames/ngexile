@@ -42,9 +42,8 @@ class View(GlobalView):
         
         elif action == 'update':
             
-            energy_to = ToInt(request.POST.get('to'), 0)
-            
-            energy = ToInt(request.POST.get('energy_' + str(energy_to)), 0)
+            energy_to = ToInt(request.POST.get('to'), 0)            
+            energy = ToInt(request.POST.get('energy'), 0)
             
             '''
             enabled = request.POST.get('enabled_' + str(row['target_planetid']))
@@ -56,7 +55,7 @@ class View(GlobalView):
                 query = query + 'enabled=' + str(enabled)
             '''
 
-            query = 'UPDATE planet_energy_transfer SET enabled=' + str(True) + ', energy=1000 WHERE planetid=' + str(self.currentPlanetId) + ' AND target_planetid=' + str(energy_to)
+            query = 'UPDATE planet_energy_transfer SET enabled=' + str(True) + ', energy=' + str(energy) + ' WHERE planetid=' + str(self.currentPlanetId) + ' AND target_planetid=' + str(energy_to)
             dbQuery(query)
             
             '''

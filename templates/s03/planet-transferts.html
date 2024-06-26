@@ -82,9 +82,6 @@
                                         <div class="col">
                                             <script>putplanet({{sent.planetid}},'{{sent.name}}',{{sent.g}},{{sent.s}},{{sent.p}},{{sent.rel}});</script>
                                         </div>
-                                        <div class="col-auto">
-                                            <input type="number" class="form-control" min="0" name="energy_{{ sent.planetid }}" value="{{ sent.energy }}" maxlength="6" size="6">
-                                        </div>
                                         <div class="col-2">
                                             <span>{{ sent.effective_energy|intcomma }}</span>
                                         </div>
@@ -105,6 +102,7 @@
                                                 {% csrf_token %}
                                                 <input type="hidden" name="action" value="update" />
                                                 <input type="hidden" name="to" value="{{ sent.planetid }}" />
+                                                <input type="number" class="form-control" min="0" name="energy" value="{{ sent.energy }}" maxlength="6" size="6">
                                                 <button type="submit" class="btn btn-primary">Valider</button>
                                             </form>
                                         </div>
