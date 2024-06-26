@@ -71,7 +71,7 @@ class View(GlobalView):
                 else: report['planetname'] = ''
                 
                 if row['researchid']:                    
-                    report['researchname'] = dbRow('SELECT name FROM db_research WHERE id=' + str(row['researchid']))['name']
+                    report['researchname'] = dbRow('SELECT label FROM db_research WHERE id=' + str(row['researchid']))['label']
                     
         #---
         
