@@ -114,6 +114,10 @@
                                         </div>
                                     </div>
                                 </div>
+                            {% empty %}
+                                <div class="card-body text-center">
+                                    <span class="text-danger">Aucun lien énergétique établi</span>
+                                </div>
                             {% endfor %}
                         {% endif %}                        
                         
