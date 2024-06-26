@@ -124,6 +124,9 @@
                                 <input type="hidden" name="action" value="submit" />
                                 <div class="card-header">
                                     <div class="row gx-3 align-items-center">
+                                        <div class="col">
+                                            <span class="fs-6 me-auto">Nouveau transfert</span>
+                                        </div>
                                         <div class="col-auto">
                                             <input type="number" class="form-control" min="0" name="to_g" maxlength="2" size="2" value="{{ send_g }}">
                                         </div>
@@ -135,9 +138,6 @@
                                         </div>
                                         <div class="col-auto">
                                             <input type="number" class="form-control" min="0" name="energy" maxlength="6" size="6" value="0">
-                                        </div>
-                                        <div class="col-auto">
-                                            {{ send_effective_energy|intcomma }}
                                         </div>
                                         <div class="col-auto">
                                             <input type="submit" class="btn btn-primary" name="submit" value="Valider">
