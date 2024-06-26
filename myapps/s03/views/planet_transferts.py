@@ -69,8 +69,10 @@ class View(GlobalView):
             
                 query = 'UPDATE planet_energy_transfer SET ' + query + ' WHERE planetid=' + str(self.currentPlanetId) + ' AND target_planetid=' + str(row['target_planetid'])
                 dbQuery(query)
-
+                
+                '''
                 update_planet = True
+                '''
         
         #---
         
