@@ -63,7 +63,7 @@ class View(GlobalView):
                     if query != '': query = query + ','
                     query = query + 'enabled=' + str(enabled)
                 '''
-                query = query + 'enabled=' + str(True)
+                if row['enabled'] != True: query = query + 'enabled=' + str(True)
 
                 if query != '':
                 

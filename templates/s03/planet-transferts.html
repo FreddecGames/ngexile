@@ -100,15 +100,29 @@
                                                 <button type="submit" class="btn btn-danger">Retirer</button>
                                             </form>
                                         </div>
+                                        <div class="col-1 text-end">
+                                            <form method="post">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="action" value="update" />
+                                                <input type="hidden" name="to" value="{{ sent.planetid }}" />
+                                                <button type="submit" class="btn btn-primary">Valider</button>
+                                            </form>
+                                        </div>
                                     </div>
                                 </div>
                             {% endfor %}
                         {% endif %}                        
-                        {% if send %}
+                        
+                    </div>
+                </div>
+                
+                {% if send %}
+                    <div class="col-12">
+                        <div class="card">
                             <form method="post">
                                 {% csrf_token %}
                                 <input type="hidden" name="action" value="submit" />
-                                <div class="card-body">
+                                <div class="card-header">
                                     <div class="row gx-3 align-items-center">
                                         <div class="col-auto">
                                             <input type="number" class="form-control" min="0" name="to_g" maxlength="2" size="2" value="{{ send_g }}">
@@ -126,19 +140,15 @@
                                             {{ send_effective_energy|intcomma }}
                                         </div>
                                         <div class="col-auto">
-                                            <small class="text-normal">perte</small>
-                                            {{ send_loss }}%
-                                        </div>
-                                        <div class="col-auto">
                                             <input type="submit" class="btn btn-primary" name="submit" value="Valider">
                                         </div>
                                     </div>
                                 </div>
                             </form>
-                        {% endif %}
-                        
+                        </div>
                     </div>
-                </div>
+                {% endif %}
+                        
             
             </div>
         </div>
