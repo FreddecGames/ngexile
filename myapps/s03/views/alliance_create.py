@@ -46,7 +46,7 @@ class View(GlobalView):
             
             result = dbExecute('SELECT sp_create_alliance(' + str(self.userId) + ',' + dosql(name) + ',' + dosql(tag) + ', \'\')')
             if result >= -1:
-                return HttpResponseRedirect('/s03/alliance/')
+                return HttpResponseRedirect('/s03/alliance-view/')
                 
             if result == -2: messages.error(request, 'name_already_used')
             elif result == -3: messages.error(request, 'tag_already_used')

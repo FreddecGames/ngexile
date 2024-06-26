@@ -156,7 +156,7 @@ class View(GlobalView):
                 ' FROM vw_fleets' + \
                 ' WHERE action=0 AND ownerid=' + str(self.userId) + ' AND id=' + str(self.fleetId)
         fleet = dbRow(query)
-        if fleet == None: return HttpResponseRedirect('/s03/fleets/')
+        if fleet == None: return HttpResponseRedirect('/s03/fleet-list/')
         tpl.set('fleet', fleet)
 
         #---

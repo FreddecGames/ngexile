@@ -74,7 +74,7 @@ class View(GlobalView):
                 ' cargo_capacity, cargo_load, cargo_ore, cargo_hydrocarbon, cargo_scientists, cargo_soldiers, cargo_workers' + \
                 ' FROM vw_fleets WHERE planet_owner_relation = 2 AND engaged = False AND remaining_time IS NULL AND ownerid=' + str(self.userId) + ' AND id=' + str(self.fleetId)
         fleet = dbRow(query)
-        if fleet == None: return HttpResponseRedirect('/s03/fleets/')
+        if fleet == None: return HttpResponseRedirect('/s03/fleet-list/')
         tpl.set('fleet', fleet)
 
         #---

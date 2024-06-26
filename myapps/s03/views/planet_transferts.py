@@ -53,7 +53,8 @@ class View(GlobalView):
 
                 energy = ToInt(request.POST.get('energy_' + str(row['target_planetid'])), 0)
                 if energy != row['energy']: query = query + 'energy = ' + str(energy)
-
+                
+                '''
                 enabled = request.POST.get('enabled_' + str(row['target_planetid']))
                 if enabled == '1': enabled = True
                 else: enabled = False
@@ -61,6 +62,8 @@ class View(GlobalView):
                 if enabled != row['enabled']:
                     if query != '': query = query + ','
                     query = query + 'enabled=' + str(enabled)
+                '''
+                query = query + 'enabled=' + str(True)
 
                 if query != '':
                 

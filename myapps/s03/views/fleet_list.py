@@ -46,7 +46,7 @@ class View(GlobalView):
 
                 return render(request, tpl.template, tpl.data)
 
-            return HttpResponseRedirect('/s03/fleets/')
+            return HttpResponseRedirect('/s03/fleet-list/')
             
         #---
         
@@ -75,7 +75,7 @@ class View(GlobalView):
 
                 return render(request, tpl.template, tpl.data)
 
-            return HttpResponseRedirect('/s03/fleets/')
+            return HttpResponseRedirect('/s03/fleet-list/')
                 
         #---
         
@@ -118,7 +118,7 @@ class View(GlobalView):
 
                 return render(request, tpl.template, tpl.data)
 
-            return HttpResponseRedirect('/s03/fleets/')
+            return HttpResponseRedirect('/s03/fleet-list/')
                 
         #---
         
