@@ -102,8 +102,14 @@
                                                 {% csrf_token %}
                                                 <input type="hidden" name="action" value="update" />
                                                 <input type="hidden" name="to" value="{{ sent.planetid }}" />
-                                                <input type="number" class="form-control" min="0" name="energy" value="{{ sent.energy }}" maxlength="6" size="6">
-                                                <button type="submit" class="btn btn-primary">Valider</button>
+                                                <div class="row gx-3 align-items-center">
+                                                    <div class="col-auto">
+                                                        <input type="number" class="form-control" min="0" name="energy" value="{{ sent.energy }}" maxlength="6" size="6">
+                                                    </div>
+                                                    <div class="col-auto">
+                                                        <button type="submit" class="btn btn-primary">Valider</button>
+                                                    </div>
+                                                </div>
                                             </form>
                                         </div>
                                     </div>
