@@ -44,15 +44,7 @@ class View(GlobalView):
             
             energy_to = ToInt(request.POST.get('to'), 0)
             
-            query = 'SELECT target_planetid, energy, enabled' + \
-                    ' FROM planet_energy_transfer' + \
-                    ' WHERE planetid=' + str(self.currentPlanetId) + ' AND target_planetid=' + str(energy_to)
-            row = dbRow(query)
-
-            query = ''
-
-            energy = ToInt(request.POST.get('energy_' + str(row['target_planetid'])), 0)
-            if energy != row['energy']: query = query + 'energy = ' + str(energy)
+            energy = ToInt(request.POST.get('energy_' + str(energy_to)), 0)
             
             '''
             enabled = request.POST.get('enabled_' + str(row['target_planetid']))
@@ -63,16 +55,13 @@ class View(GlobalView):
                 if query != '': query = query + ','
                 query = query + 'enabled=' + str(enabled)
             '''
-            if row['enabled'] != True: query = query + 'enabled=' + str(True)
 
-            if query != '':
+            query = 'UPDATE planet_energy_transfer SET enabled=' + str(True) + ', energy=' + str(energy) + ' WHERE planetid=' + str(self.currentPlanetId) + ' AND target_planetid=' + str(energy_to)
+            dbQuery(query)
             
-                query = 'UPDATE planet_energy_transfer SET ' + query + ' WHERE planetid=' + str(self.currentPlanetId) + ' AND target_planetid=' + str(row['target_planetid'])
-                dbQuery(query)
-                
-                '''
-                update_planet = True
-                '''
+            '''
+            update_planet = True
+            '''
         
         #---
         
