@@ -25,6 +25,8 @@ class View(GlobalView):
         
         action = request.POST.get('action')
         
+        update_planet = False
+        
         #---
         
         if action == 'cancel':
@@ -38,39 +40,41 @@ class View(GlobalView):
         
         #---
         
-        elif action == 'submit':
+        elif action == 'update':
             
-            update_planet = False
+            energy_to = ToInt(request.POST.get('to'), 0)
             
             query = 'SELECT target_planetid, energy, enabled' + \
                     ' FROM planet_energy_transfer' + \
-                    ' WHERE planetid=' + str(self.currentPlanetId)
-            rows = dbRows(query)
+                    ' WHERE planetid=' + str(self.currentPlanetId) + ' AND target_planetid=' + str(energy_to)
+            row = dbRow(query)
 
-            for row in rows:
-                
-                query = ''
+            query = ''
 
-                energy = ToInt(request.POST.get('energy_' + str(row['target_planetid'])), 0)
-                if energy != row['energy']: query = query + 'energy = ' + str(energy)
-                
-                '''
-                enabled = request.POST.get('enabled_' + str(row['target_planetid']))
-                if enabled == '1': enabled = True
-                else: enabled = False
+            energy = ToInt(request.POST.get('energy_' + str(row['target_planetid'])), 0)
+            if energy != row['energy']: query = query + 'energy = ' + str(energy)
+            
+            '''
+            enabled = request.POST.get('enabled_' + str(row['target_planetid']))
+            if enabled == '1': enabled = True
+            else: enabled = False
 
-                if enabled != row['enabled']:
-                    if query != '': query = query + ','
-                    query = query + 'enabled=' + str(enabled)
-                '''
-                if row['enabled'] != True: query = query + 'enabled=' + str(True)
+            if enabled != row['enabled']:
+                if query != '': query = query + ','
+                query = query + 'enabled=' + str(enabled)
+            '''
+            if row['enabled'] != True: query = query + 'enabled=' + str(True)
 
-                if query != '':
-                
-                    query = 'UPDATE planet_energy_transfer SET ' + query + ' WHERE planetid=' + str(self.currentPlanetId) + ' AND target_planetid=' + str(row['target_planetid'])
-                    dbQuery(query)
+            if query != '':
+            
+                query = 'UPDATE planet_energy_transfer SET ' + query + ' WHERE planetid=' + str(self.currentPlanetId) + ' AND target_planetid=' + str(row['target_planetid'])
+                dbQuery(query)
 
-                    update_planet = True
+                update_planet = True
+        
+        #---
+        
+        elif action == 'submit':
 
             g = ToInt(request.POST.get('to_g'), 0)
             s = ToInt(request.POST.get('to_s'), 0)
@@ -84,10 +88,12 @@ class View(GlobalView):
 
                 update_planet = True
 
-            if update_planet:
-            
-                query = 'SELECT sp_update_planet(' + str(self.currentPlanetId) + ')'
-                dbQuery(query)
+        #---
+        
+        if update_planet:
+        
+            query = 'SELECT sp_update_planet(' + str(self.currentPlanetId) + ')'
+            dbQuery(query)
             
         #---
         

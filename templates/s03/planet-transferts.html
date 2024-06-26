@@ -92,7 +92,7 @@
                                             <small class="text-normal">perte</small>
                                             <span>{{ sent.loss }}%</span>
                                         </div>
-                                        <div class="col-1 text-end">        
+                                        <div class="col-auto">        
                                             <form method="post">
                                                 {% csrf_token %}
                                                 <input type="hidden" name="action" value="cancel" />
@@ -100,7 +100,7 @@
                                                 <button type="submit" class="btn btn-danger">Retirer</button>
                                             </form>
                                         </div>
-                                        <div class="col-1 text-end">
+                                        <div class="col-auto">
                                             <form method="post">
                                                 {% csrf_token %}
                                                 <input type="hidden" name="action" value="update" />
@@ -148,7 +148,6 @@
                         </div>
                     </div>
                 {% endif %}
-                        
             
             </div>
         </div>
