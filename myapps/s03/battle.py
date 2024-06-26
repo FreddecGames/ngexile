@@ -42,7 +42,7 @@ class TBattle:
         if not Result: return Result
 
         # rounds
-        for R in range(1, MaxRounds + 1):
+        for R in range(1, MaxRounds + 1):        
             self.NewRound()
 
             AmmoRemaining = False

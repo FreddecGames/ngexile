@@ -69,6 +69,9 @@ class View(GlobalView):
                 if row['planet_relation'] in [rHostile, rWar, rFriend]: report['planetname'] = row['planet_ownername']
                 elif row['planet_relation'] in [rAlliance, rSelf]: report['planetname'] = row['planet_name']
                 else: report['planetname'] = ''
+                
+                if row['researchid']:                    
+                    report['researchname'] = dbRow('SELECT name FROM db_research WHERE id=' + str(row['researchid']))['name']
                     
         #---
         
