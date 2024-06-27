@@ -120,6 +120,8 @@ class View(GlobalView):
 
             #---
                             
+            time.sleep(2)
+            
             for ship in ships:
                 quantity = min(ToInt(request.POST.get('transfership' + str(ship['id'])), 0), ship['count'])
                 if quantity > 0:
