@@ -25,8 +25,6 @@ class View(GlobalView):
         
         action = request.POST.get('action')
         
-        update_planet = False
-        
         #---
         
         if action == 'cancel':
@@ -44,21 +42,9 @@ class View(GlobalView):
             
             energy_to = ToInt(request.POST.get('to'), 0)            
             energy = ToInt(request.POST.get('energy'), 0)
-            
-            '''
-            enabled = request.POST.get('enabled_' + str(row['target_planetid']))
-            if enabled == '1': enabled = True
-            else: enabled = False
-
-            if enabled != row['enabled']:
-                if query != '': query = query + ','
-                query = query + 'enabled=' + str(enabled)
-            '''
 
             query = 'UPDATE planet_energy_transfer SET enabled=' + str(True) + ', energy=' + str(energy) + ' WHERE planetid=' + str(self.currentPlanetId) + ' AND target_planetid=' + str(energy_to)
             dbQuery(query)
-            
-            update_planet = True
         
         #---
         
@@ -73,15 +59,6 @@ class View(GlobalView):
             
                 query = 'INSERT INTO planet_energy_transfer(planetid, target_planetid, energy) VALUES(' + str(self.currentPlanetId) + ', sp_planet(' + str(g) + ',' + str(s) + ',' + str(p) + '),' + str(energy) + ')'
                 dbQuery(query)
-
-                update_planet = True
-
-        #---
-        
-        if update_planet:
-        
-            query = 'SELECT sp_update_planet(' + str(self.currentPlanetId) + ')'
-            dbQuery(query)
             
         #---
         
