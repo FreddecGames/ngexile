@@ -53,77 +53,81 @@ class View(GlobalView):
                 return HttpResponseRedirect('/s03/fleet-view/?id=' + str(self.fleetId))
                 
             #---
-
-            newfleetid = dbExecute('SELECT sp_create_fleet(' + str(self.userId) + ',' + str(fleet['planetid']) + ',' + dosql(newfleetname) + ')')
-            if newfleetid < 0:
-                if newfleetid == -1: messages.error(request, 'error_already_exists')
-                elif newfleetid == -2: messages.error(request, 'error_already_exists')
-                elif newfleetid == -3: messages.error(request, 'error_limit_reached')
-                return HttpResponseRedirect('/s03/fleet-split/?id=' + str(self.fleetId))
             
-            #---
-            
-            query = 'SELECT db_ships.id, ' + \
-                    ' COALESCE((SELECT quantity FROM fleets_ships WHERE fleetId=' + str(self.fleetId) + ' AND shipid = db_ships.id), 0) AS count' + \
-                    ' FROM db_ships' + \
-                    ' ORDER BY db_ships.category, db_ships.label'
-            ships = dbRows(query)
-            
-            for ship in ships:            
-                quantity = min(ToInt(request.POST.get('transfership' + str(ship['id'])), 0), ship['count'])
-                if quantity > 0:
-                    dbQuery('INSERT INTO fleets_ships(fleetId, shipid, quantity) VALUES(' + str(newfleetid) + ',' + str(ship['id']) +',' + str(quantity) + ')')
+            with transaction.atomic():
 
-            #---
-                    
-            dbQuery('UPDATE fleets SET idle_since=now() WHERE ownerid =' + str(self.userId) + ' AND (id=' + str(newfleetid) + ' OR id=' + str(self.fleetId) + ')')
+                #---
+                
+                newfleetid = dbExecute('SELECT sp_create_fleet(' + str(self.userId) + ',' + str(fleet['planetid']) + ',' + dosql(newfleetname) + ')')
+                if newfleetid < 0:
+                    if newfleetid == -1: messages.error(request, 'error_already_exists')
+                    elif newfleetid == -2: messages.error(request, 'error_already_exists')
+                    elif newfleetid == -3: messages.error(request, 'error_limit_reached')
+                    return HttpResponseRedirect('/s03/fleet-split/?id=' + str(self.fleetId))
+                
+                #---
+                
+                query = 'SELECT db_ships.id, ' + \
+                        ' COALESCE((SELECT quantity FROM fleets_ships WHERE fleetId=' + str(self.fleetId) + ' AND shipid = db_ships.id), 0) AS count' + \
+                        ' FROM db_ships' + \
+                        ' ORDER BY db_ships.category, db_ships.label'
+                ships = dbRows(query)
+                
+                for ship in ships:            
+                    quantity = min(ToInt(request.POST.get('transfership' + str(ship['id'])), 0), ship['count'])
+                    if quantity > 0:
+                        dbQuery('INSERT INTO fleets_ships(fleetId, shipid, quantity) VALUES(' + str(newfleetid) + ',' + str(ship['id']) +',' + str(quantity) + ')')
 
-            #---
-            
-            newload = dbExecute('SELECT cargo_capacity FROM vw_fleets WHERE ownerid=' + str(self.userId) + ' AND id=' + str(newfleetid))
-            
-            ore = max(min(ToInt(request.POST.get('load_ore'), 0), fleet['cargo_ore']), 0)
-            hydrocarbon = max(min(ToInt(request.POST.get('load_hydrocarbon'), 0), fleet['cargo_hydrocarbon']), 0)
-            scientists = max(min(ToInt(request.POST.get('load_scientists'), 0), fleet['cargo_scientists']), 0)
-            soldiers = max(min(ToInt(request.POST.get('load_soldiers'), 0), fleet['cargo_soldiers']), 0)
-            workers = max(min(ToInt(request.POST.get('load_workers'), 0), fleet['cargo_workers']), 0)
+                #---
+                        
+                dbQuery('UPDATE fleets SET idle_since=now() WHERE ownerid =' + str(self.userId) + ' AND (id=' + str(newfleetid) + ' OR id=' + str(self.fleetId) + ')')
 
-            ore = min(ore, newload)
-            newload = newload - ore
+                #---
+                
+                newload = dbExecute('SELECT cargo_capacity FROM vw_fleets WHERE ownerid=' + str(self.userId) + ' AND id=' + str(newfleetid))
+                
+                ore = max(min(ToInt(request.POST.get('load_ore'), 0), fleet['cargo_ore']), 0)
+                hydrocarbon = max(min(ToInt(request.POST.get('load_hydrocarbon'), 0), fleet['cargo_hydrocarbon']), 0)
+                scientists = max(min(ToInt(request.POST.get('load_scientists'), 0), fleet['cargo_scientists']), 0)
+                soldiers = max(min(ToInt(request.POST.get('load_soldiers'), 0), fleet['cargo_soldiers']), 0)
+                workers = max(min(ToInt(request.POST.get('load_workers'), 0), fleet['cargo_workers']), 0)
 
-            hydrocarbon = min( hydrocarbon, newload)
-            newload = newload - hydrocarbon
+                ore = min(ore, newload)
+                newload = newload - ore
 
-            scientists = min( scientists, newload)
-            newload = newload - scientists
+                hydrocarbon = min( hydrocarbon, newload)
+                newload = newload - hydrocarbon
 
-            soldiers = min( soldiers, newload)
-            newload = newload - soldiers
+                scientists = min( scientists, newload)
+                newload = newload - scientists
 
-            workers = min( workers, newload)
-            newload = newload - workers
+                soldiers = min( soldiers, newload)
+                newload = newload - soldiers
 
-            if ore != 0 or hydrocarbon != 0 or scientists != 0 or soldiers != 0 or workers != 0:
+                workers = min( workers, newload)
+                newload = newload - workers
 
-                dbQuery('UPDATE fleets SET' + \
-                        ' cargo_ore=' + str(ore) + ', cargo_hydrocarbon=' + str(hydrocarbon) + ', ' + \
-                        ' cargo_scientists=' + str(scientists) + ', cargo_soldiers=' + str(soldiers) + ', ' + \
-                        ' cargo_workers=' + str(workers) + \
-                        ' WHERE id =' + str(newfleetid) + ' AND ownerid =' + str(self.userId))
+                if ore != 0 or hydrocarbon != 0 or scientists != 0 or soldiers != 0 or workers != 0:
 
-                dbQuery('UPDATE fleets SET' + \
-                        ' cargo_ore=cargo_ore-' + str(ore) + ', cargo_hydrocarbon=cargo_hydrocarbon-' + str(hydrocarbon) + ', ' + \
-                        ' cargo_scientists=cargo_scientists-' + str(scientists) + ', ' + \
-                        ' cargo_soldiers=cargo_soldiers-' + str(soldiers) + ', ' + \
-                        ' cargo_workers=cargo_workers-' + str(workers) + \
-                        ' WHERE id =' + str(self.fleetId) + ' AND ownerid =' + str(self.userId))
+                    dbQuery('UPDATE fleets SET' + \
+                            ' cargo_ore=' + str(ore) + ', cargo_hydrocarbon=' + str(hydrocarbon) + ', ' + \
+                            ' cargo_scientists=' + str(scientists) + ', cargo_soldiers=' + str(soldiers) + ', ' + \
+                            ' cargo_workers=' + str(workers) + \
+                            ' WHERE id =' + str(newfleetid) + ' AND ownerid =' + str(self.userId))
 
-            #---
-            
-            for ship in ships:
-                quantity = min(ToInt(request.POST.get('transfership' + str(ship['id'])), 0), ship['count'])
-                if quantity > 0:
-                    dbQuery('UPDATE fleets_ships SET quantity=quantity-' + str(quantity) + ' WHERE fleetId=' + str(self.fleetId) + ' AND shipid=' + str(ship['id']))
+                    dbQuery('UPDATE fleets SET' + \
+                            ' cargo_ore=cargo_ore-' + str(ore) + ', cargo_hydrocarbon=cargo_hydrocarbon-' + str(hydrocarbon) + ', ' + \
+                            ' cargo_scientists=cargo_scientists-' + str(scientists) + ', ' + \
+                            ' cargo_soldiers=cargo_soldiers-' + str(soldiers) + ', ' + \
+                            ' cargo_workers=cargo_workers-' + str(workers) + \
+                            ' WHERE id =' + str(self.fleetId) + ' AND ownerid =' + str(self.userId))
+
+                #---
+                
+                for ship in ships:
+                    quantity = min(ToInt(request.POST.get('transfership' + str(ship['id'])), 0), ship['count'])
+                    if quantity > 0:
+                        dbQuery('UPDATE fleets_ships SET quantity=quantity-' + str(quantity) + ' WHERE fleetId=' + str(self.fleetId) + ' AND shipid=' + str(ship['id']))
 
             #---
            
