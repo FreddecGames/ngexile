@@ -91,7 +91,6 @@ INSTALLED_APPS = [
     'myapps.accounts',
     'myapps.lobby',
     'myapps.s03',
-    'myapps.api',
 ]
 
 
