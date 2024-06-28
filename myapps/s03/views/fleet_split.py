@@ -119,8 +119,6 @@ class View(GlobalView):
                         ' WHERE id =' + str(self.fleetId) + ' AND ownerid =' + str(self.userId))
 
             #---
-                            
-            time.sleep(2)
             
             for ship in ships:
                 quantity = min(ToInt(request.POST.get('transfership' + str(ship['id'])), 0), ship['count'])
