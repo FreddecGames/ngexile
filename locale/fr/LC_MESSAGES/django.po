@@ -1,0 +1,265 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-01-03 14:26+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#: myapps/accounts/admin.py:13
+msgid "Personal info"
+msgstr ""
+
+#: myapps/accounts/admin.py:14
+msgid "Permissions"
+msgstr ""
+
+#: myapps/accounts/admin.py:15
+msgid "Important dates"
+msgstr ""
+
+#: myapps/accounts/models.py:46
+msgid "email address"
+msgstr ""
+
+#: templates/404.html:22 templates/500.html:22
+msgid "Oups..."
+msgstr ""
+
+#: templates/404.html:29
+msgid "La page demandée n'a pas été trouvée."
+msgstr ""
+
+#: templates/404.html:32 templates/lobby/home.html:22
+msgid "Serveurs"
+msgstr ""
+
+#: templates/404.html:35 templates/500.html:36
+msgid ""
+"Si le problème persiste contactez <span class='text-white'>Freddec</span> "
+"sur Discord."
+msgstr ""
+
+#: templates/500.html:32
+msgid "Une erreur est survenue sur la page que vous avez demandée."
+msgstr ""
+
+#: templates/500.html:33
+msgid "Merci de bien vouloir nous en excuser."
+msgstr ""
+
+#: templates/django_registration/activation_complete.html:25
+#: templates/django_registration/activation_failed.html:25
+#: templates/django_registration/registration_complete.html:25
+#: templates/django_registration/registration_form.html:26
+#: templates/django_registration/registration_form.html:74
+#: templates/index.html:55
+msgid "Inscription"
+msgstr ""
+
+#: templates/django_registration/activation_complete.html:32
+msgid ""
+"Votre compte est activé. Vous pouvez vous connecter pour commencer à jouer."
+msgstr ""
+
+#: templates/django_registration/activation_complete.html:35
+#: templates/index.html:56 templates/registration/login.html:26
+#: templates/registration/login.html:67
+#: templates/registration/password_reset_complete.html:38
+msgid "Connexion"
+msgstr ""
+
+#: templates/django_registration/activation_email_body.txt:3
+msgid "Bonjour,"
+msgstr ""
+
+#: templates/django_registration/activation_email_body.txt:5
+msgid "Lien d'activation de votre compte pour"
+msgstr ""
+
+#: templates/django_registration/activation_email_body.txt:9
+#, python-format
+msgid "Ce lien est valable pendant %(expiration_days)s jours."
+msgstr ""
+
+#: templates/django_registration/activation_email_body.txt:11
+msgid "Merci d’utiliser notre site !"
+msgstr ""
+
+#: templates/django_registration/activation_email_body.txt:13
+msgid "L’équipe"
+msgstr ""
+
+#: templates/django_registration/activation_email_subject.txt:3
+msgid "Activation de compte sur"
+msgstr ""
+
+#: templates/django_registration/activation_failed.html:32
+msgid "Une erreur est survenue. Votre compte n'est pas activé :("
+msgstr ""
+
+#: templates/django_registration/activation_failed.html:35
+msgid "Veuillez contacter Freddec sur Discord avec les données suivantes:"
+msgstr ""
+
+#: templates/django_registration/registration_complete.html:32
+msgid ""
+"Vous êtes inscrit. Un email avec un lien d'activation a été envoyé à "
+"l'adresse électronique renseignée. N'oubliez pas de regarder parmi vos spams."
+msgstr ""
+
+#: templates/django_registration/registration_form.html:44
+#: templates/registration/login.html:44
+msgid "Adresse électronique"
+msgstr ""
+
+#: templates/django_registration/registration_form.html:51
+msgid "Requis. 254 caractères maximum. Doit contenir le caractère @."
+msgstr ""
+
+#: templates/django_registration/registration_form.html:54
+#: templates/registration/login.html:53
+#: templates/registration/password_reset_confirm.html:47
+msgid "Mot de passe"
+msgstr ""
+
+#: templates/django_registration/registration_form.html:61
+#: templates/registration/password_reset_confirm.html:54
+msgid ""
+"Requis. Votre mot de passe ne peut pas trop ressembler à vos autres "
+"informations personnelles. Votre mot de passe doit contenir au minimum 8 "
+"caractères. Votre mot de passe ne peut pas être un mot de passe couramment "
+"utilisé. Votre mot de passe ne peut pas être entièrement numérique."
+msgstr ""
+
+#: templates/django_registration/registration_form.html:64
+#: templates/registration/password_reset_confirm.html:57
+msgid "Confirmation du mot de passe"
+msgstr ""
+
+#: templates/django_registration/registration_form.html:71
+#: templates/registration/password_reset_confirm.html:64
+msgid ""
+"Requis. Saisissez le même mot de passe que précédemment, pour vérification."
+msgstr ""
+
+#: templates/django_registration/registration_form.html:82
+msgid "Déjà inscrit ? <a href='/accounts/login/'>Connexion</a>."
+msgstr ""
+
+#: templates/index.html:24
+msgid "Bienvenue"
+msgstr ""
+
+#: templates/index.html:49
+msgid ""
+"NG Exile est un jeu web en ligne totalement gratuit de simulation "
+"stratégique spatiale jouable avec un simple navigateur."
+msgstr ""
+
+#: templates/index.html:62
+msgid ""
+"Puisque NG Exile est un jeu multijoueur, vous devez créer un compte pour "
+"jouer. Votre email ne sera jamais utilisé sauf pour le lien d'activation."
+msgstr ""
+
+#: templates/index.html:69
+msgid ""
+"Pour vous tenir informé et obtenir les dernières informations, rejoignez le "
+"salon Discord du jeu."
+msgstr ""
+
+#: templates/lobby/home.html:29
+msgid "Sélectionner un serveur pour jouer"
+msgstr ""
+
+#: templates/lobby/home.html:38
+msgid "Serveur avec le code d'origine refactoré"
+msgstr ""
+
+#: templates/lobby/home.html:47
+msgid "Déconnexion"
+msgstr ""
+
+#: templates/registration/login.html:64
+msgid "Mot de passe oublié ?"
+msgstr ""
+
+#: templates/registration/login.html:77
+msgid "Pas encore inscrit ? <a href='/accounts/register'>Inscription</a>."
+msgstr ""
+
+#: templates/registration/password_reset_complete.html:25
+#: templates/registration/password_reset_confirm.html:26
+#: templates/registration/password_reset_done.html:25
+#: templates/registration/password_reset_form.html:26
+msgid "Réinitialisation du mot de passe"
+msgstr ""
+
+#: templates/registration/password_reset_complete.html:32
+msgid "Réinitialisation du mot de passe effectuée"
+msgstr ""
+
+#: templates/registration/password_reset_complete.html:35
+msgid ""
+"Votre mot de passe a été réinitialisé. Vous pouvez vous connecter maintenant."
+msgstr ""
+
+#: templates/registration/password_reset_confirm.html:33
+msgid ""
+"Saisissez 2 fois votre nouveau mot de passe pour que nous puissions le "
+"vérifier."
+msgstr ""
+
+#: templates/registration/password_reset_confirm.html:67
+#: templates/registration/password_reset_form.html:55
+msgid "Réinitialiser mon mot de passe"
+msgstr ""
+
+#: templates/registration/password_reset_done.html:32
+msgid "Email de réinitialisation envoyé"
+msgstr ""
+
+#: templates/registration/password_reset_done.html:35
+msgid ""
+"Nous vous avons envoyé par email les instructions pour réinitialisaer votre "
+"mot de passe, si un compte existe avec l'email que vous avez saisi. Vous "
+"devriez le recevoir sous peu. Si vous ne recevez pas d'email, assurez-vous "
+"d'avoir entré l'adresse avec laquelle vous vous êtes inscrit et vérifiez "
+"votre dossier spam."
+msgstr ""
+
+#: templates/registration/password_reset_form.html:33
+msgid ""
+"Mot de passe oublié? Saisissez votre adresse électonique ci-dessous et nous "
+"vous enverrons un email avec les instructions pour réinitialiser votre mot "
+"de passe."
+msgstr ""
+
+#: templates/s04/_layout.html:42 templates/s04/_layout.html:51
+msgid "credit_text"
+msgstr ""
+
+#: templates/s04/_layout.html:57
+msgid "count_text"
+msgstr ""
+
+#: templates/s04/_layout.html:62
+msgid "prod_text"
+msgstr ""
+
+#: templates/s04/_layout.html:68
+msgid "credit_desc"
+msgstr ""

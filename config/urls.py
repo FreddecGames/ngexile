@@ -23,6 +23,7 @@ urlpatterns = [
     
     path('lobby/', include('myapps.lobby.urls')),
     path('s03/', include('myapps.s03.urls')),
+    path('s04/', include('myapps.s04.urls')),
     
     path('favicon.ico', RedirectView.as_view(url='/static/favicon.ico')),
     

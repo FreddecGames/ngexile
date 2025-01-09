@@ -1,0 +1,166 @@
+{% load i18n %}
+{% load humanize %}
+
+<div class="p-2">
+    <div class="card card-body d-flex flex-column gap-1">
+
+			<div class="flex-grow-1 frame border rounded d-flex gap-2 align-items-center">			
+                <img src="/static/s04/planets/{{ current_planet.img }}" width="16" height="16" />
+                <span class="flex-grow-1">{{ current_planet.name }}</span>
+                <span>{{ current_planet.galaxy }}.{{ current_planet.sector }}.{{ current_planet.number }}</span>                        
+			</div>
+
+            <div class="row g-1 align-items-center">
+
+                <div class="col-6 col-md-3 dropdown">
+
+                    <button class="w-100 btn btn-secondary" type="button" data-bs-toggle="dropdown">
+                        <img src="/static/s04/icons/ore.png" width="16" height="16" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="{% translate 'Minerai' %}" />
+                        <span class="text-white">{{ current_planet.ore_count|intcomma }}</span>
+                    </button>
+
+                    <div class="dropdown-menu">
+                        <div class="d-flex flex-column gap-2">
+
+                            <div class="d-flex gap-2 align-items-center">
+                                <img src="/static/s04/icons/ore.png" width="16" height="16" />
+                                <span class="text-white">{% translate 'Minerai' %}</span>
+                            </div>
+
+                            <div class="d-flex flex-column gap-1">
+
+                                <div class="d-flex gap-2 align-items-center justify-content-between">
+                                    <span class="text-gray-300">{% translate 'Stock'  %}</span>
+                                    <span class="text-white">{{ current_planet.ore_count|intcomma }} / {{ current_planet.ore_max|intcomma }}</span>
+                                </div>
+
+                                <div class="d-flex gap-2 align-items-center justify-content-between">
+                                    <span class="text-gray-300">{% translate 'Production'  %}</span>
+                                    <span class="text-white">+{{ current_planet.ore_prod|intcomma }} /s</span>
+                                </div>
+
+                            </div>
+
+                            <span class="small text-gray-400">{% translate 'Le Minerai est utilisé pour améliorer les bâtiments. Chaque Mine augmente la production de Minerai. La capacité de stockage peut être augmentée en construisant et en améliorant les Silos.'  %}</span>
+
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="col-6 col-md-3 dropdown">
+
+                    <button class="w-100 btn btn-secondary" type="button" data-bs-toggle="dropdown">
+                        <img src="/static/s04/icons/hydro.png" width="16" height="16" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="{% translate 'Hydro' %}" />
+                        <span class="text-white">{{ current_planet.hydro_count|intcomma }}</span>
+                    </button>
+
+                    <div class="dropdown-menu">
+                        <div class="d-flex flex-column gap-2">
+
+                            <div class="d-flex gap-2 align-items-center">
+                                <img src="/static/s04/icons/hydro.png" width="16" height="16" />
+                                <span class="text-white">{% translate 'Hydro' %}</span>
+                            </div>
+
+                            <div class="d-flex flex-column gap-1">
+
+                                <div class="d-flex gap-2 align-items-center justify-content-between">
+                                    <span class="text-gray-300">{% translate 'Stock'  %}</span>
+                                    <span class="text-white">{{ current_planet.hydro_count|intcomma }} / {{ current_planet.hydro_max|intcomma }}</span>
+                                </div>
+
+                                <div class="d-flex gap-2 align-items-center justify-content-between">
+                                    <span class="text-gray-300">{% translate 'Production'  %}</span>
+                                    <span class="text-white">+{{ current_planet.hydro_prod|intcomma }} /s</span>
+                                </div>
+                                
+                            </div>
+
+                            <span class="small text-gray-400">{% translate 'L\'Hydro est utilisé pour construire les vaisseaux. Chaque Puits augmente la production d\'Hydro. La capacité de stockage peut être augmentée en construisant et en améliorant les Citernes.'  %}</span>
+
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="col-6 col-md-3 dropdown">
+
+                    <button class="w-100 btn btn-secondary" type="button" data-bs-toggle="dropdown">
+                        <img src="/static/s04/icons/energy.png" width="16" height="16" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="{% translate 'Energie' %}" />
+                        <span class="text-white">{{ current_planet.energy_count|intcomma }}</span>
+                    </button>
+
+                    <div class="dropdown-menu">
+                        <div class="d-flex flex-column gap-2">
+
+                            <div class="d-flex gap-2 align-items-center">
+                                <img src="/static/s04/icons/energy.png" width="16" height="16" />
+                                <span class="text-white">{% translate 'Energie' %}</span>
+                            </div>
+
+                            <div class="d-flex flex-column gap-1">
+
+                                <div class="d-flex gap-2 align-items-center justify-content-between">
+                                    <span class="text-gray-300">{% translate 'Stock'  %}</span>
+                                    <span class="text-white">{{ current_planet.energy_count|intcomma }} / {{ current_planet.energy_max|intcomma }}</span>
+                                </div>
+
+                                <div class="d-flex gap-2 align-items-center justify-content-between">
+                                    <span class="text-gray-300">{% translate 'Production'  %}</span>
+                                    <span class="text-white">+{{ current_planet.energy_prod|intcomma }} /s</span>
+                                </div>
+
+                            </div>
+
+                            <span class="small text-gray-400">{% translate 'L\'Hydro est utilisé pour construire les vaisseaux. Chaque Puits augmente la production d\'Hydro. La capacité de stockage peut être augmentée en construisant et en améliorant les Citernes.'  %}</span>
+
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="col-6 col-md-3 dropdown">
+
+                    <button class="w-100 btn btn-secondary" type="button" data-bs-toggle="dropdown">
+                        <img src="/static/s04/icons/credit.png" width="16" height="16" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="{% translate 'Crédit' %}" />
+                        <span class="text-white">+{{ current_planet.credit_prod|intcomma }} /s</span>
+                    </button>
+
+                    <div class="dropdown-menu">
+                        <div class="d-flex flex-column gap-2">
+
+                            <div class="d-flex gap-2 align-items-center">
+                                <img src="/static/s04/icons/credit.png" width="16" height="16" />
+                                <span class="text-white">{% translate 'Crédit' %}</span>
+                            </div>
+
+                            <div class="d-flex gap-2 align-items-center justify-content-between">
+                                <span class="text-gray-300">{% translate 'Production'  %}</span>
+                                <span class="text-white">+{{ current_planet.credit_prod|intcomma }} /s</span>
+                            </div>
+
+                            <span class="small text-gray-400">{% translate 'L\'Hydro est utilisé pour construire les vaisseaux. Chaque Puits augmente la production d\'Hydro. La capacité de stockage peut être augmentée en construisant et en améliorant les Citernes.'  %}</span>
+
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+    </div>
+</div>
+
+<div class="p-2">
+    <div class="nav nav-tabs">
+
+        <div class="nav-item">
+            <a href="/s04/planet-buildings/" class="nav-link {% if selectedTab == 'buildings' %}active{% endif %}">
+                <i class="fas fa-fw fa-building"></i>
+                <span>{% translate 'Bâtiments' %}</span>
+            </a>
+        </div>
+
+    </div>
+</div>

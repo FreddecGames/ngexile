@@ -1,0 +1,223 @@
+{% extends "s04/_layout.html" %}
+
+{% load i18n %}
+{% load humanize %}
+
+{% block header %}
+
+    <div class="flex-grow-1 d-flex gap-1 align-items-center fs-5 text-white">
+        <i class="d-none d-md-inline fas fa-fw fa-globe"></i>
+        <span>{% translate 'Planète' %}</span>
+    </div>
+
+{% endblock %}
+
+{% block content %}
+    
+    {% include "s04/planet-header.html" %}
+    
+    <div class="p-2">
+        <div class="card card-body d-flex flex-column gap-2">
+
+            {% include "s04/_messages.html" %}
+
+            <div class="row g-1 align-items-center">
+
+                <div class="col-6 col-sm-3 dropdown">
+
+                    <button type="button" class="w-100 btn btn-secondary" data-bs-toggle="dropdown">
+                        <img src="/static/s04/icons/building_slot.png" width="16" height="16" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="{% translate 'Terrain' %}" />
+                        <span {% if current_planet.slot_count >= current_planet.slot_max %}class="text-red-400"{% endif %}>{{ current_planet.slot_count }} / {{ current_planet.slot_max }}</span>
+                    </button>
+
+                    <div class="dropdown-menu">
+                        <div class="d-flex flex-column gap-2">
+
+                            <div class="d-flex gap-2 align-items-center">
+                                <img src="/static/s04/icons/building_slot.png" width="16" height="16" />
+                                <span class="text-white">{% translate 'Terrain' %}</span>
+                            </div>
+
+                            <div class="d-flex gap-2 align-items-center justify-content-between">
+                                <span class="text-gray-300">{% translate 'Slots'  %}</span>
+                                <span class="{% if current_planet.slot_count >= current_planet.slot_max %}text-red-400{% else %}text-white{% endif %}">{{ current_planet.slot_count }} / {{ current_planet.slot_max }}</span>
+                            </div>
+
+                            <span class="small text-gray-400">{% translate 'Les Terrains vous permettent d\'ajouter des bâtiments. Chaque niveau de la Colonie augmente le nombre de Terrains disponibles sur la planète.'  %}</span>
+
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="col-auto">
+                    <button type="button" class="btn btn-secondary" data-bs-toggle="collapse" data-bs-target="#collapseAddBuilding">
+                        <i class="fas fa-fw fa-eye"></i>
+                    </button>
+                </div>
+
+            </div>
+
+            <div id="collapseAddBuilding" class="collapse">
+                <div class="d-flex flex-column gap-2">
+
+                    <span class="fs-5 text-white">{% translate 'Ajouter un bâtiment' %}</span>
+
+                    {% if current_planet.slot_count >= current_planet.slot_max %}
+                    <div class="alert alert-danger d-flex gap-2 align-items-baseline justify-content-center">
+                        <i class="fas fa-fw fa-exclamation-triangle"></i>
+                        <span class="text-center">{% translate 'Il n\'y a plus assez de Terrain pour ajouter un bâtiment.' %}</span>
+                    </div>
+                    {% endif %}
+
+                    <div class="d-flex flex-column gap-1">
+                        {% for building in buildings %}
+                        <div class="row flex-nowrap g-0 gap-1 align-items-center">
+
+                            <div class="col-auto dropdown">
+
+                                <button type="button" class="btn btn-secondary" data-bs-toggle="dropdown">
+                                    <i class="fas fa-fw fa-info-circle"></i>
+                                </button>
+
+                                <div class="dropdown-menu">
+                                    <div class="d-flex flex-column gap-2">
+
+                                        <div class="d-flex flex-column gap-1">
+
+                                            <span class="text-white">{% blocktranslate with id=building.id %}building_{{ id }}{% endblocktranslate %}</span>
+                                            <span class="small text-gray-400">{% blocktranslate with id=building.id %}building_desc_{{ id }}{% endblocktranslate %}</span>
+
+                                        </div>
+
+                                        <div class="d-flex flex-column gap-1">
+                                            <span class="text-gray-300">{% translate 'Requirements'  %}</span>
+                                            <div class="d-flex gap-1 flex-column">
+                                                
+                                                {% if building.max %}<span class="{% if building.count >= building.max %}text-red-400{% else %}text-green-400{% endif %}">{% translate 'Nombre maximal'  %} {{ building.max }}</span>{% endif %}
+                                                {% for req in building.reqs %}
+                                                    <span class="{% if req.met %}text-green-400{% else %}text-red-400{% endif %}">{% blocktranslate with id=req.req_id %}building_{{ id }}{% endblocktranslate %} {% translate 'Niv' %} {{ req.level }}</span>
+                                                {% endfor %}
+
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <div class="col text-truncate frame border rounded d-flex gap-2 align-items-center justify-content-between">
+                                <span class="text-truncate">{% blocktranslate with id=building.id %}building_{{ id }}{% endblocktranslate %}</span>
+                                <span {% if building.max and building.count >= building.max %}class="text-red-400"{% endif %}>{{ building.count }} {% if building.max %}/ {{ building.max }}{% endif %}</span>
+                            </div>
+
+                            <div class="col-auto">
+                                <form method="post">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="action" value="build" />
+                                    <input type="hidden" name="id" value="{{ building.id }}" />
+                                    <button type="submit" class="btn btn-primary" {% if not building.can_build %}disabled{% endif %} data-bs-toggle="tooltip" data-bs-title="{% translate 'Ajouter' %}">
+                                        <i class="fas fa-fw fa-plus"></i>
+                                    </button>
+                                </form>
+                            </div>
+
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    {% for category in categories %}
+    <div class="p-2">
+        <div class="card card-body d-flex flex-column gap-2">
+            
+            <span class="fs-5 text-white">{% blocktranslate with id=category.id %}building_category_{{ id }}{% endblocktranslate %}</span>
+
+            <div class="d-flex flex-column gap-1">
+                {% for building in category.buildings %}
+                <div class="row flex-nowrap g-0 gap-1 align-items-center">
+                    
+                    <div class="col-auto dropdown">
+
+                        <button type="button" class="btn btn-secondary" data-bs-toggle="dropdown">
+                            <i class="fas fa-fw fa-info-circle"></i>
+                        </button>
+
+                        <div class="dropdown-menu">
+                        </div>
+
+                    </div>
+
+                    <div class="col text-truncate frame border rounded d-flex gap-2 align-items-center justify-content-between">
+                        <span class="text-truncate">{% blocktranslate with id=building.building_id %}building_{{ id }}{% endblocktranslate %}</span>
+                        {% if building.level > 0 %}<span><span class="text-gray-500">{% translate 'Niv' %}</span> {{ building.level }}</span>{% endif %}
+                    </div>
+                        
+                    {% if building.remainingSeconds %}
+                    <div class="col-auto">
+                        <div class="input-group">
+
+                            <div class="frame border rounded-start py-1">
+                                <div class="text-end">00:00:00</div>
+                                <div class="progress" style="height:3px; width:75px;">
+                                    <div class="progress-bar" style="width:25%;"></div>
+                                </div>
+                            </div>
+
+                            <button type="button" class="btn btn-primary">
+                                <i class="fas fa-fw fa-play"></i>
+                            </button>
+
+                        </div>
+                    </div>
+                    {% else %}
+
+                    <div class="col-auto dropdown" data-bs-toggle="tooltip" data-bs-title="{% translate 'Vendre' %}">
+
+                        <button type="button" class="btn btn-outline-danger" data-bs-toggle="dropdown">
+                            <i class="fas fa-fw fa-trash"></i>
+                        </button>
+
+                        <div class="dropdown-menu">
+                        </div>
+
+                    </div>
+
+                    <div class="col-auto">
+                        <div class="input-group">
+
+                            <div class="frame border rounded-start py-1">
+                                <div class="text-end">00:00:00</div>
+                                <div class="progress" style="height:3px; width:75px;">
+                                    <div class="progress-bar" style="width:25%;"></div>
+                                </div>
+                            </div>
+
+                            <form method="post">
+                                {% csrf_token %}
+                                <input type="hidden" name="action" value="upgrade" />
+                                <input type="hidden" name="id" value="{{ building.id }}" />
+                                <button type="button" class="btn btn-primary" data-bs-toggle="tooltip" data-bs-title="{% translate 'Améliorer' %}">
+                                    <i class="fas fa-fw fa-level-up-alt"></i>
+                                </button>
+                            </form>
+
+                        </div>
+                    </div>
+                    
+                    {% endif %}
+
+                </div>
+                {% endfor %}
+            </div>
+
+        </div>
+    </div>
+    {% endfor %}
+
+{% endblock %}

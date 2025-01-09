@@ -1,0 +1,11 @@
+{% if messages %}
+<div class="d-flex flex-column gap-1">
+    {% for message in messages %}
+        <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}primary{% endif %} d-flex gap-2 align-items-baseline justify-content-center">
+            {% if message.tags == 'error' %}<i class="fas fa-fw fa-exclamation-triangle"></i>
+            {% endif %}
+            <span class="text-center">{{ message.message }}</span>
+        </div>
+    {% endfor %}
+</div>
+{% endif %}
