@@ -77,21 +77,9 @@ INSTALLED_APPS = [
     'precise_bbcode',
     'impersonate',
     
-    'corsheaders',
-    
-    'rest_framework',
-    'rest_framework.authtoken',
-
-    'dj_rest_auth',
-    'dj_rest_auth.registration',
-
-    'allauth',
-    'allauth.account',
-    
     'myapps.accounts',
     'myapps.lobby',
     'myapps.s03',
-    'myapps.s04',
 ]
 
 
@@ -99,7 +87,6 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.BrokenLinkEmailsMiddleware',
     'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -108,7 +95,6 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'impersonate.middleware.ImpersonateMiddleware',
-    'allauth.account.middleware.AccountMiddleware',
 ]
 
 
@@ -187,16 +173,3 @@ EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
 
 
 ACCOUNT_USER_MODEL_USERNAME_FIELD = 'email'
-
-REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework.authentication.TokenAuthentication',
-    ),
-    'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.IsAuthenticatedOrReadOnly',
-    ),
-}
-
-REST_AUTH_REGISTER_SERIALIZERS = {
-    'REGISTER_SERIALIZER': 'myapps.api.serializers.UserRegisterSerializer',
-}
