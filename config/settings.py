@@ -79,7 +79,6 @@ INSTALLED_APPS = [
     
     'myapps.accounts',
     'myapps.lobby',
-    'myapps.s03',
 ]
 
 
@@ -122,7 +121,7 @@ DATABASES = {
         'HOST': env('DATABASE_HOST'),
         'PORT': env('DATABASE_PORT'),
         'OPTIONS': {
-            'options': '-c search_path=s03,s04,public'
+            'options': '-c search_path=public'
         },
     }
 }
