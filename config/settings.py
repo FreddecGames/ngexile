@@ -74,7 +74,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.humanize',
     
-    'precise_bbcode',
     'impersonate',
     
     'myapps.accounts',
